@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
@@ -55,6 +56,7 @@ import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPrefer
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
@@ -157,6 +159,13 @@ public class UploadActivity extends MyActivity {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
+
+//            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+//
+//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+//                drawer.setFitsSystemWindows(true);
+//            }
+
             toolbar = findViewById(R.id.toolbar);
             appBar = findViewById(R.id.appbar);
             if(BuildConfig.DEBUG) {
@@ -179,6 +188,34 @@ public class UploadActivity extends MyActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
+
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
+
+        if (hasFocus) {
+            DisplayUtils.hideAndroidStatusBar(this);
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+        } else {
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+        }
+
+        if (v != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                v.requestApplyInsets();
+            } else {
+                v.requestFitSystemWindows();
+            }
+        }
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 
     private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {

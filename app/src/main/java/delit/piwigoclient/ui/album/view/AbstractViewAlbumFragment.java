@@ -516,6 +516,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     protected void cacheViewComponentReferences(@NonNull View view) {
+
+        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
+
         // store references and initialise anything vital to the page (and used when loading data for example)
         retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
 
@@ -524,11 +527,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
 
         galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
+        galleryNameHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheet.openLayer(true);
+            }
+        });
 
         galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
         descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
-
-        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
 
         // Set the adapter
         galleryListView = view.findViewById(R.id.gallery_list);

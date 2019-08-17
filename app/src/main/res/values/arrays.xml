@@ -245,7 +245,7 @@
             - Added extra bulk action (key) for album resources to set resource privacy for selected items
             - relaxed restrictions on file mime types shared by other apps to this one
             - increased size of the album photos in proportion to the text
-            - TODO hide android buttons and notification bar until swipe from top of screen
+            - hide android buttons and notification bar until swipe from top of screen
             - show current piwigo username and server hostname in navigation bar
             Bugfix:
             - Corrected detection of long click to clear video from cache (slideshow)

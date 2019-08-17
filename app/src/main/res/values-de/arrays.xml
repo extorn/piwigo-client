@@ -118,7 +118,18 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.20</item>
-        <item>"Fehlerbehebung:
-            - Ein paar verschiedene Bugfixes, die sich auf die Stabilität der App auswirken."</item>
+        <item>"Änderungen:
+            - Zusätzliche Massenaktion (Schlüssel) für Albumressourcen hinzugefügt, um den Ressourcenschutz für ausgewählte Elemente festzulegen.
+            - entspannte Einschränkungen für Datei-Mime-Typen, die von anderen Anwendungen zu diesem Typ verwendet werden.
+            - Vergrößerung der Albumfotos im Verhältnis zum Text
+            - Android-Buttons und Benachrichtigungsleiste ausblenden, bis sie vom oberen Bildschirmrand gestreift werden.
+            - aktuellen Piwigo-Benutzernamen und Server-Hostnamen in der Navigationsleiste anzeigen
+            Fehlerbehebung:
+            - Die Erkennung von langen Klicks zum Löschen von Videos aus dem Cache (Diashow) wurde korrigiert.
+            - behebt den Absturz beim Löschen von Tag-Inhalten
+            - Korrektur für App, die nicht auf Android 4.2.2.2 startet.
+            - behebt einen Absturz, der durch das Ändern eines Einstellungstyps für einen automatischen Upload-Job verursacht wurde.
+            - Benachrichtigung des übergeordneten Albums über Änderungen beim Löschen von Alben oder Albuminhalten
+            - Die Einstellungen des Verbindungsprofils wie Server-URI, Benutzername und Passwort werden bei Verwendung mehrerer Profile nicht korrekt gespeichert"</item>
     </string-array>
 </resources>

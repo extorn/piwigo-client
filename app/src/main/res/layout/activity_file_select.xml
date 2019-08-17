@@ -3,5 +3,6 @@
     android:id="@+id/app_content"
     android:layout_alignWithParentIfMissing="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
 </FrameLayout>

@@ -232,22 +232,71 @@ public class DisplayUtils {
             // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE
             Window window = activity.getWindow();
             View decorView = window.getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE
-                            // Set the content to appear under the system bars so that the
-                            // content doesn't resize when the system bars hide and show.
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            // Hide the nav bar and status bar
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            int uiFlags = View.SYSTEM_UI_FLAG_IMMERSIVE
+                    // don't resize the screen content if the nav bar or status bar show or hide.
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    // hide the navigation bar
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    // hide the status bar
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Make content appear behind the navigation bar
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    // make content appear behind the status bar
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiFlags);
+
+            decorView.setOnSystemUiVisibilityChangeListener(new SystemUiVisibilityChangeListener(decorView, uiFlags));
         }
+
         // Remember that you should never show the action bar if the
         // status bar is hidden, so hide that too if necessary.
         ActionBar actionBar = activity.getActionBar();
         if (actionBar != null) {
             actionBar.hide();
+        }
+    }
+
+    private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {
+
+        private View decorView;
+        private int flags;
+        private Hider hider = new Hider();
+        private long autoHideDelayMillis = 2000;
+
+        public SystemUiVisibilityChangeListener(View decorView, int flags) {
+            this.decorView = decorView;
+            this.flags = flags;
+        }
+
+        @Override
+        public void onSystemUiVisibilityChange(int visibility) {
+            if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                if (hider.activate()) {
+                    decorView.postDelayed(hider, autoHideDelayMillis);
+                }
+            }
+        }
+
+        private class Hider implements Runnable {
+            private volatile boolean isActive;
+
+            @Override
+            public void run() {
+                synchronized (this) {
+                    decorView.setSystemUiVisibility(flags);
+                    isActive = false;
+                }
+            }
+
+            private boolean activate() {
+                synchronized (this) {
+                    if (!isActive) {
+                        isActive = true;
+                        return true;
+                    }
+                    return false;
+                }
+            }
         }
     }
 

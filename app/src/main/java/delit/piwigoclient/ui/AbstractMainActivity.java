@@ -4,10 +4,12 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -172,6 +174,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         });*/
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -470,6 +473,35 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
+
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
+
+        if (hasFocus) {
+
+            DisplayUtils.hideAndroidStatusBar(this);
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+        } else {
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+        }
+
+        if (v != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                v.requestApplyInsets();
+            } else {
+                v.requestFitSystemWindows();
+            }
+        }
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 
     @Override

@@ -1,15 +1,25 @@
 package delit.piwigoclient.ui;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.MyActivity;
+import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 
 public class PreferencesActivity extends MyActivity {
+
+    private static final String TAG = "PrefAct";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,5 +52,33 @@ public class PreferencesActivity extends MyActivity {
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
+
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
+
+        if (hasFocus) {
+            DisplayUtils.hideAndroidStatusBar(this);
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+        } else {
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+        }
+
+        if (v != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                v.requestApplyInsets();
+            } else {
+                v.requestFitSystemWindows();
+            }
+        }
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 }

@@ -5,11 +5,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -18,12 +22,14 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -37,6 +43,9 @@ import delit.piwigoclient.ui.file.RecyclerViewFolderItemSelectFragment;
  */
 
 public class FileSelectActivity extends MyActivity {
+
+    private static final String TAG = "FileSelAct";
+
     public static final String INTENT_SELECTED_FILES = "FileSelectActivity.selectedFiles";
 //    public static final String INTENT_SOURCE_EVENT_ID = "FileSelectActivity.sourceEventId";
     private static final String STATE_STARTED_ALREADY = "FileSelectActivity.startedAlready";
@@ -93,6 +102,12 @@ public class FileSelectActivity extends MyActivity {
             finish();
         } else {
             setContentView(R.layout.activity_file_select);
+
+            /*View activityRootView = findViewById(R.id.app_content);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                activityRootView.setFitsSystemWindows(true);
+            }*/
+
             showFileSelectFragment();
         }
     }
@@ -108,6 +123,34 @@ public class FileSelectActivity extends MyActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
+
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
+
+        if (hasFocus) {
+            DisplayUtils.hideAndroidStatusBar(this);
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+        } else {
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+        }
+
+        if (v != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                v.requestApplyInsets();
+            } else {
+                v.requestFitSystemWindows();
+            }
+        }
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 
     private void showFileSelectFragment() {

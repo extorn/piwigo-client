@@ -714,7 +714,7 @@ public class CustomSlidingLayer extends FrameLayout {
                     }
                 }
 
-                if (mIsDragging) {
+                if ((isCanOpenWithDrag() || isOpened()) && mIsDragging) {
 
                     final float oldScrollX = getScrollX();
                     final float oldScrollY = getScrollY();
@@ -769,20 +769,25 @@ public class CustomSlidingLayer extends FrameLayout {
             case MotionEvent.ACTION_UP: {
 
                 if (mIsDragging) {
-                    final VelocityTracker velocityTracker = mVelocityTracker;
-                    velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                    final int initialVelocityX = (int) velocityTracker.getXVelocity(mActivePointerId);
-                    final int initialVelocityY = (int) velocityTracker.getYVelocity(mActivePointerId);
-                    final int scrollX = getScrollX();
-                    final int scrollY = getScrollY();
 
-                    final int pointerIndex = ev.findPointerIndex(mActivePointerId);
-                    final float x = getViewX(ev);
-                    final float y = getViewY(ev);
+                    if (isCanOpenWithDrag() || isOpened()) { // only allow swipe to close.
 
-                    int nextState = determineNextStateForDrag(scrollX, scrollY, initialVelocityX, initialVelocityY,
-                            (int) mInitialRawX, (int) mInitialRawY, (int) x, (int) y);
-                    setLayerState(nextState, true, true, initialVelocityX, initialVelocityY);
+                        final VelocityTracker velocityTracker = mVelocityTracker;
+                        velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+                        final int initialVelocityX = (int) velocityTracker.getXVelocity(mActivePointerId);
+                        final int initialVelocityY = (int) velocityTracker.getYVelocity(mActivePointerId);
+                        final int scrollX = getScrollX();
+                        final int scrollY = getScrollY();
+
+                        final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+                        final float x = getViewX(ev);
+                        final float y = getViewY(ev);
+
+                        int nextState = determineNextStateForDrag(scrollX, scrollY, initialVelocityX, initialVelocityY,
+                                (int) mInitialRawX, (int) mInitialRawY, (int) x, (int) y);
+                        setLayerState(nextState, true, true, initialVelocityX, initialVelocityY);
+
+                    }
 
                     mActivePointerId = INVALID_VALUE;
                     endDrag();
@@ -820,6 +825,12 @@ public class CustomSlidingLayer extends FrameLayout {
         }
 
         return true;
+    }
+
+    private boolean isCanOpenWithDrag() {
+        boolean canOpenWithDrag = false;
+        canOpenWithDrag = Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2;
+        return canOpenWithDrag;
     }
 
     /**

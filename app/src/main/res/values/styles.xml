@@ -55,6 +55,19 @@
         <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
+    <style name="Custom.TextAppearance.AppCompat.Title.Clickable" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+    </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Headline" parent="TextAppearance.AppCompat.Headline">
+        <!-- this is used for items that are clickable but invisibly so -->
+    </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Headline.Clickable" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+    </style>
+
+
     <style name="Custom.Widget.AppCompat.CompoundButton.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="buttonTint">@color/checkbox_color_tint</item>

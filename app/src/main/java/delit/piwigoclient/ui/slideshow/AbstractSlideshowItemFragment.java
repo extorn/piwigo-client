@@ -376,6 +376,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         View v = inflater.inflate(getLayoutId(), container, false);
 
+        bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
+
         itemPositionTextView = v.findViewById(R.id.slideshow_resource_item_x_of_y_text);
         progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);
         setAsAlbumThumbnail = v.findViewById(R.id.slideshow_resource_action_use_for_album_thumbnail);
@@ -387,6 +389,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         resourceTitleView = v.findViewById(R.id.slideshow_resource_item_title);
+        resourceTitleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheet.openLayer(true);
+            }
+        });
 
         averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -396,22 +404,22 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
         ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
 
+        overlaysVisibilityControl = new ViewVisibleControl(setAsAlbumThumbnail, itemPositionTextView, averageRatingsBar, resourceTitleView);
+        overlaysVisibilityControl.setVisibility(View.VISIBLE);
+
         RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
         itemContent = createItemContent(inflater, itemContentLayout, savedInstanceState);
+
         if (itemContent != null) {
             // insert first to allow all others to be overlaid.
             int children = itemContentLayout.getChildCount();
             itemContentLayout.addView(itemContent, 0);
         }
 
-        bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
-
         if (AlbumViewPreferences.isSlideshowExtraInfoShadowTransparent(getPrefs(), requireContext())) {
             bottomSheet.setShadowDrawable(null);
         }
 
-        overlaysVisibilityControl = new ViewVisibleControl(setAsAlbumThumbnail,itemPositionTextView,averageRatingsBar, resourceTitleView);
-        overlaysVisibilityControl.setVisibility(View.VISIBLE);
 
         return v;
     }

@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             tools:text="Image 20121.jpg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Headline" />
 
         <TextView
             android:id="@+id/slideshow_resource_item_x_of_y_text"

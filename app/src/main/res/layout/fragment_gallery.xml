@@ -38,7 +38,7 @@
                 android:maxLines="2"
                 android:ellipsize="end"
                 tools:text="Gallery name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title.Clickable" />
 
             <TextView
                 android:id="@+id/gallery_details_description_header"
