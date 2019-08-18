@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.wunderlist.slidinglayer.CustomSlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -237,6 +238,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 getOverlaysVisibilityControl().runWithDelay(getView());
             }
         });
+
         simpleExoPlayerView.getVideoSurfaceView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -283,20 +285,31 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
         });
         simpleExoPlayerView.setPlayer(player);
-
-        simpleExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
-            @Override
-            public void onVisibilityChange(int visibility) {
-                if(visibility == View.VISIBLE) {
-                    getBottomSheet().setVisibility(View.GONE);
-                } else {
-                    getBottomSheet().setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
+        View exoPlayerControlsView = simpleExoPlayerView.findViewById(R.id.exo_player_controls_container);
+        simpleExoPlayerView.setControllerVisibilityListener(new CustomVidePlayerControlsVisibilityListener(exoPlayerControlsView, getBottomSheet()));
         logStatus("finished created item content");
         return itemContentView;
+    }
+
+    private static class CustomVidePlayerControlsVisibilityListener implements PlayerControlView.VisibilityListener {
+
+        private final View playerControlsView;
+        private final CustomSlidingLayer videoMetadataContainerView;
+        private int naturalHeightPx = -1;
+
+        private CustomVidePlayerControlsVisibilityListener(View playerControlsView, CustomSlidingLayer videoMetadataContainerView) {
+            this.playerControlsView = playerControlsView;
+            this.videoMetadataContainerView = videoMetadataContainerView;
+        }
+
+        @Override
+        public void onVisibilityChange(int visibility) {
+            if (visibility == View.VISIBLE) {
+                videoMetadataContainerView.setVisibility(View.GONE);
+            } else {
+                videoMetadataContainerView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override

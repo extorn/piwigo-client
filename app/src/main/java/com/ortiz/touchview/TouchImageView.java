@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.OverScroller;
 import android.widget.Scroller;
+
 import androidx.appcompat.widget.AppCompatImageView;
 
 public class TouchImageView extends AppCompatImageView {
@@ -63,6 +64,7 @@ public class TouchImageView extends AppCompatImageView {
     // saved prior to the screen rotating.
     //
     private Matrix matrix, prevMatrix;
+    private boolean isRotateImageToFitScreen;
 
     public enum FixedPixel {CENTER, TOP_LEFT, BOTTOM_RIGHT}
     private FixedPixel orientationChangeFixedPixel = FixedPixel.CENTER;
@@ -170,6 +172,10 @@ public class TouchImageView extends AppCompatImageView {
 
     public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener l) {
         doubleTapListener = l;
+    }
+
+    public void setRotateImageToFitScreen(boolean rotateImageToFitScreen) {
+        isRotateImageToFitScreen = rotateImageToFitScreen;
     }
 
     @Override
@@ -718,6 +724,15 @@ public class TouchImageView extends AppCompatImageView {
         int drawableWidth = drawable.getIntrinsicWidth();
         int drawableHeight = drawable.getIntrinsicHeight();
 
+//        boolean rotatingImage = false;
+
+//        if(isRotateImageToFitScreen && (viewWidth > viewHeight != drawableWidth > drawableHeight)) {
+//            drawableWidth = drawableHeight;
+//            drawableHeight = drawable.getIntrinsicWidth();
+//            // flip the scaling.
+//        }
+
+
         //
         // Scale image for view
         //
@@ -759,7 +774,7 @@ public class TouchImageView extends AppCompatImageView {
             //
             // Stretch and center image to fit view
             //
-            matrix.setScale(scaleX, scaleY);
+            matrix.postScale(scaleX, scaleY);
             switch (mScaleType) {
                 case FIT_START:
                     matrix.postTranslate(0, 0);
@@ -817,7 +832,10 @@ public class TouchImageView extends AppCompatImageView {
             //
             matrix.setValues(m);
         }
+
+
         fixTrans();
+
         setImageMatrix(matrix);
     }
 

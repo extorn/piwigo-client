@@ -112,6 +112,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(AlbumViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
+        imageView.setRotateImageToFitScreen(true);
         imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
             @Override
             public void onMove() {
@@ -175,12 +176,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             if (imageView instanceof TouchImageView) {
                 TouchImageView touchImageView = ((TouchImageView) imageView);
                 touchImageView.setMinZoom(TouchImageView.AUTOMATIC_MIN_ZOOM);
-//                float width = Math.abs(((TouchImageView)imageView).getZoomedRect().width());
-//                float height = Math.abs(((TouchImageView)imageView).getZoomedRect().height());
-//                int pictureOrientation = width < height ? Configuration.ORIENTATION_PORTRAIT : Configuration.ORIENTATION_LANDSCAPE;
-//                if(pictureOrientation != DisplayUtils.getCurrentScreenOrientation(imageView.getContext())) {
-//                    touchImageView.setRotation(90f);
-//                }
             }
             if (loader.hasPlaceholder()) {
                 // placeholder loaded
