@@ -28,8 +28,6 @@ import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
-import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 
 /**
  * Created by gareth on 14/06/17.
@@ -119,38 +117,6 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 }
             }
         });
-        migrators.add(new PreferenceMigrator(235) {
-
-            @Override
-            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                List<AutoUploadJobConfig> autoUploadJobs = new AutoUploadJobsConfig(prefs).getAutoUploadJobs(context);
-                for (AutoUploadJobConfig cfg : autoUploadJobs) {
-                    SharedPreferences jobSharedPrefs = cfg.getJobPreferences(context);
-                    try {
-                        cfg.getFileExtsToUpload(context);
-                    } catch (ClassCastException e) {
-                        SharedPreferences.Editor jobPrefsEditor = jobSharedPrefs.edit();
-                        // need to migrate this preference from a csv string
-                        String key = getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
-                        String fileExtsCsvList = jobSharedPrefs.getString(key, null);
-                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(fileExtsCsvList));
-                        HashSet<String> cleanedValues = new HashSet<>(values.size());
-                        for (String value : values) {
-                            int dotIdx = value.indexOf('.');
-                            if (dotIdx < 0) {
-                                cleanedValues.add(value.toLowerCase());
-                            } else {
-                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
-                            }
-                        }
-                        jobPrefsEditor.remove(key);
-                        jobPrefsEditor.putStringSet(key, cleanedValues);
-                        jobPrefsEditor.apply();
-                    }
-                }
-            }
-        });
-
         return migrators;
     }
 
