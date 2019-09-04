@@ -260,6 +260,6 @@
         <item>"Changes:
             - Add preference to set default file permissions for upload screen
             Bugfix:
-            - ???"</item>
+            - page requests to update many resource item permissions"</item>
     </string-array>
 </resources>

@@ -675,10 +675,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 }
             }
         } else {
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
-            for (ResourceItem item : bulkResourceActionData.getItemsWithoutLinkedAlbumData()) {
-                bulkResourceActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList)));
-            }
+            bulkResourceActionData.getResourcesInfoIfNeeded(this);
             return;
         }
         if (resourcesReadyForAction.size() > 0) {
@@ -713,10 +710,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 }
             }
         } else {
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
-            for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList)));
-            }
+            deleteActionData.getResourcesInfoIfNeeded(this);
             return;
         }
         if (sharedResources.size() > 0) {
@@ -1573,6 +1567,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                         break;
                 }
 
+            } else {
+                // this will load the next batch of resource infos...
+                bulkResourceActionData.getResourcesInfoIfNeeded(this);
             }
         }
     }
@@ -2427,9 +2424,29 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return trackedMessageIds.remove(messageId);
         }
 
+        private final static int maxHttpRequestsQueued = 20;
+
         @Override
         public int describeContents() {
             return 0;
+        }
+
+        public int getTrackedMessageIdsCount() {
+            return trackedMessageIds.size();
+        }
+
+        public void getResourcesInfoIfNeeded(AbstractViewAlbumFragment fragment) {
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(fragment.getPrefs(), fragment.requireContext());
+            int simultaneousCalls = trackedMessageIds.size();
+            if (maxHttpRequestsQueued > simultaneousCalls) {
+                for (ResourceItem item : getItemsWithoutLinkedAlbumData()) {
+                    simultaneousCalls++;
+                    trackMessageId(fragment.addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList)));
+                    if (simultaneousCalls >= maxHttpRequestsQueued) {
+                        break;
+                    }
+                }
+            }
         }
     }
 
