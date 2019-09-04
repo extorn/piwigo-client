@@ -384,6 +384,10 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
      */
     public List<CategoryItem> getFullPath(CategoryItem child) {
         List<Long> parentageIds = new ArrayList<>();
+        if (child == null) {
+            Crashlytics.log(Log.ERROR, TAG, "GetFullPath called for null CategoryItem");
+            return new ArrayList<>(0);
+        }
         if(child.getParentageChain() != null) {
             parentageIds.addAll(child.getParentageChain());
         }

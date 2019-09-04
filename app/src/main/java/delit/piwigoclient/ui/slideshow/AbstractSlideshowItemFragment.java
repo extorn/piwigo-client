@@ -886,11 +886,18 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
 
     private void notifyUserFileDownloadComplete(final File downloadedFile) {
-
+        //TODO handle this notification within the activity level rather than the fragment level so user always gets it!
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_notifications_black_24dp).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 Intent notificationIntent;
+                Context context;
+                try {
+                    context = requireContext();
+                } catch (IllegalStateException e) {
+                    Crashlytics.log(Log.ERROR, TAG, "No context to create notification in");
+                    return;
+                }
 
 //        if(openImageNotFolder) {
                 notificationIntent = new Intent(Intent.ACTION_VIEW);
@@ -902,7 +909,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 //notificationIntent.setDataAndType(selectedUri, mimeType);
 
                 Uri apkURI = FileProvider.getUriForFile(
-                        requireContext(),
+                        context,
                         BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
                 notificationIntent.setDataAndType(apkURI, mimeType);
                 notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
+import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.net.URI;
@@ -201,6 +202,11 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
     @Override
     public final void onCreate() {
+        if (MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
+            // Skip app initialization.
+            return;
+        }
+
         super.onCreate();
         // ensure it's available for any users of it
         resources = getResources();
