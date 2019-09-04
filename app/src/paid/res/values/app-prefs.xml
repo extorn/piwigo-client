@@ -86,7 +86,7 @@
     <string name="preference_data_upload_automatic_job_privacy_level_title">Privacy Level</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
     <string name="preference_data_upload_automatic_job_privacy_level_key" translatable="false">preference_data_upload_automatic_job_privacy_level</string>
-    <integer name="preference_data_upload_automatic_job_privacy_level_default">0</integer>
+    <integer name="preference_data_upload_automatic_job_privacy_level_default">8</integer>
 
     <string name="preference_data_upload_automatic_job_compress_videos_quality_title" translatable="false">@string/preference_data_upload_compress_videos_quality_title</string>
     <string name="preference_data_upload_automatic_job_compress_videos_quality_summary" translatable="false">@string/preference_data_upload_compress_videos_quality_summary</string>

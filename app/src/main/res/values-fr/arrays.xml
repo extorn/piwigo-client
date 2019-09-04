@@ -133,20 +133,7 @@
          - ? Veuillez m'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.4.0.20</item>
-        <item>"Changements :
-            - Ajouter une préférence pour permettre de changer la mise à l'échelle des images dans un diaporama (plein écran)
-            - Ajout d'une action de masse supplémentaire (clé) pour les ressources de l'album afin de définir la confidentialité des ressources pour les éléments sélectionnés.
-            - restrictions assouplies sur les types de mimes de fichiers partagés par d'autres applications à celle-ci
-            - augmentation de la taille des photos de l'album en proportion du texte
-            - cacher les boutons androïdes et la barre de notification jusqu'à ce qu'ils glissent vers le haut de l'écran
-            - afficher le nom d'utilisateur piwigo actuel et le nom d'hôte du serveur dans la barre de navigation
-            Correction d'un bug :
-            - Correction de la détection d'un long clic pour effacer la vidéo du cache (diaporama)
-            - correction d'un plantage lors de la suppression du contenu d'une balise
-            - Correction d'une application ne démarrant pas sur android 4.2.2.2
-            - correction d'un plantage causé par la modification d'un type de préférence de tâche de téléchargement automatique
-            - avertir l'album parent de tout changement lors de la suppression d'un album ou d'un contenu d'album
-            - Les paramètres de profil de connexion tels que l'uri du serveur, le nom d'utilisateur et le mot de passe ne sont pas enregistrés correctement lors de l'utilisation de plusieurs profils."</item>
+        <item>1.4.0.21</item>
+        <item>""</item>
     </string-array>
 </resources>

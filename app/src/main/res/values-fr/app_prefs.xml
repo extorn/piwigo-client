@@ -247,6 +247,8 @@
 
     <!-- prefs -->
 
+    <string name="preference_data_upload_default_privacy_level_title">Niveau de confidentialité par défaut</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Fichiers téléchargés visibles à %1$s</string>
 
     <string name="preference_data_upload_chunkSizeKb_title">Max Upload Taille des morceaux (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>

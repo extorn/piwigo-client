@@ -298,7 +298,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
 // Apply the filesToUploadAdapter to the spinner
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
-        privacyLevelSpinner.setSelection(0);
+        int defaultPrivacyLevelGroup = UploadPreferences.getDefaultPrivacyLevel(getContext(), getPrefs());
+        privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(defaultPrivacyLevelGroup));
 
         deleteUploadJobButton = view.findViewById(R.id.delete_upload_job_button);
         deleteUploadJobButton.setOnClickListener(new View.OnClickListener() {

@@ -243,6 +243,8 @@
 
     <!-- prefs -->
 
+    <string name="preference_data_upload_default_privacy_level_title">默认隐私级别</string>
+    <string name="preference_data_upload_default_privacy_level_summary">上传的文件对%1$s可见</string>
 
     <string name="preference_data_upload_chunkSizeKb_title">最大上传块大小（KB）</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>

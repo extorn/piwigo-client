@@ -297,6 +297,11 @@
 
     <string name="preference_data_upload_default_local_folder_key" translatable="false">preference_data_upload_default_local_folder</string>
 
+    <integer name="preference_data_upload_default_privacy_level_default">8</integer>
+    <string name="preference_data_upload_default_privacy_level_summary">Uploaded files visible to %1$s</string>
+    <string name="preference_data_upload_default_privacy_level_key" translatable="false">preference_data_upload_automatic_job_privacy_level</string>
+    <string name="preference_data_upload_default_privacy_level_title">Default Privacy Level</string>
+
     <string name="preference_data_upload_chunkSizeKb_key" translatable="false">preference_data_upload_chunkSizeKb</string>
     <string name="preference_data_upload_chunkSizeKb_title">Max Upload Chunk Size (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>

@@ -42,7 +42,7 @@ public class IntListPreference extends MappedListPreference<Integer> {
         }
         if(obj instanceof String) {
             String resIdStr = (String)obj;
-            if(resIdStr.startsWith("@int/")) {
+            if (resIdStr.startsWith("#int/")) {
                 //may be a reference to an int.
                 int resId = getContext().getResources().getIdentifier(resIdStr.substring(5), "integer", getContext().getPackageName());
                 if(resId != 0) {

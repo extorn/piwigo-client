@@ -114,4 +114,7 @@ public class UploadPreferences {
     }
 
 
+    public static int getDefaultPrivacyLevel(Context context, SharedPreferences prefs) {
+        return getInt(context, prefs, R.string.preference_data_upload_default_privacy_level_key, R.integer.preference_data_upload_default_privacy_level_default);
+    }
 }

@@ -256,20 +256,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.20</item>
+        <item>1.4.0.21</item>
         <item>"Changes:
-            - Add preference to allow changing scaling of pictures in slideshow (full screen)
-            - Added extra bulk action (key) for album resources to set resource privacy for selected items
-            - relaxed restrictions on file mime types shared by other apps to this one
-            - increased size of the album photos in proportion to the text
-            - hide android buttons and notification bar until swipe from top of screen
-            - show current piwigo username and server hostname in navigation bar
+            - Add preference to set default file permissions for upload screen
             Bugfix:
-            - Corrected detection of long click to clear video from cache (slideshow)
-            - fix crash when deleting tag content
-            - Fix for app not starting on android 4.2.2
-            - fixed crash caused by changing an automatic upload job preference type
-            - notify parent album of change when deleting album or album content
-            - Connection profile settings such as server uri, username, and password are not saved correctly when using multiple profiles"</item>
+            - ???"</item>
     </string-array>
 </resources>
