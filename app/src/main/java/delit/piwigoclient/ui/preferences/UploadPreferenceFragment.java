@@ -3,8 +3,11 @@ package delit.piwigoclient.ui.preferences;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.preference.Preference;
+
+import com.crashlytics.android.Crashlytics;
 
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.preference.NumberPickerPreference;
@@ -74,7 +77,9 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
         public boolean onSuccess(UIHelper<UploadPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-            if(sessionDetails.isPiwigoClientCleanUploadsAvailable()){
+            if (sessionDetails == null) {
+                Crashlytics.log(Log.ERROR, TAG, "Session details null after login success - weird");
+            } else if (sessionDetails.isPiwigoClientCleanUploadsAvailable()) {
                 uiHelper.invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction());
             } else {
                 uiHelper.showDetailedMsg(R.string.alert_error, R.string.alert_unavailable_feature_piwigo_client_plugin_needed);

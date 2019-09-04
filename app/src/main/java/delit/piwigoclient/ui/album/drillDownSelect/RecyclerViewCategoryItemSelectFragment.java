@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.album.drillDownSelect;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -137,13 +140,18 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         newItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CategoryItem selectedAlbum = getListAdapter().getActiveItem();
-                if (selectedAlbum != null) {
-                    AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedAlbum.toStub());
-                    getUiHelper().setTrackingRequest(event.getActionId());
-                    EventBus.getDefault().post(event);
+                CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
+                if (listAdapter == null) {
+                    Crashlytics.log(Log.ERROR, getTag(), "List adapter is null - weird");
                 } else {
-                    getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.please_select_a_parent_album);
+                    CategoryItem selectedAlbum = listAdapter.getActiveItem();
+                    if (selectedAlbum != null) {
+                        AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedAlbum.toStub());
+                        getUiHelper().setTrackingRequest(event.getActionId());
+                        EventBus.getDefault().post(event);
+                    } else {
+                        getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.please_select_a_parent_album);
+                    }
                 }
             }
         });

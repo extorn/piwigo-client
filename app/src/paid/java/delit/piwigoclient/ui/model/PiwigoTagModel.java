@@ -20,7 +20,7 @@ public class PiwigoTagModel extends ViewModelContainer {
     }
 
     public LiveData<PiwigoTag> updatePiwigoTag(@NotNull Tag tag) {
-        albumLiveData.setValue(new PiwigoTag(tag));
+        albumLiveData.postValue(new PiwigoTag(tag));
         return albumLiveData;
     }
 

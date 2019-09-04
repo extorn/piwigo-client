@@ -132,7 +132,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
         if (resourceContainer == null) {
             // attempt to get back to a working fragment.
-            requireFragmentManager().popBackStackImmediate(); //TODO - work out why resource container can be null - after app kill and restore?
+            requireFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
             return null;
         }
 
