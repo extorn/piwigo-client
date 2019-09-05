@@ -3,7 +3,6 @@ package delit.piwigoclient.ui;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -222,12 +221,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         super.onResume();
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        Dialog dialog = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST, new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                finish();
-            }
-        });
+        Dialog dialog = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
         if(dialog != null) {
             dialog.show();
         }

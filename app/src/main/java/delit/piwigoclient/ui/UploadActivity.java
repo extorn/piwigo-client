@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -189,12 +188,7 @@ public class UploadActivity extends MyActivity {
         super.onResume();
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        Dialog dialog = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST, new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                finish();
-            }
-        });
+        Dialog dialog = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
         if (dialog != null) {
             dialog.show();
         }
