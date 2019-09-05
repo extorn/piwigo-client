@@ -259,6 +259,7 @@
         <item>1.4.0.21</item>
         <item>"Changes:
             - Add preference to set default file permissions for upload screen
+            - TODO make fullscreen optional!
             Bugfix:
             - page requests to update many resource item permissions"</item>
     </string-array>

@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -56,6 +56,7 @@ import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
@@ -188,9 +189,17 @@ public class UploadActivity extends MyActivity {
         super.onResume();
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        Dialog dialog = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
-        if (dialog != null) {
-            dialog.show();
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleApi.isUserResolvableError(result)) {
+                googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST).show();
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper>(getUiHelper()) {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                        finish();
+                    }
+                });
+            }
         }
     }
 

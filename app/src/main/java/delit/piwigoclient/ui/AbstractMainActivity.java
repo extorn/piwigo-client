@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -59,7 +60,9 @@ import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelec
 import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
@@ -221,9 +224,17 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         super.onResume();
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        Dialog dialog = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
-        if(dialog != null) {
-            dialog.show();
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleApi.isUserResolvableError(result)) {
+                googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST).show();
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper>(getUiHelper()) {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                        finish();
+                    }
+                });
+            }
         }
     }
 

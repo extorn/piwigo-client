@@ -490,4 +490,5 @@
     <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与%1$s类型共享的文件</string>
     <string name="alert_error_unsupported_file_extensions_pattern">具有以下扩展名的文件无法上载且已被忽略：%1$s</string>
     <string name="please_select_a_parent_album">请选择父相册</string>
+    <string name="unsupported_device">抱歉，此设备不受支持。 访问Google Play Services时出现问题。</string>
 </resources>

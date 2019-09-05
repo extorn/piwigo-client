@@ -998,4 +998,5 @@ SOFTWARE.
     <string name="alert_error_unable_to_handle_shared_mime_type">Unable to handle files shared with an %1$s mime type</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit folgenden Erweiterungen können nicht hochgeladen werden und wurden ignoriert: %1$s</string>
     <string name="please_select_a_parent_album">Please select a parent album</string>
+    <string name="unsupported_device">Sorry, this device is not supported. There is an issue with accessing Google Play Services.</string>
 </resources>

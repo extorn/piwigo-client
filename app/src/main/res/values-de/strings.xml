@@ -613,5 +613,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_unable_to_handle_shared_mime_type">Es können keine Dateien verarbeitet werden, die mit einem %1$s Mime-Typ geteilt werden.</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Files with the following extensions cannot be uploaded and have been removed: %1$s</string>
     <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album aus</string>
+    <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Es gibt ein Problem mit dem Zugriff auf die Google Play Services.</string>
 </resources>
 
