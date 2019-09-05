@@ -1,8 +1,10 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -22,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.appbar.AppBarLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -82,6 +85,7 @@ public class UploadActivity extends MyActivity {
 
     private static final String TAG = "uploadActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
+    private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
     private static final String STATE_STARTED_ALREADY = "startedAlready";
     private static final String INTENT_DATA_CURRENT_ALBUM = "currentAlbum";
@@ -177,6 +181,22 @@ public class UploadActivity extends MyActivity {
             if (savedInstanceState == null) { // the fragment will be created automatically from the fragment manager state if there is state :-)
                 showUploadFragment(true, connectionPrefs);
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
+        Dialog dialog = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST, new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
+        if (dialog != null) {
+            dialog.show();
         }
     }
 
