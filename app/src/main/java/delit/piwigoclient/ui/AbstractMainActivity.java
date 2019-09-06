@@ -228,7 +228,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             if (googleApi.isUserResolvableError(result)) {
                 googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST).show();
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper>(getUiHelper()) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
                     @Override
                     public void onDismiss(AlertDialog dialog) {
                         finish();
@@ -505,12 +505,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
         }
 
-        if (v != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                v.requestApplyInsets();
-            } else {
-                v.requestFitSystemWindows();
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            v.requestApplyInsets(); //TODO why is this needed?
+        } else {
+            v.requestFitSystemWindows();
         }
         EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }

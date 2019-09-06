@@ -193,7 +193,7 @@ public class UploadActivity extends MyActivity {
             if (googleApi.isUserResolvableError(result)) {
                 googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST).show();
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper>(getUiHelper()) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<UploadActivity>>(getUiHelper()) {
                     @Override
                     public void onDismiss(AlertDialog dialog) {
                         finish();
