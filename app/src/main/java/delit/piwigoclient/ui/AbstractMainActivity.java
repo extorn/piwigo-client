@@ -505,11 +505,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            v.requestApplyInsets(); //TODO why is this needed?
-        } else {
-            v.requestFitSystemWindows();
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+//            v.requestApplyInsets(); //TODO why is this needed?
+//        } else {
+//            v.requestFitSystemWindows();
+//        }
         EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 

@@ -134,7 +134,12 @@
     </string-array>
     <string-array name="release_history">
         <item>1.4.0.21</item>
-        <item>""</item>
+        <item>"变化：
+              - 添加首选项以设置上传屏幕的默认文件权限
+              - 对全屏行为进行微小更改（希望在下一版本中将此模式设为可选）
+            修正：
+              - 页面请求更新许多资源项权限
+              - 在幻灯片中再次在图像之间移动"</item>
     </string-array>
 
 </resources>

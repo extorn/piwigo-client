@@ -134,6 +134,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.21</item>
-        <item>""</item>
+        <item>"Changements :
+            - Ajout d'une préférence pour définir les permissions par défaut des fichiers pour l'écran de téléchargement
+            - modification mineure du comportement en plein écran (nous espérons rendre ce mode optionnel dans la prochaine version)
+            Correction d'un bug :
+            - demandes de mise à jour de nombreuses permissions d'éléments de ressources par page
+            - le déplacement d'une image à l'autre fonctionne à nouveau en diaporama"</item>
     </string-array>
 </resources>

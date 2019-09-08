@@ -1,50 +1,36 @@
 
 <en-GB>
 Changes:
-- Add preference to allow changing scaling of pictures in slideshow (full screen)
-- Added extra bulk action (key) for album resources to set resource privacy for selected items
-- relaxed restrictions on file mime types shared by other apps to this one
-- increased size of the album photos in proportion to the text
-- hide android buttons and notification bar until swipe from top of screen
-- show current piwigo username and server hostname in navigation bar
+- Add preference to set default file permissions for upload screen
+- minor change to fullscreen behaviour (hope to make this mode optional in the next release)
 Bugfix:
-- Corrected detection...
+- page requests to update many resource item permissions
+- moving between images works again in slideshow
 </en-GB>
 
 <de-DE>
 Änderungen:
-- Einstellungen hinzufügen, um die Skalierung von Bildern in der Diashow zu ändern (Vollbild)
-- Zusätzliche Massenaktion (Schlüssel) für Albumressourcen hinzugefügt, um den Ressourcenschutz für ausgewählte Elemente festzulegen.
-- entspannte Einschränkungen für Datei-Mime-Typen, die von anderen Anwendungen zu diesem Typ verwendet werden.
-- Vergrößerung der Albumfotos im Verhältnis zum Text
-- Android-Buttons und Benachrichtigungsleiste ausblenden,...
+- Präferenz hinzufügen, um Standard-Dateiberechtigungen für den Upload-Bildschirm festzulegen.
+- kleinere Änderung am Vollbildverhalten (hoffentlich wird dieser Modus in der nächsten Version optional sein)
 Fehlerbehebung:
-- Die Erkennung...
+- Seitenaufrufe zur Aktualisierung vieler Berechtigungen für Ressourcenelemente
+- Das Verschieben zwischen den Bildern funktioniert wieder in der Diashow.
 </de-DE>
 
 <fr-FR>
 Changements :
-- Ajouter une préférence pour permettre de changer la mise à l'échelle des images dans un diaporama (plein écran)
-- Ajout d'une action de masse supplémentaire (clé) pour les ressources de l'album afin de définir la confidentialité des ressources pour les éléments sélectionnés.
-- restrictions assouplies sur les types de mimes de fichiers partagés par d'autres applications à celle-ci
-- augmentation de la taille des photos de l'album en proportion du tex...
+- Ajout d'une préférence pour définir les permissions par défaut des fichiers pour l'écran de téléchargement
+- modification mineure du comportement en plein écran (nous espérons rendre ce mode optionnel dans la prochaine version)
 Correction d'un bug :
-- ...
+- demandes de mise à jour de nombreuses permissions d'éléments de ressources par page
+- le déplacement d'une image à l'autre fonctionne à nouveau en diaporama
 </fr-FR>
 
 <zh-CN>
 变化：
-- 添加首选项以允许在幻灯片中更改图片缩放（全屏）
-- 为专辑资源添加了额外的批量操作（键），以便为所选项目设置资源隐私
-- 放宽对其他应用程序共享的文件mime类型的限制
-- 增加相册照片的大小与文本成比例
-- 隐藏Android按钮和通知栏，直到从屏幕顶部滑动
-- 在导航栏中显示当前的piwigo用户名和服务器主机名
+- 添加首选项以设置上传屏幕的默认文件权限
+- 对全屏行为进行微小更改（希望在下一版本中将此模式设为可选）
 修正：
-- 更正了长按点检测以清除缓存中的视频（幻灯片）
-- 删除标记内容时修复崩溃
-- 修复了Android 4.2.2上无法启动的应用程序
-- 通过更改自动上载作业首选项类型导致的修复崩溃
-- 删除专辑或专辑内容时通知父专辑的更改
-- 使用多个配置文件时，无法正确保存连接配置文件设置，如服务器uri，用户名和密码
+- 页面请求更新许多资源项权限
+- 在幻灯片中再次在图像之间移动
 </zh-CN>

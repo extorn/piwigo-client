@@ -7,9 +7,11 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -25,6 +27,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+
+import com.crashlytics.android.Crashlytics;
 
 /**
  * Created by gareth on 30/05/17.
@@ -226,13 +230,18 @@ public class DisplayUtils {
     }
 
     public static void hideAndroidStatusBar(FragmentActivity activity) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            Crashlytics.log(Log.DEBUG, TAG, "Unable to go fullscreen on old versions of android");
+            return;
+        }
         if (activity.hasWindowFocus()) {
             // Enables regular immersive mode.
             // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
             // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE
             Window window = activity.getWindow();
             View decorView = window.getDecorView();
-            int uiFlags = View.SYSTEM_UI_FLAG_IMMERSIVE
+            // force user to swipe up from bottom or down from top to bring back status bars
+            int uiFlags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY //TODO why can't I use sticky immersive and ditch the ui vis change listener???
                     // don't resize the screen content if the nav bar or status bar show or hide.
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     // hide the navigation bar
@@ -244,8 +253,7 @@ public class DisplayUtils {
                     // make content appear behind the status bar
                     | View.SYSTEM_UI_FLAG_FULLSCREEN;
             decorView.setSystemUiVisibility(uiFlags);
-
-            decorView.setOnSystemUiVisibilityChangeListener(new SystemUiVisibilityChangeListener(decorView, uiFlags));
+//            decorView.setOnSystemUiVisibilityChangeListener(new SystemUiVisibilityChangeListener(decorView, uiFlags));
         }
 
         // Remember that you should never show the action bar if the

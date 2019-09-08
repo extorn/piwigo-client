@@ -253,9 +253,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         // show information panel if wanted.
         updateInformationShowingStatus();
 
-        configureItemContent(itemContent, model, savedInstanceState);
-
         super.onViewCreated(view, savedInstanceState);
+
+        configureItemContent(itemContent, model, savedInstanceState);
 
         if (model.isResourceDetailsLikelyOutdated() || model.isLikelyOutdated()) {
             // call this quietly in the background to avoid it ruining the slideshow experience.
@@ -441,65 +441,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return overlaysVisibilityControl;
     }
 
-    public static class ViewVisibleControl implements Runnable {
-
-        private long delayMillis = 2000;
-        private List<View> views;
-        private int visibilityOnRun = View.INVISIBLE;
-        private long timerStarted;
-        private CustomSlidingLayer bottomSheet;
-        private Drawable shadowDrawable;
-
-        public ViewVisibleControl(View ... views) {
-            this.views = new ArrayList<>(Arrays.asList(views));
-        }
-
-        public void setDelayMillis(long delayMillis) {
-            this.delayMillis = delayMillis;
-        }
-
-        public void setVisibilityOnRun(int visibility) {
-            this.visibilityOnRun = visibility;
-        }
-
-        private void setVisibility(int visibility) {
-            for(View v : views) {
-                v.setVisibility(visibility);
-            }
-            if(bottomSheet != null) {
-                Drawable currentDrawable = bottomSheet.getShadowDrawable();
-                if(currentDrawable != null) {
-                    shadowDrawable = currentDrawable;
-                }
-                bottomSheet.setShadowDrawable(visibility == View.VISIBLE ? shadowDrawable : null);
-
-            }
-        }
-
-        @Override
-        public synchronized void run() {
-            if(timerStarted + delayMillis - System.currentTimeMillis() > 0) {
-                // another trigger has been added.
-                return;
-            }
-            setVisibility(visibilityOnRun);
-        }
-
-        public synchronized void runWithDelay(View v) {
-            if (v != null) {
-                timerStarted = System.currentTimeMillis();
-                setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-                v.postDelayed(this, 2000);
-            }
-        }
-
-        public synchronized void addView(View v) {
-            setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-            views.add(v);
-        }
-
-        public void addBottomSheetTransparency(CustomSlidingLayer bottomSheet) {
-            this.bottomSheet = bottomSheet;
+    protected void doOnceOnPageSelectedAndAdded() {
+        FragmentUIHelper uiHelper = getUiHelper();
+        uiHelper.registerToActiveServiceCalls();
+        uiHelper.setBlockDialogsFromShowing(false);
+        uiHelper.handleAnyQueuedPiwigoMessages();
+//        setTitleBar();
+        overlaysVisibilityControl.setVisibility(View.VISIBLE);
+        if (getParentFragment() != null) {
+            getOverlaysVisibilityControl().runWithDelay(getParentFragment().getView());
         }
     }
 
@@ -1008,13 +958,66 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    protected void doOnceOnPageSelectedAndAdded() {
-        FragmentUIHelper uiHelper = getUiHelper();
-        uiHelper.registerToActiveServiceCalls();
-        uiHelper.setBlockDialogsFromShowing(false);
-        uiHelper.handleAnyQueuedPiwigoMessages();
-//        setTitleBar();
-        overlaysVisibilityControl.setVisibility(View.VISIBLE);
+    public static class ViewVisibleControl implements Runnable {
+
+        private long delayMillis = 2000;
+        private List<View> views;
+        private int visibilityOnRun = View.INVISIBLE;
+        private long timerStarted;
+        private CustomSlidingLayer bottomSheet;
+        private Drawable shadowDrawable;
+
+        public ViewVisibleControl(View... views) {
+            this.views = new ArrayList<>(Arrays.asList(views));
+        }
+
+        public void setDelayMillis(long delayMillis) {
+            this.delayMillis = delayMillis;
+        }
+
+        public void setVisibilityOnRun(int visibility) {
+            this.visibilityOnRun = visibility;
+        }
+
+        private void setVisibility(int visibility) {
+            for (View v : views) {
+                v.setVisibility(visibility);
+            }
+            if (bottomSheet != null) {
+                Drawable currentDrawable = bottomSheet.getShadowDrawable();
+                if (currentDrawable != null) {
+                    shadowDrawable = currentDrawable;
+                }
+                bottomSheet.setShadowDrawable(visibility == View.VISIBLE ? shadowDrawable : null);
+
+            }
+        }
+
+        @Override
+        public synchronized void run() {
+            if (timerStarted + delayMillis - System.currentTimeMillis() > 0) {
+                // another trigger has been added.
+                return;
+            }
+            setVisibility(visibilityOnRun);
+        }
+
+        public synchronized void runWithDelay(View v) {
+            if (v != null) {
+                timerStarted = System.currentTimeMillis();
+                setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+                v.postDelayed(this, 2000);
+            }
+        }
+
+        public synchronized void addView(View v) {
+            views.add(v);
+            v.setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+        }
+
+        public void addBottomSheetTransparency(CustomSlidingLayer bottomSheet) {
+            this.bottomSheet = bottomSheet;
+        }
     }
 
     private void setTitleBar() {

@@ -112,15 +112,15 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(AlbumViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
-        imageView.setRotateImageToFitScreen(true);
+        imageView.setRotateImageToFitScreen(false);
         imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
             @Override
             public void onMove() {
                 getOverlaysVisibilityControl().runWithDelay(imageView);
             }
 
-            @Override
-            public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
+//            @Override
+//            public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
 //                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
 //                    ToolbarEvent toolbarEvent = new ToolbarEvent();
 //                    if(deltaY > 0) {
@@ -133,7 +133,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 //                        EventBus.getDefault().post(toolbarEvent);
 //                    }
 //                }
-            }
+//            }
         });
 
         return imageView;
@@ -205,6 +205,11 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     @Override
+    protected void doOnceOnPageSelectedAndAdded() {
+        super.doOnceOnPageSelectedAndAdded();
+    }
+
+    @Override
     protected void configureItemContent(@Nullable View itemContent, final PictureResourceItem model, @Nullable Bundle savedInstanceState) {
         super.configureItemContent(itemContent, model, savedInstanceState);
 
@@ -237,6 +242,42 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 return true;
             }
         });
+
+        // Load the content into the screen.
+        if (currentImageUrlDisplayed == null) {
+
+            String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, requireContext());
+            for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
+                if (rf.getName().equals(preferredImageSize)) {
+                    currentImageUrlDisplayed = model.getFileUrl(rf.getName());
+                    break;
+                }
+            }
+            if (currentImageUrlDisplayed == null) {
+                //Oh no - image couldn't be found - use the default.
+                int appHeight = itemContent.getRootView().getMeasuredHeight();
+                int appWidth = itemContent.getRootView().getMeasuredWidth();
+                if(appHeight == 0 || appWidth == 0) {
+                    Point p = DisplayUtils.getRealScreenSize(requireContext());
+                    appHeight = p.y;
+                    appWidth = p.x;
+                }
+                ResourceItem.ResourceFile fullscreenImage = model.getBestFitFile(appWidth, appHeight);
+                if (fullscreenImage != null) {
+                    currentImageUrlDisplayed = model.getFileUrl(fullscreenImage.getName());
+                } else {
+                    // this is theoretically never going to happen. Only if bug in the image selection code.
+                    currentImageUrlDisplayed = model.getFileUrl("original");
+                }
+            }
+        }
+        loader.resetAll();
+        loader.cancelImageLoadIfRunning();
+        loader.setPlaceholderImageUri(model.getThumbnailUrl());
+        char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
+        String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
+        loader.setUriToLoad(uriToLoad);
+        loader.load();
     }
 
     @Override
@@ -252,50 +293,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         super.onViewCreated(view, savedInstanceState);
 
         getOverlaysVisibilityControl().addBottomSheetTransparency(getBottomSheet());
-
-        // reset the screen state if we're entering for the first time
-        if (currentImageUrlDisplayed == null) {
-            if (loader != null) {
-                // currently only the loader needs resetting.
-                loader.resetAll();
-            }
-        }
-
-        // Load the content into the screen.
-
-        PictureResourceItem model = getModel();
-        if (currentImageUrlDisplayed == null) {
-            String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, requireContext());
-            for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
-                if (rf.getName().equals(preferredImageSize)) {
-                    currentImageUrlDisplayed = model.getFileUrl(rf.getName());
-                    break;
-                }
-            }
-            if (currentImageUrlDisplayed == null) {
-                //Oh no - image couldn't be found - use the default.
-                int appHeight = getView().getRootView().getMeasuredHeight();
-                int appWidth = getView().getRootView().getMeasuredWidth();
-                if(appHeight == 0 || appWidth == 0) {
-                    Point p = DisplayUtils.getRealScreenSize(requireContext());
-                    appHeight = p.y;
-                    appWidth = p.x;
-                }
-                ResourceItem.ResourceFile fullscreenImage = model.getBestFitFile(appWidth, appHeight);
-                if (fullscreenImage != null) {
-                    currentImageUrlDisplayed = model.getFileUrl(fullscreenImage.getName());
-                } else {
-                    // this is theoretically never going to happen. Only if bug in the image selection code.
-                    currentImageUrlDisplayed = model.getFileUrl("original");
-                }
-            }
-        }
-        loader.cancelImageLoadIfRunning();
-        loader.setPlaceholderImageUri(model.getThumbnailUrl());
-        char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
-        String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
-        loader.setUriToLoad(uriToLoad);
-        loader.load();
     }
 
     @Override

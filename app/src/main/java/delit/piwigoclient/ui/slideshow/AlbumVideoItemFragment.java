@@ -342,7 +342,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     protected void doOnceOnPageSelectedAndAdded() {
         super.doOnceOnPageSelectedAndAdded();
         if (getParentFragment() != null) {
-            getOverlaysVisibilityControl().runWithDelay(getParentFragment().getView());
             configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
         }
     }

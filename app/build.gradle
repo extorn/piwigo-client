@@ -110,6 +110,7 @@ dependencies {
     // third party libraries
     //    compile 'com.squareup.okhttp:okhttp:1.6.0'
     //    compile 'com.squareup.okhttp:okhttp-urlconnection:1.6.0'
+//    implementation 'com.github.MikeOrtiz:TouchImageView:2.2.0' // am extending this file locally.
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'org.greenrobot:eventbus:3.1.1'

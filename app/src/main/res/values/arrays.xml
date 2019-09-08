@@ -259,8 +259,9 @@
         <item>1.4.0.21</item>
         <item>"Changes:
             - Add preference to set default file permissions for upload screen
-            - TODO make fullscreen optional!
+            - minor change to fullscreen behaviour (hope to make this mode optional in the next release)
             Bugfix:
-            - page requests to update many resource item permissions"</item>
+            - page requests to update many resource item permissions
+            - moving between images works again in slideshow"</item>
     </string-array>
 </resources>
