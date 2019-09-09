@@ -210,6 +210,9 @@
     <string name="preference_gallery_slideshow_image_scaletype_title">Type de mise à l\'échelle de l\'image du diaporama</string>
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
 
+    <string name="preference_gallery_slideshow_image_rotate_title">Faire pivoter l\'image pour qu\'elle corresponde au format de l\'écran</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Image pivotée pour s\'adapter à l\'écran</string>
+
     <string name="preference_groups_request_pagesize_title">Groupes de la taille d\'une page de demande de serveur</string>
     <string name="preference_groups_request_pagesize_summary">%1$d articles</string>
 

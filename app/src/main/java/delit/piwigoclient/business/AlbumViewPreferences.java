@@ -119,4 +119,8 @@ public class AlbumViewPreferences {
         String scaleTypeName = prefs.getString(context.getString(R.string.preference_gallery_slideshow_image_scaletype_key), context.getResources().getString(R.string.preference_gallery_slideshow_image_scaletype_default));
         return ImageView.ScaleType.valueOf(scaleTypeName);
     }
+
+    public static boolean isRotateImageSoAspectMatchesScreenAspect(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_image_rotate_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_image_rotate_default));
+    }
 }

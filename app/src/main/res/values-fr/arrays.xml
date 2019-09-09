@@ -133,6 +133,9 @@
          - ? Veuillez m'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.22</item>
+        <item>"Changements:
+             - Nouvelle préférence permettant de faire pivoter l’image de 90 ° si le format de l’image correspond mieux à l’écran"</item>
         <item>1.4.0.21</item>
         <item>"Changements :
             - Ajout d'une préférence pour définir les permissions par défaut des fichiers pour l'écran de téléchargement

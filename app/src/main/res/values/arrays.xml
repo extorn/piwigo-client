@@ -256,6 +256,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.22</item>
+        <item>"Changes:
+            - New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this"</item>
         <item>1.4.0.21</item>
         <item>"Changes:
             - Add preference to set default file permissions for upload screen

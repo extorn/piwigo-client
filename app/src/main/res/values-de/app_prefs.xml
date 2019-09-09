@@ -210,6 +210,9 @@
     <string name="preference_gallery_slideshow_image_scaletype_title">Skalierungstyp der Diashow-Bilder</string>
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
 
+    <string name="preference_gallery_slideshow_image_rotate_title">Drehen Sie das Bild, um das Seitenverhältnis des Bildschirms anzupassen</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Bild wurde auf den passenden Bildschirm gedreht</string>
+
     <string name="preference_groups_request_pagesize_title">Gruppen Serveranfrage Seitengröße</string>
     <string name="preference_groups_request_pagesize_summary">%1$d Artikel</string>
 

@@ -206,6 +206,9 @@
     <string name="preference_gallery_slideshow_image_scaletype_title">幻灯片图像缩放类型</string>
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
 
+    <string name="preference_gallery_slideshow_image_rotate_title">旋转图像以匹配屏幕的宽高比</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">旋转图像以适合屏幕</string>
+
     <string name="preference_groups_request_pagesize_title">组服务器请求页面大小</string>
     <string name="preference_groups_request_pagesize_summary">%1$d项</string>
 

@@ -253,6 +253,10 @@
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
     <string name="preference_gallery_slideshow_image_scaletype_default" translatable="false">MATRIX</string>
 
+    <bool name="preference_gallery_slideshow_image_rotate_default">false</bool>
+    <string name="preference_gallery_slideshow_image_rotate_title">Rotate image to match aspect ratio of screen</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Image rotated to fit screen</string>
+    <string name="preference_gallery_slideshow_image_rotate_key" translatable="false">preference_gallery_slideshow_image_rotate</string>
 
     <string name="preference_groups_request_pagesize_key" translatable="false">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>

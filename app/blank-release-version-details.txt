@@ -1,11 +1,7 @@
 
 <en-GB>
 Changes:
-- Add preference to set default file permissions for upload screen
-- minor change to fullscreen behaviour (hope to make this mode optional in the next release)
-Bugfix:
-- page requests to update many resource item permissions
-- moving between images works again in slideshow
+            - New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this
 </en-GB>
 
 <de-DE>
@@ -18,19 +14,11 @@ Fehlerbehebung:
 </de-DE>
 
 <fr-FR>
-Changements :
-- Ajout d'une préférence pour définir les permissions par défaut des fichiers pour l'écran de téléchargement
-- modification mineure du comportement en plein écran (nous espérons rendre ce mode optionnel dans la prochaine version)
-Correction d'un bug :
-- demandes de mise à jour de nombreuses permissions d'éléments de ressources par page
-- le déplacement d'une image à l'autre fonctionne à nouveau en diaporama
+Changements:
+             - Nouvelle préférence permettant de faire pivoter l’image de 90 ° si le format de l’image correspond mieux à l’écran
 </fr-FR>
 
 <zh-CN>
 变化：
-- 添加首选项以设置上传屏幕的默认文件权限
-- 对全屏行为进行微小更改（希望在下一版本中将此模式设为可选）
-修正：
-- 页面请求更新许多资源项权限
-- 在幻灯片中再次在图像之间移动
+              - 如果图像的宽高比与此更匹配，则允许将图像旋转90°的新首选项
 </zh-CN>

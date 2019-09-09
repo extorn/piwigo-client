@@ -1,3 +1,16 @@
+/*
+ * TouchImageView.java
+ * By: Michael Ortiz
+ * Updated By: Patrick Lackemacher
+ * Updated By: Babay88
+ * Updated By: @ipsilondev
+ * Updated By: hank-cp
+ * Updated By: singpolyma
+ * Updated By: Bartholomew Furrow
+ * -------------------
+ * Extends Android ImageView to include pinch zooming, panning, fling and double tap zoom.
+ */
+
 package com.ortiz.touchview;
 
 import android.annotation.TargetApi;
@@ -795,17 +808,8 @@ public class TouchImageView extends AppCompatImageView {
         if (!isZoomed() && !imageRenderedAtLeastOnce) {
 
             if (isRotateImageToFitScreen && orientationMismatch(drawable)) {
-                RectF rect = new RectF();   // only allocate once
-                rect.set(0, 0, drawableWidth, drawableHeight);
-                matrix.mapRect(rect);
-                matrix.setRotate(90, rect.centerX(), rect.centerY());
+                matrix.setRotate(90);
                 matrix.postTranslate(drawableWidth, 0);
-
-//                float cx = drawableWidth / 2;
-//                float cy = drawableHeight / 2;
-//                matrix.setTranslate(-cx , -cy);
-//                matrix.postRotate(90, cx, cy);
-//                matrix.postTranslate(cx, cy);
                 matrix.postScale(scaleX, scaleY);
             } else {
                 matrix.setScale(scaleX, scaleY);
@@ -825,7 +829,6 @@ public class TouchImageView extends AppCompatImageView {
             //
             // Stretch and center image to fit view
             //
-
 
 
             normalizedScale = 1;
@@ -1108,7 +1111,6 @@ public class TouchImageView extends AppCompatImageView {
                             float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
                             float fixTransY = getFixDragTrans(deltaY, viewHeight, getImageHeight());
                             matrix.postTranslate(fixTransX, fixTransY);
-                            //TODO not sure what needs to be done here or elsewhere Movement doesn't work properly in screen x axis (flick) when image rotated
                             fixTrans();
                             last.set(curr.x, curr.y);
                         }
@@ -1391,6 +1393,10 @@ public class TouchImageView extends AppCompatImageView {
             int startY = (int) m[Matrix.MTRANS_Y];
             int minX, maxX, minY, maxY;
 
+            if (isRotateImageToFitScreen && orientationMismatch(getDrawable())) {
+                startX -= getImageWidth();
+            }
+
             if (getImageWidth() > viewWidth) {
                 minX = viewWidth - (int) getImageWidth();
                 maxX = 0;
@@ -1442,9 +1448,6 @@ public class TouchImageView extends AppCompatImageView {
                 int transY = newY - currY;
                 currX = newX;
                 currY = newY;
-//                if(isRotateImageToFitScreen && orientationMismatch(getDrawable())) {
-//                    transX += getImageWidth();
-//                }
                 matrix.postTranslate(transX, transY);
                 fixTrans();
                 setImageMatrix(matrix);
