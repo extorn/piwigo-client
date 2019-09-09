@@ -1,7 +1,7 @@
 
 <en-GB>
 Changes:
-            - New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this
+- New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this
 </en-GB>
 
 <de-DE>
@@ -15,10 +15,10 @@ Fehlerbehebung:
 
 <fr-FR>
 Changements:
-             - Nouvelle préférence permettant de faire pivoter l’image de 90 ° si le format de l’image correspond mieux à l’écran
+ - Nouvelle préférence permettant de faire pivoter l’image de 90 ° si le format de l’image correspond mieux à l’écran
 </fr-FR>
 
 <zh-CN>
 变化：
-              - 如果图像的宽高比与此更匹配，则允许将图像旋转90°的新首选项
+- 如果图像的宽高比与此更匹配，则允许将图像旋转90°的新首选项
 </zh-CN>
