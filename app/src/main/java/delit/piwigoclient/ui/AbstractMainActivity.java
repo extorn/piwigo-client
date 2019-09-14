@@ -176,10 +176,16 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             }
         });*/
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                ((CustomNavigationView) drawerView).onDrawerOpened();
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
