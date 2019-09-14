@@ -9,6 +9,7 @@
 
     <string name="preference_agreed_eula_version_key" translatable="false">preference_agreed_eula_version</string>
     <string name="preference_app_prefs_version_key" translatable="false">preference_app_prefs_version</string>
+    <string name="usage_hints_shown_list_key" translatable="false">usage_hints_shown_list</string>
 
     <!-- Server Page -->
 

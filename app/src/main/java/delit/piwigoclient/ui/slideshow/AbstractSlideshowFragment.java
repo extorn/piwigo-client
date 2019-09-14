@@ -63,6 +63,7 @@ import static android.view.View.VISIBLE;
 
 public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment {
 
+    private static final String TAG = "AbsSlideshowFragment";
     private static final String ARG_GALLERY_TYPE = "containerModelType";
     private static final String ARG_GALLERY_ID = "containerId";
     private static final String ARG_GALLERY_ITEM_DISPLAYED = "indexOfItemInContainerToDisplay";
@@ -104,6 +105,13 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         // Need to unregister it now because if done in onDetach, it alters the UI after the saveInstanceState is called and thus crashes!
         getUiHelper().deregisterFromActiveServiceCalls();
         EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(resourceContainer));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_1);
+        getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_view_2);
     }
 
     @Override

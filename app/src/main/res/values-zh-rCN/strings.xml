@@ -491,4 +491,11 @@
     <string name="alert_error_unsupported_file_extensions_pattern">具有以下扩展名的文件无法上载且已被忽略：%1$s</string>
     <string name="please_select_a_parent_album">请选择父相册</string>
     <string name="unsupported_device">抱歉，此设备不受支持。 访问Google Play Services时出现问题。</string>
+    <string name="hint_album_view">点击屏幕底部以显示此相册的详细信息</string>
+    <string name="usage_hint_title">暗示</string>
+    <string name="hint_slideshow_view_1">点击屏幕底部以显示此资源的详细信息</string>
+    <string name="hint_slideshow_view_2">向左或向右滑动以在资源之间导航</string>
+    <string name="hint_slideshow_item_view_1">可以通过点击或滑动所需的星级来调整评级。 这立即生效</string>
+    <string name="hint_slideshow_view_3">要将此资源标记为收藏，请点击图像资源名称右侧的心形图标</string>
+    <string name="hint_navigation_panel_1">点击上面的应用程序图标以强制服务器注销并登录</string>
 </resources>

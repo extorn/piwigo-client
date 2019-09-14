@@ -1043,6 +1043,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         updateBasketDisplay(getBasket());
 
+        getUiHelper().showUserHint(getTag(), 1, R.string.hint_album_view);
+
     }
 
     private void reloadAlbumContent() {

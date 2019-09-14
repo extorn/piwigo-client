@@ -38,10 +38,18 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 
 public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
 
+    private static final String TAG = "SlideshowFragment";
+
     public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(Class<ViewModelContainer> modelType, ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
         fragment.setArguments(buildArgs(modelType, gallery, currentGalleryItem));
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_3);
     }
 
     @Override

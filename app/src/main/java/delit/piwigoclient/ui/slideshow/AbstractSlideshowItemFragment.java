@@ -44,6 +44,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
+import com.wunderlist.slidinglayer.OnInteractAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -386,6 +387,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         View v = inflater.inflate(getLayoutId(), container, false);
 
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
+        bottomSheet.setOnInteractListener(new OnInteractAdapter() {
+            @Override
+            public void onOpened() {
+                super.onOpened();
+                getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_item_view_1);
+            }
+        });
 
         itemPositionTextView = v.findViewById(R.id.slideshow_resource_item_x_of_y_text);
         progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);

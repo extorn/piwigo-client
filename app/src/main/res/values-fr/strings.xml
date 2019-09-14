@@ -642,4 +642,11 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_error_unsupported_file_extensions_pattern">Les fichiers avec les extensions suivantes ne peuvent pas être téléchargés et ont été ignorés : %1$s</string>
     <string name="please_select_a_parent_album">Veuillez sélectionner un album parent</string>
     <string name="unsupported_device">Désolé, cet appareil n\'est pas supporté. Il y a un problème avec l\'accès aux services Google Play.</string>
+    <string name="hint_album_view">Touchez au bas de l\'écran pour afficher les détails de cet album.</string>
+    <string name="usage_hint_title">Allusion</string>
+    <string name="hint_slideshow_view_1">Appuyez sur au bas de l\'écran pour afficher les détails de cette ressource</string>
+    <string name="hint_slideshow_view_2">Balayez vers la gauche ou la droite pour naviguer entre les ressources</string>
+    <string name="hint_slideshow_item_view_1">Le classement peut être ajusté en tapotant ou en glissant sur le classement souhaité. Cela a un effet immédiat</string>
+    <string name="hint_slideshow_view_3">Pour marquer cette ressource comme favorite, appuyez sur l’icône du cœur à droite du nom de la ressource d’image</string>
+    <string name="hint_navigation_panel_1">Appuyez sur l\'icône de l\'application ci-dessus pour forcer un serveur à se déconnecter et à se connecter</string>
 </resources>

@@ -614,5 +614,12 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_unsupported_file_extensions_pattern">Files with the following extensions cannot be uploaded and have been removed: %1$s</string>
     <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album aus</string>
     <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Es gibt ein Problem mit dem Zugriff auf die Google Play Services.</string>
+    <string name="hint_album_view">Tippen Sie unten auf dem Bildschirm auf, um Details zu diesem Album anzuzeigen</string>
+    <string name="usage_hint_title">Hinweis</string>
+    <string name="hint_slideshow_view_1">Tippen Sie unten auf dem Bildschirm auf, um Details zu dieser Ressource aufzurufen</string>
+    <string name="hint_slideshow_view_2">Wischen Sie nach links oder rechts, um zwischen Ressourcen zu navigieren</string>
+    <string name="hint_slideshow_item_view_1">Die Bewertung kann durch Tippen oder Streichen auf die gewünschte Sternebewertung angepasst werden. Dies hat sofortige Wirkung</string>
+    <string name="hint_slideshow_view_3">Tippen Sie auf das Herzsymbol rechts neben dem Namen der Bildressource, um diese Ressource als Favorit zu markieren</string>
+    <string name="hint_navigation_panel_1">Tippen Sie auf das App-Symbol oben, um die Abmeldung und Anmeldung eines Servers zu erzwingen</string>
 </resources>
 

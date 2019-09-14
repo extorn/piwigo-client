@@ -55,6 +55,7 @@ import delit.piwigoclient.ui.events.UnlockAppEvent;
 
 public class CustomNavigationView extends NavigationView implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "NavView";
     private SharedPreferences prefs;
     private ViewGroupUIHelper<CustomNavigationView> uiHelper;
     private ViewGroup headerView;
@@ -258,6 +259,10 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
         uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new OnUnlockAction(uiHelper));
+    }
+
+    public void onDrawerOpened() {
+        uiHelper.showUserHint(TAG, 1, R.string.hint_navigation_panel_1);
     }
 
     private static class OnUnlockAction extends UIHelper.QuestionResultAdapter {

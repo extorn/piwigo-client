@@ -999,4 +999,11 @@ SOFTWARE.
     <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit folgenden Erweiterungen können nicht hochgeladen werden und wurden ignoriert: %1$s</string>
     <string name="please_select_a_parent_album">Please select a parent album</string>
     <string name="unsupported_device">Sorry, this device is not supported. There is an issue with accessing Google Play Services.</string>
+    <string name="hint_album_view">Tap at the bottom of the screen to bring up details for this album</string>
+    <string name="usage_hint_title">Hint</string>
+    <string name="hint_slideshow_view_1">Tap at the bottom of the screen or on the resource name to bring up details for this resource</string>
+    <string name="hint_slideshow_view_2">Swipe left or right to navigate between resources</string>
+    <string name="hint_slideshow_item_view_1">Rating can be adjusted by tapping or swiping on the desired star rating. This has immediate effect.</string>
+    <string name="hint_slideshow_view_3">To mark this resource as a favorite, tap the heart icon to right of image resource name</string>
+    <string name="hint_navigation_panel_1">Tap on the app icon above to force a server log out and log in</string>
 </resources>

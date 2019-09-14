@@ -1002,6 +1002,17 @@ public abstract class UIHelper<T> {
         return progressIndicator;
     }
 
+    public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {
+        Set<String> hintsShown = getPrefs().getStringSet(context.getString(R.string.usage_hints_shown_list_key), new HashSet<String>());
+        if (hintsShown.add(tag + '_' + hintId)) {
+            showDetailedMsg(R.string.usage_hint_title, context.getString(hintStrResId), 3000);
+            SharedPreferences.Editor editor = getPrefs().edit();
+            editor.putStringSet(context.getString(R.string.usage_hints_shown_list_key), hintsShown);
+            editor.apply();
+        }
+
+    }
+
     public interface QuestionResultListener<S extends UIHelper> extends Serializable {
         void onDismiss(AlertDialog dialog);
 
