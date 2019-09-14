@@ -152,6 +152,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
+    private static final String TAG = "AbsViewAlbumFrag";
     private static transient PiwigoAlbumAdminList albumAdminList;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
@@ -1043,7 +1044,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         updateBasketDisplay(getBasket());
 
-        getUiHelper().showUserHint(getTag(), 1, R.string.hint_album_view);
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_album_view);
 
     }
 
