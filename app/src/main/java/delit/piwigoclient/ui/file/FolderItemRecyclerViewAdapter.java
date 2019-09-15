@@ -233,6 +233,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     public int getItemPosition(File item) {
+        if (currentDisplayContent == null) {
+            throw new IllegalStateException("Please set the initial folder and initialise the list before attempting to access the items in the list");
+        }
         return currentDisplayContent.indexOf(item);
     }
 

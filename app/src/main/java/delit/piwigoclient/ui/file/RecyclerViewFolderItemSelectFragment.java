@@ -324,13 +324,14 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 viewAdapter.toggleItemSelection();
             }
 
-            viewAdapter.setInitiallySelectedItems();
-
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
 
             // update the adapter content
             viewAdapter.changeFolderViewed(getViewPrefs().getInitialFolderAsFile());
+
+            // select the items to view.
+            viewAdapter.setInitiallySelectedItems();
         }
 
         // call this here to ensure page reformats if orientation changes for example.
