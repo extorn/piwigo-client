@@ -229,16 +229,11 @@
         <item>"Changes:
          - Possibly:
             - Removal of all or most adverts in favour of a free trial period followed by a subscription based payment model
-            - Auto image rotation based on device orientation, device orientation, device orientation ignoring screen rotation lock
             - Verify the current login status to ensure album and image lists are always correct
             - Verify support for upload to older servers (e.g. piwigo.com - version 2.8a)
             - The ability to delete an album, but not its contents (creating orphans)
             - Orphan file management
-            - Allow user to zoom out in slideshow (view smaller than fullscreen)
             - Investigate adding support for coloured tag plugin
-            - Remember the previously opened photo or album when the user opens the app.
-            - Support stretching or cropping images to fill device screen
-            - Add some sort of help to assist user in knowing the features
             - Improved Animated gif support (large file streaming)
          - Possibly (Paid App only):
             - The random photos idea implemented on the piwigo web UI
@@ -256,6 +251,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.23</item>
+        <item>"Changes:
+            - Added hints to hidden app functionality
+            - TODO - Remember the previously opened photo or album when the user opens the app (open first available parent if album or image is no longer available)
+            - Allow user to zoom out in slideshow (view smaller than fullscreen)
+               Bugfix:
+            ** TODO - fix intermittent but incorrect HTTP 401 errors</item>
         <item>1.4.0.22</item>
         <item>"Changes:
             - New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this"</item>

@@ -109,28 +109,24 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
-        <item>"Changements :
-         - C'est possible :
-            - Suppression de la totalité ou de la plupart des annonces en faveur d'une période d'essai gratuite suivie d'un modèle de paiement par abonnement
-            - Rotation automatique de l'image basée sur l'orientation de l'appareil, l'orientation de l'appareil, l'orientation de l'appareil ignorant le verrouillage de rotation de l'écran
-            - Vérifiez l'état de connexion actuel pour vous assurer que les listes d'albums et d'images sont toujours correctes.
-            - Vérifier la prise en charge du téléchargement vers des serveurs plus anciens (par exemple piwigo.com - version 2.8a)
+        <item>"Changements:
+         - Peut-être:
+            - Suppression de la totalité ou de la plupart des publicités en faveur d'une période d'essai gratuite suivie d'un modèle de paiement basé sur un abonnement
+            - Vérifiez l'état de connexion actuel pour vous assurer que les listes d'albums et d'images sont toujours correctes
+            - Vérifiez la prise en charge du téléchargement sur des serveurs plus anciens (par exemple, piwigo.com - version 2.8a)
             - La possibilité de supprimer un album, mais pas son contenu (création d'orphelins)
-            - Gestion des fichiers orphelins
-            - Permet à l'utilisateur d'effectuer un zoom arrière dans le diaporama (affichage plus petit que le plein écran)
-            - Étudier la possibilité d'ajouter le support pour les plugins de tags colorés
-            - Souvenez-vous de la photo ou de l'album précédemment ouvert lorsque l'utilisateur ouvre l'application.
-            - Prise en charge de l'étirement ou du recadrage des images pour remplir l'écran de l'appareil
-            - Ajouter une sorte d'aide pour aider l'utilisateur à connaître les fonctionnalités
-            - Amélioration du support du gif animé
-         - Possiblement (application payante uniquement) :
-            - L'idée des photos aléatoires mises en œuvre sur l'interface web piwigo
+            - Gestion de fichiers orphelins
+            - Enquêter sur l'ajout d'un support pour le plugin de balises colorées
+            - Amélioration du support de gif animé (streaming de fichiers volumineux)
+         - Peut-être (application payante uniquement):
+            - L'idée de photos aléatoires implémentée sur l'interface utilisateur Web de piwigo
             - Prise en charge des commentaires des utilisateurs
-            - Informer l'utilisateur des mises à jour du serveur qui sont disponibles
-            - Prise en charge de l'édition d'EXIF et d'autres formats de métadonnées d'image
-            - Ajouter une préférence pour permettre d'afficher/masquer les champs EXIF etc d'intérêt ou non
-            - Ecran moulé d'une sorte ou d'une autre pour permettre la mise en miroir d'un dispositif sur un écran plus grand
-         - ? Veuillez m'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore"</item>
+            - Notifier l'utilisateur des mises à jour du serveur disponibles
+            - Prise en charge de l'édition de formats de métadonnées d'image EXIF ​​et autres
+            - Ajouter une préférence pour permettre d'afficher / masquer les champs EXIF, etc., d'intérêt ou non
+            - Cast d'écran de quelque sorte pour permettre le miroir de l'appareil sur un écran plus grand
+         - Rien d'autre:
+            - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.22</item>

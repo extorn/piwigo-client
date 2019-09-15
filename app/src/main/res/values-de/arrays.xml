@@ -101,26 +101,22 @@
         <item>Die Zukunft</item>
         <item>"Änderungen:
          - Möglicherweise:
-            - Entfernung aller oder der meisten Anzeigen zugunsten einer kostenlosen Probezeit, gefolgt von einem abonnementbasierten Zahlungsmodell
-            - Automatische Bildrotation basierend auf Geräteausrichtung, Geräteausrichtung, Geräteausrichtung, Geräteausrichtung ignoriert Bildschirmrotationssperre
-            - Überprüfen Sie den aktuellen Anmeldestatus, um sicherzustellen, dass die Alben- und Bildlisten immer korrekt sind
-            - Überprüfen Sie die Unterstützung für den Upload auf ältere Server (z.B. piwigo.com - Version 2.8a)
-            - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Waisenkinder erstellen)
-            - Verwaltung von verwaisten Dateien
-            - Erlaubt es dem Benutzer, in der Diashow herauszuzoomen (Ansicht kleiner als Vollbild)
-            - Untersuchung der Hinzufügung von Unterstützung für farbiges Tag-Plugin
-            - Merken Sie sich das zuvor geöffnete Foto oder Album, wenn der Benutzer die App öffnet
-            - Unterstützt das Strecken oder Zuschneiden von Bildern, um den Bildschirm des Geräts zu füllen
-            - Füge eine Art Hilfe hinzu, um dem Benutzer zu helfen, die Funktionen zu kennen.
-            - Verbesserte Unterstützung für animierte Gifs
+            - Entfernen aller oder der meisten Anzeigen zugunsten einer kostenlosen Testphase, gefolgt von einem auf Abonnements basierenden Zahlungsmodell
+            - Überprüfen Sie den aktuellen Anmeldestatus, um sicherzustellen, dass Album- und Bilderlisten immer korrekt sind
+            - Überprüfen Sie die Unterstützung für das Hochladen auf ältere Server (z. B. piwigo.com - Version 2.8a).
+            - Die Möglichkeit, ein Album, aber nicht dessen Inhalt zu löschen (Erstellen von Waisen)
+            - Verwaltung verwaister Dateien
+            - Untersuchen Sie das Hinzufügen von Unterstützung für farbige Tag-Plugins
+            - Verbesserte Unterstützung für animierte GIFs (Streaming großer Dateien)
          - Möglicherweise (nur kostenpflichtige App):
-            - Die Idee der Zufallsfotos, die auf der Piwigo-Weboberfläche umgesetzt wurde
+            - Die Idee für zufällige Fotos, die auf der Benutzeroberfläche von piwigo implementiert wurde
             - Unterstützung für Benutzerkommentare
             - Benachrichtigen Sie den Benutzer über verfügbare Server-Updates
-            - Unterstützung für die Bearbeitung von EXIF und anderen Bild-Metadatenformaten
-            - Präferenz hinzufügen, um das Ein-/Ausblenden der EXIF- und anderen Felder von Interesse oder nicht von Interesse zu ermöglichen
-            - Bildschirmabdruck einer Art, der es ermöglicht, die Vorrichtung auf einem größeren Bildschirm zu spiegeln
-         - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
+            - Unterstützung für die Bearbeitung von EXIF- und anderen Bildmetadatenformaten
+            - Fügen Sie Einstellungen hinzu, um das Ein- / Ausblenden der EXIF-Felder usw. zuzulassen, die von Interesse sind oder nicht
+            - Irgendeine Art von Bildschirmdarstellung, um das Spiegeln des Geräts auf einem größeren Bildschirm zu ermöglichen
+         - Noch etwas:
+            - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.22</item>
