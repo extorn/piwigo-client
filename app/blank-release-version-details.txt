@@ -1,21 +1,20 @@
 
 <en-GB>
 Changes:
-- New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this
+- Added hints to hidden app functionality
+- Support zooming out so an image doesn't fill the screen when viewed fullscreen
 </en-GB>
 
 <de-DE>
 Änderungen:
-- Präferenz hinzufügen, um Standard-Dateiberechtigungen für den Upload-Bildschirm festzulegen.
-- kleinere Änderung am Vollbildverhalten (hoffentlich wird dieser Modus in der nächsten Version optional sein)
-Fehlerbehebung:
-- Seitenaufrufe zur Aktualisierung vieler Berechtigungen für Ressourcenelemente
-- Das Verschieben zwischen den Bildern funktioniert wieder in der Diashow.
+ - Hinweise zu versteckten App-Funktionen hinzugefügt
+ - Unterstützt das Herauszoomen, damit ein Bild den Bildschirm nicht ausfüllt, wenn es im Vollbildmodus angezeigt wird
 </de-DE>
 
 <fr-FR>
 Changements:
- - Nouvelle préférence permettant de faire pivoter l’image de 90 ° si le format de l’image correspond mieux à l’écran
+ - Ajout de conseils aux fonctionnalités d'applications cachées
+ - Prise en charge du zoom arrière pour qu'aucune image ne remplisse l'écran lorsqu'elle est affichée en plein écran
 </fr-FR>
 
 <zh-CN>

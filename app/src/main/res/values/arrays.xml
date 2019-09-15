@@ -226,7 +226,9 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
-        <item>"Changes:
+        <item>"Bugfix:
+            - fix intermittent but incorrect HTTP 401 errors possibly linked to cached response revalidation
+            Changes:
          - Possibly:
             - Removal of all or most adverts in favour of a free trial period followed by a subscription based payment model
             - Verify the current login status to ensure album and image lists are always correct
@@ -254,10 +256,7 @@
         <item>1.4.0.23</item>
         <item>"Changes:
             - Added hints to hidden app functionality
-            - TODO - Remember the previously opened photo or album when the user opens the app (open first available parent if album or image is no longer available)
-            - Allow user to zoom out in slideshow (view smaller than fullscreen)
-               Bugfix:
-            ** TODO - fix intermittent but incorrect HTTP 401 errors</item>
+            - Support zooming out so an image doesn't fill the screen when viewed fullscreen"</item>
         <item>1.4.0.22</item>
         <item>"Changes:
             - New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this"</item>

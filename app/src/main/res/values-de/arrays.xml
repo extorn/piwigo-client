@@ -99,8 +99,11 @@
     </string-array>
     <string-array name="planned_releases">
         <item>Die Zukunft</item>
-        <item>"Änderungen:
+        <item>"Bug-Fix:
+             - Behebung von zeitweiligen, aber falschen HTTP 401-Fehlern, die möglicherweise mit einer zwischengespeicherten Neuvalidierung der Antwort zusammenhängen
+            Änderungen:
          - Möglicherweise:
+            - Merken Sie sich das zuvor geöffnete Foto oder Album, wenn der Benutzer die App öffnet (öffnen Sie das erste verfügbare übergeordnete Element, wenn das Album oder Bild nicht mehr verfügbar ist).
             - Entfernen aller oder der meisten Anzeigen zugunsten einer kostenlosen Testphase, gefolgt von einem auf Abonnements basierenden Zahlungsmodell
             - Überprüfen Sie den aktuellen Anmeldestatus, um sicherzustellen, dass Album- und Bilderlisten immer korrekt sind
             - Überprüfen Sie die Unterstützung für das Hochladen auf ältere Server (z. B. piwigo.com - Version 2.8a).
@@ -119,6 +122,10 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.23</item>
+        <item>"Änderungen:
+             - Hinweise zu versteckten App-Funktionen hinzugefügt
+             - Unterstützt das Herauszoomen, damit ein Bild den Bildschirm nicht ausfüllt, wenn es im Vollbildmodus angezeigt wird</item>
         <item>1.4.0.22</item>
         <item>"Änderungen:
              - Neue Einstellung, mit der das Bild um 90 nach rechts gedreht werden kann, wenn das Seitenverhältnis des Bildes besser zum Bildschirm passt"</item>

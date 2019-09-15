@@ -109,8 +109,11 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
-        <item>"Changements:
+        <item>"Correction d'un bug:
+             - corrige les erreurs HTTP 401 intermittentes mais incorrectes éventuellement liées à la revalidation de réponses en cache
+            Changements:
          - Peut-être:
+            - Rappelez-vous la photo ou l'album précédemment ouvert lorsque l'utilisateur ouvre l'application (ouvrez le premier parent disponible si l'album ou l'image n'est plus disponible)
             - Suppression de la totalité ou de la plupart des publicités en faveur d'une période d'essai gratuite suivie d'un modèle de paiement basé sur un abonnement
             - Vérifiez l'état de connexion actuel pour vous assurer que les listes d'albums et d'images sont toujours correctes
             - Vérifiez la prise en charge du téléchargement sur des serveurs plus anciens (par exemple, piwigo.com - version 2.8a)
@@ -129,6 +132,10 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.23</item>
+        <item>"Changements:
+             - Ajout de conseils aux fonctionnalités d'applications cachées
+             - Prise en charge du zoom arrière pour qu'aucune image ne remplisse l'écran lorsqu'elle est affichée en plein écran</item>
         <item>1.4.0.22</item>
         <item>"Changements:
              - Nouvelle préférence permettant de faire pivoter l’image de 90 ° si le format de l’image correspond mieux à l’écran"</item>
