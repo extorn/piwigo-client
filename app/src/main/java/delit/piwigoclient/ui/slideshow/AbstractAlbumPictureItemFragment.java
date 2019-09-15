@@ -176,6 +176,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             if (imageView instanceof TouchImageView) {
                 TouchImageView touchImageView = ((TouchImageView) imageView);
                 touchImageView.setMinZoom(TouchImageView.AUTOMATIC_MIN_ZOOM);
+                float calcMinZoom = touchImageView.getMinZoom();
+                touchImageView.setMinZoom(calcMinZoom / 2);
             }
             if (loader.hasPlaceholder()) {
                 // placeholder loaded
@@ -226,7 +228,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                         char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
                         String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
                         loader.setUriToLoad(uriToLoad);
-                        //TODO work out how to do auto rotation!
                         if (0 != Float.compare(rotateDegrees, 0f)) {
                             loader.setRotation(rotateDegrees);
                         } else {
