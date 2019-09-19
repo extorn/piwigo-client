@@ -60,7 +60,7 @@
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Custom.Theme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -71,7 +71,7 @@
             android:name=".ui.PreferencesActivity"
             android:label="@string/app_name"
             android:theme="@style/Custom.Theme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name=".Preferences" />
                 <category android:name="android.intent.category.PREFERENCE" />
@@ -82,7 +82,7 @@
             android:name=".ui.UploadActivity"
             android:label="@string/app_name"
             android:theme="@style/Custom.Theme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -107,7 +107,7 @@
             android:name=".ui.FileSelectActivity"
             android:label="@string/app_name"
             android:theme="@style/Custom.Theme"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name="com.google.android.gms.ads.AdActivity"/>
         <service
             android:name=".piwigoApi.upload.ForegroundPiwigoUploadService"
