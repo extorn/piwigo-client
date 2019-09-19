@@ -4,5 +4,5 @@
     android:layout_alignWithParentIfMissing="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false">
+    android:fitsSystemWindows="true">
 </FrameLayout>
