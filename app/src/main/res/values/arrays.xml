@@ -253,6 +253,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.24</item>
+        <item>"Bugfix:
+            - incorrect checkbox icon shown selecting user album access for users in selected groups
+            - popup keyboard obscures the resource detail edit field
+            - TODO check albums.getList for user that reports it is broken"</item>
         <item>1.4.0.23</item>
         <item>"Changes:
             - Added hints to hidden app functionality
