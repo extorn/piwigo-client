@@ -160,6 +160,7 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
             }
         }
 
+        protected abstract void onCategoryClick(CategoryItem item);
     }
 
     private static class AlbumItemCustomClickListener<T extends GalleryItem, Q extends AlbumItemMultiSelectStatusAdapter, S extends AlbumItemViewHolder<T, Q, S, M>, M extends ResourceContainer<T, GalleryItem>> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, S> {
@@ -179,11 +180,12 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
         }
 
         private void onCategoryClick() {
-            if (!getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
-                //If not currently in multiselect mode
-                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, getParentAdapter().getItemStore(), getViewHolder().getItem());
-                EventBus.getDefault().post(event);
+            if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled() && getParentAdapter().getMultiSelectStatusListener() != null) {
+                AlbumItemMultiSelectStatusAdapter multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
+                multiSelectListener.onCategoryClick((CategoryItem) getViewHolder().getItem());
             }
+            AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, getParentAdapter().getItemStore(), getViewHolder().getItem());
+            EventBus.getDefault().post(event);
         }
 
         private void onNonCategoryClick() {

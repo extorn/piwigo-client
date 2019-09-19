@@ -546,6 +546,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0;
     }
 
+    private boolean showBulkPermissionsAction(Basket basket) {
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && galleryModel.getContainerDetails().getId() == basket.getContentParentId();
+    }
+
     private boolean showBulkCopyAction(Basket basket) {
         return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || galleryModel.getContainerDetails().getId() == basket.getContentParentId());
     }
@@ -576,6 +580,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 return true; // consume the event
             }
         });
+        if (showBulkPermissionsAction(basket)) {
+            bulkActionButtonPermissions.show();
+        } else {
+            bulkActionButtonPermissions.hide();
+        }
 
         bulkActionButtonTag = bulkActionsContainer.findViewById(R.id.gallery_action_tag_bulk);
         bulkActionButtonTag.hide();
@@ -2642,6 +2651,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             onAlbumDeleteRequest(album);
         }
 
+        @Override
+        protected void onCategoryClick(CategoryItem item) {
+            if (viewAdapter.isItemSelectionAllowed()) {
+                viewAdapter.toggleItemSelection();
+            }
+        }
 
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
