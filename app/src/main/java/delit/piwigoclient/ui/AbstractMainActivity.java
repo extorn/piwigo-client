@@ -15,6 +15,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -161,6 +164,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         setContentView(R.layout.activity_main);
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         appBar = findViewById(R.id.appbar);
@@ -177,6 +181,20 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         });*/
 
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ViewCompat.setOnApplyWindowInsetsListener(drawer, new OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                    insets.replaceSystemWindowInsets(
+                            insets.getStableInsetLeft(),
+                            0,
+                            insets.getStableInsetRight(),
+                            0);
+                    return insets;
+                }
+            });
+        }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
