@@ -29,10 +29,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import delit.libs.ui.util.MediaScanner;
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
-import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
@@ -344,8 +343,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure() {
-            super.cacheViewFieldsAndConfigure();
+        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
             getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.accent), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             getIconViewLoader().load();
@@ -392,8 +391,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure() {
-            super.cacheViewFieldsAndConfigure();
+        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
             itemHeading = itemView.findViewById(R.id.list_item_heading);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
             final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
@@ -424,23 +423,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    protected abstract class FolderItemViewHolder extends CustomViewHolder<FolderItemViewAdapterPreferences, File> implements PicassoLoader.PictureItemImageLoaderListener {
-        private TextView txtTitle;
-        private View deleteButton;
-        private AppCompatCheckboxTriState checkBox;
+    protected abstract class FolderItemViewHolder extends BaseViewHolder<FolderItemViewAdapterPreferences, File> implements PicassoLoader.PictureItemImageLoaderListener {
+
         private ImageView iconView;
         private ResizingPicassoLoader<ImageView> iconViewLoader;
 
         public FolderItemViewHolder(View view) {
             super(view);
-        }
-
-        public TextView getTxtTitle() {
-            return txtTitle;
-        }
-
-        public AppCompatCheckboxTriState getCheckBox() {
-            return checkBox;
         }
 
         public ImageView getIconView() {
@@ -451,51 +440,16 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return iconViewLoader;
         }
 
-        public View getDeleteButton() {
-            return deleteButton;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + txtTitle.getText() + "'";
-        }
-
         public abstract void fillValues(Context context, File newItem, boolean allowItemDeletion);
 
         @Override
-        public void setChecked(boolean checked) {
-            checkBox.setChecked(checked);
-        }
+        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
 
-        @Override
-        public void cacheViewFieldsAndConfigure() {
-
-            checkBox = itemView.findViewById(R.id.list_item_checked);
-            checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
-            checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
-            if (isMultiSelectionAllowed()) {
-                checkBox.setButtonDrawable(R.drawable.checkbox);
-            } else {
-                checkBox.setButtonDrawable(R.drawable.radio_button);
-            }
-
-            txtTitle = itemView.findViewById(R.id.list_item_name);
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
 
             iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("folder item thumb");
             iconViewLoader = new ResizingPicassoLoader<>(getIconView(), this, 0, 0);
-
-            deleteButton = itemView.findViewById(R.id.list_item_delete_button);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItemButtonClick(v);
-                }
-            });
-        }
-
-        private void onDeleteItemButtonClick(View v) {
-            getItemActionListener().getParentAdapter().onDeleteItem(this, v);
         }
 
         @Override

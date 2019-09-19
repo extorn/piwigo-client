@@ -46,7 +46,7 @@
         android:visibility="visible" />
 
     <delit.libs.ui.view.button.AppCompatCheckboxTriState
-        android:id="@+id/checked"
+        android:id="@+id/list_item_checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="2dp" />

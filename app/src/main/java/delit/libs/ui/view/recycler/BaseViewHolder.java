@@ -46,15 +46,20 @@ public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreference
     }
 
     @Override
-    public void cacheViewFieldsAndConfigure() {
+    public void cacheViewFieldsAndConfigure(P adapterPrefs) {
 
-        checkBox = itemView.findViewById(R.id.checked);
+        checkBox = itemView.findViewById(R.id.list_item_checked);
         checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
         checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
+        if (adapterPrefs.isMultiSelectionEnabled()) {
+            checkBox.setButtonDrawable(R.drawable.checkbox);
+        } else {
+            checkBox.setButtonDrawable(R.drawable.radio_button);
+        }
 
-        txtTitle = itemView.findViewById(R.id.name);
+        txtTitle = itemView.findViewById(R.id.list_item_name);
 
-        detailsTitle = itemView.findViewById(R.id.details);
+        detailsTitle = itemView.findViewById(R.id.list_item_details);
 
         deleteButton = itemView.findViewById(R.id.list_item_delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {

@@ -67,12 +67,12 @@ public class AboutFragment extends MyFragment<AboutFragment> {
 
         @Override
         public void populateView(View view, String heading, String data) {
-            TextView headingText = view.findViewById(R.id.name);
+            TextView headingText = view.findViewById(R.id.list_item_name);
             headingText.setText(heading);
 
             data = data.replaceAll("\\n[\\s]*(\\s-|\\w)", "\n$1");
 
-            TextView detailsText = view.findViewById(R.id.details);
+            TextView detailsText = view.findViewById(R.id.list_item_details);
             detailsText.setText(data);
         }
     }

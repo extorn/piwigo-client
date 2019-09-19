@@ -6,7 +6,7 @@
     android:descendantFocusability="blocksDescendants">
 
     <TextView
-        android:id="@+id/details"
+        android:id="@+id/list_item_details"
         android:layout_marginStart="5dp"
         android:layout_width="match_parent"
         android:layout_marginBottom="25dp"

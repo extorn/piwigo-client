@@ -71,7 +71,7 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
     }
 
     @Override
-    public void cacheViewFieldsAndConfigure() {
+    public void cacheViewFieldsAndConfigure(AlbumItemRecyclerViewAdapterPreferences adapterPrefs) {
         mNameView = itemView.findViewById(R.id.resource_name);
         mDescView = itemView.findViewById(R.id.resource_description);
         mImageView = itemView.findViewById(R.id.resource_thumbnail);

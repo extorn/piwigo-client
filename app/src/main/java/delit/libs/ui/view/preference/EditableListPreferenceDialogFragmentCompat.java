@@ -416,15 +416,15 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
             public ActionableListItemViewHolder(View itemView) {
                 super(itemView);
-                selected = itemView.findViewById(R.id.checked);
+                selected = itemView.findViewById(R.id.list_item_checked);
                 selected.setVisibility(alwaysSelectAll ? View.GONE : View.VISIBLE);
                 if (multiSelect) {
                     selected.setButtonDrawable(R.drawable.checkbox);
                 } else {
                     selected.setButtonDrawable(R.drawable.radio_button);
                 }
-                itemName = itemView.findViewById(R.id.name);
-                itemDescription = itemView.findViewById(R.id.details);
+                itemName = itemView.findViewById(R.id.list_item_name);
+                itemDescription = itemView.findViewById(R.id.list_item_details);
                 deleteButton = itemView.findViewById(R.id.list_item_delete_button);
                 itemView.setOnClickListener(buildViewClickListener(this));
                 itemView.setOnLongClickListener(buildViewLongClickListener(this));

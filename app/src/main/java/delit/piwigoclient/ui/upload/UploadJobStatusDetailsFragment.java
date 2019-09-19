@@ -159,10 +159,10 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
             if(v == null) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_list_item, null);
             }
-            TextView view = v.findViewById(R.id.name);
+            TextView view = v.findViewById(R.id.list_item_name);
             view.setText(piwigoDateFormat.format(thisDataItem.getKey()));
 
-            view = v.findViewById(R.id.details);
+            view = v.findViewById(R.id.list_item_details);
             view.setText(thisDataItem.getValue());
 
             return v;

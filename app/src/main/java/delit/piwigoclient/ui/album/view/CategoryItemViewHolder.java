@@ -21,8 +21,8 @@ public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void cacheViewFieldsAndConfigure() {
-        super.cacheViewFieldsAndConfigure();
+    public void cacheViewFieldsAndConfigure(AlbumItemRecyclerViewAdapterPreferences adapterPrefs) {
+        super.cacheViewFieldsAndConfigure(adapterPrefs);
         mPhotoCountView = itemView.findViewById(R.id.album_photoCount);
 
         itemView.setOnClickListener(getItemActionListener());

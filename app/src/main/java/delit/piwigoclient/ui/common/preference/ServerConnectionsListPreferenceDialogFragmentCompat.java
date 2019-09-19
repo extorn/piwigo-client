@@ -209,8 +209,8 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
 
         @Override
         protected void setViewContentForItemDisplay(View itemView, ServerConnectionsListPreference.ServerConnection item, int levelInTreeOfItem) {
-            TextView nameView = itemView.findViewById(R.id.name);
-            TextView detailView = itemView.findViewById(R.id.details);
+            TextView nameView = itemView.findViewById(R.id.list_item_name);
+            TextView detailView = itemView.findViewById(R.id.list_item_details);
 
             nameView.setText(item.getProfileName());
             detailView.setText(getString(R.string.server_connection_id_pattern, item.getUsername(), item.getServerName()));
@@ -218,7 +218,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
 
         @Override
         protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
-            return view.findViewById(R.id.checked);
+            return view.findViewById(R.id.list_item_checked);
         }
 
     }

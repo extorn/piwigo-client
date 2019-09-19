@@ -95,9 +95,6 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
         } else {
             setAlpha(1f);
         }
-
-        // Refresh the drawable state so that it includes the message unread
-        // state if required.
         refreshDrawableState();
     }
 
@@ -114,8 +111,7 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
         // the existing drawable state before returning it.
         if (alwaysChecked) {
             // We are going to add 1 extra state.
-            final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-
+            int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
             mergeDrawableStates(drawableState, STATE_ALWAYS_CHECKED);
             return drawableState;
         } else {

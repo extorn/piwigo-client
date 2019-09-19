@@ -6,37 +6,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants">
 
-    <delit.libs.ui.view.button.AppCompatCheckboxTriState
-        android:id="@+id/checked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:checked="false"
-        android:clickable="false"
-        android:focusable="false"/>
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/list_item_name"
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@+id/list_item_delete_button"
-        android:layout_toEndOf="@id/checked"
+        android:layout_toEndOf="@id/list_item_checked"
         android:layout_alignWithParentIfMissing="true"
         tools:text="dummy text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <TextView
-        android:id="@+id/details"
+        android:id="@+id/list_item_details"
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
         android:layout_marginBottom="15dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/name"
+        android:layout_below="@id/list_item_name"
         android:layout_toStartOf="@+id/list_item_delete_button"
-        android:layout_toEndOf="@id/checked"
+        android:layout_toEndOf="@id/list_item_checked"
         android:layout_alignWithParentIfMissing="true"
         tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+    <delit.libs.ui.view.button.AppCompatCheckboxTriState
+        android:id="@+id/list_item_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:checked="false"
+        android:clickable="false"
+        android:focusable="false" />
 
     <delit.libs.ui.view.button.AppCompatCheckboxTriState
         android:id="@+id/enabled"
@@ -44,9 +45,9 @@
         android:layout_width="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/details"
+        android:layout_below="@id/list_item_details"
         android:layout_toStartOf="@+id/list_item_delete_button"
-        android:layout_toEndOf="@id/checked"
+        android:layout_toEndOf="@id/list_item_checked"
         android:layout_alignWithParentIfMissing="true"
         android:text="@string/upload_job_is_enabled_label"
         android:clickable="false"

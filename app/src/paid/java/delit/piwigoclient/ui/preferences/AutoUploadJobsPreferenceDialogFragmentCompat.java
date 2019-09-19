@@ -4,14 +4,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.preference.DialogPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceDialogFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.preference.DialogPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.util.Strings;
@@ -23,18 +24,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import delit.piwigoclient.R;
-import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.AdsManager;
 import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.list.MultiSourceListAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.ObjectUtils;
+import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableEventManager;
-import delit.libs.util.CollectionUtils;
-import delit.libs.util.ObjectUtils;
 
 public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     private final static String STATE_DELETED_JOBS = "AutoUploadJobsPreference.deletedJobs";
@@ -243,8 +244,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
                     onDisplayUploadJob(item);
                 }
             });
-            TextView nameView = itemView.findViewById(R.id.name);
-            TextView detailView = itemView.findViewById(R.id.details);
+            TextView nameView = itemView.findViewById(R.id.list_item_name);
+            TextView detailView = itemView.findViewById(R.id.list_item_details);
             AppCompatCheckboxTriState jobEnabledView = itemView.findViewById(R.id.enabled);
             CustomImageButton deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -261,7 +262,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
         @Override
         protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
-            return view.findViewById(R.id.checked);
+            return view.findViewById(R.id.list_item_checked);
         }
     }
 

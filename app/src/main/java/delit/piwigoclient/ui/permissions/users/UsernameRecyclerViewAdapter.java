@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -10,10 +9,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
-import delit.libs.ui.view.recycler.CustomViewHolder;
+import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
@@ -43,60 +41,10 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
         return new UsernameViewHolder(view);
     }
 
-    public class UsernameViewHolder extends CustomViewHolder<BaseRecyclerViewAdapterPreferences, Username> {
-        private TextView txtTitle;
-        private TextView detailsTitle;
-        private View deleteButton;
-        private AppCompatCheckboxTriState checkBox;
+    public class UsernameViewHolder extends BaseViewHolder<BaseRecyclerViewAdapterPreferences, Username> {
 
         public UsernameViewHolder(View view) {
             super(view);
-        }
-
-        public TextView getTxtTitle() {
-            return txtTitle;
-        }
-
-        public TextView getDetailsTitle() {
-            return detailsTitle;
-        }
-
-        public AppCompatCheckboxTriState getCheckBox() {
-            return checkBox;
-        }
-
-        public View getDeleteButton() {
-            return deleteButton;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + txtTitle.getText() + "'";
-        }
-
-        @Override
-        public void setChecked(boolean checked) {
-            checkBox.setChecked(checked);
-        }
-
-        @Override
-        public void cacheViewFieldsAndConfigure() {
-
-            checkBox = itemView.findViewById(R.id.checked);
-//            checkBox.setClickable(isItemSelectionAllowed());
-            checkBox.setOnCheckedChangeListener(new ItemSelectionListener(UsernameRecyclerViewAdapter.this, this));
-
-            txtTitle = itemView.findViewById(R.id.name);
-
-            detailsTitle = itemView.findViewById(R.id.details);
-
-            deleteButton = itemView.findViewById(R.id.list_item_delete_button);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItem(UsernameViewHolder.this, v);
-                }
-            });
         }
 
         public void fillValues(Context context, Username newItem, boolean allowItemDeletion) {

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -21,10 +20,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
-import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -236,10 +234,10 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             setItem(newItem);
 //            getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
-            getDetailTxt().setVisibility(View.GONE);
+            getDetailsTitle().setVisibility(View.GONE);
             if(newItem.getChildAlbumCount() > 0) {
-                getDetailTxt().setText(context.getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
-                getDetailTxt().setVisibility(View.VISIBLE);
+                getDetailsTitle().setText(context.getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
+                getDetailsTitle().setVisibility(View.VISIBLE);
             }
 
             if (!allowItemDeletion) {
@@ -259,8 +257,8 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure() {
-            super.cacheViewFieldsAndConfigure();
+        public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
             final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
                 @Override
@@ -304,28 +302,12 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    protected abstract class CategoryItemViewHolder extends CustomViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
-        private TextView txtTitle;
-        private TextView detailTxt;
-        private View deleteButton;
-        private AppCompatCheckboxTriState checkBox;
+    protected abstract class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
 
         public CategoryItemViewHolder(View view) {
             super(view);
-        }
-
-        public TextView getTxtTitle() {
-            return txtTitle;
-        }
-
-        public TextView getDetailTxt() {
-            return detailTxt;
-        }
-
-        public AppCompatCheckboxTriState getCheckBox() {
-            return checkBox;
         }
 
         public ImageView getIconView() {
@@ -336,53 +318,16 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             return iconViewLoader;
         }
 
-        public View getDeleteButton() {
-            return deleteButton;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + txtTitle.getText() + "'";
-        }
-
         public abstract void fillValues(Context context, CategoryItem newItem, boolean allowItemDeletion);
 
         @Override
-        public void setChecked(boolean checked) {
-            checkBox.setChecked(checked);
-        }
+        public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
 
-        @Override
-        public void cacheViewFieldsAndConfigure() {
-
-            checkBox = itemView.findViewById(R.id.list_item_checked);
-            checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
-            checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
-            if (isMultiSelectionAllowed()) {
-                checkBox.setButtonDrawable(R.drawable.checkbox);
-            } else {
-                checkBox.setButtonDrawable(R.drawable.radio_button);
-            }
-
-            txtTitle = itemView.findViewById(R.id.list_item_name);
-
-            detailTxt = itemView.findViewById(R.id.list_item_details);
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
 
             iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("cat thumb");
             iconViewLoader = new ResizingPicassoLoader(getIconView(), this, 0, 0);
-
-            deleteButton = itemView.findViewById(R.id.list_item_delete_button);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItemButtonClick(v);
-                }
-            });
-        }
-
-        private void onDeleteItemButtonClick(View v) {
-            getItemActionListener().getParentAdapter().onDeleteItem(this, v);
         }
 
         @Override

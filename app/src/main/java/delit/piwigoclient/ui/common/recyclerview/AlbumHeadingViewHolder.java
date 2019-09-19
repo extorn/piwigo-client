@@ -8,6 +8,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 
 public class AlbumHeadingViewHolder<Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, M extends PiwigoAlbum> extends AlbumItemViewHolder<GalleryItem, Q, AlbumHeadingViewHolder<Q, M>, M> {
@@ -24,7 +25,7 @@ public class AlbumHeadingViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void cacheViewFieldsAndConfigure() {
+    public void cacheViewFieldsAndConfigure(AlbumItemRecyclerViewAdapterPreferences adapterPrefs) {
         headingView = itemView.findViewById(R.id.heading_text);
     }
 

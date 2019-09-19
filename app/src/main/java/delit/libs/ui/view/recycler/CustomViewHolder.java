@@ -16,7 +16,7 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
 
     public abstract void fillValues(Context context, T item, boolean allowItemDeletion);
 
-    public abstract void cacheViewFieldsAndConfigure();
+    public abstract void cacheViewFieldsAndConfigure(V adapterPrefs);
 
     public abstract void setChecked(boolean checked);
 
@@ -28,11 +28,11 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
         this.item = item;
     }
 
-    public void internalCacheViewFieldsAndConfigure(CustomClickListener<V, T, ? extends CustomViewHolder<V, T>> itemActionListener) {
+    public void internalCacheViewFieldsAndConfigure(CustomClickListener<V, T, ? extends CustomViewHolder<V, T>> itemActionListener, V adapterPrefs) {
         this.itemActionListener = itemActionListener;
         itemView.setOnClickListener(itemActionListener);
         itemView.setOnLongClickListener(itemActionListener);
-        cacheViewFieldsAndConfigure();
+        cacheViewFieldsAndConfigure(adapterPrefs);
     }
 
     public CustomClickListener getItemActionListener() {
