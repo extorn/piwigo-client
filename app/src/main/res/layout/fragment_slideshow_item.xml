@@ -162,11 +162,30 @@
                     app:srcCompat="@drawable/ic_undo_black_24dp"/>
 
                 <delit.libs.ui.view.button.CustomImageButton
+                    android:id="@+id/slideshow_resource_action_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="20dp"
+                    android:tooltipText="@string/slideshow_resource_action_delete"
+                    app:srcCompat="@drawable/ic_delete_black_24px" />
+
+                <delit.libs.ui.view.button.CustomImageButton
+                    android:id="@+id/slideshow_resource_action_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/slideshow_resource_action_delete"
+                    android:layout_toStartOf="@+id/slideshow_resource_action_delete"
+                    android:tooltipText="@string/slideshow_resource_action_download"
+                    app:srcCompat="@drawable/ic_file_download_black_24px" />
+
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_move"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_download"
                     android:layout_toStartOf="@+id/slideshow_resource_action_download"
+                    android:tooltipText="@string/slideshow_resource_action_move"
                     app:srcCompat="@drawable/ic_content_cut_black_24px"/>
 
                 <delit.libs.ui.view.button.CustomImageButton
@@ -175,25 +194,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_move"
                     android:layout_toStartOf="@+id/slideshow_resource_action_move"
-                    android:text="@string/slideshow_resource_action_copy"
+                    android:tooltipText="@string/slideshow_resource_action_copy"
                     app:srcCompat="@drawable/ic_content_copy_black_24px"/>
 
-                <delit.libs.ui.view.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/slideshow_resource_action_copy"
-                    android:layout_toStartOf="@+id/slideshow_resource_action_copy"
-                    android:layout_marginEnd="5dp"
-                    app:srcCompat="@drawable/ic_delete_black_24px"/>
-
-                <delit.libs.ui.view.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="end"
-                    app:srcCompat="@drawable/ic_file_download_black_24px"/>
 
 
                 <LinearLayout
