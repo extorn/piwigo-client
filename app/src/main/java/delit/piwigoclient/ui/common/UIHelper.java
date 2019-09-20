@@ -1318,7 +1318,7 @@ public abstract class UIHelper<T> {
             int layoutId = getLayoutId();
 
             if (layoutId == R.layout.layout_dialog_detailed) {
-                final TextView detailView = dialogView.findViewById(R.id.details);
+                final TextView detailView = dialogView.findViewById(R.id.list_item_details);
                 detailView.setText(getDetail());
 
                 ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
