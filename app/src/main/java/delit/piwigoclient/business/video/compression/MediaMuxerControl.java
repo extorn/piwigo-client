@@ -182,17 +182,29 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
                 default:
                     mode = "unidentified";
             }
-            int splitAt = Math.max(location.indexOf('-', 1), location.indexOf('+', 1));
-            String latStr = location.substring(0, splitAt);
+//            Altitude can be added optionally.
+//                    Latitude, Longitude (in Degrees) and Altitude:
+//      ±DD.DDDD±DDD.DDDD±AAA.AAA/         (eg +12.345-098.765+15.9/)
+//            Latitude, Longitude (in Degrees and Minutes) and Altitude:
+//      ±DDMM.MMMM±DDDMM.MMMM±AAA.AAA/     (eg +1234.56-09854.321+15.9/)
+//            Latitude, Longitude (in Degrees, Minutes and Seconds) and Altitude:
+//      ±DDMMSS.SSSS±DDDMMSS.SSSS±AAA.AAA/ (eg +123456.7-0985432.1+15.9/)
+
+            int longStartsAt = Math.max(location.indexOf('-', 1), location.indexOf('+', 1));
+            String latStr = location.substring(0, longStartsAt);
+
+            int altitudeStartAt = Math.max(location.indexOf('-', longStartsAt + 1), location.indexOf('+', longStartsAt + 1));
+
             int longEndAt = location.length();
             if (location.lastIndexOf('/') == longEndAt - 1) {
                 longEndAt--;
             }
-            int altitudeStartAt = Math.max(location.indexOf('-', splitAt + 1), location.indexOf('+', splitAt + 1));
             if (altitudeStartAt > 0) {
                 longEndAt = altitudeStartAt;
             }
-            String longStr = location.substring(splitAt, longEndAt);
+
+            String longStr = location.substring(longStartsAt, longEndAt);
+
             try {
                 latitude = Float.valueOf(latStr);
                 longitude = Float.valueOf(longStr);
