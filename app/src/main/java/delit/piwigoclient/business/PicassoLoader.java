@@ -21,6 +21,7 @@ import com.squareup.picasso.Transformation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.RejectedExecutionException;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
@@ -35,6 +36,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
     public final static int INFINITE_AUTO_RETRIES = -1;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";
     private final static int DEFAULT_AUTO_RETRIES = 1;
+    private static final String TAG = "PicassoLoader";
     private final T loadInto;
     private String uriToLoad;
     private File fileToLoad;
@@ -224,7 +226,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             RequestCreator loader = customiseLoader(buildLoader());
             if (forceServerRequest) {
                 loader.memoryPolicy(MemoryPolicy.NO_CACHE);
+                loader.memoryPolicy(MemoryPolicy.NO_STORE);
                 loader.networkPolicy(NetworkPolicy.NO_CACHE);
+                loader.networkPolicy(NetworkPolicy.NO_STORE);
             }
             //                if(placeholderUri != null) {
             //                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
@@ -233,6 +237,8 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             //                }
             registerUriLoadListener();
             loader.into(loadInto, this);
+        } catch (RejectedExecutionException e) {
+            Crashlytics.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
         } catch (IllegalStateException e) {
             if (!placeholderLoaded) {
                 throw e;
