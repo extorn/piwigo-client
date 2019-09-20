@@ -90,6 +90,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     private static final String STATE_TAG_LOADS_TO_RETRY = "retryLoadList";
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
+    private static final String TAG = "ViewTagFrag";
 
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
@@ -268,7 +269,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 reloadTagModel();
             } else {
                 // immediately leave this screen.
-                getFragmentManager().popBackStack();
+                requireFragmentManager().popBackStack();
             }
         }
 
