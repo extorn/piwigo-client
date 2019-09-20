@@ -157,7 +157,7 @@
 ###
 -keep class androidx.lifecycle.Observer { public *; }
 -keep class com.drew.** { public *; }
--keep class com.adobe.xmp.** { public *; }
+-keep class com.adobe.internal.xmp.** { public *; } # needed for the metadata-extractor code now.
 -keep class **.R  { public *; }
 -keep class **.R$*  { public *; }
 

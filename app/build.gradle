@@ -104,7 +104,7 @@ dependencies {
     implementation project(path: ':google-licencing-library')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     // prevent side loading (validate if this is attempted)
-    implementation 'com.google.android.play:core:1.6.1'
+    implementation 'com.google.android.play:core:1.6.3'
     //implementation 'com.android.tools.build:bundletool:0.9.0'
 
     implementation 'com.wunderlist:sliding-layer:1.2.5'
@@ -125,15 +125,16 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.2'
     // vector graphics support
-    implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
     // annotations support
     implementation 'androidx.annotation:annotation:1.1.0'
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.0.0' //1.1.0-alpha01
     // parse and edit exif and IPTC etc information
     //implementation 'com.drewnoakes:metadata-extractor:2.12.0' - use this once they have increased the version number to remove awt dependency https://github.com/drewnoakes/metadata-extractor
-    // TODO remove the settings.gradle include for the metadata-extractor project!
-    implementation files('../metadata-extractor/build/libs/metadata-extractor-2.1.1.jar')
+    // TODO remove the settings.gradle include for the metadata-extractor project! relative path below won't work - using absolute.
+    implementation files('/home/gareth/AndroidStudioProjects/metadata-extractor/build/libs/metadata-extractor-2.1.1.jar')
+    implementation 'com.adobe.xmp:xmpcore:6.0.6' // only needed because I'm forcing use of an external jar (this is a transient dependency)
 
     // custom tab support
     implementation 'androidx.browser:browser:1.0.0'
@@ -147,8 +148,8 @@ dependencies {
 //    implementation 'com.android.support:support-media-compat:27.1.1'
 //    implementation 'com.android.support:support-compat:27.1.1'
     // v7 appcompat stuff
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.preference:preference:1.0.0' //1.1.0-alpha01
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0' //1.1.0-alpha01
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     // v14 stuff
     //implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
@@ -171,7 +172,7 @@ dependencies {
     //implementation 'net.ypresto.androidtranscoder:android-transcoder:0.3.0'
     // android mp4 streaming header generator library
     implementation 'net.ypresto.qtfaststartjava:qtfaststart:0.1.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
     implementation 'id.zelory:compressor:2.1.0' // image compression library apache2
 
