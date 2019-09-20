@@ -58,7 +58,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionPrefs();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());

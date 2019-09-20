@@ -58,12 +58,12 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
         if(retrieveFullList) {
             runSequenceOfNestedHandlers();
             return null;
         } else {
-            return super.runCall(client, handler);
+            return super.runCall(client, handler, forceResponseRevalidation);
         }
     }
 

@@ -186,7 +186,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
         if (haveValidSession) {
             handler.beforeCall();
-            handler.runCall();
+            handler.runCall(false);
 
             // this is the absolute timeout - in case something is seriously wrong.
             long callTimeoutAtTime = System.currentTimeMillis() + 300000;

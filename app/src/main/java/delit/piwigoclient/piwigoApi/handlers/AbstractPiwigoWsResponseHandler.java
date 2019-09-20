@@ -243,7 +243,12 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     protected void logJsonSyntaxError(String responseBodyStr) {
-        Crashlytics.log(String.format("Json Syntax error: %1$s (%2$s) : %3$s", getPiwigoMethod(), getRequestParameters(), responseBodyStr));
+        RequestParams reqParams = getRequestParameters();
+        if (reqParams.has("password")) {
+            reqParams.remove("password");
+            reqParams.put("password", "********");
+        }
+        Crashlytics.log(String.format("Json Syntax error: %1$s (%2$s) : %3$s", getPiwigoMethod(), reqParams, responseBodyStr));
     }
 
     private boolean handleCombinedJsonAndHtmlResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
@@ -394,7 +399,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
 //        String thread = Thread.currentThread().getName();
         if (BuildConfig.DEBUG) {
             Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + getRequestParameters().toString());
@@ -403,7 +408,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         if(isUseHttpGet()) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
             boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
-            return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(onlyUseCache), getRequestParameters(), handler);
+            return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(forceResponseRevalidation, onlyUseCache), getRequestParameters(), handler);
         } else {
             return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
         }

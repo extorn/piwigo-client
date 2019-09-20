@@ -71,7 +71,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriString(uri));
         handler.setCallDetails(context, connectionPrefs, false);
         if (Looper.myLooper() == null || Looper.myLooper().getThread() != Looper.getMainLooper().getThread()) {
-            handler.runCall();
+            handler.runCall(false);
         } else {
             // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
             Crashlytics.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread!");

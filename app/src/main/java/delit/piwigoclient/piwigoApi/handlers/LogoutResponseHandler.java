@@ -28,13 +28,13 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         if (sessionDetails == null || !sessionDetails.isLoggedIn()) {
             onLogout(sessionDetails, false);
             return null;
         } else {
-            return super.runCall(client, handler);
+            return super.runCall(client, handler, forceResponseRevalidation);
         }
     }
 
