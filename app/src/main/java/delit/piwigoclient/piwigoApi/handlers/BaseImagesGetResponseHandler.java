@@ -89,9 +89,9 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             images = result.get("_content").getAsJsonArray();
         } else {
             if(isCached) {
-                Log.w(TAG, "Unable to find images in cached response " + rsp.getAsString());
+                Crashlytics.log(Log.WARN, TAG, "Unable to find images in cached response " + result.toString());
             } else {
-                Log.w(TAG, "Unable to find images in response " + rsp.getAsString());
+                Crashlytics.log(Log.WARN, TAG, "Unable to find images in response " + result.toString());
             }
             images = null;
         }
