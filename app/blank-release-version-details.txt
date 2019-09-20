@@ -1,23 +1,40 @@
 
 <en-GB>
-Changes:
-- Added hints to hidden app functionality
-- Support zooming out so an image doesn't fill the screen when viewed fullscreen
+Bugfix:
+- incorrect checkbox icon shown selecting user album access for users in selected groups
+- popup keyboard obscures the resource detail edit field
+- use development copy of metadata-extractor to remove awt dependency
+- Corrected ISO location lat long parser error
+- Added extra logging when encountering date format errors
+- crash when image requested but picasso not started
 </en-GB>
 
 <de-DE>
-Änderungen:
- - Hinweise zu versteckten App-Funktionen hinzugefügt
- - Unterstützt das Herauszoomen, damit ein Bild den Bildschirm nicht ausfüllt, wenn es im Vollbildmodus angezeigt wird
+Bug-Fix:
+ - Das falsche Kontrollkästchensymbol zeigt an, dass der Zugriff auf das Benutzeralbum für Benutzer in ausgewählten Gruppen ausgewählt wird
+ - Popup-Tastatur verdeckt das Bearbeitungsfeld für Ressourcendetails
+ - Verwenden Sie die Entwicklungskopie von Metadata-Extractor, um AWT-Abhängigkeiten zu entfernen
+ - Fehler beim Parser des ISO-Speicherorts vor langer Zeit behoben
+ - Zusätzliche Protokollierung hinzugefügt, wenn Datumsformatfehler auftreten
+ - Absturz, wenn Bild angefordert...
 </de-DE>
 
 <fr-FR>
-Changements:
- - Ajout de conseils aux fonctionnalités d'applications cachées
- - Prise en charge du zoom arrière pour qu'aucune image ne remplisse l'écran lorsqu'elle est affichée en plein écran
+Correction d'un bug:
+ - L'icône de case à cocher incorrecte apparaît en sélectionnant l'accès à l'album utilisateur pour les utilisateurs des groupes sélectionnés
+ - le clavier contextuel masque le champ d'édition des détails de la ressource
+ - utiliser une copie de développement de metadata-extractor pour supprimer la dépendance à awt
+ - Erreur de l'analyseur lat long corrigée pour l'emplacement ISO
+ - Ajout de journalisation supplémentaire en cas d'erreur de format de date
+ - blocage lorsqu...
 </fr-FR>
 
 <zh-CN>
-变化：
-- 如果图像的宽高比与此更匹配，则允许将图像旋转90°的新首选项
+修正：
+- 显示错误的复选框图标，为所选组中的用户选择用户相册访问权限
+- 弹出键盘模糊了资源详细信息编辑字段
+- 使用metadata-extractor的开发副本来删除awt依赖项
+- 更正了ISO位置lat长解析器错误
+- 遇到日期格式错误时添加了额外的日志记录
+- 请求图片但是毕加索没有开始时崩溃
 </zh-CN>

@@ -132,6 +132,14 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.24</item>
+        <item>"Correction d'un bug:
+             - L'icône de case à cocher incorrecte apparaît en sélectionnant l'accès à l'album utilisateur pour les utilisateurs des groupes sélectionnés
+             - le clavier contextuel masque le champ d'édition des détails de la ressource
+             - utiliser une copie de développement de metadata-extractor pour supprimer la dépendance à awt
+             - Erreur de l'analyseur lat long corrigée pour l'emplacement ISO
+             - Ajout de journalisation supplémentaire en cas d'erreur de format de date
+             - blocage lorsque l'image est demandée mais que picasso n'a pas commencé"</item>
         <item>1.4.0.23</item>
         <item>"Changements:
              - Ajout de conseils aux fonctionnalités d'applications cachées

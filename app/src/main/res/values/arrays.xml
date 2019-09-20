@@ -259,7 +259,8 @@
             - popup keyboard obscures the resource detail edit field
             - use development copy of metadata-extractor to remove awt dependency
             - Corrected ISO location lat long parser error
-            - Added extra logging when encountering date format errors"</item>
+            - Added extra logging when encountering date format errors
+            - crash when image requested but picasso not started"</item>
         <item>1.4.0.23</item>
         <item>"Changes:
             - Added hints to hidden app functionality
