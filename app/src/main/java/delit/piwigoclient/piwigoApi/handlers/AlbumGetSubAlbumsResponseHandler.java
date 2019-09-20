@@ -187,6 +187,9 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             } else {
                 dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
             }
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            throw new JSONException("Unable to parse date " + dateLastAlteredStr + " using expected date format string : " + piwigoDateFormat.toPattern());
         } catch (ParseException e) {
             Crashlytics.logException(e);
             throw new JSONException("Unable to parse date " + dateLastAlteredStr);
