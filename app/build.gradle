@@ -97,6 +97,7 @@ android {
             manifest.srcFile(sourceSets.paid.manifest.srcFile)
         }
     }
+
 }
 
 dependencies {
@@ -130,7 +131,10 @@ dependencies {
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.0.0' //1.1.0-alpha01
     // parse and edit exif and IPTC etc information
-    implementation 'com.drewnoakes:metadata-extractor:2.12.0'
+    //implementation 'com.drewnoakes:metadata-extractor:2.12.0' - use this once they have increased the version number to remove awt dependency https://github.com/drewnoakes/metadata-extractor
+    // TODO remove the settings.gradle include for the metadata-extractor project!
+    implementation files('../metadata-extractor/build/libs/metadata-extractor-2.1.1.jar')
+
     // custom tab support
     implementation 'androidx.browser:browser:1.0.0'
     //EXIF Support
