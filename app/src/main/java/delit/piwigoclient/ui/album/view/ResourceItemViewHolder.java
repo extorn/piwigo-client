@@ -71,9 +71,9 @@ public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void cacheViewFieldsAndConfigure() {
-        super.cacheViewFieldsAndConfigure();
-        checkBox = itemView.findViewById(R.id.checked);
+    public void cacheViewFieldsAndConfigure(AlbumItemRecyclerViewAdapterPreferences adapterPrefs) {
+        super.cacheViewFieldsAndConfigure(adapterPrefs);
+        checkBox = itemView.findViewById(R.id.list_item_checked);
         mTypeIndicatorImg = itemView.findViewById(R.id.type_indicator);
     }
 
