@@ -57,7 +57,8 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         if(responseBodyStr != null && responseBodyStr.contains("forbidden file type")) {
             String fileType = fileChunk.getOriginalFile().isDirectory() ? "dir" : "file";
             String filePath = fileChunk.getOriginalFile().getAbsolutePath();
-            Crashlytics.log(String.format("Json Syntax error while trying to upload %1$s : %2$s", fileType, filePath));
+            String mimeType = fileChunk.getMimeType();
+            Crashlytics.log(String.format("Json Syntax error while trying to upload %1$s : %2$s (Mime: %3$s)", fileType, filePath, mimeType));
             super.logJsonSyntaxError(responseBodyStr + " (file: " + filePath + ")");
         } else {
             super.logJsonSyntaxError(responseBodyStr);
