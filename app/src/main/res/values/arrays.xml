@@ -257,7 +257,9 @@
         <item>"Bugfix:
             - incorrect checkbox icon shown selecting user album access for users in selected groups
             - popup keyboard obscures the resource detail edit field
-            - TODO check albums.getList for user that reports it is broken"</item>
+            - use development copy of metadata-extractor to remove awt dependency
+            - Corrected ISO location lat long parser error
+            - Added extra logging when encountering date format errors"</item>
         <item>1.4.0.23</item>
         <item>"Changes:
             - Added hints to hidden app functionality
