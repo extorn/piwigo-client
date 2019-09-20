@@ -118,6 +118,33 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 }
             }
         });
+        migrators.add(new PreferenceMigrator(240) {
+
+            @Override
+            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
+                if (!prefs.contains(getString(R.string.preference_app_prefs_version_key))) {
+                    editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
+                }
+                try {
+                    String multimediaCsvList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), null);
+                    HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+                    HashSet<String> cleanedValues = new HashSet<>(values.size());
+                    for (String value : values) {
+                        int dotIdx = value.indexOf('.');
+                        if (dotIdx < 0) {
+                            cleanedValues.add(value.toLowerCase());
+                        } else {
+                            cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                        }
+                    }
+                    String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
+                    editor.remove(key);
+                    editor.putStringSet(key, cleanedValues);
+                } catch (ClassCastException e) {
+                    // will occur if the user has previously migrated preferences at version 240!
+                }
+            }
+        });
         return migrators;
     }
 
@@ -135,7 +162,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             SharedPreferences.Editor editor = prefs.edit();
             int newVersion = ProjectUtils.getVersionCode(getApplicationContext());
             editor.putInt(getString(R.string.preference_app_prefs_version_key), newVersion);
-            editor.apply();
+            editor.commit(); // ensure this is written to disk now.
             Bundle bundle = new Bundle();
             bundle.putInt("from_version", currentPrefsVersion);
             bundle.putInt("to_version", newVersion);
@@ -163,7 +190,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             if (currentPrefsVersion < prefsVersion) {
                 SharedPreferences.Editor editor = prefs.edit();
                 upgradePreferences(context, prefs, editor);
-                editor.apply();
+                editor.commit(); // need to wait for it - make sure they're written to disk in order
             }
         }
 
