@@ -182,11 +182,15 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
                 default:
                     mode = "unidentified";
             }
-            int splitAt = Math.max(location.lastIndexOf('-'), location.lastIndexOf('+'));
+            int splitAt = Math.max(location.indexOf('-', 1), location.indexOf('+', 1));
             String latStr = location.substring(0, splitAt);
             int longEndAt = location.length();
             if (location.lastIndexOf('/') == longEndAt - 1) {
                 longEndAt--;
+            }
+            int altitudeStartAt = Math.max(location.indexOf('-', splitAt + 1), location.indexOf('+', splitAt + 1));
+            if (altitudeStartAt > 0) {
+                longEndAt = altitudeStartAt;
             }
             String longStr = location.substring(splitAt, longEndAt);
             try {
