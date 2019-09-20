@@ -157,15 +157,44 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         return false;
     }
 
-    private final void extractLocationData(File inputFile) {
+    private void extractLocationData(File inputFile) {
         MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
         metadataRetriever.setDataSource(inputFile.getPath());
         String location = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
         if (location != null) {
-            //Lat = ±DDMM.MMMM & Lon = ±DDDMM.MMMM
+            String mode;
+            switch (location.indexOf(".")) {
+                case 3:
+                    //   Latitude and Longitude in Degrees:
+                    //      ±DD.DDDD±DDD.DDDD/         (eg +12.345-098.765/)
+                    mode = "degrees";
+                    break;
+                case 5:
+                    //   Latitude and Longitude in Degrees and Minutes:
+                    //      ±DDMM.MMMM±DDDMM.MMMM/     (eg +1234.56-09854.321/)
+                    mode = "degrees and minutes";
+                    break;
+                case 7:
+                    //   Latitude and Longitude in Degrees, Minutes and Seconds:
+                    //      ±DDMMSS.SSSS±DDDMMSS.SSSS/ (eg +123456.7-0985432.1/)
+                    mode = "degress minutes and seconds";
+                    break;
+                default:
+                    mode = "unidentified";
+            }
             int splitAt = Math.max(location.lastIndexOf('-'), location.lastIndexOf('+'));
-            latitude = Float.valueOf(location.substring(0, splitAt));
-            longitude = Float.valueOf(location.substring(splitAt));
+            String latStr = location.substring(0, splitAt);
+            int longEndAt = location.length();
+            if (location.lastIndexOf('/') == longEndAt - 1) {
+                longEndAt--;
+            }
+            String longStr = location.substring(splitAt, longEndAt);
+            try {
+                latitude = Float.valueOf(latStr);
+                longitude = Float.valueOf(longStr);
+            } catch (NumberFormatException e) {
+                Crashlytics.log(Log.ERROR, TAG, String.format("Error parsing lat long ISO String %1$s (%2$s), lat : %3$s, long : %4$s", location, mode, latStr, longStr));
+            }
         }
         metadataRetriever.release();
     }
