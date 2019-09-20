@@ -9,6 +9,7 @@ import org.json.JSONException;
 import java.util.HashSet;
 
 import delit.libs.http.RequestParams;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -58,7 +59,8 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
             String fileType = fileChunk.getOriginalFile().isDirectory() ? "dir" : "file";
             String filePath = fileChunk.getOriginalFile().getAbsolutePath();
             String mimeType = fileChunk.getMimeType();
-            Crashlytics.log(String.format("Json Syntax error while trying to upload %1$s : %2$s (Mime: %3$s)", fileType, filePath, mimeType));
+            String filesize = IOUtils.toNormalizedText(fileChunk.getOriginalFile().length());
+            Crashlytics.log(String.format("Json Syntax error while trying to upload %4$s %1$s : %2$s (Mime: %3$s)", fileType, filePath, mimeType, filesize));
             super.logJsonSyntaxError(responseBodyStr + " (file: " + filePath + ")");
         } else {
             super.logJsonSyntaxError(responseBodyStr);
