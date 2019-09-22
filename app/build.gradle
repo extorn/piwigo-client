@@ -28,8 +28,8 @@ android {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 240
-        versionName "1.4.0.24"
+        versionCode 241
+        versionName "1.4.0.25"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -149,7 +149,7 @@ dependencies {
 //    implementation 'com.android.support:support-compat:27.1.1'
     // v7 appcompat stuff
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0' //1.1.0-alpha01
+    implementation 'androidx.preference:preference:1.0.0' //1.1.0 - DO NOT JUST USE - Lots of code changes needed!
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     // v14 stuff
     //implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
