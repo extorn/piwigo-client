@@ -21,8 +21,7 @@
         <delit.libs.ui.view.preference.CustomEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="words"
-            android:inputType="textNoSuggestions"
+            android:inputType="textNoSuggestions|textCapWords"
             android:key="@string/preference_piwigo_server_address_key"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -32,7 +31,6 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:inputType="textNoSuggestions"
             android:key="@string/preference_piwigo_server_username_key"
             android:maxLines="1"
@@ -43,11 +41,9 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:inputType="textPassword"
             android:key="@string/preference_piwigo_server_password_key"
             android:maxLines="1"
-            android:password="true"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_password_summary"
@@ -78,7 +74,6 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:dependency="@string/preference_server_use_basic_auth_key"
             android:inputType="text"
             android:key="@string/preference_server_basic_auth_username_key"
@@ -89,12 +84,10 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:dependency="@string/preference_server_use_basic_auth_key"
             android:inputType="textPassword"
             android:key="@string/preference_server_basic_auth_password_key"
             android:maxLines="1"
-            android:password="true"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/preference_server_basic_auth_password_title" />

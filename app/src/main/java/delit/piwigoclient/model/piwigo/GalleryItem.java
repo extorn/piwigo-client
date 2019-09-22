@@ -237,4 +237,11 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     protected void setId(long id) {
         this.id = id;
     }
+
+    public ArrayList<Long> getFullPath() {
+        ArrayList<Long> fullPath = new ArrayList<>(parentageChain.size() + 1);
+        fullPath.addAll(parentageChain);
+        fullPath.add(id);
+        return fullPath;
+    }
 }

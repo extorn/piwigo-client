@@ -27,6 +27,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -88,6 +89,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumRemovePermissionsResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumsGetFirstAvailableAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
@@ -153,6 +155,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
     private static final String TAG = "AbsViewAlbumFrag";
+    public static final String RESUME_ACTION = "ALBUM";
     private static transient PiwigoAlbumAdminList albumAdminList;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
@@ -207,6 +210,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private CustomSlidingLayer bottomSheet;
     private EndlessRecyclerViewScrollListener galleryListViewScrollListener;
     private CategoryItem albumDetails;
+    private boolean reopening;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -228,6 +232,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourceForeverAction<>(uiHelper, selectedItemIds, selectedItems));
     }
 
+    public static boolean canHandleReopenAction(UIHelper uiHelper) {
+        SharedPreferences resumePrefs = uiHelper.getResumePrefs();
+        if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+            ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+            if (activeProfile.getProfileId(uiHelper.getPrefs(), uiHelper.getContext()).equals(resumePrefs.getString("reopenProfileId", null))) {
+                // Can handle it. Lets try.
+                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                if (albumPath.size() > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -235,9 +254,39 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         if (getArguments() != null) {
             albumDetails = getArguments().getParcelable(ARG_ALBUM);
             albumDetails.forcePermissionsReload();
-            galleryModel = ViewModelProviders.of(getActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+            galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
             galleryModel.setContainerDetails(albumDetails);
             galleryIsDirty = true;
+        } else {
+            // restore previous viewed album.
+            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                reopening = true;
+                String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs, requireContext());
+                AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredThumbnailSize);
+                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
+            } else {
+                throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
+            }
+        }
+    }
+
+    protected void onReopenModelRetrieved(CategoryItem album) {
+        try {
+            reopening = false;
+            galleryIsDirty = true;
+            albumDetails = album;
+            galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+            populateViewFromModelEtc(requireView(), null);
+            populateViewFromModelEtcOnResume();
+            // below needed? called on re-login so prob not
+//            loadAlbumPermissionsIfNeeded();
+//            displayControlsBasedOnSessionState();
+//            setEditItemDetailsControlsStatus();
+            updatePageTitle();
+        } catch (IllegalStateException e) {
+            // do nothing - if not attached - app likely closed again.
         }
     }
 
@@ -363,6 +412,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         cacheViewComponentReferences(view);
+
+        if (!reopening) {
+            populateViewFromModelEtc(view, savedInstanceState);
+        }
+    }
+
+    private void populateViewFromModelEtc(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         if (!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
             // force a reload of the gallery if the session has been destroyed.
@@ -1002,7 +1058,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private void loadAlbumPermissionsIfNeeded() {
-        if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())
+        if (galleryModel != null
+                && PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())
                 && !galleryModel.getContainerDetails().isRoot()
                 && !galleryModel.getContainerDetails().isPermissionsLoaded()) {
             // never want to load permissions for the root album (it's not legal to call this service with category id 0).
@@ -1012,20 +1069,28 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     @Override
     protected String buildPageHeading() {
-        CategoryItem catItem = galleryModel.getContainerDetails();
-        if (catItem.isRoot()) {
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-            if(sessionDetails != null) {
-                ServerConfig serverConfig = sessionDetails.getServerConfig();
-                if(serverConfig != null) {
-                    return serverConfig.getGalleryTitle();
+        if (galleryModel != null) {
+            CategoryItem catItem = galleryModel.getContainerDetails();
+            if (catItem.isRoot()) {
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                if (sessionDetails != null) {
+                    ServerConfig serverConfig = sessionDetails.getServerConfig();
+                    if (serverConfig != null) {
+                        return serverConfig.getGalleryTitle();
+                    }
                 }
+                return getString(R.string.album_title_home);
+            } else {
+                String currentAlbumName = "... / " + catItem.getName();
+                return currentAlbumName;
             }
-            return getString(R.string.album_title_home);
-        } else {
-            String currentAlbumName = "... / " + catItem.getName();
-            return currentAlbumName;
+        } else if (reopening) {
+            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+                return resumePrefs.getString("reopenAlbumName", "");
+            }
         }
+        return "";
     }
 
     @Override
@@ -1036,6 +1101,25 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             //Resumed, but fragment initialisation cancelled for whatever reason.
             return;
         }
+
+        if (!reopening) {
+            populateViewFromModelEtcOnResume();
+        }
+    }
+
+    protected void populateViewFromModelEtcOnResume() {
+        ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+        String profileId = activeProfile.getProfileId(getPrefs(), getContext());
+        List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
+        SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+        SharedPreferences.Editor editor = resumePrefs.edit();
+        editor.clear();
+        editor.putString("reopenAction", RESUME_ACTION);
+        editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
+        editor.putString("reopenProfileId", profileId);
+        editor.putString("reopenAlbumName", buildPageHeading());
+        editor.commit();
+
 
         if (galleryIsDirty) {
             reloadAlbumContent();
@@ -1054,7 +1138,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         updateBasketDisplay(getBasket());
 
         getUiHelper().showUserHint(TAG, 1, R.string.hint_album_view);
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(PiwigoLoginSuccessEvent event) {
+        if (!reopening) {
+            loadAlbumPermissionsIfNeeded();
+            displayControlsBasedOnSessionState();
+            setEditItemDetailsControlsStatus();
+            updatePageTitle();
+        }
     }
 
     private void reloadAlbumContent() {
@@ -1905,12 +1998,27 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(PiwigoLoginSuccessEvent event) {
-        loadAlbumPermissionsIfNeeded();
-        displayControlsBasedOnSessionState();
-        setEditItemDetailsControlsStatus();
-        updatePageTitle();
+    private static class LoadAlbumTreeAction extends UIHelper.Action<AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> {
+        @Override
+        public boolean onSuccess(UIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
+            CategoryItem currentItem = response.getAlbumTreeRoot();
+            FragmentActivity activity = uiHelper.getParent().requireActivity();
+            for (Long albumId : response.getAlbumPath()) {
+                if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
+                    continue;
+                }
+                ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
+                currentItem = currentItem.getChild(albumId);
+            }
+            uiHelper.getParent().onReopenModelRetrieved(response.getDeepestAlbumOnDesiredPath());
+            return true; // to close the progress indicator
+        }
+
+        @Override
+        public boolean onFailure(UIHelper<AbstractViewAlbumFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            uiHelper.getParent().onReopenModelRetrieved(CategoryItem.ROOT_ALBUM.clone());
+            return true; // to close the progress indicator
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

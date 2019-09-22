@@ -27,7 +27,7 @@ public class PiwigoAlbumModel extends ViewModelContainer {
     }
 
     @Override
-    public ResourceContainer getModel() {
-        return getPiwigoAlbum().getValue();
+    public <T extends ResourceContainer> T getModel() {
+        return (T) getPiwigoAlbum().getValue();
     }
 }

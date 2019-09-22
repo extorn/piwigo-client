@@ -62,6 +62,7 @@ import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPrefer
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
@@ -351,11 +352,24 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     protected abstract void showFavorites();
 
     private void showGallery(final CategoryItem gallery) {
+        boolean restore = false;
         if (CategoryItem.ROOT_ALBUM.equals(gallery)) {
             // check if we've shown any albums before. If so, pop everything off the stack.
-            removeFragmentsFromHistory(ViewAlbumFragment.class, true);
+            if (!removeFragmentsFromHistory(ViewAlbumFragment.class, true)) {
+                // we're opening the activity freshly.
+
+                // check for reopen details and use them instead if possible.
+                if (AbstractViewAlbumFragment.canHandleReopenAction(getUiHelper())) {
+                    restore = true;
+                }
+
+            }
         }
-        showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
+        if (restore) {
+            showFragmentNow(new ViewAlbumFragment(), true);
+        } else {
+            showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
+        }
         AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate();
     }
 

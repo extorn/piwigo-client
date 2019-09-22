@@ -1013,6 +1013,10 @@ public abstract class UIHelper<T> {
 
     }
 
+    public SharedPreferences getResumePrefs() {
+        return getContext().getSharedPreferences("resume-actions", Context.MODE_PRIVATE);
+    }
+
     public interface QuestionResultListener<S extends UIHelper> extends Serializable {
         void onDismiss(AlertDialog dialog);
 
@@ -1531,6 +1535,11 @@ public abstract class UIHelper<T> {
             return uiHelper.getParent();
         }
 
+        /**
+         * @param uiHelper
+         * @param response
+         * @return run normal listener code
+         */
         public boolean onSuccess(UIHelper<T> uiHelper, S response){
             return true;
         }

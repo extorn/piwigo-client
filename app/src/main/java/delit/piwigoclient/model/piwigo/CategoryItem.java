@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -480,5 +482,18 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     public int getPagesOfPhotos(int pageSize) {
         int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
         return pages < 0 ? 0 : pages;
+    }
+
+    public @Nullable
+    CategoryItem getChild(long albumId) {
+        if (childAlbums == null) {
+            throw new IllegalStateException("Unable to retrieve child (no children set) on album " + getId() + " and desired child id : " + albumId);
+        }
+        for (CategoryItem childAlbum : childAlbums) {
+            if (childAlbum.getId() == albumId) {
+                return childAlbum;
+            }
+        }
+        return null;
     }
 }

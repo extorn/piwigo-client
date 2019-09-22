@@ -215,7 +215,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         super.onDetachedFromWindow();
     }
 
-    protected void removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass, boolean includeMidSessionLogins) {
+    protected boolean removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass, boolean includeMidSessionLogins) {
         boolean found = false;
         int i = 0;
         int popToStateId = -1;
@@ -236,6 +236,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         if (found) {
             getSupportFragmentManager().popBackStack(popToStateId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
+        return found;
     }
 
     protected void checkLicenceIfNeeded() {
