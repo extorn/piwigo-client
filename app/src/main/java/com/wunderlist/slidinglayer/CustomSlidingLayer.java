@@ -1415,7 +1415,11 @@ public class CustomSlidingLayer extends FrameLayout {
                 WindowInsets insets = getRootWindowInsets();
                 setStickToOffset(visibility == VISIBLE ? insets.getStableInsetBottom() : 0);
             } else {
-                setStickToOffset(visibility == VISIBLE ? lastInsets.getStableInsetBottom() : 0);
+                if (lastInsets != null) {
+                    setStickToOffset(visibility == VISIBLE ? lastInsets.getStableInsetBottom() : 0);
+                } else {
+                    setStickToOffset(0);
+                }
             }
         }
 
