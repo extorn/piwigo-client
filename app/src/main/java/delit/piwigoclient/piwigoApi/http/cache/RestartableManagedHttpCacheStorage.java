@@ -69,6 +69,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
 
     public static final String DEFAULT_CACHE_FILENAME = "overall_cache_index.dat";
     private static final String TAG = "RestartableCache";
+    public static final int MAX_EXPECTED_CACHE_SIZE = 1024 * 2048;  // 2MB
     private final File cacheFolder;
     private final ReferenceQueue<HttpCacheEntry> morque;
     private final Set<ResourceReference> resources;
@@ -171,7 +172,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
             if (cacheFolder != null) {
                 File sourceFile = new File(cacheFolder, cacheFilename);
                 if (sourceFile.exists()) {
-                    if (sourceFile.length() > 1024 * 512) { // 512KB
+                    if (sourceFile.length() > MAX_EXPECTED_CACHE_SIZE) {
                         Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.toNormalizedText(sourceFile.length())));
                     }
                     entries = IOUtils.readObjectFromFile(sourceFile);
@@ -221,7 +222,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
                     Log.d(TAG, String.format("saved  %1$d cache entries to file", entries.size()));
                 }
             }
-            if (destination.length() > 1024 * 512) { // 512KB
+            if (destination.length() > MAX_EXPECTED_CACHE_SIZE) {
                 Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.toNormalizedText(destination.length())));
             }
         }
