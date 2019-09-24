@@ -649,4 +649,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="hint_slideshow_item_view_1">Le classement peut être ajusté en tapotant ou en glissant sur le classement souhaité. Cela a un effet immédiat</string>
     <string name="hint_slideshow_view_3">Pour marquer cette ressource comme favorite, appuyez sur l’icône du cœur à droite du nom de la ressource d’image</string>
     <string name="hint_navigation_panel_1">Appuyez sur l\'icône de l\'application ci-dessus pour forcer un serveur à se déconnecter et à se connecter</string>
+    <string name="user_details_not_found_on_server">Impossible de trouver les détails de l\'utilisateur sur le serveur</string>
 </resources>

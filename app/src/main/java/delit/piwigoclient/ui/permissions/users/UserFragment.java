@@ -427,8 +427,12 @@ public class UserFragment extends MyFragment<UserFragment> {
                 public boolean onSuccess(UIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
                     user = response.getSelectedUser();
                     if(newUser == null) {
-                        setFieldsFromModel(user);
-                        populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
+                        if (user != null) {
+                            setFieldsFromModel(user);
+                            populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
+                        } else {
+                            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.user_details_not_found_on_server));
+                        }
                     }
                     return false;
                 }
