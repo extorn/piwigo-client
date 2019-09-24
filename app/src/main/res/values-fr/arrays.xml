@@ -132,6 +132,8 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.26</item>
+        <item>"Correction de bogues"</item>
         <item>1.4.0.25</item>
         <item>"Changements:
              - Autoriser la réouverture de l'album précédent si l'application est redémarrée (retourne au premier disponible)

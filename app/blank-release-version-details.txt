@@ -1,28 +1,16 @@
 
 <en-GB>
-Changes:
-- Allow reopening of previous album if the app is restarted (falls back to first available)
-Bugfix:
-- Settings grayed following library update (reverted)
+Assorted Bugfixes
 </en-GB>
 
 <de-DE>
-Änderungen:
- - Erlaube das erneute Öffnen des vorherigen Albums, wenn die App neu gestartet wird (greift auf das erste verfügbare zurück)
- Bug-Fix:
- - Einstellungen nach Bibliotheksaktualisierung abgeblendet (zurückgesetzt)
+Verschiedene Bugfixes
 </de-DE>
 
 <fr-FR>
-Changements:
- - Autoriser la réouverture de l'album précédent si l'application est redémarrée (retourne au premier disponible)
- Correction d'un bug:
- - Paramètres grisés après la mise à jour de la bibliothèque (annulés)
+Correction de bogues
 </fr-FR>
 
 <zh-CN>
-变化：
- -如果应用重新启动，则允许重新打开上一个相册（恢复为第一个可用）
-修正：
- -库更新后设置为灰色（已还原）
+各种错误修正
 </zh-CN>

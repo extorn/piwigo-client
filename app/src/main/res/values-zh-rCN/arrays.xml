@@ -131,6 +131,8 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
+        <item>1.4.0.26</item>
+        <item>"各种错误修正"</item>
         <item>1.4.0.25</item>
         <item>"变化：
              -如果应用重新启动，则允许重新打开上一个相册（恢复为第一个可用）
