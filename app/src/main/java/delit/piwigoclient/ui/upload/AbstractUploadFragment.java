@@ -1328,9 +1328,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                 adapter.remove(cancelledFile);
             }
-            UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
-            if (uploadJob.isFilePartiallyUploaded(cancelledFile)) {
-                getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_partial_upload_deleted));
+            if (uploadJobId != null) {
+                UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
+                if (uploadJob.isFilePartiallyUploaded(cancelledFile)) {
+                    getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_partial_upload_deleted));
+                }
+            } else {
+                FirebaseAnalytics.getInstance(getContext()).logEvent("noJobDelFile", null);
             }
         }
 
