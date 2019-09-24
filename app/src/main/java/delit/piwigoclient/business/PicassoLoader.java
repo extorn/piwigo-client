@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
 
 import delit.libs.ui.util.DisplayUtils;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.PicassoFactory;
 import pl.droidsonroids.gif.GifDrawable;
@@ -222,6 +223,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
 
     private void runLoad(boolean forceServerRequest) {
         try {
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "entering picasso loader - runLoad");
+            }
             waitForErrorMessage = true;
             RequestCreator loader = customiseLoader(buildLoader());
             if (forceServerRequest) {
@@ -237,6 +241,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             //                }
             registerUriLoadListener();
             loader.into(loadInto, this);
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "exiting picasso loader - runLoad");
+            }
         } catch (RejectedExecutionException e) {
             Crashlytics.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
         } catch (IllegalStateException e) {
