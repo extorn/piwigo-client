@@ -415,6 +415,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         if (!reopening) {
             populateViewFromModelEtc(view, savedInstanceState);
+        } else {
+            descriptionDropdownButton.setVisibility(GONE);
+            Basket basket = getBasket();
+            initialiseBasketView(view);
+            setupBottomSheet(bottomSheet);
+            setupBulkActionsControls(basket);
+            updateBasketDisplay(basket);
+            retryActionButton.hide();
         }
     }
 
@@ -619,7 +627,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private boolean showBulkActionsContainer(Basket basket) {
-        return viewAdapter.isItemSelectionAllowed() || getBasket().getItemCount() > 0;
+        return viewAdapter != null && (viewAdapter.isItemSelectionAllowed() || getBasket().getItemCount() > 0);
     }
 
     protected void setupBulkActionsControls(Basket basket) {
@@ -871,7 +879,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     protected void updateBasketDisplay(Basket basket) {
 
-        if (viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+        if (viewAdapter != null && viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
             viewPrefs.withAllowMultiSelect(false);
             viewPrefs.setAllowItemSelection(false);
             viewAdapter.notifyDataSetChanged(); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
@@ -1295,11 +1303,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         });
 
-        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM;
+        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || (galleryModel != null && galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM);
         bottomSheet.setVisibility(visibleBottomSheet ? View.VISIBLE : View.GONE);
 
         int editFieldVisibility = VISIBLE;
-        if (galleryModel.getContainerDetails().isRoot()) {
+        if (galleryModel == null || galleryModel.getContainerDetails().isRoot()) {
             editFieldVisibility = GONE;
         }
 
@@ -1309,7 +1317,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         // always setting them up eliminates the chance they might be null.
         setupBottomSheetButtons(bottomSheet, editFieldVisibility);
         setupEditFields(editFields);
-        if (!galleryModel.getContainerDetails().isRoot()) {
+        if (galleryModel != null && !galleryModel.getContainerDetails().isRoot()) {
             fillGalleryEditFields();
         } else {
             displayControlsBasedOnSessionState();
@@ -1499,6 +1507,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private void setEditItemDetailsControlsStatus() {
+        if (galleryModel == null) {
+            return; // if reopening page (will be set once data loaded)
+        }
         boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM;
         bottomSheet.setVisibility(visibleBottomSheet ? View.VISIBLE : View.GONE);
 
@@ -2668,6 +2679,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     onAlbumPermissionsRemoved((AlbumRemovePermissionsResponseHandler.PiwigoRemoveAlbumPermissionsResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
                     onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
+                } else if (response instanceof AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse) {
+                    // do nothing. This is handled. just dont want it to be registered as an error.
                 } else {
                     String failedCall = loadingMessageIds.get(response.getMessageId());
                     if (failedCall == null) {
