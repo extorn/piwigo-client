@@ -37,32 +37,35 @@ public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoW
 
         CategoryItem albumTreeRoot = CategoryItem.ROOT_ALBUM.clone();
         CategoryItem currentAlbumItem = albumTreeRoot;
-        long desiredAlbumId = albumPath.get(albumPath.size() - 1);
         boolean isAnElementCached = false;
-        for (Long albumId : albumPath) {
-            if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
-                continue;
-            }
-            AlbumGetSubAlbumsResponseHandler albumListLoadHandler = new AlbumGetSubAlbumsResponseHandler(currentAlbumItem, preferredThumbnailSize, false);
-            albumListLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());
-            if (!albumListLoadHandler.isSuccess()) {
-                // presume the desired child album no longer exists.
-                break;
-            } else {
-                AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response = (AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) albumListLoadHandler.getResponse();
-                currentAlbumItem.setChildAlbums(response.getAlbums());
-                boolean found = false;
-                for (CategoryItem catItem : response.getAlbums()) {
-                    if (catItem.getId() == albumId) {
-                        currentAlbumItem = catItem;
-                        found = true;
+
+        if (!albumPath.isEmpty()) {
+            long desiredAlbumId = albumPath.get(albumPath.size() - 1);
+            for (Long albumId : albumPath) {
+                if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
+                    continue;
+                }
+                AlbumGetSubAlbumsResponseHandler albumListLoadHandler = new AlbumGetSubAlbumsResponseHandler(currentAlbumItem, preferredThumbnailSize, false);
+                albumListLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());
+                if (!albumListLoadHandler.isSuccess()) {
+                    // presume the desired child album no longer exists.
+                    break;
+                } else {
+                    AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response = (AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) albumListLoadHandler.getResponse();
+                    currentAlbumItem.setChildAlbums(response.getAlbums());
+                    boolean found = false;
+                    for (CategoryItem catItem : response.getAlbums()) {
+                        if (catItem.getId() == albumId) {
+                            currentAlbumItem = catItem;
+                            found = true;
+                            break;
+                        }
+                    }
+                    isAnElementCached |= response.isCached();
+                    if (!found) {
+                        // the desired child album no longer exists.
                         break;
                     }
-                }
-                isAnElementCached |= response.isCached();
-                if (!found) {
-                    // the desired child album no longer exists.
-                    break;
                 }
             }
         }
