@@ -188,9 +188,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         ViewPager.OnPageChangeListener slideshowPageChangeListener = new MyPageChangeListener();
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
 
+        try {
+            int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
+            viewPager.setCurrentItem(pagerItemsIdx);
+        } catch (IllegalArgumentException e) {
+            Crashlytics.log(Log.WARN, TAG, "returning to album - slideshow empty");
+            requireFragmentManager().popBackStack();
+        }
 
-        int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
-        viewPager.setCurrentItem(pagerItemsIdx);
         return view;
     }
 

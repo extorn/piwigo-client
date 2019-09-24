@@ -145,7 +145,11 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
             if(galleryResourceItems.size() > 0) {
                 return 0;
             }
-            throw new IllegalArgumentException("This slideshow is empty and should not have been opened!");
+            if (gallery.getItemCount() == 0) {
+                throw new IllegalArgumentException("This slideshow is empty (empty album) and should not have been opened!");
+            } else {
+                throw new IllegalArgumentException("This slideshow is empty (all album content filtered) and should not have been opened!");
+            }
         }
         return idx;
     }
