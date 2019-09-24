@@ -40,7 +40,7 @@ public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoW
         boolean isAnElementCached = false;
 
         if (!albumPath.isEmpty()) {
-            long desiredAlbumId = albumPath.get(albumPath.size() - 1);
+//            long desiredAlbumId = albumPath.get(albumPath.size() - 1);
             for (Long albumId : albumPath) {
                 if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
                     continue;
