@@ -163,7 +163,9 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        viewPrefs.storeToBundle(outState);
+        if (viewPrefs != null) {
+            viewPrefs.storeToBundle(outState);
+        }
         outState.putParcelable(ARG_TAG, tag);
         BundleUtils.writeMap(outState, STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
