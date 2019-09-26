@@ -2021,6 +2021,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
+    public CategoryItem getParentAlbum() {
+        PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(this).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        return nextPiwigoAlbum.getContainerDetails();
+    }
+
     private static class LoadAlbumTreeAction extends UIHelper.Action<AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> {
         @Override
         public boolean onSuccess(UIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {

@@ -22,7 +22,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -54,7 +53,6 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
@@ -93,7 +91,6 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.ui.model.PiwigoAlbumModel;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -290,9 +287,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             if (backstackCount == 1) {
                 Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
                 if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
+                    // get the next album to show
+                    CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
+                    // remove this fragment (so we don't have an illogical fragment back-stack - child album first)
                     removeFragmentsFromHistory(ViewAlbumFragment.class, true);
-                    PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(this).get("" + currentAlbum.getParentId(), PiwigoAlbumModel.class).getModel();
-                    CategoryItem nextAlbumToShow = nextPiwigoAlbum.getContainerDetails();
+                    // open this fragment again, but with new album
                     showGallery(nextAlbumToShow);
                     blockDefaultBackOperation = true;
                 }
