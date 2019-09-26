@@ -253,6 +253,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.27</item>
+        <item>"Changes:
+            - Allow navigation up to root album using back button when a child album is automatically re-opened on app start
+            - Change to improve perceived image load times"</item>
         <item>1.4.0.26</item>
         <item>"Assorted Bugfixes"</item>
         <item>1.4.0.25</item>

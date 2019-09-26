@@ -1,16 +1,24 @@
 
 <en-GB>
-Assorted Bugfixes
+Changes:
+            - Allow navigation up to root album using back button when a child album is automatically re-opened on app start
+            - Change to improve perceived image load times
 </en-GB>
 
 <de-DE>
-Verschiedene Bugfixes
+Änderungen:
+             - Ermöglichen Sie die Navigation zum Hauptalbum mithilfe der Zurück-Taste, wenn ein untergeordnetes Album beim Start der App automatisch wieder geöffnet wird
+             - Ändern, um wahrgenommene Bildladezeiten zu verbessern
 </de-DE>
 
 <fr-FR>
-Correction de bogues
+Changements:
+             - Autoriser la navigation jusqu'à l'album racine à l'aide du bouton Précédent lorsqu'un album enfant est automatiquement ré-ouvert au démarrage de l'application
+             - Changer pour améliorer les temps de chargement des images perçues
 </fr-FR>
 
 <zh-CN>
-各种错误修正
+变化：
+             -在应用启动时自动重新打开子相册时，允许使用“后退”按钮导航到根相册
+             -进行更改以改善感知的图像加载时间
 </zh-CN>

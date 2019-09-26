@@ -122,6 +122,10 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.27</item>
+        <item>"Änderungen:
+             - Ermöglichen Sie die Navigation zum Hauptalbum mithilfe der Zurück-Taste, wenn ein untergeordnetes Album beim Start der App automatisch wieder geöffnet wird
+             - Ändern, um wahrgenommene Bildladezeiten zu verbessern"</item>
         <item>1.4.0.26</item>
         <item>"Verschiedene Bugfixes"</item>
         <item>1.4.0.25</item>
