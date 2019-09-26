@@ -195,13 +195,13 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
         }
     }
 
-    protected final void load(boolean forceServerRequest) {
+    protected final void load(final boolean forceServerRequest) {
         synchronized (this) {
             if (imageLoading) {
                 return;
             }
             imageLoading = true;
-            //TODO this hack isn't needed if the resource isnt a vector drawable... later version of com.squareup.picasso?
+            //TODO this hack isn't needed if the resource isn't a vector drawable... later version of com.squareup.picasso?
             if (resourceToLoad != Integer.MIN_VALUE) {
                 getLoadInto().setImageResource(getResourceToLoad());
                 onSuccess();
@@ -215,7 +215,12 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
                         task.doInBackground(this);
                     }
                 } else {
-                    runLoad(forceServerRequest);
+                    DisplayUtils.postOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            runLoad(forceServerRequest);
+                        }
+                    }); // this is sensible because if called in a predraw method for example, we don't want to take too long at this point.
                 }
             }
         }
