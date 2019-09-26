@@ -22,6 +22,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -53,6 +54,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
@@ -91,6 +93,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.model.PiwigoAlbumModel;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -281,19 +284,22 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (preferencesShowing) {
-
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-
-            if (!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
-                doDefaultBackOperation();
-            } else {
-                // pop the current fragment off, close app if it is the last one
-                doDefaultBackOperation();
-            }
         } else {
             // pop the current fragment off, close app if it is the last one
-            doDefaultBackOperation();
+            boolean blockDefaultBackOperation = false;
+            if (backstackCount == 1) {
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
+                if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
+                    removeFragmentsFromHistory(ViewAlbumFragment.class, true);
+                    PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(this).get("" + currentAlbum.getParentId(), PiwigoAlbumModel.class).getModel();
+                    CategoryItem nextAlbumToShow = nextPiwigoAlbum.getContainerDetails();
+                    showGallery(nextAlbumToShow);
+                    blockDefaultBackOperation = true;
+                }
+            }
+            if (!blockDefaultBackOperation) {
+                doDefaultBackOperation();
+            }
         }
     }
 
@@ -353,7 +359,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     private void showGallery(final CategoryItem gallery) {
         boolean restore = false;
-        if (CategoryItem.ROOT_ALBUM.equals(gallery)) {
+        if (gallery != null && gallery.isRoot()) {
             // check if we've shown any albums before. If so, pop everything off the stack.
             if (!removeFragmentsFromHistory(ViewAlbumFragment.class, true)) {
                 // we're opening the activity freshly.

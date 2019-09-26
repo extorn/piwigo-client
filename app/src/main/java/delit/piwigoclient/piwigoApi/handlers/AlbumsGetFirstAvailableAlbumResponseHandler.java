@@ -2,6 +2,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import java.util.Iterator;
 import java.util.List;
 
 import delit.libs.http.RequestParams;
@@ -54,11 +55,14 @@ public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoW
                     AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response = (AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) albumListLoadHandler.getResponse();
                     currentAlbumItem.setChildAlbums(response.getAlbums());
                     boolean found = false;
-                    for (CategoryItem catItem : response.getAlbums()) {
+                    Iterator<CategoryItem> iter = response.getAlbums().iterator();
+                    while (iter.hasNext()) {
+                        CategoryItem catItem = iter.next();
                         if (catItem.getId() == albumId) {
                             currentAlbumItem = catItem;
                             found = true;
-                            break;
+                        } else {
+                            iter.remove();
                         }
                     }
                     isAnElementCached |= response.isCached();

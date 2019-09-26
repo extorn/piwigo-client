@@ -154,7 +154,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
-    private static final String TAG = "AbsViewAlbumFrag";
+    public static final String TAG = "AbsViewAlbumFrag";
     public static final String RESUME_ACTION = "ALBUM";
     private static transient PiwigoAlbumAdminList albumAdminList;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
@@ -253,6 +253,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         if (getArguments() != null) {
             albumDetails = getArguments().getParcelable(ARG_ALBUM);
+            if (albumDetails == null) {
+                throw new IllegalStateException("album details are null for some reason");
+            }
             albumDetails.forcePermissionsReload();
             galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
             galleryModel.setContainerDetails(albumDetails);
@@ -272,11 +275,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    protected void onReopenModelRetrieved(CategoryItem album) {
+    protected void onReopenModelRetrieved(CategoryItem rootAlbum, CategoryItem album) {
         try {
             reopening = false;
             galleryIsDirty = true;
             albumDetails = album;
+            // add the album path to the ViewModelProvider
+            CategoryItem thisAlbum = album;
+            do {
+                CategoryItem catItem = rootAlbum.findChild(thisAlbum.getParentId());
+                catItem.removeChildAlbum(thisAlbum);
+                ViewModelProviders.of(requireActivity()).get("" + catItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(catItem);
+                thisAlbum = catItem;
+            } while (!thisAlbum.isRoot());
+
             galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
             populateViewFromModelEtc(requireView(), null);
             populateViewFromModelEtcOnResume();
@@ -441,7 +453,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
             currentGroups = savedInstanceState.getLongArray(STATE_CURRENT_GROUPS);
-            galleryModel = ViewModelProviders.of(getActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum().getValue();
+            galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum().getValue();
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
@@ -466,7 +478,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             albumsPerRow = savedInstanceState.getInt(STATE_ALBUMS_PER_ROW);
         } else {
             // fresh view of the root of the gallery - reset the admin list
-            if (galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
+            if (galleryModel.getContainerDetails().isRoot()) {
                 albumAdminList = null;
             }
         }
@@ -569,7 +581,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 galleryIsDirty = true;
                 reloadAlbumContent();
             } else {
-                if(galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
+                if (galleryModel.getContainerDetails().isRoot()) {
                     // root of gallery can always be refreshed successfully.
                     galleryIsDirty = true;
                 } else {
@@ -1181,7 +1193,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 if (albumAdminList == null) {
                     loadAdminList = true;
                 } else {
-                    if (galleryModel.getContainerDetails().equals(CategoryItem.ROOT_ALBUM)) {
+                    if (galleryModel.getContainerDetails().isRoot()) {
                         adminCategories = albumAdminList.getAlbums();
                     } else {
                         CategoryItem adminCopyOfAlbum = null;
@@ -1510,7 +1522,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         if (galleryModel == null) {
             return; // if reopening page (will be set once data loaded)
         }
-        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM;
+        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || !galleryModel.getContainerDetails().isRoot();
         bottomSheet.setVisibility(visibleBottomSheet ? View.VISIBLE : View.GONE);
 
         addNewAlbumButton.setEnabled(!editingItemDetails);
@@ -1562,7 +1574,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return;
         }
         CategoryItem currentAlbum = galleryModel.getContainerDetails();
-        if (currentAlbum != null && currentAlbum.getName() != null && !currentAlbum.getName().isEmpty() && CategoryItem.ROOT_ALBUM != currentAlbum) {
+        if (currentAlbum != null && currentAlbum.getName() != null && !currentAlbum.getName().isEmpty() && !currentAlbum.isRoot()) {
             galleryNameHeader.setText(galleryModel.getContainerDetails().getName());
             galleryNameHeader.setVisibility(View.VISIBLE);
         } else {
@@ -2021,13 +2033,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
                 currentItem = currentItem.getChild(albumId);
             }
-            uiHelper.getParent().onReopenModelRetrieved(response.getDeepestAlbumOnDesiredPath());
+            uiHelper.getParent().onReopenModelRetrieved(response.getAlbumTreeRoot(), response.getDeepestAlbumOnDesiredPath());
             return true; // to close the progress indicator
         }
 
         @Override
         public boolean onFailure(UIHelper<AbstractViewAlbumFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            uiHelper.getParent().onReopenModelRetrieved(CategoryItem.ROOT_ALBUM.clone());
+            uiHelper.getParent().onReopenModelRetrieved(CategoryItem.ROOT_ALBUM.clone(), CategoryItem.ROOT_ALBUM.clone());
             return true; // to close the progress indicator
         }
     }

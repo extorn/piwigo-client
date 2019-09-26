@@ -215,6 +215,10 @@ public class DisplayUtils {
         return columnsToShow;
     }
 
+    public static void postOnUiThread(Runnable runnable) {
+        runOnUiThread(runnable, 0);
+    }
+
     public static void runOnUiThread(Runnable runnable, long delay) {
         Handler h = new Handler(Looper.getMainLooper());
         h.postDelayed(runnable, delay);
