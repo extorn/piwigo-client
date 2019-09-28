@@ -151,6 +151,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (uploadJobId != null) {
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
         }
+        if (filesToUploadAdapter != null) {
+            filesToUploadAdapter.onSaveInstanceState(outState, "filesToUploadAdapter");
+        }
+        outState.putParcelable(SAVED_STATE_UPLOAD_TO_ALBUM, uploadToAlbum);
         outState.putLong(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID, externallyTriggeredSelectFilesActionId);
     }
 
@@ -168,9 +172,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
             }
             externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
-        }
-        if (savedInstanceState != null) { // override the upload to album value (used to set clickable text field)
-            uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
         }
     }
 
@@ -323,7 +324,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         compressVideosSettings = view.findViewById(R.id.video_compression_options);
         compressVideosQualitySpinner = compressVideosSettings.findViewById(R.id.compress_videos_quality);
-        BiArrayAdapter<String> videoQualityAdapter = new BiArrayAdapter<>(getContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_quality_items),
+        BiArrayAdapter<String> videoQualityAdapter = new BiArrayAdapter<>(requireContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_quality_items),
                 ArrayUtils.getLongArray(getResources().getIntArray(R.array.preference_data_upload_compress_videos_quality_values)));
         videoQualityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         compressVideosQualitySpinner.setAdapter(videoQualityAdapter);
@@ -430,23 +431,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
         }
 
-        if (savedInstanceState != null) {
-            // update view with saved data
-            if (savedInstanceState.containsKey(SAVED_STATE_UPLOAD_JOB_ID)) {
-                uploadJobId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_JOB_ID);
-            }
-        }
-
-        if (uploadToAlbum == null) {
-            uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
-        }
-        selectedGalleryTextView.setText(uploadToAlbum.getName());
-
-        int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, requireActivity());
-
-        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
-        filesForUploadView.setLayoutManager(gridLayoutMan);
-
         if (filesToUploadAdapter == null) {
             filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new ArrayList<File>(), mediaScanner, getContext(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
@@ -461,6 +445,27 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 }
             });
         }
+
+        if (savedInstanceState != null) {
+            // update view with saved data
+            if (savedInstanceState.containsKey(SAVED_STATE_UPLOAD_JOB_ID)) {
+                uploadJobId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_JOB_ID);
+            }
+            // override the upload to album value (used to set clickable text field)
+            uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
+            filesToUploadAdapter.onRestoreInstanceState(savedInstanceState, "filesToUploadAdapter");
+        }
+
+        if (uploadToAlbum == null) {
+            uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
+        }
+        selectedGalleryTextView.setText(uploadToAlbum.getName());
+
+        int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, requireActivity());
+
+        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
+        filesForUploadView.setLayoutManager(gridLayoutMan);
+
         filesForUploadView.setAdapter(filesToUploadAdapter);
 
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesToUploadAdapter);

@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.upload;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
@@ -60,6 +62,18 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         this.mediaScanner = mediaScanner;
         this.setHasStableIds(true);
         updateUris();
+    }
+
+    public Bundle onSaveInstanceState(Bundle b, String key) {
+        Bundle savedInstanceState = new Bundle();
+        BundleUtils.writeMap(savedInstanceState, "data", currentDisplayContentUris);
+        b.putBundle(key, savedInstanceState);
+        return b;
+    }
+
+    public void onRestoreInstanceState(Bundle b, String key) {
+        Bundle savedInstanceState = b.getBundle(key);
+        currentDisplayContentUris = BundleUtils.readMap(savedInstanceState, "data", currentDisplayContentUris, null);
     }
 
     private void updateUris() {

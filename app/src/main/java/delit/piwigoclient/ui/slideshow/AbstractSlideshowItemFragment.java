@@ -297,6 +297,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", errBundle);
             Crashlytics.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
             throw new ModelUnavailableException();
+        } catch (IllegalArgumentException e) {
+            Crashlytics.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow galleryItem could not be found in model - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
+            throw new ModelUnavailableException();
         }
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);

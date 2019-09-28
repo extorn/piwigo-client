@@ -133,7 +133,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
                     T pif = (T) f; // safe since f is already a fragment.
                     int pagerIndex = pif.getPagerIndex();
                     if (pagerIndex < 0) {
-                        throw new RuntimeException("Error pager index invalid!");
+                        Crashlytics.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position);
                     }
                     Fragment removed = activeFragments.put(pagerIndex, pif);
                     if (removed != null) {

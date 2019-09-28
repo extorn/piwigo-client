@@ -464,15 +464,19 @@ public class X509Utils {
                         continue;
                     }
                     Certificate[] certChain = keystore.getCertificateChain(alias);
-                    keyPass = aliasPasswordMap.get(alias);
-                    if (keyPass == null) {
-                        keyPass = blankKey;
+                    if (certChain != null) {
+                        keyPass = aliasPasswordMap.get(alias);
+                        if (keyPass == null) {
+                            keyPass = blankKey;
+                        }
+                        Key key = keystore.getKey(alias, keyPass);
+                        if (key == null) {
+                            key = certChain[0].getPublicKey();
+                        }
+                        certs.put(key, certChain);
+                    } else {
+                        Crashlytics.log(Log.WARN, TAG, "Unable to find certificate chain for alias in keystore");
                     }
-                    Key key = keystore.getKey(alias, keyPass);
-                    if (key == null) {
-                        key = certChain[0].getPublicKey();
-                    }
-                    certs.put(key, certChain);
                 } catch (UnrecoverableKeyException e) {
                     Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {

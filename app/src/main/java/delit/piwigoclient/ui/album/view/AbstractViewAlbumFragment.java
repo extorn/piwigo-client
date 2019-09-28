@@ -283,10 +283,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             // add the album path to the ViewModelProvider
             CategoryItem thisAlbum = album;
             do {
-                CategoryItem catItem = rootAlbum.findChild(thisAlbum.getParentId());
-                catItem.removeChildAlbum(thisAlbum);
-                ViewModelProviders.of(requireActivity()).get("" + catItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(catItem);
-                thisAlbum = catItem;
+                Long albumParentId = thisAlbum.getParentId();
+                if (albumParentId != null) {
+                    CategoryItem catItem = rootAlbum.findChild(albumParentId);
+                    catItem.removeChildAlbum(thisAlbum);
+                    ViewModelProviders.of(requireActivity()).get("" + catItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(catItem);
+                    thisAlbum = catItem;
+                } else {
+                    Crashlytics.log(Log.WARN, TAG, "Attempt to get parent album for album with id " + album.getId());
+                }
             } while (!thisAlbum.isRoot());
 
             galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
@@ -1543,10 +1548,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     private void displayControlsBasedOnSessionState() {
         if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode()) {
-            saveButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
-            discardButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
-            editButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
-            deleteButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
+            boolean showPersistenceControls = galleryModel != null && !galleryModel.getContainerDetails().isRoot();
+            saveButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
+            discardButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
+            editButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
+            deleteButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
             addNewAlbumButton.setVisibility(VISIBLE);
             //TODO make visible once functionality written.
             cutButton.setVisibility(GONE);
@@ -2022,7 +2028,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     public CategoryItem getParentAlbum() {
-        PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(this).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
         return nextPiwigoAlbum.getContainerDetails();
     }
 
@@ -2030,13 +2036,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public boolean onSuccess(UIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
             CategoryItem currentItem = response.getAlbumTreeRoot();
-            FragmentActivity activity = uiHelper.getParent().requireActivity();
-            for (Long albumId : response.getAlbumPath()) {
-                if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
-                    continue;
+            if (currentItem != null) {
+                FragmentActivity activity = uiHelper.getParent().requireActivity();
+                for (Long albumId : response.getAlbumPath()) {
+                    if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
+                        continue;
+                    }
+                    ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
+                    currentItem = currentItem.getChild(albumId);
                 }
-                ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
-                currentItem = currentItem.getChild(albumId);
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "album tree retrieved, but albumTreeRoot is null");
             }
             uiHelper.getParent().onReopenModelRetrieved(response.getAlbumTreeRoot(), response.getDeepestAlbumOnDesiredPath());
             return true; // to close the progress indicator
