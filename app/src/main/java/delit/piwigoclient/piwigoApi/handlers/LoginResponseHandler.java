@@ -1,6 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -86,12 +87,18 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             canContinue = loadMethodsAvailable();
         }
 
-        if (canContinue && PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
-            canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
-        } else {
-            PiwigoSessionDetails instance = PiwigoSessionDetails.getInstance(connectionPrefs);
-            if(instance != null) {
-                instance.setUseCommunityPlugin(false);
+        if (canContinue) {
+            if (PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
+                canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
+            } else {
+                PiwigoSessionDetails instance = PiwigoSessionDetails.getInstance(connectionPrefs);
+                if (instance != null) {
+                    instance.setUseCommunityPlugin(false);
+                } else {
+                    Bundle b = new Bundle();
+                    b.putString("location", "LoginCode");
+                    FirebaseAnalytics.getInstance(getContext()).logEvent("SessionNull", b);
+                }
             }
         }
 

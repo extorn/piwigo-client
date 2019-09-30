@@ -425,8 +425,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
                     return;
                 }
+                if (sessionDetails == null) {
+                    Bundle b = new Bundle();
+                    b.putString("location", "upload - get login");
+                    FirebaseAnalytics.getInstance(this).logEvent("SessionNull", b);
+                    postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
+                    return;
+                }
             }
-
             ArrayList<CategoryItemStub> availableAlbumsOnServer = retrieveListOfAlbumsOnServer(thisUploadJob, sessionDetails);
             if (availableAlbumsOnServer == null) {
                 //try again. This is really important.
