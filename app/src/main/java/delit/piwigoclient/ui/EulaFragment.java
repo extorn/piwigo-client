@@ -112,7 +112,7 @@ public class EulaFragment extends MyFragment<EulaFragment> {
     }
 
     private void onDontAgreeToEula() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(getString(R.string.preference_agreed_eula_version_key));
         editor.commit();
@@ -120,7 +120,7 @@ public class EulaFragment extends MyFragment<EulaFragment> {
     }
 
     private void onAgreeToEula() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(getString(R.string.preference_agreed_eula_version_key), getResources().getInteger(R.integer.eula_version));
         editor.commit();
