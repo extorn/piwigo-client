@@ -652,6 +652,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
 
         bulkActionButtonPermissions = bulkActionsContainer.findViewById(R.id.gallery_action_permissions_bulk);
+        bulkActionButtonTag = bulkActionsContainer.findViewById(R.id.gallery_action_tag_bulk);
+        bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
+        bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
+        bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
+        bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
+
         bulkActionButtonPermissions.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -661,21 +667,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 return true; // consume the event
             }
         });
-        if (showBulkPermissionsAction(basket)) {
-            bulkActionButtonPermissions.show();
-        } else {
-            bulkActionButtonPermissions.hide();
-        }
-
-        bulkActionButtonTag = bulkActionsContainer.findViewById(R.id.gallery_action_tag_bulk);
-        bulkActionButtonTag.hide();
-
-        bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
-        if(showBulkDeleteAction(basket)) {
-            bulkActionButtonDelete.show();
-        } else {
-            bulkActionButtonDelete.hide();
-        }
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -685,13 +676,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 return true; // consume the event
             }
         });
-
-        bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
-        if(showBulkCopyAction(basket)) {
-            bulkActionButtonCopy.show();
-        } else {
-            bulkActionButtonCopy.hide();
-        }
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -702,13 +686,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 return true; // consume the event
             }
         });
-
-        bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
-        if(showBulkCutAction(basket)) {
-            bulkActionButtonCut.show();
-        } else {
-            bulkActionButtonCut.hide();
-        }
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -720,12 +697,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         });
 
-        bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
-        if(showBulkPasteAction(basket)) {
-            bulkActionButtonPaste.show();
-        } else {
-            bulkActionButtonPaste.hide();
-        }
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -744,6 +715,37 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 return true; // consume the event
             }
         });
+
+        if (!reopening && showBulkPermissionsAction(basket)) {
+            bulkActionButtonPermissions.show();
+        } else {
+            bulkActionButtonPermissions.hide();
+        }
+
+
+        bulkActionButtonTag.hide();
+
+
+        if (!reopening && showBulkDeleteAction(basket)) {
+            bulkActionButtonDelete.show();
+        } else {
+            bulkActionButtonDelete.hide();
+        }
+        if (!reopening && showBulkCopyAction(basket)) {
+            bulkActionButtonCopy.show();
+        } else {
+            bulkActionButtonCopy.hide();
+        }
+        if (!reopening && showBulkCutAction(basket)) {
+            bulkActionButtonCut.show();
+        } else {
+            bulkActionButtonCut.hide();
+        }
+        if (!reopening && showBulkPasteAction(basket)) {
+            bulkActionButtonPaste.show();
+        } else {
+            bulkActionButtonPaste.hide();
+        }
     }
 
     private void loadAdminListOfAlbums() {
