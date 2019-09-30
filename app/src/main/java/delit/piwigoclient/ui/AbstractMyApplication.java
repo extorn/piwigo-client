@@ -58,16 +58,12 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_password_key, null);
                 encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_username_key, null);
                 encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
-                editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             }
         });
         migrators.add(new PreferenceMigrator(226) {
 
             @Override
             protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                if (!prefs.contains(getString(R.string.preference_app_prefs_version_key))) {
-                    editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-                }
                 if (prefs.contains(getString(R.string.preference_piwigo_server_address_key))) {
                     String serverName = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
                     if (serverName != null) {
@@ -122,9 +118,6 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
             @Override
             protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                if (!prefs.contains(getString(R.string.preference_app_prefs_version_key))) {
-                    editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-                }
                 try {
                     String multimediaCsvList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), null);
                     HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
@@ -190,6 +183,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             if (currentPrefsVersion < prefsVersion) {
                 SharedPreferences.Editor editor = prefs.edit();
                 upgradePreferences(context, prefs, editor);
+                editor.putInt(context.getString(R.string.preference_app_prefs_version_key), prefsVersion);
                 editor.commit(); // need to wait for it - make sure they're written to disk in order
             }
         }
