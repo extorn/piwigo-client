@@ -253,40 +253,7 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.28</item>
+        <item>1.4.0.29</item>
         <item>"Assorted Bugfixes"</item>
-        <item>1.4.0.27</item>
-        <item>"Changes:
-            - Allow navigation up to root album using back button when a child album is automatically re-opened on app start
-            - Change to improve perceived image load times"</item>
-        <item>1.4.0.26</item>
-        <item>"Assorted Bugfixes"</item>
-        <item>1.4.0.25</item>
-        <item>"Changes:
-            - Allow reopening of previous album if the app is restarted (falls back to first available)
-            Bugfix:
-                - Settings grayed following library update (reverted)"</item>
-        <item>1.4.0.24</item>
-        <item>"Bugfix:
-            - incorrect checkbox icon shown selecting user album access for users in selected groups
-            - popup keyboard obscures the resource detail edit field
-            - use development copy of metadata-extractor to remove awt dependency
-            - Corrected ISO location lat long parser error
-            - Added extra logging when encountering date format errors
-            - crash when image requested but picasso not started"</item>
-        <item>1.4.0.23</item>
-        <item>"Changes:
-            - Added hints to hidden app functionality
-            - Support zooming out so an image doesn't fill the screen when viewed fullscreen"</item>
-        <item>1.4.0.22</item>
-        <item>"Changes:
-            - New preference to allow image to be rotated 90 right if the aspect ratio of the image matches the screen better like this"</item>
-        <item>1.4.0.21</item>
-        <item>"Changes:
-            - Add preference to set default file permissions for upload screen
-            - minor change to fullscreen behaviour (hope to make this mode optional in the next release)
-            Bugfix:
-            - page requests to update many resource item permissions
-            - moving between images works again in slideshow"</item>
     </string-array>
 </resources>
