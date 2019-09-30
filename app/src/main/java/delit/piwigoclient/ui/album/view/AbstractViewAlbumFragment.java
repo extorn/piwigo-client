@@ -1072,7 +1072,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         privacyStatusFieldListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked && !galleryModel.getContainerDetails().isPrivate()) {
+                if (!reopening && isChecked && !galleryModel.getContainerDetails().isPrivate()) {
+                    // when reopening, this will be called once the gallery model has been loaded.
                     loadAlbumPermissionsIfNeeded();
                 }
                 allowedGroupsFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);

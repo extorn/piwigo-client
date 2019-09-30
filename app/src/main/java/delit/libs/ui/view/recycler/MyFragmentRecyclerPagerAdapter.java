@@ -341,8 +341,11 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
     @Override
     public void finishUpdate(@NonNull ViewGroup container) {
-        commitFragmentTransaction();
-
+        try {
+            commitFragmentTransaction();
+        } catch (IllegalStateException e) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to commit fragment transaction at this time - transaction will likely be lost.");
+        }
     }
 
     private void commitFragmentTransaction() {
