@@ -2031,6 +2031,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     public CategoryItem getParentAlbum() {
+        if (albumDetails == null) {
+            Crashlytics.log(Log.WARN, TAG, "Attempt to reopen parent but is null");
+            return null;
+        }
         PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
         return nextPiwigoAlbum.getContainerDetails();
     }
@@ -2047,6 +2051,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     }
                     ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
                     currentItem = currentItem.getChild(albumId);
+                    if (currentItem == null) {
+                        break; // were unable to load this item.
+                    }
                 }
             } else {
                 Crashlytics.log(Log.ERROR, TAG, "album tree retrieved, but albumTreeRoot is null");

@@ -298,11 +298,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
                     // get the next album to show
                     CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
-                    // remove this fragment (so we don't have an illogical fragment back-stack - child album first)
-                    removeFragmentsFromHistory(ViewAlbumFragment.class, true);
-                    // open this fragment again, but with new album
-                    showGallery(nextAlbumToShow);
-                    blockDefaultBackOperation = true;
+                    if (nextAlbumToShow != null) {
+                        // remove this fragment (so we don't have an illogical fragment back-stack - child album first)
+                        removeFragmentsFromHistory(ViewAlbumFragment.class, true);
+                        // open this fragment again, but with new album
+                        showGallery(nextAlbumToShow);
+                        blockDefaultBackOperation = true;
+                    }
                 }
             }
             if (!blockDefaultBackOperation) {
