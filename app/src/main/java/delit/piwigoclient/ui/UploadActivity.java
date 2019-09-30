@@ -1,8 +1,10 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -191,7 +193,14 @@ public class UploadActivity extends MyActivity {
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
         if (result != ConnectionResult.SUCCESS) {
             if (googleApi.isUserResolvableError(result)) {
-                googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST).show();
+                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
+                d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        finish();
+                    }
+                });
+                d.show();
             } else {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<UploadActivity>>(getUiHelper()) {
                     @Override
@@ -372,9 +381,11 @@ public class UploadActivity extends MyActivity {
             for(int i = 0; i < clipData.getItemCount(); i++) {
                 ClipData.Item sharedItem = clipData.getItemAt(i);
                 Uri sharedUri = sharedItem.getUri();
-                String mimeType = getContentResolver().getType(sharedUri);
                 if (sharedUri != null) {
-                    handleSentImage(sharedUri, mimeType, filesToUpload);
+                    String mimeType = getContentResolver().getType(sharedUri);
+                    if (sharedUri != null) {
+                        handleSentImage(sharedUri, mimeType, filesToUpload);
+                    }
                 }
             }
             intent.setClipData(null);

@@ -1,7 +1,9 @@
 package delit.piwigoclient.ui;
 
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -251,7 +253,14 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
         if (result != ConnectionResult.SUCCESS) {
             if (googleApi.isUserResolvableError(result)) {
-                googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST).show();
+                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
+                d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        finish();
+                    }
+                });
+                d.show();
             } else {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
                     @Override
