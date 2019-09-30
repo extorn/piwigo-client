@@ -275,7 +275,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if (b == null) {
             return;
         }
-        Class<? extends ViewModelContainer> galleryModelClass = (Class) b.getSerializable(ARG_GALLERY_TYPE);
+        Class<? extends ViewModelContainer> galleryModelClass = (Class<? extends ViewModelContainer>) b.getSerializable(ARG_GALLERY_TYPE);
         long galleryModelId = b.getLong(ARG_GALLERY_ID);
         ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
         ResourceContainer<?, T> modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
@@ -292,12 +292,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             model = modelStore.getItemById(galleryItemId);
         } catch (ClassCastException e) {
             Bundle errBundle = new Bundle();
+            errBundle.putString("error", e.getMessage());
             errBundle.putString("class", galleryModelClass.getName());
             errBundle.putLong("modelId", galleryModelId);
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", errBundle);
+            Crashlytics.logException(e);
             Crashlytics.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
             throw new ModelUnavailableException();
         } catch (IllegalArgumentException e) {
+            Crashlytics.logException(e);
             Crashlytics.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow galleryItem could not be found in model - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
             throw new ModelUnavailableException();
         }
