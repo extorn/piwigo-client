@@ -11,7 +11,6 @@
         <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
-            app:setDefaultOnAttach="false"
             android:key="@string/preference_data_upload_preferredColumnsPortrait_key"
             android:title="@string/preference_data_upload_preferredColumnsPortrait_title"
             android:summary="@string/preference_data_upload_preferredColumnsPortrait_summary"
@@ -20,7 +19,6 @@
         <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
-            app:setDefaultOnAttach="false"
             android:key="@string/preference_data_upload_preferredColumnsLandscape_key"
             android:title="@string/preference_data_upload_preferredColumnsLandscape_title"
             android:summary="@string/preference_data_upload_preferredColumnsLandscape_summary"
@@ -42,7 +40,7 @@
             app:entries="@array/privacy_levels_groups_array"
             app:entryValues="@array/privacy_levels_values_array" />
         <delit.libs.ui.view.preference.NumberPickerPreference
-            app:defValue="@integer/preference_data_upload_chunkSizeKb_default"
+            android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
             app:minValue="256"
             app:maxValue="10240"
             android:key="@string/preference_data_upload_chunkSizeKb_key"
@@ -51,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <delit.libs.ui.view.preference.NumberPickerPreference
-            app:defValue="@integer/preference_data_upload_chunk_auto_retries_default"
+            android:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
             app:minValue="0"
             app:maxValue="5"
             android:key="@string/preference_data_upload_chunk_auto_retries_key"
@@ -60,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <delit.libs.ui.view.preference.NumberPickerPreference
-            app:defValue="@integer/preference_data_upload_max_filesize_mb_default"
+            android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
             app:minValue="0"
             app:maxValue="150"
             android:key="@string/preference_data_upload_max_filesize_mb_key"
@@ -87,7 +85,7 @@
             android:key="@string/preference_data_upload_compress_images_quality_key"
             android:summary="@string/preference_data_upload_compress_images_quality_summary"
             android:title="@string/preference_data_upload_compress_images_quality_title"
-            app:defValue="@integer/preference_data_upload_compress_images_quality_default"
+            android:defaultValue="@integer/preference_data_upload_compress_images_quality_default"
             app:maxValue="@integer/preference_data_upload_compress_images_quality_max"
             app:minValue="@integer/preference_data_upload_compress_images_quality_min" />
         <delit.libs.ui.view.preference.NumberPickerPreference
@@ -96,7 +94,7 @@
             android:key="@string/preference_data_upload_compress_images_max_height_key"
             android:summary="@string/preference_data_upload_compress_images_max_height_summary"
             android:title="@string/preference_data_upload_compress_images_max_height_title"
-            app:defValue="@integer/preference_data_upload_compress_images_max_height_default"
+            android:defaultValue="@integer/preference_data_upload_compress_images_max_height_default"
             app:maxValue="@integer/preference_data_upload_compress_images_max_height_max"
             app:minValue="@integer/preference_data_upload_compress_images_max_height_min" />
         <delit.libs.ui.view.preference.NumberPickerPreference
@@ -105,7 +103,7 @@
             android:key="@string/preference_data_upload_compress_images_max_width_key"
             android:summary="@string/preference_data_upload_compress_images_max_width_summary"
             android:title="@string/preference_data_upload_compress_images_max_width_title"
-            app:defValue="@integer/preference_data_upload_compress_images_max_width_default"
+            android:defaultValue="@integer/preference_data_upload_compress_images_max_width_default"
             app:maxValue="@integer/preference_data_upload_compress_images_max_width_max"
             app:minValue="@integer/preference_data_upload_compress_images_max_width_min" />
         <androidx.preference.ListPreference

@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceManager;
@@ -19,6 +20,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.util.PreferenceUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -29,6 +31,7 @@ import delit.piwigoclient.R;
 
 public class EditableListPreference extends DialogPreference {
 
+    private static final String TAG = "EditableListPreference";
     // State persistent values
     private TreeSet<String> currentValues = new TreeSet<>();
     private TreeSet<String> entries;
@@ -175,12 +178,19 @@ public class EditableListPreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(Object defaultValue) {
-        boolean canRestoreValue = shouldPersist() && getSharedPreferences().contains(getKey());
-        if (isMultiSelectMode()) {
-            setValues(canRestoreValue ? getPersistedStringSet(currentValues) : (Set<String>) defaultValue);
-        } else {
-            String currentValue = currentValues.size() > 0 ? currentValues.iterator().next() : null;
-            setValue(canRestoreValue ? getPersistedString(currentValue) : (String) defaultValue);
+        try {
+            boolean canRestoreValue = shouldPersist() && getSharedPreferences().contains(getKey());
+            if (isMultiSelectMode()) {
+                setValues(canRestoreValue ? getPersistedStringSet(currentValues) : (Set<String>) defaultValue);
+            } else {
+                String currentValue = currentValues.size() > 0 ? currentValues.iterator().next() : null;
+                setValue(canRestoreValue ? getPersistedString(currentValue) : (String) defaultValue);
+            }
+        } catch (ClassCastException e) {
+            Crashlytics.logException(e);
+            String msg = "Pref " + this.getKey() + " in " + (isMultiSelectMode() ? "multi" : "single") + "select mode initialised with value of wrong type (" + defaultValue + ")";
+            Crashlytics.log(Log.ERROR, TAG, msg);
+            throw e;
         }
     }
 
@@ -279,16 +289,7 @@ public class EditableListPreference extends DialogPreference {
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        if (isMultiSelectMode()) {
-            CharSequence[] val = a.getTextArray(index);
-            HashSet<String> defVal = new HashSet<>(val != null ? val.length : 0);
-            for (CharSequence v : val) {
-                defVal.add(v.toString());
-            }
-            return defVal;
-        } else {
-            return a.getString(index);
-        }
+        return PreferenceUtils.getMultiTypeDefaultValue(this, a, index);
     }
 
     public boolean isAllowItemEdit() {

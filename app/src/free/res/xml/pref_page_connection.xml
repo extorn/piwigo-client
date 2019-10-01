@@ -164,7 +164,7 @@
             android:key="@string/preference_server_connection_max_redirects_key"
             android:summary="@string/preference_server_connection_max_redirects_summary"
             android:title="@string/preference_server_connection_max_redirects_title"
-            app:defValue="@integer/preference_server_connection_max_redirects_default"
+            android:defaultValue="@integer/preference_server_connection_max_redirects_default"
             app:maxValue="100"
             app:minValue="0"
             app:wrapPickList="false" />
@@ -175,7 +175,7 @@
             android:key="@string/preference_server_connection_timeout_secs_key"
             android:summary="@string/preference_server_connection_timeout_secs_summary"
             android:title="@string/preference_server_connection_timeout_secs_title"
-            app:defValue="@integer/preference_server_connection_timeout_secs_default"
+            android:defaultValue="@integer/preference_server_connection_timeout_secs_default"
             app:maxValue="30"
             app:minValue="1"
             app:wrapPickList="false" />
@@ -186,7 +186,7 @@
             android:key="@string/preference_server_response_timeout_secs_key"
             android:summary="@string/preference_server_response_timeout_secs_summary"
             android:title="@string/preference_server_response_timeout_secs_title"
-            app:defValue="@integer/preference_server_response_timeout_secs_default"
+            android:defaultValue="@integer/preference_server_response_timeout_secs_default"
             app:maxValue="30"
             app:minValue="1"
             app:wrapPickList="false" />
@@ -198,7 +198,7 @@
             android:key="@string/preference_server_connection_retries_key"
             android:summary="@string/preference_server_connection_retries_summary"
             android:title="@string/preference_server_connection_retries_title"
-            app:defValue="@integer/preference_server_connection_retries_default"
+            android:defaultValue="@integer/preference_server_connection_retries_default"
             app:maxValue="10"
             app:minValue="0"
             app:wrapPickList="false" />
@@ -229,7 +229,7 @@
             android:key="@string/preference_caching_max_cache_entries_key"
             android:summary="@string/preference_caching_max_cache_entries_summary"
             android:title="@string/preference_caching_max_cache_entries_title"
-            app:defValue="@integer/preference_caching_max_cache_entries_default"
+            android:defaultValue="@integer/preference_caching_max_cache_entries_default"
             app:maxValue="10000"
             app:minValue="0"
             app:wrapPickList="false"/>
@@ -239,7 +239,7 @@
             android:key="@string/preference_caching_max_cache_entry_size_key"
             android:summary="@string/preference_caching_max_cache_entry_size_summary"
             android:title="@string/preference_caching_max_cache_entry_size_title"
-            app:defValue="@integer/preference_caching_max_cache_entry_size_default"
+            android:defaultValue="@integer/preference_caching_max_cache_entry_size_default"
             app:maxValue="10240"
             app:minValue="0"
             app:multiplier="1024"

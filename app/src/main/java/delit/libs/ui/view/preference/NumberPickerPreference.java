@@ -26,6 +26,7 @@ import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
+import delit.libs.ui.util.PreferenceUtils;
 import delit.piwigoclient.R;
 
 /**
@@ -44,7 +45,6 @@ import delit.piwigoclient.R;
 public class NumberPickerPreference extends DialogPreference {
     private int maxValue;
     private int minValue;
-    private boolean setDefaultOnAttach;
     private boolean wrapPickList;
     private int multiplier;
     private int value = 0;
@@ -79,8 +79,6 @@ public class NumberPickerPreference extends DialogPreference {
         minValue = a.getInt(R.styleable.NumberPickerPreference_minValue, DEFAULT_minValue);
         int DEFAULT_multiplier = 1;
         multiplier = a.getInt(R.styleable.NumberPickerPreference_multiplier, DEFAULT_multiplier);
-        value = a.getInt(R.styleable.NumberPickerPreference_defValue, 0);
-        setDefaultOnAttach = a.getBoolean(R.styleable.NumberPickerPreference_setDefaultOnAttach, true);
         wrapPickList = a.getBoolean(R.styleable.NumberPickerPreference_wrapPickList, false);
         a.recycle();
     }
@@ -98,10 +96,13 @@ public class NumberPickerPreference extends DialogPreference {
     }
 
     @Override
-    protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        if (setDefaultOnAttach) {
-            setValue(restoreValue ? getAdjustedPersistedInt(getPersistedInt(value * multiplier)) : (Integer) defaultValue);
+    protected void onSetInitialValue(Object defaultValue) {
+        int defaultVal = 0;
+        if (defaultValue != null) {
+            // default value is null if there is already a value stored for this preference. (so my code is overly complex I think!)
+            defaultVal = (Integer) defaultValue;
         }
+        setValue(getAdjustedPersistedInt(getPersistedInt(defaultVal * multiplier)));
     }
 
     protected int getAdjustedPersistedInt(int defaultPersistedInt) {
@@ -134,7 +135,7 @@ public class NumberPickerPreference extends DialogPreference {
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getInt(index, 0);
+        return PreferenceUtils.getIntDefaultValue(this, a, index, 0);
     }
 
     @Override

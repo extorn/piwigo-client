@@ -119,7 +119,8 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             @Override
             protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
                 try {
-                    String multimediaCsvList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), null);
+                    String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
+                    String multimediaCsvList = prefs.getString(key, null);
                     HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
                     HashSet<String> cleanedValues = new HashSet<>(values.size());
                     for (String value : values) {
@@ -130,7 +131,6 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                             cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
                         }
                     }
-                    String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
                     editor.remove(key);
                     editor.putStringSet(key, cleanedValues);
                 } catch (ClassCastException e) {
@@ -151,14 +151,15 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         for (PreferenceMigrator migrator : migrators) {
             migrator.execute(this, prefs, currentPrefsVersion);
         }
-        if (currentPrefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
+        int latestAppVersion = ProjectUtils.getVersionCode(getApplicationContext());
+        if (currentPrefsVersion < latestAppVersion) {
             SharedPreferences.Editor editor = prefs.edit();
-            int newVersion = ProjectUtils.getVersionCode(getApplicationContext());
-            editor.putInt(getString(R.string.preference_app_prefs_version_key), newVersion);
+
+            editor.putInt(getString(R.string.preference_app_prefs_version_key), latestAppVersion);
             editor.commit(); // ensure this is written to disk now.
             Bundle bundle = new Bundle();
             bundle.putInt("from_version", currentPrefsVersion);
-            bundle.putInt("to_version", newVersion);
+            bundle.putInt("to_version", latestAppVersion);
             FirebaseAnalytics.getInstance(this).logEvent("app_upgraded", bundle);
         }
     }
