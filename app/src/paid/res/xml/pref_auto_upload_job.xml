@@ -148,7 +148,7 @@
             <delit.libs.ui.view.preference.IntListPreference
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:defaultValue="#int/preference_data_upload_automatic_job_privacy_level_default"
+                android:defaultValue="@integer/preference_data_upload_automatic_job_privacy_level_default"
                 android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
                 android:key="@string/preference_data_upload_automatic_job_privacy_level_key"
                 android:summary="@string/preference_data_upload_automatic_job_privacy_level_summary"

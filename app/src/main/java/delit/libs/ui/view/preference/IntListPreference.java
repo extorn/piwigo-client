@@ -2,6 +2,7 @@ package delit.libs.ui.view.preference;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 
@@ -10,6 +11,7 @@ import androidx.annotation.RequiresApi;
 
 import com.crashlytics.android.Crashlytics;
 
+import delit.libs.ui.util.PreferenceUtils;
 import delit.libs.util.ArrayUtils;
 
 public class IntListPreference extends MappedListPreference<Integer> {
@@ -33,27 +35,17 @@ public class IntListPreference extends MappedListPreference<Integer> {
     }
 
     @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        return PreferenceUtils.getIntDefaultValue(this, a, index, 0);
+    }
+
+    @Override
     protected Integer transform(Object obj) {
-        if (obj == null) {
-            return null;
-        }
         if (obj instanceof Integer) {
             return (Integer) obj;
+        } else {
+            throw new IllegalArgumentException("object must be assignable to Integer (" + obj + ")");
         }
-        if(obj instanceof String) {
-            String resIdStr = (String)obj;
-            if (resIdStr.startsWith("#int/")) {
-                //may be a reference to an int.
-                int resId = getContext().getResources().getIdentifier(resIdStr.substring(5), "integer", getContext().getPackageName());
-                if(resId != 0) {
-                    return getContext().getResources().getInteger(resId);
-                } else {
-                    throw new IllegalArgumentException("integer resource id does not exist : " + resIdStr.substring(5));
-                }
-            }
-
-        }
-        return Integer.valueOf(obj.toString());
     }
 
     @Override

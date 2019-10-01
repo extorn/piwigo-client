@@ -7,10 +7,7 @@ import android.util.AttributeSet;
 
 import androidx.preference.DialogPreference;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ListIterator;
@@ -75,8 +72,8 @@ public abstract class KeyStorePreference extends DialogPreference {
     }
 
     @Override
-    protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setKeystore(restoreValue ? loadKeystore() : buildBlankKeyStore());
+    protected void onSetInitialValue(Object defaultValue) {
+        setKeystore(loadKeystore());
     }
 
     /**
@@ -104,15 +101,6 @@ public abstract class KeyStorePreference extends DialogPreference {
     protected abstract void saveKeystore(KeyStore keystore);
 
     protected abstract KeyStore loadKeystore();
-
-    private KeyStore buildBlankKeyStore() {
-        try {
-            return KeyStore.getInstance(KeyStore.getDefaultType());
-        } catch (KeyStoreException e) {
-            Crashlytics.logException(e);
-            throw new RuntimeException("Unable to set initial value", e);
-        }
-    }
 
     @Override
     protected Parcelable onSaveInstanceState() {

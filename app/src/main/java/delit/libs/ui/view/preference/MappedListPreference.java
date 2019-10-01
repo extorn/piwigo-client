@@ -15,6 +15,7 @@ import androidx.preference.Preference;
 
 import java.io.Serializable;
 
+import delit.libs.ui.util.PreferenceUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
 
@@ -260,12 +261,13 @@ public abstract class MappedListPreference<T extends Serializable> extends Dialo
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getString(index);
+        return PreferenceUtils.getMultiTypeDefaultValue(this, a, index);
     }
 
     @Override
-    protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setValue(restoreValue ? getPersistedValue(currentValue) : transform(defaultValue));
+    protected void onSetInitialValue(Object defaultValue) {
+        boolean canRestoreValue = shouldPersist() && getSharedPreferences().contains(getKey());
+        setValue(canRestoreValue ? getPersistedValue(currentValue) : transform(defaultValue));
     }
 
     @Override
