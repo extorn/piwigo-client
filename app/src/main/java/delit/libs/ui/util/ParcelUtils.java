@@ -1,5 +1,6 @@
 package delit.libs.ui.util;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -9,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -273,5 +275,37 @@ public class ParcelUtils {
 
     public static Long readLong(Parcel in) {
         return readValue(in, null, Long.class);
+    }
+
+    public static void writeFile(Parcel out, File file) {
+        if (file != null) {
+            out.writeString(file.getAbsolutePath());
+        } else {
+            out.writeValue(null);
+        }
+    }
+
+    public static File readFile(Parcel in) {
+        String value = (String) in.readValue(null);
+        if (value == null) {
+            return null;
+        }
+        return new File(value);
+    }
+
+    public static void writeUri(Parcel out, Uri uri) {
+        if (uri != null) {
+            out.writeString(uri.toString());
+        } else {
+            out.writeValue(null);
+        }
+    }
+
+    public static Uri readUri(Parcel in) {
+        String value = (String) in.readValue(null);
+        if (value == null) {
+            return null;
+        }
+        return Uri.parse(value);
     }
 }

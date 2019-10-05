@@ -67,7 +67,7 @@ public class UploadJob implements Serializable {
     private ImageCompressionParams imageCompressionParams;
     private boolean allowUploadOfRawVideosIfIncompressible;
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, List<File> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;

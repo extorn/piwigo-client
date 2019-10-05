@@ -59,6 +59,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
     private boolean usePlaceholderIfError = false;
     private String lastLoadError;
     private boolean waitForErrorMessage;
+    private boolean usePlaceholderIfNothingToLoad;
 
     public PicassoLoader(T loadInto) {
         this(loadInto, null);
@@ -67,6 +68,10 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
     public PicassoLoader(T loadInto, PictureItemImageLoaderListener listener) {
         this.loadInto = loadInto;
         this.listener = listener;
+    }
+
+    public void setUsePlaceholderIfNothingToLoad(boolean usePlaceholderIfNothingToLoad) {
+        this.usePlaceholderIfNothingToLoad = usePlaceholderIfNothingToLoad;
     }
 
     @Override
@@ -335,6 +340,10 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             return picassoSingleton.load(fileToLoad); // convert to uri to allow using MediaStore data (useful for video thumbnails)
         } else if (resourceToLoad != Integer.MIN_VALUE) {
             return picassoSingleton.load(resourceToLoad);
+        }
+
+        if (usePlaceholderIfNothingToLoad) {
+            return picassoSingleton.load(placeholderPlaceholderId);
         }
 
         Crashlytics.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image");

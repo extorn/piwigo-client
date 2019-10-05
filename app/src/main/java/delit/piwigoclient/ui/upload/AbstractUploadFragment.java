@@ -109,11 +109,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final String SAVED_STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID = "externallyTriggeredSelectFilesActionId";
     private static final boolean ENABLE_COMPRESSION_BUTTON = false;
-
+    private static final int TAB_IDX_SETTINGS = 1;
+    private static final int TAB_IDX_FILES = 0;
     private Long uploadJobId;
     private long externallyTriggeredSelectFilesActionId;
     private CategoryItemStub uploadToAlbum;
-
     private RecyclerView filesForUploadView;
     private Button uploadFilesNowButton;
     private Button deleteUploadJobButton;
@@ -126,8 +126,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private CheckBox compressVideosCheckbox;
     private CheckBox allowUploadOfRawVideosIfIncompressibleCheckbox;
     private CheckBox compressImagesCheckbox;
-    private static final int TAB_IDX_SETTINGS = 1;
-    private static final int TAB_IDX_FILES = 0;
     private ViewPager mViewPager;
     private LinearLayout compressImagesSettings;
     private LinearLayout compressVideosSettings;
@@ -479,7 +477,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getUiHelper().showDetailedMsg(R.string.alert_error, "Video Compression not supported on this version of android");
         } else {
             FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-            ArrayList<File> filesForUpload = fileListAdapter.getFiles();
+            List<File> filesForUpload = fileListAdapter.getFiles();
             if (filesForUpload.isEmpty()) {
                 return;
             }
@@ -517,7 +515,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     protected boolean hasFileMatchingMime(String mimePrefix) {
-        ArrayList<File> files = filesToUploadAdapter.getFiles();
+        List<File> files = filesToUploadAdapter.getFiles();
         MimeTypeMap mimeTypesMap = MimeTypeMap.getSingleton();
         for (File f : files) {
             String fileExt = IOUtils.getFileExt(f.getName());
@@ -743,7 +741,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-        ArrayList<File> filesForUpload = fileListAdapter.getFiles();
+        List<File> filesForUpload = fileListAdapter.getFiles();
 
         if (activeJob == null) {
 
@@ -789,7 +787,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         submitUploadJob(activeJob);
     }
 
-    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(ArrayList<File> filesForUpload) {
+    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(List<File> filesForUpload) {
 
         final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUpload);
 
@@ -831,7 +829,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return true;
     }
 
-    private boolean runIsAllFileTypesAcceptedByServerTests(ArrayList<File> filesForUpload) {
+    private boolean runIsAllFileTypesAcceptedByServerTests(List<File> filesForUpload) {
         // check for server unacceptable files.
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
         Set<String> serverAcceptedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
@@ -1084,6 +1082,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return selectedGalleryTextView;
     }
 
+    private Button getUploadFilesNowButton() {
+        return uploadFilesNowButton;
+    }
+
     private static class OnLoginAction extends UIHelper.Action<AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
         @Override
         public boolean onSuccess(UIHelper<AbstractUploadFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
@@ -1114,10 +1116,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 fragment.updateActiveJobActionButtonsStatus();
             }
         }
-    }
-
-    private Button getUploadFilesNowButton() {
-        return uploadFilesNowButton;
     }
 
     private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
@@ -1230,7 +1228,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             if (Boolean.TRUE == positiveAnswer) {
 
-                ArrayList<File> unaccceptableFiles = new ArrayList<>(fragment.getFilesForUploadViewAdapter().getFiles());
+                List<File> unaccceptableFiles = new ArrayList<>(fragment.getFilesForUploadViewAdapter().getFiles());
                 Iterator<File> iter = unaccceptableFiles.iterator();
                 while (iter.hasNext()) {
                     if (!unacceptableFileExts.contains(IOUtils.getFileExt(iter.next().getName()).toLowerCase())) {

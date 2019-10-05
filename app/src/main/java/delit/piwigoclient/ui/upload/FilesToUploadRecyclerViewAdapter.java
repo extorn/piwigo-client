@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,13 +24,12 @@ import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -48,17 +49,16 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public static final int SCALING_QUALITY_MEDIUM = 240;
     public static final int SCALING_QUALITY_LOW = 120;
     public static final int SCALING_QUALITY_VLOW = 60;
-    private final UploadProgressModel uploadProgressModel;
+
+    private UploadDataItemModel uploadDataItemsModel;
     private final RemoveListener listener;
     private final int scalingQuality = SCALING_QUALITY_MEDIUM;
     private final MediaScanner mediaScanner;
-    private boolean useDarkMode;
-    private HashMap<File, Uri> currentDisplayContentUris = new HashMap<>();
     private int viewType = VIEW_TYPE_LIST;
 
     public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, MediaScanner mediaScanner, @NonNull Context context, RemoveListener listener) {
         this.listener = listener;
-        this.uploadProgressModel = new UploadProgressModel(filesToUpload);
+        this.uploadDataItemsModel = new UploadDataItemModel(filesToUpload);
         this.mediaScanner = mediaScanner;
         this.setHasStableIds(true);
         updateUris();
@@ -66,26 +66,23 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     public Bundle onSaveInstanceState(Bundle b, String key) {
         Bundle savedInstanceState = new Bundle();
-        BundleUtils.writeMap(savedInstanceState, "data", currentDisplayContentUris);
+        savedInstanceState.putParcelable("data", uploadDataItemsModel);
         b.putBundle(key, savedInstanceState);
         return b;
     }
 
     public void onRestoreInstanceState(Bundle b, String key) {
         Bundle savedInstanceState = b.getBundle(key);
-        currentDisplayContentUris = BundleUtils.readMap(savedInstanceState, "data", currentDisplayContentUris, null);
+        uploadDataItemsModel = savedInstanceState.getParcelable("data");
     }
 
     private void updateUris() {
-        if (uploadProgressModel.filesToUpload.isEmpty()) {
-            currentDisplayContentUris.clear();
-            return;
-        }
-        notifyDataSetChanged();
-        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(uploadProgressModel.filesToUpload, 15) {
+        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(uploadDataItemsModel.getFilesSelectedForUpload(), 15) {
             @Override
             public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
-                currentDisplayContentUris.putAll(batchResults);
+                for (Map.Entry<File, Uri> item : batchResults.entrySet()) {
+                    uploadDataItemsModel.addMediaContentUri(item.getKey(), item.getValue());
+                }
                 notifyItemRangeChanged(firstResultIdx, batchResults.size());
             }
         });
@@ -93,11 +90,11 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     @Override
     public long getItemId(int position) {
-        return uploadProgressModel.getItemUid(position);
+        return uploadDataItemsModel.getItemUid(position);
     }
 
-    public void remove(File item) {
-        uploadProgressModel.remove(item);
+    public void remove(File fileSelectedForUpload) {
+        uploadDataItemsModel.remove(fileSelectedForUpload);
         notifyDataSetChanged();
     }
 
@@ -108,36 +105,32 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         this.viewType = viewType;
     }
 
-    public void setUseDarkMode(boolean useDarkMode) {
-        this.useDarkMode = useDarkMode;
-    }
-
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        final ProgressInfo progressInfo = uploadProgressModel.get(position);
+        final UploadDataItem uploadDataItem = uploadDataItemsModel.get(position);
 
         // Configure the progress bar (upload progress)
 
-        if (progressInfo != null) {
+        if (uploadDataItem.uploadProgress != null) {
             holder.progressBar.setVisibility(View.VISIBLE);
-            if (progressInfo.uploadProgress < 0) {
+            if (uploadDataItem.uploadProgress.uploadProgress < 0) {
                 holder.progressBar.setIndeterminate(true);
             } else {
                 holder.progressBar.setIndeterminate(false);
-                holder.progressBar.setSecondaryProgress(progressInfo.compressionProgress);
-                holder.progressBar.setProgress(progressInfo.uploadProgress);
-                if (progressInfo.compressionProgress == 100) {
+                holder.progressBar.setSecondaryProgress(uploadDataItem.uploadProgress.compressionProgress);
+                holder.progressBar.setProgress(uploadDataItem.uploadProgress.uploadProgress);
+                if (uploadDataItem.uploadProgress.compressionProgress == 100) {
                     // change the filesize to be that of the compressed file
-                    holder.itemHeading.setText(getFileSizeStr(progressInfo.fileBeingUploaded));
+                    holder.itemHeading.setText(uploadDataItem.getFileSizeStr());
                 }
             }
             // Now we've updated the progress bar, we can return, no need to reload the remainder of the fields as they won't have altered.
-            if (holder.getOldPosition() < 0 && holder.mItem != null && progressInfo.isForItem(holder.mItem)) {
+            if (holder.getOldPosition() < 0 && uploadDataItem.equals(holder.mItem)) {
                 return;
             }
 
-            // store the item in this recyclable holder.
-            holder.mItem = progressInfo.rawFile;
+            // store a reference to the item in this recyclable holder.
+            holder.mItem = uploadDataItem;
 
         } else {
             holder.progressBar.setVisibility(View.GONE);
@@ -147,25 +140,25 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
 
         // configure the filename field
-        File item = holder.mItem;
+        UploadDataItem item = holder.mItem;
         if (item == null) {
-            item = uploadProgressModel.getKey(position);
+            item = uploadDataItemsModel.get(position);
         }
 
         if (item != null) {
-            holder.fileNameField.setText(item.getName());
-            holder.itemHeading.setText(getFileSizeStr(item));
+            holder.fileNameField.setText(item.fileToUpload.getName());
+            holder.itemHeading.setText(item.getFileSizeStr());
 
-            Uri itemUri = currentDisplayContentUris.get(item);
-            if (itemUri != null) {
-                holder.imageLoader.setUriToLoad(itemUri.toString());
+            if (item.mediaStoreReference != null) {
+                holder.imageLoader.setUriToLoad(item.mediaStoreReference.toString());
             } else {
-                holder.imageLoader.setFileToLoad(item);
+                // TODO is the media store reference always up to date? Can it be relied upon to be?
+//                holder.imageLoader.setFileToLoad(item.fileToUpload);
             }
             holder.itemHeading.setVisibility(View.VISIBLE);
         } else {
             // theoretically this shouldn't happen I think
-            holder.imageLoader.setFileToLoad(item);
+            holder.imageLoader.setFileToLoad(null);
             holder.itemHeading.setVisibility(View.INVISIBLE);
             Crashlytics.log(Log.ERROR, TAG, "file to upload cannot be rendered as is null");
         }
@@ -184,10 +177,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                     .inflate(R.layout.layout_upload_list_item_grid_format, parent, false);
         } else {
             throw new IllegalStateException("viewType not supported" + viewType);
-        }
-
-        if (useDarkMode) {
-            view.setBackgroundColor(Color.WHITE);
         }
 
         final ViewHolder viewHolder = new ViewHolder(view);
@@ -221,14 +210,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return viewHolder;
     }
 
-    private String getFileSizeStr(File f) {
-        long bytes = f.length();
-        double sizeMb = ((double) bytes) / 1024 / 1024;
-        return String.format(Locale.getDefault(), "%1$.2fMB", sizeMb);
-    }
-
     protected void onDeleteButtonClicked(ViewHolder viewHolder, boolean longClick) {
-        listener.onRemove(this, viewHolder.mItem, longClick);
+        listener.onRemove(this, viewHolder.mItem.fileToUpload, longClick);
     }
 
     @Override
@@ -239,16 +222,16 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     @Override
     public int getItemCount() {
-        return uploadProgressModel.size();
+        return uploadDataItemsModel.size();
     }
 
     public void updateUploadProgress(File fileBeingUploaded, int percentageComplete) {
-        uploadProgressModel.updateUploadProgress(fileBeingUploaded, percentageComplete);
+        uploadDataItemsModel.updateUploadProgress(fileBeingUploaded, percentageComplete);
         notifyDataSetChanged();
     }
 
     public void updateCompressionProgress(File fileBeingCompressed, File compressedFile, int percentageComplete) {
-        uploadProgressModel.updateCompressionProgress(fileBeingCompressed, compressedFile, percentageComplete);
+        uploadDataItemsModel.updateCompressionProgress(fileBeingCompressed, compressedFile, percentageComplete);
         notifyDataSetChanged();
     }
 
@@ -257,8 +240,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         notifyItemRangeChanged(0, getItemCount());
     }
 
-    public ArrayList<File> getFiles() {
-        return new ArrayList<>(uploadProgressModel.filesToUpload);
+    public List<File> getFiles() {
+        return uploadDataItemsModel.getFilesSelectedForUpload();
     }
 
     /**
@@ -266,116 +249,46 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
      * @return List of all files that were not already present
      */
     public ArrayList<File> addAll(List<File> filesForUpload) {
-        ArrayList<File> newFiles = uploadProgressModel.addAll(filesForUpload);
+        ArrayList<File> newFiles = uploadDataItemsModel.addAll(filesForUpload);
         updateUris();
         notifyDataSetChanged();
         return newFiles;
     }
 
     public void clear() {
-        uploadProgressModel.clear();
+        uploadDataItemsModel.clear();
         notifyDataSetChanged();
     }
 
-    private static class UploadProgressModel {
+    private static class UploadDataItem implements Parcelable {
 
-        private ArrayList<File> filesToUpload;
-        private HashMap<File, ProgressInfo> progressDetails;
-
-        public UploadProgressModel(ArrayList<File> filesToUpload) {
-            this.filesToUpload = new ArrayList<>();
-            progressDetails = new HashMap<>();
-            addAll(filesToUpload);
-        }
-
-        /**
-         * @param filesForUpload
-         * @return List of all files that were not already present
-         */
-        public ArrayList<File> addAll(List<File> filesForUpload) {
-            ArrayList<File> newFiles = new ArrayList<>(filesForUpload);
-            newFiles.removeAll(filesToUpload);
-            filesToUpload.addAll(newFiles);
-            for (File f : newFiles) {
-                progressDetails.put(f, new ProgressInfo(f));
+        public static final Parcelable.Creator<UploadDataItem> CREATOR
+                = new Parcelable.Creator<UploadDataItem>() {
+            public UploadDataItem createFromParcel(Parcel in) {
+                return new UploadDataItem(in);
             }
-            return newFiles;
-        }
 
-        public long getItemUid(int position) {
-            File fileToUpload = filesToUpload.get(position);
-            ProgressInfo info = progressDetails.get(fileToUpload);
-            return info != null ? info.uid : -1;
-        }
-
-        public void remove(File item) {
-            filesToUpload.remove(item);
-            progressDetails.remove(item);
-        }
-
-        public ProgressInfo get(int position) {
-            File key = getKey(position);
-            if (key == null) {
-                return null;
+            public UploadDataItem[] newArray(int size) {
+                return new UploadDataItem[size];
             }
-            return progressDetails.get(key);
-        }
-
-        public File getKey(int position) {
-            return filesToUpload.get(position);
-        }
-
-        public int size() {
-            return progressDetails.size();
-        }
-
-        public void updateCompressionProgress(File fileBeingCompressed, File compressedFile, int percentageComplete) {
-            ProgressInfo progress = progressDetails.get(fileBeingCompressed);
-            if (progress != null) {
-                progress.compressionProgress = percentageComplete;
-                progress.fileBeingUploaded = compressedFile;
-            }
-        }
-
-        public void updateUploadProgress(File fileBeingUploaded, int percentageComplete) {
-            ProgressInfo progress = progressDetails.get(fileBeingUploaded); // try to retrieve detail for this file presuming it was that requested by user
-            if (progress != null) {
-                progress.uploadProgress = percentageComplete;
-            } else {
-                // we're uploading a compressed file (need to hunt for the original file (Slow but not hundreds of compressed files I hope!)
-                for (ProgressInfo item : progressDetails.values()) {
-                    if (item.fileBeingUploaded.equals(fileBeingUploaded)) {
-                        progress = item;
-                        break;
-                    }
-                }
-                if (progress != null) {
-                    progress.uploadProgress = percentageComplete;
-                } else {
-                    String filename = fileBeingUploaded == null ? null : fileBeingUploaded.getAbsolutePath();
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
-                }
-            }
-        }
-
-        public void clear() {
-            filesToUpload.clear();
-            progressDetails.clear();
-        }
-    }
-
-    private static class ProgressInfo {
+        };
         private static long nextUid;
-        File fileBeingUploaded;
-        File rawFile;
-        int uploadProgress;
-        int compressionProgress;
-        long uid;
+        private final long uid;
+        private File fileToUpload;
+        private Uri mediaStoreReference;
+        private UploadProgressInfo uploadProgress;
 
-        public ProgressInfo(File fileToUpload) {
-            this.rawFile = fileToUpload;
-            this.fileBeingUploaded = fileToUpload; // this value will be replaced if we start getting compression progress updates
-            this.uid = getNextUid();
+        public UploadDataItem(Parcel p) {
+            ParcelUtils.readFile(p);
+            ParcelUtils.readUri(p);
+            uploadProgress = p.readParcelable(UploadProgressInfo.class.getClassLoader());
+            uid = getNextUid();
+        }
+
+        public UploadDataItem(File f) {
+            fileToUpload = f;
+            uploadProgress = new UploadProgressInfo(f);
+            uid = getNextUid();
         }
 
         private static long getNextUid() {
@@ -386,8 +299,210 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             return nextUid;
         }
 
-        public boolean isForItem(File item) {
-            return item != null && (item.equals(fileBeingUploaded) || item.equals(rawFile));
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            ParcelUtils.writeFile(dest, fileToUpload);
+            ParcelUtils.writeUri(dest, mediaStoreReference);
+            dest.writeParcelable(uploadProgress, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public long getItemUid() {
+            return uid;
+        }
+
+        private String getFileSizeStr() {
+            File f = fileToUpload;
+            if (uploadProgress != null && uploadProgress.fileBeingUploaded != null) {
+                f = uploadProgress.fileBeingUploaded;
+            }
+            long bytes = f.length();
+            double sizeMb = ((double) bytes) / 1024 / 1024;
+            return String.format(Locale.getDefault(), "%1$.2fMB", sizeMb);
+        }
+    }
+
+    private static class UploadDataItemModel implements Parcelable {
+
+        public static final Parcelable.Creator<UploadDataItemModel> CREATOR
+                = new Parcelable.Creator<UploadDataItemModel>() {
+            public UploadDataItemModel createFromParcel(Parcel in) {
+                return new UploadDataItemModel(in);
+            }
+
+            public UploadDataItemModel[] newArray(int size) {
+                return new UploadDataItemModel[size];
+            }
+        };
+        private ArrayList<UploadDataItem> uploadDataItems;
+
+        public UploadDataItemModel(Parcel p) {
+            uploadDataItems = ParcelUtils.readArrayList(p, UploadDataItem.class.getClassLoader());
+        }
+
+        public UploadDataItemModel(ArrayList<File> filesToUpload) {
+            this.uploadDataItems = new ArrayList<>();
+            for (File f : filesToUpload) {
+                uploadDataItems.add(new UploadDataItem(f));
+            }
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            ParcelUtils.writeArrayList(dest, uploadDataItems);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        private boolean hasUploadDataItemForFileSelectedForUpload(File f) {
+            return getUploadDataItemForFileSelectedForUpload(f) != null;
+        }
+
+        private UploadDataItem getUploadDataItemForFileBeingUploaded(File f) {
+            for (UploadDataItem item : uploadDataItems) {
+                if (item.uploadProgress != null && item.uploadProgress.fileBeingUploaded.equals(f)) {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        private UploadDataItem getUploadDataItemForFileSelectedForUpload(File f) {
+            for (UploadDataItem item : uploadDataItems) {
+                if (item.fileToUpload.equals(f)) {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * @param filesForUpload
+         * @return List of all files that were not already present
+         */
+        public ArrayList<File> addAll(List<File> filesForUpload) {
+            ArrayList<File> filesAdded = new ArrayList<>(filesForUpload.size());
+            for (File f : filesForUpload) {
+                if (!hasUploadDataItemForFileSelectedForUpload(f)) {
+                    uploadDataItems.add(new UploadDataItem(f));
+                    filesAdded.add(f);
+                }
+            }
+            return filesAdded;
+        }
+
+        public long getItemUid(int position) {
+            UploadDataItem uploadDataItem = uploadDataItems.get(position);
+            return uploadDataItem.getItemUid();
+        }
+
+        public void remove(File fileSelectedForUpload) {
+            UploadDataItem uploadItem = getUploadDataItemForFileSelectedForUpload(fileSelectedForUpload);
+            uploadDataItems.remove(uploadItem);
+        }
+
+        public UploadDataItem get(int position) {
+            return uploadDataItems.get(position);
+        }
+
+        public File getFileSelectedForUpload(int position) {
+            return uploadDataItems.get(position).fileToUpload;
+        }
+
+        public int size() {
+            return uploadDataItems.size();
+        }
+
+        public void updateCompressionProgress(File fileBeingCompressed, File compressedFile, int percentageComplete) {
+            UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingCompressed);
+            UploadProgressInfo progress = uploadDataItem.uploadProgress;
+            if (progress != null) {
+                progress.compressionProgress = percentageComplete;
+                progress.fileBeingUploaded = compressedFile;
+            }
+        }
+
+        public void updateUploadProgress(File fileBeingUploaded, int percentageComplete) {
+            UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingUploaded);
+            UploadProgressInfo progress = uploadDataItem.uploadProgress;
+            if (progress != null) {
+                progress.uploadProgress = percentageComplete;
+            } else {
+                // we're uploading a compressed file
+                uploadDataItem = getUploadDataItemForFileBeingUploaded(fileBeingUploaded);
+                progress = uploadDataItem.uploadProgress;
+                if (progress != null) {
+                    progress.uploadProgress = percentageComplete;
+                } else {
+                    String filename = fileBeingUploaded == null ? null : fileBeingUploaded.getAbsolutePath();
+                    Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                }
+            }
+        }
+
+        public void clear() {
+            uploadDataItems.clear();
+        }
+
+        public List<File> getFilesSelectedForUpload() {
+            ArrayList<File> filesSelectedForUpload = new ArrayList<>(uploadDataItems.size());
+            for (UploadDataItem item : uploadDataItems) {
+                filesSelectedForUpload.add(item.fileToUpload);
+            }
+            return filesSelectedForUpload;
+        }
+
+        public void addMediaContentUri(File f, Uri uri) {
+            UploadDataItem item = getUploadDataItemForFileSelectedForUpload(f);
+            if (item != null) {
+                item.mediaStoreReference = uri;
+            }
+        }
+    }
+
+    private static class UploadProgressInfo implements Parcelable {
+
+        public static final Parcelable.Creator<UploadProgressInfo> CREATOR
+                = new Parcelable.Creator<UploadProgressInfo>() {
+            public UploadProgressInfo createFromParcel(Parcel in) {
+                return new UploadProgressInfo(in);
+            }
+
+            public UploadProgressInfo[] newArray(int size) {
+                return new UploadProgressInfo[size];
+            }
+        };
+        private File fileBeingUploaded;
+        private int uploadProgress;
+        private int compressionProgress;
+
+        public UploadProgressInfo(Parcel p) {
+            fileBeingUploaded = ParcelUtils.readFile(p);
+            uploadProgress = p.readInt();
+            compressionProgress = p.readInt();
+        }
+
+        public UploadProgressInfo(File fileToUpload) {
+            this.fileBeingUploaded = fileToUpload; // this value will be replaced if we start getting compression progress updates
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            ParcelUtils.writeFile(dest, fileBeingUploaded);
+            dest.writeInt(uploadProgress);
+            dest.writeInt(compressionProgress);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
         }
     }
 
@@ -403,7 +518,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         private final ImageButton deleteButton;
         private final AppCompatImageView fileForUploadImageView;
         private final ResizingPicassoLoader imageLoader;
-        public File mItem;
+        // data!
+        private UploadDataItem mItem;
 
 
         public ViewHolder(View view) {
@@ -420,6 +536,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
             imageLoader = new ResizingPicassoLoader<>(fileForUploadImageView, this, 0, 0);
+            imageLoader.setUsePlaceholderIfNothingToLoad(true);
 
         }
 
@@ -440,7 +557,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mItem.getName() + "'";
+            return super.toString() + " '" + mItem.fileToUpload.getName() + "'";
         }
     }
 
