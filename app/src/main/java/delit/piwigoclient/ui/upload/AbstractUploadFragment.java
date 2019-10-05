@@ -91,6 +91,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -181,11 +182,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 EventBus.getDefault().removeStickyEvent(stickyEvent);
                 mViewPager.setCurrentItem(TAB_IDX_FILES);
                 Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
-                Iterator<File> iter = stickyEvent.getSelectedFiles().iterator();
+                Iterator<FolderItemRecyclerViewAdapter.FolderItem> iter = stickyEvent.getSelectedFolderItems().iterator();
                 Set<String> unsupportedExts = new HashSet<>();
                 while (iter.hasNext()) {
-                    File f = iter.next();
-                    String fileExt = IOUtils.getFileExt(f.getName().toLowerCase());
+                    FolderItemRecyclerViewAdapter.FolderItem f = iter.next();
+                    String fileExt = IOUtils.getFileExt(f.getFile().getName().toLowerCase());
                     if (!allowedFileTypes.contains(fileExt)) {
                         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
                         if (mimeType == null || !mimeType.startsWith("video/")) {
@@ -197,7 +198,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if (!unsupportedExts.isEmpty()) {
                     getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts)));
                 }
-                updateFilesForUploadList(stickyEvent.getSelectedFiles());
+                updateFilesForUploadList(stickyEvent.getSelectedFolderItems(), stickyEvent.isContentUrisPresent());
             }
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
@@ -698,14 +699,27 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return uploadToAlbum;
     }
 
-    protected void updateFilesForUploadList(ArrayList<File> filesToBeUploaded) {
-        if (filesToBeUploaded.size() > 0) {
-            String lastOpenedFolder = filesToBeUploaded.get(0).getParentFile().getAbsolutePath();
+    protected void updateFilesForUploadList(ArrayList<FolderItemRecyclerViewAdapter.FolderItem> folderItemsToBeUploaded, boolean contentUrisPresent) {
+        if (folderItemsToBeUploaded.size() > 0) {
+            String lastOpenedFolder = folderItemsToBeUploaded.get(0).getFile().getParentFile().getAbsolutePath();
             getPrefs().edit().putString(getString(R.string.preference_data_upload_default_local_folder_key), lastOpenedFolder).apply();
         }
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
-        List<File> addedFiles = adapter.addAll(filesToBeUploaded);
-        int filesAlreadyPresent = filesToBeUploaded.size() - addedFiles.size();
+        int addedItems = 0;
+        if (contentUrisPresent) {
+            for (FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
+                if (adapter.add(item.getFile(), item.getContentUri())) {
+                    addedItems++;
+                }
+            }
+        } else {
+            ArrayList<File> filesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
+            for (FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
+                filesToBeUploaded.add(item.getFile());
+            }
+            addedItems = adapter.addAll(filesToBeUploaded).size();
+        }
+        int filesAlreadyPresent = folderItemsToBeUploaded.size() - addedItems;
         if (filesAlreadyPresent > 0) {
             getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
         }

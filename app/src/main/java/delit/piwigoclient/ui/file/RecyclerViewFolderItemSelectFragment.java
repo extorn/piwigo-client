@@ -313,7 +313,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         if(getListAdapter() == null) {
 
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, MediaScanner.instance(getContext()), new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, MediaScanner.instance(getContext()), new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
 
             if (activeFolder != null) {
                 viewAdapter.setActiveFolder(activeFolder);
@@ -399,13 +399,13 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
-        HashSet<File> selectedItems = listAdapter.getSelectedItems();
+        HashSet<FolderItemRecyclerViewAdapter.FolderItem> selectedItems = listAdapter.getSelectedItems();
         if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             selectedItems = new HashSet<>(1);
-            selectedItems.add(listAdapter.getActiveFolder());
+            selectedItems.add(new FolderItemRecyclerViewAdapter.FolderItem(listAdapter.getActiveFolder()));
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems), actionTimeMillis));
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
         // now pop this screen off the stack.
         if (isVisible() && getFragmentManager() != null) {
             getFragmentManager().popBackStackImmediate();
@@ -484,7 +484,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     @Override
     public void onCancelChanges() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null, actionTimeMillis));
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis));
         super.onCancelChanges();
     }
 

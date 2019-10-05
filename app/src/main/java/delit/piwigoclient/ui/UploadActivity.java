@@ -74,6 +74,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
@@ -584,14 +585,11 @@ public class UploadActivity extends MyActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            Bundle extras = data != null ? data.getExtras() : null;
-            if (resultCode == RESULT_OK && extras != null) {
+            if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
-                long actionTimeMillis = extras.getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(extras, FileSelectActivity.INTENT_SELECTED_FILES);
-
-                int eventId = requestCode;
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);
+                long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
+                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
                 // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
                 EventBus.getDefault().postSticky(event);
             }
@@ -652,7 +650,7 @@ public class UploadActivity extends MyActivity {
                 ArrayList<File> sentFiles = handleSentFiles();
                 if(sentFiles != null) {
                     // this activity was invoked from another application
-                    FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, sentFiles, -1);
+                    FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, -1).withFiles(sentFiles);
                     EventBus.getDefault().postSticky(evt);
                 }
             } else {

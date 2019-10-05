@@ -254,8 +254,8 @@ public class FileSelectActivity extends MyActivity {
             Intent result = this.getIntent();
 //            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
             result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
-            if (event.getSelectedFiles() != null) {
-                BundleUtils.putFileArrayListExtra(result,INTENT_SELECTED_FILES, event.getSelectedFiles());
+            if (event.getSelectedFolderItems() != null) {
+                result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
                 setResult(Activity.RESULT_OK, result);
             } else {
                 setResult(Activity.RESULT_CANCELED, result);

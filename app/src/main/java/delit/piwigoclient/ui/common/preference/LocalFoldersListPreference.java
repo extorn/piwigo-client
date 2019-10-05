@@ -79,7 +79,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     public void onEvent(FileSelectionCompleteEvent event) {
         if(isTrackingEvent(event)) {
             EventBus.getDefault().removeStickyEvent(event);
-            File selectedFile = event.getSelectedFiles().get(0);
+            File selectedFile = event.getSelectedFolderItems().get(0).getFile();
             if (selectedFile.isDirectory()) {
                 persistStringValue(selectedFile.getAbsolutePath());
             }

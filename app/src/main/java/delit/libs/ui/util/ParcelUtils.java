@@ -279,14 +279,14 @@ public class ParcelUtils {
 
     public static void writeFile(Parcel out, File file) {
         if (file != null) {
-            out.writeString(file.getAbsolutePath());
+            out.writeValue(file.getAbsolutePath());
         } else {
             out.writeValue(null);
         }
     }
 
     public static File readFile(Parcel in) {
-        String value = (String) in.readValue(null);
+        String value = readString(in);
         if (value == null) {
             return null;
         }
@@ -295,14 +295,14 @@ public class ParcelUtils {
 
     public static void writeUri(Parcel out, Uri uri) {
         if (uri != null) {
-            out.writeString(uri.toString());
+            out.writeValue(uri.toString());
         } else {
             out.writeValue(null);
         }
     }
 
     public static Uri readUri(Parcel in) {
-        String value = (String) in.readValue(null);
+        String value = readString(in);
         if (value == null) {
             return null;
         }

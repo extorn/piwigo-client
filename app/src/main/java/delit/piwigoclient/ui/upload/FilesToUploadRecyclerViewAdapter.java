@@ -244,6 +244,17 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return uploadDataItemsModel.getFilesSelectedForUpload();
     }
 
+
+    /**
+     * Note that this will not invoke a media scanner call.
+     *
+     * @param fileForUpload
+     * @param mediaContentUri
+     * @return
+     */
+    public boolean add(@NonNull File fileForUpload, @NonNull Uri mediaContentUri) {
+        return uploadDataItemsModel.add(fileForUpload, mediaContentUri);
+    }
     /**
      * @param filesForUpload
      * @return List of all files that were not already present
@@ -283,6 +294,11 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             ParcelUtils.readUri(p);
             uploadProgress = p.readParcelable(UploadProgressInfo.class.getClassLoader());
             uid = getNextUid();
+        }
+
+        public UploadDataItem(File f, Uri uri) {
+            this(f);
+            mediaStoreReference = uri;
         }
 
         public UploadDataItem(File f) {
@@ -398,6 +414,15 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             return filesAdded;
         }
 
+        public boolean add(File fileForUpload, Uri mediaContentUri) {
+            if (!hasUploadDataItemForFileSelectedForUpload(fileForUpload)) {
+                UploadDataItem newUploadItem = new UploadDataItem(fileForUpload, mediaContentUri);
+                uploadDataItems.add(newUploadItem);
+                return true;
+            }
+            return false;
+        }
+
         public long getItemUid(int position) {
             UploadDataItem uploadDataItem = uploadDataItems.get(position);
             return uploadDataItem.getItemUid();
@@ -465,6 +490,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 item.mediaStoreReference = uri;
             }
         }
+
+
     }
 
     private static class UploadProgressInfo implements Parcelable {
