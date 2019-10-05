@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -34,11 +36,9 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
-import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-import delit.libs.util.SetUtils;
 
 public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
@@ -73,7 +73,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void setupBulkActionsControls(Basket basket) {
         super.setupBulkActionsControls(basket);
 
-        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
+        if (isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed()) {
             bulkActionButtonTag.show();
         } else {
             bulkActionButtonTag.hide();
