@@ -231,7 +231,7 @@ public class ParcelUtils {
         try {
             p.writeValue(value);
             int sizeInBytes = p.marshall().length;
-            Crashlytics.log(Log.VERBOSE, TAG, String.format("ParcelItemSize(%1$s:%2$s) %3$.02fKb", id, value.getClass().getName(), ((double) sizeInBytes) / 1024));
+            Crashlytics.log(Log.VERBOSE, TAG, String.format("ParcelItemSize(%1$s:%2$s) %3$.02fKb", id, value == null ? "Null" : value.getClass().getName(), ((double) sizeInBytes) / 1024));
         } finally {
             p.recycle();
         }
