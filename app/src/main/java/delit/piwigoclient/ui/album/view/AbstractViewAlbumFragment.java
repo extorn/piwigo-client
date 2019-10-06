@@ -942,6 +942,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         } else {
             bulkActionButtonPaste.hide();
         }
+        if (showBulkPermissionsAction(basket)) {
+            bulkActionButtonPermissions.show();
+        } else {
+            bulkActionButtonPermissions.hide();
+        }
 
     }
 
