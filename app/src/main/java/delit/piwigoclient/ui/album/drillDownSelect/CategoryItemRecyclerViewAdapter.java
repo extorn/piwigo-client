@@ -183,7 +183,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
     @Override
     public boolean isHolderOutOfSync(CategoryItemViewHolder holder, CategoryItem newItem) {
-        return isDirtyItemViewHolder(holder) || !(getItemPosition(holder.getItem()) == getItemPosition(newItem));
+        return isDirtyItemViewHolder(holder, newItem);
     }
 
     @Override

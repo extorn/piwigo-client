@@ -86,8 +86,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
      * @param holder
      * @return true if this holder has never been used before (or is totally clean)
      */
-    protected boolean isDirtyItemViewHolder(S holder) {
-        return holder.getOldPosition() < 0 || holder.getItem() == null;
+    protected boolean isDirtyItemViewHolder(S holder, T newItem) {
+        return holder.getItem() == null || !holder.getItem().equals(newItem);
     }
 
     @NonNull

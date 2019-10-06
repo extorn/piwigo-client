@@ -315,23 +315,23 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
             final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, MediaScanner.instance(getContext()), new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
 
-            if (activeFolder != null) {
-                viewAdapter.setActiveFolder(activeFolder);
-            } else {
-                // ??? can this ever occur?
-            }
             if (!viewAdapter.isItemSelectionAllowed()) {
                 viewAdapter.toggleItemSelection();
             }
+
+
+            // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
+            HashSet<Long> currentSelection = getCurrentSelection();
 
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
 
             // update the adapter content
-            viewAdapter.changeFolderViewed(getViewPrefs().getInitialFolderAsFile());
+            viewAdapter.changeFolderViewed(activeFolder != null ? activeFolder : getViewPrefs().getInitialFolderAsFile());
 
             // select the items to view.
             viewAdapter.setInitiallySelectedItems();
+            viewAdapter.setSelectedItems(currentSelection);
         }
 
         // call this here to ensure page reformats if orientation changes for example.

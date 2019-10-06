@@ -94,21 +94,18 @@ public class FileSelectActivity extends MyActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
 
-        if (savedInstanceState != null) {
-            startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
-        }
-
         if (!hasAgreedToEula()) {
             finish();
         } else {
             setContentView(R.layout.activity_file_select);
+        }
 
-            /*View activityRootView = findViewById(R.id.app_content);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                activityRootView.setFitsSystemWindows(true);
-            }*/
+        if (savedInstanceState == null) {
 
+            // open a new instance of the file select fragment
             showFileSelectFragment();
+        } else {
+            startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
         }
     }
 

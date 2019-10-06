@@ -43,10 +43,11 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 
 public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences> extends MyFragment {
 
+    private static final String ARG_ACTION_ID = "actionId";
+    private static final String ARG_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
-    private static final String STATE_INITIAL_SELECTION = "initialSelection";
-    private static final String STATE_ACTION_ID = "actionId";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
+
     private Y list;
     private X listAdapter;
     private Button saveChangesButton;
@@ -61,11 +62,23 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private Z viewPrefs;
 
     public static Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+
         Bundle args = new Bundle();
+
         prefs.storeToBundle(args);
-        args.putInt(STATE_ACTION_ID, actionId);
-        BundleUtils.putLongHashSet(args, STATE_INITIAL_SELECTION, initialSelection);
+        args.putInt(ARG_ACTION_ID, actionId);
+        BundleUtils.putLongHashSet(args, ARG_INITIAL_SELECTION, initialSelection);
         return args;
+    }
+
+    public void loadArgsFromBundle(Bundle bundle) {
+        if (bundle == null) {
+            return;
+        }
+        viewPrefs = createEmptyPrefs();
+        viewPrefs.loadFromBundle(bundle);
+        actionId = bundle.getInt(ARG_ACTION_ID);
+        initialSelection = BundleUtils.getLongHashSet(bundle, ARG_INITIAL_SELECTION);
     }
 
     public Y getList() {
@@ -99,20 +112,15 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            loadStateFromBundle(args);
-        }
+        loadArgsFromBundle(getArguments());
+
     }
 
     protected abstract Z createEmptyPrefs();
 
     private void loadStateFromBundle(Bundle bundle) {
-        viewPrefs = createEmptyPrefs();
-        viewPrefs.loadFromBundle(bundle);
-        actionId = bundle.getInt(STATE_ACTION_ID);
+
         currentSelection = BundleUtils.getLongHashSet(bundle, STATE_CURRENT_SELECTION);
-        initialSelection = BundleUtils.getLongHashSet(bundle, STATE_INITIAL_SELECTION);
         if (currentSelection == null) {
             currentSelection = initialSelection;
         }
@@ -123,9 +131,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
-        outState.putInt(STATE_ACTION_ID, actionId);
         BundleUtils.putLongHashSet(outState, STATE_CURRENT_SELECTION, getCurrentSelection());
-        BundleUtils.putLongHashSet(outState, STATE_INITIAL_SELECTION, getInitialSelection());
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
 

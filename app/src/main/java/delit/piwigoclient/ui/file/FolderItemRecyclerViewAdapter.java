@@ -78,7 +78,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     protected void updateContent(File newContent, boolean force) {
         boolean refreshingExistingFolder = false;
         if (ObjectUtils.areEqual(activeFolder, newContent)) {
-            if (!force) {
+            if (!force && currentDisplayContent != null) {
                 return;
             } else {
                 refreshingExistingFolder = true;
@@ -318,7 +318,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     public boolean isHolderOutOfSync(FolderItemViewHolder holder, FolderItem newItem) {
-        return isDirtyItemViewHolder(holder) || !(getItemPosition(holder.getItem()) == getItemPosition(newItem));
+        return isDirtyItemViewHolder(holder, newItem);
     }
 
     public static class FolderItem implements Parcelable {

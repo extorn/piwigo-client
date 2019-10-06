@@ -14,7 +14,7 @@ public abstract class LongSelectableSetSelectFragment<Y extends View, X extends 
     public HashSet<Long> getCurrentSelection() {
         X adapter = getListAdapter();
         if (adapter == null) {
-            return null;
+            return super.getCurrentSelection();
         }
         return adapter.getSelectedItemIds();
     }
