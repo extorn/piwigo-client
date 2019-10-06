@@ -1,10 +1,10 @@
 package delit.piwigoclient.ui.upload;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 public class UploadFragment extends AbstractUploadFragment {
     public static UploadFragment newInstance(CategoryItemStub currentGallery, int actionId) {
@@ -14,14 +14,14 @@ public class UploadFragment extends AbstractUploadFragment {
     }
 
     @Override
-    protected void updateFilesForUploadList(ArrayList<File> filesToBeUploaded) {
+    protected void updateFilesForUploadList(ArrayList<FolderItemRecyclerViewAdapter.FolderItem> folderItemsToBeUploaded, boolean contentUrisPresent) {
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
         boolean maxItemCountReached = false;
-        while(filesToBeUploaded.size() > 0 && filesToBeUploaded.size() > 5 - adapter.getItemCount()) {
-            filesToBeUploaded.remove(filesToBeUploaded.size() - 1);
+        while (folderItemsToBeUploaded.size() > 0 && folderItemsToBeUploaded.size() > 5 - adapter.getItemCount()) {
+            folderItemsToBeUploaded.remove(folderItemsToBeUploaded.size() - 1);
             maxItemCountReached = true;
         }
-        super.updateFilesForUploadList(filesToBeUploaded);
+        super.updateFilesForUploadList(folderItemsToBeUploaded, contentUrisPresent);
         if(maxItemCountReached) {
             getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_max_upload_file_count_reached));
         }
