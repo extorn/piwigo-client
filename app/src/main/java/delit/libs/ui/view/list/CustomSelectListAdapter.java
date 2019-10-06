@@ -1,6 +1,7 @@
 package delit.libs.ui.view.list;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,24 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.crashlytics.android.Crashlytics;
+
+import java.util.HashSet;
+
 import delit.libs.ui.view.Enableable;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.BuildConfig;
 
 /**
  * Created by gareth on 13/06/17.
  */
 
-public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterPreferences, T> extends ArrayAdapter<T> implements Enableable {
+public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterPreferences, T> extends ArrayAdapter<T> implements Enableable, SelectableItemsAdapter<T> {
 
+    private static final String TAG = "CustomSelLisAdapter";
     private final P prefs;
+    private HashSet<Long> selectedResourceIds = new HashSet<>(0);
+    private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
     private LongSparseArray<Integer> idPositionMap;
 
     protected CustomSelectListAdapter(@NonNull Context context, P prefs, @LayoutRes int resource) {
@@ -59,9 +68,114 @@ public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterP
         return aView;
     }
 
+    /**
+     * Note: May throw an IllegalStateException if not all items loaded yet
+     *
+     * @return
+     */
+    @Override
+    public HashSet<T> getSelectedItems() {
+        try {
+            HashSet<T> selectedItems = new HashSet<>();
+            for (Long selectedItemId : selectedResourceIds) {
+                T selectedItem = getItemById(selectedItemId);
+                if (selectedItem != null) {
+                    selectedItems.add(selectedItem);
+                }
+            }
+            return selectedItems;
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them", e);
+        }
+    }
+
+    @Override
+    public void setSelectedItems(HashSet<Long> selectedResourceIds) {
+        if (initialSelectedResourceIds == null) {
+            throw new IllegalStateException("initially selected items should never be null at this point");
+        }
+        this.selectedResourceIds = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<>(initialSelectedResourceIds);
+    }
+
+    @Override
+    public void setInitiallySelectedItems(HashSet<Long> initialSelection) {
+        this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
+    }
+
+    @Override
+    public void clearSelectedItemIds() {
+        selectedResourceIds.clear();
+        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    private void notifyItemRangeChanged(int i, int itemCount) {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void selectAllItemIds() {
+        for (int i = 0; i < getItemCount(); i++) {
+            selectedResourceIds.add(getItemId(i));
+        }
+        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    public int getItemCount() {
+        return idPositionMap.size();
+    }
+
+    @Override
+    public void setItemSelected(Long selectedItemId) {
+        selectedResourceIds.add(selectedItemId);
+        try {
+            T item = getItemById(selectedItemId);
+            int idx = getItemPosition(item);
+            notifyItemChanged(idx);
+        } catch (IllegalArgumentException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Item not available to select (probably not loaded yet)", e);
+            }
+        }
+    }
+
+    protected void notifyItemChanged(int idx) {
+        notifyDataSetChanged();
+    }
+
+    private int getItemPosition(T item) {
+        return getPosition(item);
+    }
+
     protected abstract void setViewData(int position, View aView, boolean isDropdown);
 
     protected abstract Long getItemId(T item);
+
+    public boolean isItemSelected(Long itemId) {
+        return selectedResourceIds.contains(itemId);
+    }
+
+    @Override
+    public boolean isAllowItemDeselection(long itemId) {
+        return (!prefs.isInitialSelectionLocked() || !initialSelectedResourceIds.contains(itemId)) && (isMultiSelectionAllowed() || selectedResourceIds.size() > 1);
+    }
+
+    public boolean isMultiSelectionAllowed() {
+        return prefs.isMultiSelectionEnabled();
+    }
+
+    public void toggleItemSelection() {
+        prefs.setAllowItemSelection(!prefs.isAllowItemSelection());
+        if (!prefs.isAllowItemSelection()) {
+            selectedResourceIds.clear();
+        }
+        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    @Override
+    public HashSet<Long> getSelectedItemIds() {
+        return selectedResourceIds;
+    }
 
     @Override
     public void notifyDataSetChanged() {
@@ -125,7 +239,14 @@ public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterP
 
     @Override
     public void setEnabled(boolean enabled) {
+        boolean changed = false;
+        if (enabled != prefs.isEnabled()) {
+            changed = true;
+        }
         prefs.setEnabled(enabled);
+        if (changed) {
+            notifyDataSetChanged();
+        }
     }
 
     public T getItemById(Long selectedId) {

@@ -10,14 +10,13 @@ import java.util.Set;
 import delit.libs.ui.view.Enableable;
 import delit.libs.ui.view.list.SelectableItemsAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 
 /**
  * Created by gareth on 03/01/18.
  */
 
-public abstract class ListViewLongSetSelectFragment<X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences> extends LongSetSelectFragment<ListView, X, Z> {
+public abstract class ListViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter<?>, Z extends BaseRecyclerViewAdapterPreferences> extends LongSetSelectFragment<ListView, X, Z> {
 
     @Override
     @LayoutRes
@@ -33,6 +32,15 @@ public abstract class ListViewLongSetSelectFragment<X extends Enableable, Z exte
 //        list.deferNotifyDataSetChanged();
     }
 
+    @Override
+    public HashSet<Long> getCurrentSelection() {
+        X adapter = getListAdapter();
+        if (adapter == null) {
+            return super.getCurrentSelection();
+        }
+        return adapter.getSelectedItemIds();
+    }
+
     protected void selectNoneListItems() {
         ListView list = getList();
         for (int i = 0; i < list.getCount(); i++) {
@@ -42,19 +50,7 @@ public abstract class ListViewLongSetSelectFragment<X extends Enableable, Z exte
 
     @Override
     protected void selectOnlyListItems(Set<Long> selectionIds) {
-        X listAdapter = getListAdapter();
-        if (listAdapter instanceof SelectableItemsAdapter) {
-            if (BuildConfig.DEBUG) {
-                throw new RuntimeException("Incorrectly using ListViewLongSetSelectFragment when should be using ListViewLongSelectableSetSelectFragment");
-            }
-            ((SelectableItemsAdapter) listAdapter).setSelectedItems(new HashSet<>(selectionIds));
-        } else {
-            ListView list = getList();
-            for (int i = 0; i < list.getCount(); i++) {
-                long itemId = list.getItemIdAtPosition(i);
-                list.setItemChecked(i, selectionIds.contains(itemId));
-            }
-        }
+        getListAdapter().setSelectedItems(new HashSet<>(selectionIds));
     }
 
     @Override

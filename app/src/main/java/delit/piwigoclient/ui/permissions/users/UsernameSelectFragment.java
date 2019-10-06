@@ -100,11 +100,19 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter<Username>() {
         }, getViewPrefs());
 
-        viewAdapter.setInitiallySelectedItems(getInitialSelection());
-        viewAdapter.setSelectedItems(getInitialSelection());
+        // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
+        HashSet<Long> currentSelection = getCurrentSelection();
+
+        // will restore previous selection from state if any
         setListAdapter(viewAdapter);
 
-        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
+
+        // select the items to view.
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(currentSelection);
+
+
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), requireActivity()));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
         getList().addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));

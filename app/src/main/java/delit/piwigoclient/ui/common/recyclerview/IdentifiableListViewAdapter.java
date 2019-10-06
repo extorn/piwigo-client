@@ -85,7 +85,16 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
 
     @Override
     public boolean isHolderOutOfSync(S holder, T newItem) {
-        return !(holder.getOldPosition() < 0 && holder.getItem() != null && holder.getItem().getId() == newItem.getId());
+        return isDirtyItemViewHolder(holder, newItem);
+    }
+
+    /**
+     * @param holder
+     * @return true if this holder has never been used before (or is totally clean)
+     */
+    @Override
+    protected boolean isDirtyItemViewHolder(S holder, T newItem) {
+        return holder.getItem() == null || holder.getItem().getId() != newItem.getId();
     }
 
     @Override

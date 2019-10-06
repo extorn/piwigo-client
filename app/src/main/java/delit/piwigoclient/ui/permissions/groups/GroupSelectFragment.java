@@ -96,9 +96,17 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             viewAdapter.toggleItemSelection();
         }
 
-        viewAdapter.setInitiallySelectedItems(getInitialSelection());
-        viewAdapter.setSelectedItems(getInitialSelection());
+        // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
+        HashSet<Long> currentSelection = getCurrentSelection();
+
+        // will restore previous selection from state if any
         setListAdapter(viewAdapter);
+
+
+        // select the items to view.
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(currentSelection);
+
 
         RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfGroups(getPrefs(), getActivity()));
         getList().setLayoutManager(layoutMan);

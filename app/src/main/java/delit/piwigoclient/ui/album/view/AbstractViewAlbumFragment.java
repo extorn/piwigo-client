@@ -922,30 +922,35 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         displayControlsBasedOnSessionState();
         bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
-        if(showBulkDeleteAction(basket)) {
-            bulkActionButtonDelete.show();
-        } else {
-            bulkActionButtonDelete.hide();
-        }
-        if(showBulkCopyAction(basket)) {
-            bulkActionButtonCopy.show();
-        } else {
-            bulkActionButtonCopy.hide();
-        }
-        if(showBulkCutAction(basket)) {
-            bulkActionButtonCut.show();
-        } else {
-            bulkActionButtonCut.hide();
-        }
-        if(showBulkPasteAction(basket)) {
-            bulkActionButtonPaste.show();
-        } else {
-            bulkActionButtonPaste.hide();
-        }
-        if (showBulkPermissionsAction(basket)) {
-            bulkActionButtonPermissions.show();
-        } else {
-            bulkActionButtonPermissions.hide();
+
+        if (viewAdapter != null) {
+
+            if (showBulkDeleteAction(basket)) {
+                bulkActionButtonDelete.show();
+            } else {
+                bulkActionButtonDelete.hide();
+            }
+            if (showBulkCopyAction(basket)) {
+                bulkActionButtonCopy.show();
+            } else {
+                bulkActionButtonCopy.hide();
+            }
+            if (showBulkCutAction(basket)) {
+                bulkActionButtonCut.show();
+            } else {
+                bulkActionButtonCut.hide();
+            }
+            if (showBulkPasteAction(basket)) {
+                bulkActionButtonPaste.show();
+            } else {
+                bulkActionButtonPaste.hide();
+            }
+            if (showBulkPermissionsAction(basket)) {
+                bulkActionButtonPermissions.show();
+            } else {
+                bulkActionButtonPermissions.hide();
+            }
+
         }
 
     }
