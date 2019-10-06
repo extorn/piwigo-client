@@ -177,10 +177,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return activeFolder;
     }
 
-    public void setActiveFolder(File activeFolder) {
-        this.activeFolder = activeFolder;
-    }
-
     public Comparator<? super FolderItem> getFileComparator() {
         if (fileComparator == null) {
             fileComparator = buildFileComparator();

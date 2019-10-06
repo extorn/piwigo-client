@@ -624,19 +624,19 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private boolean showBulkDeleteAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0;
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0 && getSelectedItems().size() > 0;
     }
 
     private boolean showBulkPermissionsAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && galleryModel.getContainerDetails().getId() == basket.getContentParentId();
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && getSelectedItems().size() > 0 && basket.getItemCount() == 0;
     }
 
     private boolean showBulkCopyAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || galleryModel.getContainerDetails().getId() == basket.getContentParentId());
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (getSelectedItems().size() > 0 || (galleryModel.getContainerDetails().getId() == basket.getContentParentId() && basket.getAction() == Basket.ACTION_COPY));
     }
 
     private boolean showBulkCutAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || galleryModel.getContainerDetails().getId() == basket.getContentParentId());
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (getSelectedItems().size() > 0 || (galleryModel.getContainerDetails().getId() == basket.getContentParentId() && basket.getAction() == Basket.ACTION_CUT));
     }
 
     private boolean showBulkPasteAction(Basket basket) {

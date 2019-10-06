@@ -91,7 +91,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
     protected void updateBasketDisplay(Basket basket) {
         super.updateBasketDisplay(basket);
-        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
+        if (isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed() && viewAdapter.getSelectedItems().size() > 0 && basket.getItemCount() == 0) {
             bulkActionButtonTag.show();
         } else {
             bulkActionButtonTag.hide();
