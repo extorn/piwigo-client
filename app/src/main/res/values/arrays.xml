@@ -253,7 +253,7 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.30</item>
+        <item>1.4.0.31</item>
         <item>"Assorted Bugfixes"</item>
     </string-array>
 </resources>
