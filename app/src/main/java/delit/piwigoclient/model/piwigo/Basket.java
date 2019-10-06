@@ -101,4 +101,8 @@ public class Basket implements Parcelable {
             return new Basket[size];
         }
     };
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
 }

@@ -91,7 +91,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private boolean showBulkTagAction(Basket basket) {
-        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems().size() > 0 && basket.getItemCount() == 0;
+        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems().size() > 0 && basket.isEmpty();
     }
 
     protected void updateBasketDisplay(Basket basket) {
@@ -99,12 +99,10 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
         if (!isAlbumDataLoading()) {
             // if gallery is dirty, then the album contents are being reloaded and won't yet be available. This method is recalled once it is
-            if (viewAdapter != null) {
-                if (isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed() && viewAdapter.getSelectedItems().size() > 0 && basket.getItemCount() == 0) {
-                    bulkActionButtonTag.show();
-                } else {
-                    bulkActionButtonTag.hide();
-                }
+            if (showBulkTagAction(basket)) {
+                bulkActionButtonTag.show();
+            } else {
+                bulkActionButtonTag.hide();
             }
         }
     }
