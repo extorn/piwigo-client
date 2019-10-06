@@ -156,6 +156,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final int UPDATE_NOT_RUNNING = 0;
     public static final String TAG = "AbsViewAlbumFrag";
     public static final String RESUME_ACTION = "ALBUM";
+    private static final String STATE_SELECTED_ITEMS = "selectedItemIds";
     private static transient PiwigoAlbumAdminList albumAdminList;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
@@ -221,10 +222,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     public static AbstractViewAlbumFragment newInstance(CategoryItem album) {
         AbstractViewAlbumFragment fragment = new ViewAlbumFragment();
+        fragment.addArguments(album);
+        return fragment;
+    }
+
+    private void addArguments(CategoryItem album) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_ALBUM, album);
-        fragment.setArguments(args);
-        return fragment;
+        setArguments(args);
     }
 
     private static void deleteResourcesFromServerForever(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, final HashSet<Long> selectedItemIds, final HashSet<ResourceItem> selectedItems) {
@@ -280,6 +285,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             reopening = false;
             galleryIsDirty = true;
             albumDetails = album;
+            addArguments(albumDetails); // ensure we don't reopen next time - just handle as usual!
+
             // add the album path to the ViewModelProvider
             CategoryItem thisAlbum = album;
             do {
@@ -370,10 +377,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         outState.putParcelable(STATE_DELETE_ACTION_DATA, bulkResourceActionData);
         outState.putLong(STATE_USER_GUID, userGuid);
         outState.putInt(STATE_ALBUMS_PER_ROW, albumsPerRow);
+        BundleUtils.putLongHashSet(outState, STATE_SELECTED_ITEMS, viewAdapter.getSelectedItemIds());
 
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("ViewAlbumFragment", outState);
         }
+    }
+
+    /**
+     * is a reload occuring or about to right now
+     *
+     * @return
+     */
+    protected boolean isAlbumDataLoading() {
+        return loadingMessageIds.size() > 0;
     }
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
@@ -385,7 +402,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
+        boolean freshInit = false;
         if (viewPrefs == null) {
+            freshInit = true;
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
         }
 
@@ -394,7 +413,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
 
         viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
-        viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
+        if (freshInit) {
+            // keep this value from the saved version
+            viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
+        }
         viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
         viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
         viewPrefs.withShowingAlbumNames(showResourceNames);
@@ -565,6 +587,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), PiwigoAlbumModel.class, galleryModel, viewAdapterListener, viewPrefs);
 
+        if (savedInstanceState != null) {
+            viewAdapter.setInitiallySelectedItems(new HashSet<Long>());
+            viewAdapter.setSelectedItems(BundleUtils.getLongHashSet(savedInstanceState, STATE_SELECTED_ITEMS));
+        }
+
         Basket basket = getBasket();
 
         setupBulkActionsControls(basket);
@@ -725,26 +752,29 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         bulkActionButtonTag.hide();
 
+        if (!isAlbumDataLoading()) {
+            // if gallery is dirty, then the album contents are being reloaded and won't yet be available. This method is recalled once it is
 
-        if (!reopening && showBulkDeleteAction(basket)) {
-            bulkActionButtonDelete.show();
-        } else {
-            bulkActionButtonDelete.hide();
-        }
-        if (!reopening && showBulkCopyAction(basket)) {
-            bulkActionButtonCopy.show();
-        } else {
-            bulkActionButtonCopy.hide();
-        }
-        if (!reopening && showBulkCutAction(basket)) {
-            bulkActionButtonCut.show();
-        } else {
-            bulkActionButtonCut.hide();
-        }
-        if (!reopening && showBulkPasteAction(basket)) {
-            bulkActionButtonPaste.show();
-        } else {
-            bulkActionButtonPaste.hide();
+            if (!reopening && showBulkDeleteAction(basket)) {
+                bulkActionButtonDelete.show();
+            } else {
+                bulkActionButtonDelete.hide();
+            }
+            if (!reopening && showBulkCopyAction(basket)) {
+                bulkActionButtonCopy.show();
+            } else {
+                bulkActionButtonCopy.hide();
+            }
+            if (!reopening && showBulkCutAction(basket)) {
+                bulkActionButtonCut.show();
+            } else {
+                bulkActionButtonCut.hide();
+            }
+            if (!reopening && showBulkPasteAction(basket)) {
+                bulkActionButtonPaste.show();
+            } else {
+                bulkActionButtonPaste.hide();
+            }
         }
     }
 
@@ -776,7 +806,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private HashSet<ResourceItem> getSelectedItems() {
+    protected HashSet<ResourceItem> getSelectedItems() {
         return viewAdapter.getSelectedItems();
     }
 
@@ -923,7 +953,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         displayControlsBasedOnSessionState();
         bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
 
-        if (viewAdapter != null) {
+        if (!isAlbumDataLoading() && viewAdapter != null) {
 
             if (showBulkDeleteAction(basket)) {
                 bulkActionButtonDelete.show();

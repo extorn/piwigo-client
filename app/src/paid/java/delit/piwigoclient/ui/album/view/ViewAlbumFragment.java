@@ -73,7 +73,8 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void setupBulkActionsControls(Basket basket) {
         super.setupBulkActionsControls(basket);
 
-        if (isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed()) {
+
+        if (showBulkTagAction(basket)) {
             bulkActionButtonTag.show();
         } else {
             bulkActionButtonTag.hide();
@@ -89,14 +90,21 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         });
     }
 
+    private boolean showBulkTagAction(Basket basket) {
+        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems().size() > 0 && basket.getItemCount() == 0;
+    }
+
     protected void updateBasketDisplay(Basket basket) {
         super.updateBasketDisplay(basket);
 
-        if (viewAdapter != null) {
-            if (isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed() && viewAdapter.getSelectedItems().size() > 0 && basket.getItemCount() == 0) {
-                bulkActionButtonTag.show();
-            } else {
-                bulkActionButtonTag.hide();
+        if (!isAlbumDataLoading()) {
+            // if gallery is dirty, then the album contents are being reloaded and won't yet be available. This method is recalled once it is
+            if (viewAdapter != null) {
+                if (isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed() && viewAdapter.getSelectedItems().size() > 0 && basket.getItemCount() == 0) {
+                    bulkActionButtonTag.show();
+                } else {
+                    bulkActionButtonTag.hide();
+                }
             }
         }
     }
