@@ -304,11 +304,9 @@ public class CustomSlidingLayer extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            InsetsListener insetsListener = new InsetsListener();
-            setOnSystemUiVisibilityChangeListener(insetsListener);
-            ViewCompat.setOnApplyWindowInsetsListener(this, insetsListener);
-        }
+        InsetsListener insetsListener = new InsetsListener();
+        ViewCompat.setOnApplyWindowInsetsListener(this, insetsListener); // Lollipop+ only
+        setOnSystemUiVisibilityChangeListener(insetsListener);
     }
 
     /**
@@ -1352,6 +1350,9 @@ public class CustomSlidingLayer extends FrameLayout {
     }
 
     public void setStickToOffset(int offsetFromSideToStickTo) {
+        if (offsetFromSideToStickTo > this.offsetFromSideToStickTo && getCurrentState() == STATE_CLOSED) {
+            return;
+        }
         if (this.offsetFromSideToStickTo != offsetFromSideToStickTo) {
             this.offsetFromSideToStickTo = offsetFromSideToStickTo;
             setLayerState(mCurrentState, false, true);
@@ -1413,10 +1414,10 @@ public class CustomSlidingLayer extends FrameLayout {
         public void onSystemUiVisibilityChange(int visibility) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 WindowInsets insets = getRootWindowInsets();
-                setStickToOffset(visibility == VISIBLE ? insets.getStableInsetBottom() : 0);
+                setStickToOffset(visibility == VISIBLE ? insets.getSystemWindowInsetBottom() : 0);
             } else {
                 if (lastInsets != null) {
-                    setStickToOffset(visibility == VISIBLE ? lastInsets.getStableInsetBottom() : 0);
+                    setStickToOffset(visibility == VISIBLE ? lastInsets.getSystemWindowInsetBottom() : 0);
                 } else {
                     setStickToOffset(0);
                 }
@@ -1426,7 +1427,11 @@ public class CustomSlidingLayer extends FrameLayout {
         @Override
         public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
             lastInsets = insets;
-            setStickToOffset(insets.getSystemWindowInsetBottom());
+            int offset = 0;
+            if (insets.getSystemWindowInsetBottom() > insets.getStableInsetBottom()) {
+                offset = insets.getSystemWindowInsetBottom();
+            }
+            setStickToOffset(offset);
             return insets;
         }
     }
