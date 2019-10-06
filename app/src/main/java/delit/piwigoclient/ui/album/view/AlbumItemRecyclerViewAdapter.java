@@ -24,7 +24,6 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
- * FIXME This is broken. swap for a new class based upon IdentifiableListViewAdapter
  */
 public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, S extends AlbumItemViewHolder<T, Q, S, M>, M extends ResourceContainer<? extends T, GalleryItem>> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, M, S, Q> {
 
