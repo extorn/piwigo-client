@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
@@ -155,6 +156,7 @@ public class FileSelectActivity extends MyActivity {
         FileSelectionNeededEvent event = (FileSelectionNeededEvent) getIntent().getSerializableExtra(INTENT_DATA);
         if(event == null) {
             event = new FileSelectionNeededEvent(true,true, true);
+            event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
         String initialFolder = event.getInitialFolder();
 

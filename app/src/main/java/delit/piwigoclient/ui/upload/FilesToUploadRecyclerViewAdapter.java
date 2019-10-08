@@ -273,16 +273,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     private static class UploadDataItem implements Parcelable {
 
-        public static final Parcelable.Creator<UploadDataItem> CREATOR
-                = new Parcelable.Creator<UploadDataItem>() {
-            public UploadDataItem createFromParcel(Parcel in) {
-                return new UploadDataItem(in);
-            }
-
-            public UploadDataItem[] newArray(int size) {
-                return new UploadDataItem[size];
-            }
-        };
         private static long nextUid;
         private final long uid;
         private File fileToUpload;
@@ -295,6 +285,17 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             uploadProgress = p.readParcelable(UploadProgressInfo.class.getClassLoader());
             uid = getNextUid();
         }
+
+        public static final Parcelable.Creator<UploadDataItem> CREATOR
+                = new Parcelable.Creator<UploadDataItem>() {
+            public UploadDataItem createFromParcel(Parcel in) {
+                return new UploadDataItem(in);
+            }
+
+            public UploadDataItem[] newArray(int size) {
+                return new UploadDataItem[size];
+            }
+        };
 
         public UploadDataItem(File f, Uri uri) {
             this(f);
@@ -456,18 +457,23 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         public void updateUploadProgress(File fileBeingUploaded, int percentageComplete) {
             UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingUploaded);
-            UploadProgressInfo progress = uploadDataItem.uploadProgress;
-            if (progress != null) {
-                progress.uploadProgress = percentageComplete;
+            if (uploadDataItem == null) {
+                String filename = fileBeingUploaded == null ? null : fileBeingUploaded.getAbsolutePath();
+                Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
             } else {
-                // we're uploading a compressed file
-                uploadDataItem = getUploadDataItemForFileBeingUploaded(fileBeingUploaded);
-                progress = uploadDataItem.uploadProgress;
+                UploadProgressInfo progress = uploadDataItem.uploadProgress;
                 if (progress != null) {
                     progress.uploadProgress = percentageComplete;
                 } else {
-                    String filename = fileBeingUploaded == null ? null : fileBeingUploaded.getAbsolutePath();
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                    // we're uploading a compressed file
+                    uploadDataItem = getUploadDataItemForFileBeingUploaded(fileBeingUploaded);
+                    progress = uploadDataItem.uploadProgress;
+                    if (progress != null) {
+                        progress.uploadProgress = percentageComplete;
+                    } else {
+                        String filename = fileBeingUploaded == null ? null : fileBeingUploaded.getAbsolutePath();
+                        Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                    }
                 }
             }
         }

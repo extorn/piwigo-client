@@ -377,7 +377,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         outState.putParcelable(STATE_DELETE_ACTION_DATA, bulkResourceActionData);
         outState.putLong(STATE_USER_GUID, userGuid);
         outState.putInt(STATE_ALBUMS_PER_ROW, albumsPerRow);
-        BundleUtils.putLongHashSet(outState, STATE_SELECTED_ITEMS, viewAdapter.getSelectedItemIds());
+        if (viewAdapter != null) {
+            BundleUtils.putLongHashSet(outState, STATE_SELECTED_ITEMS, viewAdapter.getSelectedItemIds());
+        }
 
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("ViewAlbumFragment", outState);
