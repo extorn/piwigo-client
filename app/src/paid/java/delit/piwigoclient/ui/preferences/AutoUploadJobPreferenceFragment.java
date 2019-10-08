@@ -24,6 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -33,13 +36,10 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
-import delit.libs.util.CollectionUtils;
-import delit.libs.util.SetUtils;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
@@ -77,16 +77,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);
 
         MultiSelectListPreference fileExtPref = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
-        fileExtPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MultiSelectListPreference pref = (MultiSelectListPreference) preference;
-                if (pref.getEntries() == null || pref.getValues() == null) {
-                    preference.setEnabled(false);
-                }
-                return false;
-            }
-        });
+        fileExtPref.setOnPreferenceClickListener(new FileExtPreferenceClickListener());
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             Preference p = findPreference(R.string.preference_data_upload_automatic_job_compress_videos_key);
@@ -95,6 +86,21 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
+    private void getAcceptableUploadFileTypes() {
+        String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
+        final ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(serverProfile, appPrefs, getContext());
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(profilePrefs);
+        if (sessionDetails != null) {
+            updateAvailableFileTypes(sessionDetails.getAllowedFileTypes());
+        } else {
+            String serverUri = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
+            LoginResponseHandler loginHandler = new LoginResponseHandler();
+            loginHandler.withConnectionPreferences(profilePrefs);
+            getUiHelper().addActionOnResponse(loginHandler.getMessageId(), new LoginResponseAction(profilePrefs));
+            callServer(getString(R.string.logging_in_to_piwigo_pattern, serverUri), loginHandler);
+        }
+    }
 
     /**
      * disable this job as long as at least one preference is not valid
@@ -142,25 +148,29 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private void getAcceptableUploadFileTypes() {
-        String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
-        final ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(serverProfile, appPrefs, getContext());
+    private static class FileExtPreferenceClickListener implements Preference.OnPreferenceClickListener {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            MultiSelectListPreference pref = (MultiSelectListPreference) preference;
+            if (pref.getEntries() == null || pref.getValues() == null) {
+                preference.setEnabled(false);
+            }
+            return false;
+        }
+    }
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(profilePrefs);
-        if (sessionDetails != null) {
-            updateAvailableFileTypes(sessionDetails.getAllowedFileTypes());
-        } else {
-            String serverUri = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
-            LoginResponseHandler loginHandler = new LoginResponseHandler();
-            loginHandler.withConnectionPreferences(profilePrefs);
-            getUiHelper().addActionOnResponse(loginHandler.getMessageId(), new UIHelper.Action() {
-                @Override
-                public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
-                    updateAvailableFileTypes(PiwigoSessionDetails.getInstance(profilePrefs).getAllowedFileTypes());
-                    return true;
-                }
-            });
-            callServer(getString(R.string.logging_in_to_piwigo_pattern, serverUri), loginHandler);
+    private static class LoginResponseAction extends UIHelper.Action<AutoUploadJobPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+
+        private ConnectionPreferences.ProfilePreferences profilePrefs;
+
+        public LoginResponseAction(ConnectionPreferences.ProfilePreferences profilePrefs) {
+            this.profilePrefs = profilePrefs;
+        }
+
+        @Override
+        public boolean onSuccess(UIHelper<AutoUploadJobPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+            uiHelper.getParent().updateAvailableFileTypes(PiwigoSessionDetails.getInstance(profilePrefs).getAllowedFileTypes());
+            return true;
         }
     }
 
