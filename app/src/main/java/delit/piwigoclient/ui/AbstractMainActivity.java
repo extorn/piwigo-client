@@ -257,7 +257,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 d.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        finish();
+                        if (!BuildConfig.DEBUG) {
+                            finish();
+                        }
                     }
                 });
                 d.show();
@@ -265,7 +267,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
                     @Override
                     public void onDismiss(AlertDialog dialog) {
-                        finish();
+                        if (!BuildConfig.DEBUG) {
+                            finish();
+                        }
                     }
                 });
             }
