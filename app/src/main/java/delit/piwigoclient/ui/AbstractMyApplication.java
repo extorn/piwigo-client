@@ -94,23 +94,26 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                         }
                     }
                 }
-                try {
-                    String multimediaCsvList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), null);
-                    HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                    HashSet<String> cleanedValues = new HashSet<>(values.size());
-                    for (String value : values) {
-                        int dotIdx = value.indexOf('.');
-                        if (dotIdx < 0) {
-                            cleanedValues.add(value.toLowerCase());
-                        } else {
-                            cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+
+                String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
+                if (prefs.contains(key)) {
+                    try {
+                        String multimediaCsvList = prefs.getString(key, null);
+                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+                        HashSet<String> cleanedValues = new HashSet<>(values.size());
+                        for (String value : values) {
+                            int dotIdx = value.indexOf('.');
+                            if (dotIdx < 0) {
+                                cleanedValues.add(value.toLowerCase());
+                            } else {
+                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                            }
                         }
+                        editor.remove(key);
+                        editor.putStringSet(key, cleanedValues);
+                    } catch (ClassCastException e) {
+                        // will occur if the user has previously migrated preferences at version 222!
                     }
-                    String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
-                    editor.remove(key);
-                    editor.putStringSet(key, cleanedValues);
-                } catch (ClassCastException e) {
-                    // will occur if the user has previously migrated preferences at version 222!
                 }
             }
         });
@@ -118,23 +121,25 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
             @Override
             protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                try {
-                    String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
-                    String multimediaCsvList = prefs.getString(key, null);
-                    HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                    HashSet<String> cleanedValues = new HashSet<>(values.size());
-                    for (String value : values) {
-                        int dotIdx = value.indexOf('.');
-                        if (dotIdx < 0) {
-                            cleanedValues.add(value.toLowerCase());
-                        } else {
-                            cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
+                if (prefs.contains(key)) {
+                    try {
+                        String multimediaCsvList = prefs.getString(key, null);
+                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+                        HashSet<String> cleanedValues = new HashSet<>(values.size());
+                        for (String value : values) {
+                            int dotIdx = value.indexOf('.');
+                            if (dotIdx < 0) {
+                                cleanedValues.add(value.toLowerCase());
+                            } else {
+                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                            }
                         }
+                        editor.remove(key);
+                        editor.putStringSet(key, cleanedValues);
+                    } catch (ClassCastException e) {
+                        // will occur if the user has previously migrated preferences at version 240!
                     }
-                    editor.remove(key);
-                    editor.putStringSet(key, cleanedValues);
-                } catch (ClassCastException e) {
-                    // will occur if the user has previously migrated preferences at version 240!
                 }
             }
         });
