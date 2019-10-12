@@ -131,7 +131,9 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         long thisItemId = getItemId(item);
         int levelInTreeOfItem = itemIdToLevelMap.get(thisItemId);
 
-        setViewContentForItemDisplay(view, item, levelInTreeOfItem);
+
+        setViewContentForItemDisplay(parent.getContext(), view, item, levelInTreeOfItem);
+
 
         final AppCompatCheckboxTriState imageView = getAppCompatCheckboxTriState(view);
 
@@ -180,10 +182,10 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
      * @param item              item to be displayed
      * @param levelInTreeOfItem level within the tree of the item (root is 0)
      */
-    protected void setViewContentForItemDisplay(View view, T item, int levelInTreeOfItem) {
+    protected void setViewContentForItemDisplay(Context context, View view, T item, int levelInTreeOfItem) {
         TextView textView = view.findViewById(R.id.permission_text);
         int defaultPaddingStartDp = 8;
-        int paddingStartPx = DisplayUtils.dpToPx(view.getContext(), defaultPaddingStartDp + (levelInTreeOfItem * 15));
+        int paddingStartPx = DisplayUtils.dpToPx(context, defaultPaddingStartDp + (levelInTreeOfItem * 15));
         textView.setPaddingRelative(paddingStartPx, textView.getPaddingTop(), textView.getPaddingEnd(), textView.getPaddingBottom());
         textView.setText(item.toString());
     }
