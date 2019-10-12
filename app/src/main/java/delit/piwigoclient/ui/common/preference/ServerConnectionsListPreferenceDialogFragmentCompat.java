@@ -208,12 +208,12 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         }
 
         @Override
-        protected void setViewContentForItemDisplay(View itemView, ServerConnectionsListPreference.ServerConnection item, int levelInTreeOfItem) {
+        protected void setViewContentForItemDisplay(Context context, View itemView, ServerConnectionsListPreference.ServerConnection item, int levelInTreeOfItem) {
             TextView nameView = itemView.findViewById(R.id.list_item_name);
             TextView detailView = itemView.findViewById(R.id.list_item_details);
 
             nameView.setText(item.getProfileName());
-            detailView.setText(getString(R.string.server_connection_id_pattern, item.getUsername(), item.getServerName()));
+            detailView.setText(context.getString(R.string.server_connection_id_pattern, item.getUsername(), item.getServerName()));
         }
 
         @Override

@@ -211,20 +211,20 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             return R.layout.upload_jobs_list_item_checkable_layout;
         }
 
-        public String getUploadFromSummary(AutoUploadJobConfig item) {
-            File localFolder = item.getLocalFolderToMonitor(getContext());
+        public String getUploadFromSummary(@NonNull Context context, AutoUploadJobConfig item) {
+            File localFolder = item.getLocalFolderToMonitor(context);
             if(localFolder == null) {
                 return "???";
             }
             return localFolder.getAbsolutePath();
         }
 
-        public String getUploadToSummary(AutoUploadJobConfig item) {
+        public String getUploadToSummary(@NonNull Context context, AutoUploadJobConfig item) {
 
-            ConnectionPreferences.ProfilePreferences connPrefs = item.getConnectionPrefs(getContext(), getPreference().getSharedPreferences());
-            String serverName = connPrefs.getPiwigoServerAddress(getPreference().getSharedPreferences(), getContext());
-            String username = connPrefs.getPiwigoUsername(getPreference().getSharedPreferences(), getContext());
-            String uploadFolder = item.getUploadToAlbumName(getContext());
+            ConnectionPreferences.ProfilePreferences connPrefs = item.getConnectionPrefs(context, getPreference().getSharedPreferences());
+            String serverName = connPrefs.getPiwigoServerAddress(getPreference().getSharedPreferences(), context);
+            String username = connPrefs.getPiwigoUsername(getPreference().getSharedPreferences(), context);
+            String uploadFolder = item.getUploadToAlbumName(context);
             if(uploadFolder == null) {
                 uploadFolder = "???";
             }
@@ -237,7 +237,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         }
 
         @Override
-        protected void setViewContentForItemDisplay(View itemView, final AutoUploadJobConfig item, int levelInTreeOfItem) {
+        protected void setViewContentForItemDisplay(Context context, View itemView, final AutoUploadJobConfig item, int levelInTreeOfItem) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -255,8 +255,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
                 }
             });
 
-            nameView.setText(getUploadFromSummary(item));
-            detailView.setText(getUploadToSummary(item));
+            nameView.setText(getUploadFromSummary(context, item));
+            detailView.setText(getUploadToSummary(context, item));
             jobEnabledView.setChecked(item.isJobEnabled(getContext()) && item.isJobValid(getContext()));
         }
 
