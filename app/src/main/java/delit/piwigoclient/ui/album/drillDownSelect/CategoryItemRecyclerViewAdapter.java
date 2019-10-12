@@ -223,6 +223,32 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
+    private static class PredrawListener implements ViewTreeObserver.OnPreDrawListener {
+        private final ResizingPicassoLoader iconViewLoader;
+        private final ImageView iconView;
+
+        public PredrawListener(ImageView iconView, ResizingPicassoLoader iconViewLoader) {
+            this.iconView = iconView;
+            this.iconViewLoader = iconViewLoader;
+        }
+
+        @Override
+        public boolean onPreDraw() {
+            try {
+                if (!iconViewLoader.isImageLoaded() && !iconViewLoader.isImageLoading() && !iconViewLoader.isImageUnavailable()) {
+
+                    int imgSize = iconView.getMeasuredWidth();
+                    iconViewLoader.setResizeTo(imgSize, imgSize);
+                    iconViewLoader.load();
+                }
+            } catch (IllegalStateException e) {
+                Crashlytics.logException(e);
+                // image loader not configured yet...
+            }
+            return true;
+        }
+    }
+
     protected class SimpleCategoryItemViewHolder extends CategoryItemViewHolder {
 
         public SimpleCategoryItemViewHolder(View view) {
@@ -249,34 +275,18 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
             if(newItem.getThumbnailUrl() != null) {
                 ImageViewCompat.setImageTintMode(getIconView(), null);
-                getIconViewLoader().setUriToLoad(newItem.getThumbnailUrl());
+                geticonViewLoader().setUriToLoad(newItem.getThumbnailUrl());
             } else {
                 ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_IN);
-                getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
+                geticonViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             }
         }
 
         @Override
         public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
-            getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
-            final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    try {
-                        if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
-
-                            int imgSize = getIconView().getMeasuredWidth();
-                            getIconViewLoader().setResizeTo(imgSize, imgSize);
-                            getIconViewLoader().load();
-                        }
-                    } catch (IllegalStateException e) {
-                        Crashlytics.logException(e);
-                        // image loader not configured yet...
-                    }
-                    return true;
-                }
-            };
+            geticonViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
+            final ViewTreeObserver.OnPreDrawListener predrawListener = new PredrawListener(getIconView(), geticonViewLoader());
 
             // default to setting a tint (we'll apply it if needed depending on image shown)
             ColorStateList colorList;
@@ -302,6 +312,8 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
+    ;
+    
     protected abstract class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
@@ -314,7 +326,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             return iconView;
         }
 
-        public ResizingPicassoLoader getIconViewLoader() {
+        public ResizingPicassoLoader geticonViewLoader() {
             return iconViewLoader;
         }
 
