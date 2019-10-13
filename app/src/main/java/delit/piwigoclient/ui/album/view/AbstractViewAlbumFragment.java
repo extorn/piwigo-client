@@ -404,26 +404,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
-        boolean freshInit = false;
         if (viewPrefs == null) {
-            freshInit = true;
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
+            viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
+            viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         }
 
         String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs,getContext());
 
         String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
 
-        viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
-        if (freshInit) {
-            // keep this value from the saved version
-            viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
-        }
         viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
         viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
-        viewPrefs.withAlbumWidth(getScreenWidth(getActivity()) / albumsPerRow);
+        viewPrefs.withAlbumWidth(getScreenWidth(requireActivity()) / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
         return viewPrefs;
     }
