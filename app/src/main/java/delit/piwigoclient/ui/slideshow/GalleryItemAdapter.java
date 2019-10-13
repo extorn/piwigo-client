@@ -116,7 +116,8 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         } else if (galleryItem instanceof VideoResourceItem) {
             return (Class<? extends P>) AlbumVideoItemFragment.class;
         }
-        throw new IllegalArgumentException("Unsupported slideshow item type at position " + position);
+        //TODO check what causes this - probably deleting all items and trying to show a header!
+        throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem.getClass().getName() + ")");
     }
 
     @Override
