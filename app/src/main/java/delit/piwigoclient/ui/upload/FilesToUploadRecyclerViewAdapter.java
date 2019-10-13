@@ -73,7 +73,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     public void onRestoreInstanceState(Bundle b, String key) {
         Bundle savedInstanceState = b.getBundle(key);
-        uploadDataItemsModel = savedInstanceState.getParcelable("data");
+        if (savedInstanceState != null) {
+            uploadDataItemsModel = savedInstanceState.getParcelable("data");
+        }
     }
 
     private void updateUris() {

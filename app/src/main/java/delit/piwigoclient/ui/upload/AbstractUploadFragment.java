@@ -112,6 +112,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final boolean ENABLE_COMPRESSION_BUTTON = false;
     private static final int TAB_IDX_SETTINGS = 1;
     private static final int TAB_IDX_FILES = 0;
+    public static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
     private Long uploadJobId;
     private long externallyTriggeredSelectFilesActionId;
     private CategoryItemStub uploadToAlbum;
@@ -151,7 +152,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
         }
         if (filesToUploadAdapter != null) {
-            filesToUploadAdapter.onSaveInstanceState(outState, "filesToUploadAdapter");
+            filesToUploadAdapter.onSaveInstanceState(outState, FILES_TO_UPLOAD_ADAPTER_STATE);
         }
         outState.putParcelable(SAVED_STATE_UPLOAD_TO_ALBUM, uploadToAlbum);
         outState.putLong(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID, externallyTriggeredSelectFilesActionId);
@@ -452,7 +453,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
             // override the upload to album value (used to set clickable text field)
             uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
-            filesToUploadAdapter.onRestoreInstanceState(savedInstanceState, "filesToUploadAdapter");
+            filesToUploadAdapter.onRestoreInstanceState(savedInstanceState, FILES_TO_UPLOAD_ADAPTER_STATE);
         }
 
         if (uploadToAlbum == null) {
