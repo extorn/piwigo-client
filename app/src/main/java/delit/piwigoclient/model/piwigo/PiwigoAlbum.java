@@ -119,8 +119,13 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
 
     @Override
     public void addItem(GalleryItem item) {
+        boolean replaced = false;
+        if (containsItem(item)) {
+            remove(item);
+            replaced = true;
+        }
         super.addItem(item);
-        if(item == GalleryItem.PICTURE_HEADING) {
+        if (item == GalleryItem.PICTURE_HEADING && !replaced) {
             bannerCount++;
         }
         // ensure these are always placed above other resources.
@@ -130,10 +135,14 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     public void addItem(CategoryItem item) {
-        if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
-            subAlbumCount++;
+        if (!containsItem(item)) {
+            if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
+                subAlbumCount++;
+            } else {
+                bannerCount++;
+            }
         } else {
-            bannerCount++;
+            remove(item);
         }
         super.addItem(item);
         // ensure these are always placed first.
