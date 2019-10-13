@@ -147,13 +147,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
+        View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
+
         if (resourceContainer == null) {
-            return null;
+            return view;
         }
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
