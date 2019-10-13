@@ -280,8 +280,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         private UploadProgressInfo uploadProgress;
 
         public UploadDataItem(Parcel p) {
-            ParcelUtils.readFile(p);
-            ParcelUtils.readUri(p);
+            fileToUpload = ParcelUtils.readFile(p);
+            mediaStoreReference = ParcelUtils.readUri(p);
             uploadProgress = p.readParcelable(UploadProgressInfo.class.getClassLoader());
             uid = getNextUid();
         }
