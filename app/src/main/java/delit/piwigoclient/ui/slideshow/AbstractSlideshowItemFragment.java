@@ -164,6 +164,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private TextView resourceRatingScoreField;
     private ViewVisibleControl overlaysVisibilityControl;
     private TextView resourceTitleView;
+    private TextView resourceDescTitleView;
 
     public static <S extends ResourceItem> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long itemId, int albumItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
@@ -382,6 +383,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         super.onStart();
         // need to do this here because text fields don't update correctly when set in onCreateView / onViewCreated
         resourceTitleView.setText(model.getName());
+        resourceDescTitleView.setText(model.getDescription());
         fillResourceEditFields();
     }
 
@@ -412,12 +414,19 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         resourceTitleView = v.findViewById(R.id.slideshow_resource_item_title);
+        resourceDescTitleView = v.findViewById(R.id.slideshow_resource_item_desc_title);
         resourceTitleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bottomSheet.openLayer(true);
             }
         });
+//        resourceDescTitleView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                bottomSheet.openLayer(true);
+//            }
+//        });
 
         averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -427,7 +436,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
         ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
 
-        overlaysVisibilityControl = new ViewVisibleControl(setAsAlbumThumbnail, itemPositionTextView, averageRatingsBar, resourceTitleView);
+        overlaysVisibilityControl = new ViewVisibleControl(setAsAlbumThumbnail, itemPositionTextView, averageRatingsBar, resourceTitleView, resourceDescTitleView);
         overlaysVisibilityControl.setVisibility(View.VISIBLE);
 
         RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
