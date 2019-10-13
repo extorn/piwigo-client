@@ -1180,15 +1180,19 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     protected void populateViewFromModelEtcOnResume() {
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
         String profileId = activeProfile.getProfileId(getPrefs(), getContext());
-        List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
-        SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-        SharedPreferences.Editor editor = resumePrefs.edit();
-        editor.clear();
-        editor.putString("reopenAction", RESUME_ACTION);
-        editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
-        editor.putString("reopenProfileId", profileId);
-        editor.putString("reopenAlbumName", buildPageHeading());
-        editor.commit();
+
+        if (galleryModel != null) {
+            // why would this ever be null?
+            List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
+            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+            SharedPreferences.Editor editor = resumePrefs.edit();
+            editor.clear();
+            editor.putString("reopenAction", RESUME_ACTION);
+            editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
+            editor.putString("reopenProfileId", profileId);
+            editor.putString("reopenAlbumName", buildPageHeading());
+            editor.commit();
+        }
 
 
         if (galleryIsDirty) {
