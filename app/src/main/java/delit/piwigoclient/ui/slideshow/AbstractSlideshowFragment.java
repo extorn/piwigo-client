@@ -150,7 +150,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
         if (resourceContainer == null) {
-            return view;
+            return view; // because we can't use this, a pop backstack must be in progress
         }
 
         super.onCreateView(inflater, container, savedInstanceState);
