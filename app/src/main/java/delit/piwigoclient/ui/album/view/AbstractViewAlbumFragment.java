@@ -2089,6 +2089,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public boolean onSuccess(UIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
             CategoryItem currentItem = response.getAlbumTreeRoot();
+
+            // cache the retrieved category tree into the model
             if (currentItem != null) {
                 FragmentActivity activity = uiHelper.getParent().requireActivity();
                 for (Long albumId : response.getAlbumPath()) {
@@ -2096,7 +2098,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                         continue;
                     }
                     ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
-                    currentItem = currentItem.getChild(albumId);
+                    try {
+                        currentItem = currentItem.getChild(albumId);
+                    } catch (IllegalStateException e) {
+                        // thrown if no child albums were set. This should never occur really since it was a success but the root could now theoretically be empty.
+                    }
                     if (currentItem == null) {
                         break; // were unable to load this item.
                     }
@@ -2104,6 +2110,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             } else {
                 Crashlytics.log(Log.ERROR, TAG, "album tree retrieved, but albumTreeRoot is null");
             }
+
+            // now reopent the model
             uiHelper.getParent().onReopenModelRetrieved(response.getAlbumTreeRoot(), response.getDeepestAlbumOnDesiredPath());
             return true; // to close the progress indicator
         }
