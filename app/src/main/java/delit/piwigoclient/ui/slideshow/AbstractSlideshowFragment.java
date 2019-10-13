@@ -117,7 +117,27 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         try {
+            Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
+            long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
+
+            ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
+            resourceContainer = viewModelContainer.getModel();
+
+
+            if (resourceContainer == null) {
+                // attempt to get back to a working fragment.
+                try {
+                    requireFragmentManager().popBackStackImmediate();
+                } catch (RuntimeException e) {
+                    Crashlytics.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
+                    requireFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
+                }
+                // stop child fragment creation
+                throw new ModelUnavailableException();
+            }
+
             super.onCreate(savedInstanceState);
+
         } catch (ModelUnavailableException e) {
             Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
         }
@@ -127,27 +147,13 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
-        long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
-        int rawCurrentGalleryItemPosition = getArguments().getInt(ARG_GALLERY_ITEM_DISPLAYED);
-
-        ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
-        resourceContainer = viewModelContainer.getModel();
+        if (resourceContainer == null) {
+            return null;
+        }
 
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
-
-        if (resourceContainer == null) {
-            // attempt to get back to a working fragment.
-            try {
-                requireFragmentManager().popBackStackImmediate();
-            } catch (RuntimeException e) {
-                Crashlytics.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
-                requireFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
-            }
-            return null;
-        }
 
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
@@ -174,6 +180,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
+
+        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
+        int rawCurrentGalleryItemPosition = getArguments().getInt(ARG_GALLERY_ITEM_DISPLAYED);
+
         if (galleryItemAdapter == null) {
             galleryItemAdapter = new GalleryItemAdapter<>(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
