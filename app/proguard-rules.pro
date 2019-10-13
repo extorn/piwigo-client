@@ -44,6 +44,21 @@
 #-dontwarn com.google.android.exoplayer2.**
 
 -keep public class com.google.android.gms.** { public *; }
+-keep interface com.google.android.gms.**
+-keep class com.google.android.gms.internal.firebase-perf.** { *; }
+
+-keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.firebase.perf.ModuleDescriptor {
+    java.lang.String MODULE_ID;
+    int MODULE_VERSION;
+}
+
+-keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.ads.dynamite.ModuleDescriptor {
+    java.lang.String MODULE_ID;
+    int MODULE_VERSION;
+}
+
+-keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
+
 -dontwarn com.google.android.gms.**
 
 #-keep class delit.libs.ui.view.SlidingTabLayout* { public *; }
@@ -57,8 +72,8 @@
 
 -keep class cz.msebera.android.httpclient.cookie.Cookie { *; }
 
+# Weird but this is needed else it gets stripped and the super implementation is presumably used!
 -keepclassmembers class delit.piwigoclient.business.video.RandomAccessFileAsyncHttpResponseHandler {
-    # Weird but this is needed else it gets stripped and the super implementation is presumably used!
     protected byte[] getResponseData(cz.msebera.android.httpclient.HttpEntity);
 }
 
@@ -76,17 +91,6 @@
 -keep class delit.piwigoclient.model.piwigo.PiwigoJsonResponse { *; }
 #
 
--keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.firebase.perf.ModuleDescriptor {
-    java.lang.String MODULE_ID;
-    int MODULE_VERSION;
-}
-
--keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.ads.dynamite.ModuleDescriptor {
-    java.lang.String MODULE_ID;
-    int MODULE_VERSION;
-}
-
--keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
 
 -keepclassmembers class cz.msebera.android.httpclient.entity.HttpEntityWrapper {
     protected HttpEntity wrappedEntity;
@@ -112,11 +116,11 @@
 }
 
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
+     # <init>(...);
 -keepclassmembers class * implements java.io.Serializable {
      static final long serialVersionUID;
      private static final java.io.ObjectStreamField[] serialPersistentFields;
      !static !transient <fields>;
-     # <init>(...);
      !private <fields>;
      !private <methods>;
      private void writeObject(java.io.ObjectOutputStream);
@@ -151,7 +155,6 @@
 -keep class io.fabric.sdk.android.Logger { public *; }
 -keep class io.fabric.sdk.android.ActivityLifecycleManager { public *; }
 -keep class io.fabric.sdk.android.ActivityLifecycleManager$Callbacks { public *; }
--keep class com.google.android.gms.internal.firebase-perf.** { *; }
 ###
 -keep class androidx.lifecycle.LifecycleOwner { public *; }
 ###
