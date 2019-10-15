@@ -622,5 +622,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="hint_slideshow_view_3">Tippen Sie auf das Herzsymbol rechts neben dem Namen der Bildressource, um diese Ressource als Favorit zu markieren</string>
     <string name="hint_navigation_panel_1">Tippen Sie auf das App-Symbol oben, um die Abmeldung und Anmeldung eines Servers zu erzwingen</string>
     <string name="user_details_not_found_on_server">Es konnten keine Benutzerdetails auf dem Server gefunden werden</string>
+    <string name="resource_queued_for_download">Ressource zum Herunterladen in die Warteschlange gestellt. Es ist Position %1$d in der Warteschlange.</string>
 </resources>
 

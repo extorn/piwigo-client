@@ -118,10 +118,13 @@ class DownloadSelectionDialog {
         ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
         mgr.setPrimaryClip(clipData);
+        downloadSelectionListener.onCopyLink(selectedItem, resourceName);
     }
 
     public interface DownloadSelectionListener extends Serializable {
         void onDownload(ResourceItem.ResourceFile selectedItem, String resourceName);
         void onShare(ResourceItem.ResourceFile selectedItem, String resourceName);
+
+        void onCopyLink(AbstractBaseResourceItem.ResourceFile selectedItem, String resourceName);
     }
 }

@@ -408,7 +408,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         if(isUseHttpGet()) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
             boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
-            return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(forceResponseRevalidation, onlyUseCache), getRequestParameters(), handler);
+            return client.get(getContext(), getPiwigoWsApiUri(), buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), getRequestParameters(), handler);
         } else {
             return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
         }

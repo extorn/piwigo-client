@@ -178,7 +178,9 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             } else {
                 runListenerHandlerCode = action.onSuccess(uiHelper, response);
             }
-            uiHelper.removeActionForResponse(response);
+            if (response.isEndResponse()) {
+                uiHelper.removeActionForResponse(response);
+            }
         }
 
 

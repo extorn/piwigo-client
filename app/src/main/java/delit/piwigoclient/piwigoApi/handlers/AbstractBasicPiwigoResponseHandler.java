@@ -149,53 +149,40 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
     }
 
-    protected Header[] buildOnlineOnlyNoCachedResponseAccessHeaders() {
-        if (getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext())) {
-            return new Header[0];
-        }
-        BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_NO_CACHE, "")};
+    protected Header[] buildCustomCacheControlHeaders(boolean forceResponseRevalidation, boolean onlyUseCache) {
+        boolean offlineModeSilentErrors = getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext());
+
+        Header[] headers = new Header[1];
+
+        BasicHeaderElement[] headerElems = getCacheControlHeaderElements(offlineModeSilentErrors, onlyUseCache, forceResponseRevalidation);
         String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
-        Header[] headers = new Header[]{new BasicHeader(HeaderConstants.CACHE_CONTROL, value)};
+        headers[0] = new BasicHeader(HeaderConstants.CACHE_CONTROL, value);
+
         return headers;
     }
 
-    protected Header[] buildOfflineAccessHeaders(boolean forceResponseRevalidation, boolean onlyUseCache) {
-        if(getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext())) {
-            Header[] headers = new Header[onlyUseCache || forceResponseRevalidation ? 3 : 2];
-            headers[0] = new BasicHeader(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
-            headers[1] = new BasicHeader(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
-            if (onlyUseCache) {
-                BasicHeaderElement[] headerElems = getBasicHeaderElements(false);
-                String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
-                headers[2] = new BasicHeader(HeaderConstants.CACHE_CONTROL, value);
-            } else if (forceResponseRevalidation) {
-                BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_NO_CACHE, "")};
-                String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
-                headers[2] = new BasicHeader(HeaderConstants.CACHE_CONTROL, value);
-            }
-            return headers;
-        } else if (onlyUseCache) {
-            BasicHeaderElement[] headerElems = getBasicHeaderElements(forceResponseRevalidation);
-            String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
-            Header[] headers = new Header[]{new BasicHeader(HeaderConstants.CACHE_CONTROL, value)};
-            return headers;
-        } else if (forceResponseRevalidation) {
-            BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_NO_CACHE, "")};
-            String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
-            Header[] headers = new Header[]{new BasicHeader(HeaderConstants.CACHE_CONTROL, value)};
-            return headers;
-        } else {
-            return new Header[0];
-        }
-    }
+    private BasicHeaderElement[] getCacheControlHeaderElements(boolean offlineSilentErrorsMode, boolean onlyUseCache, boolean forceResponseRevalidation) {
+        int headerElementCount = 0;
+        headerElementCount += offlineSilentErrorsMode ? 2 : 0;
+        headerElementCount += onlyUseCache ? 2 : 0;
+        headerElementCount += forceResponseRevalidation ? 1 : 0;
 
-    private BasicHeaderElement[] getBasicHeaderElements(boolean forceResponseRevalidation) {
-        BasicHeaderElement[] headerElems = new BasicHeaderElement[forceResponseRevalidation ? 3 : 2];
-        headerElems[0] = new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString());
-        headerElems[1] = new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE);
-        if (forceResponseRevalidation) {
-            headerElems[2] = new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_NO_CACHE, "");
+        BasicHeaderElement[] headerElems = new BasicHeaderElement[headerElementCount];
+        int elem = 0;
+
+        if (offlineSilentErrorsMode) {
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
         }
+        if (onlyUseCache) {
+            headerElems[elem++] = new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString());
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE);
+        }
+
+        if (forceResponseRevalidation) {
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_NO_CACHE, null);
+        }
+
         return headerElems;
     }
 
@@ -304,8 +291,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     this.error = error;
                 }
             } else {
-                // just run the original call again (some action has been taken such that it may succeed this time)
-                rerunCall();
+                if (!rerunningCall) { // don't run it more than once!
+                    // just run the original call again (some action has been taken such that it may succeed this time)
+                    rerunCall();
+                }
             }
         }
     }

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,20 +22,19 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
+import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
+import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -314,37 +312,30 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
                     @Override
                     public void onDownload(ResourceItem.ResourceFile selectedItem, String resourceName) {
-                        File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                        File outputFile = new File(downloadsFolder, getModel().getDownloadFileName(selectedItem));
-                        //TODO check what happens if file exists
-                        //NOTE: Don't add to active service calls (we want control over the dialog displayed).
-                        addDownloadAction(getUiHelper().invokeSilentServiceCall(new ImageGetToFileHandler(getModel().getFileUrl(selectedItem.getName()), outputFile)), false);
+                        String downloadFilename = getModel().getDownloadFileName(selectedItem);
+                        EventBus.getDefault().post(new DownloadFileRequestEvent(resourceName, getModel().getFileUrl(selectedItem.getName()), downloadFilename, false));
+                        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), getModel()));
                     }
 
                     @Override
                     public void onShare(ResourceItem.ResourceFile selectedItem, String resourceName) {
+                        String downloadFilename = getModel().getDownloadFileName(selectedItem);
+                        EventBus.getDefault().post(new DownloadFileRequestEvent(resourceName, getModel().getFileUrl(selectedItem.getName()), downloadFilename, true));
+                        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), getModel()));
+                    }
 
-                        File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                        File outputFile = new File(downloadsFolder, getModel().getDownloadFileName(selectedItem));
-                        //TODO check what happens if file exists
-                        //NOTE: Don't add to active service calls (we want control over the dialog displayed).
-                        addDownloadAction(getUiHelper().invokeSilentServiceCall(new ImageGetToFileHandler(getModel().getFileUrl(selectedItem.getName()), outputFile)), true);
+                    @Override
+                    public void onCopyLink(AbstractBaseResourceItem.ResourceFile selectedItem, String resourceName) {
+                        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), getModel()));
                     }
                 });
                 dialog.show();
 
-
             } else {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
-                onGalleryItemActionFinished();
+                EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), getModel()));
             }
         }
-    }
-
-    @Override
-    public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-        super.onGetResource(response);
-        getUiHelper().showDetailedMsg(R.string.alert_image_download_title, getString(R.string.alert_image_download_complete_message));
     }
 
     public String getCurrentImageUrlDisplayed() {

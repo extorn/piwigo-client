@@ -1,26 +1,17 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,15 +25,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
 import com.wunderlist.slidinglayer.OnInteractAdapter;
 
@@ -50,7 +37,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -60,9 +46,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.util.MediaScanner;
-import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.BuildConfig;
@@ -84,7 +67,6 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAlterRatingResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -93,7 +75,6 @@ import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
-import delit.piwigoclient.ui.events.CancelDownloadEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
@@ -155,7 +136,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private ImageButton moveButton;
     private RatingBar ratingBar;
     private ImageButton downloadButton;
-    private DownloadAction activeDownloadAction;
     private CustomImageButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
     private TextView itemPositionTextView;
@@ -267,11 +247,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    public void addDownloadAction(long activeDownloadActionId, boolean shareWithAppAfterDownload) {
-        this.activeDownloadAction = new DownloadAction(activeDownloadActionId, shareWithAppAfterDownload);
-        getUiHelper().addBackgroundServiceCall(activeDownloadActionId);
-    }
-
     private void loadArgsFromBundle(Bundle b) throws ModelUnavailableException {
         if (b == null) {
             return;
@@ -324,50 +299,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
-    }
-
-    private static class DownloadAction implements Parcelable {
-        private long activeDownloadActionId;
-        private boolean shareDownloadedResource;
-
-        public DownloadAction(long activeDownloadActionId, boolean shareDownloadedResource) {
-            this.activeDownloadActionId = activeDownloadActionId;
-            this.shareDownloadedResource = shareDownloadedResource;
-        }
-
-        public DownloadAction(Parcel in) {
-            activeDownloadActionId = in.readLong();
-            shareDownloadedResource = ParcelUtils.readBool(in);
-        }
-
-        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
-            public DownloadAction createFromParcel(Parcel in) {
-                return new DownloadAction(in);
-            }
-
-            public DownloadAction[] newArray(int size) {
-                return new DownloadAction[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public long getActiveDownloadActionId() {
-            return activeDownloadActionId;
-        }
-
-        public boolean isShareDownloadedResource() {
-            return shareDownloadedResource;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(activeDownloadActionId);
-            ParcelUtils.writeBool(dest, shareDownloadedResource);
-        }
     }
 
     @Override
@@ -829,128 +760,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return model;
     }
 
-    private void shareFileDownloaded(final File downloadedFile) {
-//        File sharedFolder = new File(getContext().getExternalCacheDir(), "shared");
-//        sharedFolder.mkdir();
-//        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
-//        tmpFile.deleteOnExit();
-
-        //Send multiple seems essential to allow to work with the other apps. Not clear why.
-        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        ContentResolver contentResolver = requireContext().getContentResolver();
-        Uri uri = FileProvider.getUriForFile(
-                requireContext(),
-                BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
-
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-        String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(downloadedFile).toString());
-        String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-        intent.setType(mimeType);
-        ArrayList<Uri> files = new ArrayList<>(1);
-        files.add(uri);
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        }
-        startActivity(intent);
-    }
-
-
-    private void notifyUserFileDownloadComplete(final File downloadedFile) {
-        //TODO handle this notification within the activity level rather than the fragment level so user always gets it!
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_notifications_black_24dp).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                Intent notificationIntent;
-                Context context;
-                try {
-                    context = requireContext();
-                } catch (IllegalStateException e) {
-                    Crashlytics.log(Log.ERROR, TAG, "No context to create notification in");
-                    return;
-                }
-
-//        if(openImageNotFolder) {
-                notificationIntent = new Intent(Intent.ACTION_VIEW);
-                // Action on click on notification
-                Uri selectedUri = Uri.fromFile(downloadedFile);
-                MimeTypeMap map = MimeTypeMap.getSingleton();
-                String ext = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-                String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-                //notificationIntent.setDataAndType(selectedUri, mimeType);
-
-                Uri apkURI = FileProvider.getUriForFile(
-                        context,
-                        BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
-                notificationIntent.setDataAndType(apkURI, mimeType);
-                notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                notificationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-                }
-
-//        } else {
-                // N.B.this only works with a very select few android apps - folder browsing seemingly isn't a standard thing in android.
-//            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
-//            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
-//            notificationIntent.setDataAndType(selectedUri, "resource/folder");
-//        }
-
-                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
-                        notificationIntent, 0);
-
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(requireContext(), getUiHelper().getDefaultNotificationChannelId())
-                        .setLargeIcon(bitmap)
-                        .setContentTitle(getString(R.string.notification_download_event))
-                        .setContentText(downloadedFile.getAbsolutePath())
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true);
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    // this is not a vector graphic
-                    mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
-                    mBuilder.setCategory("event");
-                } else {
-                    mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-                    mBuilder.setCategory(Notification.CATEGORY_EVENT);
-                }
-
-                getUiHelper().clearNotification(TAG, 1);
-                getUiHelper().showNotification(TAG, 1, mBuilder.build());
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                //Do nothing... Should never ever occur
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                // Don't need to do anything before loading image
-            }
-
-        });
-
-    }
-
-    public final void onGalleryItemActionFinished() {
-        getUiHelper().hideProgressIndicator();
-        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), model));
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        if (activeDownloadAction != null) {
-            EventBus.getDefault().post(new CancelDownloadEvent(activeDownloadAction.getActiveDownloadActionId()));
-        }
-        super.onDetach();
     }
 
     @Override
@@ -1071,43 +883,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         populateResourceExtraFields();
     }
 
-    public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-        // add the file details to the media store :-)
-        MediaScanner.instance(getContext()).invokeScan(new MediaScanner.MediaScannerImportTask(response.getFile()));
-        if(activeDownloadAction.isShareDownloadedResource()) {
-            shareFileDownloaded(response.getFile());
-        } else {
-            notifyUserFileDownloadComplete(response.getFile());
-        }
-        activeDownloadAction = null;
-    }
-
-    private void onProgressUpdate(final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
-        ProgressIndicator progressIndicator = getUiHelper().getProgressIndicator();
-        if (response.getProgress() < 0) {
-            progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
-        } else {
-            if (response.getProgress() == 0) {
-                progressIndicator.showProgressIndicator(R.string.progress_downloading, response.getProgress(), new CancelDownloadListener(response.getMessageId()));
-            } else if (progressIndicator.getVisibility() == VISIBLE) {
-                progressIndicator.updateProgressIndicator(response.getProgress());
-            }
-        }
-    }
-
-    private static class CancelDownloadListener implements View.OnClickListener {
-        private final long downloadMessageId;
-
-        public CancelDownloadListener(long messageId) {
-            downloadMessageId = messageId;
-        }
-
-        @Override
-        public void onClick(View v) {
-            EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
-        }
-    }
-
     private void onRatingAltered(ResourceItem resource) {
         if (resource.getRatingsGiven() > 0) {
             averageRatingsBar.setRating(resource.getAverageRating());
@@ -1123,10 +898,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             // update all albums except the direct parent of the resource deleted
             EventBus.getDefault().post(new AlbumAlteredEvent(resourceItemParentChain.get(i), resourceItemParentChain.get(i+1)));
         }
-    }
-
-    private void onGetResourceCancelled(PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
-        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_image_download_cancelled_message));
     }
 
     private static class OnDeleteItemAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
@@ -1233,11 +1004,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(CancelDownloadEvent event) {
-        activeDownloadAction = null;
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
         Long albumId = event.item.getParentId();
         if (albumId == null && model.getParentId() == null || albumId != null && albumId.equals(model.getParentId())) {
@@ -1317,6 +1083,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     }
 
+    public final void onGalleryItemActionFinished() {
+        getUiHelper().hideProgressIndicator();
+        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), model));
+    }
+
     protected class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
 
         @Override
@@ -1326,19 +1097,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            boolean finishedOperation = true;
 
-            if (response instanceof PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) {
-                onGetResource((PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.UrlProgressResponse) {
-                onProgressUpdate((PiwigoResponseBufferingHandler.UrlProgressResponse) response);
-                finishedOperation = false;
-            } else if (response instanceof ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) {
+            if (response instanceof ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) {
                 onRatingAltered(((ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) response).getPiwigoResource());
             } else if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                 onImageDeleted(((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItemIds());
-            } else if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
-                onGetResourceCancelled((PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
             } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
                 onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
             } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
@@ -1350,9 +1113,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 onAlbumThumbnailUpdated((AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
             }
 
-            if (finishedOperation) {
-                onGalleryItemActionFinished();
-            }
+            onGalleryItemActionFinished();
         }
     }
 
