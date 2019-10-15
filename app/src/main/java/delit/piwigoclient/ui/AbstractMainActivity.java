@@ -144,8 +144,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private Basket basket = new Basket();
     private Toolbar toolbar;
     private AppBarLayout appBar;
-    private List<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
-    private List<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
+    private final List<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
+    private final List<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
 
     public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
         final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
@@ -423,27 +423,35 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(DownloadFileRequestEvent event) {
-        queuedDownloads.add(event);
-        if (activeDownloads.size() == 0) {
+        synchronized (activeDownloads) {
+            queuedDownloads.add(event);
+            if (activeDownloads.size() == 0) {
+                processNextQueuedDownloadEvent();
+            } else {
+                getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_queued_for_download, queuedDownloads.size()));
+            }
+        }
+    }
+
+    protected void processNextQueuedDownloadEvent() {
+        synchronized (activeDownloads) {
             DownloadFileRequestEvent nextEvent = queuedDownloads.remove(0);
             File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File destinationFile = new File(downloadsFolder, nextEvent.getOutputFilename());
             activeDownloads.add(nextEvent);
 
-            if (event.getLocalFileToCopy() != null) {
+            if (nextEvent.getLocalFileToCopy() != null) {
                 try {
-                    IOUtils.copy(event.getLocalFileToCopy(), destinationFile);
-                    String destFilename = event.getLocalFileToCopy().getName();
-                    onFileDownloaded(event.getRemoteUri(), destinationFile);
+                    IOUtils.copy(nextEvent.getLocalFileToCopy(), destinationFile);
+                    String destFilename = nextEvent.getLocalFileToCopy().getName();
+                    onFileDownloaded(nextEvent.getRemoteUri(), destinationFile);
                 } catch (IOException e) {
                     Crashlytics.logException(e);
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
                 }
             } else {
-                getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(event.getRemoteUri(), destinationFile), new DownloadAction());
+                getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(nextEvent.getRemoteUri(), destinationFile), new DownloadAction());
             }
-        } else {
-            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_queued_for_download, queuedDownloads.size()));
         }
     }
 
@@ -549,16 +557,28 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(CancelDownloadEvent event) {
-        //TODO link to message Id to remove the right one event.messageId
-        activeDownloads.clear();
+        synchronized (activeDownloads) {
+            //TODO link to message Id to remove the right one event.messageId
+            activeDownloads.clear();
+        }
+    }
+
+    private void scheduleNextDownloadIfPresent() {
+        synchronized (activeDownloads) {
+            if (!queuedDownloads.isEmpty() && activeDownloads.isEmpty()) {
+                processNextQueuedDownloadEvent();
+            }
+        }
     }
 
     private @Nullable
     DownloadFileRequestEvent removeActionDownloadEvent() {
-        if (activeDownloads.isEmpty()) {
-            return null;
+        synchronized (activeDownloads) {
+            if (activeDownloads.isEmpty()) {
+                return null;
+            }
+            return activeDownloads.remove(0);
         }
-        return activeDownloads.remove(0);
     }
 
     private static class DownloadAction extends UIHelper.Action<AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
@@ -577,6 +597,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         public boolean onFailure(UIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
                 onGetResourceCancelled(uiHelper, (PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
+            }
+            if (response.isEndResponse()) {
+                //TODO handle the failure and retry here so we can keep the activeDownloads field in sync properly. Presently two downloads may occur simulataneously.
+                uiHelper.getParent().removeActionDownloadEvent();
+                uiHelper.getParent().scheduleNextDownloadIfPresent();
             }
             return super.onFailure(uiHelper, response);
         }
