@@ -70,6 +70,9 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
                     sendFailureMessage(status.getStatusCode(), response.getAllHeaders(), null, new HttpResponseException(status.getStatusCode(), status.getReasonPhrase()));
                 } else if(isSuccess){
                     sendSuccessMessage(status.getStatusCode(), response.getAllHeaders(), null);
+                } else {
+                    // capture error
+                    sendFailureMessage(200, null, null, getError());
                 }
             }
         }
@@ -101,7 +104,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
             }
 
             long contentLength = entity.getContentLength();
-            int buffersize = (contentLength > BUFFER_SIZE) ? BUFFER_SIZE : (int) contentLength;
+            int buffersize = (contentLength > BUFFER_SIZE || contentLength < 1024) ? BUFFER_SIZE : (int) contentLength;
             int progress = -1;
             long totalBytesRead = 0;
             if (contentLength >= 0) {
