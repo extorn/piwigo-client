@@ -6,7 +6,9 @@ import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class CollectionUtils {
@@ -143,5 +145,32 @@ public class CollectionUtils {
                 iter.remove();
             }
         }
+    }
+
+    public static <T> Map<T, Integer> toFrequencyMap(List<T> runningExecutorTasks) {
+        Map<T, Integer> frequencyMap = new HashMap<T, Integer>();
+        for (T item : runningExecutorTasks) {
+            Integer currentFrequency = frequencyMap.get(item);
+            if (currentFrequency == null) {
+                frequencyMap.put(item, 1);
+            } else {
+                frequencyMap.put(item, ++currentFrequency);
+            }
+
+        }
+        return frequencyMap;
+    }
+
+    public static <T> String getFrequencyMapAsString(Map<T, Integer> frequencyMap) {
+        StringBuilder sb = new StringBuilder();
+        Iterator<Map.Entry<T, Integer>> iter = frequencyMap.entrySet().iterator();
+        while (iter.hasNext()) ;
+        Map.Entry<?, Integer> itemEntry = iter.next();
+        sb.append(itemEntry.getKey());
+        sb.append(" (").append(itemEntry.getValue()).append(")");
+        if (iter.hasNext()) {
+            sb.append(", ");
+        }
+        return sb.toString();
     }
 }

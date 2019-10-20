@@ -11,15 +11,19 @@ import androidx.annotation.NonNull;
 import com.crashlytics.android.Crashlytics;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -41,6 +45,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private static final int CORE_POOL_SIZE = 6;
     private static final int MAXIMUM_POOL_SIZE = Math.max(6, CPU_COUNT * 2 + 1);
     private static final int KEEP_ALIVE_SECONDS = 60;
+    private static final List<String> runningExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
+    private static final List<String> queuedExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
             new LinkedBlockingQueue<Runnable>(128) {
                 @Override
@@ -155,6 +161,9 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     protected boolean executeCall(long messageId) {
+
+        recordExcutionStart();
+
 //        Thread.currentThread().setName(handler.getClass().getSimpleName());
 
         Log.e(tag, "Running worker for handler " + handler.getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
@@ -222,9 +231,31 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         return handler.isSuccess();
     }
 
+    private void recordExcutionStart() {
+        synchronized (queuedExecutorTasks) {
+            synchronized (runningExecutorTasks) {
+                queuedExecutorTasks.remove(handler.getTag());
+                runningExecutorTasks.add(handler.getTag());
+            }
+        }
+    }
+
+    private void recordExcutionQueued() {
+        synchronized (queuedExecutorTasks) {
+            queuedExecutorTasks.add(handler.getTag());
+        }
+    }
+
+    private void recordExcutionFinished() {
+        synchronized (runningExecutorTasks) {
+            runningExecutorTasks.remove(handler.getTag());
+        }
+    }
+
     @Override
     protected void onPostExecute(Boolean aBoolean) {
         super.onPostExecute(aBoolean);
+        recordExcutionFinished();
     }
 
     protected @NonNull AbstractPiwigoDirectResponseHandler getHandler(SharedPreferences prefs) {
@@ -232,9 +263,26 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     public long start(long messageId) {
-        AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
-        //TODO collect a list of tasks and kill them all if the app exits.
-        return messageId;
+        try {
+            AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
+            recordExcutionQueued();
+            //TODO collect a list of tasks and kill them all if the app exits.
+            return messageId;
+        } catch (RejectedExecutionException e) {
+            StringBuilder sb = new StringBuilder();
+            synchronized (queuedExecutorTasks) {
+                synchronized (runningExecutorTasks) {
+                    String runningTaskFreqMapStr = CollectionUtils.getFrequencyMapAsString(CollectionUtils.toFrequencyMap(runningExecutorTasks));
+                    String queuedTaskFreqMapStr = CollectionUtils.getFrequencyMapAsString(CollectionUtils.toFrequencyMap(queuedExecutorTasks));
+                    sb.append("Main Executor is Running Task: ").append(runningTaskFreqMapStr);
+                    sb.append('\n');
+                    sb.append("Main Executor has Queued Tasks: ").append(queuedTaskFreqMapStr);
+                    sb.append('\n');
+                    sb.append("This task was of type : ").append(handler.getTag());
+                }
+            }
+            throw new RejectedExecutionException(sb.toString(), e);
+        }
     }
 
     /**
