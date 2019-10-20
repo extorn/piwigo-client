@@ -1,16 +1,45 @@
 
 <en-GB>
-Assorted Bugfixes
+Changes:
+- The download for files now occurs in a rudimentatry queue and is managed at an app level. However, you must still currently keep the app open for then download to continue.
+ Bugfix:
+- Download of files now works where server does not report file size
+- Files added to file upload screen are now shown again (were initially invisible)
+- Other assorted bugs
 </en-GB>
 
 <de-DE>
-Verschiedene Bugfixes
+Änderungen:
+ - Der Download für Dateien erfolgt jetzt in einer rudimentären Warteschlange und wird auf App-Ebene verwaltet. Sie müssen die App jedoch noch geöffnet lassen, damit der Download fortgesetzt werden kann.
+Bug-Fix:
+ - Das Herunterladen von Dateien funktioniert jetzt, wenn der Server keine Dateigröße angibt
+ - Dateien, die zum Datei-Upload-Bildschirm hinzugefügt wurden, werden jetzt wieder angezeigt (waren anfangs unsichtbar)
+ - Andere verschiedene Fehler
 </de-DE>
 
 <fr-FR>
-Correction de bogues
+Changements:
+ - Le téléchargement des fichiers a maintenant lieu dans une file d'attente rudimentatry et est géré au niveau de l'application. Cependant, vous devez toujours garder l'application ouverte pour pouvoir ensuite télécharger pour continuer.
+Correction d'un bug:
+ - Le téléchargement de fichiers fonctionne maintenant lorsque le serveur ne signale pas la taille du fichier
+ - Les fichiers ajoutés à l'écran de téléchargement de fichier sont à nouveau affichés (initialement invisibles)
+ - Autres bugs assortis
 </fr-FR>
 
 <zh-CN>
-各种错误修正
+变化：
+ -现在，文件下载发生在rudimentatry队列中，并在应用程序级别进行管理。 但是，您当前仍必须保持该应用程序处于打开状态，然后才能继续下载。
+错误修正：
+ -现在可以在服务器不报告文件大小的情况下下载文件
+ -现在再次显示添加到文件上传屏幕的文件（最初不可见）
+ -其他各种错误
 </zh-CN>
+
+<ru-RU>
+Изменения :
+                 - Загрузка файлов теперь происходит в зачаточной очереди и управляется на уровне приложения. Тем не менее, вы должны по-прежнему держать приложение открытым, а затем продолжить загрузку .
+                Исправлена ошибка:
+                - Загрузка файлов теперь работает там, где сервер не сообщает о размере файла.
+                - Файлы, добавленные на экран загрузки файлов, теперь снова отображаются (были изначально невидимы)
+                - Другие разные ошибки
+</ru-RU>
