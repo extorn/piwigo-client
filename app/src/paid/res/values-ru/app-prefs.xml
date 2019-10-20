@@ -1,0 +1,306 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+
+    <bool name="preference_server_connection_force_https_default">false</bool>
+
+    <!-- Non editable preferences -->
+
+    <!-- Server Page -->
+
+    <bool name="preference_server_connection_offline_mode_default">false</bool>
+    <bool name="preference_server_connection_allow_redirects_default">true</bool>
+    <bool name="preference_server_alter_cache_directives_default">false</bool>
+
+    <!-- prefs -->
+
+    <bool name="preference_server_use_basic_auth_default">false</bool>
+    <bool name="preference_server_use_client_certs_default">false</bool>
+    <bool name="preference_server_use_custom_trusted_ca_certs_default">false</bool>
+
+    <bool name="preference_gallery_show_image_name_default">true</bool>
+    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">true</bool>
+    <bool name="preference_gallery_include_videos_in_slideshow_default">true</bool>
+
+    <bool name="preference_gallery_enable_video_playback_default">true</bool>
+    <bool name="preference_video_cache_enabled_default">true</bool>
+    <bool name="preference_gallery_sort_order_inverted_default">false</bool>
+
+    <bool name="preference_gallery_slideshow_transparent_extra_info_shadow_default">false</bool>
+    <bool name="preference_gallery_slideshow_image_rotate_default">false</bool>
+    <bool name="preference_data_upload_compress_videos_default">true</bool>
+
+    <bool name="preference_data_upload_allow_upload_of_incompressible_videos_default">true</bool>
+    <bool name="preference_data_upload_compress_images_default">false</bool>
+    <bool name="preference_data_file_selector_showFilenames_default">true</bool>
+
+    <integer name="preference_server_connection_max_redirects_default">5</integer>
+    <integer name="preference_server_connection_timeout_secs_default">10</integer>
+    <integer name="preference_server_response_timeout_secs_default">10</integer>
+
+    <integer name="preference_server_connection_retries_default">3</integer>
+    <integer name="preference_caching_max_cache_entries_default">1000</integer>
+    <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
+
+    <integer name="preference_video_cache_maxsize_mb_default">512</integer>
+    <integer name="preference_album_subalbum_sort_order_default">2
+    </integer>
+    <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer>
+
+    <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
+
+    <integer name="preference_groups_request_pagesize_default">20</integer>
+
+    <integer name="preference_users_request_pagesize_default">20</integer>
+    <integer name="preference_album_request_pagesize_default">20</integer>
+    <integer name="preference_data_upload_default_privacy_level_default">8</integer>
+
+    <integer name="preference_data_upload_chunkSizeKb_default">512</integer>
+    <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
+    <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
+
+    <integer name="preference_data_upload_compress_videos_quality_default">700</integer>
+    <integer name="preference_data_upload_compress_videos_audio_bitrate_default">128000</integer>
+
+    <integer name="preference_data_upload_compress_images_quality_default">70</integer>
+    <integer name="preference_data_upload_compress_images_quality_max">100</integer>
+
+    <!-- list of connection profiles to select from -->
+    <integer name="preference_data_upload_compress_images_quality_min">10</integer>
+    <integer name="preference_data_upload_compress_images_max_height_default">1024</integer>
+
+    <integer name="preference_data_upload_compress_images_max_height_max">3840</integer>
+    <integer name="preference_data_upload_compress_images_max_height_min">120</integer>
+
+
+    <integer name="preference_data_upload_compress_images_max_width_default">768</integer>
+    <integer name="preference_data_upload_compress_images_max_width_max">3840</integer>
+
+    <integer name="preference_data_upload_compress_images_max_width_min">120</integer>
+    <string name="preferences_overall_heading">настройки</string>
+    <string name="preference_page_connection">соединение</string>
+    <string name="preference_connections_category_piwigo">Piwigo</string>
+
+    <string name="preference_connections_category_server_basic_auth">Базовая аутентификация сервера</string>
+    <string name="preference_server_connection_max_redirects_title">Макс сервер перенаправляет</string>
+    <string name="preference_server_connection_max_redirects_summary">%1$d</string>
+
+    <string name="preference_server_connection_force_https_title">Переписать URL-адреса Http в Https</string>
+    <string name="preference_server_connection_force_https_summary">Все http: // URL переписаны на https: // для сервера https</string>
+    <string name="preference_server_connection_offline_mode_title">Разрешить просмотр в автономном режиме</string>
+
+    <string name="preference_server_connection_offline_mode_summary">Используйте кэшированные данные, когда они доступны</string>
+    <string name="preference_server_connection_allow_redirects_title">Разрешить перенаправления сервера</string>
+    <string name="preference_server_connection_allow_redirects_summary">Следуйте http 3xx ответов</string>
+
+    <string name="preference_server_connection_timeout_secs_title">Тайм-аут соединения (секунды)</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d секунд</string>
+    <string name="preference_server_response_timeout_secs_title">Время ожидания ответа (в секундах)</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d секунд</string>
+
+    <string name="preference_server_alter_cache_directives_title">Изменить директивы Http-кэша сервера</string>
+    <string name="preference_server_alter_cache_directives_summary">Включить, чтобы разрешить автономный доступ к галерее</string>
+
+    <!-- Gallery Page -->
+
+    <string name="preference_server_connection_retries_title">Соединение повторяется до сбоя</string>
+    <string name="preference_server_connection_retries_summary">%1$d</string>
+    <string name="preference_server_basic_auth_username_title">Имя пользователя базовой аутентификации</string>
+    <string name="preference_server_basic_auth_password_title">Пароль базовой аутентификации</string>
+    <string name="preference_server_use_basic_auth_title">Использовать базовую аутентификацию</string>
+    <string name="preference_server_use_basic_auth_summary">Включить, если для сервера требуется обычная аутентификация</string>
+
+    <!-- prefs -->
+
+    <string name="preference_server_use_client_certs_title">Использовать аутентификацию сертификата клиента</string>
+    <string name="preference_server_use_client_certs_summary">Включить, если для сервера требуется проверка подлинности клиента на основе сертификатов</string>
+
+    <string name="preference_select_client_certificate_title">Клиентские сертификаты (и частные ключи)</string>
+    <string name="preference_select_client_certificate_summary">Выберите Сертификат клиента для аутентификации</string>
+    <string name="preference_piwigo_connection_profile_title">Выберите профиль подключения</string>
+
+    <string name="preference_piwigo_connection_profile_summary">Активный профиль подключения (%1$s)</string>
+    <string name="preference_piwigo_server_address_title">Адрес сервера</string>
+
+    <string name="preference_piwigo_server_address_summary">%1$s</string>
+    <string name="preference_piwigo_server_username_title">имя пользователя</string>
+    <string name="preference_piwigo_server_username_summary">%1$s</string>
+
+    <string name="preference_piwigo_server_password_title">пароль</string>
+    <string name="preference_piwigo_server_password_summary">%1$s</string>
+
+    <string name="preference_server_ssl_certificate_hostname_verification_title">Проверка имени хоста SSL-сертификата</string>
+    <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
+
+    <string name="preference_caching_clearResponseCache_title">Очистить кэш ответа сервера</string>
+    <string name="preference_caching_clearResponseCache_summary">Удаляет все ответы сервера, кэшированные на диск</string>
+    <string name="preference_caching_level_title">Уровень кэша ответов</string>
+
+    <string name="preference_caching_level_summary">%1$s</string>
+    <string name="preference_caching_level_default">disk</string>
+    <string name="preference_caching_max_cache_entries_title">Максимальное количество записей в кэше</string>
+
+    <string name="preference_caching_max_cache_entries_summary">%1$d</string>
+    <string name="preference_caching_max_cache_entry_size_title">Максимальный размер записи в кэш (КБ)</string>
+
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d КБ</string>
+
+    <string name="preference_connections_category_trusted_server_ca">CA сертификатов доверенных серверов</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">Используйте пользовательский список доверенных сертификатов CA для проверки SSL-сертификатов сервера.</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_title">Используйте настраиваемые доверенные центры сертификации</string>
+
+    <string name="preference_select_trusted_certificate_title">Выберите доверенные сертификаты CA</string>
+    <string name="preference_select_trusted_certificate_summary">Просмотр и редактирование списка доверенных сертификатов CA</string>
+    <string name="preference_page_gallery">Галерея</string>
+
+    <string name="preference_gallery_category_general">Генеральная</string>
+    <string name="preference_gallery_category_advanced">продвинутый</string>
+    <string name="preference_gallery_category_slideshow">Слайд-шоу</string>
+    <string name="preference_gallery_category_resources">Ресурсы</string>
+    <string name="preference_gallery_category_albums">Альбомы</string> <!--DATE_ALBUM_SORT_ORDER (DSC) -->
+
+
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Пейзаж: колонны альбомов, чтобы показать</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
+    <string name="preference_gallery_show_image_name_title">Показать названия изображений в альбоме</string>
+
+    <string name="preference_gallery_show_image_name_summary">Показывает название изображения под каждым изображением</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Пейзаж: столбцы изображений, чтобы показать</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Показать уменьшенное изображение альбома</string>
+
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Миниатюры альбомов обрезаны по центру</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Портрет: колонки альбомов, чтобы показать</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
+
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">Портрет: столбцы изображений для показа</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
+    <string name="preference_gallery_include_videos_in_slideshow_title">Показывать видео в Слайдшоу</string> <!--one week (7 days) -->
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Нужно ли показывать видео при просмотре галереи в режиме слайд-шоу?</string>
+
+    <string name="preference_gallery_enable_video_playback_title">Разрешить воспроизведение видео</string>
+    <string name="preference_gallery_enable_video_playback_summary">Включите, если вы хотите загружать и воспроизводить видео по запросу</string>
+    <string name="preference_piwigo_playable_media_extensions_title">Поддерживаемые мультимедийные расширения</string>
+
+    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
+    <string name="preference_video_cache_enabled_title">Кэширование видео в файл</string>
+    <string name="preference_video_cache_enabled_summary">Когда включено, любые потоковые видео будут кэшироваться для последующего воспроизведения.</string>
+    <string name="preference_video_cache_maxsize_mb_title">Максимальный размер кэша видео (МБ)</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d МБ</string>
+    <string name="preference_gallery_sort_order_title">Порядок сортировки альбомов</string>
+    <string name="preference_gallery_sort_order_summary">%1$s</string>
+    <string name="preference_album_subalbum_sort_order_title">Порядок сортировки дочерних альбомов</string>
+
+    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_sort_order_inverted_title">Инвертировать порядок сортировки альбомов</string>
+    <string name="preference_gallery_sort_order_inverted_summary">Когда включено, обратный порядок сортировки ресурсов альбома</string>
+
+    <string name="preference_gallery_unique_id_title">Уникальный идентификатор для изображений</string>
+    <string name="preference_gallery_unique_id_summary">%1$s</string>
+    <string name="preference_gallery_clearMemoryCache_title">Очистить кэш в памяти</string>
+
+    <string name="preference_gallery_clearMemoryCache_summary">Удаляет все изображения, кэшированные в памяти</string>
+    <string name="preference_gallery_clearVideoCache_title">Очистить кэш видео</string>
+    <string name="preference_gallery_clearVideoCache_summary">Удаляет все видео, кэшированные на диск</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Удаляет все% 1 $ .2fMB видео, кэшированных на диск</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Максимальный возраст последних предметов (дней)</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d дней</string>
+    <!-- Data Upload page -->
+
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Ящик для слайдшоу прозрачный</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Ящик с информацией о слайд-шоу прозрачный</string>
+    <string name="preference_gallery_slideshow_image_scaletype_title">Тип масштабирования слайд-шоу</string>
+    <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
+    <string name="preference_gallery_slideshow_image_rotate_title">Поворот изображения в соответствии с соотношением сторон экрана</string>
+
+    <!-- prefs -->
+
+    <string name="preference_gallery_slideshow_image_rotate_summary">Изображение повернуто по размеру экрана</string>
+    <string name="preference_groups_request_pagesize_title">Размер страницы запроса сервера групп</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d товаров</string>
+
+    <string name="preference_users_request_pagesize_title">Размер страницы запроса сервера пользователя</string>
+    <string name="preference_users_request_pagesize_summary">%1$d товаров</string>
+    <string name="preference_album_request_pagesize_title">Размер страницы запроса сервера альбома</string>
+
+    <string name="preference_album_request_pagesize_summary">%1$d товаров</string>
+    <string name="preference_gallery_item_thumbnail_size_title">Размер эскиза ресурса</string>
+    <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
+
+    <string name="preference_gallery_album_thumbnail_size_title">Размер миниатюры альбома</string>
+    <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
+
+    <string name="preference_gallery_item_slideshow_image_size_title">Размер слайд-шоу по умолчанию</string>
+    <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
+
+    <string name="preference_page_upload">Загрузить</string>
+    <string name="preference_upload_category_data_upload_display">Визуальные настройки</string>
+    <string name="preference_upload_category_data_upload">Загрузка данных</string>
+
+    <string name="preference_upload_category_pre_data_upload_compression">Сжатие перед загрузкой</string>
+    <string name="preference_upload_category_advanced">продвинутый</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Загруженные файлы видны%1$s</string>
+
+    <string name="preference_data_upload_default_privacy_level_title">Уровень конфиденциальности по умолчанию</string>
+
+    <string name="preference_data_upload_chunkSizeKb_title">Максимальный размер загружаемого чанка (КБ)</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d КБ</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">Максимальное количество повторных попыток автоматической загрузки файла</string>
+
+    <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_title">Портрет: столбцы изображений для показа</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
+
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Пейзаж: столбцы изображений, чтобы показать</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
+    <string name="preference_data_upload_max_filesize_mb_title">Максимальный размер файла для загрузки без предупреждения вас (в МБ)</string>
+
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d МБ</string>
+    <string name="preference_data_upload_compress_videos_summary">Сжатие видео перед загрузкой</string>
+    <string name="preference_data_upload_compress_videos_title">Сжатие видео</string>
+    <string name="preference_data_upload_compress_videos_quality_title">Качество видео</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Качество сжатия видео%1$s</string>
+
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Аудио битрейт</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Аудио битрейт%1$s</string>
+    <string name="preference_data_upload_compress_images_summary">Сжатие изображений перед загрузкой</string>
+    <string name="preference_data_upload_compress_images_title">Сжать изображения</string>
+    <string name="preference_data_upload_compress_images_quality_title">Качество изображения</string>
+
+    <string name="preference_data_upload_compress_images_quality_summary">Качество сжатия изображения%1$s</string>
+    <string name="preference_data_upload_compress_images_max_height_title">Максимальная высота</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Максимальная высота (%1$s пикселей)</string>
+    <string name="preference_data_upload_compress_images_max_width_title">Максимальная ширина</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Максимальная ширина (%1$s пикселей)</string>
+
+    <string name="preference_data_upload_compress_images_output_format_title">Формат вывода изображения</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Выходной формат сжатия изображения%1$s</string>
+    <!-- other page -->
+
+    <string name="preference_page_other">Другие</string>
+    <string name="preference_other_category_file_selector">Выбор файла</string>
+
+    <!-- prefs -->
+
+    <string name="preference_data_file_selector_showFilenames_title">Показать имена файлов</string>
+    <string name="preference_data_file_selector_showFilenames_summary">Имена файлов показаны для каждого файла</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Пейзаж: столбцы файлов для отображения</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Портрет: столбцы файлов для отображения</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Пейзаж: колонны папок, чтобы показать</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Портрет: колонны папок, чтобы показать</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
+    <string-array name="preference_piwigo_playable_media_extensions_default">
+        <item>мили на галлон</item>
+        <item>AVI</item>
+        <item>mp3</item>
+        <item>OGG</item>
+        <item>mp4</item>
+    </string-array>
+
+</resources>
