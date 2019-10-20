@@ -713,6 +713,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     addedItems++;
                 }
             }
+            adapter.notifyDataSetChanged();
         } else {
             ArrayList<File> filesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
             for (FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
