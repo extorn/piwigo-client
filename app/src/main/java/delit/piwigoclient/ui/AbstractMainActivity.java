@@ -56,7 +56,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
@@ -133,6 +133,8 @@ import static android.view.View.VISIBLE;
 public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> extends MyActivity<T> implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
+    private static final String STATE_QUEUED_DOWNLOADS = "queuedDownloads";
+    private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
@@ -144,8 +146,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private Basket basket = new Basket();
     private Toolbar toolbar;
     private AppBarLayout appBar;
-    private final List<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
-    private final List<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
+    private final ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
+    private final ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
 
     public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
         final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
@@ -176,6 +178,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         LoaderManager.getInstance(this).getLoader(0);
         outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putParcelable(STATE_BASKET, basket);
+        outState.putParcelableArrayList(STATE_ACTIVE_DOWNLOADS, activeDownloads);
+        outState.putParcelableArrayList(STATE_QUEUED_DOWNLOADS, queuedDownloads);
 //        if(BuildConfig.DEBUG) {
 //            getSupportFragmentManager().enableDebugLogging(true);
 //        }
@@ -192,6 +196,15 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if (savedInstanceState != null) {
             currentAlbum = savedInstanceState.getParcelable(STATE_CURRENT_ALBUM);
             basket = savedInstanceState.getParcelable(STATE_BASKET);
+            ArrayList<DownloadFileRequestEvent> readVal;
+            readVal = savedInstanceState.getParcelableArrayList(STATE_QUEUED_DOWNLOADS);
+            if (readVal != null) {
+                queuedDownloads.addAll(readVal);
+            }
+            readVal = savedInstanceState.getParcelableArrayList(STATE_ACTIVE_DOWNLOADS);
+            if (readVal != null) {
+                activeDownloads.addAll(readVal);
+            }
         }
 
         setContentView(R.layout.activity_main);
@@ -443,14 +456,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             if (nextEvent.getLocalFileToCopy() != null) {
                 try {
                     IOUtils.copy(nextEvent.getLocalFileToCopy(), destinationFile);
-                    String destFilename = nextEvent.getLocalFileToCopy().getName();
                     onFileDownloaded(nextEvent.getRemoteUri(), destinationFile);
                 } catch (IOException e) {
                     Crashlytics.logException(e);
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
                 }
             } else {
-                getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(nextEvent.getRemoteUri(), destinationFile), new DownloadAction());
+                nextEvent.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(nextEvent.getRemoteUri(), destinationFile), new DownloadAction()));
             }
         }
     }
@@ -558,8 +570,15 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(CancelDownloadEvent event) {
         synchronized (activeDownloads) {
-            //TODO link to message Id to remove the right one event.messageId
-            activeDownloads.clear();
+            Iterator<DownloadFileRequestEvent> iter = activeDownloads.iterator();
+            while (iter.hasNext()) {
+                DownloadFileRequestEvent evt = iter.next();
+                if (evt.getRequestId() == event.messageId) {
+                    iter.remove();
+                    break;
+                }
+            }
+
         }
     }
 

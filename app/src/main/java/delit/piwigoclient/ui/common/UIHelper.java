@@ -500,9 +500,10 @@ public abstract class UIHelper<T> {
         worker.invokeAsync(context);
     }
 
-    public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+    public long invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
         addActiveServiceCall(progressMsg, worker);
+        return worker.getMessageId();
     }
 
     public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
