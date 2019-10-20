@@ -277,6 +277,7 @@ Ein großes Dankeschön an alle, die mir mit Vorschlägen oder Fehlern gemailt h
 Bitte wählen Sie, ob Sie jeden auftretenden Absturz melden möchten. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu schreiben. Es ist wahrscheinlich, dass ich ein wenig mehr Kontext um das, was passiert, brauche, kurz bevor der Fehler auftritt.
 
 Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass sich die Häufigkeit der Veröffentlichungen mit zunehmendem Alter der App verringert. Der Release-Zeitplan und die Historie sind unten dargestellt. Das kann sich ändern und die Dinge können sich verzögern, aber du kannst sehen, was auf der Liste steht."</string>
+    <string name="licences_heading">Lizenzen für Ressourcen, die in dieser App verwendet werden</string>
     <string name="slideshow_image_details_name_title">Name der Ressource</string>
     <string name="slideshow_image_details_description_title">Ressourcenbeschreibung</string>
     <string name="unlock_menu_title">Entsperren</string>
