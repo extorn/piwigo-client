@@ -257,27 +257,31 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            albumDetails = getArguments().getParcelable(ARG_ALBUM);
-            if (albumDetails == null) {
-                throw new IllegalStateException("album details are null for some reason");
-            }
-            albumDetails.forcePermissionsReload();
-            galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
-            galleryModel.setContainerDetails(albumDetails);
-            galleryIsDirty = true;
+            loadModelFromArguments();
         } else {
             // restore previous viewed album.
             SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
             if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
                 ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
                 reopening = true;
-                String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs, requireContext());
-                AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredThumbnailSize);
+                String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+                AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
                 getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
             } else {
                 throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
             }
         }
+    }
+
+    protected void loadModelFromArguments() {
+        albumDetails = getArguments().getParcelable(ARG_ALBUM);
+        if (albumDetails == null) {
+            throw new IllegalStateException("album details are null for some reason");
+        }
+        albumDetails.forcePermissionsReload();
+        galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+        galleryModel.setContainerDetails(albumDetails);
+        galleryIsDirty = true;
     }
 
     protected void onReopenModelRetrieved(CategoryItem rootAlbum, CategoryItem album) {
@@ -1176,18 +1180,22 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
         String profileId = activeProfile.getProfileId(getPrefs(), getContext());
 
-        if (galleryModel != null) {
-            // why would this ever be null?
-            List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
-            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-            SharedPreferences.Editor editor = resumePrefs.edit();
-            editor.clear();
-            editor.putString("reopenAction", RESUME_ACTION);
-            editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
-            editor.putString("reopenProfileId", profileId);
-            editor.putString("reopenAlbumName", buildPageHeading());
-            editor.commit();
+
+        if (galleryModel == null) {
+            loadModelFromArguments(); // restoring view.
         }
+
+
+        // why would this ever be null?
+        List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
+        SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+        SharedPreferences.Editor editor = resumePrefs.edit();
+        editor.clear();
+        editor.putString("reopenAction", RESUME_ACTION);
+        editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
+        editor.putString("reopenProfileId", profileId);
+        editor.putString("reopenAlbumName", buildPageHeading());
+        editor.commit();
 
 
         if (galleryIsDirty) {

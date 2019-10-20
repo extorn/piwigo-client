@@ -109,6 +109,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     @Override
     public void onResume() {
+        if (resourceContainer == null) {
+            loadModelFromArguments();
+        }
         super.onResume();
         getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_1);
         getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_view_2);
@@ -117,11 +120,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         try {
-            Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
-            long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
-
-            ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
-            resourceContainer = viewModelContainer.getModel();
+            loadModelFromArguments();
 
 
             if (resourceContainer == null) {
@@ -141,6 +140,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         } catch (ModelUnavailableException e) {
             Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
         }
+    }
+
+    private void loadModelFromArguments() {
+        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
+        long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
+
+        ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
+        resourceContainer = viewModelContainer.getModel();
     }
 
     @Override

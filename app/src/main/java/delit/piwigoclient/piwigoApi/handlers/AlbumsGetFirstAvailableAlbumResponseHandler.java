@@ -50,6 +50,7 @@ public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoW
                 albumListLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());
                 if (!albumListLoadHandler.isSuccess()) {
                     // presume the desired child album no longer exists.
+                    reportNestedFailure(albumListLoadHandler);
                     break;
                 } else {
                     AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response = (AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) albumListLoadHandler.getResponse();
@@ -76,8 +77,6 @@ public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoW
 
 
         PiwigoGetAlbumTreeResponse response = new PiwigoGetAlbumTreeResponse(getMessageId(), "pwgcli.int.getAlbumTree", albumPath, albumTreeRoot, currentAlbumItem, isAnElementCached);
-
-        setError(getNestedFailure());
         storeResponse(response);
 
         return null;
