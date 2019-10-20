@@ -134,11 +134,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 // stop child fragment creation
                 throw new ModelUnavailableException();
             }
-
-            super.onCreate(savedInstanceState);
-
         } catch (ModelUnavailableException e) {
             Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
+        } finally {
+            super.onCreate(savedInstanceState);
         }
     }
 
