@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import delit.libs.util.CollectionUtils;
+
 public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment> extends MyFragmentRecyclerPagerAdapter<T, ViewPager> {
 
     private final static String TAG = "SimpleFragmentPagerAdapter";
@@ -38,7 +40,11 @@ public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerP
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        return super.instantiateItem(container, position);
+        try {
+            return super.instantiateItem(container, position);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error in pager with tab titles (" + CollectionUtils.toCsvList(tabTitles) + ")", e);
+        }
     }
 
     @Override
