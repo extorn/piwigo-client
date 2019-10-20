@@ -131,7 +131,7 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
-        <item>1.4.0.35</item>
+        <item>1.4.0.36</item>
         <item>"变化：
                  -现在，文件下载发生在rudimentatry队列中，并在应用程序级别进行管理。 但是，您当前仍必须保持该应用程序处于打开状态，然后才能继续下载。
                 错误修正：
