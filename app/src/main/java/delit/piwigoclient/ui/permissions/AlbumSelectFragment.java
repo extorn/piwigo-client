@@ -141,12 +141,19 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        HashSet<String> selectedItemNamesSet = new HashSet<>(selectedIdsSet.size());
-        AlbumSelectionListAdapter listAdapter = getListAdapter();
-        for(Long selectedId : selectedIdsSet) {
-            selectedItemNamesSet.add(listAdapter.getItemById(selectedId).getName());
+        int selectedItemCount = selectedIdsSet == null ? 0 : selectedIdsSet.size();
+        HashSet<String> selectedItemNamesSet = new HashSet<>(selectedItemCount);
+        HashSet<Long> selectedItemIdsSet = new HashSet<>(selectedItemCount);
+
+        if (selectedIdsSet != null) {
+            AlbumSelectionListAdapter listAdapter = getListAdapter();
+            for (Long selectedId : selectedIdsSet) {
+                selectedItemNamesSet.add(listAdapter.getItemById(selectedId).getName());
+                selectedItemIdsSet.add(selectedId);
+            }
         }
-        EventBus.getDefault().post(new AlbumPermissionsSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItemNamesSet));
+        EventBus.getDefault().post(new AlbumPermissionsSelectionCompleteEvent(getActionId(), selectedItemIdsSet, selectedItemNamesSet));
+
         // now pop this screen off the stack.
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
