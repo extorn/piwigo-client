@@ -146,6 +146,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private Basket basket = new Basket();
     private Toolbar toolbar;
     private AppBarLayout appBar;
+    //TODO move the download mechanism into a background service so it isn't cancelled if the user leaves the app.
     private final ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
     private final ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
 
