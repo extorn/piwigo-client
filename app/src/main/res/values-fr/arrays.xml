@@ -133,6 +133,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.35</item>
-        <item>"Correction de bogues"</item>
+        <item>"Changements:
+                 - Le téléchargement des fichiers a maintenant lieu dans une file d'attente rudimentatry et est géré au niveau de l'application. Cependant, vous devez toujours garder l'application ouverte pour pouvoir ensuite télécharger pour continuer.
+                Correction d'un bug:
+                 - Le téléchargement de fichiers fonctionne maintenant lorsque le serveur ne signale pas la taille du fichier
+                 - Les fichiers ajoutés à l'écran de téléchargement de fichier sont à nouveau affichés (initialement invisibles)
+                 - Autres bugs assortis"</item>
     </string-array>
 </resources>

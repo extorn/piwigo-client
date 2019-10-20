@@ -123,6 +123,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.4.0.35</item>
-        <item>"Verschiedene Bugfixes"</item>
+        <item>"Änderungen:
+                 - Der Download für Dateien erfolgt jetzt in einer rudimentären Warteschlange und wird auf App-Ebene verwaltet. Sie müssen die App jedoch noch geöffnet lassen, damit der Download fortgesetzt werden kann.
+                Bug-Fix:
+                 - Das Herunterladen von Dateien funktioniert jetzt, wenn der Server keine Dateigröße angibt
+                 - Dateien, die zum Datei-Upload-Bildschirm hinzugefügt wurden, werden jetzt wieder angezeigt (waren anfangs unsichtbar)
+                 - Andere verschiedene Fehler"</item>
     </string-array>
 </resources>

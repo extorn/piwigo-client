@@ -132,7 +132,12 @@
     </string-array>
     <string-array name="release_history">
         <item>1.4.0.35</item>
-        <item>"各种错误修正"</item>
+        <item>"变化：
+                 -现在，文件下载发生在rudimentatry队列中，并在应用程序级别进行管理。 但是，您当前仍必须保持该应用程序处于打开状态，然后才能继续下载。
+                错误修正：
+                 -现在可以在服务器不报告文件大小的情况下下载文件
+                 -现在再次显示添加到文件上传屏幕的文件（最初不可见）
+                 -其他各种错误"</item>
     </string-array>
 
 </resources>

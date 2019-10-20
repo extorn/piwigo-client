@@ -254,6 +254,11 @@
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
         <item>1.4.0.35</item>
-        <item>"Assorted Bugfixes"</item>
+        <item>"Changes:
+                - The download for files now occurs in a rudimentatry queue and is managed at an app level. However, you must still currently keep the app open for then download to continue.
+               Bugfix:
+                - Download of files now works where server does not report file size
+                - Files added to file upload screen are now shown again (were initially invisible)
+                - Other assorted bugs"</item>
     </string-array>
 </resources>
