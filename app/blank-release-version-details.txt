@@ -22,8 +22,7 @@ Changements:
  - Le téléchargement des fichiers a maintenant lieu dans une file d'attente rudimentatry et est géré au niveau de l'application. Cependant, vous devez toujours garder l'application ouverte pour pouvoir ensuite télécharger pour continuer.
 Correction d'un bug:
  - Le téléchargement de fichiers fonctionne maintenant lorsque le serveur ne signale pas la taille du fichier
- - Les fichiers ajoutés à l'écran de téléchargement de fichier sont à nouveau affichés (initialement invisibles)
- - Autres bugs assortis
+ - Les fichiers ajoutés à l'écran de téléchargement de fichier sont à nouveau affichés (initialement invisibles)...
 </fr-FR>
 
 <zh-CN>
@@ -37,9 +36,9 @@ Correction d'un bug:
 
 <ru-RU>
 Изменения :
-                 - Загрузка файлов теперь происходит в зачаточной очереди и управляется на уровне приложения. Тем не менее, вы должны по-прежнему держать приложение открытым, а затем продолжить загрузку .
-                Исправлена ошибка:
-                - Загрузка файлов теперь работает там, где сервер не сообщает о размере файла.
-                - Файлы, добавленные на экран загрузки файлов, теперь снова отображаются (были изначально невидимы)
-                - Другие разные ошибки
+ - Загрузка файлов теперь происходит в зачаточной очереди и управляется на уровне приложения. Тем не менее, вы должны по-прежнему держать приложение открытым, а затем продолжить загрузку .
+ Исправлена ошибка:
+ - Загрузка файлов теперь работает там, где сервер не сообщает о размере файла.
+ - Файлы, добавленные на экран загрузки файлов, теперь снова отображаются (были изначально невидимы)
+ - Другие разные ошибки
 </ru-RU>
