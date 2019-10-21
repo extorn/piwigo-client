@@ -122,7 +122,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         try {
             loadModelFromArguments();
 
-
             if (resourceContainer == null) {
                 // attempt to get back to a working fragment.
                 try {
@@ -131,13 +130,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                     Crashlytics.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
                     requireFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
                 }
-                // stop child fragment creation
-                throw new ModelUnavailableException();
+                super.onCreate(savedInstanceState);
             }
         } catch (ModelUnavailableException e) {
             Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
-        } finally {
-            super.onCreate(savedInstanceState);
         }
     }
 
