@@ -242,8 +242,12 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     private void recordExcutionQueued() {
         synchronized (queuedExecutorTasks) {
-            queuedExecutorTasks.add(handler.getTag());
+            queuedExecutorTasks.add(getTaskName());
         }
+    }
+
+    protected String getTaskName() {
+        return handler != null ? handler.getTag() : "Unknown";
     }
 
     private void recordExcutionFinished() {

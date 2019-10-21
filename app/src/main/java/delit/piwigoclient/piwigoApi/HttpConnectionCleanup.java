@@ -29,6 +29,11 @@ public class HttpConnectionCleanup extends Worker {
     }
 
     @Override
+    protected String getTaskName() {
+        return "HttpConnCleanup";
+    }
+
+    @Override
     protected boolean executeCall(long messageId) {
         if (fullClientShutdown) {
             HttpClientFactory.getInstance(getContext()).clearCachedClients(connectionPrefs);
