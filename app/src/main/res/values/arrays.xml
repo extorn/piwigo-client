@@ -253,6 +253,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.37</item>
+        <item>"Bugfix:
+                - Connection cleanup now works again
+                - Setting resource rating in Russian Locale now works again"</item>
         <item>1.4.0.36</item>
         <item>"Changes:
                 - The download for files now occurs in a rudimentatry queue and is managed at an app level. However, you must still currently keep the app open for then download to continue.

@@ -28,8 +28,8 @@ android {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 252
-        versionName "1.4.0.36"
+        versionCode 253
+        versionName "1.4.0.37"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
