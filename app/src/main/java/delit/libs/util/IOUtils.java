@@ -29,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -85,13 +86,21 @@ public class IOUtils {
         outStream.close();
     }
 
-    public static long getFolderSize(File directory) {
+    public static long getFolderSize(File directory, boolean recursive) {
         long length = 0;
-        for (File file : directory.listFiles()) {
-            if (file.isFile())
-                length += file.length();
-            else
-                length += getFolderSize(file);
+        File[] fileList = directory.listFiles();
+        if (fileList != null) {
+            for (File file : fileList) {
+                if (file.isFile()) {
+                    boolean isSymLink = false;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        isSymLink = Files.isSymbolicLink(file.toPath());
+                    }
+                    length += isSymLink ? 0 : file.length();
+                } else if (recursive) {
+                    length += getFolderSize(file, recursive);
+                }
+            }
         }
         return length;
     }

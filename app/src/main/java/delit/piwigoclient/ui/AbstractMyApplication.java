@@ -259,7 +259,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
     private void sanityCheckTheTempUploadFolder() {
         File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
-        long folderSizeBytes = IOUtils.getFolderSize(tmp_upload_folder);
+        long folderSizeBytes = IOUtils.getFolderSize(tmp_upload_folder, true);
         long folderMaxSizeBytes = 25 * 1024 * 1024;
         if (folderSizeBytes > folderMaxSizeBytes) {
             Bundle b = new Bundle();
