@@ -73,4 +73,8 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
 
     protected abstract void onUploadComplete(Context context, UploadJob job);
 
+    @Override
+    public boolean canHandlePiwigoResponseNow(PiwigoResponseBufferingHandler.Response response) {
+        return true; // otherwise it won't get handled unless the fragment is showing (i.e. the upload activity is also showing).
+    }
 }

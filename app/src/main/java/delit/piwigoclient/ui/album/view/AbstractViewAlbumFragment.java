@@ -2196,6 +2196,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         if (galleryModel != null && albumAlteredEvent.isRelevant(galleryModel.getContainerDetails().getId())) {
             galleryIsDirty = true;
             if (isResumed()) {
+                //TODO Do something more fine grained to avoid refreshing the entire album view!
                 reloadAlbumContent();
             }
             if (albumAlteredEvent.isCascadeToParents()) {

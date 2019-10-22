@@ -999,7 +999,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void notifyUser(Context context, int titleId, String message) {
-        if (getContext() == null) {
+        if (!isAdded() && getActivity() != null) {
             notifyUserUploadStatus(context.getApplicationContext(), message);
         } else {
             getUiHelper().showDetailedMsg(titleId, message);
@@ -1049,19 +1049,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private void notifyUserUploadJobComplete(Context context, UploadJob job) {
-        String message;
-        int titleId = R.string.alert_success;
-
-        if (!job.hasJobCompletedAllActionsSuccessfully()) {
-            message = context.getString(R.string.alert_upload_partial_success);
-            titleId = R.string.alert_partial_success;
-        } else {
-            message = context.getString(R.string.alert_upload_success);
-        }
-        notifyUser(context, titleId, message);
-    }
-
     private UploadJob getActiveJob(Context context) {
         UploadJob uploadJob;
         if (uploadJobId == null) {
@@ -1091,7 +1078,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void onAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
-        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_temporary_upload_album_deleted));
+
     }
 
     private TextView getSelectedGalleryTextView() {
@@ -1381,7 +1368,26 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 }
                 allowUserUploadConfiguration(job);
             }
+            // ensure the album view is refreshed if visible (to remove temp upload album).
+            for (Long albumParent : job.getUploadToCategoryParentage()) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+            }
+            EventBus.getDefault().post(new AlbumAlteredEvent(job.getUploadToCategory()));
+            // notify the user the upload has finished.
             notifyUserUploadJobComplete(context, job);
+        }
+
+        private void notifyUserUploadJobComplete(Context context, UploadJob job) {
+            String message;
+            int titleId = R.string.alert_success;
+
+            if (!job.hasJobCompletedAllActionsSuccessfully()) {
+                message = context.getString(R.string.alert_upload_partial_success);
+                titleId = R.string.alert_partial_success;
+            } else {
+                message = context.getString(R.string.alert_upload_success);
+            }
+            notifyUser(context, titleId, message);
         }
 
         @Override
@@ -1436,14 +1442,17 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         private void onFileUploadComplete(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
 
-            UploadJob uploadJob = getActiveJob(context);
 
-            if (uploadJob != null) {
-                for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
-                    EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
-                }
-                EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
-            }
+            //TODO This causes lots of server calls and is really unnecessary! Refresh once at the end
+
+//            UploadJob uploadJob = getActiveJob(context);
+//            if (uploadJob != null) {
+//                ResourceItem item = uploadJob.getUploadedFileResource(response.getFileForUpload());
+//                for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
+//                    EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+//                }
+//                EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory(), item.getId()));
+//            }
 
             if (isAdded()) {
                 // somehow upload job can be null... hopefully this copes with that scenario.
