@@ -999,7 +999,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void notifyUser(Context context, int titleId, String message) {
-        if (!isAdded() && getActivity() != null) {
+        if (!isAdded() || getActivity() == null) {
             notifyUserUploadStatus(context.getApplicationContext(), message);
         } else {
             getUiHelper().showDetailedMsg(titleId, message);
