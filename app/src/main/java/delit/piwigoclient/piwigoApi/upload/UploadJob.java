@@ -624,6 +624,17 @@ public class UploadJob implements Serializable {
         return resourceIds;
     }
 
+    public HashMap<File, String> getUploadedFilesLocalFileChecksums() {
+        HashSet<File> filesUploaded = getFilesSuccessfullyUploaded();
+        HashMap<File, String> uploadedFileChecksums = new HashMap<>(filesUploaded.size());
+        for (File f : filesUploaded) {
+            if (f.exists()) {
+                uploadedFileChecksums.put(f, getFileChecksum(f));
+            }
+        }
+        return uploadedFileChecksums;
+    }
+
     protected static class PartialUploadData implements Serializable {
         private static final long serialVersionUID = -8796546283675576745L;
         private final String uploadName;

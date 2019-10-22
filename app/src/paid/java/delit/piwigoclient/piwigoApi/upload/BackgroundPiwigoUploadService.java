@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import delit.libs.util.CustomFileFilter;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -35,8 +36,6 @@ import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
-import delit.libs.util.CustomFileFilter;
-import delit.libs.util.IOUtils;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -168,7 +167,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                                 AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
                                 runJob(unfinishedJob, this);
                                 if (jobConfig != null) {
-                                    runPostJobCleanup(jobConfig, unfinishedJob);
+                                    runPostJobCleanup(unfinishedJob, jobConfig.isDeleteFilesAfterUpload(context));
                                 }
                                 if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
                                     removeJob(unfinishedJob);
@@ -248,7 +247,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
      */
     private boolean runJobWithCleanup(UploadJob uploadJob, AutoUploadJobConfig jobConfig, Context context) {
         runJob(uploadJob, this);
-        runPostJobCleanup(jobConfig, uploadJob);
         if(!uploadJob.isCancelUploadAsap()) {
             if(uploadJob.hasJobCompletedAllActionsSuccessfully()) {
                 deleteStateFromDisk(context, uploadJob);
@@ -282,16 +280,15 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    protected void runPostJobCleanup(AutoUploadJobConfig jobConfig, UploadJob uploadJob) {
+    @Override
+    protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
+        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(uploadJob.getJobConfigId());
         super.runPostJobCleanup(uploadJob, jobConfig.isDeleteFilesAfterUpload(getApplicationContext()));
-        // record all files uploaded to prevent repeated upload (do this always in case delete fails for a file!
-        HashSet<File> filesUploaded = uploadJob.getFilesSuccessfullyUploaded();
-        HashMap<File, String> uploadedFileChecksums = new HashMap<>(filesUploaded.size());
-        for(File f : filesUploaded) {
-            if(f.exists()) {
-                uploadedFileChecksums.put(f, uploadJob.getFileChecksum(f));
-            }
-        }
+    }
+
+    @Override
+    protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<File, String> uploadedFileChecksums) {
+        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(uploadJob.getJobConfigId());
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(getApplicationContext());
         priorUploads.getFilesToHashMap().putAll(uploadedFileChecksums);
         jobConfig.saveFilesPreviouslyUploaded(getApplicationContext(), priorUploads);

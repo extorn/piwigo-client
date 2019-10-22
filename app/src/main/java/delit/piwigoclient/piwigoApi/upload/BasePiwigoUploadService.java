@@ -313,6 +313,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
             }
         }
+
+        // record all files uploaded to prevent repeated upload (do this always in case delete fails for a file!
+        HashMap<File, String> uploadedFileChecksums = uploadJob.getUploadedFilesLocalFileChecksums();
+        updateListOfPreviouslyUploadedFiles(uploadJob, uploadedFileChecksums);
     }
 
     protected NotificationCompat.Builder getNotificationBuilder() {
@@ -392,11 +396,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected abstract void doWork(Intent intent);
 
+    protected abstract void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<File, String> uploadedFileChecksums);
+
     protected abstract void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response);
 
     protected void runJob(long jobId) {
         UploadJob thisUploadJob = getActiveForegroundJob(this, jobId);
         runJob(thisUploadJob, null);
+        runPostJobCleanup(thisUploadJob, false);
     }
 
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
