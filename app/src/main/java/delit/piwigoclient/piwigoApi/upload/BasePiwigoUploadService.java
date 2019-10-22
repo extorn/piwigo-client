@@ -153,6 +153,16 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return null;
     }
 
+    public static int getUploadJobsCount(Context context) {
+        synchronized (activeUploadJobs) {
+            if (activeUploadJobs.size() == 0) {
+                loadForegroundJobStateFromDisk(context);
+                activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+            }
+            return activeUploadJobs.size();
+        }
+    }
+
     public static UploadJob getActiveBackgroundJob(Context context, long jobId) {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {

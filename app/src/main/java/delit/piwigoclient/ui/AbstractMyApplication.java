@@ -31,6 +31,7 @@ import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 
 /**
  * Created by gareth on 14/06/17.
@@ -259,10 +260,12 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     private void sanityCheckTheTempUploadFolder() {
         File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
         long folderSizeBytes = IOUtils.getFolderSize(tmp_upload_folder);
-        long folderMaxSizeBytes = 100 * 1024 * 1024;
+        long folderMaxSizeBytes = 25 * 1024 * 1024;
         if (folderSizeBytes > folderMaxSizeBytes) {
             Bundle b = new Bundle();
+            int activeUploadJobCount = BasePiwigoUploadService.getUploadJobsCount(this);
             b.putString("folder_size", IOUtils.toNormalizedText(folderSizeBytes));
+            b.putInt("active_uploads", activeUploadJobCount);
             FirebaseAnalytics.getInstance(this).logEvent("tmp_upload_folder_size", b);
         }
     }
