@@ -85,6 +85,17 @@ public class IOUtils {
         outStream.close();
     }
 
+    public static long getFolderSize(File directory) {
+        long length = 0;
+        for (File file : directory.listFiles()) {
+            if (file.isFile())
+                length += file.length();
+            else
+                length += getFolderSize(file);
+        }
+        return length;
+    }
+
     public static <T extends Serializable> T readObjectFromFile(File sourceFile) {
         boolean deleteFileNow = false;
         ObjectInputStream ois = null;

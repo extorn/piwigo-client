@@ -15,6 +15,7 @@ import androidx.multidex.MultiDexApplication;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import java.util.Set;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.util.SecurePrefsUtil;
 import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -243,6 +245,8 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         PicassoFactory.initialise();
 
         upgradeAnyPreferencesIfRequired();
+        sanityCheckTheTempUploadFolder();
+
         AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
 
@@ -250,6 +254,17 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
 //        TooLargeTool.startLogging(this);
+    }
+
+    private void sanityCheckTheTempUploadFolder() {
+        File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
+        long folderSizeBytes = IOUtils.getFolderSize(tmp_upload_folder);
+        long folderMaxSizeBytes = 100 * 1024 * 1024;
+        if (folderSizeBytes > folderMaxSizeBytes) {
+            Bundle b = new Bundle();
+            b.putString("folder_size", IOUtils.toNormalizedText(folderSizeBytes));
+            FirebaseAnalytics.getInstance(this).logEvent("tmp_upload_folder_size", b);
+        }
     }
 
 
