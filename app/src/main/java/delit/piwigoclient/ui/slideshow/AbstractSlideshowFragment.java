@@ -130,8 +130,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                     Crashlytics.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
                     requireFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
                 }
-                super.onCreate(savedInstanceState);
             }
+            super.onCreate(savedInstanceState);
+
         } catch (ModelUnavailableException e) {
             Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
         }
