@@ -48,7 +48,6 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
-import delit.piwigoclient.database.PiwigoDatabase;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
@@ -190,15 +189,16 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         @Override
         protected Void doInBackground(Void... voids) {
-            // clear those files no longer existing from the database.
-            PiwigoDatabase.getInstance(context).uploadedFileDao().removeObsolete(folderPath, new File(folderPath).list());
-
-            List<String> previouslyUploadedFiles = PiwigoDatabase.getInstance(context).uploadedFileDao().loadAllFilenamesByParentPathForServerId(folderPath, serverProfileId);
-            // mark up the adapter content.
-            for (String previousUploadedFile : previouslyUploadedFiles) {
-                int itemPos = adapter.getItemPositionForFilename(previousUploadedFile);
-                adapter.removeItemByPosition(itemPos);
-            }
+            //TODO enable this for paid app only
+//            // clear those files no longer existing from the database.
+//            PiwigoDatabase.getInstance(context).uploadedFileDao().removeObsolete(folderPath, new File(folderPath).list());
+//
+//            List<String> previouslyUploadedFiles = PiwigoDatabase.getInstance(context).uploadedFileDao().loadAllFilenamesByParentPathForServerId(folderPath, serverProfileId);
+//            // mark up the adapter content.
+//            for (String previousUploadedFile : previouslyUploadedFiles) {
+//                int itemPos = adapter.getItemPositionForFilename(previousUploadedFile);
+//                adapter.removeItemByPosition(itemPos);
+//            }
             return null;
         }
     }
