@@ -1,46 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <!-- Automatic Upload Jobs page -->
 
-    <bool name="preference_data_upload_automatic_upload_enabled_default">false</bool>
-    <bool name="preference_data_upload_automatic_upload_wireless_only_default">true</bool>
-    <bool name="preference_data_upload_automatic_job_enabled_default">true</bool>
-
-    <!-- prefs -->
-
-    <bool name="preference_data_upload_automatic_job_delete_uploaded_default">true</bool>
-    <bool name="preference_data_upload_automatic_job_compress_videos_default">
-        @bool/preference_data_upload_compress_videos_default
-    </bool>
-    <bool name="preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_default">
-        @bool/preference_data_upload_allow_upload_of_incompressible_videos_default
-    </bool>
-
-    <bool name="preference_data_upload_automatic_job_compress_images_default">
-        @bool/preference_data_upload_compress_images_default
-    </bool>
-    <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
-    <integer name="preference_data_upload_automatic_job_privacy_level_default">8</integer>
-
-    <integer name="preference_data_upload_automatic_job_compress_videos_quality_default">
-        @integer/preference_data_upload_compress_videos_quality_default
-    </integer>
-    <integer name="preference_data_upload_automatic_job_compress_videos_audio_bitrate_default">
-        @integer/preference_data_upload_compress_videos_audio_bitrate_default
-    </integer>
-
-    <!-- boolean flag set that if false will stop the job running -->
-
-    <integer name="preference_data_upload_automatic_job_compress_images_quality_default">
-        @integer/preference_data_upload_compress_images_quality_default
-    </integer>
-
-    <integer name="preference_data_upload_automatic_job_compress_images_max_height_default">
-        @integer/preference_data_upload_compress_images_max_height_default
-    </integer>
-    <integer name="preference_data_upload_automatic_job_compress_images_max_width_default">
-        @integer/preference_data_upload_compress_images_max_width_default
-    </integer>
     <string name="preference_page_auto_upload_jobs">Автоматическая загрузка</string>
 
     <string name="preference_data_upload_automatic_title">Автоматическая загрузка</string>
