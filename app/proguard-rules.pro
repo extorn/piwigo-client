@@ -163,6 +163,7 @@
 -keep class com.adobe.internal.xmp.** { public *; } # needed for the metadata-extractor code now.
 -keep class **.R  { public *; }
 -keep class **.R$*  { public *; }
+-keep class delit.piwigoclient.database.**  { public *; }
 
 #-keep public class * implements java.lang.annotation.Annotation { *; }
 ###-keep class delit.piwigoclient.**.*Activity { public *; }

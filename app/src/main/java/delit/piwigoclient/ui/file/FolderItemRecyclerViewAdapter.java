@@ -94,6 +94,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         activeFolder = newContent;
         getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
         File[] folderContent = activeFolder.listFiles(getAdapterPrefs().getFileFilter());
+
         currentDisplayContent = buildDisplayContent(folderContent);
         currentVisibleFileExts = getUniqueFileExtsInFolder(currentDisplayContent);
         Collections.sort(currentDisplayContent, getFileComparator());
@@ -262,6 +263,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     private int getItemPositionForFile(File f) {
         for (int i = 0; i < currentDisplayContent.size(); i++) {
             if (currentDisplayContent.get(i).getFile().equals(f)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getItemPositionForFilename(String filename) {
+        for (int i = 0; i < currentDisplayContent.size(); i++) {
+            if (currentDisplayContent.get(i).getFile().getName().equals(filename)) {
                 return i;
             }
         }

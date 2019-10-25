@@ -36,6 +36,16 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         multiDexKeepProguard file('multidex_keep_file.pro')
+        // configure room options
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
+
     }
     buildTypes {
         release {
@@ -101,6 +111,12 @@ android {
 }
 
 dependencies {
+    // room database persistence libs used to track files previously uploaded
+    def room_version = "2.2.0"
+    paidImplementation "androidx.room:room-runtime:$room_version"
+    paidAnnotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+
+
     implementation project(path: ':google-licencing-library')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     // prevent side loading (validate if this is attempted)
@@ -153,7 +169,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     // v14 stuff
     //implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation 'androidx.transition:transition:1.1.0'
+    implementation 'androidx.transition:transition:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout-solver:1.1.3' //2.0.0-alpha2
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3' //2.0.0-alpha2
     implementation 'com.google.firebase:firebase-core:17.2.0'
@@ -163,7 +179,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.1.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     // firebase-perf must be lower version than firebase-core and play-services*
-    implementation 'com.google.firebase:firebase-perf:19.0.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.1'
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

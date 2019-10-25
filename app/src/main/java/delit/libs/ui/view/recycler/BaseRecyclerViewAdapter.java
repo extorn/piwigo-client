@@ -219,6 +219,13 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
+    public void removeItemByPosition(int idxRemoved) {
+        if (idxRemoved >= 0) {
+            removeItemFromInternalStore(idxRemoved);
+            notifyItemRemoved(idxRemoved);
+        }
+    }
+
     public void remove(T item) {
         int idxRemoved = getItemPosition(item);
         if (idxRemoved >= 0) {

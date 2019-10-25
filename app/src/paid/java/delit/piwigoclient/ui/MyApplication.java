@@ -22,6 +22,9 @@ public class MyApplication extends AbstractMyApplication {
                 BackgroundPiwigoUploadService.startService(getApplicationContext());
             }
         }
+        // start the database
+        //TODO start the previously uploaded files database here
+//        PiwigoDatabase.getInstance(this);
     }
 
 
