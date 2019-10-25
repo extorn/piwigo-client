@@ -122,6 +122,10 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.38</item>
+        <item>"Bug-Fix:
+                 - Die Diashow (Vollbildansicht) funktioniert jetzt wieder. Meine aufrichtige Entschuldigung.
+                 - Russische Übersetzungen für Einstellungen hinzugefügt"</item>
         <item>1.4.0.37</item>
         <item>"Bug-Fix:
                  - Die Verbindungsbereinigung funktioniert jetzt wieder

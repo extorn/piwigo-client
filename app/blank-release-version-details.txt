@@ -1,30 +1,30 @@
 
 <en-GB>
 Bugfix:
-- Connection cleanup now works again
-- Setting resource rating in Russian Locale now works again
+- Slideshow (full screen image view) now works again. My Sincere apologies.
+- Russian translations for preferences added
 </en-GB>
 
 <de-DE>
 Bug-Fix:
- - Die Verbindungsbereinigung funktioniert jetzt wieder
- - Das Setzen der Ressourcenbewertung im russischen Gebietsschema funktioniert jetzt wieder
+- Die Diashow (Vollbildansicht) funktioniert jetzt wieder. Meine aufrichtige Entschuldigung.
+- Russische Übersetzungen für Einstellungen hinzugefügt
 </de-DE>
 
 <fr-FR>
 Correction d'un bug:
- - Le nettoyage de la connexion fonctionne à nouveau
- - La définition de la classification des ressources dans les paramètres régionaux russes fonctionne à nouveau
+- Le diaporama (affichage d'image plein écran) fonctionne à nouveau. Mes sincères excuses.
+- Traductions en russe pour les préférences ajoutées
 </fr-FR>
 
 <zh-CN>
 错误修正：
- -连接清理现在再次起作用
- -现在可以再次在俄语区域设置资源评级
+-幻灯片（全屏图像视图）现在可以再次使用。 诚挚的歉意。
+-增加了俄语翻译的首选项
 </zh-CN>
 
 <ru-RU>
 Исправлена ошибка:
- - Очистка соединения теперь работает снова
- - Установка рейтинга ресурса в русском языке теперь работает снова
+- Слайд-шоу (полноэкранный просмотр изображений) теперь снова работает. Мои искренние извинения.
+- добавлены русские переводы для предпочтений
 </ru-RU>

@@ -253,6 +253,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.38</item>
+        <item>"Bugfix:
+                - Slideshow (full screen image view) now works again. My Sincere apologies.
+                - Russian translations for preferences added"
+        </item>
+
+
         <item>1.4.0.37</item>
         <item>"Bugfix:
                 - Connection cleanup now works again
