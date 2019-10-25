@@ -15,6 +15,10 @@
 
     <string name="preference_data_upload_automatic_upload_jobs_title">Автоматическая загрузка заданий</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Вакансии</string>
+
+    <string name="preference_data_upload_automatic_job_view_status_title">Просмотр статуса загрузки</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Просмотр состояния с последнего запуска задания (если доступно)</string>
+
     <string name="preference_data_upload_automatic_job_is_valid_title">Работа действительна</string>
 
     <string name="preference_data_upload_automatic_job_enabled_summary">Эта работа слушает в фоновом режиме?</string>

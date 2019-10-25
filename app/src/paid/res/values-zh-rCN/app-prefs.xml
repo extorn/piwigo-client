@@ -22,6 +22,8 @@
 
     <!-- boolean flag set that if false will stop the job running -->
 
+    <string name="preference_data_upload_automatic_job_view_status_title">查看上传状态</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">查看上次作业运行的状态（如果可用）</string>
 
     <string name="preference_data_upload_automatic_job_is_valid_title">工作有效</string>
 

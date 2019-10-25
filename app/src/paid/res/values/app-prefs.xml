@@ -24,6 +24,10 @@
 
     <!-- boolean flag set that if false will stop the job running -->
 
+    <string name="preference_data_upload_automatic_job_view_status_key" translatable="false">preference_data_upload_automatic_job_view_status</string>
+    <string name="preference_data_upload_automatic_job_view_status_title">View Upload Status</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">View status from last job run (if available)</string>
+
     <string name="preference_data_upload_automatic_job_is_valid_key" translatable="false">preference_data_upload_automatic_job_is_valid</string>
     <string name="preference_data_upload_automatic_job_is_valid_title">Job is Valid</string>
 

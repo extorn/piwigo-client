@@ -8,16 +8,18 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
 
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.VersionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
+import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
@@ -26,7 +28,7 @@ import delit.piwigoclient.ui.preferences.AutoUploadJobPreferenceFragment;
 import delit.piwigoclient.ui.tags.TagSelectFragment;
 import delit.piwigoclient.ui.tags.TagsListFragment;
 import delit.piwigoclient.ui.tags.ViewTagFragment;
-import delit.libs.util.VersionUtils;
+import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 
 /**
  * Created by gareth on 07/04/18.
@@ -80,6 +82,12 @@ public class MainActivity extends AbstractMainActivity {
 
     private void showTagSelectionFragment(int actionId, BaseRecyclerViewAdapterPreferences prefs, HashSet<Long> initialSelection, HashSet<Tag> unsavedTags) {
         TagSelectFragment fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection, unsavedTags);
+        showFragmentNow(fragment);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final ViewJobStatusDetailsEvent event) {
+        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
         showFragmentNow(fragment);
     }
 

@@ -20,6 +20,8 @@
     <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Aufträge</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
 
+    <string name="preference_data_upload_automatic_job_view_status_title">Upload-Status anzeigen</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Status der letzten Jobausführung anzeigen (falls verfügbar)</string>
 
     <string name="preference_data_upload_automatic_job_is_valid_title">Auftrag ist gültig</string>
 

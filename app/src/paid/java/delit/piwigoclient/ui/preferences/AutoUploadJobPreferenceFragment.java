@@ -35,10 +35,13 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
+import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
@@ -61,18 +64,28 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public void onCreate(Bundle paramBundle) {
-        jobId = getArguments().getInt(JOB_ID_ARG);
-        actionId = getArguments().getInt(ACTION_ID_ARG);
+        Bundle args = requireArguments();
+        jobId = args.getInt(JOB_ID_ARG);
+        actionId = args.getInt(ACTION_ID_ARG);
         super.onCreate(paramBundle);
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        appPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        appPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         // ensure we use the shared preferences for this job
         getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
+
+        Preference viewUploadStatus = findPreference(R.string.preference_data_upload_automatic_job_view_status_key);
+        viewUploadStatus.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                onUploadJobStatusButtonClick();
+                return true;
+            }
+        });
 
         ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);
 
@@ -83,6 +96,15 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             Preference p = findPreference(R.string.preference_data_upload_automatic_job_compress_videos_key);
             p.setEnabled(false);
             p.setVisible(false);
+        }
+    }
+
+    private void onUploadJobStatusButtonClick() {
+        UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJob(requireContext(), jobId);
+        if (uploadJob != null) {
+            EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
+        } else {
+            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.job_not_found);
         }
     }
 

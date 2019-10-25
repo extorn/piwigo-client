@@ -24,6 +24,8 @@
 
     <!-- boolean flag set that if false will stop the job running -->
 
+    <string name="preference_data_upload_automatic_job_view_status_title">Afficher l\'état du téléchargement</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Afficher le statut de la dernière tâche exécutée (si disponible)</string>
 
     <string name="preference_data_upload_automatic_job_is_valid_title">L\'emploi est valide</string>
 
