@@ -781,7 +781,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         int itemIdx = tagModel.getItemIdx(r);
         tagModel.remove(itemIdx);
         viewAdapter.notifyItemRemoved(itemIdx);
-        if(deleteActionData.removeProcessedResource(r)) {
+        if (deleteActionData != null && deleteActionData.removeProcessedResource(r)) {
             deleteActionData = null;
         }
         EventBus.getDefault().post(new TagContentAlteredEvent(tag.getId(), -1));
