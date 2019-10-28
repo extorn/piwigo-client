@@ -202,8 +202,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
         if (args != null) {
-            intialiseFields(); // if we are opening this page for the first time with new data, wipe any old values.
-            loadArgsFromBundle(args);
+            long galleryItemId = args.getLong(ARG_GALLERY_ITEM_ID);
+            if (model == null || (model != null && model.getId() != galleryItemId)) {
+                intialiseFields(); // if we are opening this page for the first time with new data, wipe any old values.
+                loadArgsFromBundle(args);
+            }
         }
         // override page default values with any saved state
         restoreSavedInstanceState(savedInstanceState);

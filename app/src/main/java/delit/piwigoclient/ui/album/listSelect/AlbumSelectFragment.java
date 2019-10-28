@@ -126,6 +126,16 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
                             listView.setItemChecked(itemPos, true);
                         }
                     }
+                } else {
+                    HashSet<Long> initialSelection = getInitialSelection();
+                    if (initialSelection != null) {
+                        for (Long selectedAlbum : initialSelection) {
+                            int itemPos = availableGalleries.getPosition(selectedAlbum);
+                            if (itemPos >= 0) {
+                                listView.setItemChecked(itemPos, true);
+                            }
+                        }
+                    }
                 }
                 setListAdapter(availableGalleries);
                 setAppropriateComponentState();
