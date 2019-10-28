@@ -80,6 +80,25 @@ public class UploadJob implements Serializable {
         this.compressedFilesMap = new HashMap<>();
     }
 
+    public int getUploadProgress() {
+        int filesCount = filesForUpload.size();
+        long totalProgress = filesCount * 100;
+        long jobProgress = 0;
+        for (File f : filesForUpload) {
+            if (CANCELLED.equals(fileUploadStatus.get(f))) {
+                totalProgress -= 100;
+                continue;
+            }
+            if ((isPhoto(f) && isCompressPhotosBeforeUpload()) || (isVideo(f) && isCompressVideosBeforeUpload())) {
+                totalProgress += 100;
+            }
+            jobProgress += getCompressionProgress(f);
+            jobProgress += getUploadProgress(f);
+
+        }
+        return (int) Math.rint(((double) jobProgress) / totalProgress * 100);
+    }
+
     public void setToRunInBackground() {
         this.runInBackground = true;
     }
@@ -270,7 +289,7 @@ public class UploadJob implements Serializable {
         if (COMPRESSED.equals(status)) {
             return 100;
         }
-        if (isCompressVideosBeforeUpload() && canCompressVideoFile(uploadJobKey)) {
+        if ((isCompressVideosBeforeUpload() && canCompressVideoFile(uploadJobKey)) || isCompressPhotosBeforeUpload()) {
             // if we've started uploading this file it must have been compressed first!
             return getUploadProgress(uploadJobKey) > 0 ? 100 : 0;
         }

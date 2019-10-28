@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -137,6 +138,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private Spinner compressImagesOutputFormatSpinner;
     private NumberPicker compressImagesMaxHeightNumberPicker;
     private NumberPicker compressImagesMaxWidthNumberPicker;
+    private ProgressBar overallUploadProgressBar;
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
         Bundle args = new Bundle();
@@ -321,6 +323,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
 
         updateActiveJobActionButtonsStatus();
+
+        overallUploadProgressBar = view.findViewById(R.id.overall_upload_progress_bar);
 
         compressVideosSettings = view.findViewById(R.id.video_compression_options);
         compressVideosQualitySpinner = compressVideosSettings.findViewById(R.id.compress_videos_quality);
@@ -1333,6 +1337,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                 adapter.remove(cancelledFile);
+                UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
+                updateOverallUploadProgress(uploadJob.getUploadProgress());
             }
             if (uploadJobId != null) {
                 UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
@@ -1367,6 +1373,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_upload, context.getString(errMsgResourceId), R.string.button_ok);
                 }
                 allowUserUploadConfiguration(job);
+                updateOverallUploadProgress(job.getUploadProgress());
             }
             // ensure the album view is refreshed if visible (to remove temp upload album).
             for (Long albumParent : job.getUploadToCategoryParentage()) {
@@ -1414,11 +1421,20 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             processError(context, error);
         }
 
+        private void updateOverallUploadProgress(int progress) {
+            overallUploadProgressBar.setProgress(progress);
+            overallUploadProgressBar.setVisibility(VISIBLE);
+            if (progress == 100) {
+                overallUploadProgressBar.setVisibility(GONE);
+            }
+        }
+
         @Override
         protected void onFileUploadProgressUpdate(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                 adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
+                updateOverallUploadProgress(getActiveJob(context).getUploadProgress());
             }
             if (response.getProgress() == 100) {
                 onFileUploadComplete(context, response);
@@ -1430,6 +1446,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                 adapter.updateCompressionProgress(response.getFileForUpload(), response.getCompressedFileUpload(), response.getProgress());
+                updateOverallUploadProgress(getActiveJob(context).getUploadProgress());
             }
             if (response.getProgress() == 100) {
                 onFileCompressionComplete(context, response);
@@ -1445,14 +1462,16 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             //TODO This causes lots of server calls and is really unnecessary! Refresh once at the end
 
-//            UploadJob uploadJob = getActiveJob(context);
-//            if (uploadJob != null) {
+            UploadJob uploadJob = getActiveJob(context);
+            if (uploadJob != null) {
+                updateOverallUploadProgress(uploadJob.getUploadProgress());
 //                ResourceItem item = uploadJob.getUploadedFileResource(response.getFileForUpload());
 //                for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
 //                    EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
 //                }
 //                EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory(), item.getId()));
-//            }
+
+            }
 
             if (isAdded()) {
                 // somehow upload job can be null... hopefully this copes with that scenario.
@@ -1473,6 +1492,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         adapter.updateUploadProgress(existingFile, progress);
 //                    adapter.remove(existingFile);
                     }
+                    updateOverallUploadProgress(uploadJob.getUploadProgress());
                 }
             }
             String message = String.format(context.getString(R.string.alert_items_for_upload_already_exist_message_pattern), response.getExistingFiles().size());

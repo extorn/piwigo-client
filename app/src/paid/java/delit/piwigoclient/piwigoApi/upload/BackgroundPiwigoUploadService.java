@@ -122,6 +122,11 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
+    protected void updateNotificationProgressText(int uploadProgress) {
+        updateNotificationText(getString(R.string.notification_text_background_upload_running), uploadProgress);
+    }
+
+    @Override
     protected void doWork(Intent intent) {
         Context context = getApplicationContext();
 
@@ -263,7 +268,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             synchronized (BackgroundPiwigoUploadService.class) {
                 runningUploadJob = thisUploadJob;
             }
-            updateNotificationText(getString(R.string.notification_text_background_upload_running), true);
+            updateNotificationText(getString(R.string.notification_text_background_upload_running), runningUploadJob.getUploadProgress());
             boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
                 super.runJob(thisUploadJob, listener);

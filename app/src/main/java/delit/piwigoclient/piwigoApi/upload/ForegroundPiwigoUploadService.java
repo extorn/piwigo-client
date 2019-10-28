@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
@@ -58,13 +57,13 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     protected NotificationCompat.Builder buildNotification(String text) {
         NotificationCompat.Builder builder = super.buildNotification(text);
         Intent contentIntent = new Intent(this, UploadActivity.class);
-        contentIntent.putExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB, true);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
-        } else {
-            builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
-        }
+        Intent cancelIntent = new Intent(this, UploadActivity.class);
+        cancelIntent.putExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB, true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // add a cancel button to cancel the upload if clicked
+        builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
+        // open the upload activity if notification clicked
+        builder.setContentIntent(PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT));
         return builder;
     }
 

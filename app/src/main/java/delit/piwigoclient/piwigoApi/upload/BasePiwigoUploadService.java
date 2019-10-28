@@ -564,6 +564,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         } finally {
             thisUploadJob.setRunning(false);
             thisUploadJob.clearCancelUploadAsapFlag();
+
+            updateNotificationProgressText(thisUploadJob.getUploadProgress());
+
             if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
                 saveStateToDisk(thisUploadJob);
             } else {
@@ -848,7 +851,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
 
         File outputVideo = uploadJob.addCompressedFile(this, rawVideo, compressionSettings.getOutputFileMimeType());
-        UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob.getJobId(), rawVideo, outputVideo);
+        UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob, rawVideo, outputVideo);
 
         compressor.invokeFileCompression(this, rawVideo, outputVideo, listener, compressionSettings);
 
@@ -1095,6 +1098,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             saveStateToDisk(thisUploadJob);
 
+            updateNotificationProgressText(thisUploadJob.getUploadProgress());
+
         }
     }
 
@@ -1194,6 +1199,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     deleteCompressedVersionIfExists(thisUploadJob, uploadJobKey);
                     bytesOfDataInChunk = -1;
                 }
+                updateNotificationProgressText(thisUploadJob.getUploadProgress());
             } while (bytesOfDataInChunk >= 0);
 
             if (fileBytesUploaded < totalBytesInFile) {
@@ -1216,6 +1222,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
 
         return lastChunkUploadResult == null ? null : lastChunkUploadResult.second;
+    }
+
+    protected void updateNotificationProgressText(int uploadProgress) {
+        updateNotificationText(getString(R.string.notification_message_upload_service), uploadProgress);
     }
 
     private void configureUploadedFileDetails(UploadJob thisUploadJob, long jobId, File fileForUpload, Set<Long> allServerAlbumIds) {
@@ -1478,12 +1488,12 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private final File compressedVideo;
         private boolean compressionComplete;
         private BasePiwigoUploadService uploadService;
-        private long jobId;
+        private UploadJob job;
         private Exception compressionError;
 
-        public UploadFileCompressionListener(BasePiwigoUploadService uploadService, long jobId, File rawVideo, File compressedVideo) {
+        public UploadFileCompressionListener(BasePiwigoUploadService uploadService, UploadJob job, File rawVideo, File compressedVideo) {
             this.uploadService = uploadService;
-            this.jobId = jobId;
+            this.job = job;
             this.rawVideo = rawVideo;
             this.compressedVideo = compressedVideo;
         }
@@ -1495,7 +1505,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         @Override
         public void onCompressionComplete() {
-            uploadService.postNewResponse(jobId, new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, 100));
+            uploadService.postNewResponse(job.getJobId(), new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, 100));
             compressionComplete = true;
             // wake the main upload thread.
             synchronized (this) {
@@ -1510,7 +1520,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         @Override
         public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
             int intCompProgress = (int) Math.round(compressionProgress);
-            uploadService.postNewResponse(jobId, new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, intCompProgress));
+            uploadService.updateNotificationProgressText(job.getUploadProgress());
+            uploadService.postNewResponse(job.getJobId(), new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, intCompProgress));
         }
 
         @Override

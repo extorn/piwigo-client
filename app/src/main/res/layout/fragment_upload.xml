@@ -4,10 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/overall_upload_progress_bar"
+        style="@style/Custom.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="100"
+        android:visibility="gone"
+        tools:progress="50"
+        tools:visibility="visible" />
+
     <delit.libs.ui.view.SlidingTabLayout
         android:id="@+id/sliding_views_tab_headings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@id/overall_upload_progress_bar"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         app:viewPager="@+id/sliding_views_tab_content"
