@@ -150,10 +150,13 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         if(tagMembershipChangesAction != null) {
         tagMembershipChangesAction.recordTagListUpdated(response.getPiwigoResource());
             // changes made.
-            for (Tag t : tagMembershipChangesAction.getTagsToAdd()) {
-                int newTagMembers = Collections.frequency(tagMembershipChangesAction.getTagUpdateEvents(), t);
-                if(newTagMembers > 0) {
-                    EventBus.getDefault().post(new TagContentAlteredEvent(t.getId(), newTagMembers));
+            HashSet<Tag> tagsToAdd = tagMembershipChangesAction.getTagsToAdd();
+            if (tagsToAdd != null) {
+                for (Tag t : tagsToAdd) {
+                    int newTagMembers = Collections.frequency(tagMembershipChangesAction.getTagUpdateEvents(), t);
+                    if (newTagMembers > 0) {
+                        EventBus.getDefault().post(new TagContentAlteredEvent(t.getId(), newTagMembers));
+                    }
                 }
             }
             tagMembershipChangesAction.getTagUpdateEvents().clear();
