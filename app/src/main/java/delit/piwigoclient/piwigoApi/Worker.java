@@ -252,7 +252,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     private void recordExcutionFinished() {
         synchronized (runningExecutorTasks) {
-            runningExecutorTasks.remove(handler.getTag());
+            runningExecutorTasks.remove(getTaskName());
         }
     }
 
