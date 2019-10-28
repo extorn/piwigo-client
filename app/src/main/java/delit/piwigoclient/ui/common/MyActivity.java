@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,7 @@ import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActivity {
 
+    private static final String TAG = "MyActivity";
     protected static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
     private static final String STATE_TRACKED_ACTION_TO_INTENTS_MAP = "trackedActionIntentsMap";
     protected SharedPreferences prefs;
@@ -93,7 +95,16 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             licencingHelper.onCreate(this);
         }
 
-        super.onCreate(savedInstanceState);
+        try {
+            super.onCreate(savedInstanceState);
+        } catch (RuntimeException e) {
+            String error = "Unknown";
+            if (e.getCause() != null) {
+                error = e.getCause().getMessage();
+            }
+            Crashlytics.log(Log.ERROR, TAG, "Unable to  create activity (cause : " + error + ")");
+            Crashlytics.logException(e.getCause());
+        }
         uiHelper.registerToActiveServiceCalls();
     }
 
