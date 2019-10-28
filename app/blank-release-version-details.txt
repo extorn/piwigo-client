@@ -1,30 +1,21 @@
 
 <en-GB>
-Bugfix:
-- Slideshow (full screen image view) now works again. My Sincere apologies.
-- Russian translations for preferences added
+Improvements to app stability
 </en-GB>
 
 <de-DE>
-Bug-Fix:
-- Die Diashow (Vollbildansicht) funktioniert jetzt wieder. Meine aufrichtige Entschuldigung.
-- Russische Übersetzungen für Einstellungen hinzugefügt
+Verbesserungen der App-Stabilität
 </de-DE>
 
 <fr-FR>
-Correction d'un bug:
-- Le diaporama (affichage d'image plein écran) fonctionne à nouveau. Mes sincères excuses.
-- Traductions en russe pour les préférences ajoutées
+Amélioration de la stabilité de l'application
 </fr-FR>
 
 <zh-CN>
 错误修正：
--幻灯片（全屏图像视图）现在可以再次使用。 诚挚的歉意。
--增加了俄语翻译的首选项
+改善应用程式稳定性
 </zh-CN>
 
 <ru-RU>
-Исправлена ошибка:
-- Слайд-шоу (полноэкранный просмотр изображений) теперь снова работает. Мои искренние извинения.
-- добавлены русские переводы для предпочтений
+Улучшения стабильности приложения
 </ru-RU>
