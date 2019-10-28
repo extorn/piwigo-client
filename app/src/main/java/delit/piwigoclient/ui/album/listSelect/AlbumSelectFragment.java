@@ -118,10 +118,13 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
                     listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
                 }
 
-                for (Long selectedAlbum : getCurrentSelection()) {
-                    int itemPos = availableGalleries.getPosition(selectedAlbum);
-                    if (itemPos >= 0) {
-                        listView.setItemChecked(itemPos, true);
+                HashSet<Long> currentSelection = getCurrentSelection();
+                if (currentSelection != null) {
+                    for (Long selectedAlbum : currentSelection) {
+                        int itemPos = availableGalleries.getPosition(selectedAlbum);
+                        if (itemPos >= 0) {
+                            listView.setItemChecked(itemPos, true);
+                        }
                     }
                 }
                 setListAdapter(availableGalleries);
