@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
@@ -125,7 +126,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     protected TextView tagsField;
     private RatingBar averageRatingsBar;
     private ProgressBar progressIndicator;
-    private RatingBar ratingsBar;
+    private RatingBar myRatingForThisResourceBar;
     private AppCompatSpinner privacyLevelSpinner;
     private EditText resourceDescriptionView;
     private EditText resourceNameView;
@@ -134,7 +135,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private ImageButton deleteButton;
     private ImageButton copyButton;
     private ImageButton moveButton;
-    private RatingBar ratingBar;
     private ImageButton downloadButton;
     private CustomImageButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
@@ -221,8 +221,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 }
             }
         });
-        ratingsBar.setRating(model.getMyRating());
-        ratingsBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+        myRatingForThisResourceBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if (fromUser) {
@@ -234,7 +233,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         updateItemPositionText();
         setupImageDetailPopup(view, savedInstanceState);
         // updates the detail popup and main image rating
-        onRatingAltered(model);
+        processModelRatings(model);
         // show information panel if wanted.
         updateInformationShowingStatus();
 
@@ -368,9 +367,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             Drawable progressDrawable = layerDrawable.findDrawableByLayerId(android.R.id.progress).mutate();
             progressDrawable.setColorFilter(ContextCompat.getColor(requireContext(), R.color.rating_indicator), PorterDuff.Mode.SRC_IN);
         }
-        ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
+        myRatingForThisResourceBar = v.findViewById(R.id.slideshow_image_ratingBar);
 
-        overlaysVisibilityControl = new ViewVisibleControl(setAsAlbumThumbnail, itemPositionTextView, averageRatingsBar, resourceTitleView, resourceDescTitleView);
+
+        overlaysVisibilityControl = new ViewVisibleControl(v.findViewById(R.id.item_overlay_details_panel));
         overlaysVisibilityControl.setVisibility(View.VISIBLE);
 
         RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
@@ -579,8 +579,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 onCopyItem(model);
             }
         });
-
-        ratingBar = v.findViewById(R.id.slideshow_image_ratingBar);
     }
 
     protected void onSaveChangesButtonClicked() {
@@ -630,7 +628,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         setControlVisible(copyButton, false);
         setControlVisible(moveButton, false);
 
-        ratingBar.setEnabled(!isAppInReadOnlyMode());
+        myRatingForThisResourceBar.setEnabled(!isAppInReadOnlyMode());
         downloadButton.setEnabled(allowDownload);
     }
 
@@ -886,12 +884,17 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         populateResourceExtraFields();
     }
 
-    private void onRatingAltered(ResourceItem resource) {
+    private void processModelRatings(ResourceItem resource) {
         if (resource.getRatingsGiven() > 0) {
             averageRatingsBar.setRating(resource.getAverageRating());
             averageRatingsBar.setVisibility(VISIBLE);
+        } else {
+            averageRatingsBar.setVisibility(GONE);
         }
         resourceRatingScoreField.setText(getString(R.string.rating_score_pattern, model.getScore(), model.getRatingsGiven()));
+
+        myRatingForThisResourceBar.setRating(resource.getMyRating());
+        DrawableCompat.setTint(myRatingForThisResourceBar.getProgressDrawable(), ContextCompat.getColor(requireContext(), R.color.accent));
     }
 
     protected void onImageDeleted(HashSet<Long> deletedItemIds) {
@@ -922,9 +925,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     protected void populateResourceExtraFields() {
-        onRatingAltered(model);
-
-        ratingsBar.setRating(model.getMyRating());
 
         privacyLevelSpinner.setSelection(getPrivacyLevelIndexPositionFromValue(model.getPrivacyLevel()));
 
@@ -1102,7 +1102,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
 
             if (response instanceof ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) {
-                onRatingAltered(((ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) response).getPiwigoResource());
+                processModelRatings(((ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) response).getPiwigoResource());
             } else if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                 onImageDeleted(((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItemIds());
             } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
