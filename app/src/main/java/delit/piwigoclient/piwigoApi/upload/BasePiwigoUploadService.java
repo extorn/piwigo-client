@@ -312,6 +312,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
+        if (uploadJob == null) {
+            return; // Do nothing.
+        }
         File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
 
         for (File f : uploadJob.getFilesSuccessfullyUploaded()) {
