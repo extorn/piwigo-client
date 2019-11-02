@@ -3,6 +3,8 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -90,23 +92,36 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     @Override
-    public GalleryItem getItemByIdx(int idx) {
+    public GalleryItem getItemByIdx(final int idx) {
+        int adjustedIdx = idx;
         if (hideAlbums) {
             int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
-            if (idx > 0) {
-                idx += subAlbumCount + spacerAlbums;
+            if (adjustedIdx > 0) {
+                adjustedIdx += subAlbumCount + spacerAlbums;
             }
         }
         if (isRetrieveItemsInReverseOrder()) {
             // albums should not be reversed as their ordering is static
             int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
-            if (idx >= bannerOffset && idx < bannerOffset + subAlbumCount + spacerAlbums) {
+            if (adjustedIdx >= bannerOffset && adjustedIdx < bannerOffset + subAlbumCount + spacerAlbums) {
                 // retrieving a category item - sub album or banner (heading / advert)
-                int newIdx = subAlbumCount + spacerAlbums + bannerOffset - idx;
-                idx = newIdx;
+                int newIdx = subAlbumCount + spacerAlbums + bannerOffset - adjustedIdx;
+                adjustedIdx = newIdx;
             }
         }
-        return super.getItemByIdx(idx);
+        try {
+            return super.getItemByIdx(adjustedIdx);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            Crashlytics.log("error getting spansize for position " + idx + ", adjusted to " + adjustedIdx + ".\n"
+                    + " Is reverse order : " + isRetrieveItemsInReverseOrder() + ",\n"
+                    + "  model count: " + getItemCount() + ",\n"
+                    + " model resource count: " + getImgResourceCount() + ",\n"
+                    + " subAlbumCnt : " + subAlbumCount + ",\n"
+                    + " spacerAlbums : " + spacerAlbums + ",\n"
+                    + " hideAlbums : " + hideAlbums);
+            Crashlytics.logException(e);
+            throw e;
+        }
     }
 
     public boolean isHideAlbums() {
