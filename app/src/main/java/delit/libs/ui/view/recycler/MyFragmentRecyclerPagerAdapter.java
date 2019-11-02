@@ -141,7 +141,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
                             throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
                         }
                     } else {
-                        Crashlytics.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position + ". Ignored.");
+                        Crashlytics.log(Log.WARN, TAG, "Warning pager fragment of class type " + pif.getClass().getName() + " found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position + ". Ignored.");
                     }
                 }
             }
