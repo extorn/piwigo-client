@@ -135,9 +135,13 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
                     if (pagerIndex < 0) {
                         Crashlytics.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position);
                     }
-                    Fragment removed = activeFragments.put(pagerIndex, pif);
-                    if (removed != null) {
-                        throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
+                    if (pagerIndex >= 0) {
+                        Fragment removed = activeFragments.put(pagerIndex, pif);
+                        if (removed != null) {
+                            throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
+                        }
+                    } else {
+                        Crashlytics.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position + ". Ignored.");
                     }
                 }
             }
