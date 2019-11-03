@@ -304,8 +304,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     Crashlytics.log(Log.WARN, TAG, "Attempt to get parent album for album with id " + album.getId());
                 }
             } while (!thisAlbum.isRoot());
-
+            // now add the album to the ViewModelProvider and then get the current value
             galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+            if (galleryModel == null) {
+                Crashlytics.log(Log.ERROR, TAG, "Gallery model is unexpectedly null on reopening model with album " + album);
+            }
             populateViewFromModelEtc(requireView(), null);
             populateViewFromModelEtcOnResume();
             // below needed? called on re-login so prob not
@@ -481,7 +484,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
             currentGroups = savedInstanceState.getLongArray(STATE_CURRENT_GROUPS);
-            galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum().getValue();
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
@@ -1190,7 +1192,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
 
         if (galleryModel == null) {
-            loadModelFromArguments(); // restoring view.
+            if (getArguments() != null) {
+                loadModelFromArguments(); // restoring view.
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "Gallery model is null, but there are no arguments available from which to load one - unable to populate view");
+                return;
+            }
         }
 
 
