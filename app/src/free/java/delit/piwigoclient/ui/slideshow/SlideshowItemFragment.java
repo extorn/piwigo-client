@@ -15,7 +15,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     protected void populateResourceExtraFields() {
         super.populateResourceExtraFields();
-        tagsField.setText(R.string.paid_feature_only);
-        TextViewCompat.setTextAppearance(tagsField, R.style.Custom_TextAppearance_AppCompat_Body1);
+        getTagsField().setText(R.string.paid_feature_only);
+        TextViewCompat.setTextAppearance(getTagsField(), R.style.Custom_TextAppearance_AppCompat_Body1);
     }
 }
