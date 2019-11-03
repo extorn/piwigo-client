@@ -43,13 +43,13 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
         } else if (response instanceof BasePiwigoUploadService.PiwigoStartUploadFileResponse) {
             // ignore for now.
         } else if (response instanceof BasePiwigoUploadService.MessageForUserResponse) {
-            onMessageForUser((BasePiwigoUploadService.MessageForUserResponse) response);
+            onMessageForUser(context, (BasePiwigoUploadService.MessageForUserResponse) response);
         } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
             onErrorResponse((PiwigoResponseBufferingHandler.ErrorResponse) response);
         }
     }
 
-    protected abstract void onMessageForUser(BasePiwigoUploadService.MessageForUserResponse response);
+    protected abstract void onMessageForUser(Context context, BasePiwigoUploadService.MessageForUserResponse response);
 
     protected abstract void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response);
 

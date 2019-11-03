@@ -1500,8 +1500,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onMessageForUser(BasePiwigoUploadService.MessageForUserResponse response) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, response.getMessage());
+        protected void onMessageForUser(Context context, BasePiwigoUploadService.MessageForUserResponse response) {
+            notifyUser(context, R.string.alert_information, response.getMessage());
         }
 
         @Override

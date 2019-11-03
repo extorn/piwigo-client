@@ -17,7 +17,7 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onMessageForUser(BasePiwigoUploadService.MessageForUserResponse response) {
+    protected void onMessageForUser(Context context, BasePiwigoUploadService.MessageForUserResponse response) {
 
     }
 
