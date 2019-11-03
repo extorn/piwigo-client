@@ -114,6 +114,10 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
         }
     }
 
+    public void onPagerIndexChangedTo(int newPagerIndex) {
+        // do nothing.
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         uiHelper.onSaveInstanceState(outState);
@@ -198,6 +202,10 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        }
+
+        @Override
+        public void onPagerIndexChangedTo(int newPagerIndex) {
         }
     }
 

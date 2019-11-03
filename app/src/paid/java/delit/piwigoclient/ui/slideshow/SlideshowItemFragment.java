@@ -57,7 +57,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
         super.setupImageDetailPopup(v, savedInstanceState);
 
-        tagsField.setOnClickListener(new View.OnClickListener() {
+        getTagsField().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onShowTagsSelection();
@@ -94,7 +94,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
         boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
 
-        setControlVisible(editButton, (allowTagEdit || allowFullEdit) && !isEditingItemDetails());
+        setControlVisible(getEditButton(), (allowTagEdit || allowFullEdit) && !isEditingItemDetails());
 
     }
 
@@ -121,7 +121,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
 
 
-        setLinkedAlbumFieldText(tagsField, getLatestTagListForResource());
+        setLinkedAlbumFieldText(getTagsField(), getLatestTagListForResource());
     }
 
     @Override
@@ -229,7 +229,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                     changedTagsEvents.add(new TagContentAlteredEvent(newTag.getId(), -1));
                 }
             }
-            setLinkedAlbumFieldText(tagsField, updatedTagsSet == null ? currentTags : updatedTagsSet);
+            setLinkedAlbumFieldText(getTagsField(), updatedTagsSet == null ? currentTags : updatedTagsSet);
         }
     }
 

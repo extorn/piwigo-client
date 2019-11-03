@@ -122,8 +122,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private transient boolean doOnPageSelectedAndAddedRun; // reset to false with every object re-use and never tracked.
 
-    protected ImageButton editButton;
-    protected TextView tagsField;
+    private ImageButton editButton;
+    private TextView tagsField;
     private RatingBar averageRatingsBar;
     private ProgressBar progressIndicator;
     private RatingBar myRatingForThisResourceBar;
@@ -542,7 +542,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         editButton = v.findViewById(R.id.slideshow_resource_action_edit_button);
-        editButton.setOnClickListener(new View.OnClickListener() {
+        getEditButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editingItemDetails = !editingItemDetails;
@@ -622,7 +622,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         setControlVisible(saveButton, allowFullEdit || allowTagEdit);
         setControlVisible(discardButton, allowFullEdit || allowTagEdit);
-        setControlVisible(editButton, allowFullEdit || allowTagEdit);
+        setControlVisible(getEditButton(), allowFullEdit || allowTagEdit);
         setControlVisible(deleteButton, allowFullEdit);
         //TODO make visible once functionality written.
         setControlVisible(copyButton, false);
@@ -666,7 +666,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         privacyLevelSpinner.setEnabled(allowFullEdit && editingItemDetails);
 
         setControlVisible(setAsAlbumThumbnail, allowFullEdit && !editingItemDetails);
-        setControlVisible(editButton, (allowTagEdit || allowFullEdit) && !editingItemDetails);
+        setControlVisible(getEditButton(), (allowTagEdit || allowFullEdit) && !editingItemDetails);
         setControlVisible(saveButton, editingItemDetails);
         saveButton.setEnabled(editingItemDetails);
         setControlVisible(discardButton, editingItemDetails);
@@ -738,6 +738,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
 
         });
+    }
+
+    protected ImageButton getEditButton() {
+        return editButton;
+    }
+
+    protected TextView getTagsField() {
+        return tagsField;
     }
 
     private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
@@ -1006,17 +1014,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         setEditItemDetailsControlsStatus();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(AlbumItemDeletedEvent event) {
-        Long albumId = event.item.getParentId();
-        if (albumId == null && model.getParentId() == null || albumId != null && albumId.equals(model.getParentId())) {
-            //Need to update page as an item was deleted from the currently displayed album
-            albumLoadedItemCount = event.getAlbumResourceItemCount() - 1;
-            if (albumItemIdx > event.getAlbumResourceItemIdx()) {
-                albumItemIdx -= 1;
-            }
-            updateItemPositionText();
-        }
+    public void onPagerIndexChangedTo(int newPagerIndex) {
+        albumItemIdx -= 1;
+        updateItemPositionText();
     }
 
     @Override

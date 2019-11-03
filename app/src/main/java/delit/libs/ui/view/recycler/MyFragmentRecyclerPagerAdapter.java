@@ -221,6 +221,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             f = activeFragments.remove(activeAdapterPosition + 1);
             if(f != null) {
                 activeFragments.put(activeAdapterPosition, f);
+                f.onPagerIndexChangedTo(activeAdapterPosition);
                 // shift any page state too
                 Fragment.SavedState thisFragmentPageState = pageState.remove(activeAdapterPosition + 1);
                 if(thisFragmentPageState != null) {
@@ -439,6 +440,8 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         void onPageDeselected();
 
         int getPagerIndex();
+
+        void onPagerIndexChangedTo(int newPagerIndex);
     }
 
     public S getContainer() {
