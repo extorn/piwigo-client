@@ -2100,6 +2100,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return null;
         }
         PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        if (nextPiwigoAlbum == null) {
+            Crashlytics.log(Log.WARN, TAG, "Attempt to reopen parent but parent is not available. Returning null");
+            return null;
+        }
         return nextPiwigoAlbum.getContainerDetails();
     }
 
