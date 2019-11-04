@@ -1294,7 +1294,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     getUiHelper().addNonBlockingActiveServiceCall(getContext().getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()), albumDelHandler.getTag());
                 }
                 ForegroundPiwigoUploadService.removeJob(job);
-                ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job);
+                ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job, true);
                 fragment.allowUserUploadConfiguration(null);
             }
         }
