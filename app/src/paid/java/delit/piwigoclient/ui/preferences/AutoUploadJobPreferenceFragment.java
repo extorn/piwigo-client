@@ -79,6 +79,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
 
         Preference viewUploadStatus = findPreference(R.string.preference_data_upload_automatic_job_view_status_key);
+        viewUploadStatus.setEnabled(BackgroundPiwigoUploadService.getActiveBackgroundJob(requireContext(), jobId) != null);
         viewUploadStatus.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

@@ -192,7 +192,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (job != null && job.getJobId() != jobId) {
             // Is this an error caused by corruption. Delete the old job. We can't use it anyway.
             Crashlytics.log(Log.WARN, TAG, "Job exists on disk, but it doesn't match that expected by the app - deleting");
-            deleteStateFromDisk(context, job);
+            deleteStateFromDisk(context, job, true);
             job = null;
         }
         if (job != null) {
@@ -254,7 +254,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return loadedJobState;
     }
 
-    public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob) {
+    public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob, boolean deleteJobConfigFile) {
         if (thisUploadJob == null) {
             return; // out of sync! Job no longer exists presumably.
         }
@@ -266,12 +266,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
             }
         }
-
-        File stateFile = thisUploadJob.getLoadedFromFile();
-        if (stateFile == null) {
-            stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());
+        if (deleteJobConfigFile) {
+            File stateFile = thisUploadJob.getLoadedFromFile();
+            if (stateFile == null) {
+                stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());
+            }
+            deleteJobStateFile(stateFile);
         }
-        deleteJobStateFile(stateFile);
     }
 
     private static void deleteJobStateFile(File f) {
@@ -415,11 +416,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected void runJob(long jobId) {
         UploadJob thisUploadJob = getActiveForegroundJob(this, jobId);
-        runJob(thisUploadJob, null);
+        runJob(thisUploadJob, null, true);
         runPostJobCleanup(thisUploadJob, false);
     }
 
-    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
+    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
 
         int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(this, prefs);
 
@@ -555,10 +556,6 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
             }
 
-            if (thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
-                deleteStateFromDisk(this, thisUploadJob);
-            }
-
             thisUploadJob.setFinished();
 
         } finally {
@@ -570,7 +567,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
                 saveStateToDisk(thisUploadJob);
             } else {
-                deleteStateFromDisk(this, thisUploadJob);
+                deleteStateFromDisk(this, thisUploadJob, deleteJobConfigFileOnSuccess);
             }
 
             postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
@@ -851,7 +848,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
 
         File outputVideo = uploadJob.addCompressedFile(this, rawVideo, compressionSettings.getOutputFileMimeType());
-        UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob, rawVideo, outputVideo);
+        final UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob, rawVideo, outputVideo);
 
         compressor.invokeFileCompression(this, rawVideo, outputVideo, listener, compressionSettings);
 
@@ -1179,7 +1176,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         lastChunkUploadResult = uploadStreamChunk(thisUploadJob, uploadJobKey, currentUploadFileChunk, maxChunkUploadAutoRetries);
 
                         chunkId++;
-                        @SuppressWarnings("ConstantConditions") boolean chunkUploadedOk = lastChunkUploadResult.first;
+                        boolean chunkUploadedOk = lastChunkUploadResult.first;
                         if (chunkUploadedOk) {
                             fileBytesUploaded += bytesOfDataInChunk;
                             String fileChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
@@ -1491,7 +1488,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private UploadJob job;
         private Exception compressionError;
 
-        public UploadFileCompressionListener(BasePiwigoUploadService uploadService, UploadJob job, File rawVideo, File compressedVideo) {
+        UploadFileCompressionListener(BasePiwigoUploadService uploadService, UploadJob job, File rawVideo, File compressedVideo) {
             this.uploadService = uploadService;
             this.job = job;
             this.rawVideo = rawVideo;
@@ -1513,7 +1510,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
         }
 
-        public boolean isCompressionComplete() {
+        boolean isCompressionComplete() {
             return compressionComplete;
         }
 
@@ -1553,7 +1550,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     public static class MessageForUserResponse extends PiwigoResponseBufferingHandler.BaseResponse {
         private final String message;
 
-        public MessageForUserResponse(long jobId, String message) {
+        MessageForUserResponse(long jobId, String message) {
             super(jobId, true);
             this.message = message;
         }
@@ -1566,7 +1563,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     public static class PiwigoCleanupPostUploadFailedResponse extends PiwigoResponseBufferingHandler.BaseResponse {
         private final PiwigoResponseBufferingHandler.Response error;
 
-        public PiwigoCleanupPostUploadFailedResponse(long jobId, PiwigoResponseBufferingHandler.Response error) {
+        PiwigoCleanupPostUploadFailedResponse(long jobId, PiwigoResponseBufferingHandler.Response error) {
             super(jobId, true);
             this.error = error;
         }
@@ -1584,7 +1581,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         private final PiwigoResponseBufferingHandler.Response error;
 
-        public PiwigoPrepareUploadFailedResponse(long jobId, PiwigoResponseBufferingHandler.Response error) {
+        PiwigoPrepareUploadFailedResponse(long jobId, PiwigoResponseBufferingHandler.Response error) {
             super(jobId, true);
             this.error = error;
         }
@@ -1603,7 +1600,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private final int progress;
         private final File fileForUpload;
 
-        public PiwigoUploadProgressUpdateResponse(long jobId, File fileForUpload, int progress) {
+        PiwigoUploadProgressUpdateResponse(long jobId, File fileForUpload, int progress) {
             super(jobId, true);
             this.progress = progress;
             this.fileForUpload = fileForUpload;
@@ -1628,7 +1625,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private final File fileForUpload;
         private final File compressedFileUpload;
 
-        public PiwigoVideoCompressionProgressUpdateResponse(long jobId, File fileForUpload, File compressedFileUpload, int progress) {
+        PiwigoVideoCompressionProgressUpdateResponse(long jobId, File fileForUpload, File compressedFileUpload, int progress) {
             super(jobId, true);
             this.progress = progress;
             this.fileForUpload = fileForUpload;
@@ -1657,7 +1654,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private final Exception error;
         private final File fileForUpload;
 
-        public PiwigoUploadFileLocalErrorResponse(long jobId, File fileForUpload, Exception error) {
+        PiwigoUploadFileLocalErrorResponse(long jobId, File fileForUpload, Exception error) {
             super(jobId, true);
             this.error = error;
             this.fileForUpload = fileForUpload;
@@ -1681,7 +1678,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private final PiwigoResponseBufferingHandler.Response error;
         private final File fileForUpload;
 
-        public PiwigoUploadFileAddToAlbumFailedResponse(long jobId, File fileForUpload, PiwigoResponseBufferingHandler.Response error) {
+        PiwigoUploadFileAddToAlbumFailedResponse(long jobId, File fileForUpload, PiwigoResponseBufferingHandler.Response error) {
             super(jobId, true);
             this.error = error;
             this.fileForUpload = fileForUpload;
@@ -1705,7 +1702,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private final PiwigoResponseBufferingHandler.Response error;
         private final File fileForUpload;
 
-        public PiwigoUploadFileChunkFailedResponse(long jobId, File fileForUpload, PiwigoResponseBufferingHandler.Response error) {
+        PiwigoUploadFileChunkFailedResponse(long jobId, File fileForUpload, PiwigoResponseBufferingHandler.Response error) {
             super(jobId, true);
             this.error = error;
             this.fileForUpload = fileForUpload;
@@ -1728,7 +1725,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         private final ArrayList<File> existingFiles;
 
-        public PiwigoUploadFileFilesExistAlreadyResponse(long jobId, ArrayList<File> existingFiles) {
+        PiwigoUploadFileFilesExistAlreadyResponse(long jobId, ArrayList<File> existingFiles) {
             super(jobId, true);
             this.existingFiles = existingFiles;
         }
@@ -1746,7 +1743,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         private final UploadJob job;
 
-        public PiwigoUploadFileJobCompleteResponse(long messageId, UploadJob job) {
+        PiwigoUploadFileJobCompleteResponse(long messageId, UploadJob job) {
 
             super(messageId, true);
             this.job = job;
@@ -1765,7 +1762,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         private final File fileForUpload;
 
-        public PiwigoStartUploadFileResponse(long jobId, File fileForUpload) {
+        PiwigoStartUploadFileResponse(long jobId, File fileForUpload) {
             super(jobId, true);
             this.fileForUpload = fileForUpload;
         }
@@ -1783,7 +1780,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         private final File cancelledFile;
 
-        public FileUploadCancelledResponse(long messageId, File cancelledFile) {
+        FileUploadCancelledResponse(long messageId, File cancelledFile) {
             super(messageId, true);
             this.cancelledFile = cancelledFile;
         }

@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.FileObserver;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.greenrobot.eventbus.EventBus;
@@ -54,7 +55,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     private static boolean starting;
     private static UploadJob runningUploadJob = null;
     private long pauseThreadUntilSysTime;
-    private int BACKGROUND_UPLOAD_NOTIFICATION_ID = 2;
+    private static final int BACKGROUND_UPLOAD_NOTIFICATION_ID = 2;
 
     public BackgroundPiwigoUploadService() {
         super(TAG);
@@ -111,7 +112,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
-    protected void onHandleWork(Intent intent) {
+    protected void onHandleWork(@NonNull Intent intent) {
         // don't call the default (locks device from sleeping)
         try {
             doBeforeWork(intent);
@@ -170,7 +171,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                             }
                             if (!unfinishedJob.isFinished() && jobIsValid) {
                                 AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
-                                runJob(unfinishedJob, this);
+                                runJob(unfinishedJob, this, true);
                                 if (jobConfig != null) {
                                     runPostJobCleanup(unfinishedJob, jobConfig.isDeleteFilesAfterUpload(context));
                                 }
@@ -179,7 +180,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                                 }
                             } else {
                                 // no longer valid (connection doesn't exist any longer).
-                                deleteStateFromDisk(getApplicationContext(), unfinishedJob);
+                                deleteStateFromDisk(getApplicationContext(), unfinishedJob, true);
                                 removeJob(unfinishedJob);
                             }
                         }
@@ -190,9 +191,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                         if (jobs.hasUploadJobs(context)) {
                             // remove all existing watchers (in case user has altered the monitored folders)
                             List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
-                            List<File> keys = new ArrayList(runningObservers.keySet());
+                            List<File> keys = new ArrayList<>(runningObservers.keySet());
                             for(File key : keys) {
-                                runningObservers.remove(key).stopWatching();
+                                FileObserver observer = runningObservers.remove(key);
+                                if (observer != null) {
+                                    observer.stopWatching();
+                                }
                             }
                             for (AutoUploadJobConfig jobConfig : jobConfigList) {
                                 File monitoringFolder = jobConfig.getLocalFolderToMonitor(context);
@@ -204,12 +208,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                                 if (!terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
                                     UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
                                     if (uploadJob != null) {
-                                        if (runJobWithCleanup(uploadJob, jobConfig, context)) {
+                                        runJob(uploadJob, this, false);
+                                        if (!uploadJob.isCancelUploadAsap()) {
                                             // stop running jobs if we had a cancel request.
                                             break;
                                         }
                                     }
-
                                 }
                             }
                         }
@@ -230,12 +234,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             }
         } finally {
             // unable to remove from keyset iterator hence the temporary list.
-            List<File> observersToRemove = new ArrayList<>();
-            for(File key : runningObservers.keySet()) {
-                observersToRemove.add(key);
-            }
+            List<File> observersToRemove = new ArrayList<>(runningObservers.keySet());
             for(File key : observersToRemove) {
-                runningObservers.remove(key).stopWatching();
+                FileObserver observer = runningObservers.remove(key);
+                if (observer != null) {
+                    observer.stopWatching();
+                }
             }
             observersToRemove.clear();
 
@@ -244,26 +248,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    /**
-     * @param uploadJob
-     * @param jobConfig
-     * @param context
-     * @return true if cancelled early due to termination request.
-     */
-    private boolean runJobWithCleanup(UploadJob uploadJob, AutoUploadJobConfig jobConfig, Context context) {
-        runJob(uploadJob, this);
-        if(!uploadJob.isCancelUploadAsap()) {
-            if(uploadJob.hasJobCompletedAllActionsSuccessfully()) {
-                deleteStateFromDisk(context, uploadJob);
-                removeJob(uploadJob);
-            }
-            return false;
-        }
-        return true;
-    }
-
     @Override
-    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
+    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
         try {
             synchronized (BackgroundPiwigoUploadService.class) {
                 runningUploadJob = thisUploadJob;
@@ -271,7 +257,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             updateNotificationText(getString(R.string.notification_text_background_upload_running), runningUploadJob.getUploadProgress());
             boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
-                super.runJob(thisUploadJob, listener);
+                super.runJob(thisUploadJob, listener, deleteJobConfigFileOnSuccess);
             } else {
                 // update the job validity status
                 AutoUploadJobConfig config = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
@@ -313,7 +299,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     @Override
     public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
-        thisUploadJob.getJobId();
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
         thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFilesToHashMap());
@@ -431,7 +416,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         if(matchingFiles.length == 0) {
             return null;
         }
-        ArrayList<File> filesToUpload = new ArrayList(Arrays.asList(matchingFiles));
+        ArrayList<File> filesToUpload = new ArrayList<>(Arrays.asList(matchingFiles));
 
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context, getPrefs()), filesToUpload, category,
@@ -456,7 +441,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     private class CustomFileObserver extends FileObserver {
         private final BackgroundPiwigoUploadService uploadService;
 
-        public CustomFileObserver(BackgroundPiwigoUploadService uploadService, File f) {
+        CustomFileObserver(BackgroundPiwigoUploadService uploadService, File f) {
             super(f.getAbsolutePath(), FileObserver.CREATE ^ FileObserver.MOVED_TO);
             this.uploadService = uploadService;
         }
