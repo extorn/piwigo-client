@@ -171,10 +171,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                             }
                             if (!unfinishedJob.isFinished() && jobIsValid) {
                                 AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
-                                runJob(unfinishedJob, this, true);
-                                if (jobConfig != null) {
-                                    runPostJobCleanup(unfinishedJob, jobConfig.isDeleteFilesAfterUpload(context));
-                                }
+                                runJob(unfinishedJob, this, true, jobConfig != null ? jobConfig.isDeleteFilesAfterUpload(context) : false);
                                 if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
                                     removeJob(unfinishedJob);
                                 }
@@ -208,7 +205,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                                 if (!terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
                                     UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
                                     if (uploadJob != null) {
-                                        runJob(uploadJob, this, false);
+                                        runJob(uploadJob, this, false, jobConfig.isDeleteFilesAfterUpload(context));
                                         if (!uploadJob.isCancelUploadAsap()) {
                                             // stop running jobs if we had a cancel request.
                                             break;
@@ -249,7 +246,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
-    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
+    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess, boolean deleteUploadedFilesFromDevice) {
         try {
             synchronized (BackgroundPiwigoUploadService.class) {
                 runningUploadJob = thisUploadJob;
@@ -257,7 +254,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             updateNotificationText(getString(R.string.notification_text_background_upload_running), runningUploadJob.getUploadProgress());
             boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
-                super.runJob(thisUploadJob, listener, deleteJobConfigFileOnSuccess);
+                super.runJob(thisUploadJob, listener, deleteJobConfigFileOnSuccess, deleteUploadedFilesFromDevice);
             } else {
                 // update the job validity status
                 AutoUploadJobConfig config = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
@@ -269,12 +266,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             }
             EventBus.getDefault().post(new BackgroundUploadStoppedEvent(thisUploadJob));
         }
-    }
-
-    @Override
-    protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
-        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(uploadJob.getJobConfigId());
-        super.runPostJobCleanup(uploadJob, jobConfig.isDeleteFilesAfterUpload(getApplicationContext()));
     }
 
     @Override

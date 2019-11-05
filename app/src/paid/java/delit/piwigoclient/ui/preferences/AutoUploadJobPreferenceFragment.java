@@ -46,11 +46,11 @@ import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
-    private static final String JOB_ID_ARG = "jobId";
+    private static final String JOB_ID_ARG = "jobConfigId";
     private static final String ACTION_ID_ARG = "actionId";
     private PreferenceChangeListener prefChangeListener;
     private int actionId = -1;
-    private int jobId = -1;
+    private int jobConfigId = -1;
     private SharedPreferences appPrefs;
 
     public static AutoUploadJobPreferenceFragment newInstance(int actionId, int jobId) {
@@ -65,7 +65,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     @Override
     public void onCreate(Bundle paramBundle) {
         Bundle args = requireArguments();
-        jobId = args.getInt(JOB_ID_ARG);
+        jobConfigId = args.getInt(JOB_ID_ARG);
         actionId = args.getInt(ACTION_ID_ARG);
         super.onCreate(paramBundle);
     }
@@ -74,12 +74,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         appPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         // ensure we use the shared preferences for this job
-        getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
+        getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobConfigId));
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
 
         Preference viewUploadStatus = findPreference(R.string.preference_data_upload_automatic_job_view_status_key);
-        viewUploadStatus.setEnabled(BackgroundPiwigoUploadService.getActiveBackgroundJob(requireContext(), jobId) != null);
+        viewUploadStatus.setEnabled(BackgroundPiwigoUploadService.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId) != null);
         viewUploadStatus.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -101,7 +101,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     }
 
     private void onUploadJobStatusButtonClick() {
-        UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJob(requireContext(), jobId);
+        UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId);
         if (uploadJob != null) {
             EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
         } else {
@@ -201,7 +201,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         MultiSelectListPreference p = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
         String[] availableOptions = allowedFileTypes.toArray(new String[0]);
 
-        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(jobId);
+        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(jobConfigId);
         Set<String> newValues = jobConfig.getFileExtsToUpload(getContext());
         Set<String> availableValues = new HashSet<>();
         Collections.addAll(availableValues, availableOptions);
@@ -246,7 +246,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         SharedPreferences.Editor editor = getPrefs().edit();
         if(remoteAlbumExists) {
             // ensure the folder name is in-sync with the value on the server
-            ServerAlbumSelectPreference.ServerAlbumDetails selectedAlbumDetails = new AutoUploadJobConfig(jobId).getUploadToAlbumDetails(getContext());
+            ServerAlbumSelectPreference.ServerAlbumDetails selectedAlbumDetails = new AutoUploadJobConfig(jobConfigId).getUploadToAlbumDetails(getContext());
             boolean changed = false;
             if(selectedAlbumDetails.getAlbumId() >= 0) {
                 String selectedAlbumName = selectedAlbumDetails.getAlbumName();
@@ -322,7 +322,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public void onStop() {
-        EventBus.getDefault().postSticky(new AutoUploadJobViewCompleteEvent(actionId, jobId));
+        EventBus.getDefault().postSticky(new AutoUploadJobViewCompleteEvent(actionId, jobConfigId));
         super.onStop();
     }
 

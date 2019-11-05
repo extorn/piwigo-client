@@ -163,7 +163,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    public static UploadJob getActiveBackgroundJob(Context context, long jobId) {
+    public static UploadJob getActiveBackgroundJobByJobId(Context context, long jobId) {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground() && uploadJob.getJobId() == jobId) {
@@ -173,6 +173,23 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground() && uploadJob.getJobId() == jobId) {
+                    return uploadJob;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static UploadJob getActiveBackgroundJobByJobConfigId(Context context, long jobConfigId) {
+        synchronized (activeUploadJobs) {
+            for (UploadJob uploadJob : activeUploadJobs) {
+                if (uploadJob.isRunInBackground() && uploadJob.getJobConfigId() == jobConfigId) {
+                    return uploadJob;
+                }
+            }
+            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+            for (UploadJob uploadJob : activeUploadJobs) {
+                if (uploadJob.isRunInBackground() && uploadJob.getJobConfigId() == jobConfigId) {
                     return uploadJob;
                 }
             }
@@ -312,7 +329,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
+    private void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
         if (uploadJob == null) {
             return; // Do nothing.
         }
@@ -416,11 +433,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected void runJob(long jobId) {
         UploadJob thisUploadJob = getActiveForegroundJob(this, jobId);
-        runJob(thisUploadJob, null, true);
-        runPostJobCleanup(thisUploadJob, false);
+        runJob(thisUploadJob, null, true, false);
     }
 
-    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
+    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess, boolean deleteUploadedFilesFromDevice) {
 
         int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(this, prefs);
 
@@ -574,6 +590,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(thisUploadJob.getJobId());
             AbstractPiwigoDirectResponseHandler.unblockMessageId(thisUploadJob.getJobId());
         }
+        runPostJobCleanup(thisUploadJob, deleteUploadedFilesFromDevice);
     }
 
     private boolean isUseFilenamesOverMd5ChecksumForUniqueness() {
