@@ -315,9 +315,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     public void onStart() {
         super.onStart();
         // need to do this here because text fields don't update correctly when set in onCreateView / onViewCreated
+        fillHeaderFields();
+        fillResourceEditFields();
+    }
+
+    private void fillHeaderFields() {
         resourceTitleView.setText(model.getName());
         resourceDescTitleView.setText(model.getDescription());
-        fillResourceEditFields();
     }
 
     @Nullable
@@ -545,7 +549,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         getEditButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editingItemDetails = !editingItemDetails;
+                toggleEditingItemDetails();
                 fillResourceEditFields();
             }
         });
@@ -587,9 +591,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             getUiHelper().showDetailedMsg(R.string.alert_information, R.string.alert_server_call_in_progress_please_wait);
             return;
         }
-        //TODO ideally disable the button until complete but this involves tracking the precise calls.
-//        editingItemDetails = !editingItemDetails;
-//        fillResourceEditFields();
         onSaveModelChanges(model);
     }
 
@@ -605,9 +606,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     protected void onDiscardChanges() {
-        editingItemDetails = !editingItemDetails;
+        toggleEditingItemDetails();
         updatedLinkedAlbumSet = null;
         fillResourceEditFields();
+    }
+
+    protected void toggleEditingItemDetails() {
+        editingItemDetails = !editingItemDetails;
     }
 
     protected void setControlVisible(View v, boolean visible) {
@@ -653,6 +658,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         displayItemDetailsControlsBasedOnSessionState();
         setEditItemDetailsControlsStatus();
+
     }
 
     protected void setEditItemDetailsControlsStatus() {
@@ -977,10 +983,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     protected void onResourceInfoAltered(final T resourceItem) {
+
+        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_details_updated_message));
+
         model = resourceItem;
         if (editingItemDetails) {
             editingItemDetails = false;
             fillResourceEditFields();
+            fillHeaderFields();
         }
         if (albumsRequiringReload != null) {
             // ensure all necessary albums are updated.
