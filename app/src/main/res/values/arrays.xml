@@ -254,7 +254,11 @@
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
         <item>1.4.0.40</item>
-        <item>"Improvements to app stability"</item>
+        <item>"Bugfix:
+                - Improvements to app stability
+                - edit mode closed after image details updated
+            Changes:
+                - (pro only) View upload status details including errors for automatic jobs - on each automatic upload job config page"</item>
         <item>1.4.0.38</item>
         <item>"Bugfix:
                 - Slideshow (full screen image view) now works again. My Sincere apologies.
