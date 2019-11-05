@@ -171,7 +171,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                             }
                             if (!unfinishedJob.isFinished() && jobIsValid) {
                                 AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
-                                runJob(unfinishedJob, this, true, jobConfig != null ? jobConfig.isDeleteFilesAfterUpload(context) : false);
+                                runJob(unfinishedJob, this, true, jobConfig != null && jobConfig.isDeleteFilesAfterUpload(context));
                                 if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
                                     removeJob(unfinishedJob);
                                 }
@@ -357,7 +357,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     private void wakeIfWaiting() {
         synchronized(this) {
-            pauseThreadUntilSysTime = System.currentTimeMillis();
+            pauseThreadUntilSysTime = System.currentTimeMillis() - 1;
             notifyAll();
         }
     }
