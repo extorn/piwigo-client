@@ -450,10 +450,15 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         public void updateCompressionProgress(File fileBeingCompressed, File compressedFile, int percentageComplete) {
             UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingCompressed);
-            UploadProgressInfo progress = uploadDataItem.uploadProgress;
-            if (progress != null) {
-                progress.compressionProgress = percentageComplete;
-                progress.fileBeingUploaded = compressedFile;
+            if (uploadDataItem == null) {
+                String filename = fileBeingCompressed == null ? null : fileBeingCompressed.getAbsolutePath();
+                Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+            } else {
+                UploadProgressInfo progress = uploadDataItem.uploadProgress;
+                if (progress != null) {
+                    progress.compressionProgress = percentageComplete;
+                    progress.fileBeingUploaded = compressedFile;
+                }
             }
         }
 
