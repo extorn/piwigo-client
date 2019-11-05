@@ -151,7 +151,9 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        viewPrefs.storeToBundle(outState);
+        if (viewPrefs != null) {
+            viewPrefs.storeToBundle(outState);
+        }
         BundleUtils.writeMap(outState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY, itemsToLoad);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
@@ -159,7 +161,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
 
     private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+//        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
         boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
 
