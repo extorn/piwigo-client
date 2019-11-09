@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.FileObserver;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import delit.libs.util.CustomFileFilter;
 import delit.libs.util.IOUtils;
@@ -399,8 +403,17 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             return null;
         }
         boolean compressVideos = jobConfig.isCompressVideosBeforeUpload(context);
-        File[] matchingFiles = f.listFiles(fileFilter.withFileExtIn(jobConfig.getFileExtsToUpload(context)).withMaxSizeMb(jobConfig.getMaxUploadSize(context), compressVideos));
-        if (matchingFiles.length == 0) {
+        Set<String> fileExtsToUpload = jobConfig.getFileExtsToUpload(context);
+        int maxFileSizeMb = jobConfig.getMaxUploadSize(context);
+        if (fileExtsToUpload == null) {
+            Bundle b = new Bundle();
+            b.putString("message", "No File extensions selected for upload - nothing can be uploaded. Ignoring job");
+            FirebaseAnalytics.getInstance(context).logEvent("uploadError", b);
+            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), "No file extensions selected for upload. Ignoring job"));
+            return null;
+        }
+        File[] matchingFiles = f.listFiles(fileFilter.withFileExtIn(fileExtsToUpload).withMaxSizeMb(maxFileSizeMb, compressVideos));
+        if (matchingFiles == null || matchingFiles.length == 0) {
             return null;
         }
         matchingFiles = IOUtils.getFilesNotBeingWritten(matchingFiles, 1000);

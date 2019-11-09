@@ -47,10 +47,12 @@ public class CustomFileFilter implements FileFilter {
 
     private boolean isFilenameMatch(String filename) {
         boolean filenameMatches = false;
-        for (String acceptableExt : acceptableFileExtList) {
-            if (filename.endsWith(acceptableExt)) {
-                filenameMatches = true;
-                break;
+        if (acceptableFileExtList != null) {
+            for (String acceptableExt : acceptableFileExtList) {
+                if (filename.endsWith(acceptableExt)) {
+                    filenameMatches = true;
+                    break;
+                }
             }
         }
         return filenameMatches;
