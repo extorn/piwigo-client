@@ -166,7 +166,9 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
 //        Thread.currentThread().setName(handler.getClass().getSimpleName());
 
-        Log.e(tag, "Running worker for handler " + handler.getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+        if (BuildConfig.DEBUG) {
+            Crashlytics.log(Log.ERROR, tag, "Running worker for handler " + handler.getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+        }
 
         SharedPreferences prefs = null;
         if (context != null) {

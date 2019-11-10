@@ -223,6 +223,7 @@
         <item>When logged in as an administrator, before handing your device to a friend to view your photos, engage the application lock feature to prevent inadvertent changes being made to your gallery</item>
         <item>Once you have viewed an entire video, if local file caching is enabled, it is possible to save that video to your downloads folder</item>
         <item>Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</item>
+        <item>If images are slow to load, check that your server automatically generates the size used by this app when they are uploaded</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>

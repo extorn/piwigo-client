@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -70,11 +71,17 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriString(uri));
         handler.setCallDetails(context, connectionPrefs, false);
-        if (Looper.myLooper() == null || Looper.myLooper().getThread() != Looper.getMainLooper().getThread()) {
+        Looper currentLooper = Looper.myLooper();
+        if (currentLooper == null || currentLooper.getThread() != Looper.getMainLooper().getThread()) {
+            if (BuildConfig.DEBUG) {
+                Crashlytics.log(Log.DEBUG, TAG, "Image downloader has been called on background thread for URI: " + uri);
+            }
             handler.runCall(false);
         } else {
-            // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
-            Crashlytics.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread!");
+            if (BuildConfig.DEBUG) {
+                // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
+                Crashlytics.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread! - URI: " + uri);
+            }
             handler.invokeAndWait(context, connectionPrefs);
         }
 
@@ -97,16 +104,13 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             }
 
 
-            StringBuilder msgBuilder = new StringBuilder();
-            msgBuilder.append(errorResponse.getUrl());
-            msgBuilder.append('\n');
-            msgBuilder.append(errorResponse.getErrorMessage());
-            msgBuilder.append('\n');
-            msgBuilder.append(errorResponse.getErrorDetail());
-            msgBuilder.append('\n');
-            msgBuilder.append(errorResponse.getResponseBody());
-
-            final String toastMessage = msgBuilder.toString();
+            final String toastMessage = errorResponse.getUrl() +
+                    '\n' +
+                    errorResponse.getErrorMessage() +
+                    '\n' +
+                    errorResponse.getErrorDetail() +
+                    '\n' +
+                    errorResponse.getResponseBody();
 
             if (listener != null) {
                 listener.onImageDownloadError(toastMessage);

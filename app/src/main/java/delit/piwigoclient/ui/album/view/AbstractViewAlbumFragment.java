@@ -515,6 +515,19 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         updateViewPrefs();
 
+        // notify user once and only once per app session
+        getUiHelper().doOnce("currentPreferredResourceThumbnailSize", viewPrefs.getPreferredThumbnailSize(), new Runnable() {
+            @Override
+            public void run() {
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_image_thumbnails_of_size, viewPrefs.getPreferredThumbnailSize()));
+            }
+        });
+        getUiHelper().doOnce("currentPreferredAlbumThumbnailSize", viewPrefs.getPreferredAlbumThumbnailSize(), new Runnable() {
+            @Override
+            public void run() {
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_album_thumbnails_of_size, viewPrefs.getPreferredAlbumThumbnailSize()));
+            }
+        });
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
 
 

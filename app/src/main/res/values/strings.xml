@@ -1008,4 +1008,7 @@ SOFTWARE.
     <string name="hint_navigation_panel_1">Tap on the app icon above to force a server log out and log in</string>
     <string name="user_details_not_found_on_server">Unable to find user details on server</string>
     <string name="resource_queued_for_download">Resource queued for download. It is position %1$d in the queue.</string>
+    <string name="alert_message_showing_images_of_size">Showing images from server of size %1$s</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">Showing image thumbnails from server of size %1$s</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">Showing album thumbnails from server of size %1$s</string>
 </resources>

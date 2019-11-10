@@ -500,4 +500,7 @@
     <string name="hint_navigation_panel_1">点击上面的应用程序图标以强制服务器注销并登录</string>
     <string name="user_details_not_found_on_server">在服务器上找不到用户详细信息</string>
     <string name="resource_queued_for_download">资源排队等待下载。 它在队列中的位置%1$d。</string>
+    <string name="alert_message_showing_images_of_size">正在显示尺寸为 %1$s 的服务器中的图像</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">显示大小为 %1$s 的服务器中的图像缩略图</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">正在显示大小为 %1$s 的服务器中的相册缩略图</string>
 </resources>

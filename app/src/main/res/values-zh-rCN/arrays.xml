@@ -105,6 +105,7 @@
         <item>以管理员身份登录后，在将设备交给朋友查看照片之前，请使用应用程序锁定功能以防止对您的图库进行无意的更改</item>
         <item>查看完整个视频后，如果启用了本地文件缓存，则可以将该视频保存到下载文件夹中</item>
         <item>长按“删除”文件上的删除按钮以删除要上传的所有文件（当作业未进行时）</item>
+        <item>如果图像加载缓慢，请检查您的服务器在上传图像时是否自动生成此应用使用的尺寸</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>未来</item>

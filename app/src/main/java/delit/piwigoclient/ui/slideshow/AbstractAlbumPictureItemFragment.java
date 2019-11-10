@@ -47,6 +47,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     private PicassoLoader loader;
     private ImageView imageView;
     private ImageView imageLoadErrorView;
+    private String filesizeToShow;
 
     public AbstractAlbumPictureItemFragment() {
     }
@@ -207,6 +208,14 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     protected void doOnceOnPageSelectedAndAdded() {
         super.doOnceOnPageSelectedAndAdded();
+        if (filesizeToShow != null) {
+            getUiHelper().doOnce("currentImageSizeDisplayed", filesizeToShow, new Runnable() {
+                @Override
+                public void run() {
+                    getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_images_of_size, filesizeToShow));
+                }
+            });
+        }
     }
 
     @Override
@@ -246,6 +255,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         if (currentImageUrlDisplayed == null) {
 
             String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, requireContext());
+            filesizeToShow = preferredImageSize;
             for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
                 if (rf.getName().equals(preferredImageSize)) {
                     currentImageUrlDisplayed = model.getFileUrl(rf.getName());
@@ -254,22 +264,28 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             }
             if (currentImageUrlDisplayed == null) {
                 //Oh no - image couldn't be found - use the default.
-                int appHeight = itemContent.getRootView().getMeasuredHeight();
-                int appWidth = itemContent.getRootView().getMeasuredWidth();
-                if(appHeight == 0 || appWidth == 0) {
-                    Point p = DisplayUtils.getRealScreenSize(requireContext());
-                    appHeight = p.y;
-                    appWidth = p.x;
+                ResourceItem.ResourceFile bestFitFile = null;
+                if (itemContent != null) {
+                    int appHeight = itemContent.getRootView().getMeasuredHeight();
+                    int appWidth = itemContent.getRootView().getMeasuredWidth();
+                    if (appHeight == 0 || appWidth == 0) {
+                        Point p = DisplayUtils.getRealScreenSize(requireContext());
+                        appHeight = p.y;
+                        appWidth = p.x;
+                    }
+                    bestFitFile = model.getBestFitFile(appWidth, appHeight);
                 }
-                ResourceItem.ResourceFile fullscreenImage = model.getBestFitFile(appWidth, appHeight);
-                if (fullscreenImage != null) {
-                    currentImageUrlDisplayed = model.getFileUrl(fullscreenImage.getName());
+                if (bestFitFile != null) {
+                    filesizeToShow = bestFitFile.getName();
+                    currentImageUrlDisplayed = model.getFileUrl(bestFitFile.getName());
                 } else {
                     // this is theoretically never going to happen. Only if bug in the image selection code.
-                    currentImageUrlDisplayed = model.getFileUrl("original");
+                    filesizeToShow = "original";
+                    currentImageUrlDisplayed = model.getFileUrl(filesizeToShow);
                 }
             }
         }
+
         loader.resetAll();
         loader.cancelImageLoadIfRunning();
         loader.setPlaceholderImageUri(model.getThumbnailUrl());

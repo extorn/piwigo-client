@@ -106,6 +106,7 @@
         <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de remettre votre appareil à un ami pour visualiser vos photos, activez la fonction de verrouillage de l\'application afin d\'éviter toute modification accidentelle dans votre galerie.</item>
         <item>Une fois que vous avez visionné une vidéo entière, si la mise en cache des fichiers locaux est activée, il est possible d\'enregistrer cette vidéo dans votre dossier de téléchargement.</item>
         <item>Cliquez longuement sur le bouton supprimer d\'un \'fichier à télécharger\' pour supprimer tous les fichiers à télécharger (lorsque le travail n\'est pas en cours)</item>
+        <item>Si le chargement des images est lent, vérifiez que votre serveur génère automatiquement la taille utilisée par cette application lors de son téléchargement.</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>

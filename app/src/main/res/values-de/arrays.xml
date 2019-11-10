@@ -96,6 +96,7 @@
         <item>Wenn Sie als Administrator angemeldet sind und Ihr Gerät an einen Freund weitergeben, um Ihre Fotos anzusehen, aktivieren Sie die Anwendungssperre, um unbeabsichtigte Änderungen an Ihrer Galerie zu verhindern.</item>
         <item>Wenn Sie ein ganzes Video angesehen haben und das lokale Datei-Caching aktiviert ist, ist es möglich, dieses Video in Ihrem Download-Ordner zu speichern.</item>
         <item>Langer Klick auf die Löschen-Schaltfläche einer \'Datei zum Hochladen\', um alle Dateien zu löschen, die hochgeladen werden sollen (wenn der Auftrag nicht ausgeführt wird).</item>
+        <item>Wenn Bilder nur langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser App verwendete Größe generiert</item>
     </string-array>
     <string-array name="planned_releases">
         <item>Die Zukunft</item>

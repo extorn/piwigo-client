@@ -651,4 +651,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="hint_navigation_panel_1">Appuyez sur l\'icône de l\'application ci-dessus pour forcer un serveur à se déconnecter et à se connecter</string>
     <string name="user_details_not_found_on_server">Impossible de trouver les détails de l\'utilisateur sur le serveur</string>
     <string name="resource_queued_for_download">Ressource en file d\'attente pour le téléchargement. C\'est la position %1$d dans la file d\'attente.</string>
+    <string name="alert_message_showing_images_of_size">Affichage des images du serveur de taille %1$s</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">Affichage des vignettes d’image du serveur de taille %1$s</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">Affichage des vignettes d’album du serveur de taille %1$s</string>
 </resources>

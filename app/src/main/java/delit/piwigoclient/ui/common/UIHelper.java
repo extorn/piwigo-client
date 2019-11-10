@@ -112,6 +112,7 @@ public abstract class UIHelper<T> {
     private DismissListener dismissListener;
     private AlertDialog alertDialog;
     private Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<Long, String>(3));
+    private static final Map<String, String> globals = Collections.synchronizedMap(new HashMap<String, String>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
@@ -1015,6 +1016,20 @@ public abstract class UIHelper<T> {
 
     public SharedPreferences getResumePrefs() {
         return getContext().getSharedPreferences("resume-actions", Context.MODE_PRIVATE);
+    }
+
+    public void doOnce(String key, String newValue, Runnable action) {
+        String globalVal = globals.get(key);
+        if (globalVal == null || !globalVal.equals(newValue)) {
+            synchronized (globals) {
+                globalVal = globals.get(key);
+                if (globalVal == null || !globalVal.equals(newValue)) {
+                    // notify user once and only once per app session
+                    globals.put(key, newValue);
+                    action.run();
+                }
+            }
+        }
     }
 
     public interface QuestionResultListener<S extends UIHelper> extends Serializable {
