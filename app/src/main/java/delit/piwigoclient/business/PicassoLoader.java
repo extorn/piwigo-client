@@ -487,7 +487,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             // load the gif straight into the image manually.
             CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loader.getLoadInto().getContext());
             try {
-                Downloader.Response rsp = downloader.load(Uri.parse(loader.getUriToLoad()), -1);
+                Downloader.Response rsp = downloader.load(Uri.parse(loader.getUriToLoad()), 0);
                 if (rsp != null) {
                     //TODO create a custom video downloader that creates and uses a gif drawable as the basis for the stream decoder perhaps.
                     return new GifDrawable(rsp.getInputStream());
