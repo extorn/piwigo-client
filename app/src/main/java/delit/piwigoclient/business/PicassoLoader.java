@@ -256,9 +256,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             RequestCreator loader = customiseLoader(buildLoader());
             if (forceServerRequest) {
                 loader.memoryPolicy(MemoryPolicy.NO_CACHE);
-                loader.memoryPolicy(MemoryPolicy.NO_STORE);
+//                loader.memoryPolicy(MemoryPolicy.NO_STORE);
                 loader.networkPolicy(NetworkPolicy.NO_CACHE);
-                loader.networkPolicy(NetworkPolicy.NO_STORE);
+//                loader.networkPolicy(NetworkPolicy.NO_STORE);
             }
             //                if(placeholderUri != null) {
             //                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
