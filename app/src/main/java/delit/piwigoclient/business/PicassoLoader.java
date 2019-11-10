@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
 
+import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -32,7 +34,7 @@ import pl.droidsonroids.gif.GifDrawable;
 /**
  * Created by gareth on 11/10/17.
  */
-public class PicassoLoader<T extends ImageView> implements Callback, DownloaderListener, PicassoFactory.EnhancedPicassoListener {
+public class PicassoLoader<T extends ImageView> implements Callback, PicassoFactory.EnhancedPicassoListener {
 
     public final static int INFINITE_AUTO_RETRIES = -1;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";
@@ -60,6 +62,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
     private String lastLoadError;
     private boolean waitForErrorMessage;
     private boolean usePlaceholderIfNothingToLoad;
+    private final SparseIntArray errorDrawables = new SparseIntArray();
+    private CustomResponseException lastResponseException;
+
 
     public PicassoLoader(T loadInto) {
         this(loadInto, null);
@@ -68,19 +73,17 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
     public PicassoLoader(T loadInto, PictureItemImageLoaderListener listener) {
         this.loadInto = loadInto;
         this.listener = listener;
+        addErrorDrawable(HttpStatus.SC_UNAUTHORIZED, R.drawable.ic_image_locked_black_240dp);
+        addErrorDrawable(HttpStatus.SC_NOT_FOUND, R.drawable.ic_broken_image_black_240dp);
     }
 
     public void setUsePlaceholderIfNothingToLoad(boolean usePlaceholderIfNothingToLoad) {
         this.usePlaceholderIfNothingToLoad = usePlaceholderIfNothingToLoad;
     }
 
-    @Override
-    public void onImageDownloadError(String message) {
-        lastLoadError = message;
-    }
-
-    public String getLastLoadError() {
-        return lastLoadError;
+    public final PicassoLoader<T> addErrorDrawable(int statusCode, @DrawableRes int drawable) {
+        errorDrawables.put(statusCode, drawable);
+        return this;
     }
 
     /**
@@ -98,6 +101,8 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
         if (!(exception instanceof Downloader.ResponseException)) {
             Crashlytics.log(Log.ERROR, "PicassoLoader", "Unexpected error loading image");
             Crashlytics.logException(exception);
+        } else {
+            lastResponseException = (CustomResponseException) exception;
         }
     }
 
@@ -198,6 +203,17 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
         if (listener != null) {
             listener.onImageUnavailable(this, lastLoadError);
         }
+        if (!placeholderLoaded || !usePlaceholderIfError) {
+            int errDrawableId = errorResourceId;
+            if (lastResponseException != null) {
+                errDrawableId = errorDrawables.get(lastResponseException.getResponseCode());
+                if (errDrawableId == 0) {
+                    errDrawableId = errorResourceId;
+                }
+            }
+            RequestCreator loader = PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(errDrawableId);
+            loader.into(loadInto, null);
+        }
     }
 
     protected final void load(final boolean forceServerRequest) {
@@ -291,9 +307,6 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
 
     protected final RequestCreator buildLoader() {
         RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext()));
-        if (!placeholderLoaded || !usePlaceholderIfError) {
-            rc.error(errorResourceId);
-        }
         if (transformation != null) {
             rc.transform(transformation);
         }
@@ -473,7 +486,6 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             loader.setWaitForErrorMessage(false);
             // load the gif straight into the image manually.
             CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loader.getLoadInto().getContext());
-            downloader.setListener(loader);
             try {
                 Downloader.Response rsp = downloader.load(Uri.parse(loader.getUriToLoad()), -1);
                 if (rsp != null) {
