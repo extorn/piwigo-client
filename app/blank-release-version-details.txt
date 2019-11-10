@@ -1,40 +1,30 @@
 
 <en-GB>
 Bugfix:
-- Improvements to app stability
-- edit mode closed after image details updated
-Changes:
-- (pro only) View upload status details including errors for automatic jobs - on each automatic upload job config page
+- Corrections to image load error handling
+- Correction to fix minor bug in file upload process
 </en-GB>
 
 <de-DE>
 Bug-Fix:
- - Verbesserungen der App-Stabilität
- - Bearbeitungsmodus nach Aktualisierung der Bilddetails geschlossen
- Änderungen:
- - (Nur für Profis) Zeigen Sie Details zum Upload-Status einschließlich Fehlern für automatische Jobs an - auf jeder Konfigurationsseite für automatische Upload-Jobs
+ - Korrekturen bei der Fehlerbehandlung beim Laden von Bildern
+ - Korrektur, um kleinere Fehler beim Hochladen von Dateien zu beheben
 </de-DE>
 
 <fr-FR>
 Correction d'un bug:
- - Amélioration de la stabilité de l'application
- - mode édition fermé après la mise à jour des détails de l'image
- Changements:
- - (pro uniquement) Afficher les détails de l'état du téléchargement, y compris les erreurs pour les travaux automatiques - sur chaque page de configuration du travail de téléchargement automatique
+ - Corrections à la gestion des erreurs de chargement d'image
+ - Correction pour corriger un bug mineur dans le processus de téléchargement de fichier
 </fr-FR>
 
 <zh-CN>
 错误修正：
- -改善了应用的稳定性
- -更新图像详细信息后关闭编辑模式
- 变化：
- -（仅限专业人士）在每个自动上传作业配置页面上查看上传状态详细信息，包括自动作业的错误
+ -纠正图像加载错误处理
+ -更正了文件上传过程中的小错误
 </zh-CN>
 
 <ru-RU>
 Исправлена ошибка:
- - Улучшения стабильности приложения
- - режим редактирования закрыт после обновления деталей изображения
- Изменения:
- - (только для профессионалов) Просмотр сведений о состоянии загрузки, включая ошибки для автоматических заданий, - на каждой странице конфигурации задания автоматической загрузки
+ - Исправления в обработке ошибок загрузки изображения
+ - Исправление для исправления незначительной ошибки в процессе загрузки файла
 </ru-RU>

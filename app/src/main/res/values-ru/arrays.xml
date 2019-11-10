@@ -138,7 +138,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.40</item>
+        <item>1.4.0.42</item>
+        <item>"Исправлена ошибка:
+                 - Исправления в обработке ошибок загрузки изображения
+                 - Исправление для исправления незначительной ошибки в процессе загрузки файла"</item>
+        <item>1.4.0.41</item>
         <item>"Исправлена ошибка:
                  - Улучшения стабильности приложения
                  - режим редактирования закрыт после обновления деталей изображения
