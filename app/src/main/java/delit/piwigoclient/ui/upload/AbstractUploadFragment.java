@@ -1434,7 +1434,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                 adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
-                updateOverallUploadProgress(getActiveJob(context).getUploadProgress());
+                UploadJob activeJob = getActiveJob(context);
+                if (activeJob != null) {
+                    updateOverallUploadProgress(activeJob.getUploadProgress());
+                }
             }
             if (response.getProgress() == 100) {
                 onFileUploadComplete(context, response);
