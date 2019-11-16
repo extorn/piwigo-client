@@ -1,30 +1,25 @@
 
 <en-GB>
 Bugfix:
-- Corrections to image load error handling
-- Correction to fix minor bug in file upload process
+- Improvements to app stability
 </en-GB>
 
 <de-DE>
 Bug-Fix:
- - Korrekturen bei der Fehlerbehandlung beim Laden von Bildern
- - Korrektur, um kleinere Fehler beim Hochladen von Dateien zu beheben
+ - Verbesserungen der App-Stabilität
 </de-DE>
 
 <fr-FR>
 Correction d'un bug:
- - Corrections à la gestion des erreurs de chargement d'image
- - Correction pour corriger un bug mineur dans le processus de téléchargement de fichier
+ - Amélioration de la stabilité de l'application
 </fr-FR>
 
 <zh-CN>
 错误修正：
- -纠正图像加载错误处理
- -更正了文件上传过程中的小错误
+ -改善了应用的稳定性
 </zh-CN>
 
 <ru-RU>
 Исправлена ошибка:
- - Исправления в обработке ошибок загрузки изображения
- - Исправление для исправления незначительной ошибки в процессе загрузки файла
+ - Улучшения стабильности приложения
 </ru-RU>
