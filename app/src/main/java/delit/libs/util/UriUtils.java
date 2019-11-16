@@ -34,6 +34,8 @@ public class UriUtils {
         if (builder != null) {
             newUri = builder.build().normalizeScheme();
             resourceUrl = newUri.toString();
+        } else {
+            resourceUrl = resourceUri.toString();
         }
 
         if (serverCorrected && newUri != null) {
