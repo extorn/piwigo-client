@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Callback;
@@ -211,8 +212,13 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
                     errDrawableId = errorResourceId;
                 }
             }
-            RequestCreator loader = PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(errDrawableId);
-            loader.into(loadInto, null);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                // attempt to work around suspected issue with loading error drawables on android 4.4.2
+                loadInto.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), errDrawableId, getContext().getTheme()));
+            } else {
+                RequestCreator loader = PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(errDrawableId);
+                loader.into(loadInto, null);
+            }
         }
     }
 
