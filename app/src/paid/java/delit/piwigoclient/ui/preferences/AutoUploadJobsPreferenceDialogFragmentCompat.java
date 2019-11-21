@@ -105,7 +105,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     private void onDeleteUploadJob(AutoUploadJobConfig item) {
 
         deletedItems.add(item);
-        uploadJobIds.remove(item.getJobId());
+        uploadJobIds.remove((Integer) item.getJobId());
         loadListValues(uploadJobIds);
     }
 
