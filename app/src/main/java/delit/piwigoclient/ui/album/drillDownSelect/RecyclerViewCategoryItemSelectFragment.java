@@ -309,6 +309,10 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
+        if (listAdapter == null) {
+            // unable to handle action as list adapter is null.
+            return;
+        }
         HashSet<CategoryItem> selectedItems = listAdapter.getSelectedItems();
         if(getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             boolean selectedIdsAreValid = false;
