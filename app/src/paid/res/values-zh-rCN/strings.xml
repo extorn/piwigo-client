@@ -24,4 +24,7 @@
     <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload Compression</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">连接配置文件设置为脱机模式。 忽略工作</string>
+    <string name="ignoring_job_local_folder_not_found">本地文件夹不再存在。 忽略工作</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">没有选择要上传的文件扩展名。 忽略工作</string>
 </resources>

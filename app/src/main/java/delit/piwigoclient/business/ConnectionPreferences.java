@@ -285,13 +285,18 @@ public class ConnectionPreferences {
             writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_piwigo_server_password_key), fromPrefs.getPiwigoPassword(prefs, context));
 
             // fine grained http connection configuration bits and bobs
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_allow_redirects_key), fromPrefs.getFollowHttpRedirects(prefs, context));
+            writeIntPref(editor, getKey(context, R.string.preference_server_connection_max_redirects_key), fromPrefs.getMaxHttpRedirects(prefs, context));
+            writeIntPref(editor, getKey(context, R.string.preference_server_connection_retries_key), fromPrefs.getMaxServerConnectRetries(prefs, context));
             writeIntPref(editor, getKey(context, R.string.preference_server_connection_timeout_secs_key), fromPrefs.getServerConnectTimeout(prefs, context));
             writeIntPref(editor, getKey(context, R.string.preference_server_response_timeout_secs_key), fromPrefs.getServerResponseTimeout(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_connection_retries_key), fromPrefs.getMaxServerConnectRetries(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_connection_max_redirects_key), fromPrefs.getMaxHttpRedirects(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_allow_redirects_key), fromPrefs.getFollowHttpRedirects(prefs, context));
+
+
             writeStringPref(editor, getKey(context, R.string.preference_server_ssl_certificate_hostname_verification_key), fromPrefs.getCertificateHostnameVerificationLevel(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_force_https_key), fromPrefs.isForceHttps(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_offline_mode_key), fromPrefs.isOfflineMode(prefs, context));
 
             // received server certs list
             writeStringSetPref(editor, getKey(context, R.string.preference_pre_user_notified_certificates_key), fromPrefs.getUserPreNotifiedCerts(prefs, context));

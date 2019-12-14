@@ -24,4 +24,7 @@
     <string name="preference_data_upload_automatic_job_category_server_settings">Настройки сервера</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Локальные настройки</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Сжатие перед загрузкой</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Профиль подключения установлен в автономный режим. Игнорируя работу</string>
+    <string name="ignoring_job_local_folder_not_found">Локальная папка больше не существует. Игнорируя работу</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Не выбраны расширения файлов для загрузки. Игнорируя работу</string>
 </resources>

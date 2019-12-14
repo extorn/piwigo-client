@@ -399,7 +399,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     private UploadJob getUploadJob(Context context, AutoUploadJobConfig jobConfig, BackgroundPiwigoFileUploadResponseListener jobListener) {
         File f = jobConfig.getLocalFolderToMonitor(context);
         if(!f.exists()) {
-            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(),"Local folder no longer exists. Ignoring job"));
+            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_local_folder_not_found)));
             return null;
         }
         boolean compressVideos = jobConfig.isCompressVideosBeforeUpload(context);
@@ -409,7 +409,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             Bundle b = new Bundle();
             b.putString("message", "No File extensions selected for upload - nothing can be uploaded. Ignoring job");
             FirebaseAnalytics.getInstance(context).logEvent("uploadError", b);
-            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), "No file extensions selected for upload. Ignoring job"));
+            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_no_file_types_selected_for_upload)));
             return null;
         }
         File[] matchingFiles = f.listFiles(fileFilter.withFileExtIn(fileExtsToUpload).withMaxSizeMb(maxFileSizeMb, compressVideos));
@@ -427,6 +427,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());
+        if (uploadJob.getConnectionPrefs().isOfflineMode(getPrefs(), context)) {
+            postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_connection_profile_set_for_offline_access)));
+            return null;
+        }
 
         uploadJob.setVideoCompressionParams(jobConfig.getVideoCompressionParams(context));
         uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(context));
