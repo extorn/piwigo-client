@@ -60,7 +60,7 @@
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
             app:minValue="0"
-            app:maxValue="150"
+            app:maxValue="10240"
             android:key="@string/preference_data_upload_max_filesize_mb_key"
             android:title="@string/preference_data_upload_max_filesize_mb_title"
             android:summary="@string/preference_data_upload_max_filesize_mb_summary"

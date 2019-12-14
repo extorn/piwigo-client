@@ -207,7 +207,7 @@
                 android:summary="@string/preference_data_upload_automatic_job_max_upload_size_mb_summary"
                 android:title="@string/preference_data_upload_automatic_job_max_upload_size_mb_title"
                 android:defaultValue="@integer/preference_data_upload_automatic_job_max_upload_size_mb_default"
-                app:maxValue="150"
+                app:maxValue="10240"
                 app:minValue="0" />
 
         </androidx.preference.PreferenceCategory>
