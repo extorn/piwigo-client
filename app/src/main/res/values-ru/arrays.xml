@@ -138,6 +138,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.45</item>
+        <item>"Изменения:
+             - Увеличено произвольное приложение, поддерживается максимальный размер загружаемого файла до 10 ГБ.
+             - Обновлены зависимые версии библиотек"
+        </item>
         <item>1.4.0.44</item>
         <item>"Исправлена ошибка:
                  - Улучшения стабильности приложения"

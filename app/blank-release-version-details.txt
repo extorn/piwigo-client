@@ -1,25 +1,30 @@
 
 <en-GB>
-Bugfix:
-- Improvements to app stability
+Changes:
+- Increased arbitrary app supported max upload file size to 10GB
+- Updated dependent library versions
 </en-GB>
 
 <de-DE>
-Bug-Fix:
- - Verbesserungen der App-Stabilität
+Änderungen:
+ - Die maximale Upload-Dateigröße für beliebige Apps wurde auf 10 GB erhöht
+ - Aktualisierte abhängige Bibliotheksversionen
 </de-DE>
 
 <fr-FR>
-Correction d'un bug:
- - Amélioration de la stabilité de l'application
+Changements:
+ - Augmentation de la taille maximale du fichier de téléchargement de l'application arbitraire prise en charge à 10 Go
+ - Versions de bibliothèque dépendantes mises à jour
 </fr-FR>
 
 <zh-CN>
-错误修正：
- -改善了应用的稳定性
+变化：
+ -将任意应用程序支持的最大上传文件大小增加到10GB
+ -更新了依赖库版本
 </zh-CN>
 
 <ru-RU>
-Исправлена ошибка:
- - Улучшения стабильности приложения
+Изменения:
+ - Увеличено произвольное приложение, поддерживается максимальный размер загружаемого файла до 10 ГБ.
+ - Обновлены зависимые версии библиотеки
 </ru-RU>
