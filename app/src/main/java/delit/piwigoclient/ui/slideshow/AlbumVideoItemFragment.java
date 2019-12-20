@@ -428,7 +428,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         if (factorySettingsAltered) {
             logStatus("Need to create a new datasource");
             stopVideoDownloadAndPlay();
-            player.stop();
+            if (player != null) {
+                player.stop();
+            }
         }
         videoIsPlayingWhenVisible = startPlayback;
 
