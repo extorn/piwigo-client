@@ -528,7 +528,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     } else {
                         orphans = new ArrayList<>();
                     }
-                    processFindPreexistingImagesResponse(thisUploadJob, (ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse(), orphans);
+                    if (imageFindExistingHandler.getResponse() instanceof ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse) {
+                        processFindPreexistingImagesResponse(thisUploadJob, (ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse(), orphans);
+                    } else {
+                        // this is bizarre - a failure was recorded as a success!
+                        // notify the listener of the final error we received from the server
+                        postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
+                    }
+
                 }
                 if (!imageFindExistingHandler.isSuccess()) {
                     // notify the listener of the final error we received from the server
