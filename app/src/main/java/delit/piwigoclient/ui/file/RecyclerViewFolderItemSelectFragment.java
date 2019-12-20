@@ -43,6 +43,7 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.FileBreadcrumbsView;
 import delit.libs.ui.view.FlowLayout;
+import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.list.MappedArrayAdapter;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
@@ -158,9 +159,21 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         fileExtFilters = v.findViewById(R.id.file_ext_filters);
 
+        CustomImageButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
+        folderViewRefreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshCurrentFolderView();
+            }
+        });
+
         navListener = new FolderItemNavigationListener();
 
         return v;
+    }
+
+    private void refreshCurrentFolderView() {
+        getListAdapter().rebuildContentView();
     }
 
     private View createFileExtFilterControl(String fileExt, boolean checked) {
