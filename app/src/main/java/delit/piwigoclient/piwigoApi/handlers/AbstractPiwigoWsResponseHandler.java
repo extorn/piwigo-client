@@ -202,7 +202,11 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
             ByteArrayInputStream jsonBis = new ByteArrayInputStream(responseBody);
             if (jsonStartsAt > 0) {
-                jsonBis.skip(jsonStartsAt - 1);
+                int skip = jsonStartsAt - 1;
+                long skipped = jsonBis.skip(skip);
+                if (skipped != skip) {
+                    Crashlytics.log(Log.ERROR, getTag(), "Tried to skip " + skip + " characters, but actually skipped " + skipped);
+                }
             }
             PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
             processJsonResponse(getMessageId(), getPiwigoMethod(), piwigoResponse, responseBody, isCached);
@@ -214,11 +218,8 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
                 Crashlytics.logException(e);
             }
-            boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, new JsonSyntaxException(e.getMessage()), hasBrandNewSession);
-            if (!handled) {
-                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
-                r.setResponse(responseBodyStr);
-                storeResponse(r);
+            if (!handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, new JsonSyntaxException(e.getMessage()), hasBrandNewSession)) {
+                recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
             }
         } catch (JsonSyntaxException e) {
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
@@ -226,20 +227,22 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
                 Crashlytics.logException(e);
             }
-            boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
-            if (!handled) {
-                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
-                r.setResponse(responseBodyStr);
-                storeResponse(r);
+            if (!handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession)) {
+                recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
             }
         } catch (JsonIOException e) {
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             logJsonSyntaxError(responseBodyStr);
             Crashlytics.logException(e);
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
-            r.setResponse(responseBodyStr);
-            storeResponse(r);
+            recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
         }
+    }
+
+    private void recordFailureHandingHttp200Response(int statusCode, boolean isCached, Exception e, String responseBodyStr) {
+        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
+        r.setResponse(responseBodyStr);
+        resetSuccessAsFailure();
+        storeResponse(r);
     }
 
     protected void logJsonSyntaxError(String responseBodyStr) {
