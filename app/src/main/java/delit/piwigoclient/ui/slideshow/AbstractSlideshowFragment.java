@@ -183,7 +183,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
         viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
-        shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
+        shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, requireContext());
 
         Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
         int rawCurrentGalleryItemPosition = getArguments().getInt(ARG_GALLERY_ITEM_DISPLAYED);

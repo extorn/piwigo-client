@@ -272,12 +272,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             Bundle errBundle = new Bundle();
             errBundle.putString("error", e.getMessage());
             errBundle.putString("class", galleryModelClass.getName());
+            errBundle.putString("modelStoreClass", modelStore.getClass().getName());
+            errBundle.putLong("galleryItemId", galleryItemId);
             errBundle.putLong("modelId", galleryModelId);
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", errBundle);
             String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId);
             Crashlytics.log(Log.ERROR, TAG, errMsg);
             Crashlytics.logException(e);
-            throw new ModelUnavailableException(errMsg);
+            throw new ModelUnavailableException(errMsg, e);
         } catch (IllegalArgumentException e) {
             String errMsg = String.format(Locale.UK, "slideshow galleryItem could not be found in model - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId);
             Crashlytics.log(Log.ERROR, TAG, errMsg);

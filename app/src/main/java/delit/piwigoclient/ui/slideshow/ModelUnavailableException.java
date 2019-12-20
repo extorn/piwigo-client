@@ -5,6 +5,10 @@ public class ModelUnavailableException extends RuntimeException {
         super(errorMsg);
     }
 
+    public ModelUnavailableException(String errorMsg, Throwable e) {
+        super(errorMsg, e);
+    }
+
     public ModelUnavailableException() {
 
     }
