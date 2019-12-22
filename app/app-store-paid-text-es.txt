@@ -1,0 +1,47 @@
+Úselo para explorar una galería de fotos de PIWIGO.
+
+NOTA: EULA debe ser aceptado en la descarga.
+
+Esta aplicación tiene todas las características en la versión gratuita con algunas otras también. No hay anuncios
+
+** La aplicación se está desarrollando activamente **
+** Si algo no funciona, envíeme un correo electrónico, se solucionará **
+
+Vea la lista completa de características a continuación.
+
+Conéctese a servidores que se ejecutan en puertos http o https no estándar
+Acepte certificados de servidor no válidos (nombre de host incorrecto) o autofirmados si es necesario
+Se admite la fijación de certificados del servidor (verifique los certificados con una copia local)
+Vea imágenes con una resolución optimizada para su pantalla (o seleccione la que desee).
+Vista de solo lectura sin conexión de su servidor
+Muestre y permita ampliar imágenes de cualquier tamaño disponibles en el servidor
+Ver videos MP4 (otros también deberían funcionar, pero no he probado otros formatos)
+Descargar imágenes
+Guardar videos completamente descargados
+Opcionalmente excluir videos de presentaciones de diapositivas
+Califique imágenes y vea calificaciones promedio
+Sube nuevas imágenes o videos (se puede comprimir opcionalmente)
+Monitoreo automático de carpetas del dispositivo y carga de archivos en un trabajo en segundo plano
+Ver, agregar, modificar, eliminar etiquetas e imágenes etiquetadas
+Establecer y modificar permisos, descripción y otros detalles de álbumes y archivos
+Agregar o modificar álbumes, sus permisos, descripción, etc.
+Agregar, ver y editar usuarios de la galería
+Agregar, ver y editar grupos de galerías
+Copie o mueva imágenes dentro de la galería
+Seleccione imágenes para cargar usando otras aplicaciones y compártalas con PIWIGO
+El modo especial de solo lectura de la aplicación está disponible para evitar modificaciones no deseadas en la galería
+Algún control sobre el diseño de las pantallas en la aplicación (use para personalizar la pantalla en su dispositivo)
+
+Complementos de servidor compatibles: comunidad, piwigo_privacy, videojs, etiquetas de usuario.
+
+¿Quieres algo más que no esté en la lista? Prueba la aplicación. Si no hace exactamente lo que necesitas. Envíenme un correo electrónico usando el enlace en la aplicación y buscaré agregar las características que faltan.
+
+Próximos cambios:
+
+La intención es mejorar la interfaz de usuario de manera progresiva, y uno de los usuarios, David Klement, ha proporcionado amablemente algunas sugerencias para diseños de pantalla en el futuro que comencé a usar desde la versión 1.3.95 y sin duda tomaré más ideas. Las propuestas están disponibles en su totalidad:
+https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+
+
+Limitaciones conocidas:
+
+1. Los comentarios no son compatibles actualmente: no puede ver comentarios ni agregarlos. Si esta característica que falta es importante para usted, hable conmigo.
