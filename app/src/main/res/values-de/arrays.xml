@@ -123,6 +123,15 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.46</item>
+        <item>"Änderungen:
+             - Der Dateiauswahlseite wurde die Schaltfläche zum erneuten Laden von Inhalten hinzugefügt
+             - Das (kostenpflichtige) Suffix aus dem App-Namen entfernt
+             - Zeigen Sie den Pfad oder die Angabe für das Ziel-Upload-Album an
+             Bug-Fix:
+             - Bei der Diashow fehlte das letzte Element im Album
+             - Element in Diashow löschen - leere Seite"
+        </item>
         <item>1.4.0.45</item>
         <item>"Änderungen:
              - Die maximale Upload-Dateigröße für beliebige Apps wurde auf 10 GB erhöht

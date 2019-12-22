@@ -254,6 +254,15 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.46</item>
+        <item>"Changes:
+            - Added reload contents button to file selection page
+            - removed the (paid) suffix from app name
+            - Show path or indication of it for destination upload album
+            Bugfix:
+            - Slideshow was missing last item in album
+            - Delete item in Slideshow - blank page"
+        </item>
         <item>1.4.0.45</item>
         <item>"Changes:
             - Increased arbitrary app supported max upload file size to 10GB
