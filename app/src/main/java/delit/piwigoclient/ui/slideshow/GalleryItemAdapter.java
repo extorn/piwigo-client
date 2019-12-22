@@ -57,6 +57,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         for (int i = fromIdx; i < toIndex; i++) {
             GalleryItem currentItem = gallery.getItemByIdx(i);
             if (!(currentItem instanceof ResourceItem)) {
+                toIndex++;
                 continue;
             }
             if (!shouldShowVideos && currentItem instanceof VideoResourceItem && i != selectedItem) {

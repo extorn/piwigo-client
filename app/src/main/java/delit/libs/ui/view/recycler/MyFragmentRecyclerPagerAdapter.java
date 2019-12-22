@@ -69,6 +69,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     private int lastPosition;
     private S container;
     private ViewPager.OnPageChangeListener pageListener = new CustomPageChangeListener(this);
+    private boolean blockDestroy;
 
     public MyFragmentRecyclerPagerAdapter(FragmentManager fm) {
         mFragmentManager = fm;
@@ -236,8 +237,10 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             instantiateItem(container, position);
         }
 
+        blockDestroy = true;
         clearPageState();
         notifyDataSetChanged();
+        blockDestroy = false;
     }
 
     protected void onItemDeleted(T fragment) {
@@ -245,6 +248,10 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+
+        if (blockDestroy) {
+            return;
+        }
 
         T fragment = getActiveFragment(position);
         if (fragment == null) {
