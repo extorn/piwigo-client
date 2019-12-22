@@ -168,7 +168,7 @@
     <string name="other_licences_button_text">Autres composants sous licence</string>
     <string name="oss_licences_menu_title">Licences OSS</string>
     <string name="about_heading">A propos de cette application</string>
-    <integer name="eula_version">4</integer>
+
     <string name="eula" formatted="false">" Contrat de licence d\'utilisateur final (\" Contrat ")
 Dernière mise à jour : 7 août 2018
 

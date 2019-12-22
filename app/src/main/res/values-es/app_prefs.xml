@@ -15,35 +15,35 @@
 
     <string name="preference_server_connection_max_redirects_title">Redirecciones máximas del servidor</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
-    <integer name="preference_server_connection_max_redirects_default">5</integer>
+
 
     <string name="preference_server_connection_force_https_title">Reescribir URL Http en Https</string>
     <string name="preference_server_connection_force_https_summary">Todas las URL http: // reescritas en https: // para el servidor https</string>
-    <bool name="preference_server_connection_force_https_default">false</bool>
+
 
     <string name="preference_server_connection_offline_mode_title">Permitir navegación sin conexión</string>
     <string name="preference_server_connection_offline_mode_summary">Use datos en caché cuando estén disponibles</string>
-    <bool name="preference_server_connection_offline_mode_default">false</bool>
+
 
     <string name="preference_server_connection_allow_redirects_title">Permitir redirecciones de servidor</string>
     <string name="preference_server_connection_allow_redirects_summary">Siga las respuestas http 3xx</string>
-    <bool name="preference_server_connection_allow_redirects_default">true</bool>
+
 
     <string name="preference_server_connection_timeout_secs_title">Tiempo de espera de conexión (segundos)</string>
     <string name="preference_server_connection_timeout_secs_summary">%1$d segundos</string>
-    <integer name="preference_server_connection_timeout_secs_default">10</integer>
+
 
     <string name="preference_server_response_timeout_secs_title">Tiempo de espera de respuesta (segundos)</string>
     <string name="preference_server_response_timeout_secs_summary">%1$d segundos</string>
-    <integer name="preference_server_response_timeout_secs_default">10</integer>
+
 
     <string name="preference_server_alter_cache_directives_title">Alterar directivas de caché HTTP del servidor</string>
     <string name="preference_server_alter_cache_directives_summary">Habilitar para permitir el acceso sin conexión a la galería</string>
-    <bool name="preference_server_alter_cache_directives_default">false</bool>
+
 
     <string name="preference_server_connection_retries_title">Intentos de conexión antes del fallo</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
-    <integer name="preference_server_connection_retries_default">3</integer>
+
 
     <string name="preference_server_basic_auth_username_title">Nombre de usuario de autenticación básica</string>
 
@@ -51,9 +51,8 @@
 
     <string name="preference_server_use_basic_auth_title">Usar autenticación básica</string>
     <string name="preference_server_use_basic_auth_summary">Habilítelo si el servidor requiere autenticación básica</string>
-    <bool name="preference_server_use_basic_auth_default">false</bool>
 
-    <bool name="preference_server_use_client_certs_default">false</bool>
+
     <string name="preference_server_use_client_certs_title">Usar autenticación de certificado de cliente</string>
     <string name="preference_server_use_client_certs_summary">Habilítelo si el servidor requiere autenticación de cliente basada en certificado</string>
 
@@ -85,16 +84,16 @@
 
     <string name="preference_caching_max_cache_entries_title">Número máximo de entradas de caché</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
-    <integer name="preference_caching_max_cache_entries_default">1000</integer>
+
 
     <string name="preference_caching_max_cache_entry_size_title">Tamaño máximo de entrada de caché (KB)</string>
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
-    <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
+
 
     <string name="preference_connections_category_trusted_server_ca">Certificado de servidor de confianza CA</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Use una lista personalizada de certificados de CA confiables para validar los certificados SSL del servidor</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Usar autoridades de certificación confiables personalizadas</string>
-    <bool name="preference_server_use_custom_trusted_ca_certs_default">false</bool>
+
 
     <string name="preference_select_trusted_certificate_title">Seleccionar certificados de CA confiables</string>
     <string name="preference_select_trusted_certificate_summary">Ver y editar la lista de certificados de CA confiables</string>
@@ -115,14 +114,14 @@
 
     <string name="preference_gallery_show_image_name_title">Mostrar nombres de imágenes en el álbum</string>
     <string name="preference_gallery_show_image_name_summary">Muestra el nombre de la imagen debajo de cada imagen.</string>
-    <bool name="preference_gallery_show_image_name_default">true</bool>
+
 
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Paisaje: columnas de imágenes para mostrar</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Mostrar miniatura de álbum ampliada</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Las miniaturas de los álbumes están recortadas en el centro</string>
-    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">true</bool>
+
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Retrato: columnas de álbumes para mostrar</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
@@ -132,11 +131,11 @@
 
     <string name="preference_gallery_include_videos_in_slideshow_title">Mostrar videos en la presentación de diapositivas</string>
     <string name="preference_gallery_include_videos_in_slideshow_summary">¿Deben mostrarse los videos al navegar por una galería en modo presentación de diapositivas?</string>
-    <bool name="preference_gallery_include_videos_in_slideshow_default">true</bool>
+
 
     <string name="preference_gallery_enable_video_playback_title">Permitir reproducción de video</string>
     <string name="preference_gallery_enable_video_playback_summary">Habilítelo si desea descargar y reproducir videos a pedido</string>
-    <bool name="preference_gallery_enable_video_playback_default">true</bool>
+
 
     <string name="preference_piwigo_playable_media_extensions_title">Extensiones multimedia compatibles</string>
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
@@ -151,23 +150,21 @@
 
     <string name="preference_video_cache_enabled_title">Caché de videos vistos para archivar</string>
     <string name="preference_video_cache_enabled_summary">Cuando está habilitado, cualquier video transmitido será almacenado en caché para su posterior reproducción</string>
-    <bool name="preference_video_cache_enabled_default">true</bool>
+
 
     <string name="preference_video_cache_maxsize_mb_title">Tamaño máximo de caché de video (MB)</string>
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
-    <integer name="preference_video_cache_maxsize_mb_default">512</integer>
+
 
     <string name="preference_gallery_sort_order_title">Orden de clasificación del álbum</string>
     <string name="preference_gallery_sort_order_summary">%1$s</string>
     <string name="preference_album_subalbum_sort_order_title">Orden de clasificación del álbum secundario</string>
     <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
-    <integer name="preference_album_subalbum_sort_order_default">2
-    </integer> <!--DATE_ALBUM_SORT_ORDER (DSC) -->
 
 
     <string name="preference_gallery_sort_order_inverted_title">Invertir orden de álbum</string>
     <string name="preference_gallery_sort_order_inverted_summary">Cuando esté habilitado, invierta el orden de clasificación seleccionado de los recursos del álbum</string>
-    <bool name="preference_gallery_sort_order_inverted_default">false</bool>
+
 
     <string name="preference_gallery_unique_id_title">Identificador único para imágenes</string>
     <string name="preference_gallery_unique_id_summary">%1$s</string>
@@ -180,30 +177,28 @@
 
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Edad máxima artículos recientes (días)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d días</string>
-    <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000
-    </integer> <!--one week (7 days) -->
-    <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
+
 
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">El cajón de diapositivas es transparente</string>
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">El cajón de información de la imagen de la presentación de diapositivas es transparente</string>
-    <bool name="preference_gallery_slideshow_transparent_extra_info_shadow_default">false</bool>
+
 
     <string name="preference_gallery_slideshow_image_scaletype_title">Tipo de escala de imagen de presentación de diapositivas</string>
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
-    <bool name="preference_gallery_slideshow_image_rotate_default">false</bool>
+
     <string name="preference_gallery_slideshow_image_rotate_title">Gire la imagen para que coincida con la relación de aspecto de la pantalla</string>
     <string name="preference_gallery_slideshow_image_rotate_summary">Imagen girada para ajustarse a la pantalla</string>
     <string name="preference_groups_request_pagesize_title">Solicitud de servidor de grupos tamaño de página</string>
     <string name="preference_groups_request_pagesize_summary">%1$d artículos</string>
-    <integer name="preference_groups_request_pagesize_default">20</integer>
+
 
     <string name="preference_users_request_pagesize_title">Tamaño de página de solicitud del servidor de usuarios</string>
     <string name="preference_users_request_pagesize_summary">%1$d artículos</string>
-    <integer name="preference_users_request_pagesize_default">20</integer>
+
 
     <string name="preference_album_request_pagesize_title">Tamaño de página de solicitud del servidor de álbumes</string>
     <string name="preference_album_request_pagesize_summary">%1$d artículos</string>
-    <integer name="preference_album_request_pagesize_default">20</integer>
+
 
     <string name="preference_gallery_item_thumbnail_size_title">Tamaño de miniatura de recurso</string>
     <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
@@ -221,17 +216,17 @@
 
     <!-- prefs -->
 
-    <integer name="preference_data_upload_default_privacy_level_default">8</integer>
+
     <string name="preference_data_upload_default_privacy_level_summary">Archivos cargados visibles para%1$s</string>
     <string name="preference_data_upload_default_privacy_level_title">Nivel de privacidad predeterminado</string>
 
     <string name="preference_data_upload_chunkSizeKb_title">Tamaño máximo de fragmento de carga (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
-    <integer name="preference_data_upload_chunkSizeKb_default">512</integer>
+
 
     <string name="preference_data_upload_chunk_auto_retries_title">Max reintentos automáticos de carga de fragmentos de archivos</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
-    <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
+
 
     <string name="preference_data_upload_preferredColumnsPortrait_title">Retrato: columnas de imágenes para mostrar</string>
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
@@ -241,43 +236,35 @@
 
     <string name="preference_data_upload_max_filesize_mb_title">Tamaño máximo de archivo para cargar sin avisarle (en MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
-    <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
+
 
     <string name="preference_data_upload_compress_videos_summary">Comprime videos antes de subirlos</string>
     <string name="preference_data_upload_compress_videos_title">Comprimir videos</string>
-    <bool name="preference_data_upload_compress_videos_default">true</bool>
 
-    <bool name="preference_data_upload_allow_upload_of_incompressible_videos_default">true</bool>
 
     <string name="preference_data_upload_compress_videos_quality_title">Calidad de video</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Calidad de compresión de video%1$s</string>
-    <integer name="preference_data_upload_compress_videos_quality_default">700</integer>
+
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Bitrate de audio</string>
     <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Velocidad de bits de audio%1$s</string>
-    <integer name="preference_data_upload_compress_videos_audio_bitrate_default">128000</integer>
+
 
     <string name="preference_data_upload_compress_images_summary">Comprime las imágenes antes de subirlas</string>
     <string name="preference_data_upload_compress_images_title">Comprimir imágenes</string>
-    <bool name="preference_data_upload_compress_images_default">false</bool>
+
 
     <string name="preference_data_upload_compress_images_quality_title">La calidad de imagen</string>
     <string name="preference_data_upload_compress_images_quality_summary">Calidad de compresión de imagen%1$s</string>
-    <integer name="preference_data_upload_compress_images_quality_default">70</integer>
-    <integer name="preference_data_upload_compress_images_quality_max">100</integer>
-    <integer name="preference_data_upload_compress_images_quality_min">10</integer>
+
 
     <string name="preference_data_upload_compress_images_max_height_title">Altura máxima</string>
     <string name="preference_data_upload_compress_images_max_height_summary">Altura máxima (%1$s píxeles)</string>
-    <integer name="preference_data_upload_compress_images_max_height_default">1024</integer>
-    <integer name="preference_data_upload_compress_images_max_height_max">3840</integer>
-    <integer name="preference_data_upload_compress_images_max_height_min">120</integer>
+
 
     <string name="preference_data_upload_compress_images_max_width_title">Anchura máxima</string>
     <string name="preference_data_upload_compress_images_max_width_summary">Ancho máximo (%1$s píxeles)</string>
-    <integer name="preference_data_upload_compress_images_max_width_default">768</integer>
-    <integer name="preference_data_upload_compress_images_max_width_max">3840</integer>
-    <integer name="preference_data_upload_compress_images_max_width_min">120</integer>
+
 
     <string name="preference_data_upload_compress_images_output_format_title">Formato de salida de imagen</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Formato de salida de compresión de imagen%1$s</string>
@@ -288,7 +275,7 @@
 
     <!-- prefs -->
 
-    <bool name="preference_data_file_selector_showFilenames_default">true</bool>
+
     <string name="preference_data_file_selector_showFilenames_title">Mostrar nombres de archivo</string>
     <string name="preference_data_file_selector_showFilenames_summary">Nombres de archivo mostrados para cada archivo</string>
 

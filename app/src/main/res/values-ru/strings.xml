@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <integer name="eula_version">4</integer>
+
     <string name="checking_license">Проверка лицензии…</string>
     <string name="button_quit">Выход</string>
     <string name="button_buy">Купить приложение</string>
