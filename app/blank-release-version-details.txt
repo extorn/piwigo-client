@@ -1,60 +1,60 @@
 
 <en-GB>
 Changes:
-            - Added reload contents button to file selection page
-            - removed the (paid) suffix from app name
-            - Show path or indication of it for destination upload album
-            Bugfix:
-            - Slideshow was missing last item in album
-            - Delete item in Slideshow - blank page
+- Added reload contents button to file selection page
+- removed the (paid) suffix from app name
+- Show path or indication of it for destination upload album
+Bugfix:
+- Slideshow was missing last item in album
+- Delete item in Slideshow - blank page
 </en-GB>
 
 <de-DE>
 Änderungen:
-             - Der Dateiauswahlseite wurde die Schaltfläche zum erneuten Laden von Inhalten hinzugefügt
-             - Das (kostenpflichtige) Suffix aus dem App-Namen entfernt
-             - Zeigen Sie den Pfad oder die Angabe für das Ziel-Upload-Album an
-             Bug-Fix:
-             - Bei der Diashow fehlte das letzte Element im Album
-             - Element in Diashow löschen - leere Seite
+ - Der Dateiauswahlseite wurde die Schaltfläche zum erneuten Laden von Inhalten hinzugefügt
+ - Das (kostenpflichtige) Suffix aus dem App-Namen entfernt
+ - Zeigen Sie den Pfad oder die Angabe für das Ziel-Upload-Album an
+ Bug-Fix:
+ - Bei der Diashow fehlte das letzte Element im Album
+ - Element in Diashow löschen - leere Seite
 </de-DE>
 
 <fr-FR>
 Changements:
-             - Bouton de rechargement du contenu ajouté à la page de sélection des fichiers
-             - supprimé le suffixe (payant) du nom de l'application
-             - Afficher le chemin ou l'indication de celui-ci pour l'album de téléchargement de destination
-             Correction d'un bug:
-             - Le dernier élément de l'album manquait au diaporama
-             - Supprimer l'élément dans le diaporama - page vierge
+ - Bouton de rechargement du contenu ajouté à la page de sélection des fichiers
+ - supprimé le suffixe (payant) du nom de l'application
+ - Afficher le chemin ou l'indication de celui-ci pour l'album de téléchargement de destination
+ Correction d'un bug:
+ - Le dernier élément de l'album manquait au diaporama
+ - Supprimer l'élément dans le diaporama - page vierge
 </fr-FR>
 
 <es-ES>
 Cambios:
-             - Botón de recarga de contenido agregado a la página de selección de archivos
-             - eliminado el sufijo (pago) del nombre de la aplicación
-             - Mostrar ruta o indicación para el álbum de carga de destino
-             Arreglo del fallo:
-             - A la presentación de diapositivas le faltaba el último elemento del álbum
-             - Eliminar elemento en Presentación de diapositivas - página en blanco
+ - Botón de recarga de contenido agregado a la página de selección de archivos
+ - eliminado el sufijo (pago) del nombre de la aplicación
+ - Mostrar ruta o indicación para el álbum de carga de destino
+ Arreglo del fallo:
+ - A la presentación de diapositivas le faltaba el último elemento del álbum
+ - Eliminar elemento en Presentación de diapositivas - página en blanco
 </es-ES>
 
 <zh-CN>
 变化：
-             -在文件选择页面添加了重新加载内容按钮
-             -从应用名称中删除了（付费）后缀
-             -显示目标上传相册的路径或指示
-             错误修正：
-             -幻灯片缺少相册中的最后一个项目
-             -删除幻灯片中的项目-空白页
+ -在文件选择页面添加了重新加载内容按钮
+ -从应用名称中删除了（付费）后缀
+ -显示目标上传相册的路径或指示
+ 错误修正：
+ -幻灯片缺少相册中的最后一个项目
+ -删除幻灯片中的项目-空白页
 </zh-CN>
 
 <ru-RU>
 Изменения:
-             - Добавлена кнопка перезагрузки содержимого на страницу выбора файлов.
-             - убрал (платный) суффикс из имени приложения
-             - Показать путь или указание его для назначения загрузки альбома
-             Исправлена ошибка:
-             - В слайд-шоу отсутствовал последний элемент в альбоме
-             - Удалить элемент в слайд-шоу - пустая страница
+ - Добавлена кнопка перезагрузки содержимого на страницу выбора файлов.
+ - убрал (платный) суффикс из имени приложения
+ - Показать путь или указание его для назначения загрузки альбома
+ Исправлена ошибка:
+ - В слайд-шоу отсутствовал последний элемент в альбоме
+ - Удалить элемент в слайд-шоу - пустая страница
 </ru-RU>
