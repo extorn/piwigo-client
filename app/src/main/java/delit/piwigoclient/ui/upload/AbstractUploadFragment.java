@@ -463,7 +463,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (uploadToAlbum == null) {
             uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
         }
-        selectedGalleryTextView.setText(uploadToAlbum.getName());
+
+        if (uploadToAlbum.getParentId() != CategoryItemStub.ROOT_GALLERY.getId()) {
+            selectedGalleryTextView.setText("... / " + uploadToAlbum.getName());
+        } else {
+            selectedGalleryTextView.setText(uploadToAlbum.getName());
+        }
 
         int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, requireActivity());
 
@@ -1069,7 +1074,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (event.getSelectedItems() != null && event.getSelectedItems().size() > 0) {
                 CategoryItem selectedAlbum = event.getSelectedItems().iterator().next();
                 uploadToAlbum = selectedAlbum.toStub();
-                selectedGalleryTextView.setText(uploadToAlbum.getName());
+                selectedGalleryTextView.setText(event.getAlbumPath(selectedAlbum));
+//                selectedGalleryTextView.setText(uploadToAlbum.getName());
             }
         }
     }
@@ -1308,7 +1314,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();
                 if (uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
                     uploadToAlbum = response.getAlbumNames().get(0);
-                    fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
+                    if (uploadToAlbum.getParentId() != CategoryItemStub.ROOT_GALLERY.getId()) {
+                        fragment.getSelectedGalleryTextView().setText("... / " + uploadToAlbum.getName());
+                    } else {
+                        fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
+                    }
                 } else if (uploadToAlbum.getId() == CategoryItemStub.ROOT_GALLERY.getId()) {
                     uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
                     fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
