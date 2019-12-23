@@ -114,4 +114,8 @@ public class CategoryItemStub implements Parcelable, Identifiable {
             return new CategoryItemStub[size];
         }
     };
+
+    public boolean isRoot() {
+        return this.equals(ROOT_GALLERY);
+    }
 }
