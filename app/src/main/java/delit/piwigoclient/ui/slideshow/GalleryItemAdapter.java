@@ -56,7 +56,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         int toIndex = fromIdx + items - 1;
         for (int i = fromIdx; i < toIndex; i++) {
             GalleryItem currentItem = gallery.getItemByIdx(i);
-            if (!(currentItem instanceof ResourceItem)) {
+            if (!(currentItem instanceof ResourceItem) && (gallery.getItemCount() > toIndex + 1)) {
                 toIndex++;
                 continue;
             }
