@@ -1011,4 +1011,5 @@ SOFTWARE.
     <string name="alert_message_showing_images_of_size">Showing images from server of size %1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">Showing image thumbnails from server of size %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Showing album thumbnails from server of size %1$s</string>
+    <string name="subAlbum_text">... / {0}</string>
 </resources>

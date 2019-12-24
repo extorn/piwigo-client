@@ -465,7 +465,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         if (!uploadToAlbum.isRoot() && uploadToAlbum.getParentId() != CategoryItemStub.ROOT_GALLERY.getId()) {
-            selectedGalleryTextView.setText("... / " + uploadToAlbum.getName());
+            selectedGalleryTextView.setText(getString(R.string.subAlbum_text, uploadToAlbum.getName()));
         } else {
             selectedGalleryTextView.setText(uploadToAlbum.getName());
         }
@@ -1315,7 +1315,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if (uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
                     uploadToAlbum = response.getAlbumNames().get(0);
                     if (!uploadToAlbum.isRoot() && uploadToAlbum.getParentId() != CategoryItemStub.ROOT_GALLERY.getId()) {
-                        fragment.getSelectedGalleryTextView().setText("... / " + uploadToAlbum.getName());
+                        fragment.getSelectedGalleryTextView().setText(fragment.getString(R.string.subAlbum_text, uploadToAlbum.getName()));
                     } else {
                         fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
                     }
