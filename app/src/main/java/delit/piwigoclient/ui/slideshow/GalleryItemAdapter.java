@@ -50,14 +50,15 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         if (fromIdx == 0) {
             // need to reload all items.
             galleryResourceItems.clear();
-            fromIdx = 0;
             items = gallery.getItemCount();
         }
-        int toIndex = fromIdx + items - 1;
+        int toIndex = fromIdx + items;
         for (int i = fromIdx; i < toIndex; i++) {
             GalleryItem currentItem = gallery.getItemByIdx(i);
-            if (!(currentItem instanceof ResourceItem) && (gallery.getItemCount() > toIndex + 1)) {
-                toIndex++;
+            if (!(currentItem instanceof ResourceItem)) {
+                if (gallery.getItemCount() > toIndex + 1) {
+                    toIndex++;
+                }
                 continue;
             }
             if (!shouldShowVideos && currentItem instanceof VideoResourceItem && i != selectedItem) {
@@ -119,7 +120,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
             return (Class<? extends P>) AlbumVideoItemFragment.class;
         }
         //TODO check what causes this - probably deleting all items and trying to show a header!
-        throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem.getClass().getName() + ")");
+        throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + galleryItem.getClass().getName() + ")");
     }
 
     @Override
