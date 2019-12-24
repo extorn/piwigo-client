@@ -37,6 +37,16 @@ public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerP
         return tabTitles.get(position);
     }
 
+    @Override
+    public void onPageSelected(int position) {
+        T managedFragment = getActiveFragment(position);
+        if (managedFragment != null) {
+            // if this item still exists (not been deleted by user)
+            Crashlytics.log(Log.DEBUG, TAG, "showing tab: " + getPageTitle(position) + "(" + managedFragment.getClass().getName() + ")");
+        }
+        super.onPageSelected(position);
+    }
+
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
