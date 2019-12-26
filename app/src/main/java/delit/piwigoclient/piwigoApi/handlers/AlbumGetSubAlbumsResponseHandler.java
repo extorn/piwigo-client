@@ -100,7 +100,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             CategoryItem item = parseCategory(availableAlbumsMap, category);
             availableAlbumsMap.put(item.getId(), item);
             if(recursive) {
-                if(availableAlbumsMap.size() == 0 || item.getParentId() == CategoryItem.ROOT_ALBUM.getId()) {
+                if (availableAlbumsMap.size() == 0 || item.isParentRoot()) {
                     // this is the overall parent being added in
                     availableGalleries.add(item);
                     if(item.getParentId() == null) {

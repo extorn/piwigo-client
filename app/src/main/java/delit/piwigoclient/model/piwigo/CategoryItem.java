@@ -497,4 +497,8 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         }
         return null;
     }
+
+    public boolean isParentRoot() {
+        return getParentId() != null && getParentId() == CategoryItem.ROOT_ALBUM.getId();
+    }
 }

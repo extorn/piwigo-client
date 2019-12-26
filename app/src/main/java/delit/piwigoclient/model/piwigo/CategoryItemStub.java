@@ -118,4 +118,8 @@ public class CategoryItemStub implements Parcelable, Identifiable {
     public boolean isRoot() {
         return this.equals(ROOT_GALLERY);
     }
+
+    public boolean isParentRoot() {
+        return getParentId() != null && getParentId() == CategoryItemStub.ROOT_GALLERY.getId();
+    }
 }
