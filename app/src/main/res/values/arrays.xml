@@ -254,6 +254,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.47</item>
+        <item>"Bugfix:
+        - Improvements to app stability"
+        </item>
         <item>1.4.0.46</item>
         <item>"Changes:
             - Added reload contents button to file selection page
