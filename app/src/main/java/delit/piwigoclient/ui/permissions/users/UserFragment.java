@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
@@ -540,7 +543,7 @@ public class UserFragment extends MyFragment<UserFragment> {
 
     private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>> {
 
-        private final User user;
+        private transient User user; // user is not serializable.
 
         public OnDeleteUserAction(FragmentUIHelper<UserFragment> uiHelper, User user) {
             super(uiHelper);
@@ -554,6 +557,21 @@ public class UserFragment extends MyFragment<UserFragment> {
                 fragment.deleteUserNow(user);
             }
         }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject();
+            Parcel p = Parcel.obtain();
+            p.writeValue(user);
+            ParcelUtils.writeParcel(out, p);
+        }
+
+        private void readObject(java.io.ObjectInputStream in)
+                throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            Parcel p = ParcelUtils.readParcel(in);
+            user = ParcelUtils.readValue(p, User.class.getClassLoader(), User.class);
+        }
+
     }
 
     private void deleteUserNow(User thisItem) {
