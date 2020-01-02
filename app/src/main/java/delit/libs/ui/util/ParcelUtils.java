@@ -11,6 +11,9 @@ import androidx.annotation.Nullable;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -307,5 +310,24 @@ public class ParcelUtils {
             return null;
         }
         return Uri.parse(value);
+    }
+
+    public static void writeParcel(ObjectOutputStream os, Parcel p) throws IOException {
+        byte[] data = p.marshall();
+        os.write(data.length);
+        os.write(data);
+    }
+
+    public static Parcel readParcel(byte[] data) {
+        Parcel p = Parcel.obtain();
+        p.unmarshall(data, 0, data.length);
+        p.setDataPosition(0);
+        return p;
+    }
+
+    public static Parcel readParcel(ObjectInputStream in) throws IOException {
+        byte[] data = new byte[in.readInt()];
+        in.readFully(data);
+        return readParcel(data);
     }
 }

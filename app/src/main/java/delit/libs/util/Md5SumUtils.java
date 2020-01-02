@@ -22,14 +22,14 @@ public class Md5SumUtils {
 
     private static final String TAG = "Md5Sum";
 
-    public static String calculateMD5(File updateFile) {
+    public static String calculateMD5(File updateFile) throws RuntimeException, Md5SumException {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             Crashlytics.logException(e);
             Log.e(TAG, "Exception while getting digest", e);
-            return null;
+            throw new Md5SumException("Exception while getting digest", e);
         }
 
         InputStream is;
@@ -50,7 +50,7 @@ public class Md5SumUtils {
                 return output;
             } catch (IOException e) {
                 Crashlytics.logException(e);
-                throw new RuntimeException("Unable to process file for MD5", e);
+                throw new Md5SumException("Unable to process file for MD5", e);
             } finally {
                 try {
                     is.close();
@@ -62,7 +62,21 @@ public class Md5SumUtils {
         } catch (FileNotFoundException e) {
             Crashlytics.logException(e);
             Log.e(TAG, "Exception while getting FileInputStream", e);
-            return null;
+            throw new Md5SumException("Exception while getting FileInputStream", e);
+        }
+    }
+
+    public static class Md5SumException extends Exception {
+        public Md5SumException(String message) {
+            super(message);
+        }
+
+        public Md5SumException(Throwable cause) {
+            super(cause);
+        }
+
+        public Md5SumException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 }

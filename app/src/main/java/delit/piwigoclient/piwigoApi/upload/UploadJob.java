@@ -332,7 +332,8 @@ public class UploadJob implements Serializable {
         return progress;
     }
 
-    public synchronized void calculateChecksums() {
+    public synchronized Map<File, Md5SumUtils.Md5SumException> calculateChecksums() {
+        Map<File, Md5SumUtils.Md5SumException> failures = new HashMap<>(0);
         ArrayList<File> filesNotFinished = getFilesNotYetUploaded();
         boolean newJob = false;
         if (fileChecksums == null) {
@@ -349,14 +350,24 @@ public class UploadJob implements Serializable {
                     // if its not a file we're going to compress
 
                     // recalculate checksums for all files not yet uploaded
-                    final String checksum = Md5SumUtils.calculateMD5(f);
-                    if (!newJob) {
-                        fileChecksums.remove(f);
+                    String checksum = null;
+                    try {
+                        checksum = Md5SumUtils.calculateMD5(f);
+                    } catch (Md5SumUtils.Md5SumException e) {
+                        failures.put(f, e);
+                        Crashlytics.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
+                    } finally {
+                        if (!newJob) {
+                            fileChecksums.remove(f);
+                        }
+                        if (checksum != null) {
+                            fileChecksums.put(f, checksum);
+                        }
                     }
-                    fileChecksums.put(f, checksum);
                 }
             }
         }
+        return failures;
     }
 
     public synchronized Map<File, String> getFileChecksums() {
@@ -367,7 +378,7 @@ public class UploadJob implements Serializable {
         return fileChecksums.get(fileForUpload);
     }
 
-    public synchronized void addFileChecksum(File uploadJobKey, File fileForUpload) {
+    public synchronized void addFileChecksum(File uploadJobKey, File fileForUpload) throws Md5SumUtils.Md5SumException {
         String checksum = Md5SumUtils.calculateMD5(fileForUpload);
         fileChecksums.put(uploadJobKey, checksum);
     }

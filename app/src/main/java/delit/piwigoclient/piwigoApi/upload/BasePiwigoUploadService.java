@@ -54,6 +54,7 @@ import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.util.IOUtils;
+import delit.libs.util.Md5SumUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -497,7 +498,12 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             saveStateToDisk(thisUploadJob);
 
 
-            thisUploadJob.calculateChecksums();
+            Map<File, Md5SumUtils.Md5SumException> failures = thisUploadJob.calculateChecksums();
+            if (!failures.isEmpty()) {
+                for (Map.Entry<File, Md5SumUtils.Md5SumException> entry : failures.entrySet()) {
+                    postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), entry.getKey(), entry.getValue()));
+                }
+            }
 
             if (thisUploadJob.isRunInBackground() && listener != null) {
                 listener.onJobReadyToUpload(this, thisUploadJob);
@@ -1037,9 +1043,17 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
                 if (compressedFile != null) {
                     // we use this checksum to check the file was uploaded successfully
-                    thisUploadJob.addFileChecksum(fileForUpload, compressedFile);
-                    thisUploadJob.markFileAsCompressed(fileForUpload);
-                    saveStateToDisk(thisUploadJob);
+                    try {
+                        thisUploadJob.addFileChecksum(fileForUpload, compressedFile);
+                        thisUploadJob.markFileAsCompressed(fileForUpload);
+                        saveStateToDisk(thisUploadJob);
+                    } catch (Md5SumUtils.Md5SumException e) {
+                        // theoretically this will never occur.
+                        Bundle b = new Bundle();
+                        b.putString("error", "error calculating md5sum for compressed file.");
+                        FirebaseAnalytics.getInstance(this).logEvent("md5sum", b);
+                        postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), compressedFile, e));
+                    }
                 }
             }
 
