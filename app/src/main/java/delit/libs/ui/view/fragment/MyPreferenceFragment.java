@@ -32,7 +32,6 @@ import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreferenceDialogFragmentCompat;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
@@ -42,10 +41,10 @@ import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreferenceDi
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyPreferenceFragment extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
+public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
     private static final String STATE_PAGER_INDEX_POS = "pager_index_pos";
     protected static final int NO_PAGER_INDEX = -1;
-    private UIHelper uiHelper;
+    private FragmentUIHelper<T> uiHelper;
     private Context c;
     private int pagerIndex;
     protected static final String DIALOG_FRAGMENT_TAG =
@@ -59,7 +58,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
         this.pagerIndex = pagerIndex;
     }
 
-    protected UIHelper getUiHelper() {
+    protected FragmentUIHelper<T> getUiHelper() {
         return uiHelper;
     }
 
@@ -71,7 +70,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         if (uiHelper == null) {
-            uiHelper = new FragmentUIHelper<>(this, getPrefs(), c);
+            uiHelper = new FragmentUIHelper<T>((T) this, getPrefs(), c);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(c);
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);

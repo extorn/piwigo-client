@@ -43,6 +43,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -380,10 +381,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         return new CustomPiwigoResponseListener();
     }
 
-    private static class AlbumLoadResponseAction extends UIHelper.Action<AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
+    private static class AlbumLoadResponseAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>, AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
 
         @Override
-        public boolean onSuccess(UIHelper<AbstractSlideshowFragment> uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+        public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
             if (response.getAlbums().isEmpty()) {
                 // will occur if the album no longer exists.
@@ -403,7 +404,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
 
         @Override
-        public boolean onFailure(UIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
             fragment.requireFragmentManager().popBackStack();
             return false;

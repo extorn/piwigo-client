@@ -123,4 +123,6 @@ public class AlbumViewPreferences {
     public static boolean isRotateImageSoAspectMatchesScreenAspect(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_image_rotate_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_image_rotate_default));
     }
+
+
 }

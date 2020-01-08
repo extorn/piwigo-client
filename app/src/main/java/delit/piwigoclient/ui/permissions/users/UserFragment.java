@@ -424,10 +424,10 @@ public class UserFragment extends MyFragment<UserFragment> {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UIHelper.Action<UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse>() {
+            UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse>() {
 
                 @Override
-                public boolean onSuccess(UIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
+                public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
                     user = response.getSelectedUser();
                     if(newUser == null) {
                         if (user != null) {
@@ -441,7 +441,7 @@ public class UserFragment extends MyFragment<UserFragment> {
                 }
 
                 @Override
-                public boolean onFailure(UIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
                     getFragmentManager().popBackStack();
                     return false;
                 }

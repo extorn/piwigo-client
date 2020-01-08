@@ -254,6 +254,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.48</item>
+        <item>"Changes:
+        - New preference in gallery settings to disable navigation button and or status bar auto hide function"
+        </item>
         <item>1.4.0.47</item>
         <item>"Bugfix:
         - Improvements to app stability"

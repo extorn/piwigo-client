@@ -13,7 +13,7 @@ import delit.piwigoclient.business.OtherPreferences;
  * Created by gareth on 12/05/17.
  */
 
-public class OtherPreferenceFragment extends MyPreferenceFragment {
+public class OtherPreferenceFragment extends MyPreferenceFragment<OtherPreferenceFragment> {
 
     public OtherPreferenceFragment() {
     }

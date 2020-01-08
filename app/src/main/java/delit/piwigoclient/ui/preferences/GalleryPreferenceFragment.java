@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
@@ -20,12 +21,14 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.preference.EditableListPreference;
 import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -36,7 +39,7 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
  * Created by gareth on 12/05/17.
  */
 
-public class GalleryPreferenceFragment extends MyPreferenceFragment {
+public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPreferenceFragment> {
 
     private static final String TAG = "Gallery Settings";
     private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
@@ -198,6 +201,34 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         Preference videoCacheEnabledPref = findPreference(R.string.preference_video_cache_enabled_key);
         videoCacheEnabledPref.setOnPreferenceChangeListener(videoCacheEnabledPrefListener);
         videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey(), R.bool.preference_video_cache_enabled_default));
+
+        Preference alwaysShowNavButtonsPref = findPreference(R.string.preference_app_always_show_nav_buttons_key);
+
+        alwaysShowNavButtonsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean newVal = (Boolean) newValue;
+                FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
+                DisplayUtils.setUiFlags(fragmentActivity, newVal, AppPreferences.isAlwaysShowStatusBar(getUiHelper().getPrefs(), getUiHelper().getContext()));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                    getUiHelper().getParent().requireView().requestApplyInsets();
+                }
+                return true;
+            }
+        });
+        Preference alwaysShowStatusBarPref = findPreference(R.string.preference_app_always_show_status_bar_key);
+        alwaysShowStatusBarPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Boolean newVal = (Boolean) newValue;
+                FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
+                DisplayUtils.setUiFlags(fragmentActivity, AppPreferences.isAlwaysShowNavButtons(getUiHelper().getPrefs(), getUiHelper().getContext()), newVal);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                    getUiHelper().getParent().requireView().requestApplyInsets();
+                }
+                return true;
+            }
+        });
     }
 
     @Override

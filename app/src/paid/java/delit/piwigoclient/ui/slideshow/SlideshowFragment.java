@@ -28,6 +28,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
@@ -62,10 +63,11 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     }
 
     private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new UIHelper.Action<AbstractSlideshowFragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
+        UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>,
+                AbstractSlideshowFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
 
             @Override
-            public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+            public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
                 boolean updated = false;
                 for(Tag t : response.getTags()) {
                     if (t.getId() == getResourceContainer().getId()) {
@@ -77,7 +79,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
                 if(!updated) {
                     //Something wierd is going on - this should never happen
                     Crashlytics.log(Log.ERROR, getTag(), "Closing tag slideshow - tag was not available after refreshing session");
-                    getFragmentManager().popBackStack();
+                    requireFragmentManager().popBackStack();
                     return false;
                 }
                 loadMoreGalleryResources();
@@ -85,8 +87,8 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
             }
 
             @Override
-            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                getFragmentManager().popBackStack();
+            public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                requireFragmentManager().popBackStack();
                 return false;
             }
         };

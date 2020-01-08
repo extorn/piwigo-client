@@ -807,10 +807,10 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    static class TagLoadedAction extends UIHelper.Action<ViewTagFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
+    static class TagLoadedAction extends UIHelper.Action<FragmentUIHelper<ViewTagFragment>, ViewTagFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
 
         @Override
-        public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+        public boolean onSuccess(FragmentUIHelper<ViewTagFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
             boolean updated = false;
             ViewTagFragment fragment = ((ViewTagFragment) uiHelper.getParent());
             for (Tag t : response.getTags()) {
@@ -831,7 +831,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
 
         @Override
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FragmentUIHelper<ViewTagFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ViewTagFragment fragment = ((ViewTagFragment) uiHelper.getParent());
             fragment.getFragmentManager().popBackStack();
             return false;

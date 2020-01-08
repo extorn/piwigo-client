@@ -37,6 +37,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandle
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
@@ -182,7 +183,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class LoginResponseAction extends UIHelper.Action<AutoUploadJobPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class LoginResponseAction extends UIHelper.Action<FragmentUIHelper<AutoUploadJobPreferenceFragment>, AutoUploadJobPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
 
         private ConnectionPreferences.ProfilePreferences profilePrefs;
 
@@ -191,7 +192,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onSuccess(UIHelper<AutoUploadJobPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FragmentUIHelper<AutoUploadJobPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             uiHelper.getParent().updateAvailableFileTypes(PiwigoSessionDetails.getInstance(profilePrefs).getAllowedFileTypes());
             return true;
         }

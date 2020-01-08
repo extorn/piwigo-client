@@ -47,6 +47,7 @@ import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -239,19 +240,13 @@ public class UploadActivity extends MyActivity {
         v.setFitsSystemWindows(!hasFocus);
 
         if (hasFocus) {
-            DisplayUtils.hideAndroidStatusBar(this);
+            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
             Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
             Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
         }
 
-        if (v != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                v.requestApplyInsets();
-            } else {
-                v.requestFitSystemWindows();
-            }
-        }
+        v.requestApplyInsets();
         EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 

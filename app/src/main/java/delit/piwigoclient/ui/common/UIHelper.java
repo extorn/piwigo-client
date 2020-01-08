@@ -1543,9 +1543,9 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action<T,S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
+    public static class Action<P extends UIHelper<T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
 
-        protected T getActionParent(UIHelper<T> uiHelper) {
+        protected T getActionParent(P uiHelper) {
             return uiHelper.getParent();
         }
 
@@ -1554,11 +1554,11 @@ public abstract class UIHelper<T> {
          * @param response
          * @return run normal listener code
          */
-        public boolean onSuccess(UIHelper<T> uiHelper, S response){
+        public boolean onSuccess(P uiHelper, S response) {
             return true;
         }
 
-        public boolean onFailure(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
+        public boolean onFailure(P uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             return true;
         }
     }

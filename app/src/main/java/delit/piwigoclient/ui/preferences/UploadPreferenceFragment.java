@@ -18,13 +18,14 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 
 /**
  * Created by gareth on 12/05/17.
  */
 
-public class UploadPreferenceFragment extends MyPreferenceFragment {
+public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPreferenceFragment> {
 
     private static final String TAG = "Upload Settings";
 
@@ -72,9 +73,9 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
         });
     }
 
-    private static class OnLoginAction extends UIHelper.Action<UploadPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<UploadPreferenceFragment>, UploadPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
         @Override
-        public boolean onSuccess(UIHelper<UploadPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FragmentUIHelper<UploadPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             if (sessionDetails == null) {
@@ -88,15 +89,15 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class FailedUploadCleanAction extends UIHelper.Action<UploadPreferenceFragment, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse> {
+    private static class FailedUploadCleanAction extends UIHelper.Action<FragmentUIHelper<UploadPreferenceFragment>, UploadPreferenceFragment, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse> {
         @Override
-        public boolean onSuccess(UIHelper<UploadPreferenceFragment> uiHelper, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse response) {
+        public boolean onSuccess(FragmentUIHelper<UploadPreferenceFragment> uiHelper, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse response) {
             uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.cleared_failed_uploads_from_server_pattern, response.getFilesCleaned()));
             return super.onSuccess(uiHelper, response);
         }
 
         @Override
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FragmentUIHelper<UploadPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             return super.onFailure(uiHelper, response);
         }
     }

@@ -555,7 +555,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (getContext() != null) {
             // context could be null because there is a 3 second delay before the screen opens during which the user could close the app.
             FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
-            String initialFolder = getPrefs().getString(getString(R.string.preference_data_upload_default_local_folder_key), Environment.getExternalStorageDirectory().getAbsolutePath());
+            String initialFolder = UploadPreferences.getDefaultLocalUploadFolder(getPrefs(), getContext());
             event.withInitialFolder(initialFolder);
             event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
 
@@ -1099,9 +1099,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return uploadFilesNowButton;
     }
 
-    private static class OnLoginAction extends UIHelper.Action<AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
         @Override
-        public boolean onSuccess(UIHelper<AbstractUploadFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             AbstractUploadFragment fragment = uiHelper.getParent();
             fragment.getFileSelectButton().setEnabled(true);
             ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
@@ -1306,9 +1306,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class OnGetSubAlbumNamesAction extends UIHelper.Action<UploadFragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> {
+    private static class OnGetSubAlbumNamesAction extends UIHelper.Action<FragmentUIHelper<UploadFragment>, UploadFragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> {
         @Override
-        public boolean onSuccess(UIHelper<UploadFragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+        public boolean onSuccess(FragmentUIHelper<UploadFragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
             if (response.getAlbumNames().size() > 0) {
                 AbstractUploadFragment fragment = uiHelper.getParent();
                 CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();

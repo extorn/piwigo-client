@@ -43,11 +43,12 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
-public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment {
+public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment<BaseConnectionPreferenceFragment> {
     private static final String TAG = "Connection Settings";
     protected transient Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
     private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
@@ -375,7 +376,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         return new CustomPiwigoResponseListener();
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<ConnectionPreferenceFragment,LogoutResponseHandler.PiwigoOnLogoutResponse> {
+    private static class OnLogoutAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -388,7 +389,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
 
         @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
+        public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getContext()).start();
             if(loginAgain != null && !loginAgain) {
@@ -401,7 +402,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
 
         @Override
-        public boolean onFailure(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
             onSuccess(uiHelper, null);
@@ -409,9 +410,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment,LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
         @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
@@ -428,7 +429,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action<BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+    private static class OnHttpClientShutdownAction extends UIHelper.Action<FragmentUIHelper<BaseConnectionPreferenceFragment>, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -441,7 +442,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
 
         @Override
-        public boolean onSuccess(UIHelper<BaseConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+        public boolean onSuccess(FragmentUIHelper<BaseConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             boolean retVal = false;
             if(loginAsProfileAfterLogout != null) {
                 // copy those profile values to the working app copy of prefs

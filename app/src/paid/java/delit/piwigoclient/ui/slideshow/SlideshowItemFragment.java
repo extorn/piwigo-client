@@ -36,6 +36,7 @@ import delit.piwigoclient.piwigoApi.handlers.FavoritesAddImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.FavoritesUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
@@ -299,18 +300,18 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         favoriteButton.setEnabled(true);
     }
 
-    private abstract static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<SlideshowItemFragment<T>, S> {
+    private abstract static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<FragmentUIHelper<SlideshowItemFragment<T>>, SlideshowItemFragment<T>, S> {
 
         protected abstract boolean getValueOnSucess();
 
         @Override
-        public boolean onFailure(UIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             getActionParent(uiHelper).onFavoriteUpdateFailed(!getValueOnSucess());
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, S response) {
+        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, S response) {
             getActionParent(uiHelper).onFavoriteUpdateSucceeded(getValueOnSucess());
             return super.onSuccess(uiHelper, response);
         }
@@ -323,7 +324,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
 
         @Override
-        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
+        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
                 EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
             }
@@ -338,7 +339,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
 
         @Override
-        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
+        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
                 EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
             }

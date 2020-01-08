@@ -2120,9 +2120,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         return nextPiwigoAlbum.getContainerDetails();
     }
 
-    private static class LoadAlbumTreeAction extends UIHelper.Action<AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> {
+    private static class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> {
         @Override
-        public boolean onSuccess(UIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
+        public boolean onSuccess(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
             CategoryItem currentItem = response.getAlbumTreeRoot();
 
             // cache the retrieved category tree into the model
@@ -2152,7 +2152,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
 
         @Override
-        public boolean onFailure(UIHelper<AbstractViewAlbumFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().onReopenModelRetrieved(CategoryItem.ROOT_ALBUM.clone(), CategoryItem.ROOT_ALBUM.clone());
             return true; // to close the progress indicator
         }

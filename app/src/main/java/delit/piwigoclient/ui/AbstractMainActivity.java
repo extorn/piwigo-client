@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.FrameLayout;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
@@ -67,6 +68,8 @@ import delit.libs.util.IOUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
@@ -210,6 +213,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         setContentView(R.layout.activity_main);
 
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         appBar = findViewById(R.id.appbar);
@@ -231,11 +235,23 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             ViewCompat.setOnApplyWindowInsetsListener(drawer, new OnApplyWindowInsetsListener() {
                 @Override
                 public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                    insets.replaceSystemWindowInsets(
-                            insets.getStableInsetLeft(),
-                            0,
-                            insets.getStableInsetRight(),
-                            0);
+                    if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
+                        insets.replaceSystemWindowInsets(
+                                insets.getStableInsetLeft(),
+                                0,
+                                insets.getStableInsetRight(),
+                                0);
+                        insets.consumeStableInsets();
+                        //TODO forcing the top margin like this is really not a great idea. Find a better way.
+                        ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
+                    } else {
+                        if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
+                            int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
+                            if (topMargin == 0) {
+                                ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
+                            }
+                        }
+                    }
                     return insets;
                 }
             });
@@ -601,64 +617,37 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
     }
 
-    private static class DownloadAction extends UIHelper.Action<AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
-        @Override
-        public boolean onSuccess(UIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.Response response) {
-            //UrlProgressResponse, UrlToFileSuccessResponse,
-            if (response instanceof PiwigoResponseBufferingHandler.UrlProgressResponse) {
-                onProgressUpdate(uiHelper, (PiwigoResponseBufferingHandler.UrlProgressResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) {
-                onGetResource(uiHelper, (PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) response);
-            }
-            return super.onSuccess(uiHelper, response);
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(AlbumItemSelectedEvent event) {
 
-        @Override
-        public boolean onFailure(UIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
-                onGetResourceCancelled(uiHelper, (PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
-            }
-            if (response.isEndResponse()) {
-                //TODO handle the failure and retry here so we can keep the activeDownloads field in sync properly. Presently two downloads may occur simulataneously.
-                uiHelper.getParent().removeActionDownloadEvent();
-                uiHelper.getParent().scheduleNextDownloadIfPresent();
-            }
-            return super.onFailure(uiHelper, response);
-        }
+        Fragment newFragment = null;
 
-        private void onProgressUpdate(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
-            ProgressIndicator progressIndicator = uiHelper.getProgressIndicator();
-            if (response.getProgress() < 0) {
-                progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
-            } else {
-                if (response.getProgress() == 0) {
-                    progressIndicator.showProgressIndicator(R.string.progress_downloading, response.getProgress(), new CancelDownloadListener(response.getMessageId()));
-                } else if (progressIndicator.getVisibility() == VISIBLE) {
-                    progressIndicator.updateProgressIndicator(response.getProgress());
+        ResourceContainer<?, GalleryItem> albumOpen = event.getResourceContainer();
+        GalleryItem selectedItem = event.getSelectedItem();
+
+        if (selectedItem instanceof CategoryItem) {
+            currentAlbum = (CategoryItem) selectedItem;
+            showGallery(currentAlbum);
+        } else {
+            boolean showVideosInSlideshow = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, this);
+            boolean allowVideoPlayback = AlbumViewPreferences.isVideoPlaybackEnabled(prefs, this);
+            if (selectedItem instanceof VideoResourceItem) {
+                if (showVideosInSlideshow) {
+                    newFragment = new SlideshowFragment();
+                    newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
+                } else if (allowVideoPlayback) {
+                    newFragment = new AlbumVideoItemFragment();
+                    newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs(event.getModelType(), albumOpen.getId(), selectedItem.getId(), 1, 1, 1, true));
+                    ((AlbumVideoItemFragment) newFragment).onPageSelected();
                 }
+            } else if (selectedItem instanceof PictureResourceItem) {
+                newFragment = new SlideshowFragment();
+                newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
             }
         }
 
-        public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-            uiHelper.getParent().onFileDownloaded(response.getUrl(), response.getFile());
-        }
-
-
-        private void onGetResourceCancelled(UIHelper uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
-            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.alert_image_download_cancelled_message));
-        }
-
-        private static class CancelDownloadListener implements View.OnClickListener {
-            private final long downloadMessageId;
-
-            public CancelDownloadListener(long messageId) {
-                downloadMessageId = messageId;
-            }
-
-            @Override
-            public void onClick(View v) {
-                EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
-            }
+        if (newFragment != null) {
+            showFragmentNow(newFragment);
         }
     }
 
@@ -851,38 +840,26 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         currentAlbum = event.getAlbum();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(AlbumItemSelectedEvent event) {
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
 
-        Fragment newFragment = null;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
 
-        ResourceContainer<?, GalleryItem> albumOpen = event.getResourceContainer();
-        GalleryItem selectedItem = event.getSelectedItem();
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
 
-        if (selectedItem instanceof CategoryItem) {
-            currentAlbum = (CategoryItem) selectedItem;
-            showGallery(currentAlbum);
+        if (hasFocus) {
+            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
-            boolean showVideosInSlideshow = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
-            boolean allowVideoPlayback = prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
-            if (selectedItem instanceof VideoResourceItem) {
-                if (showVideosInSlideshow) {
-                    newFragment = new SlideshowFragment();
-                    newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
-                } else if (allowVideoPlayback) {
-                    newFragment = new AlbumVideoItemFragment();
-                    newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs(event.getModelType(), albumOpen.getId(), selectedItem.getId(), 1, 1, 1, true));
-                    ((AlbumVideoItemFragment) newFragment).onPageSelected();
-                }
-            } else if (selectedItem instanceof PictureResourceItem) {
-                newFragment = new SlideshowFragment();
-                newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
-            }
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
         }
 
-        if (newFragment != null) {
-            showFragmentNow(newFragment);
-        }
+//        v.requestApplyInsets(); // is this needed
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -900,31 +877,65 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         startActivityForResult(intent, event.getActionId());
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            return; // don't mess with the status bar
+    private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
+        @Override
+        public boolean onSuccess(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.Response response) {
+            //UrlProgressResponse, UrlToFileSuccessResponse,
+            if (response instanceof PiwigoResponseBufferingHandler.UrlProgressResponse) {
+                onProgressUpdate(uiHelper, (PiwigoResponseBufferingHandler.UrlProgressResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) {
+                onGetResource(uiHelper, (PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) response);
+            }
+            return super.onSuccess(uiHelper, response);
         }
 
-        View v = getWindow().getDecorView();
-        v.setFitsSystemWindows(!hasFocus);
-
-        if (hasFocus) {
-
-            DisplayUtils.hideAndroidStatusBar(this);
-            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
-        } else {
-            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+        @Override
+        public boolean onFailure(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
+                onGetResourceCancelled(uiHelper, (PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
+            }
+            if (response.isEndResponse()) {
+                //TODO handle the failure and retry here so we can keep the activeDownloads field in sync properly. Presently two downloads may occur simulataneously.
+                uiHelper.getParent().removeActionDownloadEvent();
+                uiHelper.getParent().scheduleNextDownloadIfPresent();
+            }
+            return super.onFailure(uiHelper, response);
         }
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-//            v.requestApplyInsets(); //TODO why is this needed?
-//        } else {
-//            v.requestFitSystemWindows();
-//        }
-        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
+        private void onProgressUpdate(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
+            ProgressIndicator progressIndicator = uiHelper.getProgressIndicator();
+            if (response.getProgress() < 0) {
+                progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
+            } else {
+                if (response.getProgress() == 0) {
+                    progressIndicator.showProgressIndicator(R.string.progress_downloading, response.getProgress(), new CancelDownloadListener(response.getMessageId()));
+                } else if (progressIndicator.getVisibility() == VISIBLE) {
+                    progressIndicator.updateProgressIndicator(response.getProgress());
+                }
+            }
+        }
+
+        public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
+            uiHelper.getParent().onFileDownloaded(response.getUrl(), response.getFile());
+        }
+
+
+        private void onGetResourceCancelled(UIHelper uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
+            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.alert_image_download_cancelled_message));
+        }
+
+        private static class CancelDownloadListener implements View.OnClickListener {
+            private final long downloadMessageId;
+
+            public CancelDownloadListener(long messageId) {
+                downloadMessageId = messageId;
+            }
+
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
+            }
+        }
     }
 
     @Override

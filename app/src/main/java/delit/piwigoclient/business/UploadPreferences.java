@@ -3,6 +3,7 @@ package delit.piwigoclient.business;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
@@ -102,7 +103,11 @@ public class UploadPreferences {
     }
 
     private static String getString(Context context, SharedPreferences prefs, @StringRes int prefKeyResId, @StringRes int prefDefaultResId) {
-        return prefs.getString(context.getString(prefKeyResId), context.getString(prefDefaultResId));
+        return getString(context, prefs, prefKeyResId, context.getString(prefDefaultResId));
+    }
+
+    private static String getString(Context context, SharedPreferences prefs, @StringRes int prefKeyResId, String defaultVal) {
+        return prefs.getString(context.getString(prefKeyResId), defaultVal);
     }
 
     private static boolean getBoolean(Context context, SharedPreferences prefs, @StringRes int prefKeyResId, @BoolRes int prefDefaultResId) {
@@ -116,5 +121,9 @@ public class UploadPreferences {
 
     public static int getDefaultPrivacyLevel(Context context, SharedPreferences prefs) {
         return getInt(context, prefs, R.string.preference_data_upload_default_privacy_level_key, R.integer.preference_data_upload_default_privacy_level_default);
+    }
+
+    public static String getDefaultLocalUploadFolder(SharedPreferences prefs, Context context) {
+        return getString(context, prefs, R.string.preference_data_upload_default_local_folder_key, Environment.getExternalStorageDirectory().getAbsolutePath());
     }
 }

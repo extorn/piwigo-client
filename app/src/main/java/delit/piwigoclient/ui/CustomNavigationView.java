@@ -339,7 +339,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<CustomNavigationView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
+    private static class OnLogoutAction extends UIHelper.Action<UIHelper<CustomNavigationView>, CustomNavigationView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
 
         @Override
         public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
@@ -358,7 +358,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<CustomNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction extends UIHelper.Action<UIHelper<CustomNavigationView>, CustomNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
 
         @Override
         public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
@@ -385,7 +385,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<CustomNavigationView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+    private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<UIHelper<CustomNavigationView>, CustomNavigationView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
 
         @Override
         public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {

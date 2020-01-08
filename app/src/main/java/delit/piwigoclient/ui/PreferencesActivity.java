@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
@@ -66,19 +67,13 @@ public class PreferencesActivity extends MyActivity {
         v.setFitsSystemWindows(!hasFocus);
 
         if (hasFocus) {
-            DisplayUtils.hideAndroidStatusBar(this);
+            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
             Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
             Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
         }
 
-        if (v != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                v.requestApplyInsets();
-            } else {
-                v.requestFitSystemWindows();
-            }
-        }
+        v.requestApplyInsets();
         EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 }

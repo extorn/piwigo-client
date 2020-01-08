@@ -187,7 +187,7 @@
     <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions</string>
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
 
-    <string-array name="preference_piwigo_playable_media_extensions_default">
+    <string-array name="preference_piwigo_playable_media_extensions_default" translatable="false">
         <item>mpg</item>
         <item>avi</item>
         <item>mp3</item>
@@ -410,4 +410,15 @@
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     <string name="preference_functions_missing_app_version_warned_key" translatable="false">preference_functions_missing_app_version_warned</string>
+
+    <bool name="preference_app_always_show_nav_buttons_default">false</bool>
+    <bool name="preference_app_always_show_status_bar_default">false</bool>
+    <string name="preference_app_always_show_nav_buttons_key" translatable="false">preference_app_always_show_nav_buttons</string>
+    <string name="preference_app_always_show_nav_buttons_title">Always show navigation buttons</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Enable to prevent auto-hide of the navigation buttons</string>
+
+    <string name="preference_app_always_show_status_bar_key" translatable="false">preference_app_always_show_status_bar</string>
+    <string name="preference_app_always_show_status_bar_title">Always show the status bar</string>
+    <string name="preference_app_always_show_status_bar_summary">Enable to prevent auto-hide of the status bar</string>
+
 </resources>

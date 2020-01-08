@@ -286,10 +286,10 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UIHelper.Action<GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse>() {
+            UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse>() {
 
                 @Override
-                public boolean onSuccess(UIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+                public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
                     HashSet<Group> groups = response.getGroups();
                     if(groups.isEmpty()) {
                         getFragmentManager().popBackStack();
@@ -303,7 +303,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
                 }
 
                 @Override
-                public boolean onFailure(UIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                public boolean onFailure(FragmentUIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
                     getFragmentManager().popBackStack();
                     return false;
                 }

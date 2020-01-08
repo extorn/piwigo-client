@@ -233,7 +233,8 @@ public class DisplayUtils {
         }
     }
 
-    public static void hideAndroidStatusBar(FragmentActivity activity) {
+    public static void setUiFlags(FragmentActivity activity, boolean showNavButtons, boolean showStatusBar) {
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             Crashlytics.log(Log.DEBUG, TAG, "Unable to go fullscreen on old versions of android");
             return;
@@ -245,27 +246,34 @@ public class DisplayUtils {
             Window window = activity.getWindow();
             View decorView = window.getDecorView();
             // force user to swipe up from bottom or down from top to bring back status bars
-            int uiFlags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY //TODO why can't I use sticky immersive and ditch the ui vis change listener???
-                    // don't resize the screen content if the nav bar or status bar show or hide.
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    // hide the navigation bar
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    // hide the status bar
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    // Make content appear behind the navigation bar
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    // make content appear behind the status bar
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            int uiFlags = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+            if (!showNavButtons) {
+                // Make content appear behind the navigation bar
+                uiFlags |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        // hide the navigation bar
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+            }
+            if (!showStatusBar) {
+                // hide the status bar
+                uiFlags |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // make content appear behind the status bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+                // Remember that you should never show the action bar if the
+                // status bar is hidden, so hide that too if necessary.
+                ActionBar actionBar = activity.getActionBar();
+                if (actionBar != null) {
+                    actionBar.hide();
+                }
+
+            }
+
             decorView.setSystemUiVisibility(uiFlags);
 //            decorView.setOnSystemUiVisibilityChangeListener(new SystemUiVisibilityChangeListener(decorView, uiFlags));
         }
 
-        // Remember that you should never show the action bar if the
-        // status bar is hidden, so hide that too if necessary.
-        ActionBar actionBar = activity.getActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
+
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {
