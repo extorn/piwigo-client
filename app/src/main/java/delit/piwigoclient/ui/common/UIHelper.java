@@ -28,6 +28,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
@@ -112,7 +113,6 @@ public abstract class UIHelper<T> {
     private DismissListener dismissListener;
     private AlertDialog alertDialog;
     private Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<Long, String>(3));
-    private static final Map<String, String> globals = Collections.synchronizedMap(new HashMap<String, String>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
@@ -1018,16 +1018,15 @@ public abstract class UIHelper<T> {
         return getContext().getSharedPreferences("resume-actions", Context.MODE_PRIVATE);
     }
 
-    public void doOnce(String key, String newValue, Runnable action) {
-        String globalVal = globals.get(key);
-        if (globalVal == null || !globalVal.equals(newValue)) {
-            synchronized (globals) {
-                globalVal = globals.get(key);
-                if (globalVal == null || !globalVal.equals(newValue)) {
-                    // notify user once and only once per app session
-                    globals.put(key, newValue);
-                    action.run();
-                }
+    public void doOnce(@NonNull String key, @NonNull String newValue, @NonNull Runnable action) {
+        Context context = getContext();
+        synchronized (UIHelper.class) {
+            SharedPreferences globalsPrefs = context.getSharedPreferences("globals", Context.MODE_PRIVATE);
+            String globalVal = globalsPrefs.getString(key, null);
+            if (!newValue.equals(globalVal)) {
+                globalsPrefs.edit().putString(key, newValue).apply();
+                // notify user once and only once
+                action.run();
             }
         }
     }
