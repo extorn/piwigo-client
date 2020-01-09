@@ -256,7 +256,8 @@
         -->
         <item>1.4.0.48</item>
         <item>"Changes:
-        - New preference in gallery settings to disable navigation button and or status bar auto hide function"
+        - New preference in gallery settings to disable navigation button and or status bar auto hide function
+        - Only show which image sizes are being shown once unless it changes"
         </item>
         <item>1.4.0.47</item>
         <item>"Bugfix:

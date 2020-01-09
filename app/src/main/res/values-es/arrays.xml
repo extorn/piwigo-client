@@ -138,6 +138,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.48</item>
+        <item>"- Nouvelle préférence dans les paramètres de la galerie pour désactiver le bouton de navigation et / ou la fonction de masquage automatique de la barre d'état
+         - Afficher uniquement les tailles d'image affichées une fois, sauf si elles changent"
+        </item>
         <item>1.4.0.47</item>
         <item>"Arreglo del fallo:
          - Mejoras en la estabilidad de la aplicación "

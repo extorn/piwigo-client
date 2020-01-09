@@ -1,60 +1,36 @@
 
 <en-GB>
 Changes:
-- Added reload contents button to file selection page
-- removed the (paid) suffix from app name
-- Show path or indication of it for destination upload album
-Bugfix:
-- Slideshow was missing last item in album
-- Delete item in Slideshow - blank page
+- New preference in gallery settings to disable navigation button and or status bar auto hide function
+- Only show which image sizes are being shown once unless it changes
 </en-GB>
 
 <de-DE>
 Änderungen:
- - Der Dateiauswahlseite wurde die Schaltfläche zum erneuten Laden von Inhalten hinzugefügt
- - Das (kostenpflichtige) Suffix aus dem App-Namen entfernt
- - Zeigen Sie den Pfad oder die Angabe für das Ziel-Upload-Album an
- Bug-Fix:
- - Bei der Diashow fehlte das letzte Element im Album
- - Element in Diashow löschen - leere Seite
+ - Neue Einstellung in den Galerieeinstellungen zum Deaktivieren der Navigationsschaltfläche und / oder der Funktion zum automatischen Ausblenden der Statusleiste
+ - Zeigen Sie nur einmal an, welche Bildgrößen angezeigt werden, es sei denn, dies ändert sich
 </de-DE>
 
 <fr-FR>
 Changements:
- - Bouton de rechargement du contenu ajouté à la page de sélection des fichiers
- - supprimé le suffixe (payant) du nom de l'application
- - Afficher le chemin ou l'indication de celui-ci pour l'album de téléchargement de destination
- Correction d'un bug:
- - Le dernier élément de l'album manquait au diaporama
- - Supprimer l'élément dans le diaporama - page vierge
+ - Nouvelle préférence dans les paramètres de la galerie pour désactiver le bouton de navigation et / ou la fonction de masquage automatique de la barre d'état
+ - Afficher uniquement les tailles d'image affichées une fois, sauf si elles changent
 </fr-FR>
 
 <es-ES>
-Cambios:
- - Botón de recarga de contenido agregado a la página de selección de archivos
- - eliminado el sufijo (pago) del nombre de la aplicación
- - Mostrar ruta o indicación para el álbum de carga de destino
- Arreglo del fallo:
- - A la presentación de diapositivas le faltaba el último elemento del álbum
- - Eliminar elemento en Presentación de diapositivas - página en blanco
+Changements:
+ - Nouvelle préférence dans les paramètres de la galerie pour désactiver le bouton de navigation et / ou la fonction de masquage automatique de la barre d'état
+ - Afficher uniquement les tailles d'image affichées une fois, sauf si elles changent...
 </es-ES>
 
 <zh-CN>
 变化：
- -在文件选择页面添加了重新加载内容按钮
- -从应用名称中删除了（付费）后缀
- -显示目标上传相册的路径或指示
- 错误修正：
- -幻灯片缺少相册中的最后一个项目
- -删除幻灯片中的项目-空白页
+ -画廊设置中的新首选项可禁用导航按钮和/或状态栏自动隐藏功能
+ -仅显示一次显示的图像大小，除非更改
 </zh-CN>
 
 <ru-RU>
 Изменения:
- - Добавлена кнопка перезагрузки содержимого на страницу выбора файлов.
- - убрал (платный) суффикс из имени приложения
- - Показать путь или указание его для назначения загрузки альбома
- Исправлена ошибка:
- - В слайд-шоу отсутствовал последний элемент в альбоме
- - Удалить элемент в слайд-шоу - пустая страница
+ - Новые настройки в настройках галереи для отключения кнопки навигации и / или функции автоматического скрытия строки состояния
+ - Показывать только те размеры изображения, которые отображаются один раз, если они не изменяются
 </ru-RU>
