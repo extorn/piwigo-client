@@ -319,5 +319,10 @@
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">纵向：要显示的文件夹列</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
+    <string name="preference_app_always_show_nav_buttons_title">一律显示导航按钮</string>
+    <string name="preference_app_always_show_nav_buttons_summary">启用以防止自动隐藏导航按钮</string>
+
+    <string name="preference_app_always_show_status_bar_title">始终显示状态栏</string>
+    <string name="preference_app_always_show_status_bar_summary">启用以防止自动隐藏状态栏</string>
 
 </resources>

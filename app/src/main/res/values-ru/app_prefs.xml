@@ -232,12 +232,11 @@
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Портрет: колонны папок, чтобы показать</string>
 
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
-    <string-array name="preference_piwigo_playable_media_extensions_default">
-        <item>мили на галлон</item>
-        <item>AVI</item>
-        <item>mp3</item>
-        <item>OGG</item>
-        <item>mp4</item>
-    </string-array>
+
+    <string name="preference_app_always_show_nav_buttons_title">Всегда показывать кнопки навигации</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Включить, чтобы запретить автоматическое скрытие кнопок навигации</string>
+
+    <string name="preference_app_always_show_status_bar_title">Всегда показывать строку состояния</string>
+    <string name="preference_app_always_show_status_bar_summary">Включить, чтобы запретить автоматическое скрытие строки состояния</string>
 
 </resources>

@@ -320,4 +320,10 @@
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Porträt: Spalten von Ordnern, die angezeigt werden sollen</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
+    <string name="preference_app_always_show_nav_buttons_title">Navigationsschaltflächen immer anzeigen</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Aktivieren Sie diese Option, um das automatische Ausblenden der Navigationsschaltflächen zu verhindern</string>
+
+    <string name="preference_app_always_show_status_bar_title">Immer die Statusleiste anzeigen</string>
+    <string name="preference_app_always_show_status_bar_summary">Aktivieren Sie diese Option, um das automatische Ausblenden der Statusleiste zu verhindern</string>
+
 </resources>
