@@ -337,7 +337,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressVideosQualitySpinner.setSelection(videoQualityAdapter.getPosition(compressionQualitySetting));
 
         compressVideosAudioBitrateSpinner = compressVideosSettings.findViewById(R.id.compress_videos_audio_bitrate);
-        BiArrayAdapter<String> audioBitrateAdapter = new BiArrayAdapter<>(getContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_audio_bitrate_items),
+        BiArrayAdapter<String> audioBitrateAdapter = new BiArrayAdapter<>(requireContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_audio_bitrate_items),
                 ArrayUtils.getLongArray(getResources().getIntArray(R.array.preference_data_upload_compress_videos_audio_bitrate_values)));
         audioBitrateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         compressVideosAudioBitrateSpinner.setAdapter(audioBitrateAdapter);
