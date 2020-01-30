@@ -21,6 +21,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.util.CollectionUtils;
@@ -323,7 +324,11 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + handler.getClass().getSimpleName());
                 }
                 if(retVal == null) {
-                    retVal = task.get();
+                    try {
+                        retVal = task.get(500, TimeUnit.MILLISECONDS); // allow it to loop around until timed out (rather than hang forever)
+                    } catch (TimeoutException e) {
+                        Log.e(tag, "Thread " + Thread.currentThread().getName() + " timed out waiting for response from handler " + handler.getClass().getSimpleName());
+                    }
                     if (retVal != null) {
                         timeoutAt = System.currentTimeMillis() + 1500;
                     }
