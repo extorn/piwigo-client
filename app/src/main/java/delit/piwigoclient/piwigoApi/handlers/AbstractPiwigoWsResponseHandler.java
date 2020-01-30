@@ -101,6 +101,10 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         } else {
             requestParams.remove("method");
             requestParams.put("method", getPiwigoMethod());
+            if (requestParams.has("pwg_token")) {
+                requestParams.remove("pwg_token");
+                requestParams.put("pwg_token", getPwgSessionToken());
+            }
         }
         return requestParams;
     }
