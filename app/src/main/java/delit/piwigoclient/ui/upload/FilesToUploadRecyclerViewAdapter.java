@@ -35,6 +35,8 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 
+import static android.view.View.GONE;
+
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  */
@@ -115,18 +117,32 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         // Configure the progress bar (upload progress)
 
         if (uploadDataItem.uploadProgress != null) {
-            holder.progressBar.setVisibility(View.VISIBLE);
-            if (uploadDataItem.uploadProgress.uploadProgress < 0) {
-                holder.progressBar.setIndeterminate(true);
-            } else {
-                holder.progressBar.setIndeterminate(false);
-                holder.progressBar.setSecondaryProgress(uploadDataItem.uploadProgress.compressionProgress);
-                holder.progressBar.setProgress(uploadDataItem.uploadProgress.uploadProgress);
-                if (uploadDataItem.uploadProgress.compressionProgress == 100) {
-                    // change the filesize to be that of the compressed file
-                    holder.itemHeading.setText(uploadDataItem.getFileSizeStr());
+            if (uploadDataItem.uploadProgress.inProgress()) {
+                holder.progressBar.setVisibility(View.VISIBLE);
+                holder.progressBarDescription.setVisibility(View.VISIBLE);
+
+                if (uploadDataItem.uploadProgress.uploadProgress < 0) {
+                    holder.progressBar.setIndeterminate(true);
+                } else {
+                    holder.progressBar.setIndeterminate(false);
+                    if (uploadDataItem.uploadProgress.uploadProgress > 0) {
+                        holder.progressBarDescription.setText(R.string.uploading_progress_bar_message);
+                    } else {
+                        holder.progressBarDescription.setText(R.string.compressing_progress_bar_message);
+                    }
+                    holder.progressBar.setSecondaryProgress(uploadDataItem.uploadProgress.compressionProgress);
+                    holder.progressBar.setProgress(uploadDataItem.uploadProgress.uploadProgress);
+                    if (uploadDataItem.uploadProgress.compressionProgress == 100) {
+                        // change the filesize to be that of the compressed file
+                        try {
+                            holder.itemHeading.setText(uploadDataItem.getFileSizeStr());
+                        } catch (IllegalStateException e) {
+                            // don't care - this happens due to file being deleted post upload
+                        }
+                    }
                 }
             }
+
             // Now we've updated the progress bar, we can return, no need to reload the remainder of the fields as they won't have altered.
             if (holder.getOldPosition() < 0 && uploadDataItem.equals(holder.mItem)) {
                 return;
@@ -136,7 +152,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             holder.mItem = uploadDataItem;
 
         } else {
-            holder.progressBar.setVisibility(View.GONE);
+            holder.progressBar.setVisibility(GONE);
+            holder.progressBarDescription.setVisibility(GONE);
             holder.progressBar.setIndeterminate(false);
             holder.progressBar.setProgress(0);
             holder.progressBar.setSecondaryProgress(0);
@@ -150,7 +167,11 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         if (item != null) {
             holder.fileNameField.setText(item.fileToUpload.getName());
-            holder.itemHeading.setText(item.getFileSizeStr());
+            try {
+                holder.itemHeading.setText(uploadDataItem.getFileSizeStr());
+            } catch (IllegalStateException e) {
+                // don't care - this happens due to file being deleted post upload
+            }
 
             if (item.mediaStoreReference != null) {
                 holder.imageLoader.setUriToLoad(item.mediaStoreReference.toString());
@@ -340,6 +361,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             if (uploadProgress != null && uploadProgress.fileBeingUploaded != null) {
                 f = uploadProgress.fileBeingUploaded;
             }
+            if (!f.exists()) {
+                throw new IllegalStateException("file has already been deleted");
+            }
             long bytes = f.length();
             double sizeMb = ((double) bytes) / 1024 / 1024;
             return String.format(Locale.getDefault(), "%1$.2fMB", sizeMb);
@@ -524,6 +548,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         private int uploadProgress;
         private int compressionProgress;
 
+        private boolean inProgress() {
+            return uploadProgress + compressionProgress > 0;
+        }
+
         public UploadProgressInfo(Parcel p) {
             fileBeingUploaded = ParcelUtils.readFile(p);
             uploadProgress = p.readInt();
@@ -554,6 +582,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public class ViewHolder extends RecyclerView.ViewHolder implements PicassoLoader.PictureItemImageLoaderListener {
         public final View mView;
         private final ProgressBar progressBar;
+        private final TextView progressBarDescription;
         private final TextView fileNameField;
         private final TextView itemHeading;
         private final ImageButton deleteButton;
@@ -567,6 +596,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             super(view);
             mView = view;
             progressBar = itemView.findViewById(R.id.file_for_upload_progress);
+            progressBarDescription = itemView.findViewById(R.id.file_for_upload_progress_description);
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
             itemHeading = itemView.findViewById(R.id.file_for_upload_heading_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);

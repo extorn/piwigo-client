@@ -72,5 +72,28 @@
         android:max="100"
         tools:progress="50"
         tools:secondaryProgress="80"
-        android:visibility="visible" />
+        android:background="@color/black_overlay"
+        android:visibility="invisible"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/file_for_upload_progress_description"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignStart="@id/file_for_upload_progress"
+        android:layout_alignTop="@id/file_for_upload_progress"
+        android:layout_alignEnd="@id/file_for_upload_progress"
+        android:layout_alignBottom="@id/file_for_upload_progress"
+        android:background="@color/transparent"
+        android:shadowColor="@color/primary"
+        android:text="@string/uploading_progress_bar_message"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/primary_text_default"
+        android:visibility="invisible"
+        app:autoSizeMaxTextSize="100sp"
+        app:autoSizeMinTextSize="1sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
+        tools:visibility="visible" />
 </RelativeLayout>

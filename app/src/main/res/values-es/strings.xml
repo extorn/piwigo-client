@@ -500,4 +500,6 @@
     <string name="alert_message_showing_image_thumbnails_of_size">Mostrando miniaturas de imágenes del servidor de tamaño%1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Mostrando miniaturas de álbum del servidor de tamaño%1$s</string>
     <string name="alert_error_upload_file_compression_error_message_pattern">Error al comprimir el archivo para cargar %1$s</string>
+    <string name="uploading_progress_bar_message">Cargando</string>
+    <string name="compressing_progress_bar_message">Apresamiento</string>
 </resources>
