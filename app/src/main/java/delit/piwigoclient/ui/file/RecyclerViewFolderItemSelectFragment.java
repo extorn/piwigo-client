@@ -134,6 +134,10 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         folderPathView.setNavigationListener(new FileBreadcrumbsView.NavigationListener() {
             @Override
             public void onBreadcrumbClicked(File pathItemFile) {
+                File activeFolder = getListAdapter().getActiveFolder();
+                if (!pathItemFile.equals(activeFolder)) {
+                    getListAdapter().cancelAnyActiveFolderMediaScan();
+                }
                 getListAdapter().changeFolderViewed(pathItemFile);
                 if (listViewStates != null) {
                     Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
@@ -326,6 +330,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
     @Override
     public boolean onBackButton() {
+        getListAdapter().cancelAnyActiveFolderMediaScan();
         File parent = getListAdapter().getActiveFolder().getParentFile();
         if (parent.getName().isEmpty()) {
             return false;
@@ -447,6 +452,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
+        listAdapter.cancelAnyActiveFolderMediaScan();
         // now pop this screen off the stack.
         if (isVisible() && getFragmentManager() != null) {
             getFragmentManager().popBackStackImmediate();
@@ -526,6 +532,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     public void onCancelChanges() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis));
+        getListAdapter().cancelAnyActiveFolderMediaScan();
         super.onCancelChanges();
     }
 

@@ -123,6 +123,12 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.49</item>
+        <item>"Bugfix:
+                - video compression failure
+                - last upload job is re-run (no damage) on running next upload - requiring you to click upload again to get new job to run
+                - slow display of images when scrolling"
+        </item>
         <item>1.4.0.48</item>
         <item>"Änderungen:
          - Neue Einstellung in den Galerieeinstellungen zum Deaktivieren der Navigationsschaltfläche und / oder der Funktion zum automatischen Ausblenden der Statusleiste

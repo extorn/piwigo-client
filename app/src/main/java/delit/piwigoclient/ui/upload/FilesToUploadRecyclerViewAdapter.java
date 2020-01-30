@@ -49,6 +49,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public static final int SCALING_QUALITY_MEDIUM = 240;
     public static final int SCALING_QUALITY_LOW = 120;
     public static final int SCALING_QUALITY_VLOW = 60;
+    public static final String MEDIA_SCANNER_TASK_ID_FILES_FOR_UPLOAD = "id_filesForUpload";
 
     private UploadDataItemModel uploadDataItemsModel;
     private final RemoveListener listener;
@@ -79,7 +80,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     }
 
     private void updateUris() {
-        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(uploadDataItemsModel.getFilesSelectedForUpload(), 15) {
+        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(MEDIA_SCANNER_TASK_ID_FILES_FOR_UPLOAD, uploadDataItemsModel.getFilesSelectedForUpload(), 15) {
             @Override
             public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
                 for (Map.Entry<File, Uri> item : batchResults.entrySet()) {

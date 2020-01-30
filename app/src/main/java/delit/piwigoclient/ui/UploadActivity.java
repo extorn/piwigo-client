@@ -98,6 +98,7 @@ public class UploadActivity extends MyActivity {
     private boolean startedWithPermissions;
     private Toolbar toolbar;
     private AppBarLayout appBar;
+    private String MEDIA_SCANNER_TASK_ID_SHARED_FILES = "id_sharedFiles";
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
         Intent intent = new Intent(context, UploadActivity.class);
@@ -477,7 +478,7 @@ public class UploadActivity extends MyActivity {
             IOUtils.write(fileDescriptor.createInputStream(), localTmpFile);
             List<File> files = new ArrayList<>();
             files.add(localTmpFile);
-            MediaScanner.instance(getApplicationContext()).invokeScan(new MediaScanner.MediaScannerScanTask(files) {
+            MediaScanner.instance(getApplicationContext()).invokeScan(new MediaScanner.MediaScannerScanTask(MEDIA_SCANNER_TASK_ID_SHARED_FILES, files) {
                 @Override
                 public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
                 }

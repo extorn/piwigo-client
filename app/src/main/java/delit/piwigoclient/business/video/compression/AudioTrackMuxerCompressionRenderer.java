@@ -204,7 +204,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         super.render(positionUs, elapsedRealtimeUs);
         mediaMuxerControl.markDataRead(processedSourceDataDuringRender);
         boolean lastRendererReadDatasource = mediaMuxerControl.getAndResetIsSourceDataRead();
-        if (steppedWithoutActionCount > 300) {
+        if (steppedWithoutActionCount > 300 && mediaMuxerControl.isAudioConfigured()) {
             if (!lastRendererReadDatasource) {
                 // Compression has crashed. Why?!
                 throw ExoPlaybackException.createForRenderer(new Exception("Compression got stuck for some reason - stopping"), getIndex());

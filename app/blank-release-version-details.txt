@@ -1,36 +1,42 @@
 
 <en-GB>
-Changes:
-- New preference in gallery settings to disable navigation button and or status bar auto hide function
-- Only show which image sizes are being shown once unless it changes
+Bugfix:
+- video compression failure
+- last upload job is re-run (no damage) on running next upload - requiring you to click upload again to get new job to run
+- slow display of images when scrolling
 </en-GB>
 
 <de-DE>
-Änderungen:
- - Neue Einstellung in den Galerieeinstellungen zum Deaktivieren der Navigationsschaltfläche und / oder der Funktion zum automatischen Ausblenden der Statusleiste
- - Zeigen Sie nur einmal an, welche Bildgrößen angezeigt werden, es sei denn, dies ändert sich
+Bug-Fix:
+ - Videokomprimierungsfehler
+ - Der letzte Upload-Auftrag wird beim nächsten Upload erneut ausgeführt (kein Schaden). Sie müssen erneut auf Upload klicken, um einen neuen Auftrag auszuführen
+ - Langsame Anzeige von Bildern beim Scrollen
 </de-DE>
 
 <fr-FR>
-Changements:
- - Nouvelle préférence dans les paramètres de la galerie pour désactiver le bouton de navigation et / ou la fonction de masquage automatique de la barre d'état
- - Afficher uniquement les tailles d'image affichées une fois, sauf si elles changent
+Correction d'un bug:
+ - échec de compression vidéo
+ - le dernier travail de téléchargement est réexécuté (aucun dommage) lors de l'exécution du prochain téléchargement - vous obligeant à cliquer à nouveau sur le téléchargement pour exécuter le nouveau travail
+ - affichage lent des images lors du défilement
 </fr-FR>
 
 <es-ES>
-Changements:
- - Nouvelle préférence dans les paramètres de la galerie pour désactiver le bouton de navigation et / ou la fonction de masquage automatique de la barre d'état
- - Afficher uniquement les tailles d'image affichées une fois, sauf si elles changent...
+Arreglo del fallo:
+ - falla de compresión de video
+ - el último trabajo de carga se vuelve a ejecutar (sin daños) al ejecutar la siguiente carga, lo que requiere que haga clic en cargar nuevamente para que se ejecute el nuevo trabajo
+ - visualización lenta de imágenes al desplazarse
 </es-ES>
 
 <zh-CN>
-变化：
- -画廊设置中的新首选项可禁用导航按钮和/或状态栏自动隐藏功能
- -仅显示一次显示的图像大小，除非更改
+错误修正：
+ -视频压缩失败
+ -在运行下一个上载时重新运行上一个上载作业（无损坏）-要求您再次单击上载才能运行新作业
+ -滚动时图像显示缓慢
 </zh-CN>
 
 <ru-RU>
-Изменения:
- - Новые настройки в настройках галереи для отключения кнопки навигации и / или функции автоматического скрытия строки состояния
- - Показывать только те размеры изображения, которые отображаются один раз, если они не изменяются
+Исправлена ошибка:
+ - ошибка сжатия видео
+ - последнее задание на загрузку перезапускается (без повреждений) при запуске следующей загрузки - требуется снова нажать кнопку загрузки, чтобы запустить новое задание
+ - медленное отображение изображений при прокрутке
 </ru-RU>

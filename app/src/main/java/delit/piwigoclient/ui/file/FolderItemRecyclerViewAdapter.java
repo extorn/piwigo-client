@@ -100,7 +100,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         Collections.sort(currentDisplayContent, getFileComparator());
 
         notifyDataSetChanged();
-        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(getDisplayedFiles(), 15) {
+        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(activeFolder.getAbsolutePath(), getDisplayedFiles(), 15) {
 
             @Override
             public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
@@ -325,6 +325,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     @Override
     public boolean isHolderOutOfSync(FolderItemViewHolder holder, FolderItem newItem) {
         return isDirtyItemViewHolder(holder, newItem);
+    }
+
+    public void cancelAnyActiveFolderMediaScan() {
+        MediaScanner.instance(getContext()).cancelActiveScan(getActiveFolder().getAbsolutePath());
     }
 
     public static class FolderItem implements Parcelable {

@@ -630,4 +630,5 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="alert_message_showing_images_of_size">Отображение изображений с сервера размером %1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">Отображение миниатюр изображений с сервера размером %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Отображение миниатюр альбомов с сервера размером %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Ошибка при сжатии файла для загрузки %1$s</string>
 </resources>

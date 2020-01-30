@@ -627,5 +627,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_showing_images_of_size">Anzeigen von Bildern vom Server der Größe %1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">Anzeigen von Miniaturbildern vom Server der Größe %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Anzeigen von Miniaturansichten des Albums vom Server der Größe %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload %1$s</string>
 </resources>
 

@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -665,6 +666,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (!jobIsComplete) {
                 // now register for any new messages (and pick up all messages in sequence)
                 getUiHelper().handleAnyQueuedPiwigoMessages();
+            } else {
+                // reset status ready for next job
+                BasePiwigoUploadService.removeJob(uploadJob);
+                uploadJobId = null;
             }
         } else {
             allowUserUploadConfiguration(null);
@@ -1412,6 +1417,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             String errorMessage;
             if (response.getError() instanceof FileNotFoundException) {
                 errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), response.getFileForUpload().getName());
+            } else if (response.getError() instanceof ExoPlaybackException) {
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_compression_error_message_pattern), response.getFileForUpload().getName());
             } else {
                 errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), response.getFileForUpload().getName());
             }

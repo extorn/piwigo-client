@@ -503,4 +503,5 @@
     <string name="alert_message_showing_images_of_size">正在显示尺寸为 %1$s 的服务器中的图像</string>
     <string name="alert_message_showing_image_thumbnails_of_size">显示大小为 %1$s 的服务器中的图像缩略图</string>
     <string name="alert_message_showing_album_thumbnails_of_size">正在显示大小为 %1$s 的服务器中的相册缩略图</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">压缩文件以上传%1$s时出错</string>
 </resources>

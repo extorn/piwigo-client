@@ -142,6 +142,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private static final String TAG = "mainActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
+    private static final String MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE = "id_downloadedFile";
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
@@ -540,7 +541,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     public void onFileDownloaded(String remoteUri, File destinationFile) {
         // add the file details to the media store :-)
-        MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(destinationFile));
+        MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, destinationFile));
         DownloadFileRequestEvent event = removeActionDownloadEvent();
         if (event != null) {
             if (event.isShareDownloadedWithAppSelector()) {
