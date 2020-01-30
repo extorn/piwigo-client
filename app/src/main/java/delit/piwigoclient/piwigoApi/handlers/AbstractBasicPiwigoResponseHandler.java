@@ -270,8 +270,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 tryingAgain = true;
                 rerunCall();
             } else if (allowSessionRefreshAttempt
-                    && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || error.getMessage().equalsIgnoreCase("Access denied")))) {
-
+                    && (statusCode == HttpStatus.SC_FORBIDDEN && !triedLoggingInAgain && (error == null || "Invalid security token".equalsIgnoreCase(error.getMessage())))
+                    || (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || "Access denied".equalsIgnoreCase(error.getMessage())))) {
                 // ensure we ignore this error (if it errors again, we'll capture that one)
                 tryingAgain = acquireNewSessionAndRetryCallIfAcquired();
             }
