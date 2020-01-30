@@ -150,7 +150,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
             existingRange = cacheMetaData.getRangeContaining(firstContentByte - 1);
         }
         FileChannel destinationChannel = null;
-        long onePercent = contentLength / 100; // send progress update every 1%
+        double onePercent = (double) contentLength / 100; // send progress update every 1%
         try {
             byte[] tmp = new byte[BUFFER_SIZE];
             ByteBuffer buffer = ByteBuffer.wrap(tmp);
@@ -196,7 +196,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     cacheMetaData.notifyAll();
                 }
 //                        destinationFile.write(tmp, 0, l);
-                int thisPercentDone = (int) (contentLength / onePercent);
+                int thisPercentDone = contentLength == 0 ? 0 : (int) Math.floor((double) contentLength / onePercent);
                 if (thisPercentDone > percentDone) {
                     percentDone = thisPercentDone;
                     sendProgressMessage(count, contentLength);
