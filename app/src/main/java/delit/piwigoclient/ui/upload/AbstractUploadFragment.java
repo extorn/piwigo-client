@@ -1231,6 +1231,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 public void run() {
                     uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression finished");
                     linkedView.setEnabled(true);
+                    AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+                    File f = fragment.getFilesForUploadViewAdapter().getFiles().get(0);
+                    fragment.getFilesForUploadViewAdapter().updateUploadProgress(f, 0);
                 }
             });
         }
