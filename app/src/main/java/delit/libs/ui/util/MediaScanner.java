@@ -22,6 +22,7 @@ import delit.piwigoclient.BuildConfig;
 
 public class MediaScanner implements MediaScannerConnection.MediaScannerConnectionClient {
 
+    private static final String TAG = "MediaScannerWrapper";
     private static ThreadLocal<MediaScanner> mediaScannerInstance = new ThreadLocal<>();
     private final MediaScannerConnection connection;
     private Handler tasksHandler;
@@ -67,6 +68,22 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         task.setMediaScanner(this);
         tasks.add(task);
         tasksHandler.post(task);
+        if (BuildConfig.DEBUG) {
+            listCurrentTasks();
+        }
+    }
+
+    private void listCurrentTasks() {
+        StringBuilder sb = new StringBuilder("Tasks : ");
+        Iterator<MediaScannerTask> iter = tasks.iterator();
+        while (iter.hasNext()) {
+            MediaScannerScanTask task = (MediaScannerScanTask) iter.next();
+            sb.append(task.getId());
+            if (iter.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        Log.d(TAG, sb.toString());
     }
 
     @Override
@@ -126,6 +143,9 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                 if (id.equals(scanTask.getId())) {
                     if (scanTask.started) {
                         scanTask.cancelScan();
+                        synchronized (scanTask) {
+                            scanTask.notify();
+                        }
                     }
                     iter.remove();
                 }
@@ -233,6 +253,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                     if (!f.isDirectory()) {
                         processingFileCount++;
                         try {
+//                            mediaScanner.getConnection().scanFile(f.getAbsolutePath(), null);
                             mediaScanner.lookupsThreadHandler.post(new LookupTask(f));
                         } catch (IllegalStateException e) {
                             // connection has died
@@ -295,28 +316,32 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         }
 
         void addResult(String path, Uri uri) {
+            if (cancelScan) {
+                // don't care about the result any more.
+                return;
+            }
             processingFileCount--;
             resultsAwaited--;
             boolean taskFinished = resultsAwaited == 0;
 
-            synchronized (results) {
-                results.put(new File(path), uri);
-                if (results.size() == resultsBatchSize || resultsAwaited == 0) {
-                    final Map<File, Uri> batchResults = results;
-                    final int nextResultIdx = firstResultIdx + batchResults.size();
-                    if (processResultsOnBackgroundThread) {
-                        onScanComplete(batchResults, firstResultIdx, nextResultIdx - 1, resultsAwaited == 0);
-                    } else {
-                        DisplayUtils.runOnUiThread(new BatchResultProcessor(firstResultIdx, nextResultIdx - 1, batchResults, taskFinished));
+            synchronized (this) {
+                synchronized (results) {
+                    results.put(new File(path), uri);
+                    if (results.size() == resultsBatchSize || resultsAwaited == 0) {
+                        final Map<File, Uri> batchResults = results;
+                        final int nextResultIdx = firstResultIdx + batchResults.size();
+                        if (processResultsOnBackgroundThread) {
+                            onScanComplete(batchResults, firstResultIdx, nextResultIdx - 1, resultsAwaited == 0);
+                        } else {
+                            DisplayUtils.runOnUiThread(new BatchResultProcessor(firstResultIdx, nextResultIdx - 1, batchResults, taskFinished));
+                        }
+                        firstResultIdx = nextResultIdx;
+                        results = new HashMap<>(resultsBatchSize);
                     }
-                    firstResultIdx = nextResultIdx;
-                    results = new HashMap<>(resultsBatchSize);
                 }
             }
-            if (taskFinished) {
-                synchronized (this) {
-                    notifyAll();
-                }
+            synchronized (this) {
+                notifyAll();
             }
         }
 

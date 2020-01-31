@@ -111,7 +111,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final String SAVED_STATE_UPLOAD_TO_ALBUM = "uploadToAlbum";
     private static final String SAVED_STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID = "externallyTriggeredSelectFilesActionId";
-    private static final boolean ENABLE_COMPRESSION_BUTTON = false;
+    private static final boolean ENABLE_COMPRESSION_BUTTON = true;
     private static final int TAB_IDX_SETTINGS = 1;
     private static final int TAB_IDX_FILES = 0;
     public static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
@@ -497,12 +497,18 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             long rawVal = compressVideosQualitySpinner.getSelectedItemId();
             int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
             double bpps = ((double) rawVal) / 1000;
+            compressionSettings.setAddAudioTrack(audioBitrate != 0);
             compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
             compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
 
             File inputVideo = filesForUpload.get(0);
             File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-            File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
+            File outputVideo;
+            int i = 0;
+            do {
+                i++;
+                outputVideo = new File(moviesFolder, "compressed_" + i + inputVideo.getName());
+            } while (outputVideo.exists());
             outputVideo = IOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType()));
             new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
         }
@@ -722,12 +728,25 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
         int addedItems = 0;
         if (contentUrisPresent) {
-            for (FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
-                if (adapter.add(item.getFile(), item.getContentUri())) {
-                    addedItems++;
+
+            ArrayList<File> rawFilesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
+            Iterator<FolderItemRecyclerViewAdapter.FolderItem> iter = folderItemsToBeUploaded.iterator();
+            while (iter.hasNext()) {
+                FolderItemRecyclerViewAdapter.FolderItem item = iter.next();
+                if (item.getContentUri() != null) {
+                    if (adapter.add(item.getFile(), item.getContentUri())) {
+                        addedItems++;
+                    }
+                    iter.remove();
+                } else {
+                    rawFilesToBeUploaded.add(item.getFile());
                 }
             }
-            adapter.notifyDataSetChanged();
+            if (rawFilesToBeUploaded.size() > 0) {
+                addedItems += adapter.addAll(rawFilesToBeUploaded).size();
+            } else {
+                adapter.notifyDataSetChanged();
+            }
         } else {
             ArrayList<File> filesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
             for (FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
@@ -1183,20 +1202,37 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         @Override
         public void onCompressionStarted() {
-            uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression started");
-            startCompressionAt = System.currentTimeMillis();
+            DisplayUtils.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression started");
+                    startCompressionAt = System.currentTimeMillis();
+                }
+            });
+
         }
 
         @Override
         public void onCompressionError(Exception e) {
-            uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression failed");
-            linkedView.setEnabled(true);
+            DisplayUtils.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression failed");
+                    linkedView.setEnabled(true);
+                }
+            });
+
         }
 
         @Override
         public void onCompressionComplete() {
-            uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression finished");
-            linkedView.setEnabled(true);
+            DisplayUtils.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression finished");
+                    linkedView.setEnabled(true);
+                }
+            });
         }
 
         @Override

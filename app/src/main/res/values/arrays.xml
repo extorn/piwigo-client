@@ -28,11 +28,19 @@
     </string-array>
 
     <string-array name="preference_data_upload_compress_videos_audio_bitrate_items" translatable="false">
+        <item>0kbps</item>
+        <item><![CDATA[-->]]></item>
+        <item>32kbps</item>
+        <item>64kbps</item>
         <item>96kbps</item>
         <item>128kbps</item>
         <item>196kbps</item>
     </string-array>
     <integer-array name="preference_data_upload_compress_videos_audio_bitrate_values">
+        <item>0</item>
+        <item>-1</item>
+        <item>32000</item>
+        <item>64000</item>
         <item>96000</item>
         <item>128000</item>
         <item>196000</item>
@@ -254,6 +262,15 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.50</item>
+        <item>"Changes:
+                - Allow passthrough of audio as compression option
+                - Enabled compression for non 'audio/raw' mime audio streams
+                - Add option to strip the audio track from video
+               Bugfix:
+                - Stop video compression if it is deleted from upload during compression
+                - Stop video being uploaded if it is deleted from upload during compression
+                - tidy the upload progress display for individual files"</item>
         <item>1.4.0.49</item>
         <item>"Bugfix:
                 - video compression failure

@@ -874,6 +874,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         double desiredBitratePerPixelPerSec = uploadJob.getVideoCompressionParams().getQuality();
         int desiredAudioBitrate = uploadJob.getVideoCompressionParams().getAudioBitrate();
+        compressionSettings.setAddAudioTrack(desiredAudioBitrate != 0);
         compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(desiredBitratePerPixelPerSec);
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
 
@@ -886,7 +887,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             try {
                 synchronized (listener) {
                     listener.wait(1000);
-                    if (uploadJob.isCancelUploadAsap()) {
+                    if (uploadJob.isCancelUploadAsap() || !uploadJob.isFileUploadStillWanted(rawVideo)) {
                         compressor.cancel();
                         return null;
                     }
@@ -896,7 +897,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 // either spurious wakeup or the upload job wished to be cancelled.
             }
         }
-        if (listener.getCompressionError() != null) {
+        if (listener.getCompressionError() != null && uploadJob.isFileUploadStillWanted(rawVideo)) {
             if (outputVideo.exists()) {
                 if (!outputVideo.delete()) {
                     Crashlytics.log(Log.ERROR, TAG, "Unable to delete corrupt compressed file.");
@@ -915,8 +916,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
                 uploadJob.cancelFileUpload(rawVideo);
             }
+            return outputVideo;
         }
-        return outputVideo;
+        return null;
     }
 
     private File compressImage(UploadJob uploadJob, File rawImage) {

@@ -8,6 +8,7 @@ import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+import android.util.LongSparseArray;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -23,14 +24,13 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
+import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM;
@@ -50,7 +50,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     private boolean VERBOSE = false;
     private MediaFormat currentDecodedMediaFormat;
     private Set<Long> encodingFrames = new HashSet<>();
-    private Map<Long, Integer> sampleTimeSizeMap = new HashMap<>(100);
+    private LongSparseArray<Integer> sampleTimeSizeMap = new LongSparseArray<>(100);
     private MediaCodec.BufferInfo audioBufferInfo = new MediaCodec.BufferInfo(); // shared copy for efficiency.
     private MediaFormat currentOutputMediaFormat;
     private MediaCodec encoder;
@@ -66,8 +66,13 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     }
 
     @Override
+    protected MediaCodecInfo getDecoderInfo(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
+        return super.getDecoderInfo(mediaCodecSelector, format, requiresSecureDecoder);
+    }
+
+    @Override
     protected boolean allowPassthrough(String mimeType) {
-        return true; // why?!
+        return compressionSettings.getBitRate() == ExoPlayerCompression.AudioCompressionParameters.AUDIO_PASSTHROUGH_BITRATE || "audio/raw".equals(mimeType); // this means that the data is not run through a decoder by the super class.
     }
 
     @Override
@@ -76,24 +81,37 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         super.onQueueInputBuffer(buffer);
     }
 
-    protected MediaFormat getOutputMediaFormat(MediaFormat inputMediaFormat) {
-        if ("audio/raw".equals(inputMediaFormat.getString(MediaFormat.KEY_MIME))) {
-            int audioChannelCount = inputMediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
-            MediaFormat mediaFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, inputMediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), audioChannelCount);
+    private String getOutputAudioFormatMime() {
+        String audioFormatOutputMime = "audio/mp4a-latm";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            audioFormatOutputMime = MediaFormat.MIMETYPE_AUDIO_AAC;
+        }
+        return audioFormatOutputMime;
+    }
 
-            mediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, android.media.MediaCodecInfo.CodecProfileLevel.AACObjectLC);
-            mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, compressionSettings.getBitRate());
+    protected MediaFormat getOutputMediaFormat(MediaFormat inputMediaFormat) {
+
+        if (compressionSettings.getBitRate() != ExoPlayerCompression.AudioCompressionParameters.AUDIO_PASSTHROUGH_BITRATE) {
+
+            int audioChannelCount = inputMediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+
+            MediaFormat outputMediaFormat = MediaFormat.createAudioFormat(getOutputAudioFormatMime(), inputMediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), audioChannelCount);
+
+            outputMediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, android.media.MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+            outputMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, compressionSettings.getBitRate());
             if (inputMediaFormat.containsKey(MediaFormat.KEY_MAX_INPUT_SIZE)) {
-                mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, inputMediaFormat.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE));
+                outputMediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, inputMediaFormat.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE));
             } else {
-                mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 655360);
+                outputMediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 655360);
             }
             // Set codec configuration values.
             if (Util.SDK_INT >= 23) {
-                mediaFormat.setInteger(MediaFormat.KEY_PRIORITY, 0 /* realtime priority */);
+                outputMediaFormat.setInteger(MediaFormat.KEY_PRIORITY, 0 /* realtime priority */);
             }
-            return mediaFormat;
+            return outputMediaFormat;
         }
+
+        // we're just passing the data through un-processed so the media format stays the same
         return inputMediaFormat;
     }
 
@@ -457,11 +475,28 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
                         Log.d(TAG, "releasing encoding codec.");
                     }
                 }
-                encoder.stop();
-                encoder.release();
-                encoder = null;
+                if (isEnded()) {
+                    releaseTranscoder();
+                }
                 return;
             }
+        }
+    }
+
+    @Override
+    protected void onDisabled() {
+        super.onDisabled();
+        releaseTranscoder();
+    }
+
+    private void releaseTranscoder() {
+        if (VERBOSE) {
+            Log.d(TAG, "stopping and releasing encoder");
+        }
+        if (encoder != null) {
+            encoder.stop();
+            encoder.release();
+            encoder = null;
         }
     }
 

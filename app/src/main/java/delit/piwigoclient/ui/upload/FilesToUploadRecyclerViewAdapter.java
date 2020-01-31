@@ -116,6 +116,12 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         // Configure the progress bar (upload progress)
 
+        holder.progressBar.setVisibility(GONE);
+        holder.progressBarDescription.setVisibility(GONE);
+        holder.progressBar.setIndeterminate(false);
+        holder.progressBar.setProgress(0);
+        holder.progressBar.setSecondaryProgress(0);
+
         if (uploadDataItem.uploadProgress != null) {
             if (uploadDataItem.uploadProgress.inProgress()) {
                 holder.progressBar.setVisibility(View.VISIBLE);
@@ -151,12 +157,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             // store a reference to the item in this recyclable holder.
             holder.mItem = uploadDataItem;
 
-        } else {
-            holder.progressBar.setVisibility(GONE);
-            holder.progressBarDescription.setVisibility(GONE);
-            holder.progressBar.setIndeterminate(false);
-            holder.progressBar.setProgress(0);
-            holder.progressBar.setSecondaryProgress(0);
         }
 
         // configure the filename field

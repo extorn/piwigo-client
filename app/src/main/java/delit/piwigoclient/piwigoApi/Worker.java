@@ -206,7 +206,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             synchronized (handler) {
                 boolean timedOut = false;
                 while (handler.isRunning() && !isCancelled() && !timedOut) {
-                    long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
+                    long waitForMillis = Math.min(1000, callTimeoutAtTime - System.currentTimeMillis());
                     if (waitForMillis > 0) {
                         try {
                             handler.wait(waitForMillis);
@@ -325,9 +325,10 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                 }
                 if(retVal == null) {
                     try {
-                        retVal = task.get(500, TimeUnit.MILLISECONDS); // allow it to loop around until timed out (rather than hang forever)
+                        retVal = task.get(1000, TimeUnit.MILLISECONDS); // allow it to loop around until timed out (rather than hang forever)
                     } catch (TimeoutException e) {
-                        Log.e(tag, "Thread " + Thread.currentThread().getName() + " timed out waiting for response from handler " + handler.getClass().getSimpleName());
+
+                        Log.e(tag, " Thread " + Thread.currentThread().getName() + " timed out waiting for response from handler " + handler.getClass().getSimpleName() + " in task with status : " + task.getStatus().name());
                     }
                     if (retVal != null) {
                         timeoutAt = System.currentTimeMillis() + 1500;

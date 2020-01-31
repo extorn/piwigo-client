@@ -186,6 +186,7 @@ public class ExoPlayerCompression {
 
     public static class AudioCompressionParameters {
 
+        public static final int AUDIO_PASSTHROUGH_BITRATE = -1;
         private int bitRate = 128000;
         private final long maxInterleavingIntervalUs;
 
