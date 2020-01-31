@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import delit.piwigoclient.BuildConfig;
 
@@ -66,24 +69,38 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
 
     public void invokeScan(MediaScannerScanTask task) {
         task.setMediaScanner(this);
-        tasks.add(task);
+        synchronized (tasks) {
+            tasks.add(task);
+        }
         tasksHandler.post(task);
         if (BuildConfig.DEBUG) {
-            listCurrentTasks();
+            dumpStatus();
         }
     }
 
-    private void listCurrentTasks() {
-        StringBuilder sb = new StringBuilder("Tasks : ");
-        Iterator<MediaScannerTask> iter = tasks.iterator();
-        while (iter.hasNext()) {
-            MediaScannerScanTask task = (MediaScannerScanTask) iter.next();
-            sb.append(task.getId());
-            if (iter.hasNext()) {
-                sb.append(", ");
+    private void dumpStatus() {
+
+        StringBuilder sb = new StringBuilder("MediaScanner Status:\n");
+        StringBuilderPrinter sbp = new StringBuilderPrinter(sb);
+        sbp.println("Tasks Looper :\n");
+        tasksHandler.getLooper().dump(sbp, TAG);
+//        sb.append('\n');
+//        sbp.println("MediaScanner Lookups Looper :\n");
+        //lookupsThreadHandler.getLooper().dump(sbp, TAG);
+        sb.append('\n');
+        sb.append("Tasks : ");
+
+        synchronized (tasks) {
+            Iterator<MediaScannerTask> iter = tasks.iterator();
+            while (iter.hasNext()) {
+                MediaScannerScanTask task = (MediaScannerScanTask) iter.next();
+                sb.append(task.getId());
+                if (iter.hasNext()) {
+                    sb.append(", ");
+                }
             }
+            Log.d(TAG, sb.toString());
         }
-        Log.d(TAG, sb.toString());
     }
 
     @Override
@@ -104,15 +121,19 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
 
     @Override
     public void onScanCompleted(String path, Uri uri) {
-        if (tasks.isEmpty()) {
-            return;
+        synchronized (tasks) {
+            if (tasks.isEmpty()) {
+                return;
+            }
+            MediaScannerScanTask task = ((MediaScannerScanTask) tasks.get(0));
+            task.addResult(path, uri);
         }
-        MediaScannerScanTask task = ((MediaScannerScanTask) tasks.get(0));
-        task.addResult(path, uri);
     }
 
     public void close() {
-        tasks.clear();
+        synchronized (tasks) {
+            tasks.clear();
+        }
         connected = false;
         connection.disconnect();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -126,7 +147,9 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
     }
 
     private void removeTask(MediaScannerScanTask mediaScannerScanTask) {
-        tasks.remove(mediaScannerScanTask);
+        synchronized (tasks) {
+            tasks.remove(mediaScannerScanTask);
+        }
     }
 
     private void connect() {
@@ -135,22 +158,22 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
     }
 
     public void cancelActiveScan(String id) {
-        Iterator<MediaScannerTask> iter = tasks.iterator();
-        while (iter.hasNext()) {
-            MediaScannerTask task = iter.next();
-            if (task instanceof MediaScannerScanTask) {
-                MediaScannerScanTask scanTask = (MediaScannerScanTask) task;
-                if (id.equals(scanTask.getId())) {
-                    if (scanTask.started) {
-                        scanTask.cancelScan();
-                        synchronized (scanTask) {
-                            scanTask.notify();
+        synchronized (tasks) {
+            Iterator<MediaScannerTask> iter = tasks.iterator();
+            while (iter.hasNext()) {
+                MediaScannerTask task = iter.next();
+                if (task instanceof MediaScannerScanTask) {
+                    MediaScannerScanTask scanTask = (MediaScannerScanTask) task;
+                    if (id.equals(scanTask.getId())) {
+                        if (scanTask.started) {
+                            scanTask.cancelScan();
+                        } else {
+                            iter.remove();
                         }
                     }
-                    iter.remove();
                 }
-            }
 
+            }
         }
     }
 
@@ -191,6 +214,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         private boolean cancelScan;
         private int processingFileCount;
         private boolean started;
+        private UUID taskUuid = UUID.randomUUID();
 
 
         /**
@@ -224,8 +248,12 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         public void cancelScan() {
             if (started) {
                 cancelScan = true;
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "task scheduled for cancellation : " + this.toString());
+                }
+                mediaScanner.lookupsThreadHandler.removeCallbacksAndMessages(taskUuid);
                 synchronized (this) {
-                    notify();
+                    notifyAll();
                 }
             }
         }
@@ -255,7 +283,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                         processingFileCount++;
                         try {
 //                            mediaScanner.getConnection().scanFile(f.getAbsolutePath(), null);
-                            mediaScanner.lookupsThreadHandler.post(new LookupTask(f));
+                            mediaScanner.lookupsThreadHandler.postAtTime(new LookupTask(f), taskUuid, SystemClock.uptimeMillis());
                         } catch (IllegalStateException e) {
                             // connection has died
                             if (mediaScanner.isConnected()) {
@@ -292,21 +320,24 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                     Log.d(TAG, "Media scanner task ending");
                 }
                 mediaScanner.removeTask(this);
+                started = false;
             }
-            started = false;
         }
 
         /**
          * @return true if should cancel job
          */
         private boolean pauseThread() {
+            if (cancelScan) {
+                return true; //already cancelled.
+            }
             synchronized (this) {
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
                     if (cancelScan) {
                         if (BuildConfig.DEBUG) {
-                            Log.d(TAG, "cancelling scan");
+                            Log.d(TAG, "cancelling scan for task " + this.toString());
                         }
                         return true;
                     }
