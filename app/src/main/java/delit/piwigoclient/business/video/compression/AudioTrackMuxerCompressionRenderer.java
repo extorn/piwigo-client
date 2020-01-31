@@ -91,14 +91,22 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 
     protected MediaFormat getOutputMediaFormat(MediaFormat inputMediaFormat) {
 
+        int likelyInputBitrate = getLikelyBitrate(inputMediaFormat);
+
         if (compressionSettings.getBitRate() != ExoPlayerCompression.AudioCompressionParameters.AUDIO_PASSTHROUGH_BITRATE) {
 
             int audioChannelCount = inputMediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
 
-            MediaFormat outputMediaFormat = MediaFormat.createAudioFormat(getOutputAudioFormatMime(), inputMediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), audioChannelCount);
+            String outputFormatMimeType = getOutputAudioFormatMime();
+            MediaFormat outputMediaFormat = MediaFormat.createAudioFormat(outputFormatMimeType, inputMediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), audioChannelCount);
+
+            int desiredBitrate = compressionSettings.getBitRate();
+            if (outputFormatMimeType.equals(inputMediaFormat.getString(MediaFormat.KEY_MIME))) {
+                desiredBitrate = Math.min(likelyInputBitrate, desiredBitrate);
+            }
 
             outputMediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, android.media.MediaCodecInfo.CodecProfileLevel.AACObjectLC);
-            outputMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, compressionSettings.getBitRate());
+            outputMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, desiredBitrate);
             if (inputMediaFormat.containsKey(MediaFormat.KEY_MAX_INPUT_SIZE)) {
                 outputMediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, inputMediaFormat.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE));
             } else {
@@ -113,6 +121,18 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 
         // we're just passing the data through un-processed so the media format stays the same
         return inputMediaFormat;
+    }
+
+    private int getLikelyBitrate(MediaFormat inputMediaFormat) {
+        int maxInputBitrate = (inputMediaFormat.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE) * inputMediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE) * inputMediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT) * 8 / 1024);
+        int[] stdBitrates = new int[]{32000, 64000, 96000, 128000, 196000};
+        int selectedBitrate = 0;
+        for (int i = stdBitrates.length - 1; i >= 0; i--) {
+            if (stdBitrates[i] < maxInputBitrate) {
+                return stdBitrates[i];
+            }
+        }
+        return stdBitrates[0];
     }
 
     @Override
