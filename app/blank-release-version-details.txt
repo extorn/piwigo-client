@@ -29,7 +29,7 @@ Changements:
 Correction d'un bug:
  - Arrêtez la compression vidéo si elle est supprimée du téléchargement pendant la compression
  - Arrêtez le téléchargement de la vidéo si elle est supprimée du téléchargement pendant la compression
- - ranger l'affichage de la progression du téléchargement pour les fichiers individuels
+ - ranger l'affichage de la progression du téléchargement pour les fichie...
 </fr-FR>
 
 <es-ES>
