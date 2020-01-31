@@ -1,42 +1,66 @@
 
 <en-GB>
-Bugfix:
-- video compression failure
-- last upload job is re-run (no damage) on running next upload - requiring you to click upload again to get new job to run
-- slow display of images when scrolling
+Changes:
+- Allow passthrough of audio as compression option
+- Enabled compression for non 'audio/raw' mime audio streams
+- Add option to strip the audio track from video
+ Bugfix:
+- Stop video compression if it is deleted from upload during compression
+- Stop video being uploaded if it is deleted from upload during compression
+- tidy the upload progress display for individual files
 </en-GB>
 
 <de-DE>
+Änderungen:
+ - Zulassen, dass Audio als Komprimierungsoption durchgelassen wird
+ - Komprimierung für Nicht-Audio / Raw-Mime-Audio-Streams aktiviert
+ - Option hinzufügen, um die Audiospur vom Video zu entfernen
 Bug-Fix:
- - Videokomprimierungsfehler
- - Der letzte Upload-Auftrag wird beim nächsten Upload erneut ausgeführt (kein Schaden). Sie müssen erneut auf Upload klicken, um einen neuen Auftrag auszuführen
- - Langsame Anzeige von Bildern beim Scrollen
+ - Stoppen Sie die Videokomprimierung, wenn sie während der Komprimierung vom Upload gelöscht wird
+ - Stoppen Sie das Hochladen von Videos, wenn diese während der Komprimierung vom Upload gelöscht werden
+ - Ordnen Sie die Anzeige des Upload-Fortschritts für einzelne Dateien an
 </de-DE>
 
 <fr-FR>
+Changements:
+ - Autoriser le passage de l'audio comme option de compression
+ - Compression activée pour les flux audio MIME non 'audio / raw'
+ - Ajouter une option pour retirer la piste audio de la vidéo
 Correction d'un bug:
- - échec de compression vidéo
- - le dernier travail de téléchargement est réexécuté (aucun dommage) lors de l'exécution du prochain téléchargement - vous obligeant à cliquer à nouveau sur le téléchargement pour exécuter le nouveau travail
- - affichage lent des images lors du défilement
+ - Arrêtez la compression vidéo si elle est supprimée du téléchargement pendant la compression
+ - Arrêtez le téléchargement de la vidéo si elle est supprimée du téléchargement pendant la compression
+ - ranger l'affichage de la progression du téléchargement pour les fichiers individuels
 </fr-FR>
 
 <es-ES>
+Cambios:
+ - Permitir el paso de audio como opción de compresión
+ - Compresión habilitada para secuencias de audio mime no 'audio / raw'
+ - Agregar opción para quitar la pista de audio del video
 Arreglo del fallo:
- - falla de compresión de video
- - el último trabajo de carga se vuelve a ejecutar (sin daños) al ejecutar la siguiente carga, lo que requiere que haga clic en cargar nuevamente para que se ejecute el nuevo trabajo
- - visualización lenta de imágenes al desplazarse
+ - Detenga la compresión de video si se elimina de la carga durante la compresión
+ - Detenga la carga del video si se elimina de la carga durante la compresión
+ - ordenar la visualización del progreso de carga para archivos individuales
 </es-ES>
 
 <zh-CN>
+变化：
+ -允许通过音频作为压缩选项
+ -为非“音频/原始”哑剧音频流启用压缩
+ -添加选项以从视频中剥离音轨
 错误修正：
- -视频压缩失败
- -在运行下一个上载时重新运行上一个上载作业（无损坏）-要求您再次单击上载才能运行新作业
- -滚动时图像显示缓慢
+ -如果在压缩期间从上传中删除了视频，则停止视频压缩
+ -如果在压缩过程中将其从上传中删除，则停止上传视频
+ -整理单个文件的上传进度显示
 </zh-CN>
 
 <ru-RU>
+Изменения:
+ - Разрешить проход аудио в качестве опции сжатия
+ - Включено сжатие для не аудио / необработанных звуковых потоков MIME
+ - Добавить опцию, чтобы удалить аудио дорожку из видео
 Исправлена ошибка:
- - ошибка сжатия видео
- - последнее задание на загрузку перезапускается (без повреждений) при запуске следующей загрузки - требуется снова нажать кнопку загрузки, чтобы запустить новое задание
- - медленное отображение изображений при прокрутке
+ - Остановить сжатие видео, если оно было удалено из загрузки во время сжатия
+ - Остановить загрузку видео, если оно было удалено из загрузки во время сжатия
+ - привести в порядок отображение загрузки отдельных файлов
 </ru-RU>

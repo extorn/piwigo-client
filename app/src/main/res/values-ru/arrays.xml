@@ -138,6 +138,15 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.50</item>
+        <item>"Изменения:
+                 - Разрешить проход аудио в качестве опции сжатия
+                 - Включено сжатие для не аудио / необработанных звуковых потоков MIME
+                 - Добавить опцию, чтобы удалить аудио дорожку из видео
+                Исправлена ошибка:
+                 - Остановить сжатие видео, если оно было удалено из загрузки во время сжатия
+                 - Остановить загрузку видео, если оно было удалено из загрузки во время сжатия
+                 - привести в порядок отображение загрузки отдельных файлов"</item>
         <item>1.4.0.49</item>
         <item>"Исправлена ошибка:
                  - ошибка сжатия видео

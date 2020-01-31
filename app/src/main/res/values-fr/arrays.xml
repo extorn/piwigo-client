@@ -133,6 +133,15 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.50</item>
+        <item>"Changements:
+                 - Autoriser le passage de l'audio comme option de compression
+                 - Compression activée pour les flux audio MIME non 'audio / raw'
+                 - Ajouter une option pour retirer la piste audio de la vidéo
+                Correction d'un bug:
+                 - Arrêtez la compression vidéo si elle est supprimée du téléchargement pendant la compression
+                 - Arrêtez le téléchargement de la vidéo si elle est supprimée du téléchargement pendant la compression
+                 - ranger l'affichage de la progression du téléchargement pour les fichiers individuels"</item>
         <item>1.4.0.49</item>
         <item>"Correction d'un bug:
                  - échec de compression vidéo

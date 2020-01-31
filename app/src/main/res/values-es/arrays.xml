@@ -138,6 +138,15 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.50</item>
+        <item>"Cambios:
+                 - Permitir el paso de audio como opción de compresión
+                 - Compresión habilitada para secuencias de audio mime no 'audio / raw'
+                 - Agregar opción para quitar la pista de audio del video
+                Arreglo del fallo:
+                 - Detenga la compresión de video si se elimina de la carga durante la compresión
+                 - Detenga la carga del video si se elimina de la carga durante la compresión
+                 - ordenar la visualización del progreso de carga para archivos individuales"</item>
         <item>1.4.0.49</item>
         <item>"Arreglo del fallo:
                  - falla de compresión de video
