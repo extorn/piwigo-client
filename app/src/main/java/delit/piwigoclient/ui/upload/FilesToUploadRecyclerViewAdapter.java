@@ -82,13 +82,20 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     }
 
     private void updateUris() {
-        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(MEDIA_SCANNER_TASK_ID_FILES_FOR_UPLOAD, uploadDataItemsModel.getFilesSelectedForUpload(), 15) {
+        List<File> filesWithUris = new ArrayList<>();
+        for (int i = 0; i < uploadDataItemsModel.size(); i++) {
+            UploadDataItem item = uploadDataItemsModel.get(i);
+            if (item.mediaStoreReference == null) {
+                filesWithUris.add(item.fileToUpload);
+            }
+        }
+        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(MEDIA_SCANNER_TASK_ID_FILES_FOR_UPLOAD, filesWithUris, 15) {
             @Override
             public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
                 for (Map.Entry<File, Uri> item : batchResults.entrySet()) {
                     uploadDataItemsModel.addMediaContentUri(item.getKey(), item.getValue());
+                    notifyItemChanged(getFiles().indexOf(item.getKey()));
                 }
-                notifyItemRangeChanged(firstResultIdx, batchResults.size());
             }
         });
     }
@@ -279,14 +286,19 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public boolean add(@NonNull File fileForUpload, @NonNull Uri mediaContentUri) {
         return uploadDataItemsModel.add(fileForUpload, mediaContentUri);
     }
+
+    public void retrieveMissingMediaUris() {
+        updateUris();
+    }
+
     /**
      * @param filesForUpload
      * @return List of all files that were not already present
      */
     public ArrayList<File> addAll(List<File> filesForUpload) {
         ArrayList<File> newFiles = uploadDataItemsModel.addAll(filesForUpload);
-        updateUris();
         notifyDataSetChanged();
+        updateUris();
         return newFiles;
     }
 
@@ -522,11 +534,19 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             return filesSelectedForUpload;
         }
 
-        public void addMediaContentUri(File f, Uri uri) {
+        /**
+         * return the index of the item updated
+         *
+         * @param f   File (key)
+         * @param uri new uri to set
+         * @return the index of the item updated (or -1 if nothing updated)
+         */
+        public int addMediaContentUri(File f, Uri uri) {
             UploadDataItem item = getUploadDataItemForFileSelectedForUpload(f);
             if (item != null) {
                 item.mediaStoreReference = uri;
             }
+            return uploadDataItems.indexOf(item);
         }
 
 

@@ -746,6 +746,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 addedItems += adapter.addAll(rawFilesToBeUploaded).size();
             } else {
                 adapter.notifyDataSetChanged();
+                adapter.retrieveMissingMediaUris();
             }
         } else {
             ArrayList<File> filesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
