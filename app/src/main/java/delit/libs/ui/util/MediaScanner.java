@@ -246,6 +246,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         @Override
         public void run() {
             started = true;
+            cancelScan = false;
             try {
                 waitForMediaScannerToStart();
                 results = new HashMap<>(resultsBatchSize);
@@ -292,6 +293,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                 }
                 mediaScanner.removeTask(this);
             }
+            started = false;
         }
 
         /**
@@ -303,7 +305,6 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                     this.wait();
                 } catch (InterruptedException e) {
                     if (cancelScan) {
-                        cancelScan = false;
                         if (BuildConfig.DEBUG) {
                             Log.d(TAG, "cancelling scan");
                         }
@@ -316,7 +317,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         }
 
         void addResult(String path, Uri uri) {
-            if (cancelScan) {
+            if (cancelScan || !started) {
                 // don't care about the result any more.
                 return;
             }
