@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
@@ -107,6 +108,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 
             outputMediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, android.media.MediaCodecInfo.CodecProfileLevel.AACObjectLC);
             outputMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, desiredBitrate);
+//            outputMediaFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, mode);
             if (inputMediaFormat.containsKey(MediaFormat.KEY_MAX_INPUT_SIZE)) {
                 outputMediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, inputMediaFormat.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE));
             } else {
@@ -148,10 +150,52 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
             transcodingTrack = !currentDecodedMediaFormat.equals(currentOutputMediaFormat);
             addTrack = !transcodingTrack;
         }
-        if (addTrack) {
+        if (addTrack) { // this is here in case the video contains multiple audio formats.
             mediaMuxerControl.addAudioTrack(outputMediaFormat);
             mediaMuxerControl.markAudioConfigured();
             mediaMuxerControl.startMediaMuxer();
+        }
+    }
+
+    private void logEncoderCapabilities(android.media.MediaCodecInfo encoderCodecInfo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            android.media.MediaCodecInfo.CodecCapabilities capabilities = encoderCodecInfo.getCapabilitiesForType(getOutputAudioFormatMime());
+            android.media.MediaCodecInfo.CodecProfileLevel[] supportedProfileLevels = capabilities.profileLevels;
+
+            StringBuilder sb = new StringBuilder("Supported AAC profile levels : ");
+            Field[] fields = android.media.MediaCodecInfo.CodecProfileLevel.class.getDeclaredFields();
+            int found = 0;
+            for (Field f : fields) {
+                if (f.getName().startsWith("AACObject")) {
+                    for (int i = 0; i < supportedProfileLevels.length; i++) {
+                        try {
+                            if (supportedProfileLevels[i].profile == f.getInt(null)) {
+                                sb.append(f.getName());
+                                found++;
+                                if (found < supportedProfileLevels.length) {
+                                    sb.append(", ");
+                                } else {
+                                    break;
+                                }
+                            }
+                        } catch (IllegalAccessException e) {
+                            // ignore this as its for debug.
+                        }
+                    }
+                }
+                if (found == supportedProfileLevels.length) {
+                    break;
+                }
+            }
+            Log.d(TAG, sb.toString());
+
+
+            android.media.MediaCodecInfo.EncoderCapabilities encoderCapabilities = capabilities.getEncoderCapabilities();
+            boolean cbrOk = encoderCapabilities.isBitrateModeSupported(android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
+            boolean cqOk = encoderCapabilities.isBitrateModeSupported(android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ);
+            boolean vbrOk = encoderCapabilities.isBitrateModeSupported(android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR);
+            Log.d(TAG, "Supported bitrate modes : " + (cbrOk ? "cbr" : "") + (cqOk ? "cq" : "") + (vbrOk ? "vbr" : ""));
         }
     }
 
@@ -323,8 +367,8 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         return bufferRead;
     }
 
-    private void initialiseOutputEncoder() throws IOException {
-        String outputMimeType = currentOutputMediaFormat.getString(MediaFormat.KEY_MIME);
+    private void initialiseOutputEncoder(MediaFormat outputMediaFormat) throws IOException {
+        String outputMimeType = outputMediaFormat.getString(MediaFormat.KEY_MIME);
         android.media.MediaCodecInfo encoderCodecInfo = selectEncoderCodec(outputMimeType);
         if (encoderCodecInfo == null) {
             if (VERBOSE) {
@@ -336,9 +380,13 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         if (VERBOSE) {
             Log.d(TAG, "found codec: " + encoderCodecInfo.getName());
         }
+
+        logEncoderCapabilities(encoderCodecInfo);
+
+
         try {
             encoder = MediaCodec.createByCodecName(encoderCodecInfo.getName());
-            encoder.configure(currentOutputMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+            encoder.configure(outputMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             encoder.start();
 
         } catch (IOException e) {
@@ -384,7 +432,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         if (transcodingTrack) {
             // we're needing to encode the audio stream
             if (encoder == null) {
-                initialiseOutputEncoder();
+                initialiseOutputEncoder(currentOutputMediaFormat);
             }
 
             // write the data to the encoder.
