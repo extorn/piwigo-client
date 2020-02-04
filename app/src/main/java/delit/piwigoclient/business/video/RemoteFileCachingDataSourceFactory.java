@@ -32,7 +32,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
     public RemoteFileCachingDataSourceFactory(Context context, TransferListener<? super DataSource> transferListener, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, RemoteDirectHttpClientBasedHttpDataSource.DownloadListener directDownloadListener, String userAgent) {
         this.transferListener = transferListener;
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
         this.directDownloadListener = directDownloadListener;

@@ -285,14 +285,14 @@ public class DisplayUtils {
 
     public static Context updateContext(Context context, Locale locale) {
         Context c;
-//        Locale.setDefault(locale);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            c = updateResourcesLocale(context, locale);
-//        }
-        c = updateResourcesLocaleLegacy(context, locale);
-        // strip the country specific value from this because this is causing the default to be used instead of the country independent language locale.
-        Locale languageLocale = new Locale(locale.getLanguage(), "");
-        Locale.setDefault(languageLocale);
+        // the non legacy way doesn't seem to work at all. Nothing gets updated. Maybe because I cache the context somewhere (old way changes items on the old context rather than cloning).
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            c = updateResourcesLocale(context, locale);
+        } else*/
+        {
+            c = updateResourcesLocaleLegacy(context, locale);
+        }
+        Locale.setDefault(locale);
         return c;
     }
 
@@ -309,6 +309,7 @@ public class DisplayUtils {
         }
         LocaleList list = new LocaleList(locales.toArray(new Locale[0]));
         configuration.setLocales(list);
+
         return context.createConfigurationContext(configuration);
     }
 

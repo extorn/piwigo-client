@@ -1019,9 +1019,9 @@ public abstract class UIHelper<T> {
     }
 
     public void doOnce(@NonNull String key, @NonNull String newValue, @NonNull Runnable action) {
-        Context context = getContext();
+
         synchronized (UIHelper.class) {
-            SharedPreferences globalsPrefs = context.getSharedPreferences("globals", Context.MODE_PRIVATE);
+            SharedPreferences globalsPrefs = getContext().getSharedPreferences("globals", Context.MODE_PRIVATE);
             String globalVal = globalsPrefs.getString(key, null);
             if (!newValue.equals(globalVal)) {
                 globalsPrefs.edit().putString(key, newValue).apply();

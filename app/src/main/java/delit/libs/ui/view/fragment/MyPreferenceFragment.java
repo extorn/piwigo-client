@@ -50,7 +50,6 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
     private static final String STATE_PAGER_INDEX_POS = "pager_index_pos";
     protected static final int NO_PAGER_INDEX = -1;
     private FragmentUIHelper<T> uiHelper;
-    private Context c;
     private int pagerIndex;
     protected static final String DIALOG_FRAGMENT_TAG =
             "androidx.preference.PreferenceFragment.DIALOG";
@@ -76,8 +75,8 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
 
         super.onCreate(paramBundle);
         if (uiHelper == null) {
-            uiHelper = new FragmentUIHelper<T>((T) this, getPrefs(), c);
-            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(c);
+            uiHelper = new FragmentUIHelper<T>((T) this, getPrefs(), getContext());
+            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
@@ -85,7 +84,6 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
 
     @Override
     public void onAttach(Context context) {
-        c = context;
         super.onAttach(context);
         String language = AppPreferences.getDesiredLanguage(PreferenceManager.getDefaultSharedPreferences(context), requireContext());
         Locale newLocale = new Locale(language);
@@ -150,7 +148,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
         Context c = super.getContext();
         if (c == null) {
             // this is sometimes used before the view is initialised.
-            return requireActivity().getApplicationContext();
+            return requireActivity();
         }
         return c;
     }

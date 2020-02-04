@@ -70,7 +70,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
      * @param listener An optional listener.
      */
     public RemoteAsyncFileCachingDataSource(Context context, TransferListener<? super DataSource> listener, CacheListener cacheListener, RequestProperties defaultRequestProperties, String userAgent) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.listener = listener;
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
