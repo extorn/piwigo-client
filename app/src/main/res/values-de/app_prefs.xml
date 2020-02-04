@@ -244,7 +244,7 @@
     <string name="preference_upload_category_data_upload_display">Visuelle Einstellungen</string>
     <string name="preference_upload_category_data_upload">Daten-Upload</string>
     <string name="preference_upload_category_pre_data_upload_compression">Komprimierung vor dem Hochladen</string>
-    <string name="preference_upload_category_advanced">Advanced</string>
+    <string name="preference_upload_category_advanced">Anspruchsvoll</string>
 
     <!-- prefs -->
 
@@ -274,8 +274,8 @@
     <string name="preference_data_upload_max_filesize_mb_title">Max Dateigröße zum Hochladen ohne Warnung (in MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
 
-    <string name="preference_data_upload_compress_videos_summary">Compress videos before upload</string>
-    <string name="preference_data_upload_compress_videos_title">Compress videos</string>
+    <string name="preference_data_upload_compress_videos_summary">Videos vor dem Hochladen komprimieren</string>
+    <string name="preference_data_upload_compress_videos_title">Videos komprimieren</string>
 
     <string name="preference_data_upload_compress_videos_quality_title">Videoqualität</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Videokompressionsqualität %1$s</string>

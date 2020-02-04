@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
@@ -18,6 +19,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,7 +29,9 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.preference.EditableListPreference;
 import delit.libs.ui.view.preference.NumberPickerPreference;
+import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
+import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.AppPreferences;
@@ -184,6 +190,26 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPrefe
                 return new TreeSet<>(userSelectedItems);
             }
         });
+
+        ListPreference desiredLanguagePref = (ListPreference) findPreference(R.string.preference_app_desired_language_key);
+        List<Locale> localeOptions = ProjectUtils.listLocalesWithUniqueTranslationOf(getContext(), R.string.album_create_failed);
+        List<String> entries = new ArrayList<>(localeOptions.size());
+        List<String> values = new ArrayList<>(localeOptions.size());
+        for (Locale l : localeOptions) {
+            entries.add(l.getDisplayName(l));
+            values.add(l.toString());
+        }
+        desiredLanguagePref.setDefaultValue(values.get(0));
+        desiredLanguagePref.setEntries(CollectionUtils.asStringArray(entries));
+        desiredLanguagePref.setEntryValues(CollectionUtils.asStringArray(values));
+        desiredLanguagePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Locale newVal = (Locale) newValue;
+                getResources().getConfiguration().setLocale(newVal);
+                return true;
+            }
+        });
     }
 
     private String suffixCacheSize(String basicString, long cacheSizeBytes) {
@@ -226,6 +252,24 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPrefe
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
                     getUiHelper().getParent().requireView().requestApplyInsets();
                 }
+                return true;
+            }
+        });
+        Preference desiredLanguagePref = findPreference(R.string.preference_app_desired_language_key);
+        desiredLanguagePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Locale newVal = new Locale((String) newValue);
+
+                DisplayUtils.updateContext(getContext(), newVal);
+//                getActivity().recreate();
+
+                DisplayUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getActivity().recreate();
+                    }
+                }, 2000);
                 return true;
             }
         });

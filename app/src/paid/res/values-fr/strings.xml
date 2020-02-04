@@ -21,9 +21,9 @@
     <string name="favorites_empty_text">Vous n\'avez actuellement aucun favori</string>
     <string name="favorites_heading">Vos Favoris</string>
     <string name="button_unfavorite">Pas Favoris</string>
-    <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
-    <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload Compression</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Paramètres du serveur</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Paramètres locaux</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Compression de pré-téléchargement</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Profil de connexion défini en mode hors ligne. Ignorer le travail</string>
     <string name="ignoring_job_local_folder_not_found">Le dossier local n\'existe plus. Ignorer le travail</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Aucune extension de fichier sélectionnée pour le téléchargement. Ignorer le travail</string>

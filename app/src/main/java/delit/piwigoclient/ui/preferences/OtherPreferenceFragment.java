@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
@@ -20,11 +19,6 @@ public class OtherPreferenceFragment extends MyPreferenceFragment<OtherPreferenc
 
     public OtherPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
-    }
-
-    // Not needed from API v23 and above
-    public Context getContext() {
-        return getActivity().getApplicationContext();
     }
 
     @Override

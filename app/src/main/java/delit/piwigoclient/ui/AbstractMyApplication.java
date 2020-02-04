@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.util.SecurePrefsUtil;
 import delit.libs.util.CollectionUtils;
@@ -38,6 +41,8 @@ import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
  */
 
 public abstract class AbstractMyApplication extends MultiDexApplication implements Application.ActivityLifecycleCallbacks {
+
+    private static final String TAG = "AbsApp";
 
     static {
         // required for vector graphics support on older devices
@@ -149,6 +154,26 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         return migrators;
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(updateBaseContextLocale(base));
+    }
+
+    private Context updateBaseContextLocale(Context context) {
+        String language = getDesiredLanguage(context); // Helper method to get saved language from SharedPreferences
+        return DisplayUtils.updateContext(context, new Locale(language));
+    }
+
+    protected abstract String getDesiredLanguage(Context context);
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+//        Locale.setDefault(newConfig.locale);
+        getBaseContext().getResources().updateConfiguration(newConfig, getResources().getDisplayMetrics());
+    }
+
     private void upgradeAnyPreferencesIfRequired() {
         SharedPreferences prefs = getPrefs();
         List<PreferenceMigrator> migrators = getPreferenceMigrators();
@@ -222,6 +247,13 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         }
     }
 
+    protected SharedPreferences getPrefs(Context c) {
+        if (prefs == null) {
+            prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        }
+        return prefs;
+    }
+
     protected SharedPreferences getPrefs() {
         if (prefs == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -236,6 +268,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             // Skip app initialization.
             return;
         }
+
 
         super.onCreate();
         // ensure it's available for any users of it

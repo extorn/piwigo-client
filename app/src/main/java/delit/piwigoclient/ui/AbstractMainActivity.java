@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -193,6 +195,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //            getSupportFragmentManager().enableDebugLogging(false);
             BundleUtils.logSizeVerbose("Current Main Activity", outState);
         }
+    }
+
+    @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
     }
 
     @Override
@@ -953,6 +960,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     /**

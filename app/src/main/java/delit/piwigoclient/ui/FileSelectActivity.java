@@ -2,6 +2,7 @@ package delit.piwigoclient.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -109,6 +110,11 @@ public class FileSelectActivity extends MyActivity {
         } else {
             startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
         }
+    }
+
+    @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
     }
 
     @Override

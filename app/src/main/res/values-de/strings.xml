@@ -604,7 +604,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="watch_advert_to_buy_advert_free_time">Möchten Sie eine Anzeige sehen, um einen kurzen Zeitraum ohne Werbung zu kaufen? Sie können dies mehrmals tun, um die Zeitspanne bei Bedarf zu verlängern.</string>
     <string name="reward_video_not_yet_loaded">Sorry, aber das Belohnungsvideo wurde noch nicht geladen. Bitte versuchen Sie es später noch einmal.</string>
     <string name="bought_time_menu_title_pattern">Anzeigen in %1$02d:%2$02d</string>
-    <string name="allow_upload_of_incompressible_videos">Upload raw file if unable to compress</string>
+    <string name="allow_upload_of_incompressible_videos">Rohdatei hochladen, wenn keine Komprimierung möglich ist</string>
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
     <string name="upload_status_tab_title_details">Details</string>
     <string name="upload_status_tab_title_errors">Fehler</string>
@@ -630,5 +630,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload %1$s</string>
     <string name="uploading_progress_bar_message">Hochladen</string>
     <string name="compressing_progress_bar_message">Komprimieren</string>
+    <string name="preference_app_desired_language_summary">Bevorzugte Übersetzung</string>
+    <string name="preference_app_desired_language_title">Sprache</string>
 </resources>
 

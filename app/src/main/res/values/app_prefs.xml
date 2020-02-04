@@ -421,4 +421,8 @@
     <string name="preference_app_always_show_status_bar_title">Always show the status bar</string>
     <string name="preference_app_always_show_status_bar_summary">Enable to prevent auto-hide of the status bar</string>
 
+    <string name="preference_app_desired_language_key" translatable="false">preference_app_desired_language</string>
+    <string name="preference_app_desired_language_title">Language</string>
+    <string name="preference_app_desired_language_summary">Preferred Translation</string>
+
 </resources>

@@ -502,4 +502,6 @@
     <string name="alert_error_upload_file_compression_error_message_pattern">Error al comprimir el archivo para cargar %1$s</string>
     <string name="uploading_progress_bar_message">Cargando</string>
     <string name="compressing_progress_bar_message">Apresamiento</string>
+    <string name="preference_app_desired_language_summary">Traducción preferida</string>
+    <string name="preference_app_desired_language_title">Idioma</string>
 </resources>

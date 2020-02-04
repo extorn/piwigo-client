@@ -13,6 +13,7 @@ import java.util.Set;
 
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
@@ -33,6 +34,10 @@ public class MyApplication extends AbstractMyApplication {
 //        PiwigoDatabase.getInstance(this);
     }
 
+    @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getPrefs(context), context);
+    }
 
     @Override
     protected List<PreferenceMigrator> getPreferenceMigrators() {

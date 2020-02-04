@@ -204,7 +204,7 @@
     <string name="preference_upload_category_data_upload_display">Ajustes visuales</string>
     <string name="preference_upload_category_data_upload">Carga de datos</string>
     <string name="preference_upload_category_pre_data_upload_compression">Compresión previa a la carga</string>
-    <string name="preference_upload_category_advanced">Advanced</string>
+    <string name="preference_upload_category_advanced">Avanzado</string>
 
     <!-- prefs -->
 

@@ -1,5 +1,6 @@
 package delit.libs.ui.util;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
+import android.os.LocaleList;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -25,10 +27,15 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.crashlytics.android.Crashlytics;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by gareth on 30/05/17.
@@ -274,6 +281,47 @@ public class DisplayUtils {
         }
 
 
+    }
+
+    public static Context updateContext(Context context, Locale locale) {
+        Context c;
+//        Locale.setDefault(locale);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            c = updateResourcesLocale(context, locale);
+//        }
+        c = updateResourcesLocaleLegacy(context, locale);
+        // strip the country specific value from this because this is causing the default to be used instead of the country independent language locale.
+        Locale languageLocale = new Locale(locale.getLanguage(), "");
+        Locale.setDefault(languageLocale);
+        return c;
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    private static Context updateResourcesLocale(Context context, Locale locale) {
+        Locale currentDefault = Locale.getDefault();
+        Locale.setDefault(locale);
+        LocaleListCompat resortedList = LocaleListCompat.getAdjustedDefault();
+        Locale.setDefault(currentDefault);
+        Configuration configuration = context.getResources().getConfiguration();
+        List<Locale> locales = new ArrayList<>(resortedList.size());
+        for (int i = 0; i < resortedList.size(); i++) {
+            locales.add(resortedList.get(i));
+        }
+        LocaleList list = new LocaleList(locales.toArray(new Locale[0]));
+        configuration.setLocales(list);
+        return context.createConfigurationContext(configuration);
+    }
+
+    @SuppressWarnings("deprecation")
+    private static Context updateResourcesLocaleLegacy(Context context, Locale locale) {
+        Resources resources = context.getResources();
+        Configuration configuration = resources.getConfiguration();
+        configuration.locale = locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            configuration.setLayoutDirection(locale);
+        }
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+        return context;
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {

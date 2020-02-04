@@ -13,9 +13,13 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.util.Locale;
+
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.preference.ClientCertificatePreference;
 import delit.libs.ui.view.preference.CustomEditTextPreference;
 import delit.libs.ui.view.preference.CustomEditTextPreferenceDialogFragmentCompat;
@@ -29,6 +33,7 @@ import delit.libs.ui.view.preference.NumberPickerPreferenceDialogFragmentCompat;
 import delit.libs.ui.view.preference.SecureEditTextPreference;
 import delit.libs.ui.view.preference.TrustedCaCertificatesPreference;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -68,6 +73,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
 
     @Override
     public void onCreate(Bundle paramBundle) {
+
         super.onCreate(paramBundle);
         if (uiHelper == null) {
             uiHelper = new FragmentUIHelper<T>((T) this, getPrefs(), c);
@@ -81,6 +87,10 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
     public void onAttach(Context context) {
         c = context;
         super.onAttach(context);
+        String language = AppPreferences.getDesiredLanguage(PreferenceManager.getDefaultSharedPreferences(context), requireContext());
+        Locale newLocale = new Locale(language);
+//        Locale.setDefault(newLocale);
+        Context newContext = DisplayUtils.updateContext(getContext(), newLocale);
     }
 
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
@@ -135,9 +145,14 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
     }
 
     // Not needed from API v23 and above
+    @Override
     public Context getContext() {
-        // this is sometimes used before the view is initialised.
-        return requireActivity().getApplicationContext();
+        Context c = super.getContext();
+        if (c == null) {
+            // this is sometimes used before the view is initialised.
+            return requireActivity().getApplicationContext();
+        }
+        return c;
     }
 
     @Override

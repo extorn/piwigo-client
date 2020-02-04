@@ -262,6 +262,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.51</item>
+        <item>"Changes:
+                - New gallery setting to force language in the app
+               Bugfix:
+                - "</item>
         <item>1.4.0.50</item>
         <item>"Changes:
                 - Allow passthrough of audio as compression option

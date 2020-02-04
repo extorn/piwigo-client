@@ -242,7 +242,7 @@
     <string name="preference_upload_category_data_upload_display">视觉设置</string>
     <string name="preference_upload_category_data_upload">数据上传</string>
     <string name="preference_upload_category_pre_data_upload_compression">预上载压缩</string>
-    <string name="preference_upload_category_advanced">Advanced</string>
+    <string name="preference_upload_category_advanced">高深</string>
 
     <!-- prefs -->
 
@@ -268,8 +268,8 @@
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize上传时不会发出警告（以MB为单位）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
 
-    <string name="preference_data_upload_compress_videos_summary">Compress videos before upload</string>
-    <string name="preference_data_upload_compress_videos_title">Compress videos</string>
+    <string name="preference_data_upload_compress_videos_summary">上传前先压缩视频</string>
+    <string name="preference_data_upload_compress_videos_title">压缩影片</string>
 
     <string name="preference_data_upload_compress_videos_quality_title">视频质量</string>
     <string name="preference_data_upload_compress_videos_quality_summary">视频压缩质量 %1$s</string>

@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,11 @@ public class PreferencesActivity extends MyActivity {
 //        setContentView(R.layout.activity_preferences);
         EventBus.getDefault().register(this);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).commit();
+    }
+
+    @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
     }
 
     @Override

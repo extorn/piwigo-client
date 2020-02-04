@@ -33,7 +33,7 @@
     <string name="alert_message_success_connectionTest">成功\n用户类型：%1$s。</string>
     <string name="alert_message_no_available_image_sizes">警告\n服务器未报告可用的图像大小。</string>
     <string name="alert_success">成功！</string>
-    <string name="alert_partial_success">INCOMPLETE</string>
+    <string name="alert_partial_success">不完整</string>
     <string name="alert_error">错误</string>
     <string name="alert_error_no_app_available_to_rate_app">没有应用程序可以评价这个应用程序。谢谢你的尝试。</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。未授予所需权限。</string>
@@ -480,7 +480,7 @@
     <string name="watch_advert_to_buy_advert_free_time">您是否希望观看广告，在没有任何广告的情况下购买短期广告？ 如果需要，您可以多次执行此操作以增加时间长度。</string>
     <string name="reward_video_not_yet_loaded">对不起，但奖励视频尚未加载。 请稍后再试。</string>
     <string name="bought_time_menu_title_pattern">%1$02d:%2$02d 中的广告</string>
-    <string name="allow_upload_of_incompressible_videos">Upload raw file if unable to compress</string>
+    <string name="allow_upload_of_incompressible_videos">如果无法压缩则上传原始文件</string>
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
     <string name="upload_status_tab_title_details">细节</string>
     <string name="upload_status_tab_title_errors">错误</string>
@@ -506,4 +506,6 @@
     <string name="alert_error_upload_file_compression_error_message_pattern">压缩文件以上传%1$s时出错</string>
     <string name="uploading_progress_bar_message">上载中</string>
     <string name="compressing_progress_bar_message">压缩方式</string>
+    <string name="preference_app_desired_language_summary">首选翻译</string>
+    <string name="preference_app_desired_language_title">语言</string>
 </resources>

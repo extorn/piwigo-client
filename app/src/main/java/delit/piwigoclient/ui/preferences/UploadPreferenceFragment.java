@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,11 +33,6 @@ public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPrefere
 
     public UploadPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
-    }
-
-    // Not needed from API v23 and above
-    public Context getContext() {
-        return getActivity().getApplicationContext();
     }
 
     @Override

@@ -107,11 +107,13 @@
             android:name=".ui.FileSelectActivity"
             android:label="@string/app_name"
             android:theme="@style/Custom.Theme"
+            android:configChanges="layoutDirection"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name="com.google.android.gms.ads.AdActivity"/>
         <service
             android:name=".piwigoApi.upload.ForegroundPiwigoUploadService"
             android:permission="android.permission.BIND_JOB_SERVICE"
+            android:configChanges="layoutDirection"
             android:exported="false"/>
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -220,6 +220,11 @@ public class UploadActivity extends MyActivity {
     }
 
     @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
+    }
+
+    @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         if (fragment instanceof UploadFragment && fragment.isAdded()) {

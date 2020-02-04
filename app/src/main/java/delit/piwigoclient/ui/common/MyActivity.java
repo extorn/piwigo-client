@@ -1,15 +1,19 @@
 package delit.piwigoclient.ui.common;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.os.ConfigurationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -27,6 +31,7 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
@@ -52,11 +57,19 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     private ActivityUIHelper<T> uiHelper;
     private LicenceCheckingHelper licencingHelper;
     private AdsManager.RewardCountDownAction rewardsCountdownAction;
+    private String initialisedWithLanguage;
 
 //    private FirebaseAnalytics mFirebaseAnalytics;
 
     public SharedPreferences getSharedPrefs() {
         return prefs;
+    }
+
+    public SharedPreferences getSharedPrefs(Context c) {
+        if (prefs == null) {
+            prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        }
+        return getSharedPrefs();
     }
 
     public static int getActivitiesResumedCount() {
@@ -71,12 +84,20 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         return new BasicPiwigoResponseListener();
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+        return super.onCreateView(name, context, attrs);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        initialisedWithLanguage = AppPreferences.getDesiredLanguage(getSharedPrefs(), this);
+
         if (uiHelper == null) {
             //TODO move this to after the view is created so that the UI helper progress indicator can init if needed!
             uiHelper = new ActivityUIHelper<>((T) this, prefs);
@@ -137,6 +158,9 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
 
     @Override
     public void onResume() {
+        if (initialisedWithLanguage != null && !initialisedWithLanguage.equals(AppPreferences.getDesiredLanguage(getSharedPrefs(), this))) {
+            recreate(); // this doesn't appear to be used ever though I'm unclear why. Maybe just the way I use fragments in this app (prevent stacking some on others).
+        }
         activitiesResumed++;
         if (!activitySwap) {
             onAppResumed();
@@ -150,6 +174,21 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         uiHelper.showNextQueuedMessage();
     }
 
+    protected abstract String getDesiredLanguage(Context context);
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(updateBaseContextLocale(base));
+        DisplayUtils.updateContext(this, ConfigurationCompat.getLocales(base.getResources().getConfiguration()).get(0));
+    }
+
+    //
+    private Context updateBaseContextLocale(Context context) {
+//        Locale currentLocale = ConfigurationCompat.getLocales(context.getResources().getConfiguration()).get(0);
+        String language = getDesiredLanguage(context); // Helper method to get saved language from SharedPreferences
+        Locale newLocale = new Locale(language);
+        return DisplayUtils.updateContext(context, newLocale);
+    }
 
     protected boolean hasAgreedToEula() {
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
