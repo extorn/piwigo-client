@@ -39,13 +39,14 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-        int pickerValue = mPicker.getValue();
+
         if (positiveResult) {
             mPicker.clearFocus();
+            int pickerValue = mPicker.getValue();
             getPreference().setValue(pickerValue);
-        }
-        if (getPreference().getOnPreferenceChangeListener() != null) {
-            getPreference().getOnPreferenceChangeListener().onPreferenceChange(getPreference(), pickerValue);
+            if (getPreference().getOnPreferenceChangeListener() != null) {
+                getPreference().getOnPreferenceChangeListener().onPreferenceChange(getPreference(), pickerValue);
+            }
         }
     }
 
