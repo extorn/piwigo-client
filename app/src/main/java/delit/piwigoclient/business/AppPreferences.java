@@ -23,4 +23,9 @@ public class AppPreferences {
         }
         return val;
     }
+
+    public static int getUserHintDuration(SharedPreferences prefs, Context context) {
+        return prefs.getInt(context.getString(R.string.preference_user_hint_display_time_millis_key), context.getResources().getInteger(R.integer.preference_user_hint_display_time_millis_default));
+    }
+
 }

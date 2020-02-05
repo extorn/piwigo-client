@@ -4,13 +4,13 @@
     <string name="preference_page_auto_upload_jobs">Автоматическая загрузка</string>
 
     <string name="preference_data_upload_automatic_title">Автоматическая загрузка</string>
-    <string name="preference_data_upload_automatic_job_title">Авто загрузка работы</string>
+    <string name="preference_data_upload_automatic_job_title">Автоматическая загрузка файлов</string>
 
-    <string name="preference_data_upload_automatic_upload_enable_summary">Включить фоновую загрузку</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Включить фоновую загрузку файлов</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Автоматическая загрузка</string>
 
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Использовать только автозагрузку по беспроводной сети</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Использовать только беспроводную автоматическую загрузку файлов</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Только по беспроводной связи</string>
 
     <string name="preference_data_upload_automatic_upload_jobs_title">Автоматическая загрузка заданий</string>

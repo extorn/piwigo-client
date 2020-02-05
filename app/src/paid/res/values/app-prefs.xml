@@ -3,14 +3,14 @@
     <!-- Automatic Upload Jobs page -->
 
     <string name="preference_page_auto_upload_jobs">Automatic Upload</string>
-    <string name="preference_data_upload_automatic_title">Automatic Upload</string>
+    <string name="preference_data_upload_automatic_title">Automatic Uploads</string>
     <string name="preference_data_upload_automatic_job_title">Auto Upload Job</string>
 
     <!-- prefs -->
 
     <string name="preference_data_upload_automatic_upload_enabled_key" translatable="false">preference_data_upload_automatic_upload_enable</string>
     <string name="preference_data_upload_automatic_upload_enable_summary">Enable background uploading</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatic Uploads</string>
     <bool name="preference_data_upload_automatic_upload_enabled_default">false</bool>
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Wireless</string>

@@ -425,4 +425,9 @@
     <string name="preference_app_desired_language_title">Language</string>
     <string name="preference_app_desired_language_summary">Preferred Translation</string>
 
+    <string name="preference_user_hint_display_time_millis_key" translatable="false">preference_user_hint_display_time_millis</string>
+    <string name="preference_user_hint_display_time_millis_title">User Hints Shown for (ms)</string>
+    <integer name="preference_user_hint_display_time_millis_default">5000</integer>
+
+
 </resources>

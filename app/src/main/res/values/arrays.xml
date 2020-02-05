@@ -264,9 +264,11 @@
         -->
         <item>1.4.0.51</item>
         <item>"Changes:
-                - New gallery setting to force language in the app
+                - New gallery preference to allow forcing language used within the app
                Bugfix:
-                - "</item>
+                - number picker preferences accept value on dialog close
+                - PiwigoClientWsExt plugin correctly named in user message
+                - Corrected a few translations"</item>
         <item>1.4.0.50</item>
         <item>"Changes:
                 - Allow passthrough of audio as compression option

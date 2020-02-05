@@ -2,17 +2,17 @@
 <resources>
     <!-- Automatic Upload Jobs page -->
 
-    <string name="preference_page_auto_upload_jobs">Carga automática</string>
-    <string name="preference_data_upload_automatic_title">Carga automática</string>
-    <string name="preference_data_upload_automatic_job_title">Carga automática de trabajo</string>
+    <string name="preference_page_auto_upload_jobs">Subidas automáticas</string>
+    <string name="preference_data_upload_automatic_title">Subidas automáticas</string>
+    <string name="preference_data_upload_automatic_job_title">Trabajo automático de carga de archivos</string>
 
     <!-- prefs -->
 
-    <string name="preference_data_upload_automatic_upload_enable_summary">Habilitar carga en segundo plano</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Carga automática</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Habilitar carga de archivos en segundo plano</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Subidas automáticas</string>
 
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Solo use la carga automática en la conexión inalámbrica</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilice solo la carga inalámbrica automática de archivos</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo por conexión inalámbrica</string>
 
 

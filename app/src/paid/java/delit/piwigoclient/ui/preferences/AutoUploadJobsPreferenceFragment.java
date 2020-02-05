@@ -10,12 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
+import androidx.preference.SwitchPreference;
 
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
 
 public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
+
+    private SwitchPreference autoUploadsServiceEnabledPreference;
+    private SwitchPreference autoUploadsServiceWirelessOnlyPreference;
 
     public AutoUploadJobsPreferenceFragment() {
     }
@@ -29,6 +33,16 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.pref_auto_upload_jobs, rootKey);
+
+        autoUploadsServiceEnabledPreference = (SwitchPreference) findPreference(R.string.preference_data_upload_automatic_upload_enabled_key);
+        autoUploadsServiceWirelessOnlyPreference = (SwitchPreference) findPreference(R.string.preference_data_upload_automatic_upload_wireless_only_key);
+
+        AutoUploadJobsConfig autoUploadConfig = new AutoUploadJobsConfig(getPrefs());
+        autoUploadsServiceEnabledPreference.setEnabled(autoUploadConfig.countEnabledUploadJobs(getContext()) > 0);
+        autoUploadsServiceWirelessOnlyPreference.setEnabled(autoUploadsServiceEnabledPreference.isEnabled());
+        if (autoUploadsServiceEnabledPreference.isChecked()) {
+            autoUploadsServiceEnabledPreference.setChecked(autoUploadsServiceEnabledPreference.isEnabled());
+        }
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -68,9 +82,22 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
     };
 
     private void onUploadJobsChanged() {
-        if(BackgroundPiwigoUploadService.isStarted()) {
-            // ensure the service knows the change occurred.
-            BackgroundPiwigoUploadService.wakeServiceIfSleeping();
+        AutoUploadJobsConfig autoUploadConfig = new AutoUploadJobsConfig(getPrefs());
+        ///if(autoUploadConfig.hasUploadJobs(getContext())) {
+        if (autoUploadConfig.countEnabledUploadJobs(getContext()) > 0) {
+
+            autoUploadsServiceEnabledPreference.setEnabled(true);
+            autoUploadsServiceWirelessOnlyPreference.setEnabled(true);
+
+            if (BackgroundPiwigoUploadService.isStarted()) {
+                // ensure the service knows the change occurred.
+                BackgroundPiwigoUploadService.wakeServiceIfSleeping();
+            }
+        } else {
+
+            autoUploadsServiceEnabledPreference.setChecked(false);
+            autoUploadsServiceEnabledPreference.setEnabled(false);
+            autoUploadsServiceWirelessOnlyPreference.setEnabled(false);
         }
     }
 

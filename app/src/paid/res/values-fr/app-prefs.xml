@@ -3,17 +3,17 @@
     <!-- Automatic Upload Jobs page -->
 
     <string name="preference_page_auto_upload_jobs">Chargement automatique</string>
-    <string name="preference_data_upload_automatic_title">Chargement automatique</string>
+    <string name="preference_data_upload_automatic_title">Téléchargements automatique</string>
     <string name="preference_data_upload_automatic_job_title">Téléchargement automatique du travail</string>
 
     <!-- prefs -->
 
 
-    <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement en arrière-plan</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Chargement automatique</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement de fichiers en arrière-plan</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Téléchargements automatiques</string>
 
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">N\'utilisez que l\'Auto Upload sur Wireless</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utiliser uniquement le téléchargement automatique de fichiers sans fil</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Sans fil seulement</string>
 
 

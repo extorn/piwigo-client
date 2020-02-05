@@ -154,7 +154,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         // check remote privacy level
         if(allPreferencesValid) {
             int privacyLevel = getIntegerPreferenceValue(getString(R.string.preference_data_upload_automatic_job_privacy_level_key), R.integer.preference_data_upload_automatic_job_privacy_level_default);
-            allPreferencesValid &= privacyLevel != Integer.MIN_VALUE;
+            allPreferencesValid = privacyLevel != Integer.MIN_VALUE;
         }
 
         updateJobValidPreferenceIfNeeded(allPreferencesValid, isFinalValidationCheck);

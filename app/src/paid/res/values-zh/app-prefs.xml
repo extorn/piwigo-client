@@ -9,11 +9,11 @@
     <!-- prefs -->
 
 
-    <string name="preference_data_upload_automatic_upload_enable_summary">启用后台上传</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">启用后台文件上传</string>
     <string name="preference_data_upload_automatic_upload_enable_title">自动上传</string>
 
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">仅在无线上使用自动上传</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">仅使用无线自动文件上传</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">仅通过无线</string>
 
 

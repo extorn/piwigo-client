@@ -76,6 +76,7 @@ import delit.libs.util.ObjectUtils;
 import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
@@ -286,6 +287,7 @@ public abstract class UIHelper<T> {
                     showQueuedMsg();
                 }
             }
+            
             @Override
             public boolean onLongClick(View v) {
                 if(v == null) {
@@ -1007,7 +1009,8 @@ public abstract class UIHelper<T> {
     public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {
         Set<String> hintsShown = getPrefs().getStringSet(context.getString(R.string.usage_hints_shown_list_key), new HashSet<String>());
         if (hintsShown.add(tag + '_' + hintId)) {
-            TransientMsgUtils.makeDetailedToast(context, R.string.usage_hint_title, context.getString(hintStrResId), 3000);
+            int userHintDuration = AppPreferences.getUserHintDuration(getPrefs(), context);
+            TransientMsgUtils.makeDetailedToast(context, R.string.usage_hint_title, context.getString(hintStrResId), userHintDuration);
             SharedPreferences.Editor editor = getPrefs().edit();
             editor.putStringSet(context.getString(R.string.usage_hints_shown_list_key), hintsShown);
             editor.apply();
