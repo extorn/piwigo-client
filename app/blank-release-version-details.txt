@@ -1,60 +1,60 @@
 
 <en-GB>
 Changes:
-                - New gallery preference to allow forcing language used within the app
-                - New Advanced Server Connection Preference - Enable URI encoding of resource URIs
-               Bugfix:
-                - number picker preferences accept value on dialog close
-                - PiwigoClientWsExt plugin correctly named in user message
-                - Corrected a few translations
+- New gallery preference to allow forcing language used within the app
+- New Advanced Server Connection Preference - Enable URI encoding of resource URIs
+ Bugfix:
+- number picker preferences accept value on dialog close
+- PiwigoClientWsExt plugin correctly named in user message
+- Corrected a few translations
 </en-GB>
 
 <de-DE>
 Änderungen:
-                 - Neue Galerieeinstellung zum Erzwingen der in der App verwendeten Sprache
-                 - Neue erweiterte Serververbindungseinstellung - Aktivieren Sie die URI-Codierung von Ressourcen-URIs
-                Bug-Fix:
-                 - Einstellungen für die Zahlenauswahl akzeptieren den Wert beim Schließen des Dialogfelds
-                 - Das PiwigoClientWsExt-Plugin wurde in der Benutzermeldung korrekt benannt
-                 - Einige Übersetzungen korrigiert
+ - Neue Galerieeinstellung zum Erzwingen der in der App verwendeten Sprache
+ - Neue erweiterte Serververbindungseinstellung - Aktivieren Sie die URI-Codierung von Ressourcen-URIs
+Bug-Fix:
+ - Einstellungen für die Zahlenauswahl akzeptieren den Wert beim Schließen des Dialogfelds
+ - Das PiwigoClientWsExt-Plugin wurde in der Benutzermeldung korrekt benannt
+ - Einige Übersetzungen korrigiert
 </de-DE>
 
 <fr-FR>
 Changements:
-                 - Nouvelle préférence de galerie pour permettre de forcer la langue utilisée dans l'application
-                 - Nouvelle préférence de connexion au serveur avancée - Activer le codage URI des URI des ressources
-                Correction d'un bug:
-                 - les préférences du sélecteur de nombres acceptent la valeur à la fermeture de la boîte de dialogue
-                 - Plugin PiwigoClientWsExt correctement nommé dans le message utilisateur
-                 - Correction de quelques traductions
+ - Nouvelle préférence de galerie pour permettre de forcer la langue utilisée dans l'application
+ - Nouvelle préférence de connexion au serveur avancée - Activer le codage URI des URI des ressources
+Correction d'un bug:
+ - les préférences du sélecteur de nombres acceptent la valeur à la fermeture de la boîte de dialogue
+ - Plugin PiwigoClientWsExt correctement nommé dans le message utilisateur
+ - Correction de quelques traductions
 </fr-FR>
 
 <es-ES>
 Cambios:
-                 - Nueva preferencia de galería para permitir el uso de lenguaje forzado dentro de la aplicación
-                 - Nueva preferencia de conexión avanzada del servidor - Habilite la codificación URI de los URI de recursos
-                Arreglo del fallo:
-                 - las preferencias del selector de número aceptan el valor al cerrar el diálogo
-                 - El complemento PiwigoClientWsExt está correctamente nombrado en el mensaje del usuario
-                 - Corregidas algunas traducciones
+ - Nueva preferencia de galería para permitir el uso de lenguaje forzado dentro de la aplicación
+ - Nueva preferencia de conexión avanzada del servidor - Habilite la codificación URI de los URI de recursos
+Arreglo del fallo:
+ - las preferencias del selector de número aceptan el valor al cerrar el diálogo
+ - El complemento PiwigoClientWsExt está correctamente nombrado en el mensaje del usuario
+ - Corregidas algunas traducciones
 </es-ES>
 
 <zh-CN>
 变化：
-                 -新的图片库首选项，允许在应用程序内使用强制语言
-                 -新的高级服务器连接首选项-启用资源URI的URI编码
-                错误修正：
-                 -数字选择器首选项在对话框关闭时接受值
-                 -在用户消息中正确命名的PiwigoClientWsExt插件
-                 -更正了一些翻译
+ -新的图片库首选项，允许在应用程序内使用强制语言
+ -新的高级服务器连接首选项-启用资源URI的URI编码
+错误修正：
+ -数字选择器首选项在对话框关闭时接受值
+ -在用户消息中正确命名的PiwigoClientWsExt插件
+ -更正了一些翻译
 </zh-CN>
 
 <ru-RU>
 Изменения:
-                 - Новая настройка галереи, позволяющая принудительно использовать язык, используемый в приложении.
-                 - Новое расширенное предпочтение подключения к серверу - Включить кодировку URI URI ресурса.
-                Исправлена ошибка:
-                 - параметры выбора номера принимают значение при закрытии диалога
-                 - Плагин PiwigoClientWsExt правильно назван в сообщении пользователя
-                 - Исправлено несколько переводов
+ - Новая настройка галереи, позволяющая принудительно использовать язык, используемый в приложении.
+ - Новое расширенное предпочтение подключения к серверу - Включить кодировку URI URI ресурса.
+Исправлена ошибка:
+ - параметры выбора номера принимают значение при закрытии диалога
+ - Плагин PiwigoClientWsExt правильно назван в сообщении пользователя
+ - Исправлено несколько переводов
 </ru-RU>
