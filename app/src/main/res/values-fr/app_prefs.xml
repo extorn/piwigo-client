@@ -42,6 +42,9 @@
     <string name="preference_server_alter_cache_directives_title">Modifier les directives de cache Http du serveur</string>
     <string name="preference_server_alter_cache_directives_summary">Activer pour permettre l\'accès hors ligne à la galerie</string>
 
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Encoder le chemin URI pour les demandes de ressources</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Essayez de l\'activer si vous recevez des erreurs 404 pour les fichiers existants</string>
+
     <string name="preference_server_connection_retries_title">Réessai de connexion avant défaillance</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
 

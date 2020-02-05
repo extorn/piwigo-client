@@ -174,6 +174,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         String userAgent = Util.getUserAgent(getContext(), getContext().getPackageName());
         cacheListener = new CustomCacheListener();
         dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, cacheListener, userAgent);
+        dataSourceFactory.setPerformUriPathSegmentEncoding(ConnectionPreferences.getActiveProfile().isPerformUriPathSegmentEncoding(getPrefs(), getContext()));
         PausableLoadControl.Listener loadControlPauseListener = dataSourceFactory.getLoadControlPauseListener();
 
         loadControl = new PausableLoadControl();

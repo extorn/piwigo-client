@@ -93,6 +93,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private long lastSentNotification;
     private long downloadedBytesSinceLastReport;
     private ConnectionPreferences.ProfilePreferences activeConnectionPreferences;
+    private boolean performUriPathSegmentEncoding;
 
 
     /**
@@ -206,6 +207,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     public void clearRequestProperty(String name) {
         Assertions.checkNotNull(name);
         requestProperties.remove(name);
+    }
+
+    public void setPerformUriPathSegmentEncoding(boolean performUriPathSegmentEncoding) {
+        this.performUriPathSegmentEncoding = performUriPathSegmentEncoding;
     }
 
     @Override
@@ -436,7 +441,9 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
         boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
         String uri = UriUtils.sanityCheckFixAndReportUri(dataSpec.uri.toString(), sessionDetails.getServerUrl(), forceHttps, activeConnectionPreferences);
-
+        if (performUriPathSegmentEncoding) {
+            uri = UriUtils.encodeUriSegments(Uri.parse(uri));
+        }
         client.get(context, uri, headers.toArray(new Header[0]), null, responseHandler);
     }
 

@@ -37,6 +37,9 @@
     <string name="preference_server_alter_cache_directives_title">Изменить директивы Http-кэша сервера</string>
     <string name="preference_server_alter_cache_directives_summary">Включить, чтобы разрешить автономный доступ к галерее</string>
 
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Кодировать путь URI для запросов на ресурсы</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Попробуйте включить это, если вы получаете 404 ошибки для файлов, которые существуют</string>
+
     <!-- Gallery Page -->
 
     <string name="preference_server_connection_retries_title">Соединение повторяется до сбоя</string>

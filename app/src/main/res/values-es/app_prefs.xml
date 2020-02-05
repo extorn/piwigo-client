@@ -40,6 +40,8 @@
     <string name="preference_server_alter_cache_directives_title">Alterar directivas de caché HTTP del servidor</string>
     <string name="preference_server_alter_cache_directives_summary">Habilitar para permitir el acceso sin conexión a la galería</string>
 
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Codificar ruta URI para solicitudes de recursos</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Intente habilitar esto si recibe errores 404 para archivos que existen</string>
 
     <string name="preference_server_connection_retries_title">Intentos de conexión antes del fallo</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>

@@ -147,6 +147,14 @@
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_server_connection_uri_path_segment_encoding_default"
+            android:key="@string/preference_server_connection_uri_path_segment_encoding_key"
+            android:summary="@string/preference_server_connection_uri_path_segment_encoding_summary"
+            android:title="@string/preference_server_connection_uri_path_segment_encoding_title" />
+
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:defaultValue="@bool/preference_server_connection_allow_redirects_default"
             android:key="@string/preference_server_connection_allow_redirects_key"
             android:summary="@string/preference_server_connection_allow_redirects_summary"

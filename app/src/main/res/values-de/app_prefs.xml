@@ -49,6 +49,9 @@
     <string name="preference_server_alter_cache_directives_title">Ändern von Server-Http-Cache-Anweisungen</string>
     <string name="preference_server_alter_cache_directives_summary">Aktivieren Sie, um den Offline-Zugriff auf die Galerie zu ermöglichen</string>
 
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Codieren Sie den URI-Pfad für Ressourcenanforderungen</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Versuchen Sie, dies zu aktivieren, wenn Sie 404-Fehler für vorhandene Dateien erhalten</string>
+
     <string name="preference_server_use_basic_auth_title">Basic Authentication verwenden</string>
     <string name="preference_server_use_basic_auth_summary">Aktivieren, wenn Server Basic Authentication erfordert</string>
 

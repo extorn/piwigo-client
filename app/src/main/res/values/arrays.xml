@@ -265,6 +265,7 @@
         <item>1.4.0.51</item>
         <item>"Changes:
                 - New gallery preference to allow forcing language used within the app
+                - New Advanced Server Connection Preference - Enable URI encoding of resource URIs
                Bugfix:
                 - number picker preferences accept value on dialog close
                 - PiwigoClientWsExt plugin correctly named in user message

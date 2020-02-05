@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,7 +12,8 @@
         android:title="@string/preference_piwigo_connection_profile_title"
         app:allowItemEdit="true"
         app:entriesPref="@string/preference_piwigo_connection_profile_list_key" />
-    <PreferenceCategory
+
+    <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
@@ -20,8 +21,7 @@
         <delit.libs.ui.view.preference.CustomEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="words"
-            android:inputType="textNoSuggestions"
+            android:inputType="textNoSuggestions|textCapWords"
             android:key="@string/preference_piwigo_server_address_key"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -31,7 +31,6 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:inputType="textNoSuggestions"
             android:key="@string/preference_piwigo_server_username_key"
             android:maxLines="1"
@@ -42,17 +41,15 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:inputType="textPassword"
             android:key="@string/preference_piwigo_server_password_key"
             android:maxLines="1"
-            android:password="true"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_password_summary"
             android:title="@string/preference_piwigo_server_password_title" />
 
-        <ListPreference
+        <androidx.preference.ListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
@@ -61,8 +58,8 @@
             android:key="@string/preference_server_ssl_certificate_hostname_verification_key"
             android:summary="@string/preference_server_ssl_certificate_hostname_verification_summary"
             android:title="@string/preference_server_ssl_certificate_hostname_verification_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
@@ -77,7 +74,6 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:dependency="@string/preference_server_use_basic_auth_key"
             android:inputType="text"
             android:key="@string/preference_server_basic_auth_username_key"
@@ -88,17 +84,15 @@
         <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:capitalize="none"
             android:dependency="@string/preference_server_use_basic_auth_key"
             android:inputType="textPassword"
             android:key="@string/preference_server_basic_auth_password_key"
             android:maxLines="1"
-            android:password="true"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/preference_server_basic_auth_password_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_trusted_server_ca"
         android:layout_width="match_parent"
@@ -117,8 +111,8 @@
             android:summary="@string/preference_select_trusted_certificate_summary"
             android:title="@string/preference_select_trusted_certificate_title" />
         <!--android:dependency="@string/preference_server_use_custom_trusted_ca_certs_key"-->
-    </PreferenceCategory>
-    <PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
@@ -137,8 +131,8 @@
             android:key="@string/preference_select_client_certificate_key"
             android:summary="@string/preference_select_client_certificate_summary"
             android:title="@string/preference_select_client_certificate_title" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
@@ -150,6 +144,14 @@
             android:key="@string/preference_server_connection_force_https_key"
             android:summary="@string/preference_server_connection_force_https_summary"
             android:title="@string/preference_server_connection_force_https_title" />
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_server_connection_uri_path_segment_encoding_default"
+            android:key="@string/preference_server_connection_uri_path_segment_encoding_key"
+            android:summary="@string/preference_server_connection_uri_path_segment_encoding_summary"
+            android:title="@string/preference_server_connection_uri_path_segment_encoding_title" />
+
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -202,13 +204,13 @@
             app:maxValue="10"
             app:minValue="0"
             app:wrapPickList="false" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_connections_caching">
-        <ListPreference
+        <androidx.preference.ListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@string/preference_caching_level_default"
@@ -217,7 +219,7 @@
             android:key="@string/preference_caching_level_key"
             android:summary="@string/preference_caching_level_summary"
             android:title="@string/preference_caching_level_title" />
-        <Preference
+        <androidx.preference.Preference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_caching_clearResponseCache_key"
@@ -230,8 +232,8 @@
             android:summary="@string/preference_caching_max_cache_entries_summary"
             android:title="@string/preference_caching_max_cache_entries_title"
             android:defaultValue="@integer/preference_caching_max_cache_entries_default"
-            app:maxValue="10000"
-            app:minValue="0"
+            app:maxValue="100000"
+            app:minValue="1000"
             app:wrapPickList="false"/>
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
@@ -244,12 +246,12 @@
             app:minValue="0"
             app:multiplier="1024"
             app:wrapPickList="false" />
-    </PreferenceCategory>
-    <Preference
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.Preference
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="true"
         android:key="@string/preference_test_server_connection_key"
         android:summary="@string/preference_test_server_connection_summary"
         android:title="@string/preference_test_server_connection_title" />
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>

@@ -273,6 +273,11 @@ public class ConnectionPreferences {
             return prefs.getBoolean(getKey(context, R.string.preference_server_alter_cache_directives_key), defaultIgnoreCacheDirectives);
         }
 
+        public boolean isPerformUriPathSegmentEncoding(SharedPreferences prefs, Context context) {
+            boolean defaultIgnoreCacheDirectives = context.getResources().getBoolean(R.bool.preference_server_connection_uri_path_segment_encoding_default);
+            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), defaultIgnoreCacheDirectives);
+        }
+
         public void copyFrom(SharedPreferences prefs, Context context, ProfilePreferences fromPrefs) {
 
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
@@ -297,6 +302,7 @@ public class ConnectionPreferences {
             writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_force_https_key), fromPrefs.isForceHttps(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_offline_mode_key), fromPrefs.isOfflineMode(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), fromPrefs.isPerformUriPathSegmentEncoding(prefs, context));
 
             // received server certs list
             writeStringSetPref(editor, getKey(context, R.string.preference_pre_user_notified_certificates_key), fromPrefs.getUserPreNotifiedCerts(prefs, context));
@@ -353,6 +359,7 @@ public class ConnectionPreferences {
             editor.remove(getKey(context, R.string.preference_server_use_basic_auth_key));
             editor.remove(getKey(context, R.string.preference_server_basic_auth_username_key));
             editor.remove(getKey(context, R.string.preference_server_basic_auth_password_key));
+            editor.remove(getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key));
             editor.apply();
             editor.commit();
         }

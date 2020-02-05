@@ -54,6 +54,11 @@
     <string name="preference_server_alter_cache_directives_summary">Enable to allow offline access to gallery</string>
     <bool name="preference_server_alter_cache_directives_default">false</bool>
 
+    <string name="preference_server_connection_uri_path_segment_encoding_key" translatable="false">preference_server_connection_uri_path_segment_encoding</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Encode URI path for requests for resources</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Try enabling this if you are receiving 404 errors for files that exist</string>
+    <bool name="preference_server_connection_uri_path_segment_encoding_default">false</bool>
+
     <string name="preference_server_connection_retries_key" translatable="false">preference_server_connection_retries</string>
     <string name="preference_server_connection_retries_title">Connection retries before failure</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>

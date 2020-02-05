@@ -42,6 +42,8 @@
     <string name="preference_server_alter_cache_directives_title">更改服务器Http Cache指令</string>
     <string name="preference_server_alter_cache_directives_summary">启用以允许离线访问图库</string>
 
+    <string name="preference_server_connection_uri_path_segment_encoding_title">编码用于资源请求的URI路径</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">如果您收到针对现有文件的404错误，请尝试启用此功能</string>
 
     <string name="preference_server_connection_retries_title">失败前连接重试</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>

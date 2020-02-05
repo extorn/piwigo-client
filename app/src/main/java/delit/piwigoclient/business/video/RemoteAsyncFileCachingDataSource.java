@@ -65,6 +65,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private boolean enableRedirects;
     private int maxRedirects;
     private long readFromFilePosition;
+    private boolean performUriPathSegmentEncoding;
 
     /**
      * @param listener An optional listener.
@@ -127,6 +128,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         }
     }
 
+    public void setPerformUriPathSegmentEncoding(boolean performUriPathSegmentEncoding) {
+        this.performUriPathSegmentEncoding = performUriPathSegmentEncoding;
+    }
+
     private void cancelAnyExistingOpenConnectionToServerAndWaitUntilDone() {
         if (activeRequestHandle != null && !activeRequestHandle.isFinished()) {
             activeRequestHandle.cancel(true);
@@ -185,7 +190,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
         boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
         String checkedUriStr = UriUtils.sanityCheckFixAndReportUri(uri.toString(), sessionDetails.getServerUrl(), forceHttps, activeConnectionPreferences);
-
+        if (performUriPathSegmentEncoding) {
+            checkedUriStr = UriUtils.encodeUriSegments(Uri.parse(checkedUriStr));
+        }
         RandomAccessFileAsyncHttpResponseHandler thisResponseHandler = getResponseHandler(cacheMetaData);
         activeRequestHandle = client.get(context, checkedUriStr, headersArray, requestParams, thisResponseHandler);
         return thisResponseHandler;

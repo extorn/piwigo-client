@@ -4,6 +4,8 @@ import android.net.Uri;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.List;
+
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.events.BadRequestExposesInternalServerEvent;
 
@@ -43,5 +45,18 @@ public class UriUtils {
         }
 
         return resourceUrl;
+    }
+
+    public static String encodeUriSegments(Uri uri) {
+
+        List<String> pathSegments = uri.getPathSegments();
+        Uri.Builder builder = uri.buildUpon().encodedPath(null);
+        ;
+
+        boolean pathSegmentsPossiblyAlreadyEncoded = false;
+        for (int i = 0; i < pathSegments.size(); i++) {
+            builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
+        }
+        return builder.build().toString();
     }
 }

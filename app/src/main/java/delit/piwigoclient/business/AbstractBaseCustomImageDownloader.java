@@ -21,6 +21,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
@@ -55,7 +57,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     @Override
     public Downloader.Response load(Uri uri, int networkPolicy) throws IOException {
 
-        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriString(uri));
+        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriStringEncodingPathSegments(uri));
         handler.setCallDetails(context, connectionPrefs, false);
         Looper currentLooper = Looper.myLooper();
         if (currentLooper == null || currentLooper.getThread() != Looper.getMainLooper().getThread()) {
@@ -148,13 +150,28 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         }
     }
 
-    protected String getUriString(Uri uri) {
-        String uriStr = uri.toString();
-        int idx = uriStr.indexOf(EXIF_WANTED_URI_FLAG) - 1;
-        if(idx > 0) {
-            uriStr = uriStr.substring(0, idx);
+    protected String getUriStringEncodingPathSegments(Uri uri) {
+
+        List<String> pathSegments = uri.getPathSegments();
+        Uri.Builder builder = uri.buildUpon().encodedPath(null);
+        Set<String> queryParamIds = uri.getQueryParameterNames();
+
+        boolean pathSegmentsPossiblyAlreadyEncoded = false;
+        for (int i = 0; i < pathSegments.size(); i++) {
+            builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
         }
-        return uriStr;
+        if (queryParamIds.contains(EXIF_WANTED_URI_PARAM)) {
+            builder.clearQuery();
+            for (String param : queryParamIds) {
+                if (!EXIF_WANTED_URI_PARAM.equalsIgnoreCase(param)) {
+                    List<String> paramVals = uri.getQueryParameters(param);
+                    for (String paramVal : paramVals) {
+                        builder.appendQueryParameter(param, paramVal);
+                    }
+                }
+            }
+        }
+        return builder.build().toString();
     }
 
     @Override
