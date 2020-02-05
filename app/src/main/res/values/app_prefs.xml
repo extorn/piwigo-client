@@ -430,9 +430,25 @@
     <string name="preference_app_desired_language_title">Language</string>
     <string name="preference_app_desired_language_summary">Preferred Translation</string>
 
-    <string name="preference_user_hint_display_time_millis_key" translatable="false">preference_user_hint_display_time_millis</string>
-    <string name="preference_user_hint_display_time_millis_title">User Hints Shown for (ms)</string>
-    <integer name="preference_user_hint_display_time_millis_default">5000</integer>
+    <!-- TODO implement this concept - Don't forget to make translatable again! -->
 
+    <string name="preference_user_hint_display_time_millis_key" translatable="false">preference_user_hint_display_time_millis</string>
+    <string name="preference_user_hint_display_time_millis_title" translatable="false">User Hints shown for (ms)</string>
+    <string name="preference_user_hint_display_time_millis_summary" translatable="false">%1$d millisecs</string>
+    <integer name="preference_user_hint_display_time_millis_default">7000</integer>
+
+    <!-- short snackbar messages -->
+    <string name="preference_short_message_display_time_millis_key" translatable="false">preference_short_message_display_time_millis</string>
+    <string name="preference_short_message_display_time_millis_title" translatable="false">Short messages shown for (ms)</string>
+    <string name="preference_short_message_display_time_millis_summary" translatable="false">%1$d millisecs</string>
+    <integer name="preference_short_message_display_time_millis_default">2000</integer>
+
+    <!-- long snackbar messages -->
+    <string name="preference_long_message_display_time_millis_key" translatable="false">preference_long_message_display_time_millis</string>
+    <string name="preference_long_message_display_time_millis_title" translatable="false">Longer messages shown for (ms)</string>
+    <string name="preference_long_message_display_time_millis_summary" translatable="false">%1$d millisecs</string>
+    <integer name="preference_long_message_display_time_millis_default">3500</integer>
+
+    <!--TODO end implement this concept! -->
 
 </resources>

@@ -123,6 +123,14 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.51</item>
+        <item>"Änderungen:
+                 - Neue Galerieeinstellung zum Erzwingen der in der App verwendeten Sprache
+                 - Neue erweiterte Serververbindungseinstellung - Aktivieren Sie die URI-Codierung von Ressourcen-URIs
+                Bug-Fix:
+                 - Einstellungen für die Zahlenauswahl akzeptieren den Wert beim Schließen des Dialogfelds
+                 - Das PiwigoClientWsExt-Plugin wurde in der Benutzermeldung korrekt benannt
+                 - Einige Übersetzungen korrigiert"</item>
         <item>1.4.0.50</item>
         <item>"Änderungen:
                  - Zulassen, dass Audio als Komprimierungsoption durchgelassen wird

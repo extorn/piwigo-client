@@ -76,7 +76,6 @@ import delit.libs.util.ObjectUtils;
 import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
@@ -1009,7 +1008,7 @@ public abstract class UIHelper<T> {
     public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {
         Set<String> hintsShown = getPrefs().getStringSet(context.getString(R.string.usage_hints_shown_list_key), new HashSet<String>());
         if (hintsShown.add(tag + '_' + hintId)) {
-            int userHintDuration = AppPreferences.getUserHintDuration(getPrefs(), context);
+            int userHintDuration = Toast.LENGTH_LONG; //TODO use custom toast impl so I can set other duration perhaps. - AppPreferences.getUserHintDuration(getPrefs(), context);
             TransientMsgUtils.makeDetailedToast(context, R.string.usage_hint_title, context.getString(hintStrResId), userHintDuration);
             SharedPreferences.Editor editor = getPrefs().edit();
             editor.putStringSet(context.getString(R.string.usage_hints_shown_list_key), hintsShown);

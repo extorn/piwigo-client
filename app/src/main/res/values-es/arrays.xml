@@ -138,6 +138,14 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.51</item>
+        <item>"Cambios:
+                 - Nueva preferencia de galería para permitir el uso de lenguaje forzado dentro de la aplicación
+                 - Nueva preferencia de conexión avanzada del servidor - Habilite la codificación URI de los URI de recursos
+                Arreglo del fallo:
+                 - las preferencias del selector de número aceptan el valor al cerrar el diálogo
+                 - El complemento PiwigoClientWsExt está correctamente nombrado en el mensaje del usuario
+                 - Corregidas algunas traducciones"</item>
         <item>1.4.0.50</item>
         <item>"Cambios:
                  - Permitir el paso de audio como opción de compresión
