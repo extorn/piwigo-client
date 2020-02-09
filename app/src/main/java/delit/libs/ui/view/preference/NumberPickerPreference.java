@@ -20,11 +20,16 @@ package delit.libs.ui.view.preference;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
+
+import com.crashlytics.android.Crashlytics;
+
+import java.util.UnknownFormatConversionException;
 
 import delit.libs.ui.util.PreferenceUtils;
 import delit.piwigoclient.R;
@@ -43,6 +48,7 @@ import delit.piwigoclient.R;
  * See android.R.styleable#EditText EditText Attributes.
  */
 public class NumberPickerPreference extends DialogPreference {
+    private static final String TAG = "NumPickpref";
     private int maxValue;
     private int minValue;
     private boolean wrapPickList;
@@ -156,7 +162,13 @@ public class NumberPickerPreference extends DialogPreference {
 //        int adjustedValue = (int) Math.round((double) value / getMultiplier());
         CharSequence summary = super.getSummary();
         if (summary != null) {
-            return String.format(summary.toString(), value);
+            try {
+                return String.format(summary.toString(), value);
+            } catch (UnknownFormatConversionException e) {
+                Crashlytics.log(Log.ERROR, TAG, getKey() + " : " + summary);
+                Crashlytics.logException(e);
+                throw e;
+            }
         }
         return null;
     }
