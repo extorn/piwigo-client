@@ -383,4 +383,24 @@ public class DisplayUtils {
             }
         }
     }
+
+    public static String getPathToView(View v) {
+        List<String> path = new ArrayList<>();
+        path.add(v.getClass().getName());
+        ViewParent currentV = v.getParent();
+        if (currentV != null) {
+            do {
+                path.add(currentV.getClass().getName());
+                currentV = v.getParent();
+            } while (currentV.getParent() != null);
+        }
+        StringBuilder pathBuilder = new StringBuilder();
+        for (int i = path.size() - 1; i > 0; i--) {
+            pathBuilder.append(path.remove(i));
+            if (i > 1) {
+                pathBuilder.append(" / ");
+            }
+        }
+        return pathBuilder.toString();
+    }
 }
