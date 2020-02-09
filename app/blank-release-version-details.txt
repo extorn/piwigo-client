@@ -2,6 +2,7 @@
 <en-GB>
 Bugfix:
 - Cancelling a file upload and leaving upload page before cancellation reported causes crash
+- paid app: crash using russian on automatic upload job configuration page
 - paid app: Updating tags list for a resource where at least one tag previously selected no longer exists causes crash (now warn user and remove them)
 - paid app: App can crash when selecting destination album for auto upload job
 - paid app: selecting the root album as destination album for auto upload job displays first album name as selected album (incorrectly)
@@ -11,6 +12,7 @@ Bugfix:
 <de-DE>
 Bug-Fix:
  - Das Abbrechen eines Datei-Uploads und das Verlassen der Upload-Seite vor dem gemeldeten Abbruch führt zum Absturz
+ - Bezahlte App: Absturz mit Russisch auf der Konfigurationsseite für den automatischen Upload-Auftrag
  - Bezahlte App: Das Aktualisieren der Tags-Liste für eine Ressource, bei der mindestens ein zuvor ausgewähltes Tag nicht mehr vorhanden ist, führt zum Absturz (Benutzer warnen und entfernen)
  - Bezahlte App: Die App kann abstürzen, wenn das Zielalbum für den automatischen Upload-Auftrag ausgewählt wird
  - Bezahlte App: Wenn Sie das Stammverzeichnis als Zielalbum für den automatischen Upload-Auftrag auswählen, wird der erste Albumname als ausgewähltes Album angezeigt (falsch).
@@ -20,6 +22,7 @@ Bug-Fix:
 <fr-FR>
 Correction d'un bug:
  - L'annulation d'un téléchargement de fichier et la sortie de la page de téléchargement avant l'annulation signalée provoquent un crash
+ - application payante: plantage en russe sur la page de configuration de la tâche de téléchargement automatique
  - application payante: la mise à jour de la liste des balises pour une ressource où au moins une balise précédemment sélectionnée n'existe plus provoque un crash (maintenant avertir l'utilisateur et les supprimer)
  - application payante: l'application peut se bloquer lors de la sélection de l'album de destination pour le travail de téléchargement automatique
  - application payante: la sélection de l'album racine comme album de destination pour le travail de téléchargement automatique affiche le premier nom de l'album comme album sélectionné (incorrectement)
@@ -29,6 +32,7 @@ Correction d'un bug:
 <es-ES>
 Arreglo del fallo:
  - Cancelar la carga de un archivo y abandonar la página de carga antes de que se informe de la cancelación causa un bloqueo
+ - aplicación paga: falla al usar ruso en la página de configuración de carga automática
  - aplicación paga: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente seleccionada ya no existe provoca un bloqueo (ahora advierte al usuario y elimínelas)
  - aplicación paga: la aplicación puede bloquearse al seleccionar el álbum de destino para el trabajo de carga automática
  - aplicación paga: al seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática, se muestra el primer nombre del álbum como álbum seleccionado (incorrectamente)
@@ -38,8 +42,9 @@ Arreglo del fallo:
 <zh-CN>
 错误修正：
  -在取消报告之前取消文件上传并离开上传页面会导致崩溃
- -付费应用：更新至少以前不再存在的一个标签的资源的标签列表会导致崩溃（现在警告用户并删除它们）
- -付费应用：选择目标相册进行自动上传时，应用可能崩溃
+ -付费应用程序：在自动上传任务配置页面上使用俄语时崩溃
+ -付费应用程序：更新至少以前不再存在的一个标签的资源的标签列表会导致崩溃（现在警告用户并删除它们）
+ -付费应用程序：选择目标相册进行自动上传时，应用可能崩溃
  -付费应用程序：选择根相册作为自动上传作业的目标相册会显示第一个相册名称作为所选相册（不正确）
  -付费应用程序：注意：我不清楚选择画廊根作为上传目的地是否明智，但是在某些情况下允许这样做。
 </zh-CN>
@@ -47,6 +52,7 @@ Arreglo del fallo:
 <ru-RU>
 Исправлена ошибка:
  - Отмена загрузки файла и выход из страницы загрузки до отмены, о которой сообщается, приводит к сбою
+ - платное приложение: сбой при использовании русского языка на странице конфигурации задания автоматической загрузки
  - платное приложение: обновление списка тегов для ресурса, где хотя бы один ранее выбранный тег больше не существует, вызывает сбой (теперь предупреждает пользователя и удаляет его)
  - платное приложение: может произойти сбой приложения при выборе целевого альбома для автоматической загрузки задания
  - платное приложение: при выборе корневого альбома в качестве целевого альбома для задания автоматической загрузки отображается имя первого альбома как выбранного альбома (неправильно)

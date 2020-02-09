@@ -265,6 +265,7 @@
         <item>1.4.0.52</item>
         <item>"Bugfix:
             - Cancelling a file upload and leaving upload page before cancellation reported causes crash
+            - paid app: crash using russian on automatic upload job configuration page
             - paid app: Updating tags list for a resource where at least one tag previously selected no longer exists causes crash (now warn user and remove them)
             - paid app: App can crash when selecting destination album for auto upload job
             - paid app: selecting the root album as destination album for auto upload job displays first album name as selected album (incorrectly)

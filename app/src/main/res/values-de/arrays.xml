@@ -126,6 +126,7 @@
         <item>1.4.0.52</item>
         <item>"Bug-Fix:
              - Das Abbrechen eines Datei-Uploads und das Verlassen der Upload-Seite vor dem gemeldeten Abbruch führt zum Absturz
+             - Bezahlte App: Absturz mit Russisch auf der Konfigurationsseite für den automatischen Upload-Auftrag
              - Bezahlte App: Das Aktualisieren der Tags-Liste für eine Ressource, bei der mindestens ein zuvor ausgewähltes Tag nicht mehr vorhanden ist, führt zum Absturz (Benutzer warnen und entfernen)
              - Bezahlte App: Die App kann abstürzen, wenn das Zielalbum für den automatischen Upload-Auftrag ausgewählt wird
              - Bezahlte App: Wenn Sie das Stammverzeichnis als Zielalbum für den automatischen Upload-Auftrag auswählen, wird der erste Albumname als ausgewähltes Album angezeigt (falsch).

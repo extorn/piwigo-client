@@ -136,6 +136,7 @@
         <item>1.4.0.52</item>
         <item>"Correction d'un bug:
              - L'annulation d'un téléchargement de fichier et la sortie de la page de téléchargement avant l'annulation signalée provoquent un crash
+             - application payante: plantage en russe sur la page de configuration de la tâche de téléchargement automatique
              - application payante: la mise à jour de la liste des balises pour une ressource où au moins une balise précédemment sélectionnée n'existe plus provoque un crash (maintenant avertir l'utilisateur et les supprimer)
              - application payante: l'application peut se bloquer lors de la sélection de l'album de destination pour le travail de téléchargement automatique
              - application payante: la sélection de l'album racine comme album de destination pour le travail de téléchargement automatique affiche le premier nom de l'album comme album sélectionné (incorrectement)

@@ -141,6 +141,7 @@
         <item>1.4.0.52</item>
         <item>"Arreglo del fallo:
              - Cancelar la carga de un archivo y abandonar la página de carga antes de que se informe de la cancelación causa un bloqueo
+             - aplicación paga: falla al usar ruso en la página de configuración de carga automática
              - aplicación paga: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente seleccionada ya no existe provoca un bloqueo (ahora advierte al usuario y elimínelas)
              - aplicación paga: la aplicación puede bloquearse al seleccionar el álbum de destino para el trabajo de carga automática
              - aplicación paga: al seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática, se muestra el primer nombre del álbum como álbum seleccionado (incorrectamente)
