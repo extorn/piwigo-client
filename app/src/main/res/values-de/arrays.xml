@@ -123,6 +123,13 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.52</item>
+        <item>"Bug-Fix:
+             - Das Abbrechen eines Datei-Uploads und das Verlassen der Upload-Seite vor dem gemeldeten Abbruch führt zum Absturz
+             - Bezahlte App: Das Aktualisieren der Tags-Liste für eine Ressource, bei der mindestens ein zuvor ausgewähltes Tag nicht mehr vorhanden ist, führt zum Absturz (Benutzer warnen und entfernen)
+             - Bezahlte App: Die App kann abstürzen, wenn das Zielalbum für den automatischen Upload-Auftrag ausgewählt wird
+             - Bezahlte App: Wenn Sie das Stammverzeichnis als Zielalbum für den automatischen Upload-Auftrag auswählen, wird der erste Albumname als ausgewähltes Album angezeigt (falsch).
+             - Bezahlte App: Hinweis: Ich bin mir nicht sicher, ob es sinnvoll ist, das Stammverzeichnis der Galerie als Upload-Ziel auszuwählen, aber unter bestimmten Umständen ist dies zulässig."</item>
         <item>1.4.0.51</item>
         <item>"Änderungen:
                  - Neue Galerieeinstellung zum Erzwingen der in der App verwendeten Sprache

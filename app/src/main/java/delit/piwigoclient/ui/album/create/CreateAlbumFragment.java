@@ -298,7 +298,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
         super.onViewCreated(view, savedInstanceState);
         if (!isAllowedToCreateAlbum()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -401,7 +401,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

@@ -292,7 +292,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
                 public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
                     HashSet<Group> groups = response.getGroups();
                     if(groups.isEmpty()) {
-                        getFragmentManager().popBackStack();
+                        getParentFragmentManager().popBackStack();
                         return false;
                     }
                     currentGroup = groups.iterator().next();
@@ -304,14 +304,14 @@ public class GroupFragment extends MyFragment<GroupFragment> {
 
                 @Override
                 public boolean onFailure(FragmentUIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return false;
                 }
             };
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_group_details, new GroupsGetListResponseHandler(currentGroup.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -568,7 +568,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         EventBus.getDefault().post(new GroupDeletedEvent(currentGroup));
         // return to previous screen
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -666,7 +666,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -675,7 +675,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return;
                 }
             }

@@ -18,7 +18,7 @@ import androidx.preference.PreferenceManager;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +29,7 @@ import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
@@ -229,10 +230,14 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         if(remoteFolderDetails != null) {
             long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
             if(albumId >= 0) {
-                AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
-                albumHandler.withConnectionPreferences(profilePrefs);
-                albumHandler.forceLogin();
-                callServer(R.string.progress_loading_albums, albumHandler);
+                if (CategoryItem.isRoot(albumId)) {
+                    finishPreferenceValuesValidation(Arrays.asList(CategoryItemStub.ROOT_GALLERY));
+                } else {
+                    AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
+                    albumHandler.withConnectionPreferences(profilePrefs);
+                    albumHandler.forceLogin();
+                    callServer(R.string.progress_loading_albums, albumHandler);
+                }
             } else {
                 updateJobValidPreferenceIfNeeded(false, false);
             }
@@ -241,7 +246,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private void finishPreferenceValuesValidation(ArrayList<CategoryItemStub> albumNames) {
+    private void finishPreferenceValuesValidation(List<CategoryItemStub> albumNames) {
         boolean remoteAlbumExists = albumNames != null && albumNames.size() >= 1;
 
         SharedPreferences.Editor editor = getPrefs().edit();
@@ -249,7 +254,10 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             // ensure the folder name is in-sync with the value on the server
             ServerAlbumSelectPreference.ServerAlbumDetails selectedAlbumDetails = new AutoUploadJobConfig(jobConfigId).getUploadToAlbumDetails(getContext());
             boolean changed = false;
-            if(selectedAlbumDetails.getAlbumId() >= 0) {
+            if (CategoryItem.isRoot(selectedAlbumDetails.getAlbumId())) {
+                // do nothing. no point. In fact, even getting the album names list was pointless.
+            } else if (selectedAlbumDetails.getAlbumId() > 0) {
+                // it is a valid non root album
                 String selectedAlbumName = selectedAlbumDetails.getAlbumName();
                 CategoryItemStub testAlbum = albumNames.get(0);
 
@@ -271,7 +279,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                 }
                 if(changed) {
                     ServerAlbumSelectPreference.ServerAlbumDetails newAlbumDetails = new ServerAlbumSelectPreference.ServerAlbumDetails(selectedAlbumDetails.getAlbumId(), selectedAlbumName, selectedAlbumParentage, selectedAlbumPath);
-                    editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), newAlbumDetails.encode());
+                    editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), newAlbumDetails.escapeSemiColons());
                 }
             }
         } else {

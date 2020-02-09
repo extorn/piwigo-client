@@ -659,4 +659,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="compressing_progress_bar_message">Compression</string>
     <string name="preference_app_desired_language_summary">Traduction préférée</string>
     <string name="preference_app_desired_language_title">Langue</string>
+    <string name="warning_missing_tags_links_removed_from_resource">Toutes les balises liées à cet élément n\'existent pas encore dans la base de données. Les liens vers %1$d ont été supprimés</string>
 </resources>

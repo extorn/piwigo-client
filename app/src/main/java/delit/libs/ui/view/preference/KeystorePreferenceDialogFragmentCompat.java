@@ -108,6 +108,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         if (keystoreLoadOperationResult != null) {
             showLoadErrors();
         }
+        view.requestFocus();
     }
 
     @Override
@@ -125,10 +126,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     @Override
     protected View onCreateDialogView(Context context) {
-        return buildCertificateListView(keystore);
+        return buildCertificateListView(context, keystore);
     }
 
-    private View buildCertificateListView(KeyStore keystore) {
+    private View buildCertificateListView(Context context, KeyStore keystore) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
@@ -152,9 +153,9 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         heading.setVisibility(View.VISIBLE);
 
         certificateList = view.findViewById(R.id.list);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         certificateList.setLayoutManager(mLayoutManager);
-        KeyStoreContentsAdapter adapter = new KeyStoreContentsAdapter(getContext(), X509Utils.cloneKeystore(keystore));
+        KeyStoreContentsAdapter adapter = new KeyStoreContentsAdapter(context, X509Utils.cloneKeystore(keystore));
         certificateList.setAdapter(adapter);
 
         addListItemButton = view.findViewById(R.id.list_action_add_item_button);

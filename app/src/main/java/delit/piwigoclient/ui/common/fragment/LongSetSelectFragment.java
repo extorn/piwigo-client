@@ -297,7 +297,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected void onCancelChanges() {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

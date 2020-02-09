@@ -83,6 +83,10 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         return albums;
     }
 
+    public static boolean isRoot(long albumId) {
+        return ROOT_ALBUM.getId() == albumId;
+    }
+
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);

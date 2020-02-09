@@ -254,7 +254,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
                 reloadFavoritesModel();
             } else {
                 // immediately leave this screen.
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         }
 

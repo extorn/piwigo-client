@@ -72,7 +72,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -162,7 +162,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
             EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
             // now pop this screen off the stack.
             if (isVisible()) {
-                getFragmentManager().popBackStackImmediate();
+                getParentFragmentManager().popBackStackImmediate();
             }
         }
     }

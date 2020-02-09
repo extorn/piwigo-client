@@ -97,7 +97,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -156,7 +156,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
 
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

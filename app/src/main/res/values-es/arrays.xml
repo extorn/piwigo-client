@@ -138,6 +138,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.52</item>
+        <item>"Arreglo del fallo:
+             - Cancelar la carga de un archivo y abandonar la página de carga antes de que se informe de la cancelación causa un bloqueo
+             - aplicación paga: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente seleccionada ya no existe provoca un bloqueo (ahora advierte al usuario y elimínelas)
+             - aplicación paga: la aplicación puede bloquearse al seleccionar el álbum de destino para el trabajo de carga automática
+             - aplicación paga: al seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática, se muestra el primer nombre del álbum como álbum seleccionado (incorrectamente)
+             - aplicación de pago: Nota: no estoy claro que seleccionar la raíz de la galería como destino de carga sea siempre sensato, pero en caso de que lo sea, en algunas circunstancias, está permitido."</item>
         <item>1.4.0.51</item>
         <item>"Cambios:
                  - Nueva preferencia de galería para permitir el uso de lenguaje forzado dentro de la aplicación

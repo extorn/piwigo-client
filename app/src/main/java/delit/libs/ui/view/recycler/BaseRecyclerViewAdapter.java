@@ -219,6 +219,21 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
+    public void deselectItem(Long itemId, boolean force) {
+        if (force || isAllowItemDeselection(itemId)) {
+            selectedResourceIds.add(itemId);
+            try {
+                T item = getItemById(itemId);
+                int idx = getItemPosition(item);
+                notifyItemChanged(idx);
+            } catch (IllegalArgumentException e) {
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, "Item not available to deselect (probably not loaded yet)", e);
+                }
+            }
+        }
+    }
+
     public void removeItemByPosition(int idxRemoved) {
         if (idxRemoved >= 0) {
             removeItemFromInternalStore(idxRemoved);

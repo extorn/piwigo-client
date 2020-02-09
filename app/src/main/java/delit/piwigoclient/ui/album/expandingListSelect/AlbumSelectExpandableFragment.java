@@ -218,7 +218,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         loadStateFromBundle(savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -388,7 +388,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), selectedAlbumIds, selectedAlbums, albumPaths));
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

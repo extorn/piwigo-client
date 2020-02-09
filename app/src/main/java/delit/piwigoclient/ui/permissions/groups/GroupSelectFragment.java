@@ -141,7 +141,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -227,7 +227,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         EventBus.getDefault().post(new GroupSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

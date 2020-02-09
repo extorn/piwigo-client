@@ -133,6 +133,13 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.52</item>
+        <item>"Correction d'un bug:
+             - L'annulation d'un téléchargement de fichier et la sortie de la page de téléchargement avant l'annulation signalée provoquent un crash
+             - application payante: la mise à jour de la liste des balises pour une ressource où au moins une balise précédemment sélectionnée n'existe plus provoque un crash (maintenant avertir l'utilisateur et les supprimer)
+             - application payante: l'application peut se bloquer lors de la sélection de l'album de destination pour le travail de téléchargement automatique
+             - application payante: la sélection de l'album racine comme album de destination pour le travail de téléchargement automatique affiche le premier nom de l'album comme album sélectionné (incorrectement)
+             - application payante: Remarque: je ne suis pas certain que la sélection de la racine de la galerie en tant que destination de téléchargement soit toujours judicieuse, mais dans le cas où cela l'est dans certaines circonstances, cela est autorisé."</item>
         <item>1.4.0.51</item>
         <item>"Changements:
                  - Nouvelle préférence de galerie pour permettre de forcer la langue utilisée dans l'application

@@ -70,7 +70,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
         }
 
         if(uploadJob == null) {
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
             return;
         }
 

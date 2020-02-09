@@ -823,7 +823,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             if (!updated) {
                 //Something wierd is going on - this should never happen
                 Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing tag - tag was not available after refreshing session");
-                fragment.getFragmentManager().popBackStack();
+                fragment.getParentFragmentManager().popBackStack();
                 return false;
             }
             fragment.loadAlbumResourcesPage(0);
@@ -833,7 +833,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         @Override
         public boolean onFailure(FragmentUIHelper<ViewTagFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ViewTagFragment fragment = ((ViewTagFragment) uiHelper.getParent());
-            fragment.getFragmentManager().popBackStack();
+            fragment.getParentFragmentManager().popBackStack();
             return false;
         }
     }

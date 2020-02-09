@@ -454,8 +454,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
         listAdapter.cancelAnyActiveFolderMediaScan();
         // now pop this screen off the stack.
-        if (isVisible() && getFragmentManager() != null) {
-            getFragmentManager().popBackStackImmediate();
+        if (isVisible() && getParentFragmentManager() != null) {
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

@@ -635,4 +635,5 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="compressing_progress_bar_message">сжимающий</string>
     <string name="preference_app_desired_language_summary">Предпочитаемый перевод</string>
     <string name="preference_app_desired_language_title">язык</string>
+    <string name="warning_missing_tags_links_removed_from_resource">Не все теги, связанные с этим элементом, все еще существуют в базе данных. Ссылки на %1$d были удалены</string>
 </resources>

@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
@@ -54,34 +55,8 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     private ArrayList<ListAction> actions = new ArrayList<>();
     private boolean alwaysSelectAll;
 
-    private RecyclerView listRecyclerView;
     private DefaultListContentsAdapter adapter;
 
-
-    public static class ListAction implements Serializable {
-        public final String entryValue;
-
-        public ListAction(String entryValue) {
-            this.entryValue = entryValue;
-        }
-    }
-    public static class Removal extends ListAction{
-        public Removal(String entryValue) {
-            super(entryValue);
-        }
-    }
-    public static class Addition extends ListAction{
-        public Addition(String entryValue) {
-            super(entryValue);
-        }
-    }
-    public static class Replacement extends ListAction{
-        public final String newEntryValue;
-        public Replacement(String entryValue, String newValue) {
-            super(entryValue);
-            this.newEntryValue = newValue;
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,7 +67,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             itemEditingAllowed = savedInstanceState.getBoolean(STATE_ITEM_EDIT_ALLOWED);
             multiSelect = savedInstanceState.getBoolean(STATE_MULTI_SELECT_MODE);
             alwaysSelectAll = savedInstanceState.getBoolean(STATE_ALWAYS_SELECT_ALL);
-            actions = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_ACTIONS, actions.getClass());
+            actions = savedInstanceState.getParcelableArrayList(STATE_LIST_ACTIONS);
         } else {
             EditableListPreference pref = getPreference();
             pref.loadEntries();
@@ -106,58 +81,12 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     }
 
     @Override
-    public Preference findPreference(CharSequence key) {
-        return getPreference();
-    }
-    
-    public EditableListPreference getPreference() {
-        return (EditableListPreference)super.getPreference();
+    protected View onCreateDialogView(Context context) {
+        return buildEditableListView(context);
     }
 
-    @Override
-    public void onDialogClosed(boolean positiveResult) {
-        EditableListPreference pref = getPreference();
-        if (positiveResult) {
-            if (userSelectedItems != null && pref.getEntryValues() != null) {
-                // remove any items not in the present list
-                CollectionUtils.removeItemsNotInRhsCollection(userSelectedItems, entriesList);
-                if (pref.callChangeListener(userSelectedItems)) {
-                    if (actions.size() > 0 && !alwaysSelectAll) {
-                        pref.updateEntryValues(actions);
-                    }
-                    actions.clear();
-                    if (multiSelect) {
-                        pref.setValues(pref.filterNewUserSelection(userSelectedItems));
-                    } else {
-                        Set<String> filteredSelection = pref.filterNewUserSelection(userSelectedItems);
-                        if (filteredSelection.size() > 0) {
-                            pref.setValue(filteredSelection.iterator().next());
-                        } else {
-                            pref.setValue(null);
-                        }
-
-                    }
-                }
-            } else if (actions.size() > 0) {
-                if (pref.callChangeListener(userSelectedItems)) {
-                    if (!alwaysSelectAll) {
-                        pref.updateEntryValues(actions);
-                    }
-                    actions.clear();
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        View view = buildEditableListView();
-        builder.setView(view);
-    }
-
-    private View buildEditableListView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
+    private View buildEditableListView(Context context) {
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_recycler_list, null);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -180,24 +109,24 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         TextView heading = view.findViewById(R.id.heading);
         heading.setVisibility(View.INVISIBLE);
 
-        listRecyclerView = view.findViewById(R.id.list);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView listRecyclerView = view.findViewById(R.id.list);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
         listRecyclerView.setLayoutManager(mLayoutManager);
 
         if (userSelectedItems == null) {
             userSelectedItems = new HashSet<>();
         }
 
-        adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, userSelectedItems);
+        adapter = buildNewRecyclerViewAdapter(context, entriesList, entriesList, userSelectedItems);
         listRecyclerView.setAdapter(adapter);
-        listRecyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
+        listRecyclerView.addItemDecoration(new RecyclerViewMargin(context, RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
 
         CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addNewItemToList();
+                addNewItemToList(v.getContext());
             }
         });
 
@@ -206,27 +135,24 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         return view;
     }
 
-    private void onToggleAll() {
-        adapter.selectAll();
-    }
-
     /**
      * Implement to allow addition of items to the list (called on add button click).
+     * @param context context in which action occurs
      */
-    public void addNewItemToList() {
-        showEditBox(false, null);
+    public void addNewItemToList(Context context) {
+        showEditBox(context, false, null);
     }
 
-    private void showEditBox(final boolean editingExistingValue, final String initialValue) {
+    private void showEditBox(Context context, final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
-        androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+        androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
         if (editingExistingValue) {
             b.setMessage(R.string.title_editing_item);
         } else {
             b.setMessage(R.string.title_adding_item);
         }
         // Set up the input
-        final EditText input = new EditText(getContext());
+        final EditText input = new EditText(context);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         if (initialValue != null) {
@@ -267,20 +193,58 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         b.show();
     }
 
-    public void alterListItem(String item) {
-        showEditBox(true, item);
+    @Override
+    public Preference findPreference(CharSequence key) {
+        return getPreference();
     }
 
-    /**
-     */
-    public DefaultListContentsAdapter buildNewRecyclerViewAdapter(Context context, List<String> entries, List<String> entryValues, Set<String> currentValues) {
-        return new DefaultListContentsAdapter(context, entries, entryValues, currentValues);
+    public EditableListPreference getPreference() {
+        return (EditableListPreference) super.getPreference();
+    }
+
+    @Override
+    public void onDialogClosed(boolean positiveResult) {
+        EditableListPreference pref = getPreference();
+        if (positiveResult) {
+            if (userSelectedItems != null && pref.getEntryValues() != null) {
+                // remove any items not in the present list
+                CollectionUtils.removeItemsNotInRhsCollection(userSelectedItems, entriesList);
+                if (pref.callChangeListener(userSelectedItems)) {
+                    if (actions.size() > 0 && !alwaysSelectAll) {
+                        pref.updateEntryValues(actions);
+                    }
+                    actions.clear();
+                    if (multiSelect) {
+                        pref.setValues(pref.filterNewUserSelection(userSelectedItems));
+                    } else {
+                        Set<String> filteredSelection = pref.filterNewUserSelection(userSelectedItems);
+                        if (filteredSelection.size() > 0) {
+                            pref.setValue(filteredSelection.iterator().next());
+                        } else {
+                            pref.setValue(null);
+                        }
+
+                    }
+                }
+            } else if (actions.size() > 0) {
+                if (pref.callChangeListener(userSelectedItems)) {
+                    if (!alwaysSelectAll) {
+                        pref.updateEntryValues(actions);
+                    }
+                    actions.clear();
+                }
+            }
+        }
+    }
+
+    public void alterListItem(Context context, String item) {
+        showEditBox(context, true, item);
     }
 
     protected void onChangeItem(String oldValue, String newValue) {
 
         if (entriesList.contains(newValue)) {
-            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
@@ -292,13 +256,18 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 userSelectedItems.add(newValue);
             }
             actions.add(new Replacement(oldValue, newValue));
-            listRecyclerView.getAdapter().notifyDataSetChanged();
+
+            adapter.notifyDataSetChanged();
         }
+    }
+
+    private void onToggleAll() {
+        adapter.selectAll();
     }
 
     protected void onAddNewItemToList(String newItem) {
         if (entriesList.contains(newItem)) {
-            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(getContext());
+            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
@@ -309,7 +278,84 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 userSelectedItems.add(newItem);
             }
             actions.add(new Addition(newItem));
-            listRecyclerView.getAdapter().notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        BundleUtils.putStringSet(outState, STATE_USER_SELECTED_ITEMS, userSelectedItems);
+        outState.putStringArrayList(STATE_LIST_ITEMS, entriesList);
+        outState.putParcelableArrayList(STATE_LIST_ACTIONS, actions);
+        outState.putBoolean(STATE_ITEM_EDIT_ALLOWED, itemEditingAllowed);
+        outState.putBoolean(STATE_MULTI_SELECT_MODE, multiSelect);
+        outState.putBoolean(STATE_ALWAYS_SELECT_ALL, alwaysSelectAll);
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        DisplayUtils.hideKeyboardFrom(requireContext(), dialog);
+        super.onClick(dialog, which);
+    }
+
+    /**
+     *
+     */
+    public DefaultListContentsAdapter buildNewRecyclerViewAdapter(Context context, List<String> entries, List<String> entryValues, Set<String> currentValues) {
+        return new DefaultListContentsAdapter(context, entries, entryValues, currentValues);
+    }
+
+    public static class ListAction implements Serializable, Parcelable {
+        public static final Parcelable.Creator<ListAction> CREATOR
+                = new Parcelable.Creator<ListAction>() {
+            public ListAction createFromParcel(Parcel in) {
+                return new ListAction(in);
+            }
+
+            public ListAction[] newArray(int size) {
+                return new ListAction[size];
+            }
+        };
+        final String entryValue;
+
+        ListAction(String entryValue) {
+            this.entryValue = entryValue;
+        }
+
+        public ListAction(Parcel in) {
+            entryValue = in.readString();
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(entryValue);
+        }
+    }
+
+    public static class Removal extends ListAction {
+        public static final Parcelable.Creator<Removal> CREATOR
+                = new Parcelable.Creator<Removal>() {
+            public Removal createFromParcel(Parcel in) {
+                return new Removal(in);
+            }
+
+            public Removal[] newArray(int size) {
+                return new Removal[size];
+            }
+        };
+
+        Removal(String entryValue) {
+            super(entryValue);
+        }
+
+        public Removal(Parcel in) {
+            this(in.readString());
         }
     }
 
@@ -322,15 +368,54 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         return fragment;
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        BundleUtils.putStringSet(outState, STATE_USER_SELECTED_ITEMS, userSelectedItems);
-        outState.putStringArrayList(STATE_LIST_ITEMS, entriesList);
-        outState.putSerializable(STATE_LIST_ACTIONS, actions);
-        outState.putBoolean(STATE_ITEM_EDIT_ALLOWED, itemEditingAllowed);
-        outState.putBoolean(STATE_MULTI_SELECT_MODE, multiSelect);
-        outState.putBoolean(STATE_ALWAYS_SELECT_ALL, alwaysSelectAll);
+    public static class Addition extends ListAction {
+        public static final Parcelable.Creator<Addition> CREATOR
+                = new Parcelable.Creator<Addition>() {
+            public Addition createFromParcel(Parcel in) {
+                return new Addition(in);
+            }
+
+            public Addition[] newArray(int size) {
+                return new Addition[size];
+            }
+        };
+
+        Addition(String entryValue) {
+            super(entryValue);
+        }
+
+        public Addition(Parcel in) {
+            this(in.readString());
+        }
+    }
+
+    public static class Replacement extends ListAction {
+        public static final Parcelable.Creator<Replacement> CREATOR
+                = new Parcelable.Creator<Replacement>() {
+            public Replacement createFromParcel(Parcel in) {
+                return new Replacement(in);
+            }
+
+            public Replacement[] newArray(int size) {
+                return new Replacement[size];
+            }
+        };
+        final String newEntryValue;
+
+        Replacement(String entryValue, String newValue) {
+            super(entryValue);
+            this.newEntryValue = newValue;
+        }
+
+        public Replacement(Parcel in) {
+            this(in.readString(), in.readString());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(newEntryValue);
+        }
     }
 
     private class DefaultListContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -365,8 +450,8 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             return new ViewLongClickListener(vh);
         }
 
-        protected ViewClickListener buildViewClickListener(RecyclerView.ViewHolder vh) {
-            return new ViewClickListener(vh);
+        protected ActionableListItemClickListener buildViewClickListener(RecyclerView.ViewHolder vh) {
+            return new ActionableListItemClickListener(vh);
         }
 
         @Override
@@ -450,15 +535,15 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 } else {
                     throw new IllegalStateException("Stable IDs are not supported by default ViewLongClickListener");
                 }
-                alterListItem(itemValue);
+                alterListItem(v.getContext(), itemValue);
                 return true;
             }
         }
 
-        protected class ViewClickListener implements View.OnClickListener {
+        protected class ActionableListItemClickListener implements View.OnClickListener {
             private final RecyclerView.ViewHolder vh;
 
-            public ViewClickListener(RecyclerView.ViewHolder vh) {
+            public ActionableListItemClickListener(RecyclerView.ViewHolder vh) {
                 this.vh = vh;
             }
 
@@ -476,7 +561,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                         } else {
                             throw new IllegalStateException("Stable IDs are not supported by default ViewLongClickListener");
                         }
-                        alterListItem(itemValue);
+                        alterListItem(v.getContext(), itemValue);
                     }
                 }
                 String newValue;
@@ -496,17 +581,13 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                     // now close the dialog.
                     Dialog dialog = getDialog();
                     EditableListPreferenceDialogFragmentCompat.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-                    dialog.dismiss();
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
                 }
             }
 
         }
-    }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
-        super.onClick(dialog, which);
     }
 
 }

@@ -251,7 +251,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
         }
         if(f != null) {
             f.setTargetFragment(this, 0);
-            f.show(this.getFragmentManager(), DIALOG_FRAGMENT_TAG);
+            f.show(this.getParentFragmentManager(), DIALOG_FRAGMENT_TAG);
         } else {
             super.onDisplayPreferenceDialog(preference);
         }

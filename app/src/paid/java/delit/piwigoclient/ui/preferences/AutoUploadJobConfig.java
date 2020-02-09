@@ -156,12 +156,12 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public String getUploadToAlbumName(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails).getAlbumName();
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumName();
     }
 
     public long getUploadToAlbumId(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails).getAlbumId();
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumId();
     }
 
     public void setJobValid(Context c, boolean isValid) {
@@ -339,7 +339,7 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public ServerAlbumSelectPreference.ServerAlbumDetails getUploadToAlbumDetails(Context context) {
         String remoteAlbumDetails = getStringValue(context, R.string.preference_data_upload_automatic_job_server_album_key);
-        return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails);
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails);
     }
 
     public CategoryItemStub getUploadToAlbum(Context context) {

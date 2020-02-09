@@ -1015,4 +1015,5 @@ SOFTWARE.
     <string name="alert_error_upload_file_compression_error_message_pattern">Error while compressing file for upload %1$s</string>
     <string name="uploading_progress_bar_message">Uploading</string>
     <string name="compressing_progress_bar_message">Compressing</string>
+    <string name="warning_missing_tags_links_removed_from_resource">Not all Tags linked to this item still exist in the database. The links to %1$d have been removed</string>
 </resources>

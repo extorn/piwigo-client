@@ -145,7 +145,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -232,7 +232,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         EventBus.getDefault().post(new UsernameSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

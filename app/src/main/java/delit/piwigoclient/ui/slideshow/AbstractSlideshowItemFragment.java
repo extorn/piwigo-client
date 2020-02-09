@@ -55,6 +55,7 @@ import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
@@ -271,20 +272,30 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         } catch (ClassCastException e) {
             Bundle errBundle = new Bundle();
             errBundle.putString("error", e.getMessage());
-            errBundle.putString("class", galleryModelClass.getName());
+            errBundle.putString("galleryModelClass", galleryModelClass.getName());
             errBundle.putString("modelStoreClass", modelStore.getClass().getName());
             errBundle.putLong("galleryItemId", galleryItemId);
             errBundle.putLong("modelId", galleryModelId);
-            FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", errBundle);
-            String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId);
+            errBundle.putLong("itemCount", modelStore.getItemCount());
+            errBundle.putLong("indexOfItem", modelStore.getItemIdx(modelStore.getItemById(galleryItemId)));
+            for (int i = 0; i < modelStore.getItemCount(); i++) {
+                GalleryItem item = modelStore.getItemById(i);
+                if (item.getId() == galleryItemId) {
+                    errBundle.putInt("correctIndexOfItem", i);
+                }
+            }
+            errBundle.putInt("sortOrder", modelStore.isRetrieveItemsInReverseOrder() ? 1 : 0);
+            FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", null);
+            String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)\n%3$s", galleryModelClass.getName(), galleryModelId, errBundle.toString());
             Crashlytics.log(Log.ERROR, TAG, errMsg);
-            Crashlytics.logException(e);
-            throw new ModelUnavailableException(errMsg, e);
+            ModelUnavailableException er = new ModelUnavailableException(errMsg, e);
+            Crashlytics.logException(er);
+            throw er;
         } catch (IllegalArgumentException e) {
             String errMsg = String.format(Locale.UK, "slideshow galleryItem could not be found in model - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId);
             Crashlytics.log(Log.ERROR, TAG, errMsg);
-            Crashlytics.logException(e);
-            throw new ModelUnavailableException(errMsg);
+            ModelUnavailableException er = new ModelUnavailableException(errMsg, e);
+            Crashlytics.logException(er);
         }
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);

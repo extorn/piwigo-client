@@ -634,7 +634,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     galleryIsDirty = true;
                 } else {
                     // immediately leave this screen.
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                 }
             }
         }
@@ -2062,7 +2062,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         }
         if(exitFragment) {
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -2333,7 +2333,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         public void onDismiss(AlertDialog dialog) {
             super.onDismiss(dialog);
             //TODO getFragmentManager means this fragment needs to be serialised!
-            getUiHelper().getParent().getFragmentManager().popBackStack();
+            getUiHelper().getParent().getParentFragmentManager().popBackStack();
         }
     }
 

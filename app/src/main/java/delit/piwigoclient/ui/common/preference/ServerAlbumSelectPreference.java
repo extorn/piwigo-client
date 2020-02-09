@@ -12,6 +12,7 @@ import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -80,7 +81,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
     @Override
     public CharSequence getSummary() {
         String currentValue = getPersistedString(getValue());
-        ServerAlbumDetails pref = ServerAlbumDetails.fromString(currentValue);
+        ServerAlbumDetails pref = ServerAlbumDetails.fromEncodedPersistenceString(currentValue);
         String albumPath =pref.getAlbumPath();
         if (albumPath != null) {
             if (super.getSummary() == null) {
@@ -119,56 +120,66 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             }
             if(selectedItems.size() > 0) {
                 CategoryItem selectedVal = selectedItems.iterator().next();
-                persistStringValue(new ServerAlbumDetails(selectedVal, event.getAlbumPath(selectedVal)).encode());
+                persistStringValue(new ServerAlbumDetails(selectedVal, event.getAlbumPath(selectedVal)).escapeSemiColons());
                 notifyChanged();
             }
         }
     }
 
     public ServerAlbumDetails getSelectedServerAlbumDetails() {
-        return ServerAlbumDetails.fromString(getValue());
+        return ServerAlbumDetails.fromEncodedPersistenceString(getValue());
     }
 
     public static class ServerAlbumDetails {
 
-        private String albumPath = null;
-        private List<Long> parentage = null;
-        private String albumName = null;
+        private String albumPath;
+        private List<Long> parentage;
+        private String albumName;
         private long albumId = -1;
 
-        public static ServerAlbumDetails fromString(String value) {
+        public ServerAlbumDetails(long albumId, @NonNull String albumName, List<Long> parentage, String albumPath) {
+            this.albumId = albumId;
+            this.albumName = albumName;
+            this.parentage = parentage;
+            if (!CategoryItem.isRoot(albumId)) {
+                if (albumPath == null) {
+                    this.albumPath = "??? / " + albumName;
+                } else {
+                    this.albumPath = albumPath;
+                }
+            } else {
+                this.albumPath = albumName;
+            }
+        }
+
+        public static ServerAlbumDetails fromEncodedPersistenceString(String value) {
             if(value != null) {
                 String[] pieces = value.split(";(?<!\\\\)");
                 long albumId = Long.valueOf(pieces[0]);
-                String albumName = decode(pieces[1]);
-                String albumPath = "??? / " + albumName;
+                String albumName = unescapeSemiColons(pieces[1]);
+                String albumPath;
                 List<Long> parentage = null;
-                if(pieces.length == 4) {
-                    parentage = CollectionUtils.longsFromCsvList(pieces[2]);
-                    albumPath = decode(pieces[3]);
+                if (CategoryItem.isRoot(albumId)) {
+                    albumPath = albumName;
+                    parentage = new ArrayList<>(0);
+                } else {
+                    albumPath = "??? / " + albumName;
+                    if (pieces.length == 4) {
+                        parentage = CollectionUtils.longsFromCsvList(pieces[2]);
+                        albumPath = unescapeSemiColons(pieces[3]);
+                    }
                 }
                 return new ServerAlbumDetails(albumId, albumName, parentage, albumPath);
             }
             return new ServerAlbumDetails(-1, null, null, null);
         }
 
-        public ServerAlbumDetails(long albumId, @NonNull String albumName, List<Long> parentage, String albumPath) {
-            this.albumId = albumId;
-            this.albumName = albumName;
-            this.parentage = parentage;
-            if(albumPath == null) {
-                albumPath = "??? / " + albumName;
-            } else {
-                this.albumPath = albumPath;
-            }
-        }
-
         public ServerAlbumDetails(@NonNull CategoryItem album, String albumPath) {
             this(album.getId(), album.getName(), album.getParentageChain(), albumPath);
         }
 
-        public String encode() {
-            return String.format(Locale.UK,"%1$d;%2$s;%3$s;%4$s", albumId, encode(albumName), CollectionUtils.toCsvList(parentage), encode(albumPath));
+        private static String escapeSemiColons(String val) {
+            return val.replaceAll(";", "\\;");
         }
 
         @NonNull
@@ -177,12 +188,12 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             return getAlbumPath();
         }
 
-        private static String encode(String val) {
-            return val.replaceAll(";", "\\;");
+        private static String unescapeSemiColons(String val) {
+            return val.replaceAll("\\;", ";");
         }
 
-        private static String decode(String val) {
-            return val.replaceAll("\\;", ";");
+        public String escapeSemiColons() {
+            return String.format(Locale.UK, "%1$d;%2$s;%3$s;%4$s", albumId, escapeSemiColons(albumName), parentage == null ? "" : CollectionUtils.toCsvList(parentage), albumPath == null ? "" : escapeSemiColons(albumPath));
         }
 
         public List<Long> getParentage() {

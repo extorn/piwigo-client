@@ -1,60 +1,54 @@
 
 <en-GB>
-Changes:
-- New gallery preference to allow forcing language used within the app
-- New Advanced Server Connection Preference - Enable URI encoding of resource URIs
- Bugfix:
-- number picker preferences accept value on dialog close
-- PiwigoClientWsExt plugin correctly named in user message
-- Corrected a few translations
+Bugfix:
+- Cancelling a file upload and leaving upload page before cancellation reported causes crash
+- paid app: Updating tags list for a resource where at least one tag previously selected no longer exists causes crash (now warn user and remove them)
+- paid app: App can crash when selecting destination album for auto upload job
+- paid app: selecting the root album as destination album for auto upload job displays first album name as selected album (incorrectly)
+- paid app: Note: I'm not clear that selecting the gallery root as an upload destination is ever sensible, but in case it is in some circumstances, it is allowed.
 </en-GB>
 
 <de-DE>
-Änderungen:
- - Neue Galerieeinstellung zum Erzwingen der in der App verwendeten Sprache
- - Neue erweiterte Serververbindungseinstellung - Aktivieren Sie die URI-Codierung von Ressourcen-URIs
 Bug-Fix:
- - Einstellungen für die Zahlenauswahl akzeptieren den Wert beim Schließen des Dialogfelds
- - Das PiwigoClientWsExt-Plugin wurde in der Benutzermeldung korrekt benannt
- - Einige Übersetzungen korrigiert
+ - Das Abbrechen eines Datei-Uploads und das Verlassen der Upload-Seite vor dem gemeldeten Abbruch führt zum Absturz
+ - Bezahlte App: Das Aktualisieren der Tags-Liste für eine Ressource, bei der mindestens ein zuvor ausgewähltes Tag nicht mehr vorhanden ist, führt zum Absturz (Benutzer warnen und entfernen)
+ - Bezahlte App: Die App kann abstürzen, wenn das Zielalbum für den automatischen Upload-Auftrag ausgewählt wird
+ - Bezahlte App: Wenn Sie das Stammverzeichnis als Zielalbum für den automatischen Upload-Auftrag auswählen, wird der erste Albumname als ausgewähltes Album angezeigt (falsch).
+ - Bezahlte App: Hinweis: Ich bin mir nicht sicher, ob es sinnvoll ist, das Stammverzeichnis der Galerie als Upload-Ziel auszuwählen, aber unter bestimmten Umständen ist dies zulässig.
 </de-DE>
 
 <fr-FR>
-Changements:
- - Nouvelle préférence de galerie pour permettre de forcer la langue utilisée dans l'application
- - Nouvelle préférence de connexion au serveur avancée - Activer le codage URI des URI des ressources
 Correction d'un bug:
- - les préférences du sélecteur de nombres acceptent la valeur à la fermeture de la boîte de dialogue
- - Plugin PiwigoClientWsExt correctement nommé dans le message utilisateur
- - Correction de quelques traductions
+ - L'annulation d'un téléchargement de fichier et la sortie de la page de téléchargement avant l'annulation signalée provoquent un crash
+ - application payante: la mise à jour de la liste des balises pour une ressource où au moins une balise précédemment sélectionnée n'existe plus provoque un crash (maintenant avertir l'utilisateur et les supprimer)
+ - application payante: l'application peut se bloquer lors de la sélection de l'album de destination pour le travail de téléchargement automatique
+ - application payante: la sélection de l'album racine comme album de destination pour le travail de téléchargement automatique affiche le premier nom de l'album comme album sélectionné (incorrectement)
+ - application payante: Remarque: je ne suis pas certain que la sélection de la racine de la galerie en tant que destination de téléchargement soit toujours judicieuse, mais dans le cas où cela l'est dans certaines circonstances, cela est autorisé.
 </fr-FR>
 
 <es-ES>
-Cambios:
- - Nueva preferencia de galería para permitir el uso de lenguaje forzado dentro de la aplicación
- - Nueva preferencia de conexión avanzada del servidor - Habilite la codificación URI de los URI de recursos
 Arreglo del fallo:
- - las preferencias del selector de número aceptan el valor al cerrar el diálogo
- - El complemento PiwigoClientWsExt está correctamente nombrado en el mensaje del usuario
- - Corregidas algunas traducciones
+ - Cancelar la carga de un archivo y abandonar la página de carga antes de que se informe de la cancelación causa un bloqueo
+ - aplicación paga: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente seleccionada ya no existe provoca un bloqueo (ahora advierte al usuario y elimínelas)
+ - aplicación paga: la aplicación puede bloquearse al seleccionar el álbum de destino para el trabajo de carga automática
+ - aplicación paga: al seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática, se muestra el primer nombre del álbum como álbum seleccionado (incorrectamente)
+ - aplicación de pago: Nota: no estoy claro que seleccionar la raíz de la galería como destino de carga sea siempre sensato, pero en caso de que lo sea, en algunas circunstancias, está permitido.
 </es-ES>
 
 <zh-CN>
-变化：
- -新的图片库首选项，允许在应用程序内使用强制语言
- -新的高级服务器连接首选项-启用资源URI的URI编码
 错误修正：
- -数字选择器首选项在对话框关闭时接受值
- -在用户消息中正确命名的PiwigoClientWsExt插件
- -更正了一些翻译
+ -在取消报告之前取消文件上传并离开上传页面会导致崩溃
+ -付费应用：更新至少以前不再存在的一个标签的资源的标签列表会导致崩溃（现在警告用户并删除它们）
+ -付费应用：选择目标相册进行自动上传时，应用可能崩溃
+ -付费应用程序：选择根相册作为自动上传作业的目标相册会显示第一个相册名称作为所选相册（不正确）
+ -付费应用程序：注意：我不清楚选择画廊根作为上传目的地是否明智，但是在某些情况下允许这样做。
 </zh-CN>
 
 <ru-RU>
-Изменения:
- - Новая настройка галереи, позволяющая принудительно использовать язык, используемый в приложении.
- - Новое расширенное предпочтение подключения к серверу - Включить кодировку URI URI ресурса.
 Исправлена ошибка:
- - параметры выбора номера принимают значение при закрытии диалога
- - Плагин PiwigoClientWsExt правильно назван в сообщении пользователя
- - Исправлено несколько переводов
+ - Отмена загрузки файла и выход из страницы загрузки до отмены, о которой сообщается, приводит к сбою
+ - платное приложение: обновление списка тегов для ресурса, где хотя бы один ранее выбранный тег больше не существует, вызывает сбой (теперь предупреждает пользователя и удаляет его)
+ - платное приложение: может произойти сбой приложения при выборе целевого альбома для автоматической загрузки задания
+ - платное приложение: при выборе корневого альбома в качестве целевого альбома для задания автоматической загрузки отображается имя первого альбома как выбранного альбома (неправильно)
+ - платное приложение: Примечание. Я не уверен, что выбор корня галереи в качестве места назначения для загрузки всегда целесообразен, но в некоторых случаях это допускается.
 </ru-RU>

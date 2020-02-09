@@ -3,6 +3,7 @@ package delit.libs.ui.view.preference;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 
@@ -12,6 +13,8 @@ import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
+import com.crashlytics.android.Crashlytics;
+
 import delit.libs.ui.util.DisplayUtils;
 
 public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
@@ -20,6 +23,7 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
     private static final String STATE_MAX_VALUE = "NumberPickerPreference.max";
     private static final String STATE_WRAP_VALUES = "NumberPickerPreference.wrap";
     private static final String STATE_VALUE = "NumberPickerPreference.currentValue";
+    private static final String TAG = "NumPickPrefDF";
     private NumberPicker mPicker;
     private int minValue;
     private int maxValue;
@@ -78,16 +82,26 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
 
     @Override
     protected View onCreateDialogView(Context context) {
-        NumberPickerPreference pref = getPreference();
-
         mPicker = new NumberPicker(getContext());
-        mPicker.setMinValue(minValue);
-        mPicker.setMaxValue(maxValue);
-        mPicker.setWrapSelectorWheel(wrapSelectionWheel);
-        mPicker.setValue(selectedValue);
         return mPicker;
     }
 
+    /**
+     * fill created view with data
+     *
+     * @param view
+     */
+    @Override
+    protected void onBindDialogView(View view) {
+        Crashlytics.log(Log.DEBUG, TAG, "Binding data for preference : " + getPreference().getKey());
+        super.onBindDialogView(view);
+        view.requestFocus();
+        NumberPicker picker = (NumberPicker) view;
+        picker.setMinValue(minValue);
+        picker.setMaxValue(maxValue);
+        picker.setWrapSelectorWheel(wrapSelectionWheel);
+        picker.setValue(selectedValue);
+    }
 
     public static DialogFragment newInstance(String key) {
         final NumberPickerPreferenceDialogFragmentCompat fragment =

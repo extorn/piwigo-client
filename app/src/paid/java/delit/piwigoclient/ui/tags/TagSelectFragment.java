@@ -31,6 +31,7 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -129,7 +130,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         if(isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
             return null;
         }
 
@@ -379,15 +380,22 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         TagRecyclerViewAdapter listAdapter = getListAdapter();
+        // in fact given the tags list isn't pages, non loaded means that it doesn't exist any longer on the server.
         HashSet<Long> tagsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
         if(tagsNeededToBeLoaded.size() > 0) {
-            FirebaseAnalytics.getInstance(requireContext()).logEvent("non_existent_tags", null);
+            Bundle b = new Bundle();
+            b.putLongArray("tagIds", CollectionUtils.asLongArray(tagsNeededToBeLoaded));
+            FirebaseAnalytics.getInstance(requireContext()).logEvent("non_existent_tags", b);
         }
+        for (Long tagId : tagsNeededToBeLoaded) {
+            listAdapter.deselectItem(tagId, true);
+        }
+        getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.warning_missing_tags_links_removed_from_resource, tagsNeededToBeLoaded.size()));
         HashSet<Tag> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new TagSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if(isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

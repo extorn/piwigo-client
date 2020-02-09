@@ -508,4 +508,5 @@
     <string name="compressing_progress_bar_message">压缩方式</string>
     <string name="preference_app_desired_language_summary">首选翻译</string>
     <string name="preference_app_desired_language_title">语言</string>
+    <string name="warning_missing_tags_links_removed_from_resource">并非所有链接到该项目的标签都仍然存在于数据库中。 指向 %1$d 的链接已删除</string>
 </resources>

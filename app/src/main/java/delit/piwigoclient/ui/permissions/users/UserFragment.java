@@ -442,14 +442,14 @@ public class UserFragment extends MyFragment<UserFragment> {
 
                 @Override
                 public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return false;
                 }
             };
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_user_details, new UserGetInfoResponseHandler(user.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -777,7 +777,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -816,7 +816,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -825,7 +825,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return;
                 }
             }

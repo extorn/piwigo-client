@@ -56,8 +56,8 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     @Override
     public HashSet<Long> getItemsSelectedButNotLoaded() {
         HashSet<Long> loadedSelectedItemIds = new HashSet<>(getSelectedItemIds());
-        for (T group : itemStore.getItems()) {
-            loadedSelectedItemIds.remove(group.getId());
+        for (T item : itemStore.getItems()) {
+            loadedSelectedItemIds.remove(item.getId());
         }
         return loadedSelectedItemIds;
     }
@@ -111,5 +111,6 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     public int getItemPosition(T item) {
         return itemStore.getItemIdx(item);
     }
+
 
 }

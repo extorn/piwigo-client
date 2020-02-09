@@ -504,4 +504,5 @@
     <string name="compressing_progress_bar_message">Apresamiento</string>
     <string name="preference_app_desired_language_summary">Traducción preferida</string>
     <string name="preference_app_desired_language_title">Idioma</string>
+    <string name="warning_missing_tags_links_removed_from_resource">No todas las etiquetas vinculadas a este elemento todavía existen en la base de datos. Se han eliminado los enlaces a %1$d</string>
 </resources>

@@ -320,7 +320,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
         if(event.item.getId() == this.getModel().getId() && isVisible() && showingOutsideSlideshow) {
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 

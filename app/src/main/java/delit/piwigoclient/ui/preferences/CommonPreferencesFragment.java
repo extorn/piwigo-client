@@ -113,7 +113,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         super.onViewCreated(view, savedInstanceState);
         if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -125,7 +125,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
