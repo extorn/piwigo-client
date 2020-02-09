@@ -271,7 +271,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 reloadTagModel();
             } else {
                 // immediately leave this screen.
-                requireFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         }
 

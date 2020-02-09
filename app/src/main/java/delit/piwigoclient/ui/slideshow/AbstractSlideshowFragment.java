@@ -126,10 +126,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             if (resourceContainer == null) {
                 // attempt to get back to a working fragment.
                 try {
-                    requireFragmentManager().popBackStackImmediate();
+                    getParentFragmentManager().popBackStackImmediate();
                 } catch (RuntimeException e) {
                     Crashlytics.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
-                    requireFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
+                    getParentFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
                 }
             }
             super.onCreate(savedInstanceState);
@@ -208,7 +208,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             viewPager.setCurrentItem(pagerItemsIdx);
         } catch (IllegalArgumentException e) {
             Crashlytics.log(Log.WARN, TAG, "returning to album - slideshow empty");
-            requireFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
 
         return view;
@@ -236,7 +236,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 reloadSlideshowModel();
             } else {
                 // immediately leave this screen.
-                requireFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         }
     }
@@ -322,7 +322,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 adapter.deleteGalleryItem(fullGalleryIdx);
                 if (adapter.getCount() == 0) {
                     // slideshow is now empty close this page.
-                    requireFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                 }
             }
         }
@@ -388,14 +388,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
             if (response.getAlbums().isEmpty()) {
                 // will occur if the album no longer exists.
-                fragment.requireFragmentManager().popBackStack();
+                fragment.getParentFragmentManager().popBackStack();
                 return false;
             }
             CategoryItem currentAlbum = response.getAlbums().get(0);
             if (currentAlbum.getId() != fragment.resourceContainer.getId()) {
                 //Something wierd is going on - this should never happen
                 Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing slideshow - reloaded album had different id to that expected!");
-                fragment.requireFragmentManager().popBackStack();
+                fragment.getParentFragmentManager().popBackStack();
                 return false;
             }
             fragment.setContainerDetails(new PiwigoAlbum(currentAlbum));
@@ -406,7 +406,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         @Override
         public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
-            fragment.requireFragmentManager().popBackStack();
+            fragment.getParentFragmentManager().popBackStack();
             return false;
         }
     }

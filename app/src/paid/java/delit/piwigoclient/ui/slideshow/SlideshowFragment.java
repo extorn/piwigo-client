@@ -79,7 +79,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
                 if(!updated) {
                     //Something wierd is going on - this should never happen
                     Crashlytics.log(Log.ERROR, getTag(), "Closing tag slideshow - tag was not available after refreshing session");
-                    requireFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return false;
                 }
                 loadMoreGalleryResources();
@@ -88,7 +88,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
 
             @Override
             public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                requireFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
                 return false;
             }
         };
