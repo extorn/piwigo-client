@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -267,7 +268,10 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPrefe
                 DisplayUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        getActivity().recreate();
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.recreate();
+                        }
                     }
                 }, 2000);
                 return true;
