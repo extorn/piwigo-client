@@ -165,8 +165,15 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
                 } else {
                     albumPath = "??? / " + albumName;
                     if (pieces.length == 4) {
-                        parentage = CollectionUtils.longsFromCsvList(pieces[2]);
-                        albumPath = unescapeSemiColons(pieces[3]);
+                        if (!"null".equals(pieces[2])) { // ignore this - this is only needed for preferences already corrupted.
+                            try {
+                                parentage = CollectionUtils.longsFromCsvList(pieces[2]);
+                                albumPath = unescapeSemiColons(pieces[3]);
+                            } catch (NumberFormatException e) {
+                                // ignore this - this is only needed for preferences already corrupted.
+                            }
+                        }
+
                     }
                 }
                 return new ServerAlbumDetails(albumId, albumName, parentage, albumPath);
