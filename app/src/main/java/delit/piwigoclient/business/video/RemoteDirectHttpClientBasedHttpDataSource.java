@@ -440,7 +440,8 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         CustomResponseHandler responseHandler = new CustomResponseHandler();
 
         boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
-        String uri = UriUtils.sanityCheckFixAndReportUri(dataSpec.uri.toString(), sessionDetails.getServerUrl(), forceHttps, activeConnectionPreferences);
+        boolean testForExposingProxiedServer = activeConnectionPreferences.isWarnInternalUriExposed(sharedPrefs, context);
+        String uri = UriUtils.sanityCheckFixAndReportUri(dataSpec.uri.toString(), sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
         if (performUriPathSegmentEncoding) {
             uri = UriUtils.encodeUriSegments(Uri.parse(uri));
         }

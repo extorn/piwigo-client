@@ -810,7 +810,15 @@ public abstract class UIHelper<T> {
         if (event.isHandled()) {
             return;
         }
-        showOrQueueDialogMessage(R.string.alert_warning, getContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority()));
+        String msg = getContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority());
+        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new QuestionResultAdapter<UIHelper<T>>(this) {
+            @Override
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if (Boolean.FALSE.equals(positiveAnswer)) {
+                    ConnectionPreferences.getActiveProfile().setWarnInternalUriExposed(getUiHelper().getPrefs(), getUiHelper().getContext(), false);
+                }
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

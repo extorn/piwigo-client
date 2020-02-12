@@ -451,4 +451,6 @@
 
     <!--TODO end implement this concept! -->
 
+    <string name="preference_server_connection_warn_internal_uri_exposed_key" translatable="false">preference_server_connection_warn_internal_uri_exposed</string>
+
 </resources>

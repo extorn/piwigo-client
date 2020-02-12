@@ -1016,4 +1016,5 @@ SOFTWARE.
     <string name="uploading_progress_bar_message">Uploading</string>
     <string name="compressing_progress_bar_message">Compressing</string>
     <string name="warning_missing_tags_links_removed_from_resource">Not all Tags linked to this item still exist in the database. The links to %1$d have been removed</string>
+    <string name="button_stop_warning_me">Don\'t tell me again</string>
 </resources>

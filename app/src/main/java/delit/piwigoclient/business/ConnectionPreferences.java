@@ -248,6 +248,12 @@ public class ConnectionPreferences {
             editor.commit();
         }
 
+        public void setWarnInternalUriExposed(SharedPreferences prefs, Context context, boolean newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeBooleanPref(editor, context.getString(R.string.preference_server_connection_warn_internal_uri_exposed_key), newValue);
+            editor.apply();
+        }
+
         public int getMaxHttpRedirects(SharedPreferences prefs, Context context) {
             int defaultMaxRedirects = context.getResources().getInteger(R.integer.preference_server_connection_max_redirects_default);
             return prefs.getInt(getKey(context, R.string.preference_server_connection_max_redirects_key), defaultMaxRedirects);
@@ -278,6 +284,10 @@ public class ConnectionPreferences {
             return prefs.getBoolean(getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), defaultIgnoreCacheDirectives);
         }
 
+        public boolean isWarnInternalUriExposed(SharedPreferences prefs, Context context) {
+            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_warn_internal_uri_exposed_key), true);
+        }
+
         public void copyFrom(SharedPreferences prefs, Context context, ProfilePreferences fromPrefs) {
 
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
@@ -303,6 +313,7 @@ public class ConnectionPreferences {
             writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_offline_mode_key), fromPrefs.isOfflineMode(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), fromPrefs.isPerformUriPathSegmentEncoding(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_warn_internal_uri_exposed_key), fromPrefs.isWarnInternalUriExposed(prefs, context));
 
             // received server certs list
             writeStringSetPref(editor, getKey(context, R.string.preference_pre_user_notified_certificates_key), fromPrefs.getUserPreNotifiedCerts(prefs, context));
@@ -372,6 +383,8 @@ public class ConnectionPreferences {
             SharedPreferences overallSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
             return isValid(overallSharedPreferences, context);
         }
+
+
     }
 
 }

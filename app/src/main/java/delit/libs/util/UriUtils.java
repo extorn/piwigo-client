@@ -11,7 +11,7 @@ import delit.piwigoclient.ui.events.BadRequestExposesInternalServerEvent;
 
 public class UriUtils {
 
-    public static String sanityCheckFixAndReportUri(String uri, String knownCorrectServerUri, boolean forceHttps, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public static String sanityCheckFixAndReportUri(String uri, String knownCorrectServerUri, boolean forceHttps, boolean testForExposingProxiedServer, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         String resourceUrl = uri;
 
         Uri resourceUri = Uri.parse(resourceUrl).normalizeScheme();
@@ -25,12 +25,14 @@ public class UriUtils {
         }
         String piwigoServerAuthority = piwigoServerUri.getAuthority();
 
-        if (piwigoServerAuthority != null && !piwigoServerAuthority.equalsIgnoreCase(resourceUri.getAuthority())) {
-            if (builder == null) {
-                builder = resourceUri.buildUpon();
+        if (testForExposingProxiedServer) {
+            if (piwigoServerAuthority != null && !piwigoServerAuthority.equalsIgnoreCase(resourceUri.getAuthority())) {
+                if (builder == null) {
+                    builder = resourceUri.buildUpon();
+                }
+                builder = builder.authority(piwigoServerUri.getAuthority());
+                serverCorrected = true;
             }
-            builder = builder.authority(piwigoServerUri.getAuthority());
-            serverCorrected = true;
         }
         Uri newUri = null;
         if (builder != null) {

@@ -189,7 +189,8 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         }
 
         boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
-        String checkedUriStr = UriUtils.sanityCheckFixAndReportUri(uri.toString(), sessionDetails.getServerUrl(), forceHttps, activeConnectionPreferences);
+        boolean testForExposingProxiedServer = activeConnectionPreferences.isWarnInternalUriExposed(sharedPrefs, context);
+        String checkedUriStr = UriUtils.sanityCheckFixAndReportUri(uri.toString(), sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
         if (performUriPathSegmentEncoding) {
             checkedUriStr = UriUtils.encodeUriSegments(Uri.parse(checkedUriStr));
         }

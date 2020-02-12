@@ -3,6 +3,7 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -12,6 +13,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.CustomNetworkRequestHandler;
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.NetworkPolicy;
@@ -21,6 +23,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -57,7 +60,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     @Override
     public Downloader.Response load(Uri uri, int networkPolicy) throws IOException {
 
-        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriStringEncodingPathSegments(uri));
+        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriStringEncodingPathSegments(context, uri));
         handler.setCallDetails(context, connectionPrefs, false);
         Looper currentLooper = Looper.myLooper();
         if (currentLooper == null || currentLooper.getThread() != Looper.getMainLooper().getThread()) {
@@ -150,27 +153,47 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         }
     }
 
-    protected String getUriStringEncodingPathSegments(Uri uri) {
+    protected String getUriStringEncodingPathSegments(Context c, Uri uri) {
 
         List<String> pathSegments = uri.getPathSegments();
         Uri.Builder builder = uri.buildUpon().encodedPath(null);
-        Set<String> queryParamIds = uri.getQueryParameterNames();
+        Set<String> queryParamIds = new HashSet<>(uri.getQueryParameterNames());
+        queryParamIds.remove(EXIF_WANTED_URI_PARAM);
 
         boolean pathSegmentsPossiblyAlreadyEncoded = false;
         for (int i = 0; i < pathSegments.size(); i++) {
             builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
         }
+
         if (queryParamIds.contains(EXIF_WANTED_URI_PARAM)) {
             builder.clearQuery();
+            boolean piwigoFragmentAdded = false;
+            boolean paramAdded = false;
             for (String param : queryParamIds) {
                 if (!EXIF_WANTED_URI_PARAM.equalsIgnoreCase(param)) {
                     List<String> paramVals = uri.getQueryParameters(param);
-                    for (String paramVal : paramVals) {
-                        builder.appendQueryParameter(param, paramVal);
+                    if (paramVals.size() > 0) {
+                        for (String paramVal : paramVals) {
+                            builder.appendQueryParameter(param, paramVal);
+                            paramAdded = true;
+                        }
+                    } else if (!piwigoFragmentAdded) {
+                        if (paramAdded) {
+                            Bundle b = new Bundle();
+                            b.putString("uri", uri.toString());
+                            FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
+                            Crashlytics.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
+                        }
+                        builder.encodedQuery(param);
+                        piwigoFragmentAdded = true;
                     }
                 }
             }
+
         }
+
+
+
         return builder.build().toString();
     }
 
