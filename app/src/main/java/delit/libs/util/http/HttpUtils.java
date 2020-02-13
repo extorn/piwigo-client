@@ -2,6 +2,10 @@ package delit.libs.util.http;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+import com.drew.lang.StringUtil;
 
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertificateException;
@@ -18,6 +22,8 @@ import delit.piwigoclient.R;
  */
 
 public class HttpUtils {
+    private static final String TAG = "HttpUtils";
+
     public static String[] getHttpErrorMessage(Context c, int statusCode, Throwable error) {
         String[] retVal = new String[2];
         retVal[1] = ""; // default to no extra detail.
@@ -40,14 +46,13 @@ public class HttpUtils {
                         CertPathValidatorException.Reason r = certPathException.getReason();
                         if (r == CertPathValidatorException.BasicReason.EXPIRED) {
                             X509Certificate cert = X509Utils.findFirstExpiredCert(certPathException.getCertPath().getCertificates());
-                            String certName = cert.getSubjectX500Principal().getName();
-                            errorDetail = "Certificate : " + certName + "\n\n";
+                            errorDetail = getCertificateName(cert);
+
                             // test expiry date
                         } else if (r == CertPathValidatorException.BasicReason.NOT_YET_VALID) {
                             // test expiry date
                             X509Certificate cert = X509Utils.findFirstCertNotYetValid(certPathException.getCertPath().getCertificates());
-                            String certName = cert.getSubjectX500Principal().getName();
-                            errorDetail = "Certificate : " + certName + "\n\n";
+                            errorDetail = getCertificateName(cert);
                         }
                     }
                     if(cause != null) {
@@ -85,8 +90,11 @@ public class HttpUtils {
                     }
                 }
             } else {
-                errorMessage = c.getString(R.string.connection_error_msg_pattern);
-                errorDetail = c.getString(R.string.http_error_msg_pattern, errorMessage);
+                errorMessage =  c.getString(R.string.connection_error_msg_pattern);
+
+                if(error != null && error.getMessage() != null) {
+                    errorDetail = c.getString(R.string.http_error_msg_pattern, error.getMessage());
+                }
             }
         } else if (statusCode < 0) {
             if (error != null && error.getCause() != null && error.getCause().getMessage() != null) {
@@ -110,6 +118,18 @@ public class HttpUtils {
         retVal[0] = errorMessage;
         retVal[1] = errorDetail;
         return retVal;
+    }
+
+    private static String getCertificateName(X509Certificate cert) {
+        String errorDetail;
+        if (cert != null) {
+            String certName = cert.getSubjectX500Principal().getName();
+            errorDetail = "Certificate : " + certName + "\n\n";
+        } else {
+            errorDetail = "Certificate : ???" + "\n\n";
+            Crashlytics.log(Log.ERROR, TAG, "Expired cert not found in chain");
+        }
+        return errorDetail;
     }
 
     public static Header getContentTypeHeader(Header[] headers) {
