@@ -262,6 +262,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.53</item>
+        <item>"Bugfix:
+                - Currently viewed album content now correctly sorted after reversing sort order
+                - TODO Bug where some connection settings changes (such as use basic authentication) wouldn't be fully used until next app restart</item>
         <item>1.4.0.52</item>
         <item>"Bugfix:
             - Cancelling a file upload and leaving upload page before cancellation reported causes crash

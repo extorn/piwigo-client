@@ -147,8 +147,9 @@
 
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Afficher la vignette de l\'album zoomé</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Les vignettes d\'album sont recadrées au centre</string>
-    
 
+    <string name="preference_gallery_show_file_size_showing_title">Afficher la taille du serveur des photos vues</string>
+    <string name="preference_gallery_show_file_size_showing_summary">Afficher la taille de chaque photo affichée</string>
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrait : Colonnes d\'albums à afficher</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>

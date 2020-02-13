@@ -158,6 +158,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return b;
     }
 
+    protected void saveExtraArgsToBundle(@NonNull Bundle b) {
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -170,6 +173,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         outState.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
         outState.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
         outState.putBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM, isPrimarySlideshowItem);
+        saveExtraArgsToBundle(outState);
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("AbstractSlideshowItemFragment", outState);
         }
@@ -300,6 +304,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+        loadExtraArgsFromBundle(b);
+    }
+
+    protected void loadExtraArgsFromBundle(@NonNull Bundle b) {
     }
 
     private void restoreSavedInstanceState(Bundle b) {

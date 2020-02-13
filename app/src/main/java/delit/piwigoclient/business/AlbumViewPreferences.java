@@ -52,6 +52,11 @@ public class AlbumViewPreferences {
         return Math.max(1, defaultColumns);
     }
 
+
+    public static boolean isShowFileSizeShowingMessage(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_show_file_size_showing_key), context.getResources().getBoolean(R.bool.preference_gallery_show_file_size_showing_default));
+    }
+
     public static boolean isShowAlbumThumbnailsZoomed(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), context.getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
     }
