@@ -7,16 +7,18 @@
     tools:context=".ui.UploadActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        app:layout_behavior="delit.piwigoclient.ui.CustomAppBarLayoutBehaviour">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
-        <delit.piwigoclient.ui.common.ProgressIndicator
+        <delit.libs.ui.view.ProgressIndicator
             android:background="@color/primary_dark"
             android:id="@+id/progressIndicator"
             android:layout_width="match_parent"

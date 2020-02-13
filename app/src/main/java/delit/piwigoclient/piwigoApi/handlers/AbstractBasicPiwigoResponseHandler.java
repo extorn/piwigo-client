@@ -25,6 +25,8 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.message.BasicHeaderElement;
+import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -64,6 +66,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private static long connectionResetOccurredWindowStart = 0;
     private static long connectionResetCount = 0;
     private double lastProgressReportAtPercent;
+    private boolean forceLogin;
+    private boolean runInBackground;
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -138,25 +142,51 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     public final void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
         this.isSuccess = true;
         try {
-            onSuccess(statusCode, headers, responseBody, triedLoggingInAgain);
+            onSuccess(statusCode, headers, responseBody, triedLoggingInAgain, isResponseCached(headers));
         } catch(RuntimeException e) {
             Crashlytics.logException(e);
             throw e;
         }
     }
 
-    protected Header[] buildOfflineAccessHeaders() {
-        if(getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext())) {
-            Header[] headers = new Header[2];
-            headers[0] = new BasicHeader(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
-            headers[1] = new BasicHeader(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
-            return headers;
-        } else {
-            return new Header[0];
-        }
+    protected Header[] buildCustomCacheControlHeaders(boolean forceResponseRevalidation, boolean onlyUseCache) {
+        boolean offlineModeSilentErrors = getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext());
+
+        Header[] headers = new Header[1];
+
+        BasicHeaderElement[] headerElems = getCacheControlHeaderElements(offlineModeSilentErrors, onlyUseCache, forceResponseRevalidation);
+        String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
+        headers[0] = new BasicHeader(HeaderConstants.CACHE_CONTROL, value);
+
+        return headers;
     }
 
-    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    private BasicHeaderElement[] getCacheControlHeaderElements(boolean offlineSilentErrorsMode, boolean onlyUseCache, boolean forceResponseRevalidation) {
+        int headerElementCount = 0;
+        headerElementCount += offlineSilentErrorsMode ? 2 : 0;
+        headerElementCount += onlyUseCache ? 2 : 0;
+        headerElementCount += forceResponseRevalidation ? 1 : 0;
+
+        BasicHeaderElement[] headerElems = new BasicHeaderElement[headerElementCount];
+        int elem = 0;
+
+        if (offlineSilentErrorsMode) {
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
+        }
+        if (onlyUseCache) {
+            headerElems[elem++] = new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString());
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE);
+        }
+
+        if (forceResponseRevalidation) {
+            headerElems[elem++] = new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_NO_CACHE, null);
+        }
+
+        return headerElems;
+    }
+
+    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
     }
 
     protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
@@ -240,8 +270,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 tryingAgain = true;
                 rerunCall();
             } else if (allowSessionRefreshAttempt
-                    && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || error.getMessage().equalsIgnoreCase("Access denied")))) {
-
+                    && (statusCode == HttpStatus.SC_FORBIDDEN && !triedLoggingInAgain && (error == null || "Invalid security token".equalsIgnoreCase(error.getMessage())))
+                    || (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || "Access denied".equalsIgnoreCase(error.getMessage())))) {
                 // ensure we ignore this error (if it errors again, we'll capture that one)
                 tryingAgain = acquireNewSessionAndRetryCallIfAcquired();
             }
@@ -261,8 +291,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     this.error = error;
                 }
             } else {
-                // just run the original call again (some action has been taken such that it may succeed this time)
-                rerunCall();
+                if (!rerunningCall) { // don't run it more than once!
+                    // just run the original call again (some action has been taken such that it may succeed this time)
+                    rerunCall();
+                }
             }
         }
     }
@@ -374,10 +406,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     protected void rerunCall() {
         rerunningCall = true;
-        runCall();
+        runCall(true);
     }
 
-    public final void runCall() {
+    public final void runCall(boolean forceResponseRevalidation) {
         CachingAsyncHttpClient client = null;
         try {
             preRunCall();
@@ -388,18 +420,30 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else {
                 client = getHttpClientFactory().getAsyncHttpClient(connectionPrefs, context);
             }
-            if (client == null) {
+           if (client == null) {
                 // unable to build a client from configuration properties.
                 sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_server_configuration_invalid)));
             } else {
-                requestHandle = runCall(client, this);
+                if(forceLogin) {
+                    forceLogin = false;
+                    getNewLogin();
+                }
+               requestHandle = runCall(client, this, forceResponseRevalidation || forceLogin);
             }
         } catch (RuntimeException e) {
             Crashlytics.logException(e);
             if (client == null) {
-                sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
+                String errorMsg = getContext().getString(R.string.error_building_http_engine);
+                if (BuildConfig.DEBUG) {
+                    Log.e(getTag(), errorMsg, e);
+                }
+                sendFailureMessage(-1, null, null, new IllegalStateException(errorMsg, e));
             } else {
-                sendFailureMessage(-1, null, null, new RuntimeException(getContext().getString(R.string.error_unexpected_error_calling_server), e));
+                String errorMsg = getContext().getString(R.string.error_unexpected_error_calling_server);
+                if (BuildConfig.DEBUG) {
+                    Log.e(getTag(), errorMsg, e);
+                }
+                sendFailureMessage(-1, null, null, new RuntimeException(errorMsg, e));
             }
         } finally {
             if (requestHandle == null) {
@@ -414,7 +458,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     protected void preRunCall() {
     }
 
-    public abstract RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler);
+    public abstract RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation);
 
     public HttpClientFactory getHttpClientFactory() {
         if(httpClientFactory == null) {
@@ -429,6 +473,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         int newLoginStatus = PiwigoSessionDetails.NOT_LOGGED_IN;
         boolean exit = false;
         LoginResponseHandler handler = new LoginResponseHandler();
+        boolean failureReported = false;
+        int loopcount = 0;
         do {
             handler.invokeAndWait(context, getConnectionPrefs());
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
@@ -452,15 +498,26 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 }
             } else {
-                reportNestedFailure(handler);
+                if(!failureReported) {
+                    failureReported = true;
+                    reportNestedFailure(handler);
+                }
             }
             if (newLoginStatus == loginStatus) {
                 // no progression - fail call.
                 exit = true;
+                if(!failureReported) {
+                    failureReported = true;
+                    reportNestedFailure(handler);
+                }
                 onGetNewSessionAndOrUserDetailsFailed();
             }
             loginStatus = newLoginStatus;
-        } while (!exit);
+            loopcount++;
+        } while (!exit && loopcount < 15); // loop count should never be hit but is a sanity check to stop hanging
+        if (loopcount == 15) {
+            Crashlytics.log(Log.ERROR, "Handler", "Insane looping while trying to get new login!");
+        }
 
         return handler.isSuccess();
     }
@@ -469,8 +526,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         boolean isCached = false;
         if(headers != null) {
             for (Header h : headers) {
-                if (HeaderConstants.VIA.equals(h.getName())) {
-                    isCached = h.getValue().contains("(cache)");
+                if (HeaderConstants.WARNING.equals(h.getName())) {
+                    isCached = h.getValue().contains("111 localhost \"Revalidation failed\""); // set internally when hostname not found is returned when trying to revalidate a cache entry.
                     break;
                 }
             }
@@ -508,7 +565,12 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     }
 
     public String getPiwigoWsApiUri() {
-        return getPiwigoServerUrl() + "/ws.php?format=json";
+        String url = getPiwigoServerUrl();
+        if (!url.endsWith("/")) {
+            url += '/';
+        }
+        url += "ws.php?format=json";
+        return url;
     }
 
     public boolean isRunning() {
@@ -536,5 +598,21 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
      */
     public void beforeCall() {
         this.triedLoggingInAgain = false;
+    }
+
+    public void forceLogin() {
+        forceLogin = true;
+    }
+
+    public boolean isTriedLoggingInAgain() {
+        return triedLoggingInAgain;
+    }
+
+    public boolean runInBackground() {
+        return runInBackground;
+    }
+
+    public void setRunInBackground(boolean runInBackground) {
+        this.runInBackground = runInBackground;
     }
 }

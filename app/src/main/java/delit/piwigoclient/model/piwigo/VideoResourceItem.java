@@ -2,6 +2,9 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Date;
 
@@ -10,10 +13,11 @@ import java.util.Date;
  */
 public class VideoResourceItem extends ResourceItem {
 
-    private static final long serialVersionUID = 1917026684526700745L;
+    private static final String TAG = "VidResItem";
+    private static final long serialVersionUID = -2479502149387115863L;
 
-    public VideoResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
+    public VideoResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String baseResourceUrl) {
+        super(id, name, description, dateCreated, lastAltered, baseResourceUrl);
     }
 
     public VideoResourceItem(Parcel in) {
@@ -31,7 +35,12 @@ public class VideoResourceItem extends ResourceItem {
     public static final Parcelable.Creator<VideoResourceItem> CREATOR
             = new Parcelable.Creator<VideoResourceItem>() {
         public VideoResourceItem createFromParcel(Parcel in) {
-            return new VideoResourceItem(in);
+            try {
+                return new VideoResourceItem(in);
+            } catch(RuntimeException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to create vid resource item from parcel: " + in.toString());
+                throw e;
+            }
         }
 
         public VideoResourceItem[] newArray(int size) {

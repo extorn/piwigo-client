@@ -1,7 +1,9 @@
 package delit.piwigoclient.business.video;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,9 +34,14 @@ import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.message.BasicHeaderElement;
+import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
+import delit.libs.util.UriUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 
@@ -70,6 +77,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private final TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener;
     private final Context context;
     private final boolean logEnabled = false;
+    private final SharedPreferences sharedPrefs;
     private CachingAsyncHttpClient client;
     private DownloadListener downloadListener;
     private DataSpec dataSpec;
@@ -84,6 +92,8 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private boolean enableRedirects;
     private long lastSentNotification;
     private long downloadedBytesSinceLastReport;
+    private ConnectionPreferences.ProfilePreferences activeConnectionPreferences;
+    private boolean performUriPathSegmentEncoding;
 
 
     /**
@@ -152,6 +162,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         this.connectTimeoutMillis = connectTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
         this.context = context;
+        this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         startClient();
     }
 
@@ -161,7 +172,8 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
     private void startClient() {
         if (client == null) {
-            client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null), context);
+            activeConnectionPreferences = ConnectionPreferences.getPreferences(null, sharedPrefs, context);
+            client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(activeConnectionPreferences, context);
         }
     }
 
@@ -195,6 +207,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     public void clearRequestProperty(String name) {
         Assertions.checkNotNull(name);
         requestProperties.remove(name);
+    }
+
+    public void setPerformUriPathSegmentEncoding(boolean performUriPathSegmentEncoding) {
+        this.performUriPathSegmentEncoding = performUriPathSegmentEncoding;
     }
 
     @Override
@@ -410,10 +426,26 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         if (!allowGzip) {
             headers.add(new BasicHeader("Accept-Encoding", "identity"));
         }
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(activeConnectionPreferences);
+        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+        if (onlyUseCache) {
+            BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString()),
+                    new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE)};
+            String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
+            headers.add(new BasicHeader(HeaderConstants.CACHE_CONTROL, value));
+        }
+
         client.setEnableRedirects(enableRedirects, maxRedirects);
         CustomResponseHandler responseHandler = new CustomResponseHandler();
 
-        client.get(context, dataSpec.uri.toString(), headers.toArray(new Header[headers.size()]), null, responseHandler);
+        boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
+        boolean testForExposingProxiedServer = activeConnectionPreferences.isWarnInternalUriExposed(sharedPrefs, context);
+        String uri = UriUtils.sanityCheckFixAndReportUri(dataSpec.uri.toString(), sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
+        if (performUriPathSegmentEncoding) {
+            uri = UriUtils.encodeUriSegments(Uri.parse(uri));
+        }
+        client.get(context, uri, headers.toArray(new Header[0]), null, responseHandler);
     }
 
     /**

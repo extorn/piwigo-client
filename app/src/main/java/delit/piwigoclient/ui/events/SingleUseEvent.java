@@ -1,5 +1,7 @@
 package delit.piwigoclient.ui.events;
 
+import java.util.Date;
+
 /**
  * Created by gareth on 18/10/17.
  */
@@ -7,6 +9,15 @@ package delit.piwigoclient.ui.events;
 public class SingleUseEvent {
 
     private boolean handled;
+    private Date eventRaisedAt;
+
+    public SingleUseEvent() {
+        eventRaisedAt = new Date();
+    }
+
+    public Date getEventRaisedAt() {
+        return eventRaisedAt;
+    }
 
     public synchronized boolean isHandled() {
         if (!handled) {

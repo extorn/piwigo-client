@@ -1,28 +1,30 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.os.Parcelable;
-import androidx.appcompat.widget.AppCompatImageView;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.crashlytics.android.Crashlytics;
 
+import delit.libs.ui.view.SquareLinearLayout;
+import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.Identifiable;
-import delit.piwigoclient.ui.common.SquareLinearLayout;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 
 import static android.view.View.GONE;
 import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences.SCALING_QUALITY_VLOW;
 
-public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> {
+public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, P extends AlbumItemViewHolder<S, Q, P, M>, M extends ResourceContainer<? extends S, GalleryItem>> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> implements PicassoLoader.PictureItemImageLoaderListener {
     protected final int viewType;
     public AppCompatImageView mImageView;
     public TextView mNameView;
@@ -30,17 +32,17 @@ public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> ext
     public ImageView mRecentlyAlteredMarkerView;
     protected SquareLinearLayout mImageContainer;
     protected ResizingPicassoLoader imageLoader;
-    protected AlbumItemRecyclerViewAdapter<S> parentAdapter;
+    protected AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter;
     protected View mItemContainer;
 
-    public AlbumItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S> parentAdapter, int viewType) {
+    public AlbumItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter, int viewType) {
         super(view);
         this.parentAdapter = parentAdapter;
         this.viewType = viewType;
 
     }
 
-    public AlbumItemRecyclerViewAdapter<S> getParentAdapter() {
+    public AlbumItemRecyclerViewAdapter<S, Q, P, M> getParentAdapter() {
         return parentAdapter;
     }
 
@@ -69,7 +71,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> ext
     }
 
     @Override
-    public void cacheViewFieldsAndConfigure() {
+    public void cacheViewFieldsAndConfigure(AlbumItemRecyclerViewAdapterPreferences adapterPrefs) {
         mNameView = itemView.findViewById(R.id.resource_name);
         mDescView = itemView.findViewById(R.id.resource_description);
         mImageView = itemView.findViewById(R.id.resource_thumbnail);
@@ -90,13 +92,14 @@ public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> ext
                 mImageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
             }
         });
+        mImageView.setContentDescription("resource thumb");
         mImageView.setOnClickListener(getItemActionListener());
         mImageView.setOnLongClickListener(getItemActionListener());
 
     }
 
     protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(final ImageView target) {
-        imageLoader = new ResizingPicassoLoader(target, 0, 0);
+        imageLoader = new ResizingPicassoLoader(target, this, 0, 0);
         return new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -135,5 +138,20 @@ public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> ext
 
     public void onRecycled() {
         UIHelper.recycleImageViewContent(mImageView);
+    }
+
+    @Override
+    public void onBeforeImageLoad(PicassoLoader loader) {
+        mImageView.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onImageLoaded(PicassoLoader loader, boolean success) {
+        mImageView.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+        mImageView.setBackgroundColor(Color.DKGRAY);
     }
 }

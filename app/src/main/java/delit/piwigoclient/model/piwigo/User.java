@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.Date;
 import java.util.HashSet;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 public class User implements Identifiable, Parcelable {
     private long id = -1;
@@ -24,27 +24,27 @@ public class User implements Identifiable, Parcelable {
 
     public User(Parcel in) {
         id = in.readLong();
-        email = in.readString();
-        username = in.readString();
-        userType = in.readString();
-        highDefinitionEnabled = ParcelUtils.readValue(in,null, boolean.class);
+        email = ParcelUtils.readString(in);
+        username = ParcelUtils.readString(in);
+        userType = ParcelUtils.readString(in);
+        highDefinitionEnabled = ParcelUtils.readBool(in);
         lastVisit = ParcelUtils.readDate(in);
-        groups = ParcelUtils.readLongSet(in, null);
+        groups = ParcelUtils.readLongSet(in);
         privacyLevel = in.readInt();
-        password = in.readString();
+        password = ParcelUtils.readString(in);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
-        dest.writeString(email);
-        dest.writeString(username);
-        dest.writeString(userType);
-        dest.writeValue(highDefinitionEnabled);
+        dest.writeValue(email);
+        dest.writeValue(username);
+        dest.writeValue(userType);
+        ParcelUtils.writeBool(dest, highDefinitionEnabled);
         ParcelUtils.writeDate(dest, lastVisit);
         ParcelUtils.writeLongSet(dest, groups);
         dest.writeInt(privacyLevel);
-        dest.writeString(password);
+        dest.writeValue(password);
     }
 
     public User(long id, String username, String userType, int privacyLevel, String email, boolean highDefinitionEnabled, Date lastVisit) {

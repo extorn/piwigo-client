@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 
 import org.json.JSONException;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class AlbumThumbnailUpdatedResponseHandler extends AbstractPiwigoWsResponseHandler {
 

@@ -4,31 +4,32 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
 
+import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
 import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
-import delit.piwigoclient.util.ProjectUtils;
 
 /**
  * Created by gareth on 07/06/17.
  */
 
-public class EulaFragment extends MyFragment {
+public class EulaFragment extends MyFragment<EulaFragment> {
     public static EulaFragment newInstance() {
         return new EulaFragment();
     }
@@ -111,7 +112,7 @@ public class EulaFragment extends MyFragment {
     }
 
     private void onDontAgreeToEula() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove(getString(R.string.preference_agreed_eula_version_key));
         editor.commit();
@@ -119,7 +120,7 @@ public class EulaFragment extends MyFragment {
     }
 
     private void onAgreeToEula() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(getString(R.string.preference_agreed_eula_version_key), getResources().getInteger(R.integer.eula_version));
         editor.commit();

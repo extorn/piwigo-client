@@ -4,9 +4,8 @@ import com.google.gson.JsonElement;
 
 import org.json.JSONException;
 
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class AlbumDeleteResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -20,18 +19,14 @@ public class AlbumDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("category_id", String.valueOf(galleryId));
         params.put("photo_deletion_mode", "delete_orphans");
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

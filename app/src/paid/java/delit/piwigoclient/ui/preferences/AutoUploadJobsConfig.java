@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.util.CollectionUtils;
 
 public class AutoUploadJobsConfig {
     private SharedPreferences prefs;
@@ -66,6 +67,19 @@ public class AutoUploadJobsConfig {
 
     public boolean hasUploadJobs(Context c) {
         return getCsvListValue(c, R.string.preference_data_upload_automatic_upload_jobs_key).size() > 0;
+    }
+
+    public int countEnabledUploadJobs(Context c) {
+        List<AutoUploadJobConfig> uploadJobs = getAutoUploadJobs(c);
+        int count = 0;
+        if (uploadJobs != null) {
+            for (AutoUploadJobConfig config : uploadJobs) {
+                if (config.isJobValid(c) && config.isJobEnabled(c)) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     public List<AutoUploadJobConfig> getAutoUploadJobs(Context c) {

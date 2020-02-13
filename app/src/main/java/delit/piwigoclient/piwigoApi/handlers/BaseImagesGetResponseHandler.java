@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.os.Bundle;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,29 +18,29 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.StringTokenizer;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetResourcesRspHdlr";
-    private final String multimediaExtensionList;
+    private final Set<String> multimediaExtensionList;
     private final CategoryItem parentAlbum;
     private final String sortOrder;
     private final int pageSize;
     private final int page;
-    private String piwigoMethodToUse;
 
-    public BaseImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
+    public BaseImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
         super("pwg.categories.getImages", TAG);
         this.parentAlbum = parentAlbum;
         this.sortOrder = sortOrder;
@@ -56,7 +58,9 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        params.put("cat_id", String.valueOf(parentAlbum.getId()));
+        if(parentAlbum != null) {
+            params.put("cat_id", String.valueOf(parentAlbum.getId()));
+        }
         params.put("order", sortOrder);
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
@@ -68,61 +72,105 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
         ArrayList<GalleryItem> resources = new ArrayList<>();
 
+
         JsonObject result = rsp.getAsJsonObject();
         JsonArray images;
-        if(result.has("images")) {
+
+        int totalResourceCount = pageSize + 1; // to ensure it tries getting the next page (if there's no paging info something is very odd!)
+        if(result.has("paging")) {
+            JsonObject pagingObj = result.get("paging").getAsJsonObject();
+            int page = pagingObj.get("page").getAsInt();
+            int pageSize = pagingObj.get("per_page").getAsInt();
+            totalResourceCount = pagingObj.get("count").getAsInt();
+        }
+        if(result.has("images") && result.get("images").isJsonArray()) {
             images = result.get("images").getAsJsonArray();
-        } else if(result.has("_content")) {
+        } else if(result.has("_content") && result.get("_content").isJsonArray()) {
             images = result.get("_content").getAsJsonArray();
         } else {
+            if(isCached) {
+                Crashlytics.log(Log.WARN, TAG, "Unable to find images in cached response " + result.toString());
+            } else {
+                Crashlytics.log(Log.WARN, TAG, "Unable to find images in response " + result.toString());
+            }
             images = null;
         }
 
-        BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList);
+        BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList, getPiwigoServerUrl());
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
                 JsonObject image = (JsonObject) images.get(i);
                 ResourceItem item = resourceParser.parseAndProcessResourceData(image);
-
-                item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                if(parentAlbum != null) {
+                    // will be null when retrieving favorites.
+                    item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                }
                 resources.add(item);
 
             }
         }
 
-        PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources, isCached);
+        if (resourceParser.isFixedImageUrisForPrivacyPluginUser()) {
+            Bundle b = new Bundle();
+            PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
+            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_2", b);
+        }
+        if (resourceParser.isFixedImageUrisWithAmpEscaping()) {
+            Bundle b = new Bundle();
+            PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
+            FirebaseAnalytics.getInstance(getContext()).logEvent("AMPERSAND_URI_FIX", b);
+        }
+        if (resourceParser.isFixedPrivacyPluginImageUrisForPrivacyPluginUser()) {
+            Bundle b = new Bundle();
+            PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
+            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_1", b);
+        }
+
+        PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
         storeResponse(r);
     }
 
-    protected BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList) {
-        return new BasicCategoryImageResourceParser(multimediaExtensionList);
+    protected BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
+        return new BasicCategoryImageResourceParser(multimediaExtensionList, basePiwigoUrl);
     }
 
     public static class BasicCategoryImageResourceParser {
 
-        private final Pattern p;
+        private final Pattern multimediaPattern;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
-        private Matcher m;
+        private Matcher multimediaPatternMatcher;
+        private String basePiwigoUrl;
+        private boolean fixedImageUrisForPrivacyPluginUser;
+        private boolean fixedImageUrisWithAmpEscaping;
+        private boolean fixedPrivacyPluginImageUrisForPrivacyPluginUser;
 
-        public BasicCategoryImageResourceParser(String multimediaExtensionList) {
+        public boolean isFixedImageUrisForPrivacyPluginUser() {
+            return fixedImageUrisForPrivacyPluginUser;
+        }
 
-            StringTokenizer st = new StringTokenizer(multimediaExtensionList, ",");
+        public boolean isFixedImageUrisWithAmpEscaping() {
+            return fixedImageUrisWithAmpEscaping;
+        }
+
+        public boolean isFixedPrivacyPluginImageUrisForPrivacyPluginUser() {
+            return fixedPrivacyPluginImageUrisForPrivacyPluginUser;
+        }
+
+        public BasicCategoryImageResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
+            this.basePiwigoUrl = basePiwigoUrl;
             StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
-            String token;
-            while (st.hasMoreTokens()) {
-                token = st.nextToken();
-                if (token.startsWith(".")) {
-                    token = token.substring(1);
-                }
-                multimediaRegexpBuilder.append(token);
-                if (st.hasMoreTokens()) {
+            Iterator<String> extIter = multimediaExtensionList.iterator();
+            while (extIter.hasNext()) {
+                String ext = extIter.next();
+                multimediaRegexpBuilder.append(ext);
+                if (extIter.hasNext()) {
                     multimediaRegexpBuilder.append('|');
                 }
             }
             multimediaRegexpBuilder.append(")$");
-            p = Pattern.compile(multimediaRegexpBuilder.toString());
-            m = null;
+            multimediaPattern = Pattern.compile(multimediaRegexpBuilder.toString(), Pattern.CASE_INSENSITIVE);
+            multimediaPatternMatcher = null;
         }
 
         public ResourceItem parseAndProcessResourceData(JsonObject image) throws JSONException {
@@ -153,10 +201,10 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             ResourceItem item;
 
             if(originalResourceUrl != null) {
-                if (m == null) {
-                    m = p.matcher(originalResourceUrl);
+                if (multimediaPatternMatcher == null) {
+                    multimediaPatternMatcher = multimediaPattern.matcher(originalResourceUrl);
                 } else {
-                    m.reset(originalResourceUrl);
+                    multimediaPatternMatcher.reset(originalResourceUrl);
                 }
             }
 
@@ -206,30 +254,36 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 originalResourceUrlHeight = image.get("height").getAsInt();
             }
 
-            if (originalResourceUrl != null && m.matches()) {
+
+            if (originalResourceUrl != null && multimediaPatternMatcher.matches() && originalResourceUrl.startsWith(basePiwigoUrl)) {
                 //TODO why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
                 String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
+
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
+                    fixedPrivacyPluginImageUrisForPrivacyPluginUser = true;
+                } else {
+
+                    String thumbRelUri = thumbnail.substring(basePiwigoUrl.length());
+                    if (thumbRelUri.startsWith("/" + id + "/_data")) {
+                        boolean missingImageId = mediaFile.startsWith("/upload");
+                        if (missingImageId) {
+                            originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/" + id + "/upload");
+                            fixedImageUrisForPrivacyPluginUser = true;
+                        }
+                    }
                 }
-                item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
-                ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
-                item.addResourceFile(originalImage);
-                item.setFullSizeImage(originalImage);
+                item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
+                item.setThumbnailUrl(thumbnail);
+                item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
 
             } else {
 
-                ResourceItem.ResourceFile originalImage = null;
-                if(originalResourceUrl != null) {
-                    originalImage = new ResourceItem.ResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
-                }
-
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
-                thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
-                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, fixUrl(thumbnail));
+                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
 
                 while (imageSizeKeys.hasNext()) {
                     String imageSizeKey = imageSizeKeys.next();
@@ -252,14 +306,14 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                     }
                     int thisImageHeight = jsonElem.getAsInt();
 
-                    ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, fixUrl(url), thisImageWidth, thisImageHeight);
-                    picItem.addResourceFile(img);
+                    picItem.addResourceFile(imageSizeKey, fixUrl(url), thisImageWidth, thisImageHeight);
 
                 }
-                if(originalImage != null) {
-                    picItem.addResourceFile(originalImage);
-                    picItem.setFullSizeImage(originalImage);
+
+                if (originalResourceUrl != null) {
+                    picItem.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
                 }
+
                 item = picItem;
             }
 
@@ -274,7 +328,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             if(idx > 0 && idx == url.indexOf("&amp;")) {
                 //strip the unwanted extra html escaping
                 fixedUrl = url.replaceAll("&amp;", "&");
-                Crashlytics.log(Log.DEBUG, TAG, "URL Fixed as: " + url);
+                fixedImageUrisWithAmpEscaping = true;
             }
             return fixedUrl;
         }
@@ -284,13 +338,19 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
         private final int page;
         private final int pageSize;
+        private final int totalResourceCount;
         private final ArrayList<GalleryItem> resources;
 
-        public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<GalleryItem> resources, boolean isCached) {
+        public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, int totalResourceCount, ArrayList<GalleryItem> resources, boolean isCached) {
             super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
+            this.totalResourceCount = totalResourceCount;
             this.resources = resources;
+        }
+
+        public int getTotalResourceCount() {
+            return totalResourceCount;
         }
 
         public int getPage() {

@@ -4,12 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.preference.DialogPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceDialogFragmentCompat;
-import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -18,10 +12,18 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.DialogPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
+import androidx.preference.PreferenceManager;
+
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -29,6 +31,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
@@ -36,7 +39,6 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.util.DisplayUtils;
 
 public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     // state persistent values
@@ -142,28 +144,15 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         return fragment;
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionProfile();
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
-            } else if (response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
-                addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
-            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                PiwigoSessionDetails.getInstance(connectionPrefs);
-                // need to try again as this call will have been pointless.
-                if (sessionDetails != null && (sessionDetails.isUseCommunityPlugin() || sessionDetails.isAdminUser())) {
-                    retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
-                } else {
-                    addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
-                }
-            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
-            }
-            super.onAfterHandlePiwigoResponse(response);
+    private long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
+        if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler(), connectionPrefs);
+        } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
+            final boolean recursive = true;
+            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
+        } else {
+            final boolean recursive = true;
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
         }
     }
 
@@ -186,7 +175,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         SharedPreferences prefs = getSharedPreferences();
         ServerAlbumListPreference pref = getPreference();
         String connectionProfile = prefs.getString(pref.getConnectionProfileNamePreferenceKey(), null);
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile);
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile, prefs, getContext());
 
         return connectionPrefs;
     }
@@ -196,24 +185,38 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         if (sessionDetails != null && sessionDetails.isFullyLoggedIn()) {
             return retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
         } else {
-            return addActiveServiceCall(R.string.progress_loading_user_details, new LoginResponseHandler().invokeAsync(getContext(), connectionPrefs));
+            return addActiveServiceCall(R.string.progress_loading_user_details, new LoginResponseHandler(), connectionPrefs);
         }
     }
 
-    private long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
-        if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext(), connectionPrefs));
-        } else if (sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
-            final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext(), connectionPrefs));
-        } else {
-            final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext(), connectionPrefs));
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionProfile();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+            } else if (response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
+                addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                PiwigoSessionDetails.getInstance(connectionPrefs);
+                // need to try again as this call will have been pointless.
+                if (sessionDetails != null && (sessionDetails.isCommunityApiAvailable() || sessionDetails.isAdminUser())) {
+                    retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+                } else {
+                    addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                }
+            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
+            }
+            super.onAfterHandlePiwigoResponse(response);
         }
     }
 
-    private long addActiveServiceCall(int loadingMsgId, long messageId) {
-        uiHelper.addActiveServiceCall(loadingMsgId, messageId);
+    private long addActiveServiceCall(int loadingMsgId, AbstractPiwigoWsResponseHandler handler, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        long messageId = handler.invokeAsync(getContext(), connectionPrefs);
+        uiHelper.addActiveServiceCall(getString(loadingMsgId), messageId, handler.getTag());
         return messageId;
     }
 
@@ -273,9 +276,14 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private class CustomUIHelper extends UIHelper {
-        public CustomUIHelper(Object parent, SharedPreferences prefs, Context context) {
+    private class CustomUIHelper extends UIHelper<DialogFragment> {
+        public CustomUIHelper(DialogFragment parent, SharedPreferences prefs, Context context) {
             super(parent, prefs, context);
+        }
+
+        @Override
+        protected View getParentView() {
+            return getParent().getView();
         }
 
         @Override

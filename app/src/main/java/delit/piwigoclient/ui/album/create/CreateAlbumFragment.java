@@ -2,15 +2,16 @@ package delit.piwigoclient.ui.album.create;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
 
@@ -54,7 +55,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 /**
  * Created by gareth on 23/05/17.
  */
-public class CreateAlbumFragment extends MyFragment {
+public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
 
     private static final String STATE_UPLOAD_TO_GALLERY = "uploadToGallery";
     private static final String STATE_NEW_GALLERY = "newAlbum";
@@ -65,8 +66,8 @@ public class CreateAlbumFragment extends MyFragment {
     private CategoryItemStub parentGallery;
     private TextView galleryNameEditField;
     private TextView galleryDescriptionEditField;
-    private SwitchCompat galleryCommentsAllowedSwitchField;
-    private SwitchCompat galleryIsPrivateSwitchField;
+    private Switch galleryCommentsAllowedSwitchField;
+    private Switch galleryIsPrivateSwitchField;
     private ArrayList<Group> selectedGroups;
     private ArrayList<Username> selectedUsernames;
     private TextView allowedGroupsTextView;
@@ -163,11 +164,6 @@ public class CreateAlbumFragment extends MyFragment {
         } else {
             allowedUsernamesTextView.setText(getString(R.string.none_selected));
         }
-    }
-
-    private void showDialogBox(int titleId, String message) {
-
-        getUiHelper().showOrQueueDialogMessage(titleId, message, R.string.button_close);
     }
 
     @Override
@@ -278,7 +274,7 @@ public class CreateAlbumFragment extends MyFragment {
                     for (Group g : selectedGroups) {
                         selectedGroupIds.add(g.getId());
                     }
-                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
                 }
             }
         });
@@ -302,8 +298,7 @@ public class CreateAlbumFragment extends MyFragment {
         super.onViewCreated(view, savedInstanceState);
         if (!isAllowedToCreateAlbum()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -333,8 +328,7 @@ public class CreateAlbumFragment extends MyFragment {
 
         newAlbum = new PiwigoGalleryDetails(parentGallery, null, galleryName, galleryDescription, userCommentsAllowed, isPrivate);
 
-        createGalleryMessageId = new AlbumCreateResponseHandler(newAlbum).invokeAsync(getContext());
-        addActiveServiceCall(R.string.progress_creating_album, createGalleryMessageId);
+        createGalleryMessageId = addActiveServiceCall(R.string.progress_creating_album, new AlbumCreateResponseHandler(newAlbum));
     }
 
     @Override
@@ -369,12 +363,11 @@ public class CreateAlbumFragment extends MyFragment {
             HashSet<Long> allowedGroups = PiwigoUtils.toSetOfIds(selectedGroups);
 
             // don't need the call to be recursive since it is a leaf node already.
-            setGalleryPermissionsMessageId = new AlbumAddPermissionsResponseHandler(newAlbum, allowedGroups, allowedUsers, false).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
+            setGalleryPermissionsMessageId = addActiveServiceCall(R.string.progress_setting_permissions, new AlbumAddPermissionsResponseHandler(newAlbum, allowedGroups, allowedUsers, false));
+
         } else {
             //TODO why are we doing this unnecessary call?
-            setGalleryPermissionsMessageId = new AlbumSetStatusResponseHandler(newAlbum).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
+            setGalleryPermissionsMessageId = addActiveServiceCall(R.string.progress_setting_permissions, new AlbumSetStatusResponseHandler(newAlbum));
         }
 
     }
@@ -391,7 +384,7 @@ public class CreateAlbumFragment extends MyFragment {
     }
 
     private void informInterestedParties() {
-        showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
+        getUiHelper().showDetailedMsg(R.string.alert_success, getString(R.string.alert_album_created));
         CategoryItem newItem = new CategoryItem(newAlbum.getGalleryId(), newAlbum.getGalleryName(), newAlbum.getGalleryDescription(), newAlbum.isPrivate(), null, 0, 0, 0, null);
         newItem.setParentageChain(newAlbum.getParentageChain());
 
@@ -408,7 +401,7 @@ public class CreateAlbumFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -437,11 +430,11 @@ public class CreateAlbumFragment extends MyFragment {
             if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
                 if (response.getMessageId() == createGalleryMessageId) {
                     // error action failed and server state unchanged.
-                    showDialogBox(R.string.alert_failure, getString(R.string.album_create_failed));
+                    getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_create_failed));
                 } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
 //                    deleteGalleryMessageId = PiwigoAccessService.startActionDeleteAlbum(newAlbum.getGalleryId(), getContext());
 //                    callServer(deleteGalleryMessageId);
-                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+                    getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
                 } else if (response.getMessageId() == deleteGalleryMessageId) {
 //                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
                 }

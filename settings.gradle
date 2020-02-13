@@ -1,2 +1,3 @@
 include ':app'
 include ':google-licencing-library'
+includeBuild '../metadata-extractor'

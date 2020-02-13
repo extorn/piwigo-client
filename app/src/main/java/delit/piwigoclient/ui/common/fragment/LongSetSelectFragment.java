@@ -2,10 +2,6 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,7 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,15 +24,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.Enableable;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.list.SelectableItemsAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.Enableable;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
-import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 
@@ -41,10 +43,11 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 
 public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences> extends MyFragment {
 
+    private static final String ARG_ACTION_ID = "actionId";
+    private static final String ARG_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
-    private static final String STATE_INITIAL_SELECTION = "initialSelection";
-    private static final String STATE_ACTION_ID = "actionId";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
+
     private Y list;
     private X listAdapter;
     private Button saveChangesButton;
@@ -59,11 +62,23 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private Z viewPrefs;
 
     public static Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+
         Bundle args = new Bundle();
+
         prefs.storeToBundle(args);
-        args.putInt(STATE_ACTION_ID, actionId);
-        BundleUtils.putLongHashSet(args, STATE_INITIAL_SELECTION, initialSelection);
+        args.putInt(ARG_ACTION_ID, actionId);
+        BundleUtils.putLongHashSet(args, ARG_INITIAL_SELECTION, initialSelection);
         return args;
+    }
+
+    public void loadArgsFromBundle(Bundle bundle) {
+        if (bundle == null) {
+            return;
+        }
+        viewPrefs = createEmptyPrefs();
+        viewPrefs.loadFromBundle(bundle);
+        actionId = bundle.getInt(ARG_ACTION_ID);
+        initialSelection = BundleUtils.getLongHashSet(bundle, ARG_INITIAL_SELECTION);
     }
 
     public Y getList() {
@@ -97,20 +112,15 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            loadStateFromBundle(args);
-        }
+        loadArgsFromBundle(getArguments());
+
     }
 
     protected abstract Z createEmptyPrefs();
 
     private void loadStateFromBundle(Bundle bundle) {
-        viewPrefs = createEmptyPrefs();
-        viewPrefs.loadFromBundle(bundle);
-        actionId = bundle.getInt(STATE_ACTION_ID);
+
         currentSelection = BundleUtils.getLongHashSet(bundle, STATE_CURRENT_SELECTION);
-        initialSelection = BundleUtils.getLongHashSet(bundle, STATE_INITIAL_SELECTION);
         if (currentSelection == null) {
             currentSelection = initialSelection;
         }
@@ -121,9 +131,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
-        outState.putInt(STATE_ACTION_ID, actionId);
         BundleUtils.putLongHashSet(outState, STATE_CURRENT_SELECTION, getCurrentSelection());
-        BundleUtils.putLongHashSet(outState, STATE_INITIAL_SELECTION, getInitialSelection());
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
 
@@ -272,9 +280,11 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         long[] selectedItemIds = getSelectedItemIds();
 
         // convert the array of long to a set of Long
-        HashSet<Long> selectedIdsSet = new HashSet<>(selectedItemIds.length);
-        for (long selectedId : selectedItemIds) {
-            selectedIdsSet.add(selectedId);
+        HashSet<Long> selectedIdsSet = new HashSet<>(selectedItemIds == null ? 0 : selectedItemIds.length);
+        if (selectedItemIds != null) {
+            for (long selectedId : selectedItemIds) {
+                selectedIdsSet.add(selectedId);
+            }
         }
         // Now just for added security - make certain it has all the initial selection if readonly
         if (viewPrefs.isInitialSelectionLocked() && initialSelection != null) {
@@ -287,7 +297,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected void onCancelChanges() {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -303,6 +313,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     public HashSet<Long> getCurrentSelection() {
         if (listAdapter instanceof SelectableItemsAdapter) {
+            if (BuildConfig.DEBUG) {
+                throw new RuntimeException("Incorrectly using LongSetSelectFragment when should be using LongSelectableSetSelectFragment");
+            }
             currentSelection = ((SelectableItemsAdapter) listAdapter).getSelectedItemIds();
         }
         return currentSelection;

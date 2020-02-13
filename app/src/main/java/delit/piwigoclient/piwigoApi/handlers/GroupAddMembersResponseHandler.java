@@ -9,11 +9,11 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class GroupAddMembersResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 
@@ -32,11 +32,7 @@ public class GroupAddMembersResponseHandler<T extends ResourceItem> extends Abst
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
@@ -45,7 +41,7 @@ public class GroupAddMembersResponseHandler<T extends ResourceItem> extends Abst
         for (Long albumId : newGroupMemberIds) {
             params.add("user_id[]", String.valueOf(albumId));
         }
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

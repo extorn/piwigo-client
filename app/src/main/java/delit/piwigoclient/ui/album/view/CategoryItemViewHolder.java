@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -10,20 +9,20 @@ import android.widget.TextView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 
 import static android.view.View.INVISIBLE;
 
-public class CategoryItemViewHolder<S extends Identifiable&Parcelable> extends AlbumItemViewHolder<S> {
+public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends AlbumItemViewHolder<CategoryItem, Q, CategoryItemViewHolder<Q, M>, M> {
     public TextView mPhotoCountView;
 
-    public CategoryItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S> parentAdapter, int viewType) {
+    public CategoryItemViewHolder(View view, AlbumItemRecyclerViewAdapter<CategoryItem, Q, CategoryItemViewHolder<Q, M>, M> parentAdapter, int viewType) {
         super(view, parentAdapter, viewType);
     }
 
     @Override
-    public void cacheViewFieldsAndConfigure() {
-        super.cacheViewFieldsAndConfigure();
+    public void cacheViewFieldsAndConfigure(AlbumItemRecyclerViewAdapterPreferences adapterPrefs) {
+        super.cacheViewFieldsAndConfigure(adapterPrefs);
         mPhotoCountView = itemView.findViewById(R.id.album_photoCount);
 
         itemView.setOnClickListener(getItemActionListener());
@@ -113,7 +112,7 @@ public class CategoryItemViewHolder<S extends Identifiable&Parcelable> extends A
         }
         if (parentAdapter.getMultiSelectStatusListener() != null) {
             //Now trigger a load of the real data.
-            AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter listener = parentAdapter.getMultiSelectStatusListener();
+            AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter listener = parentAdapter.getMultiSelectStatusListener();
             listener.notifyAlbumThumbnailInfoLoadNeeded(newItem); //see AbstractViewAlbumFragment for implementation
         }
     }

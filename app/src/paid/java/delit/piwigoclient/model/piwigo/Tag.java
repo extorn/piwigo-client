@@ -3,14 +3,15 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 /**
  * Created by gareth on 26/06/17.
  */
-public class Tag implements Identifiable, Parcelable {
+public class Tag implements Identifiable, Parcelable, Serializable, PhotoContainer {
     private long id = -1;
     private String name;
     private int usageCount;
@@ -102,4 +103,10 @@ public class Tag implements Identifiable, Parcelable {
             return new Tag[size];
         }
     };
+
+    @Override
+    public int getPagesOfPhotos(int pageSize) {
+        int pages = ((getUsageCount() / pageSize) + (getUsageCount() % pageSize > 0 ? 0 : -1));
+        return pages < 0 ? 0 : pages;
+    }
 }

@@ -9,10 +9,10 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 

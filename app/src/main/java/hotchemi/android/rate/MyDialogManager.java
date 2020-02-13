@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
@@ -40,7 +41,8 @@ final class MyDialogManager {
                 final Intent intentToAppstore = options.getStoreType() == StoreType.GOOGLEPLAY ?
                         createIntentForGooglePlay(context) : createIntentForAmazonAppstore(context);
                 try {
-                    context.startActivity(intentToAppstore);
+                    Crashlytics.log(Log.DEBUG, "MyDialogMgr", String.format("Trying to start activity for result : %1$s", intentToAppstore.toString()));
+                    context.startActivity(Intent.createChooser(intentToAppstore, ""));
                 } catch (ActivityNotFoundException e) {
                     Crashlytics.logException(e);
                     // should never happen but will on an emulator almost certainly.

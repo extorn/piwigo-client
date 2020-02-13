@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -7,12 +8,12 @@ import org.json.JSONException;
 
 import java.util.HashSet;
 
+import delit.libs.http.RequestParams;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.model.UploadFileChunk;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -27,11 +28,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
@@ -43,8 +40,8 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         params.put("chunks", String.valueOf(fileChunk.getChunkCount()));
         params.put("category", fileChunk.getUploadToAlbumId());
         params.put("file", fileChunk.getChunkData(), null, fileChunk.getMimeType(), true);
-        params.put("name", fileChunk.getFilenameOnServer());
-        params.put("pwg_token", sessionToken);
+        params.put("name", fileChunk.getFilenameOnServer().replace('/', '_'));
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 
@@ -53,6 +50,20 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         super.postCall(success);
         if (success) {
             fileChunk.incrementUploadAttempts();
+        }
+    }
+
+    @Override
+    protected void logJsonSyntaxError(String responseBodyStr) {
+        if(responseBodyStr != null && responseBodyStr.contains("forbidden file type")) {
+            String fileType = fileChunk.getOriginalFile().isDirectory() ? "dir" : "file";
+            String filePath = fileChunk.getOriginalFile().getAbsolutePath();
+            String mimeType = fileChunk.getMimeType();
+            String filesize = IOUtils.toNormalizedText(fileChunk.getOriginalFile().length());
+            Crashlytics.log(String.format("Json Syntax error while trying to upload %4$s %1$s : %2$s (Mime: %3$s)", fileType, filePath, mimeType, filesize));
+            super.logJsonSyntaxError(responseBodyStr + " (file: " + filePath + ")");
+        } else {
+            super.logJsonSyntaxError(responseBodyStr);
         }
     }
 
@@ -66,7 +77,8 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
             String thumbnailUrl = result.get("src").getAsString();
             JsonObject categeoryObj = result.get("category").getAsJsonObject();
             long albumId = categeoryObj.get("id").getAsLong();
-            uploadedResource = new ResourceItem(imageId, imageName, null, null, null, thumbnailUrl);
+            uploadedResource = new ResourceItem(imageId, imageName, null, null, null, null);
+            uploadedResource.setThumbnailUrl(thumbnailUrl);
             HashSet<Long> linkedAlbums = new HashSet<>(1);
             linkedAlbums.add(albumId);
             uploadedResource.setLinkedAlbums(linkedAlbums);

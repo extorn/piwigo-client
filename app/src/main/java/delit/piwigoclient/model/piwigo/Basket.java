@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.util.HashSet;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 /**
  * Created by gareth on 13/09/17.
@@ -59,11 +59,12 @@ public class Basket implements Parcelable {
         return contents.size();
     }
 
-    public void removeItem(ResourceItem item) {
-        contents.remove(item);
+    public boolean removeItem(ResourceItem item) {
+        boolean altered = contents.remove(item);
         if (contents.size() == 0) {
             contentParent = null;
         }
+        return altered;
     }
 
     public HashSet<ResourceItem> getContents() {
@@ -100,4 +101,8 @@ public class Basket implements Parcelable {
             return new Basket[size];
         }
     };
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
 }

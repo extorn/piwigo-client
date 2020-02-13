@@ -10,20 +10,18 @@
     <!-- prefs -->
 
 
-    <string name="preference_data_upload_automatic_upload_enable_summary">Hintergrund-Upload aktivieren</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Aktivieren Sie das Hochladen von Hintergrunddateien</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Automatischer Upload</string>
 
-    <string name="preference_data_upload_automatic_upload_polling_interval_title">Poll-Intervall</string>
-    <string name="preference_data_upload_automatic_upload_polling_interval_summary">Ausführen des Upload-Jobs alle %1$d Minuten</string>
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Nur Auto Upload auf Wireless verwenden</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Verwenden Sie nur das drahtlose automatische Hochladen von Dateien</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Nur über Funk</string>
 
     <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Aufträge</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
 
-    <!-- boolean flag set that if false will stop the job running -->
-
+    <string name="preference_data_upload_automatic_job_view_status_title">Upload-Status anzeigen</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Status der letzten Jobausführung anzeigen (falls verfügbar)</string>
 
     <string name="preference_data_upload_automatic_job_is_valid_title">Auftrag ist gültig</string>
 
@@ -53,7 +51,6 @@
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
 
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,roh</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Dateierweiterungen</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Dateien mit ext %1$s hochladen</string>
 

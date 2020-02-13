@@ -1,25 +1,36 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 import java.util.HashSet;
 
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.IdentifiableItemStore;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link T}
  */
-public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>> extends BaseRecyclerViewAdapter<P, T, S> {
+public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>, R extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends BaseRecyclerViewAdapter<P, T, S, R> {
 
     private final V itemStore;
+    private final Class<? extends ViewModelContainer> modelType;
 
 
-    public IdentifiableListViewAdapter(final V itemStore, MultiSelectStatusListener multiSelectStatusListener, P prefs) {
+    public IdentifiableListViewAdapter(final Class<? extends ViewModelContainer> modelType, final V itemStore, R multiSelectStatusListener, P prefs) {
         super(multiSelectStatusListener, prefs);
         this.itemStore = itemStore;
+        this.modelType = modelType;
+    }
+
+    public Class<? extends ViewModelContainer> getModelType() {
+        return modelType;
     }
 
     @Override
@@ -45,8 +56,8 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     @Override
     public HashSet<Long> getItemsSelectedButNotLoaded() {
         HashSet<Long> loadedSelectedItemIds = new HashSet<>(getSelectedItemIds());
-        for (T group : itemStore.getItems()) {
-            loadedSelectedItemIds.remove(group.getId());
+        for (T item : itemStore.getItems()) {
+            loadedSelectedItemIds.remove(item.getId());
         }
         return loadedSelectedItemIds;
     }
@@ -74,7 +85,16 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
 
     @Override
     public boolean isHolderOutOfSync(S holder, T newItem) {
-        return !(holder.getOldPosition() < 0 && holder.getItem() != null && holder.getItem().getId() == newItem.getId());
+        return isDirtyItemViewHolder(holder, newItem);
+    }
+
+    /**
+     * @param holder
+     * @return true if this holder has never been used before (or is totally clean)
+     */
+    @Override
+    protected boolean isDirtyItemViewHolder(S holder, T newItem) {
+        return holder.getItem() == null || holder.getItem().getId() != newItem.getId();
     }
 
     @Override
@@ -91,5 +111,6 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     public int getItemPosition(T item) {
         return itemStore.getItemIdx(item);
     }
+
 
 }

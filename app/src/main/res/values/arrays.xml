@@ -1,5 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string-array name="preference_data_upload_compress_images_output_format_items" translatable="false">
+        <item>jpeg</item>
+        <item>webp</item>
+        <item>png</item>
+    </string-array>
+
+    <integer-array name="preference_data_upload_compress_videos_quality_values">
+        <item>25</item>
+        <item>50</item>
+        <item>100</item>
+        <item>250</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
+    </integer-array>
+
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>very low (0.025 b/pixels*frame)</item>
+        <item>lower (0.05 b/pixels*frame)</item>
+        <item>low (0.1 b/pixels*frame)</item>
+        <item>medium (0.15 b/pixels*frame)</item>
+        <item>high (0.2 b/pixels*frame)</item>
+        <item>very high (0.25 b/pixels*frame)</item>
+        <item>ultra high (0.3 b/pixels*frame)</item>
+    </string-array>
+
+    <string-array name="preference_data_upload_compress_videos_audio_bitrate_items" translatable="false">
+        <item>0kbps</item>
+        <item><![CDATA[-->]]></item>
+        <item>32kbps</item>
+        <item>64kbps</item>
+        <item>96kbps</item>
+        <item>128kbps</item>
+        <item>196kbps</item>
+    </string-array>
+    <integer-array name="preference_data_upload_compress_videos_audio_bitrate_values">
+        <item>0</item>
+        <item>-1</item>
+        <item>32000</item>
+        <item>64000</item>
+        <item>96000</item>
+        <item>128000</item>
+        <item>196000</item>
+    </integer-array>
+
+    <integer-array name="preference_album_subalbum_sort_order_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
+
+    <string-array name="preference_album_subalbum_sort_order_items">
+        <item>Default</item>
+        <item>Album Name A-Z</item>
+        <item>Last Updated</item>
+    </string-array>
     <string-array name="preference_caching_level_values" translatable="false">
         <item>disabled</item>
         <item>memory</item>
@@ -10,6 +67,22 @@
         <item>Cache to Memory</item>
         <item>Cache to Disk</item>
     </string-array>
+
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+        <item>Default</item>
+        <item>fit to screen size</item>
+        <item>enlarge and crop to fit screen</item>
+        <item>center on screen</item>
+    </string-array>
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_array_values" translatable="false">
+        <item>MATRIX</item>
+        <item>FIT_XY</item>
+        <item>CENTER_CROP</item>
+        <item>CENTER</item>
+    </string-array>
+
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>best-fit</item>
         <item>square</item>
@@ -51,7 +124,7 @@
         <item>xsmall</item>
         <item>small</item>
     </string-array>
-    <string-array name="preference_gallery_sortOrder_entries">
+    <string-array name="preference_gallery_sort_order_entries">
         <item>Resource ID</item>
         <item>Resource Filename</item>
         <item>Resource Name</item>
@@ -61,7 +134,7 @@
         <item>Date available</item>
         <item>random</item>
     </string-array>
-    <string-array name="preference_gallery_sortOrder_entryValues" translatable="false">
+    <string-array name="preference_gallery_sort_order_entryValues" translatable="false">
         <item>id</item>
         <item>file</item>
         <item>name</item>
@@ -146,6 +219,7 @@
     </integer-array>
 
     <string-array name="top_tips" translatable="true">
+        <item>"You can only see files to select for upload that are acceptable to upload on your server. If you wish to upload videos, be sure to alter your server config.inc.php file to include $conf['upload_form_all_types'] = true; rather than false"</item>
         <item>If an upload just won\'t succeed, try using the preference in the app settings upload page to clear any residual failed uploads from the server</item>
         <item>Error always occurs when trying to update tags - \"You are not allowed to delete tags\" - Ensure users can both add and delete tags (server plugin setting)</item>
         <item>Share files from a different app with this app to add them to the upload screen ready to go to your current server</item>
@@ -154,69 +228,129 @@
         <item>Long click on an album image to enable bulk selection of images for an action</item>
         <item>When viewing any image in the slideshow, long click to rotate / change image size shown / allow further zooming</item>
         <item>You can zoom into an image when viewing in a slideshow by drawing two fingers together or apart on the screen</item>
-        <item>If the image / album details drawer action button is not shown (or positioned incorrectly), try adjusting the offset in the preferences.</item>
         <item>When logged in as an administrator, before handing your device to a friend to view your photos, engage the application lock feature to prevent inadvertent changes being made to your gallery</item>
         <item>Once you have viewed an entire video, if local file caching is enabled, it is possible to save that video to your downloads folder</item>
         <item>Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</item>
+        <item>If images are slow to load, check that your server automatically generates the size used by this app when they are uploaded</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
-        <item>"Changes:
-         - Possibly - allow linking the upload process to a compression routine for videos
-         - Possibly - The ability to delete an album, but not its contents (creating orphans)
-         - Possibly - Orphan file management
-         - Possibly: Allow user to zoom out in slideshow (view smaller than fullscreen)
-         - Possibly: Investigate adding support for coloured tag plugin
-         - Possibly: Remember the previously opened photo or album when the user opens the app.
-         - Possibly: Paid App Only : The random photos idea implemented on the piwigo web UI
-         - Possibly: Paid App Only : Support for user comments
-         - Possibly: Paid App Only : Notify user of server updates that are available
-         - Possibly: Paid App Only : Support for editing EXIF and other image metadata formats
-         - Possibly: Paid App Only : Add preference to allow showing/hiding the EXIF etc fields of or not of interest
-         - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
-        <item>1.3.98</item>
-        <item>"Expected Delivery:
-         - End November 2018
-         Changes:
-         - Add some sort of help to assist user in knowing the features
-         - Further rework of the way popup messages and progress indicators are shown - investigate using more Toast or Snackbar messages, minimising use of dialog popup windows
-         - Update the list of top tips"
-        </item>
+        <item>"Bugfix:
+            - fix intermittent but incorrect HTTP 401 errors possibly linked to cached response revalidation
+            Changes:
+         - Possibly:
+            - Removal of all or most adverts in favour of a free trial period followed by a subscription based payment model
+            - Verify the current login status to ensure album and image lists are always correct
+            - Verify support for upload to older servers (e.g. piwigo.com - version 2.8a)
+            - The ability to delete an album, but not its contents (creating orphans)
+            - Orphan file management
+            - Investigate adding support for coloured tag plugin
+            - Improved Animated gif support (large file streaming)
+         - Possibly (Paid App only):
+            - The random photos idea implemented on the piwigo web UI
+            - Support for user comments
+            - Notify user of server updates that are available
+            - Support for editing EXIF and other image metadata formats
+            - Add preference to allow showing/hiding the EXIF etc fields of or not of interest
+            - Screen cast of some kind to allow mirror of device on a larger screen
+         - Anything Else:
+            - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.3.97.2</item>
+        <!--
+        Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
+        Add option to show password field contents in preferences (new preference type?)
+        investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
+        -->
+        <item>1.4.0.52</item>
+        <item>"Bugfix:
+            - Cancelling a file upload and leaving upload page before cancellation reported causes crash
+            - paid app: crash using russian on automatic upload job configuration page
+            - paid app: Updating tags list for a resource where at least one tag previously selected no longer exists causes crash (now warn user and remove them)
+            - paid app: App can crash when selecting destination album for auto upload job
+            - paid app: selecting the root album as destination album for auto upload job displays first album name as selected album (incorrectly)
+            - paid app: Note: I'm not clear that selecting the gallery root as an upload destination is ever sensible, but in case it is in some circumstances, it is allowed."</item>
+        <item>1.4.0.51</item>
         <item>"Changes:
-            - Paid App Only: Added preference to allow ignoring server http cache headers to enable offline browsing of gallery (Please update PiwigoClientWsExt plugin)
-            - Use GET http requests where possible instead of always using POST (to allow caching)"
-        </item>
-        <item>1.3.97.1</item>
+                - New gallery preference to allow forcing language used within the app
+                - New Advanced Server Connection Preference - Enable URI encoding of resource URIs
+               Bugfix:
+                - number picker preferences accept value on dialog close
+                - PiwigoClientWsExt plugin correctly named in user message
+                - Corrected a few translations"</item>
+        <item>1.4.0.50</item>
+        <item>"Changes:
+                - Allow passthrough of audio as compression option
+                - Enabled compression for non 'audio/raw' mime audio streams
+                - Add option to strip the audio track from video
+               Bugfix:
+                - Stop video compression if it is deleted from upload during compression
+                - Stop video being uploaded if it is deleted from upload during compression
+                - tidy the upload progress display for individual files"</item>
+        <item>1.4.0.49</item>
         <item>"Bugfix:
-            - group membership is now displayed correctly for users
-            - field selection on user page now works
-            - error no longer pops up randomly during album browsing
+                - video compression failure
+                - last upload job is re-run (no damage) on running next upload - requiring you to click upload again to get new job to run
+                - slow display of images when scrolling"
+        </item>
+        <item>1.4.0.48</item>
+        <item>"Changes:
+        - New preference in gallery settings to disable navigation button and or status bar auto hide function
+        - Only show which image sizes are being shown once unless it changes"
+        </item>
+        <item>1.4.0.47</item>
+        <item>"Bugfix:
+        - Improvements to app stability"
+        </item>
+        <item>1.4.0.46</item>
+        <item>"Changes:
+            - Added reload contents button to file selection page
+            - removed the (paid) suffix from app name
+            - Show path or indication of it for destination upload album
+            Bugfix:
+            - Slideshow was missing last item in album
+            - Delete item in Slideshow - blank page"
+        </item>
+        <item>1.4.0.45</item>
+        <item>"Changes:
+            - Increased arbitrary app supported max upload file size to 10GB
+            - Updated dependent library versions"
+        </item>
+        <item>1.4.0.44</item>
+        <item>"Bugfix:
+        - Improvements to app stability"
+        </item>
+        <item>1.4.0.43</item>
+        <item>"Bugfix:
+        - Improvements to app stability"
+        </item>
+        <item>1.4.0.42</item>
+        <item>"Bugfix:
+                - Corrections to image load error handling
+                - Correction to fix minor bug in file upload process"</item>
+        <item>1.4.0.41</item>
+        <item>"Bugfix:
+                - Improvements to app stability
+                - edit mode closed after image details updated
             Changes:
-            - updated to latest android libraries
-            - Upload - files shared to app are appended to list now rather than replace it"
+                - (pro only) View upload status details including errors for automatic jobs - on each automatic upload job config page"</item>
+        <item>1.4.0.38</item>
+        <item>"Bugfix:
+                - Slideshow (full screen image view) now works again. My Sincere apologies.
+                - Russian translations for preferences added"
         </item>
-        <item>1.3.97</item>
+
+
+        <item>1.4.0.37</item>
         <item>"Bugfix:
-            - The user password field can now be edited again
-            - Review and bugfix basket actions (bulk cut or copy and paste)
-            Changes:
-            - New album selection screen (for the upload screen only at present)
-            - Little UI refinements"
-        </item>
-        <item>1.3.96.12</item>
-        <item>"Bugfix:
-        - Errors in restoring app data cause crashes"
-        </item>
-        <item>1.3.96.11</item>
-        <item>"Bugfix:
-            - Errors in restoring app data cause crashes
-            - User with no groups not loading properly
-            - inadvertent recursion when error retrieving images"</item>
-        <item>1.3.96.10</item>
-        <item>"Bugfix:
-            - Upload Fixed - Thanks Raphael and Alec"</item>
+                - Connection cleanup now works again
+                - Setting resource rating in Russian Locale now works again"</item>
+        <item>1.4.0.36</item>
+        <item>"Changes:
+                - The download for files now occurs in a rudimentatry queue and is managed at an app level. However, you must still currently keep the app open for then download to continue.
+               Bugfix:
+                - Download of files now works where server does not report file size
+                - Files added to file upload screen are now shown again (were initially invisible)
+                - Other assorted bugs"</item>
     </string-array>
 </resources>

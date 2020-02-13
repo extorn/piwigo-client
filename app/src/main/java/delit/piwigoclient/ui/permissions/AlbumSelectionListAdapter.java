@@ -5,9 +5,9 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.libs.ui.view.list.MultiSourceListAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.common.list.MultiSourceListAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 
 /**
  * Created by gareth on 22/06/17.

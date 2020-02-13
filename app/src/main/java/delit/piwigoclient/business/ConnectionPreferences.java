@@ -2,15 +2,17 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
+import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 
 /**
  * Created by gareth on 22/01/18.
@@ -52,7 +54,12 @@ public class ConnectionPreferences {
         return activeProfile;
     }
 
-    public static ProfilePreferences getPreferences(String profile) {
+    public static ProfilePreferences getPreferences(String profile, SharedPreferences prefs, Context context) {
+        if(profile != null) {
+            if(profile.equals(getActiveConnectionProfile(prefs, context)) || getConnectionProfileList(prefs, context).size() == 1) {
+                ConnectionPreferences.clonePreferences(prefs, context, null, profile);
+            }
+        }
         return new ProfilePreferences(profile);
     }
 
@@ -133,7 +140,7 @@ public class ConnectionPreferences {
         }
 
         public String getAbsoluteProfileKey(SharedPreferences prefs, Context context) {
-            return getProfileId(prefs, context) + ':' + asGuest;
+            return getProfileId(prefs, context) + ':' + (asGuest ? "guest" : getPiwigoUsername(prefs, context));
         }
 
         public boolean isDefaultProfile() {
@@ -241,6 +248,12 @@ public class ConnectionPreferences {
             editor.commit();
         }
 
+        public void setWarnInternalUriExposed(SharedPreferences prefs, Context context, boolean newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeBooleanPref(editor, context.getString(R.string.preference_server_connection_warn_internal_uri_exposed_key), newValue);
+            editor.apply();
+        }
+
         public int getMaxHttpRedirects(SharedPreferences prefs, Context context) {
             int defaultMaxRedirects = context.getResources().getInteger(R.integer.preference_server_connection_max_redirects_default);
             return prefs.getInt(getKey(context, R.string.preference_server_connection_max_redirects_key), defaultMaxRedirects);
@@ -266,6 +279,15 @@ public class ConnectionPreferences {
             return prefs.getBoolean(getKey(context, R.string.preference_server_alter_cache_directives_key), defaultIgnoreCacheDirectives);
         }
 
+        public boolean isPerformUriPathSegmentEncoding(SharedPreferences prefs, Context context) {
+            boolean defaultIgnoreCacheDirectives = context.getResources().getBoolean(R.bool.preference_server_connection_uri_path_segment_encoding_default);
+            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), defaultIgnoreCacheDirectives);
+        }
+
+        public boolean isWarnInternalUriExposed(SharedPreferences prefs, Context context) {
+            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_warn_internal_uri_exposed_key), true);
+        }
+
         public void copyFrom(SharedPreferences prefs, Context context, ProfilePreferences fromPrefs) {
 
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
@@ -278,13 +300,20 @@ public class ConnectionPreferences {
             writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_piwigo_server_password_key), fromPrefs.getPiwigoPassword(prefs, context));
 
             // fine grained http connection configuration bits and bobs
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_allow_redirects_key), fromPrefs.getFollowHttpRedirects(prefs, context));
+            writeIntPref(editor, getKey(context, R.string.preference_server_connection_max_redirects_key), fromPrefs.getMaxHttpRedirects(prefs, context));
+            writeIntPref(editor, getKey(context, R.string.preference_server_connection_retries_key), fromPrefs.getMaxServerConnectRetries(prefs, context));
             writeIntPref(editor, getKey(context, R.string.preference_server_connection_timeout_secs_key), fromPrefs.getServerConnectTimeout(prefs, context));
             writeIntPref(editor, getKey(context, R.string.preference_server_response_timeout_secs_key), fromPrefs.getServerResponseTimeout(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_connection_retries_key), fromPrefs.getMaxServerConnectRetries(prefs, context));
-            writeIntPref(editor, getKey(context, R.string.preference_server_connection_max_redirects_key), fromPrefs.getMaxHttpRedirects(prefs, context));
-            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_allow_redirects_key), fromPrefs.getFollowHttpRedirects(prefs, context));
+
+
             writeStringPref(editor, getKey(context, R.string.preference_server_ssl_certificate_hostname_verification_key), fromPrefs.getCertificateHostnameVerificationLevel(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_force_https_key), fromPrefs.isForceHttps(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_offline_mode_key), fromPrefs.isOfflineMode(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key), fromPrefs.isPerformUriPathSegmentEncoding(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_warn_internal_uri_exposed_key), fromPrefs.isWarnInternalUriExposed(prefs, context));
 
             // received server certs list
             writeStringSetPref(editor, getKey(context, R.string.preference_pre_user_notified_certificates_key), fromPrefs.getUserPreNotifiedCerts(prefs, context));
@@ -341,13 +370,21 @@ public class ConnectionPreferences {
             editor.remove(getKey(context, R.string.preference_server_use_basic_auth_key));
             editor.remove(getKey(context, R.string.preference_server_basic_auth_username_key));
             editor.remove(getKey(context, R.string.preference_server_basic_auth_password_key));
+            editor.remove(getKey(context, R.string.preference_server_connection_uri_path_segment_encoding_key));
             editor.apply();
             editor.commit();
         }
 
         public boolean isValid(SharedPreferences prefs, Context context) {
-            return "".equals(prefix) || getConnectionProfileList(prefs, context).contains(prefix);
+            return ("".equals(prefix) || getConnectionProfileList(prefs, context).contains(prefix)) && getPiwigoServerAddress(prefs, context) != null;
         }
+
+        public boolean isValid(Context context) {
+            SharedPreferences overallSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+            return isValid(overallSharedPreferences, context);
+        }
+
+
     }
 
 }

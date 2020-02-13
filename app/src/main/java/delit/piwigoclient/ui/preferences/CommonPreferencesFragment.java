@@ -18,16 +18,15 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.preference.PreferenceFragmentCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.ads.AdView;
 
@@ -35,11 +34,17 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import delit.libs.ui.view.SlidingTabLayout;
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.libs.ui.view.recycler.SimpleFragmentPagerAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
@@ -48,7 +53,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
  * to display a custom {@link ViewPager} title strip which gives continuous feedback to the user
  * when scrolling.
  */
-public class CommonPreferencesFragment extends MyFragment {
+public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragment> {
 
     static final String LOG_TAG = "PreferencesFragment";
 
@@ -108,8 +113,7 @@ public class CommonPreferencesFragment extends MyFragment {
         super.onViewCreated(view, savedInstanceState);
         if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -121,62 +125,29 @@ public class CommonPreferencesFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
-    protected FragmentStatePagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
-        return new CommonPreferencesPagerAdapter(childFragmentManager);
+    protected List<String> getTabTitles() {
+        ArrayList<String> tabTitles = new ArrayList<>();
+        tabTitles.add(getString(R.string.preference_page_connection));
+        tabTitles.add(getString(R.string.preference_page_gallery));
+        tabTitles.add(getString(R.string.preference_page_upload));
+        tabTitles.add(getString(R.string.preference_page_other));
+        return tabTitles;
     }
 
-    /**
-     * The {@link androidx.viewpager.widget.PagerAdapter} used to display pages in this sample.
-     * The individual pages are simple and just display two lines of value. The important section of
-     * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
-     * {@link SlidingTabLayout}.
-     */
-    protected class CommonPreferencesPagerAdapter extends FragmentStatePagerAdapter {
+    protected List<Class<? extends MyPreferenceFragment>> getTabFragmentClasses() {
+        ArrayList<Class<? extends MyPreferenceFragment>> tabClasses = new ArrayList<>();
+        tabClasses.add(ConnectionPreferenceFragment.class);
+        tabClasses.add(GalleryPreferenceFragment.class);
+        tabClasses.add(UploadPreferenceFragment.class);
+        tabClasses.add(OtherPreferenceFragment.class);
+        return tabClasses;
+    }
 
-        public CommonPreferencesPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.preference_page_connection);
-                case 1:
-                    return getString(R.string.preference_page_gallery);
-                case 2:
-                    return getString(R.string.preference_page_upload);
-                case 3:
-                    return getString(R.string.preference_page_other);
-                default:
-                    throw new RuntimeException("PagerAdapter count doesn't match positions available");
-            }
-        }
-
-        @Override
-        public PreferenceFragmentCompat getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new ConnectionPreferenceFragment();
-                case 1:
-                    return new GalleryPreferenceFragment();
-                case 2:
-                    return new UploadPreferenceFragment();
-                case 3:
-                    return new OtherPreferenceFragment();
-                default:
-                    throw new RuntimeException("PagerAdapter count doesn't match positions available");
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-
+    protected MyFragmentRecyclerPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+        return new SimpleFragmentPagerAdapter(childFragmentManager, getTabTitles(), getTabFragmentClasses());
     }
 }

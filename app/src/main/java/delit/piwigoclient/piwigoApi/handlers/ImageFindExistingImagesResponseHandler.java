@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResponseHandler {
 

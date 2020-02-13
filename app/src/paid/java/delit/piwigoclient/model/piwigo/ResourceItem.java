@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.Date;
 import java.util.HashSet;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 /**
  * Created by gareth on 12/07/17.
@@ -17,21 +17,21 @@ public class ResourceItem extends AbstractBaseResourceItem {
     private HashSet<Tag> tags;
     private Boolean isFavorite;
 
-    public ResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, creationDate, lastAltered, thumbnailUrl);
+    public ResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String baseResourceUrl) {
+        super(id, name, description, creationDate, lastAltered, baseResourceUrl);
     }
 
     public ResourceItem(Parcel in) {
         super(in);
-        tags = ParcelUtils.readHashSet(in, null);
-        isFavorite = ParcelUtils.readValue(in,null, Boolean.class);
+        tags = ParcelUtils.readHashSet(in, Tag.class.getClassLoader());
+        isFavorite = ParcelUtils.readBoolean(in);
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
         ParcelUtils.writeSet(out, tags);
-        out.writeValue(isFavorite);
+        ParcelUtils.writeBoolean(out, isFavorite);
     }
 
 

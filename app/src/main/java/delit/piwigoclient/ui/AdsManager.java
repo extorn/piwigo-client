@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -15,12 +17,23 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.AdMetadataListener;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.lang.ref.WeakReference;
+import java.math.BigInteger;
 import java.net.URI;
 
+import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.ui.events.RewardUpdateEvent;
 
 import static android.view.View.VISIBLE;
 
@@ -40,6 +53,7 @@ public class AdsManager {
     private boolean appLicensed = false;
     private transient SharedPreferences prefs;
     private static int advertLoadFailures = 0;
+    private boolean advertsDisabled;
 
     private AdsManager() {
     }
@@ -62,6 +76,19 @@ public class AdsManager {
         this.appLicensed = appLicensed;
     }
 
+    public void setAdvertsDisabled(boolean advertsDisabled) {
+        this.advertsDisabled = advertsDisabled;
+    }
+
+    public MyRewardedAdControl getRewardedVideoAd(Activity activity, OnRewardEarnedListener onRewardListener) {
+        // Use an activity context to get the rewarded video instance.
+        RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(activity);
+        MyRewardedAdControl listener = new MyRewardedAdControl(activity.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
+        rewardedVideoAd.setRewardedVideoAdListener(listener);
+        listener.loadAdvert();
+        return listener;
+    }
+
     public synchronized void updateShowAdvertsSetting(Context context) {
         String serverAddress = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
         showAds = !BuildConfig.PAID_VERSION;
@@ -75,8 +102,6 @@ public class AdsManager {
                     Crashlytics.log(Log.DEBUG, TAG, "Error parsing URI - adverts enabled");
                     showAds = true;
                 }
-            } else {
-                showAds = true;
             }
         }
 
@@ -84,19 +109,19 @@ public class AdsManager {
             MobileAds.initialize(context, context.getString(R.string.ad_app_id));
             selectFileToUploadAd = new InterstitialAd(context);
             selectFileToUploadAd.setAdUnitId(context.getString(R.string.ad_id_uploads_interstitial));
-            selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
+            selectFileToUploadAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
             selectFileToUploadAd.setAdListener(new MyAdListener(context, selectFileToUploadAd));
 
             albumBrowsingAd = new InterstitialAd(context);
             albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
-            albumBrowsingAd.loadAd(new AdRequest.Builder().build());
+            albumBrowsingAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
             albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
         } else if (showAds) {
             if (!selectFileToUploadAd.isLoading() && !selectFileToUploadAd.isLoaded()) {
-                selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
+                selectFileToUploadAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
             }
             if (!albumBrowsingAd.isLoading() && !albumBrowsingAd.isLoaded()) {
-                albumBrowsingAd.loadAd(new AdRequest.Builder().build());
+                albumBrowsingAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
             }
         }
     }
@@ -110,17 +135,17 @@ public class AdsManager {
     }
 
     public boolean shouldShowAdverts() {
-        return showAds;
+        return showAds && !advertsDisabled;
     }
 
     private synchronized boolean acceptableToShowAdvert(InterstitialAd ad, long minDelayBetweenAds) {
         long currentTime = System.currentTimeMillis();
-        if (showAds && ad != null) {
+        if (showAds && !advertsDisabled && ad != null) {
             if (ad.isLoaded() && currentTime - lastShowedAdvert > minDelayBetweenAds) {
                 lastShowedAdvert = currentTime;
                 return true;
             } else if (!ad.isLoaded() && !ad.isLoading()) {
-                ad.loadAd(new AdRequest.Builder().build());
+                ad.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
             }
         }
         return false;
@@ -167,7 +192,7 @@ public class AdsManager {
         }
 
         private void loadAdvert() {
-            advertView.loadAd(new AdRequest.Builder().build());
+            advertView.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
         }
 
         @Override
@@ -213,6 +238,268 @@ public class AdsManager {
         }
     }
 
+    public static class OnRewardEarnedListener {
+
+
+        private final Context context;
+        private final SharedPreferences sharedPreferences;
+        private final SecurePrefsUtil prefUtil;
+        private final long rewardCountUpdateFrequency;
+
+        public OnRewardEarnedListener(Context context, long rewardCountUpdateFrequency) {
+            this.context = context;
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            prefUtil = SecurePrefsUtil.getInstance(context);
+            this.rewardCountUpdateFrequency = rewardCountUpdateFrequency;
+        }
+
+        public void onRewardEarned(RewardItem rewardItem, long adDisplayTimeMaximum) {
+
+            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), null);
+            BigInteger endsAt = BigInteger.valueOf(System.currentTimeMillis());
+            if (oldVal != null) {
+                endsAt = endsAt.max(new BigInteger(oldVal));
+            }
+            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTimeMaximum * 2); // 30 sec vs time ad watched for
+            rewardTime = Math.min(rewardTime, 300000); // 5 minutes absolute maximum!
+            endsAt = endsAt.add(BigInteger.valueOf(rewardTime));
+
+            long totalRewardTime = endsAt.longValue() - System.currentTimeMillis();
+            Bundle bundle = new Bundle();
+            bundle.putLong("Reward_Time_Added", (rewardTime / 1000));
+            bundle.putLong("User_Reward_Time_Remaining", (totalRewardTime / 1000));
+            bundle.putInt("app_version", BuildConfig.VERSION_CODE);
+            bundle.putString("app_version_name", BuildConfig.VERSION_NAME);
+            FirebaseAnalytics.getInstance(context).logEvent("User_Rewarded", bundle);
+            prefUtil.writeSecurePreference(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), endsAt.toByteArray());
+            AdsManager.RewardCountDownAction action = AdsManager.RewardCountDownAction.getInstance(context, rewardCountUpdateFrequency);
+            action.start();
+        }
+    }
+
+    public static final class MyRewardedAdControl extends AdMetadataListener implements RewardedVideoAdListener {
+
+        private final String advertId;
+        private final RewardedVideoAd rewardedVideoAd;
+        private final OnRewardEarnedListener listener;
+        private int retries;
+        private boolean isLoading;
+        private long adDisplayAt;
+        private Handler h;
+        private long adDisplayedFor;
+
+        public MyRewardedAdControl(String advertId, RewardedVideoAd rewardedVideoAd, OnRewardEarnedListener listener) {
+            this.rewardedVideoAd = rewardedVideoAd;
+            rewardedVideoAd.setAdMetadataListener(this);
+            if (BuildConfig.DEBUG) {
+                this.advertId = "ca-app-pub-3940256099942544/5224354917"; // test ID
+            } else {
+                this.advertId = advertId;
+            }
+            this.listener = listener;
+            h = new Handler(Looper.getMainLooper());
+        }
+
+        @Override
+        public void onAdMetadataChanged() {
+        }
+
+        @Override
+        public void onRewardedVideoAdLoaded() {
+            isLoading = false;
+        }
+
+        @Override
+        public void onRewardedVideoAdOpened() {
+            adDisplayedFor = 0;
+            adDisplayAt = System.currentTimeMillis();
+        }
+
+        @Override
+        public void onRewardedVideoStarted() {
+        }
+
+        @Override
+        public void onRewardedVideoAdClosed() {
+            loadAdvert();
+        }
+
+        public void pause(Context context) {
+            rewardedVideoAd.pause(context);
+        }
+
+        public boolean show() {
+            if (rewardedVideoAd.isLoaded()) {
+                rewardedVideoAd.show();
+                return true;
+            }
+            loadAdvert();
+            return false;
+        }
+
+        public void resume(Context context) {
+            rewardedVideoAd.resume(context);
+        }
+
+        public void destroy(Context context) {
+            rewardedVideoAd.destroy(context);
+        }
+
+        @Override
+        public void onRewarded(RewardItem rewardItem) {
+            adDisplayedFor = System.currentTimeMillis() - adDisplayAt;
+            listener.onRewardEarned(rewardItem, adDisplayedFor);
+
+
+        }
+
+        @Override
+        public void onRewardedVideoAdLeftApplication() {
+
+        }
+
+        @Override
+        public void onRewardedVideoAdFailedToLoad(int loadFailureCount) {
+            isLoading = false;
+            if (loadFailureCount == 3) {
+                retries++;
+            }
+            if (retries < 3) {
+                Crashlytics.log(Log.DEBUG, "RewardVidAd", "advert load failed, retrying");
+                loadAdvert();
+            } else {
+                Crashlytics.log(Log.DEBUG, "RewardVidAd", "Gave up trying to load advert after 3 attempts");
+                advertLoadFailures++;
+                retries = 0;
+            }
+        }
+
+        @Override
+        public void onRewardedVideoCompleted() {
+            loadAdvert();
+        }
+
+        void loadAdvert() {
+            if (!rewardedVideoAd.isLoaded() || !isLoading) {
+                if (Looper.myLooper() != Looper.getMainLooper()) {
+                    h.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // always load adverts on the main thread!
+                            loadAdvert();
+                        }
+                    });
+                    return;
+                }
+
+                isLoading = true;
+                rewardedVideoAd.loadAd(advertId,
+                        new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+            }
+        }
+    }
+
+    public final static class RewardCountDownAction implements Runnable {
+
+        private static RewardCountDownAction instance;
+        private final WeakReference<Context> contextWeakReference;
+        private final String prefKey;
+        private final long callFrequency;
+        private final Handler h;
+        private boolean stopped;
+        private long calledAt;
+
+        public RewardCountDownAction(Context c, long callFrequency) {
+            if (callFrequency < 1000) {
+                throw new IllegalArgumentException("Cannot be called more frequently than 1000ms");
+            }
+            this.contextWeakReference = new WeakReference<>(c);
+            prefKey = c.getString(R.string.preference_advert_free_time_key);
+            this.callFrequency = callFrequency;
+            h = new Handler(Looper.getMainLooper());
+        }
+
+        public static RewardCountDownAction getActiveInstance(Context c) {
+            return instance;
+        }
+
+        public static RewardCountDownAction getInstance(Context c, long callFrequency) {
+            if (instance == null) {
+                instance = new RewardCountDownAction(c, callFrequency);
+            }
+            return instance;
+        }
+
+        public void start() {
+            updatePreference(false, 0);
+            runInMillis(callFrequency);
+        }
+
+        public void runInMillis(long delay) {
+            synchronized (this) {
+                stopped = false;
+                calledAt = System.currentTimeMillis();
+                h.postDelayed(this, delay);
+            }
+        }
+
+        public void stop() {
+            h.removeCallbacks(this);
+            stopped = true;
+            synchronized (this) {
+                updatePreference(stopped);
+            }
+        }
+
+        @Override
+        public void run() {
+            synchronized (this) {
+                if (stopped) {
+                    return;
+                }
+                boolean runAgain = updatePreference(stopped);
+                if (runAgain) {
+                    runInMillis(callFrequency);
+                } else {
+                    stopped = true;
+                }
+            }
+        }
+
+        private boolean updatePreference(boolean stoppedEarly) {
+            long elapsedTime = Math.min(System.currentTimeMillis() - calledAt, callFrequency);
+            return updatePreference(stoppedEarly, elapsedTime);
+        }
+
+        private boolean updatePreference(boolean stoppedEarly, long elapsedTime) {
+            long now = System.currentTimeMillis();
+            Context c = contextWeakReference.get();
+            if (c == null) {
+                // somehow, this context has died without killing this background thread. Kill the thread too.
+                return false;
+            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(c);
+            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(prefs, prefKey, null);
+            boolean showAds = true;
+            long timeRemainingWithoutAds = 0;
+            if (oldVal != null) {
+                BigInteger val = new BigInteger(oldVal);
+                if (val.longValue() > now) {
+                    val = val.subtract(BigInteger.valueOf(elapsedTime));
+                    prefUtil.writeSecurePreference(prefs, prefKey, val.toByteArray());
+                    timeRemainingWithoutAds = val.longValue() - now;
+                    timeRemainingWithoutAds = Math.max(timeRemainingWithoutAds, 0);
+                    showAds = timeRemainingWithoutAds <= 0;
+
+                }
+            }
+            EventBus.getDefault().post(new RewardUpdateEvent(timeRemainingWithoutAds));
+            AdsManager.getInstance().setAdvertsDisabled(!showAds);
+            return !stoppedEarly && !showAds;
+        }
+    }
+
     class MyAdListener extends AdListener {
 
         private final InterstitialAd ad;
@@ -238,7 +525,7 @@ public class AdsManager {
             Runnable myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    ad.loadAd(new AdRequest.Builder().build());
+                    ad.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
                 }
             };
             mainHandler.post(myRunnable);
@@ -246,7 +533,7 @@ public class AdsManager {
         }
 
         private void loadAdvert() {
-            ad.loadAd(new AdRequest.Builder().build());
+            ad.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
         }
 
         @Override

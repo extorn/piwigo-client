@@ -8,8 +8,8 @@ import org.json.JSONException;
 
 import java.util.HashSet;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponseHandler {
 

@@ -4,15 +4,15 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -20,15 +20,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseViewHolder;
+import delit.libs.ui.view.recycler.CustomClickListener;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
-import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 
-public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemRecyclerViewAdapter.CategoryItemViewHolder> {
+public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemRecyclerViewAdapter.CategoryItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
@@ -37,7 +37,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     private CategoryItem activeItem;
     private NavigationListener navigationListener;
 
-    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
+    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener<CategoryItem> multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
         super(multiSelectStatusListener, viewPrefs);
         this.navigationListener = navigationListener;
         overallRoot = root;
@@ -46,7 +46,14 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         if(initialRootId != 0) {
             initiallyActiveItem = overallRoot.findChild(viewPrefs.getInitialRoot().getId());
             // get the parent (as we are using the selected item at the moment).... which is wrong incidentally.
-            initiallyActiveItem = overallRoot.findChild(initiallyActiveItem.getParentId());
+            if(initiallyActiveItem != null) {
+                // this item might be null if the gallery structure has altered and this album doesn't exist any longer.
+                if(initiallyActiveItem.getParentId() != null) {
+                    initiallyActiveItem = overallRoot.findChild(initiallyActiveItem.getParentId());
+                } else {
+                    initiallyActiveItem = overallRoot;
+                }
+            }
         }
         if(initiallyActiveItem == null) {
             initiallyActiveItem = overallRoot;
@@ -70,8 +77,12 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         navigationListener.onCategoryOpened(activeItem, newDisplayRoot);
         activeItem = newDisplayRoot;
 //        getSelectedItemIds().clear();
-        List<CategoryItem> folderContent = activeItem.getChildAlbums();
-        currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList(0);
+        if (activeItem != null) {
+            List<CategoryItem> folderContent = activeItem.getChildAlbums();
+            currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList<CategoryItem>(0);
+        } else {
+            currentDisplayContent = new ArrayList<>(0);
+        }
         notifyDataSetChanged();
     }
 
@@ -176,7 +187,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
     @Override
     public boolean isHolderOutOfSync(CategoryItemViewHolder holder, CategoryItem newItem) {
-        return isDirtyItemViewHolder(holder) || !(getItemPosition(holder.getItem()) == getItemPosition(newItem));
+        return isDirtyItemViewHolder(holder, newItem);
     }
 
     @Override
@@ -194,7 +205,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     }
 
     class CategoryItemCustomClickListener extends CustomClickListener<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder> {
-        public <Q extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder>> CategoryItemCustomClickListener(CategoryItemViewHolder viewHolder, Q parentAdapter) {
+        public <Q extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder, MultiSelectStatusListener<CategoryItem>>> CategoryItemCustomClickListener(CategoryItemViewHolder viewHolder, Q parentAdapter) {
             super(viewHolder, parentAdapter);
         }
 
@@ -216,6 +227,32 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
+    private static class PredrawListener implements ViewTreeObserver.OnPreDrawListener {
+        private final ResizingPicassoLoader iconViewLoader;
+        private final ImageView iconView;
+
+        public PredrawListener(ImageView iconView, ResizingPicassoLoader iconViewLoader) {
+            this.iconView = iconView;
+            this.iconViewLoader = iconViewLoader;
+        }
+
+        @Override
+        public boolean onPreDraw() {
+            try {
+                if (!iconViewLoader.isImageLoaded() && !iconViewLoader.isImageLoading() && !iconViewLoader.isImageUnavailable()) {
+
+                    int imgSize = iconView.getMeasuredWidth();
+                    iconViewLoader.setResizeTo(imgSize, imgSize);
+                    iconViewLoader.load();
+                }
+            } catch (IllegalStateException e) {
+                Crashlytics.logException(e);
+                // image loader not configured yet...
+            }
+            return true;
+        }
+    }
+
     protected class SimpleCategoryItemViewHolder extends CategoryItemViewHolder {
 
         public SimpleCategoryItemViewHolder(View view) {
@@ -227,10 +264,10 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             setItem(newItem);
 //            getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
-            getDetailTxt().setVisibility(View.GONE);
+            getDetailsTitle().setVisibility(View.GONE);
             if(newItem.getChildAlbumCount() > 0) {
-                getDetailTxt().setText(context.getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
-                getDetailTxt().setVisibility(View.VISIBLE);
+                getDetailsTitle().setText(context.getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
+                getDetailsTitle().setVisibility(View.VISIBLE);
             }
 
             if (!allowItemDeletion) {
@@ -242,34 +279,18 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
             if(newItem.getThumbnailUrl() != null) {
                 ImageViewCompat.setImageTintMode(getIconView(), null);
-                getIconViewLoader().setUriToLoad(newItem.getThumbnailUrl());
+                geticonViewLoader().setUriToLoad(newItem.getThumbnailUrl());
             } else {
                 ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_IN);
-                getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
+                geticonViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             }
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure() {
-            super.cacheViewFieldsAndConfigure();
-            getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
-            final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    try {
-                        if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
-
-                            int imgSize = getIconView().getMeasuredWidth();
-                            getIconViewLoader().setResizeTo(imgSize, imgSize);
-                            getIconViewLoader().load();
-                        }
-                    } catch (IllegalStateException e) {
-                        Crashlytics.logException(e);
-                        // image loader not configured yet...
-                    }
-                    return true;
-                }
-            };
+        public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
+            geticonViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
+            final ViewTreeObserver.OnPreDrawListener predrawListener = new PredrawListener(getIconView(), geticonViewLoader());
 
             // default to setting a tint (we'll apply it if needed depending on image shown)
             ColorStateList colorList;
@@ -295,11 +316,9 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    protected abstract class CategoryItemViewHolder extends CustomViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> {
-        private TextView txtTitle;
-        private TextView detailTxt;
-        private View deleteButton;
-        private AppCompatCheckboxTriState checkBox;
+    ;
+    
+    protected abstract class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
 
@@ -307,72 +326,39 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             super(view);
         }
 
-        public TextView getTxtTitle() {
-            return txtTitle;
-        }
-
-        public TextView getDetailTxt() {
-            return detailTxt;
-        }
-
-        public AppCompatCheckboxTriState getCheckBox() {
-            return checkBox;
-        }
-
         public ImageView getIconView() {
             return iconView;
         }
 
-        public ResizingPicassoLoader getIconViewLoader() {
+        public ResizingPicassoLoader geticonViewLoader() {
             return iconViewLoader;
-        }
-
-        public View getDeleteButton() {
-            return deleteButton;
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + txtTitle.getText() + "'";
         }
 
         public abstract void fillValues(Context context, CategoryItem newItem, boolean allowItemDeletion);
 
         @Override
-        public void setChecked(boolean checked) {
-            checkBox.setChecked(checked);
+        public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
+
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
+
+            iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
+            iconView.setContentDescription("cat thumb");
+            iconViewLoader = new ResizingPicassoLoader(getIconView(), this, 0, 0);
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure() {
-
-            checkBox = itemView.findViewById(R.id.list_item_checked);
-            checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
-            checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
-            if (isMultiSelectionAllowed()) {
-                checkBox.setButtonDrawable(R.drawable.checkbox);
-            } else {
-                checkBox.setButtonDrawable(R.drawable.radio_button);
-            }
-
-            txtTitle = itemView.findViewById(R.id.list_item_name);
-
-            detailTxt = itemView.findViewById(R.id.list_item_details);
-
-            iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
-            iconViewLoader = new ResizingPicassoLoader(getIconView(), 0, 0);
-
-            deleteButton = itemView.findViewById(R.id.list_item_delete_button);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItemButtonClick(v);
-                }
-            });
+        public void onBeforeImageLoad(PicassoLoader loader) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
         }
 
-        private void onDeleteItemButtonClick(View v) {
-            getItemActionListener().getParentAdapter().onDeleteItem(this, v);
+        @Override
+        public void onImageLoaded(PicassoLoader loader, boolean success) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+            getIconView().setBackgroundColor(Color.DKGRAY);
         }
     }
 

@@ -3,13 +3,9 @@ package delit.piwigoclient.ui.tags;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +13,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -33,12 +44,8 @@ import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
-import delit.piwigoclient.util.DisplayUtils;
+import delit.piwigoclient.ui.model.PiwigoTagModel;
 
 /**
  * Created by gareth on 26/05/17.
@@ -123,7 +130,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         if(isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
             return null;
         }
 
@@ -131,15 +138,22 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             getViewPrefs().readonly();
         }
 
-        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
+        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(PiwigoTagModel.class, tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
         }, getViewPrefs());
         /*if(!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }*/
 
-        viewAdapter.setInitiallySelectedItems(getInitialSelection());
-        viewAdapter.setSelectedItems(getInitialSelection());
+        // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
+        HashSet<Long> currentSelection = getCurrentSelection();
+
+        // will restore previous selection from state if any
         setListAdapter(viewAdapter);
+
+
+        // select the items to view.
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(currentSelection);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
         getList().setLayoutManager(layoutMan);
@@ -184,7 +198,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void createNewTag(String tagname) {
-        addActiveServiceCall(R.string.progress_creating_tag,new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
+        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname));
     }
 
     private void addNewTag() {
@@ -271,13 +285,18 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String tagName = s.toString();
-                if(dialog.getButton(
-                        AlertDialog.BUTTON_NEUTRAL).isShown()) {
-                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(tagName.length() > 0);
+                try {
+                    String tagName = s.toString();
+                    if (dialog.getButton(
+                            AlertDialog.BUTTON_NEUTRAL).isShown()) {
+                        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(tagName.length() > 0);
+                    }
+                    dialog.getButton(
+                            AlertDialog.BUTTON_POSITIVE).setEnabled(tagName.length() > 0 && !tagsModel.containsTag(tagName));
+                } catch (RuntimeException e) {
+                    Crashlytics.log(Log.ERROR, getTag(), "Error in on tag name change");
+                    Crashlytics.logException(e);
                 }
-                dialog.getButton(
-                        AlertDialog.BUTTON_POSITIVE).setEnabled(tagName.length() > 0 && !tagsModel.containsTag(tagName));
             }
 
             @Override
@@ -288,14 +307,14 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void addMatchingTagsForSelection(String tagName) {
-        addActiveServiceCall(R.string.progress_loading_tags, new PluginUserTagsGetListResponseHandler(tagName).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_loading_tags, new PluginUserTagsGetListResponseHandler(tagName));
     }
 
     private void addNewTagForSelection(String tagName) {
 
         Tag t = new Tag(tagsModel.findAnIdNotYetPresentInTheList(), tagName);
         insertNewTagToList(t);
-        getUiHelper().showShortDetailedToast(R.string.alert_warning, R.string.tag_will_be_created_when_resource_is_saved);
+        getUiHelper().showDetailedShortMsg(R.string.alert_warning, R.string.tag_will_be_created_when_resource_is_saved);
     }
 
     @Override
@@ -326,11 +345,11 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         int basePageToLoad = pageToLoad % 2 == 0 ? pageToLoad : pageToLoad -1;
         try {
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad)) {
-                addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE));
             }
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad + 1)) {
                 if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad+1, Integer.MAX_VALUE).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad + 1, Integer.MAX_VALUE));
                 }
             }
         } finally {
@@ -361,15 +380,22 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         TagRecyclerViewAdapter listAdapter = getListAdapter();
+        // in fact given the tags list isn't pages, non loaded means that it doesn't exist any longer on the server.
         HashSet<Long> tagsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
         if(tagsNeededToBeLoaded.size() > 0) {
-            throw new UnsupportedOperationException("Paging not supported for tags");
+            Bundle b = new Bundle();
+            b.putLongArray("tagIds", CollectionUtils.asLongArray(tagsNeededToBeLoaded));
+            FirebaseAnalytics.getInstance(requireContext()).logEvent("non_existent_tags", b);
         }
+        for (Long tagId : tagsNeededToBeLoaded) {
+            listAdapter.deselectItem(tagId, true);
+        }
+        getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.warning_missing_tags_links_removed_from_resource, tagsNeededToBeLoaded.size()));
         HashSet<Tag> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new TagSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if(isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

@@ -2,16 +2,17 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.ads.AdView;
 
@@ -28,6 +29,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.CustomClickTouchListener;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -50,12 +56,9 @@ import delit.piwigoclient.piwigoApi.handlers.GroupUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
@@ -64,13 +67,12 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
-import delit.piwigoclient.util.SetUtils;
 
 /**
  * Created by gareth on 21/06/17.
  */
 
-public class GroupFragment extends MyFragment {
+public class GroupFragment extends MyFragment<GroupFragment> {
 
     private static final String CURRENT_GROUP_MEMBERS = "currentGroupMembers";
     private static final String CURRENT_GROUP = "currentGroup";
@@ -188,7 +190,7 @@ public class GroupFragment extends MyFragment {
             newAccessibleAlbumIds = BundleUtils.getLongHashSet(savedInstanceState, NEW_ACCESSIBLE_ALBUM_IDS);
             availableGalleries = savedInstanceState.getParcelableArrayList(AVAILABLE_ALBUMS);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
-            SetUtils.setNotNull(memberSaveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_MEMBER_SAVE_ACTION_IDS));
+            CollectionUtils.addToCollectionNullSafe(memberSaveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_MEMBER_SAVE_ACTION_IDS));
 
             permissionsSaveActionIds.clear();
             permissionsSaveActionIds.addAll(BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS));
@@ -284,13 +286,13 @@ public class GroupFragment extends MyFragment {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UIHelper.Action<GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse>() {
+            UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse>() {
 
                 @Override
-                public boolean onSuccess(UIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+                public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
                     HashSet<Group> groups = response.getGroups();
                     if(groups.isEmpty()) {
-                        getFragmentManager().popBackStack();
+                        getParentFragmentManager().popBackStack();
                         return false;
                     }
                     currentGroup = groups.iterator().next();
@@ -301,15 +303,15 @@ public class GroupFragment extends MyFragment {
                 }
 
                 @Override
-                public boolean onFailure(UIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                    getFragmentManager().popBackStack();
+                public boolean onFailure(FragmentUIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                    getParentFragmentManager().popBackStack();
                     return false;
                 }
             };
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_group_details, new GroupsGetListResponseHandler(currentGroup.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -347,12 +349,10 @@ public class GroupFragment extends MyFragment {
         boolean isDefault = isDefaultField.isChecked();
         newGroup = new Group(currentGroup.getId(), name, isDefault);
         if (newGroup.getId() < 0) {
-            long saveActionId = new GroupAddResponseHandler(newGroup).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_adding_group, saveActionId);
+            addActiveServiceCall(R.string.progress_adding_group, new GroupAddResponseHandler(newGroup));
 
         } else {
-            long saveActionId = new GroupUpdateInfoResponseHandler(currentGroup, newGroup).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            addActiveServiceCall(R.string.progress_saving_changes, new GroupUpdateInfoResponseHandler(currentGroup, newGroup));
         }
     }
 
@@ -378,15 +378,15 @@ public class GroupFragment extends MyFragment {
         if (currentGroupMembers == null) {
             ArrayList<Long> groups = new ArrayList<>(1);
             groups.add(group.getId());
-            addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(groups, 0, 100).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(groups, 0, 100));
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         }
 
         if (currentAccessibleAlbumIds == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, new GroupGetPermissionsResponseHandler(group.getId()).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new GroupGetPermissionsResponseHandler(group.getId()));
         }
 
         if (availableGalleries != null) {
@@ -398,19 +398,28 @@ public class GroupFragment extends MyFragment {
 
     private void deleteGroup(final Group group) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), group));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    deleteGroupNow(group);
-                }
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupFragment>> {
+        private final Group group;
+
+        public OnDeleteGroupAction(FragmentUIHelper<GroupFragment> uiHelper, Group group) {
+            super(uiHelper);
+            this.group = group;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                GroupFragment fragment = getUiHelper().getParent();
+                fragment.deleteGroupNow(group);
             }
-        });
+        }
     }
 
     private void deleteGroupNow(Group group) {
-        addActiveServiceCall(R.string.progress_delete_group, new GroupDeleteResponseHandler(group.getId()).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_delete_group, new GroupDeleteResponseHandler(group.getId()));
     }
 
     private void setFieldsEditable(boolean editable) {
@@ -509,14 +518,10 @@ public class GroupFragment extends MyFragment {
         boolean hasRemovedPermissions = oldGroupMembersSet.size() > 0;
 
         if (hasRemovedPermissions) {
-            long saveActionId = new GroupRemoveMembersResponseHandler(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet)).invokeAsync(getContext());
-            memberSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupRemoveMembersResponseHandler(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet))));
         }
         if (hasAddedNewPermissions) {
-            long saveActionId = new GroupAddMembersResponseHandler(currentGroup.getId(), new ArrayList<>(newGroupMembersSet)).invokeAsync(getContext());
-            memberSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupAddMembersResponseHandler(currentGroup.getId(), new ArrayList<>(newGroupMembersSet))));
         }
     }
 
@@ -535,14 +540,11 @@ public class GroupFragment extends MyFragment {
         boolean hasRemovedPermissions = oldPermissionsSet.size() > 0;
 
         if (hasRemovedPermissions) {
-            long saveActionId = new GroupPermissionsRemovedResponseHandler(currentGroup.getId(), new ArrayList<>(oldPermissionsSet)).invokeAsync(getContext());
-            permissionsSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            permissionsSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupPermissionsRemovedResponseHandler(currentGroup.getId(), new ArrayList<>(oldPermissionsSet))));
+
         }
         if (hasAddedNewPermissions) {
-            long saveActionId = new GroupPermissionsAddResponseHandler(currentGroup.getId(), new ArrayList<>(newPermissionsSet)).invokeAsync(getContext());
-            permissionsSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            permissionsSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupPermissionsAddResponseHandler(currentGroup.getId(), new ArrayList<>(newPermissionsSet))));
         }
     }
 
@@ -566,7 +568,7 @@ public class GroupFragment extends MyFragment {
         EventBus.getDefault().post(new GroupDeletedEvent(currentGroup));
         // return to previous screen
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -635,6 +637,7 @@ public class GroupFragment extends MyFragment {
     public void onAlbumPermissionsSelectedEvent(AlbumPermissionsSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             newAccessibleAlbumIds = event.getSelectedAlbumIds();
+            populateAlbumPermissionsList();
         }
     }
 
@@ -656,13 +659,14 @@ public class GroupFragment extends MyFragment {
             availableItemsAdapter.linkToListView(albumAccessRightsField, getLatestAlbumPermissions(), getLatestAlbumPermissions());
         } else {
             adapter.setSelectedItems(getLatestAlbumPermissions());
+            adapter.notifyDataSetChanged();
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -671,7 +675,7 @@ public class GroupFragment extends MyFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return;
                 }
             }

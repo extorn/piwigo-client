@@ -11,11 +11,11 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import delit.libs.http.RequestParams;
+import delit.libs.util.ArrayUtils;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
-import delit.piwigoclient.util.ArrayUtils;
 
 public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -30,7 +30,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
 
     public GroupsGetListResponseHandler(Collection<Long> groupIds) {
         super("pwg.groups.getList", TAG);
-        this.groupIds = new HashSet();
+        this.groupIds = new HashSet<>();
         this.groupIds.addAll(groupIds);
         page = PagedList.MISSING_ITEMS_PAGE;
         pageSize = this.groupIds.size();

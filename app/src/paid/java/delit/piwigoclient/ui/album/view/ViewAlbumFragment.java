@@ -4,10 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -33,11 +36,9 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
-import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-import delit.piwigoclient.util.SetUtils;
 
 public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
@@ -72,7 +73,8 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void setupBulkActionsControls(Basket basket) {
         super.setupBulkActionsControls(basket);
 
-        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
+
+        if (showBulkTagAction(basket)) {
             bulkActionButtonTag.show();
         } else {
             bulkActionButtonTag.hide();
@@ -88,12 +90,20 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         });
     }
 
+    private boolean showBulkTagAction(Basket basket) {
+        return isTagSelectionAllowed() && viewAdapter != null && viewAdapter.isItemSelectionAllowed() && getSelectedItems().size() > 0 && basket.isEmpty();
+    }
+
     protected void updateBasketDisplay(Basket basket) {
         super.updateBasketDisplay(basket);
-        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
-            bulkActionButtonTag.show();
-        } else {
-            bulkActionButtonTag.hide();
+
+        if (!isAlbumDataLoading()) {
+            // if gallery is dirty, then the album contents are being reloaded and won't yet be available. This method is recalled once it is
+            if (showBulkTagAction(basket)) {
+                bulkActionButtonTag.show();
+            } else {
+                bulkActionButtonTag.hide();
+            }
         }
     }
 
@@ -140,10 +150,13 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         if(tagMembershipChangesAction != null) {
         tagMembershipChangesAction.recordTagListUpdated(response.getPiwigoResource());
             // changes made.
-            for (Tag t : tagMembershipChangesAction.getTagsToAdd()) {
-                int newTagMembers = Collections.frequency(tagMembershipChangesAction.getTagUpdateEvents(), t);
-                if(newTagMembers > 0) {
-                    EventBus.getDefault().post(new TagContentAlteredEvent(t.getId(), newTagMembers));
+            HashSet<Tag> tagsToAdd = tagMembershipChangesAction.getTagsToAdd();
+            if (tagsToAdd != null) {
+                for (Tag t : tagsToAdd) {
+                    int newTagMembers = Collections.frequency(tagMembershipChangesAction.getTagUpdateEvents(), t);
+                    if (newTagMembers > 0) {
+                        EventBus.getDefault().post(new TagContentAlteredEvent(t.getId(), newTagMembers));
+                    }
                 }
             }
             tagMembershipChangesAction.getTagUpdateEvents().clear();
@@ -167,9 +180,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
                 for(ResourceItem item : tagMembershipChangesAction.resourcesReadyToProcess) {
                     if (allowTagEdit) {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item));
                     } else {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true));
                     }
                 }
             }
@@ -178,9 +191,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private void getResourceInfo(HashSet<ResourceItem> selectedResources) {
-        String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+        Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
         for(ResourceItem item : selectedResources) {
-            addActiveServiceCall(R.string.progress_resource_details_updating,new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageGetInfoResponseHandler(item, multimediaExtensionList));
         }
     }
 
@@ -212,7 +225,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             selectedResources = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             resourcesReadyToProcess = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             tagMembershipChangesPending = ParcelUtils.readMap(in, getClass().getClassLoader());
-            tagUpdateEvents = ParcelUtils.readValue(in,getClass().getClassLoader(), ArrayList.class);
+            tagUpdateEvents = ParcelUtils.readArrayList(in, Tag.class.getClassLoader());
             tagsToAdd = ParcelUtils.readHashSet(in, getClass().getClassLoader());
         }
 
@@ -233,7 +246,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             ParcelUtils.writeSet(dest, selectedResources);
             ParcelUtils.writeSet(dest,resourcesReadyToProcess);
             ParcelUtils.writeMap(dest, tagMembershipChangesPending);
-            dest.writeValue(tagUpdateEvents);
+            ParcelUtils.writeArrayList(dest, tagUpdateEvents);
             ParcelUtils.writeSet(dest, tagsToAdd);
         }
 
@@ -253,15 +266,17 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 throw new IllegalStateException("Unable to process. Not all resources are ready yet");
             }
             HashMap<ResourceItem, ArrayList<Tag>> tagMembershipChangesPending = new HashMap<>(resourcesReadyToProcess.size());
-            for (ResourceItem r : resourcesReadyToProcess) {
-                ArrayList<Tag> tagsAdded = new ArrayList<>(tagsToAdd.size());
-                for (Tag t : tagsToAdd) {
-                    if (r.getTags().add(t)) {
-                        tagsAdded.add(t);
+            if(tagsToAdd != null) {
+                for (ResourceItem r : resourcesReadyToProcess) {
+                    ArrayList<Tag> tagsAdded = new ArrayList<>(tagsToAdd.size());
+                    for (Tag t : tagsToAdd) {
+                        if (r.getTags().add(t)) {
+                            tagsAdded.add(t);
+                        }
                     }
-                }
-                if (tagsAdded.size() > 0) {
-                    tagMembershipChangesPending.put(r, tagsAdded);
+                    if (tagsAdded.size() > 0) {
+                        tagMembershipChangesPending.put(r, tagsAdded);
+                    }
                 }
             }
             // remove all those resources for which no change will be made.

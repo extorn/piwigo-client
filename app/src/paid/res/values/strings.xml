@@ -14,4 +14,17 @@
     <string name="alert_auto_upload_service_job_finished_failure">Finished running background upload job to server %1$s. No files could be uploaded. Job will be retried later.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Background upload service checking for tasks</string>
     <string name="progress_creating_tag">Creating Tag</string>
+    <string name="error_updating_favorites_pattern">Error removing resource (%1$s) from favorites: %2$s</string>
+    <string name="favorites_content_load_failed_text">Failed to load resources marked as a favorite</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently, or just unlink them from this favorite?</string>
+    <string name="progress_remove_favorite_resources">Removing resources from favorites list</string>
+    <string name="favorites_empty_text">You currently have no favorites</string>
+    <string name="favorites_heading">Your Favorites</string>
+    <string name="button_unfavorite">Not Favorite</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload Compression</string>
+    <string name="ignoring_job_local_folder_not_found">Local folder no longer exists. Ignoring job</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">No file extensions selected for upload. Ignoring job</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Connection profile set to offline mode. Ignoring job</string>
 </resources>

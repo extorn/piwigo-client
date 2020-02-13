@@ -28,6 +28,8 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
             onCleanupPostUploadFailed(context, (BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse) response);
         } else if (response instanceof BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse) {
             onFileUploadProgressUpdate(context, (BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse) response);
+        } else if (response instanceof BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse) {
+            onFileCompressionProgressUpdate(context, (BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse) response);
         } else if (response instanceof BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse) {
             onLocalFileError(context, (BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse) response);
         } else if (response instanceof BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse) {
@@ -40,10 +42,14 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
             onRequestedFileUploadCancelComplete(context, ((BasePiwigoUploadService.FileUploadCancelledResponse) response).getCancelledFile());
         } else if (response instanceof BasePiwigoUploadService.PiwigoStartUploadFileResponse) {
             // ignore for now.
+        } else if (response instanceof BasePiwigoUploadService.MessageForUserResponse) {
+            onMessageForUser(context, (BasePiwigoUploadService.MessageForUserResponse) response);
         } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
             onErrorResponse((PiwigoResponseBufferingHandler.ErrorResponse) response);
         }
     }
+
+    protected abstract void onMessageForUser(Context context, BasePiwigoUploadService.MessageForUserResponse response);
 
     protected abstract void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response);
 
@@ -59,10 +65,16 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
 
     protected abstract void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response);
 
+    protected abstract void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response);
+
     protected abstract void onPrepareUploadFailed(Context context, BasePiwigoUploadService.PiwigoPrepareUploadFailedResponse response);
 
     protected abstract void onCleanupPostUploadFailed(Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response);
 
     protected abstract void onUploadComplete(Context context, UploadJob job);
 
+    @Override
+    public boolean canHandlePiwigoResponseNow(PiwigoResponseBufferingHandler.Response response) {
+        return true; // otherwise it won't get handled unless the fragment is showing (i.e. the upload activity is also showing).
+    }
 }

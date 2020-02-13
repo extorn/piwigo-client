@@ -9,7 +9,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
@@ -52,7 +53,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     protected FileSelectionNeededEvent buildOpenSelectionEvent() {
 
         String initialFolder = getValue();
-        ArrayList<String> selection = new ArrayList<>();
+        Set<String> selection = new HashSet<>();
         if (initialFolder == null) {
             initialFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
         } else {
@@ -78,7 +79,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     public void onEvent(FileSelectionCompleteEvent event) {
         if(isTrackingEvent(event)) {
             EventBus.getDefault().removeStickyEvent(event);
-            File selectedFile = event.getSelectedFiles().get(0);
+            File selectedFile = event.getSelectedFolderItems().get(0).getFile();
             if (selectedFile.isDirectory()) {
                 persistStringValue(selectedFile.getAbsolutePath());
             }

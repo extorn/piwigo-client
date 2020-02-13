@@ -48,12 +48,25 @@
     </style>
 
     <style name="Custom.TextAppearance.AppCompat.Body1.Clickable" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textColor">@color/text_color_clickable</item>
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
     <style name="Custom.TextAppearance.AppCompat.Body2.Clickable" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textColor">@color/text_color_clickable</item>
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Title.Clickable" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+    </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Headline" parent="TextAppearance.AppCompat.Headline">
+        <!-- this is used for items that are clickable but invisibly so -->
+    </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Headline.Clickable" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+    </style>
+
 
     <style name="Custom.Widget.AppCompat.CompoundButton.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
@@ -72,13 +85,15 @@
 
     <style name="Custom.Widget.AppCompat.Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:paddingTop">0dp</item>
     </style>
 
     <!-- spinner / drop down lists - what is displayed when not expanded -->
     <style name="Custom.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingBottom">7dp</item>
     </style>
     <!-- items in the dropdown 'popup' when a spinner is clicked on -->
     <style name="Custom.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
@@ -87,6 +102,12 @@
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+    </style>
+
+    <style name="Custom.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:minHeight">9dp</item>
+        <item name="android:maxHeight">9dp</item>
+        <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
     </style>
 
 </resources>

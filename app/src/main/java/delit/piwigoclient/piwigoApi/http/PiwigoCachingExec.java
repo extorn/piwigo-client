@@ -39,7 +39,6 @@ import cz.msebera.android.httpclient.client.methods.HttpRequestWrapper;
 import cz.msebera.android.httpclient.client.protocol.HttpClientContext;
 import cz.msebera.android.httpclient.conn.routing.HttpRoute;
 import cz.msebera.android.httpclient.impl.execchain.ClientExecChain;
-import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicHeaderElement;
 
 /* LogFactory removed by HttpClient for Android script. */

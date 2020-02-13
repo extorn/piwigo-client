@@ -21,17 +21,15 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.client.cache.HeaderConstants;
-import cz.msebera.android.httpclient.message.BasicHeader;
+import delit.libs.http.RequestParams;
+import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 
 /**
@@ -52,9 +50,17 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         this.piwigoMethod = piwigoMethod;
     }
 
-
     public String getPiwigoMethod() {
         return piwigoMethod;
+    }
+
+    protected String getPwgSessionToken() {
+        String sessionToken = "";
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
+        }
+        return sessionToken;
     }
 
     protected String getPiwigoMethodOverrideIfPossible(String overrideMethod) {
@@ -67,8 +73,10 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                     sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
                 }
             }
-            if(sessionDetails != null && sessionDetails.isMethodAvailable(overrideMethod)) {
-                piwigoMethodToUse = overrideMethod;
+            if (sessionDetails != null) {
+                if (sessionDetails.isMethodAvailable(overrideMethod)) {
+                    piwigoMethodToUse = overrideMethod;
+                }
             }
         }
         return piwigoMethodToUse;
@@ -93,6 +101,10 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         } else {
             requestParams.remove("method");
             requestParams.put("method", getPiwigoMethod());
+            if (requestParams.has("pwg_token")) {
+                requestParams.remove("pwg_token");
+                requestParams.put("pwg_token", getPwgSessionToken());
+            }
         }
         return requestParams;
     }
@@ -131,7 +143,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     @Override
-    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
         if (BuildConfig.DEBUG) {
             String responseBodyStr = "<NONE PRESENT>";
             if (responseBody != null) {
@@ -194,31 +206,56 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
             ByteArrayInputStream jsonBis = new ByteArrayInputStream(responseBody);
             if (jsonStartsAt > 0) {
-                jsonBis.skip(jsonStartsAt - 1);
+                int skip = jsonStartsAt - 1;
+                long skipped = jsonBis.skip(skip);
+                if (skipped != skip) {
+                    Crashlytics.log(Log.ERROR, getTag(), "Tried to skip " + skip + " characters, but actually skipped " + skipped);
+                }
             }
             PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
             processJsonResponse(getMessageId(), getPiwigoMethod(), piwigoResponse, responseBody, isCached);
 
-        } catch (JsonSyntaxException e) {
-            String responseBodyStr = new String(responseBody);
-            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
+        } catch(IllegalStateException e) {
+            // some devices seem to cause this to be an illegal state exception not json syntax exception....
+            String responseBodyStr = responseBody != null ? new String(responseBody) : null;
+            logJsonSyntaxError(responseBodyStr);
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
                 Crashlytics.logException(e);
             }
-            boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
-            if (!handled) {
-                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
-                r.setResponse(responseBodyStr);
-                storeResponse(r);
+            if (!handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, new JsonSyntaxException(e.getMessage()), hasBrandNewSession)) {
+                recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
+            }
+        } catch (JsonSyntaxException e) {
+            String responseBodyStr = responseBody != null ? new String(responseBody) : null;
+            logJsonSyntaxError(responseBodyStr);
+            if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
+                Crashlytics.logException(e);
+            }
+            if (!handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession)) {
+                recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
             }
         } catch (JsonIOException e) {
-            String responseBodyStr = new String(responseBody);
-            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
+            String responseBodyStr = responseBody != null ? new String(responseBody) : null;
+            logJsonSyntaxError(responseBodyStr);
             Crashlytics.logException(e);
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
-            r.setResponse(responseBodyStr);
-            storeResponse(r);
+            recordFailureHandingHttp200Response(statusCode, isCached, e, responseBodyStr);
         }
+    }
+
+    private void recordFailureHandingHttp200Response(int statusCode, boolean isCached, Exception e, String responseBodyStr) {
+        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
+        r.setResponse(responseBodyStr);
+        resetSuccessAsFailure();
+        storeResponse(r);
+    }
+
+    protected void logJsonSyntaxError(String responseBodyStr) {
+        RequestParams reqParams = getRequestParameters();
+        if (reqParams.has("password")) {
+            reqParams.remove("password");
+            reqParams.put("password", "********");
+        }
+        Crashlytics.log(String.format("Json Syntax error: %1$s (%2$s) : %3$s", getPiwigoMethod(), reqParams, responseBodyStr));
     }
 
     private boolean handleCombinedJsonAndHtmlResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
@@ -232,7 +269,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
             if (idx > 0) {
                 byte[] actualJson = Arrays.copyOfRange(responseBody, idx, responseBody.length);
-                onSuccess(statusCode, headers, actualJson, hasBrandNewSession);
+                onSuccess(statusCode, headers, actualJson, hasBrandNewSession, isResponseCached(headers));
                 // skip remaining method code.
                 return true;
             }
@@ -291,6 +328,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     // When the response returned by REST has Http response code other than '200'
     @Override
     protected boolean onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession, boolean isCached) {
+
         if (BuildConfig.DEBUG) {
             String errorBody = "<NONE PRESENT>";
             if (responseBody != null) {
@@ -354,14 +392,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
 
         if(!canRetryCall) {
-            String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
+            String[] errorDetail = HttpUtils.getHttpErrorMessage(getContext(), statusCode, error);
             if (getNestedFailureMethod() != null) {
-                errorMsg = getNestedFailureMethod() + " : " + errorMsg;
+                errorDetail[0] = getNestedFailureMethod() + " : " + errorDetail[0];
             } else {
-                errorMsg = getPiwigoMethod() + " : " + errorMsg;
+                errorDetail[0] = getPiwigoMethod() + " : " + errorDetail[0];
             }
-            String errorDetail = error != null ? error.getMessage() : "";
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail, isCached);
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorDetail[0], errorDetail[1], error, isCached);
             r.setResponse(responseBody != null ? new String(responseBody) : "");
             storeResponse(r);
         }
@@ -369,14 +406,16 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
 //        String thread = Thread.currentThread().getName();
         if (BuildConfig.DEBUG) {
             Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + getRequestParameters().toString());
             Log.e(getTag(), "Invoking call to server (" + getRequestParameters() + ") thread from thread " + Thread.currentThread().getName());
         }
         if(isUseHttpGet()) {
-            return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(), getRequestParameters(), handler);
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+            boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+            return client.get(getContext(), getPiwigoWsApiUri(), buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), getRequestParameters(), handler);
         } else {
             return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
         }

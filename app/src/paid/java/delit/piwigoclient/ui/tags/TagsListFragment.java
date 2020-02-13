@@ -1,16 +1,11 @@
 package delit.piwigoclient.ui.tags;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,23 +40,25 @@ import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.libs.ui.view.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
+import delit.piwigoclient.ui.model.PiwigoTagModel;
 
 /**
  * Created by gareth on 26/05/17.
  */
-public class TagsListFragment extends MyFragment {
+public class TagsListFragment extends MyFragment<TagsListFragment> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
@@ -163,7 +168,7 @@ public class TagsListFragment extends MyFragment {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagListSelectListener(), viewPrefs);
+        viewAdapter = new TagRecyclerViewAdapter(PiwigoTagModel.class, tagsModel, new TagListSelectListener(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
         recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -171,6 +176,9 @@ public class TagsListFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (page >= 1) {
+                    return; // tags aren't paged so no call to make!
+                }
                 int pageToLoad = page * tagsModel.getPageSources();
                 if (tagsModel.isPageLoadedOrBeingLoaded(pageToLoad) || tagsModel.isFullyLoaded()) {
                     Integer missingPage = tagsModel.getAMissingPage();
@@ -227,11 +235,11 @@ public class TagsListFragment extends MyFragment {
         int basePageToLoad = pageToLoad % tagsModel.getPageSources() == 0 ? pageToLoad : pageToLoad -1;
         try {
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad)) {
-                addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE));
             }
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad + 1)) {
                 if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad+1, Integer.MAX_VALUE).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad + 1, Integer.MAX_VALUE));
                 }
             }
         } finally {
@@ -271,9 +279,14 @@ public class TagsListFragment extends MyFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String tagName = s.toString();
-                addNewTagDialog.getButton(
-                        AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
+                try {
+                    String tagName = s.toString();
+                    addNewTagDialog.getButton(
+                            AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
+                } catch (RuntimeException e) {
+                    Crashlytics.log(Log.ERROR, getTag(), "Error in on tag name change");
+                    Crashlytics.logException(e);
+                }
             }
 
             @Override
@@ -289,19 +302,31 @@ public class TagsListFragment extends MyFragment {
 
     public void onDeleteTag(final Tag thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_tag);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem) {
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
-                    deleteTagNow(thisItem);
-                }
-            }
+
         });
     }
 
+    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment>> {
+        private final Tag tag;
+
+        public OnDeleteTagAction(FragmentUIHelper<TagsListFragment> uiHelper, Tag tag) {
+            super(uiHelper);
+            this.tag = tag;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if(Boolean.TRUE == positiveAnswer) {
+                TagsListFragment fragment = getUiHelper().getParent();
+                fragment.deleteTagNow(tag);
+            }
+        }
+    }
+
     private void createNewTag(String tagname) {
-        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
+        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname));
     }
 
     private void deleteTagNow(Tag thisItem) {
@@ -383,12 +408,6 @@ public class TagsListFragment extends MyFragment {
         try {
             retryActionButton.hide();
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
-            if(!isAdminPage && tagsModel.getPagesLoaded() == 0) {
-                boolean needToLoadAdminList = setTagsModelPageSourceCount();
-                if(needToLoadAdminList) {
-                    loadTagsPage(response.getPage());
-                }
-            }
             tagsModel.addItemPage(isAdminPage?1:0, isAdminPage, response.getPage(), response.getPageSize(), response.getTags());
             // Will this code play nicely with the tags plugin? Testing needed
 //            if(tagsModel.getPageSources() == tagsModel.getPagesLoaded()) {
@@ -404,7 +423,7 @@ public class TagsListFragment extends MyFragment {
 //    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
 //    public void onEvent(TagDeletedEvent event) {
 //        viewAdapter.remove(event.getTag());
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_success_pattern), event.getTag().getName()));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, event.getTag().getName()));
 //    }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -423,12 +442,12 @@ public class TagsListFragment extends MyFragment {
 //    public void onTagDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse response) {
 //        Tag tag = deleteActionsPending.remove(response.getMessageId());
 //        viewAdapter.remove(tag);
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_success_pattern), tag.getName()));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, tag.getName()));
 //    }
 
 //    public void onTagDeleteFailed(final long messageId) {
 //        Tag tag = deleteActionsPending.remove(messageId);
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_failed_pattern), tag.getName()));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_failed_pattern, tag.getName()));
 //    }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

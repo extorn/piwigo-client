@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="20dp">
 
-    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/upload_job_status_scrollview"
-        android:layout_alignWithParentIfMissing="true"
+    <delit.libs.ui.view.SlidingTabLayout
+        android:id="@+id/sliding_views_tab_headings"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        app:viewPager="@+id/sliding_views_tab_content"
+        tools:initialTabIdx="0" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/sliding_views_tab_content"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_width="match_parent"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_status_tab_title_details" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/files_awaiting_transfer_label"
                 android:labelFor="@id/files_awaiting_transfer"
@@ -39,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
                 tools:text="3"/>
+
             <TextView
                 android:id="@+id/files_mid_data_transfer_label"
                 android:labelFor="@id/files_mid_data_transfer"
@@ -156,33 +172,43 @@
                 android:layout_marginBottom="7dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
-            <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+            <delit.libs.ui.view.button.AppCompatCheckboxTriState
                 android:id="@+id/temporary_album_needs_deleting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:enabled="false"/>
 
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/upload_status_tab_title_errors" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/errors_encountered_list_label"
-                android:labelFor="@id/errors_encountered_list"
-                android:text="@string/errors_encountered_list_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
+                android:labelFor="@id/errors_encountered_list"
+                android:text="@string/errors_encountered_list_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-
-            <delit.piwigoclient.ui.common.list.ForcedMinimumHeightListView
+            <ListView
                 android:id="@+id/errors_encountered_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="200dp"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:nestedScrollingEnabled="true"/>
+                android:layout_marginEnd="5dp" />
+
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</RelativeLayout>
+    </androidx.viewpager.widget.ViewPager>
+</LinearLayout>

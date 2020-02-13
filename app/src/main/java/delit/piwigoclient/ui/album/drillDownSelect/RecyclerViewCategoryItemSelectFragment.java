@@ -3,27 +3,35 @@ package delit.piwigoclient.ui.album.drillDownSelect;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.FlowLayout;
+import delit.libs.ui.view.button.CustomImageButton;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -38,11 +46,8 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.BackButtonHandler;
-import delit.piwigoclient.ui.common.FlowLayout;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
@@ -57,7 +62,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     private FlowLayout categoryPathView;
     private long startedActionAtTime;
     private CategoryItemRecyclerViewAdapter.NavigationListener navListener;
-    private LinkedHashMap<Long, Parcelable> listViewStates; // one state for each level within the list (created and deleted on demand)
+    private LinkedHashMap<Long, Parcelable> listViewStates = new LinkedHashMap<>(5); // one state for each level within the list (created and deleted on demand)
 
 
     public static RecyclerViewCategoryItemSelectFragment newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
@@ -90,9 +95,11 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(ACTIVE_ITEM, getListAdapter().getActiveItem());
+        if(getListAdapter() != null) {
+            outState.putParcelable(ACTIVE_ITEM, getListAdapter().getActiveItem());
+        }
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
-        outState.putSerializable(STATE_LIST_VIEW_STATE, listViewStates);
+        BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
     }
 
     @Nullable
@@ -107,7 +114,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_VIEW_STATE, LinkedHashMap.class);
+            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<Long, Parcelable>(), getClass().getClassLoader());
         }
 
         startedActionAtTime = System.currentTimeMillis();
@@ -120,9 +127,6 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             public void onCategoryOpened(CategoryItem oldCategory, CategoryItem newCategory) {
 
                 if(oldCategory != null) {
-                    if (listViewStates == null) {
-                        listViewStates = new LinkedHashMap<>(5);
-                    }
                     listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
                 }
                 getList().scrollToPosition(0);
@@ -136,9 +140,19 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         newItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(getListAdapter().getActiveItem().toStub());
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
+                CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
+                if (listAdapter == null) {
+                    Crashlytics.log(Log.ERROR, getTag(), "List adapter is null - weird");
+                } else {
+                    CategoryItem selectedAlbum = listAdapter.getActiveItem();
+                    if (selectedAlbum != null) {
+                        AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedAlbum.toStub());
+                        getUiHelper().setTrackingRequest(event.getActionId());
+                        EventBus.getDefault().post(event);
+                    } else {
+                        getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.please_select_a_parent_album);
+                    }
+                }
             }
         });
 
@@ -174,16 +188,18 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                 public void onClick(View v) {
                     TextView tv = (TextView) v;
                     getListAdapter().setActiveItem(pathItemCategory);
-                    Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
-                    Map.Entry<Long, Parcelable> item;
-                    while(iter.hasNext()) {
-                        item = iter.next();
-                        if(item.getKey() == pathItemCategory.getId()) {
-                            getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                            iter.remove();
-                            while(iter.hasNext()) {
-                                iter.next();
+                    if (!listViewStates.isEmpty()) {
+                        Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
+                        Map.Entry<Long, Parcelable> item;
+                        while (iter.hasNext()) {
+                            item = iter.next();
+                            if (item.getKey() == pathItemCategory.getId()) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
                                 iter.remove();
+                                while (iter.hasNext()) {
+                                    iter.next();
+                                    iter.remove();
+                                }
                             }
                         }
                     }
@@ -236,28 +252,28 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     private void loadData() {
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey());
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey(), prefs, getContext());
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
 
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
             //NOTE: No thumbnail url is provided with this call... Maybe need to run a standard call too as for the main albums then merge?
             AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
 
             handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
-        } else if (sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
+        } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
             CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true);
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else {
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
             AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
         }
     }
 
@@ -293,13 +309,18 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
+        if (listAdapter == null) {
+            // unable to handle action as list adapter is null.
+            return;
+        }
         HashSet<CategoryItem> selectedItems = listAdapter.getSelectedItems();
         if(getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             boolean selectedIdsAreValid = false;
             if(!selectedItems.isEmpty()) {
                 CategoryItem selectedItem = selectedItems.iterator().next();
-                if(selectedItem.getParentId() == listAdapter.getActiveItem().getId()
-                    || selectedItem.getId() == listAdapter.getActiveItem().getId()) {
+                Long activeId = Long.valueOf(listAdapter.getActiveItem().getId()); // need this to be a long as it is comparing with a Long!
+                if((activeId.equals(selectedItem.getParentId())
+                    || activeId.equals(selectedItem.getId()))) {
                     // do nothing.
                     selectedIdsAreValid = true;
                 }
@@ -310,17 +331,22 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             }
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), PiwigoUtils.toSetOfIds(selectedItems), selectedItems));
+
+        HashMap<CategoryItem, String> albumPaths = new HashMap<>();
+        for(CategoryItem selectedItem : selectedItems) {
+            albumPaths.put(selectedItem, rootAlbum.getAlbumPath(selectedItem));
+        }
+        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), PiwigoUtils.toSetOfIds(selectedItems), selectedItems, albumPaths));
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
     @Override
     public void onCancelChanges() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), null, null));
+        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId()));
         super.onCancelChanges();
     }
 

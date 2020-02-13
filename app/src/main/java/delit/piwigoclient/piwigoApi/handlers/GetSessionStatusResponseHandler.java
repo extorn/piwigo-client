@@ -10,9 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 import static delit.piwigoclient.model.piwigo.PiwigoSessionDetails.UNKNOWN_VERSION;
 
@@ -35,6 +35,11 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
+        if (isCached) {
+            // try and ensure it gets a new one before doing anything vital!
+            newCredentials.setCached(isCached);
+            newCredentials.setSessionMayHaveExpired();
+        }
         PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
 
         PiwigoSessionStatusRetrievedResponse r = new PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials, newCredentials, isCached);

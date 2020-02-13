@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.preference.DialogPreference;
-import androidx.preference.PreferenceDialogFragmentCompat;
-import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.preference.DialogPreference;
+import androidx.preference.PreferenceDialogFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
 
@@ -19,13 +20,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.list.MultiSourceListAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.list.MultiSourceListAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.util.DisplayUtils;
 
 public class ServerConnectionsListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
@@ -159,7 +160,10 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         ArrayList<ServerConnectionsListPreference.ServerConnection> connections = new ArrayList<>();
         if (profiles.size() > 0) {
             for (String p : profiles) {
-                ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p);
+                if(profiles.size() == 1) {
+                    ConnectionPreferences.clonePreferences(prefs, getContext(), null, p);
+                }
+                ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p, prefs, getContext());
                 connections.add(new ServerConnectionsListPreference.ServerConnection(p,
                         profilePrefs.getPiwigoServerAddress(prefs, getContext()),
                         profilePrefs.getPiwigoUsername(prefs, getContext())));
@@ -204,17 +208,17 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         }
 
         @Override
-        protected void setViewContentForItemDisplay(View itemView, ServerConnectionsListPreference.ServerConnection item, int levelInTreeOfItem) {
-            TextView nameView = itemView.findViewById(R.id.name);
-            TextView detailView = itemView.findViewById(R.id.details);
+        protected void setViewContentForItemDisplay(Context context, View itemView, ServerConnectionsListPreference.ServerConnection item, int levelInTreeOfItem) {
+            TextView nameView = itemView.findViewById(R.id.list_item_name);
+            TextView detailView = itemView.findViewById(R.id.list_item_details);
 
             nameView.setText(item.getProfileName());
-            detailView.setText(item.getUsername() + '@' + item.getServerName());
+            detailView.setText(context.getString(R.string.server_connection_id_pattern, item.getUsername(), item.getServerName()));
         }
 
         @Override
         protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
-            return view.findViewById(R.id.checked);
+            return view.findViewById(R.id.list_item_checked);
         }
 
     }

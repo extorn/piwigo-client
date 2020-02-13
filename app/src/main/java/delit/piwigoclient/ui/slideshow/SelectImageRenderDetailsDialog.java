@@ -2,18 +2,19 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 /**
@@ -24,7 +25,7 @@ class SelectImageRenderDetailsDialog {
     private final Context context;
     private int[] rotationValues;
     private Spinner imageRotation;
-    private SwitchCompat maxZoomPicker;
+    private Switch maxZoomPicker;
     private DownloadItemsListAdapter adapter;
     private ListView fileSelectList;
 
@@ -32,10 +33,10 @@ class SelectImageRenderDetailsDialog {
         this.context = context;
     }
 
-    public AlertDialog buildDialog(String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final RenderDetailSelectListener listener) {
+    public AlertDialog buildDialog(String currentImageUrlDisplayed, final PictureResourceItem model, final RenderDetailSelectListener listener) {
         androidx.appcompat.app.AlertDialog.Builder builder1 = new androidx.appcompat.app.AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_show_image_title);
-        adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, availableFiles);
+        adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, model);
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_dialog_zoom_control, null, false);
 
@@ -62,7 +63,7 @@ class SelectImageRenderDetailsDialog {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(fileSelectList.getCheckedItemCount() > 0) {
-                    listener.onSelection(getSelectedFile().getUrl(), getRotateDegrees(), maxZoomPicker.isChecked() ? 100 : 3);
+                    listener.onSelection(model.getFileUrl(getSelectedFile().getName()), getRotateDegrees(), maxZoomPicker.isChecked() ? 100 : 3);
                 }
             }
         });

@@ -6,7 +6,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import cz.msebera.android.httpclient.Header;
-import delit.piwigoclient.piwigoApi.HttpUtils;
+import delit.libs.util.UriUtils;
+import delit.libs.util.http.HttpUtils;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
@@ -20,12 +22,10 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
 
     private static final String TAG = "GetImgRspHdlr";
     private String resourceUrl;
-    private boolean reattemptedLogin;
 
     public ImageGetToByteArrayHandler(String resourceUrl) {
         super(TAG);
         this.resourceUrl = resourceUrl;
-        reattemptedLogin = false;
         EventBus.getDefault().register(this);
     }
 
@@ -35,18 +35,17 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     }
 
     @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
         Header contentTypeHeader = HttpUtils.getContentTypeHeader(headers);
         if(contentTypeHeader != null && !contentTypeHeader.getValue().startsWith("image/")) {
             boolean newLoginAcquired = false;
-            if(!reattemptedLogin) {
-                reattemptedLogin = true;
+            if(!isTriedLoggingInAgain()) {
                 // this was redirected to an http page - login failed most probable - try to force a login and retry!
                 newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
             }
             if (!newLoginAcquired) {
-                storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - ("+contentTypeHeader.getValue()+"). image/* expected"));
                 resetSuccessAsFailure();
+                storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - ("+contentTypeHeader.getValue()+"). image/* expected"));
             }
         } else {
             PiwigoResponseBufferingHandler.UrlSuccessResponse r = new PiwigoResponseBufferingHandler.UrlSuccessResponse(getMessageId(), resourceUrl, responseBody);
@@ -55,24 +54,23 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     }
 
     @Override
-    protected void storeResponse(PiwigoResponseBufferingHandler.BaseResponse response) {
-        reattemptedLogin = false; // this is reset in case the handler is reused (on manual retry)
-        super.storeResponse(response);
-    }
-
-    @Override
     public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
-        PiwigoResponseBufferingHandler.UrlErrorResponse r = new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, statusCode, responseBody, HttpUtils.getHttpErrorMessage(statusCode, error), error.getMessage());
+        String[] errorDetails = HttpUtils.getHttpErrorMessage(getContext(), statusCode, error);
+        PiwigoResponseBufferingHandler.UrlErrorResponse r = new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, statusCode, responseBody, errorDetails[0], errorDetails[1]);
         storeResponse(r);
         return triedToGetNewSession;
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.toLowerCase().startsWith("http://")) {
-            resourceUrl = resourceUrl.replaceFirst("://", "s://");
-        }
-        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(), null, handler);
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
+
+        boolean forceHttps = getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext());
+        boolean testForExposingProxiedServer = getConnectionPrefs().isWarnInternalUriExposed(getSharedPrefs(), getContext());
+        String uri = UriUtils.sanityCheckFixAndReportUri(resourceUrl, getPiwigoServerUrl(), forceHttps, testForExposingProxiedServer, getConnectionPrefs());
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+        return client.get(getContext(), uri, buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), null, handler);
     }
 
     @Subscribe

@@ -5,11 +5,11 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -28,13 +28,13 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         if (sessionDetails == null || !sessionDetails.isLoggedIn()) {
             onLogout(sessionDetails, false);
             return null;
         } else {
-            return super.runCall(client, handler);
+            return super.runCall(client, handler, forceResponseRevalidation);
         }
     }
 
@@ -55,5 +55,9 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
         public PiwigoOnLogoutResponse(long messageId, String piwigoMethod, boolean isCached) {
             super(messageId, piwigoMethod, true, isCached);
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

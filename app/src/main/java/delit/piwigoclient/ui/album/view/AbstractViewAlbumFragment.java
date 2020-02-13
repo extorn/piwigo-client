@@ -2,32 +2,39 @@ package delit.piwigoclient.ui.album.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -42,9 +49,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -60,6 +75,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.model.piwigo.ServerConfig;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
@@ -73,6 +89,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumRemovePermissionsResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumsGetFirstAvailableAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
@@ -80,19 +97,16 @@ import delit.piwigoclient.piwigoApi.handlers.ImageChangeParentAlbumHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageCopyToAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImageSetPrivacyLevelResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.util.BundleUtils;
-import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -109,19 +123,19 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.util.SetUtils;
+import delit.piwigoclient.ui.model.PiwigoAlbumModel;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static android.widget.AdapterView.INVALID_POSITION;
 
 /**
  * A fragment representing a list of Items.
  */
-public abstract class AbstractViewAlbumFragment extends MyFragment {
+public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewAlbumFragment> {
 
-    private static final String ARG_GALLERY = "gallery";
-    private static final String STATE_GALLERY_MODEL = "GalleryModel";
+    private static final String ARG_ALBUM = "album";
     private static final String STATE_EDITING_ITEM_DETAILS = "editingItemDetails";
     private static final String STATE_INFORMATION_SHOWING = "informationShowing";
     private static final String STATE_CURRENT_USERS = "currentUsers";
@@ -132,16 +146,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private static final String STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED = "movedResourceParentUpdateRequired";
     private static final String STATE_UPDATE_ALBUM_DETAILS_PROGRESS = "updateAlbumDetailsProgress";
     private static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
-    private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
+    private static final String STATE_DELETE_ACTION_DATA = "bulkResourceActionData";
     private static final String STATE_USER_GUID = "userGuid";
-    private static final String STATE_RECYCLER_LAYOUT = "recyclerLayout";
     private static final String STATE_ALBUMS_PER_ROW = "albumsPerRow";
 
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
-
+    public static final String TAG = "AbsViewAlbumFrag";
+    public static final String RESUME_ACTION = "ALBUM";
+    private static final String STATE_SELECTED_ITEMS = "selectedItemIds";
+    private static transient PiwigoAlbumAdminList albumAdminList;
+    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
+    private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     AlbumItemRecyclerViewAdapter viewAdapter;
     FloatingActionButton bulkActionButtonTag;
     private FloatingActionButton retryActionButton;
@@ -160,6 +178,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private TextView allowedGroupsField;
     private TextView allowedUsersField;
     private RelativeLayout bulkActionsContainer;
+    private FloatingActionButton bulkActionButtonPermissions;
     private FloatingActionButton bulkActionButtonDelete;
     private FloatingActionButton bulkActionButtonCopy;
     private FloatingActionButton bulkActionButtonCut;
@@ -169,10 +188,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private TextView allowedGroupsFieldLabel;
     private TextView allowedUsersFieldLabel;
     private CompoundButton.OnCheckedChangeListener privacyStatusFieldListener;
-
-    private static transient PiwigoAlbumAdminList albumAdminList;
-    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
-    private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     // Start fields maintained in saved session state.
     private int albumsPerRow; // calculated each time view created.
     private PiwigoAlbum galleryModel;
@@ -186,7 +201,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private int updateAlbumDetailsProgress = UPDATE_NOT_RUNNING;
     private boolean usernameSelectionWantedNext;
     private CustomImageButton addNewAlbumButton;
-    private DeleteActionData deleteActionData;
+    private BulkResourceActionData bulkResourceActionData;
     private long userGuid;
     private transient List<CategoryItem> adminCategories;
     private AppCompatImageView actionIndicatorImg;
@@ -195,6 +210,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
     private CustomSlidingLayer bottomSheet;
     private EndlessRecyclerViewScrollListener galleryListViewScrollListener;
+    private CategoryItem albumDetails;
+    private boolean reopening;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -203,12 +220,36 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     public AbstractViewAlbumFragment() {
     }
 
-    public static AbstractViewAlbumFragment newInstance(CategoryItem gallery) {
+    public static AbstractViewAlbumFragment newInstance(CategoryItem album) {
         AbstractViewAlbumFragment fragment = new ViewAlbumFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(ARG_GALLERY, gallery);
-        fragment.setArguments(args);
+        fragment.addArguments(album);
         return fragment;
+    }
+
+    private void addArguments(CategoryItem album) {
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_ALBUM, album);
+        setArguments(args);
+    }
+
+    private static void deleteResourcesFromServerForever(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, final HashSet<Long> selectedItemIds, final HashSet<ResourceItem> selectedItems) {
+        String msg = uiHelper.getContext().getString(R.string.alert_confirm_really_delete_items_from_server);
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourceForeverAction<>(uiHelper, selectedItemIds, selectedItems));
+    }
+
+    public static boolean canHandleReopenAction(UIHelper uiHelper) {
+        SharedPreferences resumePrefs = uiHelper.getResumePrefs();
+        if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+            ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+            if (activeProfile.getProfileId(uiHelper.getPrefs(), uiHelper.getContext()).equals(resumePrefs.getString("reopenProfileId", null))) {
+                // Can handle it. Lets try.
+                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                if (albumPath.size() > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -216,18 +257,73 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            if (getArguments().containsKey(ARG_GALLERY)) {
-                CategoryItem albumDetails = getArguments().getParcelable(ARG_GALLERY);
-                albumDetails.forcePermissionsReload();
-                galleryModel = new PiwigoAlbum(albumDetails);
-                galleryIsDirty = true;
+            loadModelFromArguments();
+        } else {
+            // restore previous viewed album.
+            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                reopening = true;
+                String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+                AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
+                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
+            } else {
+                throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
             }
+        }
+    }
+
+    protected void loadModelFromArguments() {
+        albumDetails = getArguments().getParcelable(ARG_ALBUM);
+        if (albumDetails == null) {
+            throw new IllegalStateException("album details are null for some reason");
+        }
+        albumDetails.forcePermissionsReload();
+        galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+        galleryModel.setContainerDetails(albumDetails);
+        galleryIsDirty = true;
+    }
+
+    protected void onReopenModelRetrieved(CategoryItem rootAlbum, CategoryItem album) {
+        try {
+            reopening = false;
+            galleryIsDirty = true;
+            albumDetails = album;
+            addArguments(albumDetails); // ensure we don't reopen next time - just handle as usual!
+
+            // add the album path to the ViewModelProvider
+            CategoryItem thisAlbum = album;
+            do {
+                Long albumParentId = thisAlbum.getParentId();
+                if (albumParentId != null) {
+                    CategoryItem catItem = rootAlbum.findChild(albumParentId);
+                    catItem.removeChildAlbum(thisAlbum);
+                    ViewModelProviders.of(requireActivity()).get("" + catItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(catItem);
+                    thisAlbum = catItem;
+                } else {
+                    Crashlytics.log(Log.WARN, TAG, "Attempt to get parent album for album with id " + album.getId());
+                }
+            } while (!thisAlbum.isRoot());
+            // now add the album to the ViewModelProvider and then get the current value
+            galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+            if (galleryModel == null) {
+                Crashlytics.log(Log.ERROR, TAG, "Gallery model is unexpectedly null on reopening model with album " + album);
+            }
+            populateViewFromModelEtc(requireView(), null);
+            populateViewFromModelEtcOnResume();
+            // below needed? called on re-login so prob not
+//            loadAlbumPermissionsIfNeeded();
+//            displayControlsBasedOnSessionState();
+//            setEditItemDetailsControlsStatus();
+            updatePageTitle();
+        } catch (IllegalStateException e) {
+            // do nothing - if not attached - app likely closed again.
         }
     }
 
     private void fillGroupsField(TextView allowedGroupsField, Collection<Group> selectedGroups) {
         if(selectedGroups.size() == 0) {
-            allowedGroupsField.setText(String.format(getString(R.string.click_to_view_pattern), 0));
+            allowedGroupsField.setText(getString(R.string.click_to_view_pattern, 0));
         } else {
             StringBuilder sb = new StringBuilder();
             Iterator<Group> groupIter = selectedGroups.iterator();
@@ -255,7 +351,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void fillUsernamesField(TextView allowedUsernamesField, Collection<Username> selectedUsernames) {
         if(selectedUsernames.size() == 0) {
-            allowedUsernamesField.setText(String.format(getString(R.string.click_to_view_pattern), 0));
+            allowedUsernamesField.setText(getString(R.string.click_to_view_pattern, 0));
         } else {
             StringBuilder sb = new StringBuilder();
             Iterator<Username> usernameIter = selectedUsernames.iterator();
@@ -272,22 +368,38 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        viewPrefs.storeToBundle(outState);
-        outState.putParcelable(STATE_GALLERY_MODEL, galleryModel);
+        if(viewPrefs != null) {
+            viewPrefs.storeToBundle(outState);
+        }
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
         outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
         outState.putLongArray(STATE_CURRENT_GROUPS, currentGroups);
         outState.putLongArray(STATE_CURRENT_USERS, currentUsers);
         outState.putBoolean(STATE_GALLERY_DIRTY, galleryIsDirty);
-        outState.putSerializable(STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds);
+        BundleUtils.writeMap(outState, STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_GALLERY_LOADS_TO_RETRY, itemsToLoad);
         outState.putBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED, movedResourceParentUpdateRequired);
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
-        outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
+        outState.putParcelable(STATE_DELETE_ACTION_DATA, bulkResourceActionData);
         outState.putLong(STATE_USER_GUID, userGuid);
-        outState.putParcelable(STATE_RECYCLER_LAYOUT, galleryListView.getLayoutManager().onSaveInstanceState());
         outState.putInt(STATE_ALBUMS_PER_ROW, albumsPerRow);
+        if (viewAdapter != null) {
+            BundleUtils.putLongHashSet(outState, STATE_SELECTED_ITEMS, viewAdapter.getSelectedItemIds());
+        }
+
+        if (BuildConfig.DEBUG) {
+            BundleUtils.logSize("ViewAlbumFragment", outState);
+        }
+    }
+
+    /**
+     * is a reload occuring or about to right now
+     *
+     * @return
+     */
+    protected boolean isAlbumDataLoading() {
+        return loadingMessageIds.size() > 0;
     }
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
@@ -301,19 +413,19 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         if (viewPrefs == null) {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
+            viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
+            viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         }
 
         String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs,getContext());
 
         String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
 
-        viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
-        viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
         viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
-        viewPrefs.withAlbumWidth(getScreenWidth(getActivity()) / albumsPerRow);
+        viewPrefs.withAlbumWidth(getScreenWidth(requireActivity()) / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
         return viewPrefs;
     }
@@ -342,6 +454,22 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        cacheViewComponentReferences(view);
+
+        if (!reopening) {
+            populateViewFromModelEtc(view, savedInstanceState);
+        } else {
+            descriptionDropdownButton.setVisibility(GONE);
+            Basket basket = getBasket();
+            initialiseBasketView(view);
+            setupBottomSheet(bottomSheet);
+            setupBulkActionsControls(basket);
+            updateBasketDisplay(basket);
+            retryActionButton.hide();
+        }
+    }
+
+    private void populateViewFromModelEtc(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         if (!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
             // force a reload of the gallery if the session has been destroyed.
@@ -356,42 +484,50 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
             currentGroups = savedInstanceState.getLongArray(STATE_CURRENT_GROUPS);
-            galleryModel = savedInstanceState.getParcelable(STATE_GALLERY_MODEL);
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
             galleryIsDirty = galleryIsDirty || savedInstanceState.getBoolean(STATE_GALLERY_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds, BundleUtils.getSerializable(savedInstanceState, STATE_GALLERY_ACTIVE_LOAD_THREADS, HashMap.class));
+            loadingMessageIds.clear();
+            BundleUtils.readMap(savedInstanceState, STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds, null);
             Set<Long> messageIdsExpired = PiwigoResponseBufferingHandler.getDefault().getUnknownMessageIds(loadingMessageIds.keySet());
             if (messageIdsExpired.size() > 0) {
                 for (Long messageId : messageIdsExpired) {
                     loadingMessageIds.remove(messageId);
                 }
             }
-            SetUtils.setNotNull(itemsToLoad, savedInstanceState.getStringArrayList(STATE_GALLERY_LOADS_TO_RETRY));
+            CollectionUtils.addToCollectionNullSafe(itemsToLoad, savedInstanceState.getStringArrayList(STATE_GALLERY_LOADS_TO_RETRY));
             movedResourceParentUpdateRequired = savedInstanceState.getBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED);
             updateAlbumDetailsProgress = savedInstanceState.getInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS);
             usernameSelectionWantedNext = savedInstanceState.getBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT);
-            if (deleteActionData != null && deleteActionData.isEmpty()) {
-                deleteActionData = null;
+            if (bulkResourceActionData != null && bulkResourceActionData.isEmpty()) {
+                bulkResourceActionData = null;
             } else {
-                deleteActionData = savedInstanceState.getParcelable(STATE_DELETE_ACTION_DATA);
-            }
-            if(galleryListView != null) {
-                galleryListView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(STATE_RECYCLER_LAYOUT));
+                bulkResourceActionData = savedInstanceState.getParcelable(STATE_DELETE_ACTION_DATA);
             }
             albumsPerRow = savedInstanceState.getInt(STATE_ALBUMS_PER_ROW);
         } else {
             // fresh view of the root of the gallery - reset the admin list
-            if (galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
+            if (galleryModel.getContainerDetails().isRoot()) {
                 albumAdminList = null;
             }
         }
 
-
-
         updateViewPrefs();
 
+        // notify user once and only once per app session
+        getUiHelper().doOnce("currentPreferredResourceThumbnailSize", viewPrefs.getPreferredThumbnailSize(), new Runnable() {
+            @Override
+            public void run() {
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_image_thumbnails_of_size, viewPrefs.getPreferredThumbnailSize()));
+            }
+        });
+        getUiHelper().doOnce("currentPreferredAlbumThumbnailSize", viewPrefs.getPreferredAlbumThumbnailSize(), new Runnable() {
+            @Override
+            public void run() {
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_album_thumbnails_of_size, viewPrefs.getPreferredAlbumThumbnailSize()));
+            }
+        });
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
 
 
@@ -404,8 +540,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
-        // store references and initialise anything vital to the page (and used when loading data for example)
-        retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
+        if (galleryModel != null) {
+            galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, getContext()));
+        } else {
+            Crashlytics.log(Log.WARN, getTag(), "Attempt to set album sort order but album model is still null");
+        }
 
         retryActionButton.hide();
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -416,23 +555,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         });
 
-        emptyGalleryLabel = view.findViewById(R.id.album_empty_content);
         emptyGalleryLabel.setText(R.string.gallery_empty_text);
         if (!galleryIsDirty) {
             emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
         }
-
-        bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
-
-        galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
-
-        galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
-        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
-
-        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
-
-        // Set the adapter
-        galleryListView = view.findViewById(R.id.gallery_list);
 
         initialiseBasketView(view);
 
@@ -456,11 +582,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
 
-
-        RecyclerView recyclerView = galleryListView;
-
-
-
         // need to wait for the gallery model to be initialised.
 
         int imagesDisplayedPerRow = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
@@ -476,37 +597,27 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), totalSpans);
         gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(galleryModel, totalSpans, colsSpannedByAlbum, colsSpannedByImage));
 
-        recyclerView.setLayoutManager(gridLayoutMan);
+        galleryListView.setLayoutManager(gridLayoutMan);
 
         viewAdapterListener = new AlbumViewAdapterListener();
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), galleryModel, viewAdapterListener, viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), PiwigoAlbumModel.class, galleryModel, viewAdapterListener, viewPrefs);
+
+        if (savedInstanceState != null) {
+            viewAdapter.setInitiallySelectedItems(new HashSet<Long>());
+            viewAdapter.setSelectedItems(BundleUtils.getLongHashSet(savedInstanceState, STATE_SELECTED_ITEMS));
+        }
 
         Basket basket = getBasket();
 
         setupBulkActionsControls(basket);
 
-        recyclerView.setAdapter(viewAdapter);
+        galleryListView.setAdapter(viewAdapter);
 
 
-        galleryListViewScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = page;
-                if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad) || galleryModel.isFullyLoaded()) {
-                    Integer missingPage = galleryModel.getAMissingPage();
-                    if(missingPage != null) {
-                        pageToLoad = missingPage;
-                    } else {
-                        // already load this one by default so lets not double load it (or we've already loaded all items).
-                        return;
-                    }
-                }
-                loadAlbumResourcesPage(pageToLoad);
-            }
-        };
+        galleryListViewScrollListener = new AlbumScrollListener(gridLayoutMan);
         galleryListViewScrollListener.configure(galleryModel.getPagesLoaded(), galleryModel.getItemCount());
-        recyclerView.addOnScrollListener(galleryListViewScrollListener);
+        galleryListView.addOnScrollListener(galleryListViewScrollListener);
 
         //display bottom sheet if needed
         updateInformationShowingStatus();
@@ -518,27 +629,65 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 galleryIsDirty = true;
                 reloadAlbumContent();
             } else {
-                if(galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
+                if (galleryModel.getContainerDetails().isRoot()) {
                     // root of gallery can always be refreshed successfully.
                     galleryIsDirty = true;
                 } else {
                     // immediately leave this screen.
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                 }
             }
         }
     }
 
+    protected void cacheViewComponentReferences(@NonNull View view) {
+
+        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
+
+        // store references and initialise anything vital to the page (and used when loading data for example)
+        retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
+
+        emptyGalleryLabel = view.findViewById(R.id.album_empty_content);
+
+        bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
+
+        galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
+        galleryNameHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheet.openLayer(true);
+            }
+        });
+
+        galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
+        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
+
+        // Set the adapter
+        galleryListView = view.findViewById(R.id.gallery_list);
+    }
+
+    private HashSet<ResourceItem> getSelectedItemsNoException() {
+        try {
+            return getSelectedItems();
+        } catch (IllegalStateException e) {
+            return new HashSet<>(0);
+        }
+    }
+
     private boolean showBulkDeleteAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0;
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (getSelectedItemsNoException().size() > 0 && basket.isEmpty());
+    }
+
+    private boolean showBulkPermissionsAction(Basket basket) {
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (getSelectedItemsNoException().size() > 0 && basket.isEmpty());
     }
 
     private boolean showBulkCopyAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || galleryModel.getContainerDetails().getId() == basket.getContentParentId());
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && ((getSelectedItemsNoException().size() > 0 && basket.isEmpty()) || (galleryModel.getContainerDetails().getId() == basket.getContentParentId() && basket.getAction() == Basket.ACTION_COPY));
     }
 
     private boolean showBulkCutAction(Basket basket) {
-        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || galleryModel.getContainerDetails().getId() == basket.getContentParentId());
+        return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && ((getSelectedItemsNoException().size() > 0 && basket.isEmpty()) || (galleryModel.getContainerDetails().getId() == basket.getContentParentId() && basket.getAction() == Basket.ACTION_CUT));
     }
 
     private boolean showBulkPasteAction(Basket basket) {
@@ -546,22 +695,29 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private boolean showBulkActionsContainer(Basket basket) {
-        return viewAdapter.isItemSelectionAllowed() || getBasket().getItemCount() > 0;
+        return viewAdapter != null && (viewAdapter.isItemSelectionAllowed() || !getBasket().isEmpty());
     }
 
     protected void setupBulkActionsControls(Basket basket) {
 
         bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
 
+        bulkActionButtonPermissions = bulkActionsContainer.findViewById(R.id.gallery_action_permissions_bulk);
         bulkActionButtonTag = bulkActionsContainer.findViewById(R.id.gallery_action_tag_bulk);
-        bulkActionButtonTag.hide();
-
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
-        if(showBulkDeleteAction(basket)) {
-            bulkActionButtonDelete.show();
-        } else {
-            bulkActionButtonDelete.hide();
-        }
+        bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
+        bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
+        bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
+
+        bulkActionButtonPermissions.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                    onBulkActionPermissionsButtonPressed();
+                }
+                return true; // consume the event
+            }
+        });
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -571,13 +727,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 return true; // consume the event
             }
         });
-
-        bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
-        if(showBulkCopyAction(basket)) {
-            bulkActionButtonCopy.show();
-        } else {
-            bulkActionButtonCopy.hide();
-        }
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -588,13 +737,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 return true; // consume the event
             }
         });
-
-        bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
-        if(showBulkCutAction(basket)) {
-            bulkActionButtonCut.show();
-        } else {
-            bulkActionButtonCut.hide();
-        }
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -606,12 +748,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         });
 
-        bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
-        if(showBulkPasteAction(basket)) {
-            bulkActionButtonPaste.show();
-        } else {
-            bulkActionButtonPaste.hide();
-        }
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -624,52 +760,137 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     } else if (basket.getAction() == Basket.ACTION_CUT) {
                         msgPatternId = R.string.alert_confirm_move_items_here_pattern;
                     }
-                    String message = String.format(getString(msgPatternId), basket.getItemCount(), galleryModel.getContainerDetails().getName());
-
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-                        @Override
-                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                            if (Boolean.TRUE == positiveAnswer) {
-                                if (basket.getAction() == Basket.ACTION_COPY) {
-                                    HashSet<ResourceItem> itemsToCopy = basket.getContents();
-                                    CategoryItem copyToAlbum = galleryModel.getContainerDetails();
-                                    for (ResourceItem itemToCopy : itemsToCopy) {
-                                        addActiveServiceCall(R.string.progress_copy_resources, new ImageCopyToAlbumResponseHandler<>(itemToCopy, copyToAlbum).invokeAsync(getContext()));
-                                    }
-                                } else if (basket.getAction() == Basket.ACTION_CUT) {
-                                    HashSet<ResourceItem> itemsToMove = basket.getContents();
-                                    CategoryItem moveToAlbum = galleryModel.getContainerDetails();
-                                    for (ResourceItem itemToMove : itemsToMove) {
-                                        addActiveServiceCall(R.string.progress_move_resources, new ImageChangeParentAlbumHandler(itemToMove, moveToAlbum).invokeAsync(getContext()));
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    String message = getString(msgPatternId, basket.getItemCount(), galleryModel.getContainerDetails().getName());
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new BasketAction(getUiHelper()));
                 }
                 return true; // consume the event
             }
         });
+
+        if (!reopening && showBulkPermissionsAction(basket)) {
+            bulkActionButtonPermissions.show();
+        } else {
+            bulkActionButtonPermissions.hide();
+        }
+
+
+        bulkActionButtonTag.hide();
+
+        if (!isAlbumDataLoading()) {
+            // if gallery is dirty, then the album contents are being reloaded and won't yet be available. This method is recalled once it is
+
+            if (!reopening && showBulkDeleteAction(basket)) {
+                bulkActionButtonDelete.show();
+            } else {
+                bulkActionButtonDelete.hide();
+            }
+            if (!reopening && showBulkCopyAction(basket)) {
+                bulkActionButtonCopy.show();
+            } else {
+                bulkActionButtonCopy.hide();
+            }
+            if (!reopening && showBulkCutAction(basket)) {
+                bulkActionButtonCut.show();
+            } else {
+                bulkActionButtonCut.hide();
+            }
+            if (!reopening && showBulkPasteAction(basket)) {
+                bulkActionButtonPaste.show();
+            } else {
+                bulkActionButtonPaste.hide();
+            }
+        }
     }
 
     private void loadAdminListOfAlbums() {
-        long loadingMessageId = new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext());
+        long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsAdminResponseHandler());
         loadingMessageIds.put(loadingMessageId, "AL");
-        addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
+    }
+
+    private void onUpdateImagePermissionsButtonClick(HashSet<Long> imageIds, HashSet<ResourceItem> selectedItems) {
+        BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, selectedItems, BulkResourceActionData.ACTION_UPDATE_PERMISSIONS);
+        this.bulkResourceActionData = bulkActionData;
+        onUpdateImagePermissions(bulkActionData);
+    }
+
+    private void onUpdateImagePermissions(BulkResourceActionData bulkActionData) {
+        final HashSet<ResourceItem> resourcesReadyForAction = new HashSet<>();
+        if (bulkResourceActionData.isResourceInfoAvailable()) {
+            for (ResourceItem item : bulkResourceActionData.getSelectedItems()) {
+                if (item.getPrivacyLevel() >= 0) {
+                    resourcesReadyForAction.add(item);
+                }
+            }
+        } else {
+            bulkResourceActionData.getResourcesInfoIfNeeded(this);
+            return;
+        }
+        if (resourcesReadyForAction.size() > 0) {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_bulk_image_permissions_title, getString(R.string.alert_bulk_image_permissions_message, resourcesReadyForAction.size()), R.layout.layout_bulk_image_permissions, R.string.button_cancel, Integer.MIN_VALUE, R.string.button_ok, new BulkImagePermissionsListener(bulkResourceActionData.getSelectedItemIds(), getUiHelper()));
+        }
+    }
+
+    protected HashSet<ResourceItem> getSelectedItems() {
+        return viewAdapter.getSelectedItems();
+    }
+
+    private void updateResourcePermissions(final HashSet<Long> imageIds, final byte privacyLevel) {
+
+        // copy this to avoid remote possibility of a concurrent modification exception.
+        HashSet<Long> itemIds = new HashSet<>(imageIds);
+        for (Long imageId : itemIds) {
+            ResourceItem item = (ResourceItem) getGalleryModel().getItemById(imageId);
+            if (item.getPrivacyLevel() != privacyLevel) {
+                // update item on server
+                getUiHelper().getParent().getBulkResourceActionData().trackMessageId(addActiveServiceCall(R.string.progress_resource_details_updating, new ImageSetPrivacyLevelResponseHandler(item, privacyLevel)));
+            }
+        }
+    }
+
+    private void onDeleteResources(final BulkResourceActionData deleteActionData) {
+        final HashSet<ResourceItem> sharedResources = new HashSet<>();
+        if (deleteActionData.isResourceInfoAvailable()) {
+            //TODO currently, this won't work. No piwigo support
+            for (ResourceItem item : deleteActionData.getSelectedItems()) {
+                if (item.getLinkedAlbums().size() > 1) {
+                    sharedResources.add(item);
+                }
+            }
+        } else {
+            deleteActionData.getResourcesInfoIfNeeded(this);
+            return;
+        }
+        if (sharedResources.size() > 0) {
+            String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new DeleteSharedResourcesAction(getUiHelper(), sharedResources));
+        } else {
+            deleteResourcesFromServerForever(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
+        }
+
+    }
+
+    private void onBulkActionPermissionsButtonPressed() {
+        boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
+        if (bulkActionsAllowed) {
+            HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
+            if (selectedItemIds.size() > 0) {
+                onUpdateImagePermissionsButtonClick(selectedItemIds, viewAdapter.getSelectedItems());
+            }
+        }
     }
 
     private void onBulkActionDeleteButtonPressed() {
         boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
         if (bulkActionsAllowed) {
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
-            if (deleteActionData != null && selectedItemIds.equals(deleteActionData.getSelectedItemIds())) {
+            if (bulkResourceActionData != null && selectedItemIds.equals(bulkResourceActionData.getSelectedItemIds())) {
                 //continue with previous action
-                onDeleteResources(deleteActionData);
+                onDeleteResources(bulkResourceActionData);
             } else if (selectedItemIds.size() > 0) {
                 HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItems();
-                DeleteActionData deleteActionData = new DeleteActionData(selectedItemIds, selectedItems);
+                BulkResourceActionData deleteActionData = new BulkResourceActionData(selectedItemIds, selectedItems, BulkResourceActionData.ACTION_DELETE);
                 if (!deleteActionData.isResourceInfoAvailable()) {
-                    this.deleteActionData = deleteActionData;
+                    this.bulkResourceActionData = deleteActionData;
                 }
                 onDeleteResources(deleteActionData);
             }
@@ -731,7 +952,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     protected void updateBasketDisplay(Basket basket) {
 
-        if (viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+        if (viewAdapter != null && viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
             viewPrefs.withAllowMultiSelect(false);
             viewPrefs.setAllowItemSelection(false);
             viewAdapter.notifyDataSetChanged(); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
@@ -755,119 +976,213 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         displayControlsBasedOnSessionState();
         bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
-        if(showBulkDeleteAction(basket)) {
-            bulkActionButtonDelete.show();
-        } else {
-            bulkActionButtonDelete.hide();
-        }
-        if(showBulkCopyAction(basket)) {
-            bulkActionButtonCopy.show();
-        } else {
-            bulkActionButtonCopy.hide();
-        }
-        if(showBulkCutAction(basket)) {
-            bulkActionButtonCut.show();
-        } else {
-            bulkActionButtonCut.hide();
-        }
-        if(showBulkPasteAction(basket)) {
-            bulkActionButtonPaste.show();
-        } else {
-            bulkActionButtonPaste.hide();
+
+        if (!isAlbumDataLoading() && viewAdapter != null) {
+
+            if (showBulkDeleteAction(basket)) {
+                bulkActionButtonDelete.show();
+            } else {
+                bulkActionButtonDelete.hide();
+            }
+            if (showBulkCopyAction(basket)) {
+                bulkActionButtonCopy.show();
+            } else {
+                bulkActionButtonCopy.hide();
+            }
+            if (showBulkCutAction(basket)) {
+                bulkActionButtonCut.show();
+            } else {
+                bulkActionButtonCut.hide();
+            }
+            if (showBulkPasteAction(basket)) {
+                bulkActionButtonPaste.show();
+            } else {
+                bulkActionButtonPaste.hide();
+            }
+            if (showBulkPermissionsAction(basket)) {
+                bulkActionButtonPermissions.show();
+            } else {
+                bulkActionButtonPermissions.hide();
+            }
+
         }
 
+    }
+
+    private void loadAlbumResourcesPage(int pageToLoad) {
+        synchronized (loadingMessageIds) {
+            galleryModel.acquirePageLoadLock();
+            try {
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+                if (pageToActuallyLoad < 0) {
+                    // the sort order is inverted so we know for a fact this page is invalid.
+                    return;
+                }
+
+                if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad)) {
+                    return;
+                }
+
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
+                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+
+
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
+                galleryModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+            } finally {
+                galleryModel.releasePageLoadLock();
+            }
+        }
+    }
+
+    private int getPageToActuallyLoad(int pageRequested, int pageSize) {
+        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+        int pageToActuallyLoad = pageRequested;
+        if (invertSortOrder) {
+            int pagesOfPhotos = galleryModel.getContainerDetails().getPagesOfPhotos(pageSize);
+            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+        }
+        return pageToActuallyLoad;
     }
 
     private void onAlbumDeleteRequest(final CategoryItem album) {
-        String msg = String.format(getString(R.string.alert_confirm_really_delete_album_from_server_pattern), album.getName());
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+        String msg = getString(R.string.alert_confirm_really_delete_album_from_server_pattern, album.getName());
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new DeleteAlbumAction(getUiHelper(), album));
+    }
+
+    private void loadAlbumSubCategories() {
+        synchronized (loadingMessageIds) {
+            ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getActiveProfile();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connPrefs);
+//            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
+//                connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
+//            }
+            loadingMessageIds.put(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), viewPrefs.getPreferredAlbumThumbnailSize(), false)), "C");
+        }
+    }
+
+    private BulkResourceActionData getBulkResourceActionData() {
+        return bulkResourceActionData;
+    }
+
+    private void setupEditFields(View editFields) {
+        galleryNameView = editFields.findViewById(R.id.gallery_details_name);
+        galleryNameView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    if(album.getTotalPhotos() > 0 || album.getSubCategories() > 0) {
-                        String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern), album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-                            @Override
-                            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                if (Boolean.TRUE == positiveAnswer) {
-                                    addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
-                                }
-                            }
-                        });
-                    } else {
-                        addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (galleryNameView.getLineCount() > galleryNameView.getMaxLines()) {
+//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+                }
+                return false;
+            }
+        });
+        galleryDescriptionView = editFields.findViewById(R.id.gallery_details_description);
+        galleryDescriptionView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (galleryDescriptionView.getLineCount() > galleryDescriptionView.getMaxLines()) {
+//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+                }
+                return false;
+            }
+        });
+
+        allowedGroupsFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_groups_label);
+        allowedGroupsField = editFields.findViewById(R.id.gallery_details_allowed_groups);
+        allowedGroupsField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashSet<Long> groups = new HashSet<>();
+                if (currentGroups != null) {
+                    for (long groupId : currentGroups) {
+                        groups.add(groupId);
                     }
+                }
+                GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, editingItemDetails, groups);
+                getUiHelper().setTrackingRequest(groupSelectionNeededEvent.getActionId());
+                EventBus.getDefault().post(groupSelectionNeededEvent);
+            }
+        });
+
+        allowedUsersFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_users_label);
+        allowedUsersField = editFields.findViewById(R.id.gallery_details_allowed_users);
+        allowedUsersField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentGroups == null || currentGroups.length == 0 || userIdsInSelectedGroups != null) {
+                    if (userIdsInSelectedGroups == null) {
+                        userIdsInSelectedGroups = new HashSet<>(0);
+                    }
+                    HashSet<Long> preselectedUsernames = getSetFromArray(currentUsers);
+                    UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, editingItemDetails, userIdsInSelectedGroups, preselectedUsernames);
+                    getUiHelper().setTrackingRequest(usernameSelectionNeededEvent.getActionId());
+                    EventBus.getDefault().post(usernameSelectionNeededEvent);
+                } else {
+                    ArrayList<Long> selectedGroupIds = new ArrayList<>(currentGroups.length);
+                    for (long groupId : currentGroups) {
+                        selectedGroupIds.add(groupId);
+                    }
+                    usernameSelectionWantedNext = true;
+                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
                 }
             }
         });
-    }
 
-    private void onDeleteResources(final DeleteActionData deleteActionData) {
-        final HashSet<ResourceItem> sharedResources = new HashSet<>();
-        if (deleteActionData.isResourceInfoAvailable()) {
-            //TODO currently, this won't work. No piwigo support
-            for (ResourceItem item : deleteActionData.getSelectedItems()) {
-                if (item.getLinkedAlbums().size() > 1) {
-                    sharedResources.add(item);
-                }
-            }
-        } else {
-            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
-            for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                long messageId = new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext());
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, messageId));
-            }
-            return;
-        }
-        if (sharedResources.size() > 0) {
-            String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new UIHelper.QuestionResultAdapter() {
-
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if (Boolean.TRUE == positiveAnswer) {
-                        addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(deleteActionData.getSelectedItemIds(), deleteActionData.selectedItems).invokeAsync(getContext()));
-                    } else if (Boolean.FALSE == positiveAnswer) {
-                        HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
-                        HashSet<ResourceItem> itemsForPermananentDelete = new HashSet<>(deleteActionData.getSelectedItems());
-                        for (ResourceItem item : sharedResources) {
-                            itemIdsForPermanentDelete.remove(item.getId());
-                            itemsForPermananentDelete.remove(item);
-                            item.getLinkedAlbums().remove(galleryModel.getContainerDetails().getId());
-                            addActiveServiceCall(R.string.progress_unlink_resources, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
-                        }
-                        //now we need to delete the rest.
-                        deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermananentDelete);
-                    }
-                }
-            });
-        } else {
-            deleteResourcesFromServerForever(deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
-        }
-
-    }
-
-    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
-        String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        galleryPrivacyStatusField = editFields.findViewById(R.id.gallery_details_status);
+        privacyStatusFieldListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!reopening && isChecked && !galleryModel.getContainerDetails().isPrivate()) {
+                    // when reopening, this will be called once the gallery model has been loaded.
+                    loadAlbumPermissionsIfNeeded();
                 }
+                allowedGroupsFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
+                allowedGroupsField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
+                allowedUsersFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
+                allowedUsersField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
             }
-        });
+        };
+        galleryPrivacyStatusField.setOnCheckedChangeListener(privacyStatusFieldListener);
+    }
+
+    private void loadAlbumPermissionsIfNeeded() {
+        if (galleryModel != null
+                && PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())
+                && !galleryModel.getContainerDetails().isRoot()
+                && !galleryModel.getContainerDetails().isPermissionsLoaded()) {
+            // never want to load permissions for the root album (it's not legal to call this service with category id 0).
+            addActiveServiceCall(R.string.progress_loading_album_permissions, new AlbumGetPermissionsResponseHandler(galleryModel.getContainerDetails()));
+        }
     }
 
     @Override
     protected String buildPageHeading() {
-        CategoryItem catItem = galleryModel.getContainerDetails();
-        if(CategoryItem.ROOT_ALBUM.equals(catItem)) {
-            return getString(R.string.album_title_home);
-        } else {
-            String currentAlbumName = "... / " + galleryModel.getContainerDetails().getName();
-            return currentAlbumName;
+        if (galleryModel != null) {
+            CategoryItem catItem = galleryModel.getContainerDetails();
+            if (catItem.isRoot()) {
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                if (sessionDetails != null) {
+                    ServerConfig serverConfig = sessionDetails.getServerConfig();
+                    if (serverConfig != null) {
+                        return serverConfig.getGalleryTitle();
+                    }
+                }
+                return getString(R.string.album_title_home);
+            } else {
+                String currentAlbumName = "... / " + catItem.getName();
+                return currentAlbumName;
+            }
+        } else if (reopening) {
+            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+                return resumePrefs.getString("reopenAlbumName", "");
+            }
         }
+        return "";
     }
 
     @Override
@@ -878,6 +1193,38 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             //Resumed, but fragment initialisation cancelled for whatever reason.
             return;
         }
+
+        if (!reopening) {
+            populateViewFromModelEtcOnResume();
+        }
+    }
+
+    protected void populateViewFromModelEtcOnResume() {
+        ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+        String profileId = activeProfile.getProfileId(getPrefs(), getContext());
+
+
+        if (galleryModel == null) {
+            if (getArguments() != null) {
+                loadModelFromArguments(); // restoring view.
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "Gallery model is null, but there are no arguments available from which to load one - unable to populate view");
+                return;
+            }
+        }
+
+
+        // why would this ever be null?
+        List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
+        SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+        SharedPreferences.Editor editor = resumePrefs.edit();
+        editor.clear();
+        editor.putString("reopenAction", RESUME_ACTION);
+        editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
+        editor.putString("reopenProfileId", profileId);
+        editor.putString("reopenAlbumName", buildPageHeading());
+        editor.commit();
+
 
         if (galleryIsDirty) {
             reloadAlbumContent();
@@ -895,6 +1242,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         updateBasketDisplay(getBasket());
 
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_album_view);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(PiwigoLoginSuccessEvent event) {
+        if (!reopening) {
+            loadAlbumPermissionsIfNeeded();
+            displayControlsBasedOnSessionState();
+            setEditItemDetailsControlsStatus();
+            updatePageTitle();
+        }
     }
 
     private void reloadAlbumContent() {
@@ -920,7 +1278,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 if (albumAdminList == null) {
                     loadAdminList = true;
                 } else {
-                    if (galleryModel.getContainerDetails().equals(CategoryItem.ROOT_ALBUM)) {
+                    if (galleryModel.getContainerDetails().isRoot()) {
                         adminCategories = albumAdminList.getAlbums();
                     } else {
                         CategoryItem adminCopyOfAlbum = null;
@@ -928,12 +1286,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                             adminCopyOfAlbum = albumAdminList.getAlbum(galleryModel.getContainerDetails());
                         } catch (IllegalStateException e) {
                             Crashlytics.logException(e);
-                            if (BuildConfig.DEBUG) {
-                                Log.d(getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
-                            } else {
-                                Crashlytics.log(Log.ERROR, getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
-
-                            }
+                            Crashlytics.log(Log.ERROR, getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
                         }
                         if (adminCopyOfAlbum != null) {
                             adminCategories = adminCopyOfAlbum.getChildAlbums();
@@ -951,36 +1304,55 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private void loadAlbumResourcesPage(int pageToLoad) {
-        synchronized (loadingMessageIds) {
-            galleryModel.acquirePageLoadLock();
-            try {
-                if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
-                    return;
+    private void onResourceMoved(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
+        Crashlytics.log(String.format("deleting 1 album items from the UI display after moving it to different album"));
+        Basket basket = getBasket();
+        if (basket == null) {
+            Crashlytics.log("Basket is null when expecting to handle onResourceMoved event");
+            return;
+        }
+        CategoryItem movedParent = basket.getContentParent();
+        boolean itemRemoved = basket.removeItem(response.getPiwigoResource());
+        if (itemRemoved) {
+            movedParent.reducePhotoCount();
+            if (movedParent.getRepresentativePictureId() != null && response.getPiwigoResource().getId() == movedParent.getRepresentativePictureId()) {
+                if (movedParent.getPhotoCount() > 0) {
+                    movedResourceParentUpdateRequired = true;
                 }
-
-                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
-                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
-                long loadingMessageId = new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
-                galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
-                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
-            } finally {
-                galleryModel.releasePageLoadLock();
             }
+            if (basket.getItemCount() == 0 && movedResourceParentUpdateRequired) {
+                movedResourceParentUpdateRequired = false;
+                addActiveServiceCall(R.string.progress_move_resources, new AlbumThumbnailUpdatedResponseHandler(movedParent.getId(), movedParent.getParentId(), null));
+            }
+
+            updateBasketDisplay(basket);
+
+            // Now ensure any parents are also updated when next shown
+            notifyAllParentAlbumsOfContentChange();
+
+            //we've altered the album content (now update this album view to reflect the server content)
+            galleryIsDirty = true;
+            reloadAlbumContent();
+        } else {
+            Crashlytics.log(Log.ERROR, getTag(), "processed onResourceMoved but basket (" + basket.getItemCount() + " items) does not contain resource");
         }
     }
 
-    private void loadAlbumSubCategories() {
-        synchronized (loadingMessageIds) {
-            ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getActiveProfile();
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connPrefs);
-//            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
-//                connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
-//            }
-            long loadingMessageId = new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), viewPrefs.getPreferredAlbumThumbnailSize(), false).invokeAsync(getContext(), connPrefs);
-            loadingMessageIds.put(loadingMessageId, "C");
-            addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
+    private void updateAlbumDetails() {
+        switch (updateAlbumDetailsProgress) {
+            case UPDATE_IN_PROGRESS:
+            case UPDATE_NOT_RUNNING:
+                updateAlbumDetailsProgress = UPDATE_IN_PROGRESS;
+                addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumUpdateInfoResponseHandler(galleryModel.getContainerDetails()));
+                break;
+            case UPDATE_SETTING_ADDING_PERMISSIONS:
+                addingAlbumPermissions();
+            case UPDATE_SETTING_REMOVING_PERMISSIONS:
+                removeAlbumPermissions();
+                break;
+            default:
+                // unsupported state
+                throw new RuntimeException("Unsupported state");
         }
     }
 
@@ -1028,11 +1400,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         });
 
-        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM;
+        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || (galleryModel != null && galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM);
         bottomSheet.setVisibility(visibleBottomSheet ? View.VISIBLE : View.GONE);
 
         int editFieldVisibility = VISIBLE;
-        if (galleryModel.getContainerDetails().isRoot()) {
+        if (galleryModel == null || galleryModel.getContainerDetails().isRoot()) {
             editFieldVisibility = GONE;
         }
 
@@ -1042,7 +1414,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         // always setting them up eliminates the chance they might be null.
         setupBottomSheetButtons(bottomSheet, editFieldVisibility);
         setupEditFields(editFields);
-        if (!galleryModel.getContainerDetails().isRoot()) {
+        if (galleryModel != null && !galleryModel.getContainerDetails().isRoot()) {
             fillGalleryEditFields();
         } else {
             displayControlsBasedOnSessionState();
@@ -1127,92 +1499,83 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
     }
 
-    private void setupEditFields(View editFields) {
-        galleryNameView = editFields.findViewById(R.id.gallery_details_name);
-        galleryNameView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+    private boolean addingAlbumPermissions() {
+        updateAlbumDetailsProgress = UPDATE_SETTING_ADDING_PERMISSIONS;
+        // Get all groups newly added to the list of permissions
+        HashSet<Long> wantedAlbumGroups = SetUtils.asSet(currentGroups);
+        final HashSet<Long> newlyAddedGroups = SetUtils.difference(wantedAlbumGroups, SetUtils.asSet(galleryModel.getContainerDetails().getGroups()));
+        // Get all users newly added to the list of permissions
+        HashSet<Long> wantedAlbumUsers = SetUtils.asSet(currentUsers);
+        final HashSet<Long> newlyAddedUsers = SetUtils.difference(wantedAlbumUsers, SetUtils.asSet(galleryModel.getContainerDetails().getUsers()));
 
-                if (galleryNameView.getLineCount() > galleryNameView.getMaxLines()) {
-//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
-        galleryDescriptionView = editFields.findViewById(R.id.gallery_details_description);
-        galleryDescriptionView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (galleryDescriptionView.getLineCount() > galleryDescriptionView.getMaxLines()) {
-//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        long currentLoggedInUserId = sessionDetails.getUserId();
 
-        allowedGroupsFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_groups_label);
-        allowedGroupsField = editFields.findViewById(R.id.gallery_details_allowed_groups);
-        allowedGroupsField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashSet<Long> groups = new HashSet<>();
-                if (currentGroups != null) {
-                    for (long groupId : currentGroups) {
-                        groups.add(groupId);
+        Set<Long> thisUsersGroupsWithoutAccess = SetUtils.difference(sessionDetails.getGroupMemberships(), wantedAlbumGroups);
+
+        if (currentLoggedInUserId >= 0) {
+            boolean noGroupAccess = thisUsersGroupsWithoutAccess.size() == sessionDetails.getGroupMemberships().size();
+            boolean noUserAccess = !wantedAlbumUsers.contains(currentLoggedInUserId);
+
+            if (noGroupAccess && noUserAccess && !sessionDetails.isAdminUser()) {
+                //You're attempting to remove your own permission to access this album. Add it back in.
+                currentUsers = Arrays.copyOf(currentUsers, currentUsers.length + 1);
+                currentUsers[currentUsers.length - 1] = currentLoggedInUserId;
+                wantedAlbumUsers.add(currentLoggedInUserId);
+                // update the ui.
+                allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
+                int msgId = R.string.alert_information_own_user_readded_to_permissions_list;
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new AddingAlbumPermissionsAction(getUiHelper()));
+                return true;
+            }
+
+            if (newlyAddedGroups.size() > 0 || newlyAddedUsers.size() > 0) {
+
+                if (galleryModel.getContainerDetails().getSubCategories() > 0) {
+                    final CategoryItem currentCategoryDetails = galleryModel.getContainerDetails();
+
+                    if (newlyAddedUsers.contains(currentLoggedInUserId)) {
+                        //we're having to force add this user explicitly therefore for safety we need to apply the change recursively
+                        String msg = getString(R.string.alert_information_add_album_permissions_recursively_pattern, galleryModel.getContainerDetails().getSubCategories());
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new AddingChildPermissionsAction(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
+                    } else {
+
+                        String msg = getString(R.string.alert_confirm_add_album_permissions_recursively_pattern, newlyAddedGroups.size(), newlyAddedUsers.size(), galleryModel.getContainerDetails().getSubCategories());
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new AddAccessToAlbumAction(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
                     }
-                }
-                GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, editingItemDetails, groups);
-                getUiHelper().setTrackingRequest(groupSelectionNeededEvent.getActionId());
-                EventBus.getDefault().post(groupSelectionNeededEvent);
-            }
-        });
-
-        allowedUsersFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_users_label);
-        allowedUsersField = editFields.findViewById(R.id.gallery_details_allowed_users);
-        allowedUsersField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentGroups == null || currentGroups.length == 0 || userIdsInSelectedGroups != null) {
-                    if (userIdsInSelectedGroups == null) {
-                        userIdsInSelectedGroups = new HashSet<>(0);
-                    }
-                    HashSet<Long> preselectedUsernames = getSetFromArray(currentUsers);
-                    UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, editingItemDetails, userIdsInSelectedGroups, preselectedUsernames);
-                    getUiHelper().setTrackingRequest(usernameSelectionNeededEvent.getActionId());
-                    EventBus.getDefault().post(usernameSelectionNeededEvent);
                 } else {
-                    ArrayList<Long> selectedGroupIds = new ArrayList<>(currentGroups.length);
-                    for (long groupId : currentGroups) {
-                        selectedGroupIds.add(groupId);
-                    }
-                    usernameSelectionWantedNext = true;
-                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
+                    // no need to be recursive as this album is a leaf node.
+                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, false));
                 }
+                return true;
+            } else {
+                return false;
             }
-        });
-
-        galleryPrivacyStatusField = editFields.findViewById(R.id.gallery_details_status);
-        privacyStatusFieldListener = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked && !galleryModel.getContainerDetails().isPrivate()) {
-                    loadAlbumPermissionsIfNeeded();
-                }
-                allowedGroupsFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
-                allowedGroupsField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
-                allowedUsersFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
-                allowedUsersField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
-            }
-        };
-        galleryPrivacyStatusField.setOnCheckedChangeListener(privacyStatusFieldListener);
+        } else {
+            return false;
+        }
     }
 
-    private void loadAlbumPermissionsIfNeeded() {
-        if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())
-                && !galleryModel.getContainerDetails().isRoot()
-                && !galleryModel.getContainerDetails().isPermissionsLoaded()) {
-            // never want to load permissions for the root album (it's not legal to call this service with category id 0).
-            addActiveServiceCall(R.string.progress_loading_album_permissions, new AlbumGetPermissionsResponseHandler(galleryModel.getContainerDetails()).invokeAsync(getContext()));
+    private boolean removeAlbumPermissions() {
+        updateAlbumDetailsProgress = UPDATE_SETTING_REMOVING_PERMISSIONS;
+        // Get all groups newly added to the list of permissions
+        final HashSet<Long> newlyRemovedGroups = SetUtils.difference(SetUtils.asSet(galleryModel.getContainerDetails().getGroups()), SetUtils.asSet(currentGroups));
+        // Get all users newly added to the list of permissions
+        HashSet<Long> currentAlbumUsers = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
+        final HashSet<Long> newlyRemovedUsers = SetUtils.difference(currentAlbumUsers, SetUtils.asSet(currentUsers));
+
+        if (newlyRemovedGroups.size() > 0 || newlyRemovedUsers.size() > 0) {
+
+            if (galleryModel.getContainerDetails().getSubCategories() > 0) {
+                String message = getString(R.string.alert_confirm_really_remove_album_permissions_pattern, newlyRemovedGroups.size(), newlyRemovedUsers.size());
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new RemoveAccessToAlbumAction(getUiHelper(), newlyRemovedGroups, newlyRemovedUsers));
+            } else {
+                addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
+            }
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -1231,17 +1594,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         allowedUsersField.setText(R.string.click_to_view);
         galleryPrivacyStatusField.setChecked(galleryModel.getContainerDetails().isPrivate());
         if (currentUsers != null) {
-            allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
+            allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
         }
         if (currentGroups != null) {
-            allowedGroupsField.setText(String.format(getString(R.string.click_to_view_pattern), currentGroups.length));
+            allowedGroupsField.setText(getString(R.string.click_to_view_pattern, currentGroups.length));
         }
         displayControlsBasedOnSessionState();
         setEditItemDetailsControlsStatus();
     }
 
     private void setEditItemDetailsControlsStatus() {
-        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM;
+        if (galleryModel == null) {
+            return; // if reopening page (will be set once data loaded)
+        }
+        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || !galleryModel.getContainerDetails().isRoot();
         bottomSheet.setVisibility(visibleBottomSheet ? View.VISIBLE : View.GONE);
 
         addNewAlbumButton.setEnabled(!editingItemDetails);
@@ -1262,10 +1628,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void displayControlsBasedOnSessionState() {
         if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode()) {
-            saveButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
-            discardButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
-            editButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
-            deleteButton.setVisibility(galleryModel.getContainerDetails().isRoot() ? INVISIBLE : VISIBLE);
+            boolean showPersistenceControls = galleryModel != null && !galleryModel.getContainerDetails().isRoot();
+            saveButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
+            discardButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
+            editButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
+            deleteButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
             addNewAlbumButton.setVisibility(VISIBLE);
             //TODO make visible once functionality written.
             cutButton.setVisibility(GONE);
@@ -1289,8 +1656,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void setGalleryHeadings() {
+        if(galleryModel == null) {
+            return;
+        }
         CategoryItem currentAlbum = galleryModel.getContainerDetails();
-        if (currentAlbum != null && currentAlbum.getName() != null && !currentAlbum.getName().isEmpty() && CategoryItem.ROOT_ALBUM != currentAlbum) {
+        if (currentAlbum != null && currentAlbum.getName() != null && !currentAlbum.getName().isEmpty() && !currentAlbum.isRoot()) {
             galleryNameHeader.setText(galleryModel.getContainerDetails().getName());
             galleryNameHeader.setVisibility(View.VISIBLE);
         } else {
@@ -1329,12 +1699,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void onMoveItem(CategoryItem model) {
         //TODO implement this
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unimplemented));
+        getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
 
     private void onCopyItem(CategoryItem model) {
         //TODO implement this
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unimplemented));
+        getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
 
     @Override
@@ -1350,9 +1720,18 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     protected void onPiwigoUpdateResourceInfoResponse(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
         if (!viewAdapterListener.handleAlbumThumbnailInfoLoaded(response.getMessageId(), response.getPiwigoResource())) {
-            if (deleteActionData != null && deleteActionData.isTrackingMessageId(response.getMessageId())) {
-                //currently mid delete of resources.
-                onResourceUnlinked(response);
+            if (bulkResourceActionData != null && bulkResourceActionData.isTrackingMessageId(response.getMessageId())) {
+                switch (bulkResourceActionData.getAction()) {
+                    case BulkResourceActionData.ACTION_DELETE:
+                        //currently mid delete of resources.
+                        onResourceUpdateProcessed(response);
+                        break;
+                    case BulkResourceActionData.ACTION_UPDATE_PERMISSIONS:
+                        onResourceUpdateProcessed(response);
+                        break;
+                    default:
+                        Crashlytics.log(Log.WARN, getTag(), "unsupported bulk resource action type");
+                }
             } else {
                 onResourceMoved(response);
             }
@@ -1365,13 +1744,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
         } catch(IllegalStateException e) {
             Crashlytics.logException(e);
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new UIHelper.QuestionResultAdapter() {
-                @Override
-                public void onDismiss(AlertDialog dialog) {
-                    super.onDismiss(dialog);
-                    getFragmentManager().popBackStack();
-                }
-            });
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new AlbumNoLongerExistsAction(getUiHelper()));
             return;
         }
 
@@ -1387,17 +1760,30 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     }
 
-    private void onResourceUnlinked(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
-        if(deleteActionData.removeProcessedResource(response.getPiwigoResource())) {
-            deleteActionData = null;
+    private void onResourceUpdateProcessed(PiwigoResponseBufferingHandler.PiwigoResourceItemResponse response) {
+        if (bulkResourceActionData.removeProcessedResource(response.getPiwigoResource())) {
+            bulkResourceActionData = null;
+            viewAdapter.clearSelectedItemIds();
+            viewAdapter.toggleItemSelection();
         }
     }
 
     protected void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
-        if (deleteActionData != null && deleteActionData.isTrackingMessageId(response.getMessageId())) {
-            this.deleteActionData.updateLinkedAlbums(response.getResource());
-            if(this.deleteActionData.isResourceInfoAvailable()) {
-                onDeleteResources(deleteActionData);
+        if (bulkResourceActionData != null && bulkResourceActionData.isTrackingMessageId(response.getMessageId())) {
+            this.bulkResourceActionData.updateLinkedAlbums(response.getResource());
+            if (this.bulkResourceActionData.isResourceInfoAvailable()) {
+                switch (bulkResourceActionData.getAction()) {
+                    case BulkResourceActionData.ACTION_DELETE:
+                        onDeleteResources(bulkResourceActionData);
+                        break;
+                    case BulkResourceActionData.ACTION_UPDATE_PERMISSIONS:
+                        onUpdateImagePermissions(bulkResourceActionData);
+                        break;
+                }
+
+            } else {
+                // this will load the next batch of resource infos...
+                bulkResourceActionData.getResourcesInfoIfNeeded(this);
             }
         }
     }
@@ -1447,43 +1833,39 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private void onResourceMoved(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final GroupSelectionCompleteEvent groupSelectionCompleteEvent) {
+        if (getUiHelper().isTrackingRequest(groupSelectionCompleteEvent.getActionId())) {
+            long[] selectedGroupsArr = new long[groupSelectionCompleteEvent.getCurrentSelection().size()];
+            int i = 0;
+            for (Group group : groupSelectionCompleteEvent.getSelectedItems()) {
+                selectedGroupsArr[i++] = group.getId();
+            }
+            currentGroups = selectedGroupsArr;
+            userIdsInSelectedGroups = null;
+            fillGroupsField(allowedGroupsField, groupSelectionCompleteEvent.getSelectedItems());
 
-        Basket basket = getBasket();
-        if(basket == null) {
-            Crashlytics.log("Basket is null when expecting to handle onResourceMoved event");
-            return;
-        }
-        CategoryItem movedParent = basket.getContentParent();
-        basket.removeItem(response.getPiwigoResource());
-        movedParent.reducePhotoCount();
-        if (movedParent.getRepresentativePictureId() != null && response.getPiwigoResource().getId() == movedParent.getRepresentativePictureId()) {
-            if (movedParent.getPhotoCount() > 0) {
-                movedResourceParentUpdateRequired = true;
+
+            ArrayList<Long> selectedGroupIds = new ArrayList<>(currentGroups.length);
+            for (long groupId : currentGroups) {
+                selectedGroupIds.add(groupId);
+            }
+            if (selectedGroupIds.size() == 0) {
+                userIdsInSelectedGroups = new HashSet<>(0);
+            } else {
+                addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
             }
         }
-        if (basket.getItemCount() == 0 && movedResourceParentUpdateRequired) {
-            movedResourceParentUpdateRequired = false;
-            addActiveServiceCall(R.string.progress_move_resources, new AlbumThumbnailUpdatedResponseHandler(movedParent.getId(), movedParent.getParentId(), null).invokeAsync(getContext()));
-        }
-
-        updateBasketDisplay(basket);
-
-        // Now ensure any parents are also updated when next shown
-        notifyAllParentAlbumsOfContentChange();
-
-        //we've altered the album content (now update this album view to reflect the server content)
-        galleryIsDirty = true;
-        reloadAlbumContent();
     }
 
     private void onResourcesDeleted(ImageDeleteResponseHandler.PiwigoDeleteImageResponse response) {
+        Crashlytics.log(String.format(Locale.getDefault(), "deleting %1$d album items from the UI display", response.getDeletedItemIds().size()));
         // clear the selection
         viewAdapter.clearSelectedItemIds();
         viewAdapter.toggleItemSelection();
         // now update this album view to reflect the server content
-        if (deleteActionData != null && deleteActionData.removeProcessedResources(response.getDeletedItemIds())) {
-            deleteActionData = null;
+        if (bulkResourceActionData != null && bulkResourceActionData.removeProcessedResources(response.getDeletedItemIds())) {
+            bulkResourceActionData = null;
         }
         // Now ensure any parents are also updated when next shown
         notifyAllParentAlbumsOfContentChange();
@@ -1491,24 +1873,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         galleryIsDirty = true;
         reloadAlbumContent();
 
-    }
-
-    private void updateAlbumDetails() {
-        switch (updateAlbumDetailsProgress) {
-            case UPDATE_IN_PROGRESS:
-            case UPDATE_NOT_RUNNING:
-                updateAlbumDetailsProgress = UPDATE_IN_PROGRESS;
-                addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumUpdateInfoResponseHandler(galleryModel.getContainerDetails()).invokeAsync(getContext()));
-                break;
-            case UPDATE_SETTING_ADDING_PERMISSIONS:
-                addingAlbumPermissions();
-            case UPDATE_SETTING_REMOVING_PERMISSIONS:
-                removeAlbumPermissions();
-                break;
-            default:
-                // unsupported state
-                throw new RuntimeException("Unsupported state");
-        }
     }
 
     private void onReloadAlbum() {
@@ -1539,7 +1903,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private void onGetSubGalleries(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+    private void onListOfAlbumsLoaded(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
 
         synchronized (this) {
             if (galleryModel.getContainerDetails().isRoot()) {
@@ -1574,7 +1938,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
-            if(response.getPage() == 0 && response.getResources().size() > 0) {
+            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            int firstPage = invertSortOrder ? galleryModel.getContainerDetails().getPagesOfPhotos(pageSize) : 0;
+
+            if (response.getPage() == firstPage && response.getResources().size() > 0) {
                 if(!galleryModel.containsItem(CategoryItem.PICTURE_HEADING)) {
                     galleryModel.addItem(CategoryItem.PICTURE_HEADING);
                 }
@@ -1612,10 +1980,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void onAlbumPermissionsAdded(AlbumAddPermissionsResponseHandler.PiwigoAddAlbumPermissionsResponse response) {
         HashSet<Long> newGroupsSet = SetUtils.asSet(galleryModel.getContainerDetails().getGroups());
         newGroupsSet.addAll(response.getGroupIdsAffected());
-        galleryModel.getContainerDetails().setGroups(SetUtils.asLongArray(newGroupsSet));
+        galleryModel.getContainerDetails().setGroups(CollectionUtils.asLongArray(newGroupsSet));
         HashSet<Long> newUsersSet = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
         newUsersSet.addAll(response.getUserIdsAffected());
-        galleryModel.getContainerDetails().setUsers(SetUtils.asLongArray(newUsersSet));
+        galleryModel.getContainerDetails().setUsers(CollectionUtils.asLongArray(newUsersSet));
 
         if (!removeAlbumPermissions()) {
             onAlbumUpdateFinished();
@@ -1625,10 +1993,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void onAlbumPermissionsRemoved(AlbumRemovePermissionsResponseHandler.PiwigoRemoveAlbumPermissionsResponse response) {
         HashSet<Long> newGroupsSet = SetUtils.asSet(galleryModel.getContainerDetails().getGroups());
         newGroupsSet.removeAll(response.getGroupIdsAffected());
-        galleryModel.getContainerDetails().setGroups(SetUtils.asLongArray(newGroupsSet));
+        galleryModel.getContainerDetails().setGroups(CollectionUtils.asLongArray(newGroupsSet));
         HashSet<Long> newUsersSet = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
         newUsersSet.removeAll(response.getUserIdsAffected());
-        galleryModel.getContainerDetails().setUsers(SetUtils.asLongArray(newUsersSet));
+        galleryModel.getContainerDetails().setUsers(CollectionUtils.asLongArray(newUsersSet));
 
         onAlbumUpdateFinished();
     }
@@ -1640,120 +2008,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         } else {
             onAlbumUpdateFinished();
-        }
-    }
-
-    private boolean addingAlbumPermissions() {
-        updateAlbumDetailsProgress = UPDATE_SETTING_ADDING_PERMISSIONS;
-        // Get all groups newly added to the list of permissions
-        HashSet<Long> wantedAlbumGroups = SetUtils.asSet(currentGroups);
-        final HashSet<Long> newlyAddedGroups = SetUtils.difference(wantedAlbumGroups, SetUtils.asSet(galleryModel.getContainerDetails().getGroups()));
-        // Get all users newly added to the list of permissions
-        HashSet<Long> wantedAlbumUsers = SetUtils.asSet(currentUsers);
-        final HashSet<Long> newlyAddedUsers = SetUtils.difference(wantedAlbumUsers, SetUtils.asSet(galleryModel.getContainerDetails().getUsers()));
-
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        long currentLoggedInUserId = sessionDetails.getUserId();
-
-        Set<Long> thisUsersGroupsWithoutAccess = SetUtils.difference(sessionDetails.getGroupMemberships(), wantedAlbumGroups);
-
-        if (currentLoggedInUserId >= 0) {
-            boolean noGroupAccess = thisUsersGroupsWithoutAccess.size() == sessionDetails.getGroupMemberships().size();
-            boolean noUserAccess = !wantedAlbumUsers.contains(currentLoggedInUserId);
-
-            if (noGroupAccess && noUserAccess && !sessionDetails.isAdminUser()) {
-                //You're attempting to remove your own permission to access this album. Add it back in.
-                currentUsers = Arrays.copyOf(currentUsers, currentUsers.length + 1);
-                currentUsers[currentUsers.length - 1] = currentLoggedInUserId;
-                wantedAlbumUsers.add(currentLoggedInUserId);
-                // update the ui.
-                allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
-                int msgId = R.string.alert_information_own_user_readded_to_permissions_list;
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new UIHelper.QuestionResultAdapter() {
-
-                    @Override
-                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                        if (Boolean.TRUE == positiveAnswer) {
-                            addingAlbumPermissions();
-                        }
-                    }
-                });
-                return true;
-            }
-
-            if (newlyAddedGroups.size() > 0 || newlyAddedUsers.size() > 0) {
-
-                if (galleryModel.getContainerDetails().getSubCategories() > 0) {
-                    if (newlyAddedUsers.contains(currentLoggedInUserId)) {
-                        //we're having to force add this user explicitly therefore for safety we need to apply the change recursively
-                        String msg = String.format(getString(R.string.alert_information_add_album_permissions_recursively_pattern), galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new UIHelper.QuestionResultAdapter() {
-
-                            @Override
-                            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                if (Boolean.TRUE == positiveAnswer) {
-                                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, true).invokeAsync(getContext()));
-                                }
-                            }
-                        });
-                    } else {
-
-                        String msg = String.format(getString(R.string.alert_confirm_add_album_permissions_recursively_pattern), newlyAddedGroups.size(), newlyAddedUsers.size(), galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-
-                            @Override
-                            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                if (Boolean.TRUE == positiveAnswer) {
-                                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, true).invokeAsync(getContext()));
-                                } else {
-                                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, false).invokeAsync(getContext()));
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    // no need to be recursive as this album is a leaf node.
-                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, false).invokeAsync(getContext()));
-                }
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    private boolean removeAlbumPermissions() {
-        updateAlbumDetailsProgress = UPDATE_SETTING_REMOVING_PERMISSIONS;
-        // Get all groups newly added to the list of permissions
-        final HashSet<Long> newlyRemovedGroups = SetUtils.difference(SetUtils.asSet(galleryModel.getContainerDetails().getGroups()), SetUtils.asSet(currentGroups));
-        // Get all users newly added to the list of permissions
-        HashSet<Long> currentAlbumUsers = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
-        final HashSet<Long> newlyRemovedUsers = SetUtils.difference(currentAlbumUsers, SetUtils.asSet(currentUsers));
-
-        if (newlyRemovedGroups.size() > 0 || newlyRemovedUsers.size() > 0) {
-
-            if (galleryModel.getContainerDetails().getSubCategories() > 0) {
-                String message = String.format(getString(R.string.alert_confirm_really_remove_album_permissions_pattern), newlyRemovedGroups.size(), newlyRemovedUsers.size());
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-
-                    @Override
-                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                        if (Boolean.TRUE == positiveAnswer) {
-                            addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers).invokeAsync(getContext()));
-                        } else {
-                            onAlbumUpdateFinished();
-                        }
-                    }
-                });
-            } else {
-                addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers).invokeAsync(getContext()));
-            }
-
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -1778,8 +2032,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         galleryModel.setContainerDetails(response.getAlbum());
         currentUsers = this.galleryModel.getContainerDetails().getUsers();
         currentGroups = this.galleryModel.getContainerDetails().getGroups();
-        allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
-        allowedGroupsField.setText(String.format(getString(R.string.click_to_view_pattern), currentGroups.length));
+        allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
+        allowedGroupsField.setText(getString(R.string.click_to_view_pattern, currentGroups.length));
     }
 
     private void onAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
@@ -1808,7 +2062,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
         if(exitFragment) {
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -1837,7 +2091,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 //You've attempted to remove your own permission to access this album. Adding it back in.
                 currentUsers = Arrays.copyOf(currentUsers, currentUsers.length + 1);
                 currentUsers[currentUsers.length - 1] = currentLoggedInUserId;
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_own_user_readded_to_permissions_list));
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_information_own_user_readded_to_permissions_list));
             }
             fillUsernamesField(allowedUsersField, usernameSelectionCompleteEvent.getSelectedItems());
         }
@@ -1853,36 +2107,55 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(final GroupSelectionCompleteEvent groupSelectionCompleteEvent) {
-        if (getUiHelper().isTrackingRequest(groupSelectionCompleteEvent.getActionId())) {
-            long[] selectedGroupsArr = new long[groupSelectionCompleteEvent.getCurrentSelection().size()];
-            int i = 0;
-            for (Group group : groupSelectionCompleteEvent.getSelectedItems()) {
-                selectedGroupsArr[i++] = group.getId();
-            }
-            currentGroups = selectedGroupsArr;
-            userIdsInSelectedGroups = null;
-            fillGroupsField(allowedGroupsField, groupSelectionCompleteEvent.getSelectedItems());
-
-
-            ArrayList<Long> selectedGroupIds = new ArrayList<>(currentGroups.length);
-            for (long groupId : currentGroups) {
-                selectedGroupIds.add(groupId);
-            }
-            if (selectedGroupIds.size() == 0) {
-                userIdsInSelectedGroups = new HashSet<>(0);
-            } else {
-                addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
-            }
+    public CategoryItem getParentAlbum() {
+        if (albumDetails == null) {
+            Crashlytics.log(Log.WARN, TAG, "Attempt to reopen parent but is null");
+            return null;
         }
+        PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        if (nextPiwigoAlbum == null) {
+            Crashlytics.log(Log.WARN, TAG, "Attempt to reopen parent but parent is not available. Returning null");
+            return null;
+        }
+        return nextPiwigoAlbum.getContainerDetails();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(PiwigoLoginSuccessEvent event) {
-        loadAlbumPermissionsIfNeeded();
-        displayControlsBasedOnSessionState();
-        setEditItemDetailsControlsStatus();
+    private static class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> {
+        @Override
+        public boolean onSuccess(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
+            CategoryItem currentItem = response.getAlbumTreeRoot();
+
+            // cache the retrieved category tree into the model
+            if (currentItem != null) {
+                FragmentActivity activity = uiHelper.getParent().requireActivity();
+                for (Long albumId : response.getAlbumPath()) {
+                    if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
+                        continue;
+                    }
+                    ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
+                    try {
+                        currentItem = currentItem.getChild(albumId);
+                    } catch (IllegalStateException e) {
+                        // thrown if no child albums were set. This should never occur really since it was a success but the root could now theoretically be empty.
+                    }
+                    if (currentItem == null) {
+                        break; // were unable to load this item.
+                    }
+                }
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "album tree retrieved, but albumTreeRoot is null");
+            }
+
+            // now reopent the model
+            uiHelper.getParent().onReopenModelRetrieved(response.getAlbumTreeRoot(), response.getDeepestAlbumOnDesiredPath());
+            return true; // to close the progress indicator
+        }
+
+        @Override
+        public boolean onFailure(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            uiHelper.getParent().onReopenModelRetrieved(CategoryItem.ROOT_ALBUM.clone(), CategoryItem.ROOT_ALBUM.clone());
+            return true; // to close the progress indicator
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -1930,29 +2203,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final BadRequestUsingHttpToHttpsServerEvent event) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (positiveAnswer != null && positiveAnswer) {
-                    event.getConnectionPreferences().setForceHttps(prefs, getContext(), true);
-                }
-            }
-        });
+        final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
+        String failedUriPath = event.getFailedUri().toString();
+        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), failedUriPath, R.string.button_no, R.string.button_yes, new BadHttpProtocolAction(getUiHelper(), connectionPreferences));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final BadRequestUsesRedirectionServerEvent event) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (positiveAnswer != null && positiveAnswer) {
-                    getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(event.getConnectionPreferences(), getContext()).start());
-                    event.getConnectionPreferences().setFollowHttpRedirects(prefs, getContext(), true);
-                }
-            }
-        });
+        final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
+        String failedUriPath = event.getFailedUri().toString();
+        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), failedUriPath, R.string.button_no, R.string.button_yes, new BadRequestRedirectionAction(getUiHelper(), connectionPreferences));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -1960,64 +2220,397 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         if (galleryModel != null && albumAlteredEvent.isRelevant(galleryModel.getContainerDetails().getId())) {
             galleryIsDirty = true;
             if (isResumed()) {
+                //TODO Do something more fine grained to avoid refreshing the entire album view!
                 reloadAlbumContent();
             }
-            if(albumAlteredEvent.isCascadeToParents()) {
+            if (albumAlteredEvent.isCascadeToParents()) {
                 notifyAllParentAlbumsOfContentChange();
             }
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(AlbumItemDeletedEvent event) {
-        if(event.item.getParentId() == galleryModel.getId()) {
-            int fullGalleryIdx = galleryModel.getItemIdx(event.item);
+    public void onEvent(AlbumDeletedEvent event) {
+        if (event.getItem().getParentId() == galleryModel.getId()) {
+            int fullGalleryIdx = galleryModel.getItemIdx(event.getItem());
             // now removed from the backing gallery too.
             galleryModel.remove(fullGalleryIdx);
+            // update all parent albums in case affected
+            notifyAllParentAlbumsOfContentChange();
         }
     }
 
-    private static class DeleteActionData implements Parcelable {
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(AlbumItemDeletedEvent event) {
+        if (event.item.getParentId() == galleryModel.getId()) {
+            int fullGalleryIdx = galleryModel.getItemIdx(event.item);
+            // now removed from the backing gallery too.
+            galleryModel.remove(fullGalleryIdx);
+            // update all parent albums in case affected
+            notifyAllParentAlbumsOfContentChange();
+        }
+    }
+
+    protected PiwigoAlbum getGalleryModel() {
+        return galleryModel;
+    }
+
+    private static final class BulkImagePermissionsListener extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+
+        private final HashSet<Long> imageIds;
+        private Spinner privacyLevelSpinner;
+
+        BulkImagePermissionsListener(HashSet<Long> imageIds, FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+            super(uiHelper);
+            this.imageIds = imageIds;
+        }
+
+        @Override
+        public void onPopulateDialogView(LinearLayout dialogView, int layoutId) {
+
+            privacyLevelSpinner = dialogView.findViewById(R.id.privacy_level);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(dialogView.getContext(),
+                    R.array.privacy_levels_groups_array, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            privacyLevelOptionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
+
+            byte privacyLevel = -1;
+            for (ResourceItem item : getUiHelper().getParent().getSelectedItems()) {
+                if (privacyLevel < 0) {
+                    privacyLevel = item.getPrivacyLevel();
+                }
+                if (privacyLevel != item.getPrivacyLevel()) {
+                    // privacy levels differ
+                    privacyLevel = -1;
+                    break;
+                }
+            }
+            setPrivacyLevelSpinnerOption(privacyLevelSpinner, privacyLevel);
+
+        }
+
+        private void setPrivacyLevelSpinnerOption(Spinner privacyLevelSpinner, int value) {
+
+            int[] values = privacyLevelSpinner.getResources().getIntArray(R.array.privacy_levels_values_array);
+            int selectionIdx = -1;
+            for (int i = 0; i < values.length; i++) {
+                if (values[i] == value) {
+                    selectionIdx = i;
+                    break;
+                }
+            }
+            privacyLevelSpinner.setSelection(selectionIdx);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE.equals(positiveAnswer)) {
+                byte privacyLevel = getPrivacyLevelValue();
+                if (privacyLevel >= 0) {
+                    getUiHelper().getParent().updateResourcePermissions(imageIds, privacyLevel);
+                }
+            }
+        }
+
+        private byte getPrivacyLevelValue() {
+            int selectedIdx = privacyLevelSpinner.getSelectedItemPosition();
+            if (selectedIdx == INVALID_POSITION) {
+                return INVALID_POSITION;
+            }
+            return (byte) privacyLevelSpinner.getResources().getIntArray(R.array.privacy_levels_values_array)[selectedIdx];
+        }
+    }
+
+    private static class AlbumNoLongerExistsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        public AlbumNoLongerExistsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            super.onDismiss(dialog);
+            //TODO getFragmentManager means this fragment needs to be serialised!
+            getUiHelper().getParent().getParentFragmentManager().popBackStack();
+        }
+    }
+
+    private static class BasketAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        BasketAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+            Basket basket = fragment.getBasket();
+            final int basketAction = basket.getAction();
+            final HashSet<ResourceItem> basketContent = basket.getContents();
+            final CategoryItem containerDetails = fragment.getGalleryModel().getContainerDetails();
+
+            if (Boolean.TRUE == positiveAnswer) {
+                if (basketAction == Basket.ACTION_COPY) {
+                    HashSet<ResourceItem> itemsToCopy = basketContent;
+                    CategoryItem copyToAlbum = containerDetails;
+                    for (ResourceItem itemToCopy : itemsToCopy) {
+                        getUiHelper().addActiveServiceCall(R.string.progress_copy_resources, new ImageCopyToAlbumResponseHandler<>(itemToCopy, copyToAlbum));
+                    }
+                } else if (basketAction == Basket.ACTION_CUT) {
+                    HashSet<ResourceItem> itemsToMove = basketContent;
+                    CategoryItem moveToAlbum = containerDetails;
+                    for (ResourceItem itemToMove : itemsToMove) {
+                        getUiHelper().addActiveServiceCall(R.string.progress_move_resources, new ImageChangeParentAlbumHandler(itemToMove, moveToAlbum));
+                    }
+                }
+            }
+        }
+    }
+
+    private static class DeleteAlbumAction extends UIHelper.QuestionResultAdapter {
+        private final CategoryItem album;
+
+        public DeleteAlbumAction(UIHelper uiHelper, CategoryItem album) {
+            super(uiHelper);
+            this.album = album;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                if (album.getTotalPhotos() > 0 || album.getSubCategories() > 0) {
+                    String msg = String.format(getContext().getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern), album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new ReallyDeleteAlbumAction(getUiHelper(), album));
+                } else {
+                    getUiHelper().addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()));
+                }
+            }
+        }
+
+        private static class ReallyDeleteAlbumAction extends UIHelper.QuestionResultAdapter {
+            private final CategoryItem album;
+
+            public ReallyDeleteAlbumAction(UIHelper uiHelper, CategoryItem album) {
+                super(uiHelper);
+                this.album = album;
+            }
+
+            @Override
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if (Boolean.TRUE == positiveAnswer) {
+                    getUiHelper().addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()));
+                }
+            }
+        }
+    }
+
+    private static class DeleteSharedResourcesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+
+        private HashSet<ResourceItem> sharedResources;
+
+        public DeleteSharedResourcesAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<ResourceItem> sharedResources) {
+            super(uiHelper);
+            this.sharedResources = sharedResources;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+            BulkResourceActionData deleteActionData = fragment.getBulkResourceActionData();
+
+            if (Boolean.TRUE == positiveAnswer) {
+                deleteActionData.trackMessageId(getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(deleteActionData.getSelectedItemIds(), deleteActionData.selectedItems)));
+            } else if (Boolean.FALSE == positiveAnswer) {
+                final long currentAlbumId = fragment.getGalleryModel().getContainerDetails().getId();
+                HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
+                HashSet<ResourceItem> itemsForPermananentDelete = new HashSet<>(deleteActionData.getSelectedItems());
+                for (ResourceItem item : sharedResources) {
+                    itemIdsForPermanentDelete.remove(item.getId());
+                    itemsForPermananentDelete.remove(item);
+                    item.getLinkedAlbums().remove(currentAlbumId);
+                    deleteActionData.trackMessageId(getUiHelper().addActiveServiceCall(R.string.progress_unlink_resources, new ImageUpdateInfoResponseHandler(item, true)));
+                }
+                //now we need to delete the rest.
+                deleteResourcesFromServerForever(getUiHelper(), itemIdsForPermanentDelete, itemsForPermananentDelete);
+            }
+        }
+    }
+
+    private static class DeleteResourceForeverAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+
+        private HashSet<Long> selectedItemIds;
+        private HashSet<T> selectedItems;
+
+        public DeleteResourceForeverAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<T> selectedItems) {
+            super(uiHelper);
+            this.selectedItemIds = selectedItemIds;
+            this.selectedItems = selectedItems;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                BulkResourceActionData currentBulkResourceActionData = getUiHelper().getParent().getBulkResourceActionData();
+                if (currentBulkResourceActionData != null) {
+                    currentBulkResourceActionData.trackMessageId(getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<T>(selectedItemIds, selectedItems)));
+                }
+            }
+        }
+    }
+
+    private static class AddAccessToAlbumAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        private HashSet<Long> newlyAddedGroups;
+        private HashSet<Long> newlyAddedUsers;
+
+        public AddAccessToAlbumAction(FragmentUIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
+            super(uiHelper);
+            this.newlyAddedGroups = newlyAddedGroups;
+            this.newlyAddedUsers = newlyAddedUsers;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+            final CategoryItem currentCategoryDetails = fragment.getGalleryModel().getContainerDetails();
+            if (Boolean.TRUE == positiveAnswer) {
+                getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true));
+            } else {
+                getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, false));
+            }
+        }
+    }
+
+    private static class AddingChildPermissionsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        private HashSet<Long> newlyAddedGroups;
+        private HashSet<Long> newlyAddedUsers;
+
+        public AddingChildPermissionsAction(FragmentUIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
+            super(uiHelper);
+            this.newlyAddedGroups = newlyAddedGroups;
+            this.newlyAddedUsers = newlyAddedUsers;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                final CategoryItem currentCategoryDetails = fragment.getGalleryModel().getContainerDetails();
+                getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true));
+            }
+        }
+    }
+
+    private static class RemoveAccessToAlbumAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        private HashSet<Long> newlyRemovedGroups;
+        private HashSet<Long> newlyRemovedUsers;
+
+        public RemoveAccessToAlbumAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<Long> newlyRemovedGroups, HashSet<Long> newlyRemovedUsers) {
+            super(uiHelper);
+            this.newlyRemovedGroups = newlyRemovedGroups;
+            this.newlyRemovedUsers = newlyRemovedUsers;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                PiwigoAlbum galleryModel = fragment.getGalleryModel();
+                getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
+            } else {
+                getUiHelper().getParent().onAlbumUpdateFinished();
+            }
+        }
+    }
+
+    private static class BadHttpProtocolAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        private final ConnectionPreferences.ProfilePreferences connectionPreferences;
+
+        public BadHttpProtocolAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+            super(uiHelper);
+            this.connectionPreferences = connectionPreferences;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (positiveAnswer != null && positiveAnswer) {
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                SharedPreferences prefs = fragment.getPrefs();
+                connectionPreferences.setForceHttps(prefs, getContext(), true);
+            }
+        }
+    }
+
+    private static class BadRequestRedirectionAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        private final ConnectionPreferences.ProfilePreferences connectionPreferences;
+
+        public BadRequestRedirectionAction(FragmentUIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+            super(uiHelper);
+            this.connectionPreferences = connectionPreferences;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (positiveAnswer != null && positiveAnswer) {
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                SharedPreferences prefs = fragment.getPrefs();
+                connectionPreferences.setFollowHttpRedirects(prefs, getContext(), true);
+                //hard reset all http clients! No other solution sadly.
+                getUiHelper().addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(connectionPreferences, getContext()).start(), "httpCleanup");
+            }
+        }
+    }
+
+    private static class BulkResourceActionData implements Parcelable {
+        public final static int ACTION_DELETE = 1;
+        public final static int ACTION_UPDATE_PERMISSIONS = 2;
+        public static final Creator<BulkResourceActionData> CREATOR = new Creator<BulkResourceActionData>() {
+            @Override
+            public BulkResourceActionData createFromParcel(Parcel in) {
+                return new BulkResourceActionData(in);
+            }
+
+            @Override
+            public BulkResourceActionData[] newArray(int size) {
+                return new BulkResourceActionData[size];
+            }
+        };
         final HashSet<Long> selectedItemIds;
         final HashSet<Long> itemsUpdated;
         final HashSet<ResourceItem> selectedItems;
         boolean resourceInfoAvailable;
         private ArrayList<Long> trackedMessageIds = new ArrayList<>();
+        private int action;
 
-        public DeleteActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
+        public BulkResourceActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems, int action) {
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
             this.resourceInfoAvailable = false; //FIXME when Piwigo provides this info as standard, this can be removed and the method simplified.
             itemsUpdated = new HashSet<>(selectedItemIds.size());
+            this.action = action;
         }
 
-        public DeleteActionData(Parcel in) {
-            selectedItemIds = ParcelUtils.readLongSet(in, null);
-            itemsUpdated = ParcelUtils.readLongSet(in, null);
-            selectedItems = ParcelUtils.readHashSet(in, null);
-            resourceInfoAvailable = ParcelUtils.readValue(in,null, boolean.class);
-            trackedMessageIds = ParcelUtils.readLongArrayList(in, null);
+        public BulkResourceActionData(Parcel in) {
+            selectedItemIds = ParcelUtils.readLongSet(in);
+            itemsUpdated = ParcelUtils.readLongSet(in);
+            selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+            resourceInfoAvailable = ParcelUtils.readBool(in);
+            trackedMessageIds = ParcelUtils.readLongArrayList(in);
+            action = in.readInt();
         }
 
-        public static final Creator<DeleteActionData> CREATOR = new Creator<DeleteActionData>() {
-            @Override
-            public DeleteActionData createFromParcel(Parcel in) {
-                return new DeleteActionData(in);
-            }
-
-            @Override
-            public DeleteActionData[] newArray(int size) {
-                return new DeleteActionData[size];
-            }
-        };
+        public int getAction() {
+            return action;
+        }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             ParcelUtils.writeLongSet(dest, selectedItemIds);
             ParcelUtils.writeLongSet(dest, itemsUpdated);
             ParcelUtils.writeSet(dest, selectedItems);
-            dest.writeValue(resourceInfoAvailable);
+            ParcelUtils.writeBool(dest, resourceInfoAvailable);
             ParcelUtils.writeLongArrayList(dest, trackedMessageIds);
+            dest.writeInt(action);
         }
 
         public void updateLinkedAlbums(ResourceItem item) {
@@ -2092,9 +2685,83 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             return trackedMessageIds.remove(messageId);
         }
 
+        private final static int maxHttpRequestsQueued = 20;
+
         @Override
         public int describeContents() {
             return 0;
+        }
+
+        public int getTrackedMessageIdsCount() {
+            return trackedMessageIds.size();
+        }
+
+        public void getResourcesInfoIfNeeded(AbstractViewAlbumFragment fragment) {
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(fragment.getPrefs(), fragment.requireContext());
+            int simultaneousCalls = trackedMessageIds.size();
+            if (maxHttpRequestsQueued > simultaneousCalls) {
+                for (ResourceItem item : getItemsWithoutLinkedAlbumData()) {
+                    simultaneousCalls++;
+                    trackMessageId(fragment.addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList)));
+                    if (simultaneousCalls >= maxHttpRequestsQueued) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private static class AddingAlbumPermissionsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        public AddingAlbumPermissionsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                fragment.addingAlbumPermissions();
+            }
+        }
+    }
+
+    private static class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+
+        private final int totalSpans;
+        private final int spansPerAlbum;
+        private final int spansPerImage;
+        private final ResourceContainer<CategoryItem, GalleryItem> galleryModel;
+
+        SpanSizeLookup(ResourceContainer<CategoryItem, GalleryItem> galleryModel, int totalSpans, int spansPerAlbum, int spansPerImage) {
+            this.totalSpans = totalSpans;
+            this.spansPerAlbum = spansPerAlbum;
+            this.spansPerImage = spansPerImage;
+            this.galleryModel = galleryModel;
+        }
+
+        @Override
+        public int getSpanSize(int position) {
+            // ensure that app cannot crash due to position being out of bounds.
+            //FIXME - why would position be outside model size? What happens next now it doesn't crash here?
+            if (position < 0 || galleryModel.getItemCount() <= position) {
+                return 1;
+            }
+
+            int itemType = galleryModel.getItemByIdx(position).getType();
+            switch (itemType) {
+                case GalleryItem.ALBUM_HEADING_TYPE:
+                    return totalSpans;
+                case GalleryItem.CATEGORY_TYPE:
+                    return spansPerAlbum;
+                case GalleryItem.PICTURE_RESOURCE_TYPE:
+                    return spansPerImage;
+                case GalleryItem.PICTURE_HEADING_TYPE:
+                    return totalSpans;
+                case GalleryItem.VIDEO_RESOURCE_TYPE:
+                    return spansPerImage;
+                default:
+                    return totalSpans;
+            }
         }
     }
 
@@ -2115,7 +2782,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                     onResourcesDeleted((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response);
                 } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                    onGetSubGalleries((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
+                    onListOfAlbumsLoaded((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
                 } else if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
                     onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
@@ -2142,6 +2809,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     onAlbumPermissionsRemoved((AlbumRemovePermissionsResponseHandler.PiwigoRemoveAlbumPermissionsResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
                     onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
+                } else if (response instanceof AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse) {
+                    // do nothing. This is handled. just dont want it to be registered as an error.
                 } else {
                     String failedCall = loadingMessageIds.get(response.getMessageId());
                     if (failedCall == null) {
@@ -2179,47 +2848,33 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+    private final class AlbumScrollListener extends EndlessRecyclerViewScrollListener {
 
-        private final int totalSpans;
-        private final int spansPerAlbum;
-        private final int spansPerImage;
-        private final ResourceContainer<CategoryItem, GalleryItem> galleryModel;
-
-        public SpanSizeLookup(ResourceContainer<CategoryItem, GalleryItem> galleryModel, int totalSpans, int spansPerAlbum, int spansPerImage) {
-            this.totalSpans = totalSpans;
-            this.spansPerAlbum = spansPerAlbum;
-            this.spansPerImage = spansPerImage;
-            this.galleryModel = galleryModel;
+        public AlbumScrollListener(GridLayoutManager gridLayoutMan) {
+            super(gridLayoutMan);
         }
 
         @Override
-        public int getSpanSize(int position) {
-            // ensure that app cannot crash due to position being out of bounds.
-            //FIXME - why would position be outside model size? What happens next now it doesn't crash here?
-            if (position < 0 || galleryModel.getItemCount() <= position) {
-                return 1;
-            }
+        public void onLoadMore(int requestedPage, int totalItemsCount, RecyclerView view) {
+            int pageToLoad = requestedPage;
 
-            int itemType = galleryModel.getItemByIdx(position).getType();
-            switch (itemType) {
-                case GalleryItem.ALBUM_HEADING_TYPE:
-                    return totalSpans;
-                case GalleryItem.CATEGORY_TYPE:
-                    return spansPerAlbum;
-                case GalleryItem.PICTURE_RESOURCE_TYPE:
-                    return spansPerImage;
-                case GalleryItem.PICTURE_HEADING_TYPE:
-                    return totalSpans;
-                case GalleryItem.VIDEO_RESOURCE_TYPE:
-                    return spansPerImage;
-                default:
-                    return totalSpans;
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+
+            if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || galleryModel.isFullyLoaded()) {
+                Integer missingPage = galleryModel.getAMissingPage();
+                if (missingPage != null) {
+                    pageToLoad = missingPage;
+                } else {
+                    // already load this one by default so lets not double load it (or we've already loaded all items).
+                    return;
+                }
             }
+            loadAlbumResourcesPage(pageToLoad);
         }
     }
 
-    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter {
+    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter {
 
         private Map<Long, CategoryItem> albumThumbnailLoadActions = new HashMap<>();
 
@@ -2247,11 +2902,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             onAlbumDeleteRequest(album);
         }
 
+        @Override
+        protected void onCategoryClick(CategoryItem item) {
+            if (viewAdapter.isItemSelectionAllowed()) {
+                viewAdapter.toggleItemSelection();
+            }
+        }
 
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
             PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null, null);
-            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
             long messageId = handler.invokeAsync(getContext());
             albumThumbnailLoadActions.put(messageId, mItem);
@@ -2273,9 +2934,5 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
             return true;
         }
-    }
-
-    protected PiwigoAlbum getGalleryModel() {
-        return galleryModel;
     }
 }

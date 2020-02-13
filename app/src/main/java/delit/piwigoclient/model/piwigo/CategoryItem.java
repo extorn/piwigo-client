@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -12,22 +14,25 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.ui.common.util.ParcelUtils;
-import delit.piwigoclient.util.CollectionUtils;
 
 /**
  * An item representing a piece of content.
  */
-public class CategoryItem extends GalleryItem implements Cloneable {
+public class CategoryItem extends GalleryItem implements Cloneable, PhotoContainer {
+    private static final String TAG = "CategoryItem";
+    private static final String BLANK_TAG = "PIWIGO_CLIENT_INTERNAL_BLANK";
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
-    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
-    public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 1, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
+    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, BLANK_TAG, null, true, null, 0, 0, 0, null);
+    public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 100, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
         @Override
         public int getType() {
             return GalleryItem.ALBUM_HEADING_TYPE;
         }
     };
+    private static final long serialVersionUID = 6967613449661498517L;
     private List<CategoryItem> childAlbums;
     private int photoCount;
     private long totalPhotoCount;
@@ -37,6 +42,7 @@ public class CategoryItem extends GalleryItem implements Cloneable {
     private long[] users;
     private long[] groups;
     private long permissionLoadedAt;
+    private String thumbnailUrl;
 
     public CategoryItem(CategoryItemStub stub) {
         super(stub.getId(), stub.getName(), null, null, null);
@@ -47,7 +53,8 @@ public class CategoryItem extends GalleryItem implements Cloneable {
     }
 
     public CategoryItem(long id, String name, String description, boolean isPrivate, Date lastAltered, int photoCount, long totalPhotoCount, long subCategories, String thumbnailUrl) {
-        super(id, name, description, lastAltered, thumbnailUrl);
+        super(id, name, description, lastAltered, null);
+        this.thumbnailUrl = getRelativePath(thumbnailUrl);
         this.photoCount = photoCount;
         this.isPrivate = isPrivate;
         this.totalPhotoCount = totalPhotoCount;
@@ -56,15 +63,16 @@ public class CategoryItem extends GalleryItem implements Cloneable {
 
     public CategoryItem(Parcel in) {
         super(in);
-        childAlbums = ParcelUtils.readTypedList(in, CategoryItem.CREATOR);
+        childAlbums = in.createTypedArrayList(CategoryItem.CREATOR);
         photoCount = in.readInt();
         totalPhotoCount = in.readLong();
         subCategories = in.readLong();
-        isPrivate = ParcelUtils.readValue(in,null, boolean.class);
-        representativePictureId = ParcelUtils.readValue(in,null, Long.class);
+        isPrivate = ParcelUtils.readBool(in);
+        representativePictureId = ParcelUtils.readLong(in);
         users = in.createLongArray();
         groups = in.createLongArray();
         permissionLoadedAt = in.readLong();
+        thumbnailUrl = in.readString();
     }
 
     public static ArrayList<CategoryItem> newListFromStubs(ArrayList<CategoryItemStub> albumNames) {
@@ -75,6 +83,10 @@ public class CategoryItem extends GalleryItem implements Cloneable {
         return albums;
     }
 
+    public static boolean isRoot(long albumId) {
+        return ROOT_ALBUM.getId() == albumId;
+    }
+
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
@@ -82,11 +94,21 @@ public class CategoryItem extends GalleryItem implements Cloneable {
         out.writeInt(photoCount);
         out.writeLong(totalPhotoCount);
         out.writeLong(subCategories);
-        out.writeValue(isPrivate);
+        ParcelUtils.writeBool(out, isPrivate);
         out.writeValue(representativePictureId);
         out.writeLongArray(users);
         out.writeLongArray(groups);
         out.writeLong(permissionLoadedAt);
+        out.writeString(thumbnailUrl);
+    }
+
+    @Override
+    public String getThumbnailUrl() {
+        return getFullPath(thumbnailUrl);
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = getRelativePath(thumbnailUrl);
     }
 
     public void setChildAlbums(ArrayList<CategoryItem> childAlbums) {
@@ -132,7 +154,11 @@ public class CategoryItem extends GalleryItem implements Cloneable {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof GalleryItem && ((GalleryItem) other).getId() == this.getId();
+        if(other instanceof GalleryItem) {
+            GalleryItem otherItem = (GalleryItem) other;
+            return otherItem.getId() == this.getId() || BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName());
+        }
+        return false;
     }
 
     @Override
@@ -224,7 +250,8 @@ public class CategoryItem extends GalleryItem implements Cloneable {
             }
         }
         String parents = CollectionUtils.toCsvList(parentageChain);
-        throw new IllegalStateException(String.format("Failed to locate child album %1$d with parentage %2$s but it could not be found in any of %3$d children within album %4$d", parentageChain.get(idx+1), parents, getChildAlbumCount(), parentageChain.get(idx)));
+        Crashlytics.log(Log.WARN, TAG, String.format("Failed to locate child album %1$d with parentage %2$s but it could not be found in any of %3$d children (%5$s) within album %4$d", parentageChain.get(idx + 1), parents, getChildAlbumCount(), parentageChain.get(idx), CollectionUtils.toCsvList(PiwigoUtils.toSetOfIds(getChildAlbums()))));
+        return null;
     }
 
     public void updateTotalPhotoAndSubAlbumCount() {
@@ -236,7 +263,7 @@ public class CategoryItem extends GalleryItem implements Cloneable {
             int subCategoryPhotoCount = 0;
             for (CategoryItem childAlbum : childAlbums) {
                 childAlbum.updateTotalPhotoAndSubAlbumCount();
-                subCategoryCount += childAlbum.getSubCategories() + 1;
+                subCategoryCount += 1; //childAlbum.getSubCategories() + 1;
                 subCategoryPhotoCount += childAlbum.getTotalPhotos();
             }
             totalPhotoCount = photoCount + subCategoryPhotoCount;
@@ -271,7 +298,12 @@ public class CategoryItem extends GalleryItem implements Cloneable {
     public static final Parcelable.Creator<CategoryItem> CREATOR
             = new Parcelable.Creator<CategoryItem>() {
         public CategoryItem createFromParcel(Parcel in) {
-            return new CategoryItem(in);
+            try {
+                return new CategoryItem(in);
+            } catch(RuntimeException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to create category item from parcel: " + in.toString());
+                throw e;
+            }
         }
 
         public CategoryItem[] newArray(int size) {
@@ -358,7 +390,14 @@ public class CategoryItem extends GalleryItem implements Cloneable {
      * @return
      */
     public List<CategoryItem> getFullPath(CategoryItem child) {
-        List<Long> parentageIds = new ArrayList<>(child.getParentageChain());
+        List<Long> parentageIds = new ArrayList<>();
+        if (child == null) {
+            Crashlytics.log(Log.ERROR, TAG, "GetFullPath called for null CategoryItem");
+            return new ArrayList<>(0);
+        }
+        if(child.getParentageChain() != null) {
+            parentageIds.addAll(child.getParentageChain());
+        }
         CategoryItem root = this;
         List<CategoryItem> parentage = new ArrayList<>(parentageIds.size() + 1);
         parentage.add(root);
@@ -401,8 +440,8 @@ public class CategoryItem extends GalleryItem implements Cloneable {
             if(newMatchingItem != null) {
                 if(!preferExisting) {
                     // swap to the new copy. Note still need to merge old child albums across.
-                    childAlbums.remove(i);
-                    childAlbums.add(i, newMatchingItem);
+//                    childAlbums.remove(i);
+                    childAlbums.set(i, newMatchingItem);
                     mergeChildrenWith(i, newMatchingItem, existingMatchingItem, !preferExisting);
                 } else {
                     mergeChildrenWith(i, existingMatchingItem, newMatchingItem, preferExisting);
@@ -417,11 +456,53 @@ public class CategoryItem extends GalleryItem implements Cloneable {
 
     private void mergeChildrenWith(int thisItemIdx, CategoryItem thisItem, CategoryItem otherItem, boolean preferExisting) {
         if(preferExisting) {
-            thisItem.mergeChildrenWith(otherItem.getChildAlbums(), preferExisting);
+            thisItem.mergeChildrenWith(otherItem.getChildAlbums(), true);
         } else {
-            otherItem.mergeChildrenWith(thisItem.getChildAlbums(), preferExisting);
+            otherItem.mergeChildrenWith(thisItem.getChildAlbums(), false);
             childAlbums.remove(thisItemIdx);
             childAlbums.add(thisItemIdx, otherItem);
         }
+    }
+
+    public String getAlbumPath(CategoryItem selectedItem) {
+        List<CategoryItem> path = getFullPath(selectedItem);
+        StringBuilder sb = new StringBuilder();
+        for(CategoryItem item : path) {
+            if(!item.isRoot()) {
+                if (sb.length() > 0) {
+                    sb.append(" / ");
+                }
+                sb.append(item.getName());
+            }
+        }
+        return sb.toString();
+    }
+
+    public CategoryItem withId(long newId) {
+        this.setId(newId);
+        return this;
+    }
+
+    @Override
+    public int getPagesOfPhotos(int pageSize) {
+        int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
+        return pages < 0 ? 0 : pages;
+    }
+
+    public @Nullable
+    CategoryItem getChild(long albumId) {
+        if (childAlbums == null) {
+            throw new IllegalStateException("Unable to retrieve child (no children set) on album " + getId() + " and desired child id : " + albumId);
+        }
+        for (CategoryItem childAlbum : childAlbums) {
+            if (childAlbum.getId() == albumId) {
+                return childAlbum;
+            }
+        }
+        return null;
+    }
+
+    public boolean isParentRoot() {
+        return getParentId() != null && getParentId() == CategoryItem.ROOT_ALBUM.getId();
     }
 }

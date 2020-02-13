@@ -13,7 +13,7 @@
         android:textOn="@string/button_hide_details"/>
 
     <TextView
-        android:id="@+id/details"
+        android:id="@+id/list_item_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"

@@ -11,10 +11,10 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsResponseHandler {
 

@@ -1,50 +1,68 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.appbar.AppBarLayout;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
-import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
@@ -57,11 +75,11 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
 import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
-import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 12/07/17.
@@ -71,6 +89,7 @@ public class UploadActivity extends MyActivity {
 
     private static final String TAG = "uploadActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
+    private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
     private static final String STATE_STARTED_ALREADY = "startedAlready";
     private static final String INTENT_DATA_CURRENT_ALBUM = "currentAlbum";
@@ -78,6 +97,8 @@ public class UploadActivity extends MyActivity {
     private int fileSelectionEventId;
     private boolean startedWithPermissions;
     private Toolbar toolbar;
+    private AppBarLayout appBar;
+    private String MEDIA_SCANNER_TASK_ID_SHARED_FILES = "id_sharedFiles";
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
         Intent intent = new Intent(context, UploadActivity.class);
@@ -101,6 +122,13 @@ public class UploadActivity extends MyActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        if (intent.getBooleanExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB, false)) {
+            UploadJob job = ForegroundPiwigoUploadService.getFirstActiveForegroundJob(getApplicationContext());
+            if (job != null && job.isRunningNow()) {
+                job.cancelUploadAsap();
+            }
+            intent.removeExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB);
+        }
         super.onNewIntent(intent);
         this.setIntent(intent);
     }
@@ -116,6 +144,10 @@ public class UploadActivity extends MyActivity {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
         outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
+
+        if(BuildConfig.DEBUG) {
+            BundleUtils.logSize("Current Upload Activity", outState);
+        }
     }
 
     @Override
@@ -136,15 +168,60 @@ public class UploadActivity extends MyActivity {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
+
+//            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+//
+//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+//                drawer.setFitsSystemWindows(true);
+//            }
+
             toolbar = findViewById(R.id.toolbar);
+            appBar = findViewById(R.id.appbar);
             if(BuildConfig.DEBUG) {
                 toolbar.setTitle(getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')');
             } else {
                 toolbar.setTitle(R.string.upload_page_title);
             }
             setSupportActionBar(toolbar);
-            showUploadFragment(true, connectionPrefs);
+            if (savedInstanceState == null) { // the fragment will be created automatically from the fragment manager state if there is state :-)
+                showUploadFragment(true, connectionPrefs);
+            }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleApi.isUserResolvableError(result)) {
+                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
+                d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (!BuildConfig.DEBUG) {
+                            finish();
+                        }
+                    }
+                });
+                d.show();
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<UploadActivity>>(getUiHelper()) {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                        if (!BuildConfig.DEBUG) {
+                            finish();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
     }
 
     @Override
@@ -157,18 +234,49 @@ public class UploadActivity extends MyActivity {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
+
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
+
+        if (hasFocus) {
+            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+        } else {
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+        }
+
+        v.requestApplyInsets();
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
+    }
+
     private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
 
         final int trackingRequestId = TrackableRequestEvent.getNextEventId();
         getUiHelper().setTrackingRequest(trackingRequestId);
 
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-                //exit the app.
-                EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
-            }
-        });
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction(getUiHelper(), trackingRequestId));
+    }
+
+    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
+        private final int trackingRequestId;
+
+        public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
+            super(uiHelper);
+            this.trackingRequestId = trackingRequestId;
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            //exit the app.
+            EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+        }
     }
 
     @Subscribe
@@ -204,9 +312,10 @@ public class UploadActivity extends MyActivity {
     private void runLogin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         String serverUri = connectionPrefs.getPiwigoServerAddress(prefs, getApplicationContext());
         if (serverUri == null || serverUri.trim().isEmpty()) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
+            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext(), connectionPrefs));
+            LoginResponseHandler handler = new LoginResponseHandler();
+            getUiHelper().addActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), handler.invokeAsync(getApplicationContext(), connectionPrefs), handler.getTag());
         }
     }
 
@@ -224,13 +333,20 @@ public class UploadActivity extends MyActivity {
         try {
 
             if (Intent.ACTION_SEND.equals(action) && type != null) {
-                if (type.startsWith("image/") || type.startsWith("video/")) {
-                    return handleSendImage(intent); // Handle single image being sent
+                if (!type.startsWith("*/")) {
+                    return handleSendMultipleImages(intent); // Handle single image being sent
+                } else {
+                    getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-                if (type.startsWith("image/") || type.startsWith("video/")) {
+                // type is */* if it contains a mixture of file types
+                if (type.equals("*/*") || type.startsWith("image/") || type.startsWith("video/") || type.startsWith("application/pdf") || type.startsWith("application/zip")) {
                     return handleSendMultipleImages(intent); // Handle multiple images being sent
+                } else {
+                    getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
                 }
+            } else if ("application/octet-stream".equals(type)) {
+                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
             }
             return null;
 
@@ -260,53 +376,182 @@ public class UploadActivity extends MyActivity {
     }
 
     private ArrayList<File> handleSendMultipleImages(Intent intent) {
-        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+
         ArrayList<File> filesToUpload;
-        if (imageUris != null) {
-            filesToUpload = new ArrayList<>(imageUris.size());
-            for (Uri imageUri : imageUris) {
-                if(imageUri != null) {
-                    handleSentImage(imageUri, filesToUpload);
+
+        ClipData clipData = intent.getClipData();
+        if(clipData != null && clipData.getItemCount() > 0) {
+            // process clip data
+            filesToUpload = new ArrayList<>(clipData.getItemCount());
+//            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
+            for(int i = 0; i < clipData.getItemCount(); i++) {
+                ClipData.Item sharedItem = clipData.getItemAt(i);
+                Uri sharedUri = sharedItem.getUri();
+                if (sharedUri != null) {
+                    String mimeType = getContentResolver().getType(sharedUri);
+                    if (sharedUri != null) {
+                        handleSentImage(sharedUri, mimeType, filesToUpload);
+                    }
                 }
             }
+            intent.setClipData(null);
         } else {
-            filesToUpload = new ArrayList<>(0);
+            // process the extra stream data
+            ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            String[] mimeTypes = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
+            }
+            if (imageUris != null) {
+                filesToUpload = new ArrayList<>(imageUris.size());
+                int i = 0;
+                for (Uri imageUri : imageUris) {
+                    String mimeType;
+                    if(mimeTypes != null && mimeTypes.length >= i) {
+                        mimeType = mimeTypes[i];
+                        i++;
+                    } else {
+                        mimeType = intent.getType();
+                    }
+                    if (imageUri != null) {
+                        handleSentImage(imageUri, mimeType, filesToUpload);
+                    }
+                }
+            } else {
+                String mimeType = intent.getType();
+                Uri imageUri = intent.getData();
+                if(imageUri != null) {
+                    filesToUpload = new ArrayList<>(1);
+                    handleSentImage(imageUri, mimeType, filesToUpload);
+                } else {
+                    filesToUpload = new ArrayList<>(0);
+                }
+            }
+            intent.removeExtra(Intent.EXTRA_STREAM);
         }
-        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
         return filesToUpload;
     }
 
-    private ArrayList<File> handleSendImage(Intent intent) {
-        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        ArrayList<File> filesToUpload;
-        if (imageUri != null) {
-            filesToUpload = new ArrayList<>(1);
-            handleSentImage(imageUri, filesToUpload);
-        } else {
-            filesToUpload = new ArrayList<>(0);
+    private void handleSentImage(Uri imageUri, String mimeType, ArrayList<File> filesToUpload) {
+        String fileExt = (mimeType != null) ? MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) : null;
+
+        File sharedFile = getLocallySharedFile(imageUri, fileExt);
+        if (sharedFile == null) {
+            if (mimeType.startsWith("video/")) {
+                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.unable_to_handle_shared_uri_missing_content_description_information);
+//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                    try {
+//                        MediaExtractor mExtractor = new MediaExtractor();
+//                        mExtractor.setDataSource(sharedFile.getAbsolutePath());
+//                        PersistableBundle mediaMetrics = mExtractor.getMetrics();
+//                        String containerFomat = mediaMetrics.getString(MediaExtractor.MetricsConstants.FORMAT);
+////                        String containerMimeType = mediaMetrics.getString(MediaExtractor.MetricsConstants.MIME_TYPE);
+//                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + "." + containerFomat);
+//                        sharedFile.renameTo(renamedTo);
+//                        sharedFile = renamedTo;
+//
+//                    } catch (IOException e) {
+//                        Crashlytics.log(Log.ERROR, TAG, "Error retrieving correct file extension for shared media file!");
+//                    }
+//                } else {
+//                    if(mimeType.equals("video/mpeg")) {
+//                        // guess
+//                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + ".mp4");
+//                        sharedFile.renameTo(renamedTo);
+//                        sharedFile = renamedTo;
+//                    }
+//                }
+            } else {
+                sharedFile = getDownloadedFileFromSharedUri(imageUri, fileExt);
+            }
         }
-        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
-        return filesToUpload;
+        filesToUpload.add(sharedFile);
     }
 
-    private void handleSentImage(@NonNull Uri imageUri, ArrayList<File> filesToUpload) {
-        File f = new File(imageUri.getPath());
-        if (!f.exists()) {
-            f = new File(getRealPathFromURI(imageUri));
+    private File getDownloadedFileFromSharedUri(Uri sharedUri, String fileExt) {
+        try {
+            // download a local copy of the file.
+            File tmp_upload_folder = getTmpUploadFolder();
+            File localTmpFile = File.createTempFile("tmp-piwigo-client-dnlded-file-for-upload", '.' + fileExt, tmp_upload_folder);
+            //TODO if this is an image - try and extract a nicer filename based on exif info from the image itself!
+
+            //TODO the file should be deleted after the upload is complete and not before!!!! BUG!!!!
+            localTmpFile.deleteOnExit(); // ensure this definitely doesn't hang about!
+            AssetFileDescriptor fileDescriptor = getContentResolver().openAssetFileDescriptor(sharedUri, "r"); // only need read only access
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            }
+            IOUtils.write(fileDescriptor.createInputStream(), localTmpFile);
+            List<File> files = new ArrayList<>();
+            files.add(localTmpFile);
+            MediaScanner.instance(getApplicationContext()).invokeScan(new MediaScanner.MediaScannerScanTask(MEDIA_SCANNER_TASK_ID_SHARED_FILES, files) {
+                @Override
+                public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
+                }
+            });
+            return localTmpFile;
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write shared data to a temporary file");
         }
-        if (f.exists() && f.isFile()) {
-            filesToUpload.add(f);
+    }
+
+    private File getTmpUploadFolder() {
+        File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
+        tmp_upload_folder.mkdir();
+        return tmp_upload_folder;
+    }
+
+    private File getLocallySharedFile(@NonNull Uri imageUri, String fileExt) {
+        File sharedFile = new File(imageUri.getPath());
+        if (!sharedFile.exists()) {
+            try {
+                String localMediaStorePath = getRealPathFromURI(imageUri);
+                if (localMediaStorePath == null) {
+                    return null;
+                } else {
+                    sharedFile = new File(localMediaStorePath);
+                }
+
+            } catch (IllegalArgumentException e) {
+                // thrown when the URI is not a place in data. (lets just create a tmp file)
+                try {
+                    File tmp_upload_folder = getTmpUploadFolder();
+                    String filename = imageUri.getLastPathSegment();
+                    if(fileExt != null && !filename.endsWith("." + fileExt)) {
+                        filename += '.' + fileExt;
+                    }
+                    sharedFile = new File(tmp_upload_folder, filename);
+                    int i = 0;
+                    while (sharedFile.exists()) {
+                        i++;
+                        int insertAt = imageUri.getLastPathSegment().lastIndexOf('.');
+                        filename = imageUri.getLastPathSegment().substring(0, insertAt);
+                        String ext = imageUri.getLastPathSegment().substring(insertAt);
+                        sharedFile = new File(tmp_upload_folder, filename + '_' + i + ext);
+                    }
+                    sharedFile.deleteOnExit();
+                    IOUtils.write(getContentResolver().openInputStream(imageUri), sharedFile);
+                } catch(FileNotFoundException e1) {
+                    throw new RuntimeException("Unable to write shared data to a temporary file");
+                } catch(IOException e1) {
+                    throw new RuntimeException("Unable to write shared data to a temporary file");
+                }
+            }
+        }
+        if (sharedFile.exists() && sharedFile.isFile()) {
+            return sharedFile;
         } else {
-            if(!f.isDirectory()) {
+            if (!sharedFile.isDirectory()) {
                 errors.put(imageUri.toString(), "File does not exist");
             }
         }
+        return null;
     }
 
     public String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getApplicationContext().getContentResolver().query(contentUri, proj,
+        Cursor cursor = getContentResolver().query(contentUri, proj,
                 null, null, null);
+
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         String path = cursor.getString(column_index);
@@ -335,7 +580,7 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
+        Intent intent = new Intent(this, FileSelectActivity.class);
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
@@ -345,13 +590,11 @@ public class UploadActivity extends MyActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
-                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(data.getExtras(), FileSelectActivity.INTENT_SELECTED_FILES);
-
-                int eventId = requestCode;
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);
+                long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
+                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
                 // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
                 EventBus.getDefault().postSticky(event);
             }
@@ -402,6 +645,7 @@ public class UploadActivity extends MyActivity {
         } else if(event.isContractToolbarView()) {
             ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
         }
+        appBar.setEnabled(event.getTitle()!= null);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -411,7 +655,7 @@ public class UploadActivity extends MyActivity {
                 ArrayList<File> sentFiles = handleSentFiles();
                 if(sentFiles != null) {
                     // this activity was invoked from another application
-                    FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, sentFiles, -1);
+                    FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, -1).withFiles(sentFiles);
                     EventBus.getDefault().postSticky(evt);
                 }
             } else {
@@ -440,7 +684,7 @@ public class UploadActivity extends MyActivity {
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getTag());
+        Crashlytics.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
         checkLicenceIfNeeded();
 
         DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
@@ -11,19 +12,20 @@ import androidx.annotation.StringRes;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
-import delit.piwigoclient.util.IOUtils;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 
 public class AutoUploadJobConfig implements Parcelable {
     private int jobId;
@@ -53,14 +55,38 @@ public class AutoUploadJobConfig implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(jobId);
     }
-    
-    private SharedPreferences getJobPreferences(Context c) {
+
+    public SharedPreferences getJobPreferences(Context c) {
         if(jobPreferences == null) {
             jobPreferences = c.getSharedPreferences(getSharedPreferencesName(jobId), Context.MODE_PRIVATE);
         }
         return jobPreferences;
     }
-    
+
+    public String getSummary(SharedPreferences appPrefs, Context c) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("uploadFrom:\n");
+        sb.append(getLocalFolderToMonitor(c) == null ? "???" : getLocalFolderToMonitor(c).getAbsolutePath());
+        sb.append('\n');
+        sb.append("uploadTo:\n");
+        ConnectionPreferences.ProfilePreferences cp = getConnectionPrefs(c, appPrefs);
+        sb.append(cp.getAbsoluteProfileKey(appPrefs, c));
+        sb.append('\n');
+        sb.append(getUploadToAlbumId(c));
+        sb.append('\n');
+        sb.append("Prefs:\n");
+        sb.append("MaxUploadSize:");
+        sb.append(getMaxUploadSize(c));
+        sb.append('\n');
+        sb.append("PrivacyLevel:");
+        sb.append(getUploadedFilePrivacyLevel(c));
+        sb.append('\n');
+        sb.append("UploadExts:\n");
+        sb.append(CollectionUtils.toCsvList(getFileExtsToUpload(c)));
+        sb.append('\n');
+        return sb.toString();
+    }
+
     public void deletePreferences(Context c) {
         getJobPreferences(c).edit().clear().commit();
     }
@@ -99,26 +125,25 @@ public class AutoUploadJobConfig implements Parcelable {
         return value;
     }
 
+    private String getStringValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultKeyId) {
+        String value = getJobPreferences(c).getString(c.getString(prefKeyId), c.getString(prefDefaultKeyId));
+        return value;
+    }
+
     private String getStringValue(Context c, @StringRes int prefKeyId, String defaultVal) {
         String value = getJobPreferences(c).getString(c.getString(prefKeyId), defaultVal);
         return value;
     }
 
-    private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId) {
-        String value = getStringValue(c, prefKeyId);
-        String[] values = value.split(",");
-        return Arrays.asList(values);
+    public @NonNull
+    Set<String> getStringSetValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultId) {
+        TreeSet<String> defaultVal = new TreeSet<>(CollectionUtils.stringsFromCsvList(c.getString(prefDefaultId)));
+        return getJobPreferences(c).getStringSet(c.getString(prefKeyId), defaultVal);
     }
 
-    private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultId) {
-        String value = getStringValue(c, prefKeyId, c.getString(prefDefaultId));
-        String[] values = value.split(",");
-        return Arrays.asList(values);
-    }
-
-    public ConnectionPreferences.ProfilePreferences getConnectionPrefs(Context c) {
+    public ConnectionPreferences.ProfilePreferences getConnectionPrefs(Context c, SharedPreferences overallAppPrefs) {
         String connectionProfileName = getStringValue(c, R.string.preference_data_upload_automatic_job_server_key);
-        return ConnectionPreferences.getPreferences(connectionProfileName);
+        return ConnectionPreferences.getPreferences(connectionProfileName, overallAppPrefs, c);
     }
 
     public File getLocalFolderToMonitor(Context c) {
@@ -131,26 +156,26 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public String getUploadToAlbumName(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        if(remoteAlbumDetails == null) {
-            return null;
-        }
-        return ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumName(remoteAlbumDetails);
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumName();
     }
 
     public long getUploadToAlbumId(Context c) {
-        if(!isJobValid(c)) {
-            throw new IllegalStateException("Unable to retrieve upload album for invalid job");
-        }
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        return ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteAlbumDetails);
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumId();
+    }
+
+    public void setJobValid(Context c, boolean isValid) {
+        SharedPreferences.Editor editor = getJobPreferences(c).edit();
+        editor.putBoolean(c.getString(R.string.preference_data_upload_automatic_job_is_valid_key), isValid);
+        editor.apply();
     }
 
     public boolean isJobValid(Context c) {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_job_is_valid_key, false);
     }
 
-    public int getUploadedFilePrivacyLevel(Context c) {
-        return getIntValue(c, R.string.preference_data_upload_automatic_job_privacy_level_key, R.integer.preference_data_upload_automatic_job_privacy_level_default);
+    public byte getUploadedFilePrivacyLevel(Context c) {
+        return (byte) getIntValue(c, R.string.preference_data_upload_automatic_job_privacy_level_key, R.integer.preference_data_upload_automatic_job_privacy_level_default);
     }
 
     public int getMaxUploadSize(Context c) {
@@ -170,7 +195,59 @@ public class AutoUploadJobConfig implements Parcelable {
         return 0;
     }
 
-    
+    public boolean isCompressVideosBeforeUpload(Context c) {
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_compress_videos_key, R.bool.preference_data_upload_automatic_job_compress_videos_default);
+    }
+
+    public boolean isCompressImagesBeforeUpload(Context c) {
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_compress_images_key, R.bool.preference_data_upload_automatic_job_compress_images_default);
+    }
+
+    private double getVideoCompressionQuality(Context c) {
+        return ((double) getIntValue(c, R.string.preference_data_upload_automatic_job_compress_videos_quality_key, R.integer.preference_data_upload_automatic_job_compress_videos_quality_default)) / 1000;
+    }
+
+    private int getVideoCompressionAudioBitrate(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_videos_audio_bitrate_key, R.integer.preference_data_upload_automatic_job_compress_videos_audio_bitrate_default);
+    }
+
+    private int getImageCompressionQuality(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.integer.preference_data_upload_automatic_job_compress_images_quality_default);
+    }
+
+    private int getImageCompressionMaxWidth(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_max_width_key, R.integer.preference_data_upload_automatic_job_compress_images_max_width_default);
+    }
+
+    private int getImageCompressionMaxHeight(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_max_height_key, R.integer.preference_data_upload_automatic_job_compress_images_max_height_default);
+    }
+
+    private String getImageCompressionOutputFormat(Context c) {
+        return getStringValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.string.preference_data_upload_automatic_job_compress_images_output_format_default);
+    }
+
+    public UploadJob.VideoCompressionParams getVideoCompressionParams(Context c) {
+        if (isCompressVideosBeforeUpload(c)) {
+            UploadJob.VideoCompressionParams params = new UploadJob.VideoCompressionParams();
+            params.setQuality(getVideoCompressionQuality(c));
+            params.setAudioBitrate(getVideoCompressionAudioBitrate(c));
+            return params;
+        }
+        return null;
+    }
+
+    public UploadJob.ImageCompressionParams getImageCompressionParams(Context c) {
+        if (isCompressImagesBeforeUpload(c)) {
+            UploadJob.ImageCompressionParams params = new UploadJob.ImageCompressionParams();
+            params.setOutputFormat(getImageCompressionOutputFormat(c));
+            params.setQuality(getImageCompressionQuality(c));
+            params.setMaxHeight(getImageCompressionMaxHeight(c));
+            params.setMaxWidth(getImageCompressionMaxWidth(c));
+            return params;
+        }
+        return null;
+    }
 
     public static class PriorUploads implements Serializable {
 
@@ -193,7 +270,7 @@ public class AutoUploadJobConfig implements Parcelable {
         }
 
         public static File getFolder(Context c) {
-            File jobsFolder = new File(c.getApplicationContext().getExternalCacheDir(), "uploadJobData");
+            File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobData");
             if(!jobsFolder.exists()) {
                 if(!jobsFolder.mkdir()) {
                     throw new RuntimeException("Unable to create required app data folder");
@@ -256,17 +333,20 @@ public class AutoUploadJobConfig implements Parcelable {
         priorUploads.saveToFile(c);
     }
 
-    public List<String> getFileExtsToUpload(Context c) {
-        return getCsvListValue(c, R.string.preference_data_upload_automatic_job_file_exts_uploaded_key, R.string.preference_data_upload_automatic_job_file_exts_uploaded_default);
+    public Set<String> getFileExtsToUpload(Context c) {
+        return getStringSetValue(c, R.string.preference_data_upload_automatic_job_file_exts_uploaded_key, R.string.preference_data_upload_automatic_job_file_exts_uploaded_default);
+    }
+
+    public ServerAlbumSelectPreference.ServerAlbumDetails getUploadToAlbumDetails(Context context) {
+        String remoteAlbumDetails = getStringValue(context, R.string.preference_data_upload_automatic_job_server_album_key);
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails);
     }
 
     public CategoryItemStub getUploadToAlbum(Context context) {
         if(!isJobValid(context)) {
             throw new IllegalStateException("Unable to retrieve upload album for invalid job");
         }
-        String albumName = getUploadToAlbumName(context);
-        long albumId = getUploadToAlbumId(context);
-        return new CategoryItemStub(albumName, albumId);
+        return getUploadToAlbumDetails(context).toCategoryItemStub();
     }
 
 }

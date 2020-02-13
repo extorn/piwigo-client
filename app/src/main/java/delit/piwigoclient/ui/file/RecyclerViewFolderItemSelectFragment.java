@@ -1,20 +1,26 @@
 package delit.piwigoclient.ui.file;
 
+import android.app.Application;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
@@ -22,36 +28,48 @@ import com.google.android.gms.common.util.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.FileBreadcrumbsView;
+import delit.libs.ui.view.FlowLayout;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.list.MappedArrayAdapter;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
-import delit.piwigoclient.ui.common.FlowLayout;
-import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
+import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
-import delit.piwigoclient.util.IOUtils;
-
-import static android.view.View.NO_ID;
 
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
+    private static final String TAG = "RVFolderSelFrg";
     private static final String ACTIVE_FOLDER = "RecyclerViewFolderItemSelectFragment.activeFolder";
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
-    private FlowLayout folderPathView;
-    private Spinner spinner;
+    private static final String STATE_ALL_POSS_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.allPossVisFileExts";
+    private static final String STATE_SELECTED_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.selectedVisFileExts";
+    private FileBreadcrumbsView folderPathView;
+    private Spinner folderRootFolderSpinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
     private long startedActionAtTime;
     private FolderItemRecyclerViewAdapter.NavigationListener navListener;
     private LinkedHashMap<String, Parcelable> listViewStates; // one state for each level within the list (created and deleted on demand)
+    private Set<String> allPossiblyVisibleFileExts;
+    private Set<String> selectedVisibleFileExts;
+    private FlowLayout fileExtFilters;
 
     public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
         RecyclerViewFolderItemSelectFragment fragment = new RecyclerViewFolderItemSelectFragment();
@@ -60,8 +78,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     public static Bundle buildArgsBundle(FolderItemViewAdapterPreferences prefs, int actionId) {
-        Bundle args = LongSetSelectFragment.buildArgsBundle(prefs, actionId, null);
-        return args;
+        return LongSelectableSetSelectFragment.buildArgsBundle(prefs, actionId, null);
     }
 
     @Override
@@ -85,7 +102,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         super.onSaveInstanceState(outState);
         BundleUtils.putFile(outState, ACTIVE_FOLDER, getListAdapter().getActiveFolder());
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
-        outState.putSerializable(STATE_LIST_VIEW_STATE, listViewStates);
+        BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
+        BundleUtils.putStringSet(outState, STATE_ALL_POSS_VIS_FILE_EXTS, allPossiblyVisibleFileExts);
+        BundleUtils.putStringSet(outState, STATE_SELECTED_VIS_FILE_EXTS, selectedVisibleFileExts);
     }
 
     @Nullable
@@ -100,123 +119,237 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_VIEW_STATE, LinkedHashMap.class);
+            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<String, Parcelable>(), Parcelable.class.getClassLoader());
+            allPossiblyVisibleFileExts = BundleUtils.getStringHashSet(savedInstanceState, STATE_ALL_POSS_VIS_FILE_EXTS);
+            selectedVisibleFileExts = BundleUtils.getStringHashSet(savedInstanceState, STATE_SELECTED_VIS_FILE_EXTS);
         }
 
         startedActionAtTime = System.currentTimeMillis();
 
-        folderRootsAdapter = buildFolderRootsAdapter();
 
-        spinner = v.findViewById(R.id.folder_root_spinner);
-        spinner.setAdapter(folderRootsAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (id > 0) {
-                    MappedArrayAdapter<String, File> adapter = (MappedArrayAdapter) parent.getAdapter();
-                    File newRoot = adapter.getItemValue(position);
-                    getListAdapter().updateContent(newRoot);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        folderRootFolderSpinner = ViewCompat.requireViewById(v, R.id.folder_root_spinner);
+        folderRootFolderSpinner.setOnItemSelectedListener(new RootFolderSelectionListener());
 
         folderPathView = v.findViewById(R.id.folder_path);
-
-        navListener = new FolderItemRecyclerViewAdapter.NavigationListener() {
-
+        folderPathView.setNavigationListener(new FileBreadcrumbsView.NavigationListener() {
             @Override
-            public void onFolderOpened(File oldFolder, File newFolder) {
-
-                if(oldFolder != null) {
-                    if (listViewStates == null) {
-                        listViewStates = new LinkedHashMap<>(5);
-                    }
-                    listViewStates.put(oldFolder.getAbsolutePath(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
+            public void onBreadcrumbClicked(File pathItemFile) {
+                File activeFolder = getListAdapter().getActiveFolder();
+                if (!pathItemFile.equals(activeFolder)) {
+                    getListAdapter().cancelAnyActiveFolderMediaScan();
                 }
-                getList().scrollToPosition(0);
-
-                buildBreadcrumbs(newFolder);
-            }
-        };
-
-        bindDataToView(savedInstanceState);
-        buildBreadcrumbs(getListAdapter().getActiveFolder());
-
-
-        return v;
-    }
-
-    private void buildBreadcrumbs(File newFolder) {
-        String item = folderRootsAdapter.getItemByValue(newFolder);
-        if (item == null) {
-            // reset the selection
-            if (spinner.getSelectedItemId() >= 0) {
-                spinner.setAdapter(folderRootsAdapter);
-            }
-        } else {
-            spinner.setSelection(folderRootsAdapter.getPosition(item), false);
-        }
-
-        File f = newFolder;
-        folderPathView.removeAllViews();
-
-
-        ArrayList<File> pathItems = new ArrayList<>();
-        while (!f.getName().isEmpty()) {
-            pathItems.add(0, f);
-            f = f.getParentFile();
-        }
-        TextView pathItem = null;
-        int idx = 0;
-        for(final File pathItemFile : pathItems) {
-            idx++;
-            int lastId = NO_ID;
-            if(pathItem != null) {
-                lastId = pathItem.getId();
-            }
-            pathItem = new TextView(getContext());
-            pathItem.setId(View.generateViewId());
-            TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
-            pathItem.setText(pathItemFile.getName());
-            folderPathView.addView(pathItem);
-
-            pathItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView tv = (TextView) v;
-                    getListAdapter().updateContent(pathItemFile);
+                getListAdapter().changeFolderViewed(pathItemFile);
+                if (listViewStates != null) {
                     Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
                     Map.Entry<String, Parcelable> item;
-                    while(iter.hasNext()) {
+                    while (iter.hasNext()) {
                         item = iter.next();
-                        if(item.getKey() == pathItemFile.getAbsolutePath()) {
-                            getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                        if (item.getKey().equals(pathItemFile.getAbsolutePath())) {
+                            if (getList().getLayoutManager() != null) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                            } else {
+                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                            }
                             iter.remove();
-                            while(iter.hasNext()) {
+                            while (iter.hasNext()) {
                                 iter.next();
                                 iter.remove();
                             }
                         }
                     }
                 }
-            });
+            }
+        });
 
-            if(idx < pathItems.size()) {
-                TextView pathItemSeperator = new TextView(getContext());
-                TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
-                pathItemSeperator.setText("/");
-                pathItemSeperator.setId(View.generateViewId());
-                folderPathView.addView(pathItemSeperator);
-                pathItem = pathItemSeperator;
+        fileExtFilters = v.findViewById(R.id.file_ext_filters);
+
+        CustomImageButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
+        folderViewRefreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshCurrentFolderView();
+            }
+        });
+
+        navListener = new FolderItemNavigationListener();
+
+        return v;
+    }
+
+    private void refreshCurrentFolderView() {
+        getListAdapter().rebuildContentView();
+    }
+
+    private View createFileExtFilterControl(String fileExt, boolean checked) {
+        CheckBox fileExtControl = new CheckBox(requireContext());
+        int paddingPx = DisplayUtils.dpToPx(requireContext(), 5);
+        fileExtControl.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+        fileExtControl.setText(fileExt);
+        fileExtControl.setChecked(checked);
+        fileExtControl.setOnCheckedChangeListener(new FileExtControlListener());
+        return fileExtControl;
+    }
+
+    private static final class PreviouslyUploadedFilesFilter extends AsyncTask<Void, Void, Void> {
+
+        private Application context;
+        private String folderPath;
+        private String serverProfileId;
+        private FolderItemRecyclerViewAdapter adapter;
+
+        public PreviouslyUploadedFilesFilter(Context context, FolderItemRecyclerViewAdapter listAdapter, String absolutePath, String serverProfileId) {
+            this.context = (Application) context.getApplicationContext();
+            this.adapter = listAdapter;
+            this.folderPath = absolutePath;
+            this.serverProfileId = serverProfileId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            //TODO enable this for paid app only
+//            // clear those files no longer existing from the database.
+//            PiwigoDatabase.getInstance(context).uploadedFileDao().removeObsolete(folderPath, new File(folderPath).list());
+//
+//            List<String> previouslyUploadedFiles = PiwigoDatabase.getInstance(context).uploadedFileDao().loadAllFilenamesByParentPathForServerId(folderPath, serverProfileId);
+//            // mark up the adapter content.
+//            for (String previousUploadedFile : previouslyUploadedFiles) {
+//                int itemPos = adapter.getItemPositionForFilename(previousUploadedFile);
+//                adapter.removeItemByPosition(itemPos);
+//            }
+            return null;
+        }
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        bindDataToView(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    private void buildFileExtFilterControls(File currentFolder) {
+
+        // initialise local cached set of selected items
+        if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
+            selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
+        }
+        // clear all the existing filters
+        fileExtFilters.removeAllViews();
+
+        FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
+
+        // get a list of all unique file extensions in the current folder
+        SortedSet<String> visibleFileExts = listAdapter.getFileExtsInCurrentFolder();
+
+        // for each file type visible, show a checkbox and set it according to out local model
+        if (visibleFileExts != null && selectedVisibleFileExts != null) {
+            boolean updateViewRequired = false;
+            for (String fileExt : visibleFileExts) {
+                FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
+                boolean checked = selectedVisibleFileExts.contains(fileExt);
+                if (!checked) {
+                    updateViewRequired = true;
+                    listAdapter.getAdapterPrefs().getVisibleFileTypes().remove(fileExt);
+                } else {
+                    listAdapter.getAdapterPrefs().getVisibleFileTypes().add(fileExt);
+                }
+                fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
+            }
+            if (updateViewRequired) {
+                listAdapter.rebuildContentView();
             }
         }
     }
 
+    private class FolderItemNavigationListener implements FolderItemRecyclerViewAdapter.NavigationListener {
+
+        @Override
+        public void onPreFolderOpened(File oldFolder, File newFolder) {
+
+            if (getViewPrefs().getVisibleFileTypes() != null) {
+                if (allPossiblyVisibleFileExts == null) {
+                    allPossiblyVisibleFileExts = new HashSet<>(getViewPrefs().getVisibleFileTypes());
+                }
+            }
+            if (allPossiblyVisibleFileExts != null) {
+                SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(newFolder);
+                if (fileExtsInFolderMatchingMimeTypesWanted != null) {
+                    // add any extra that have come from mime types now visible in this folder.
+                    allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
+                }
+            }
+            // this works because the adapter uses a reference to the same preferences.
+            getViewPrefs().withVisibleContent(allPossiblyVisibleFileExts, getViewPrefs().getFileSortOrder());
+
+            if (oldFolder != null) {
+                if (listViewStates == null) {
+                    listViewStates = new LinkedHashMap<>(5);
+                }
+                listViewStates.put(oldFolder.getAbsolutePath(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
+            }
+            getList().scrollToPosition(0);
+
+            buildBreadcrumbs(newFolder);
+        }
+
+        @Override
+        public void onPostFolderOpened(File oldFolder, File newFolder) {
+            buildFileExtFilterControls(newFolder);
+            // get a list of all those files previously uploaded to this server and update the
+            String serverProfileId = ConnectionPreferences.getActiveProfile().getProfileId(prefs, getContext());
+
+            //TODO enable uploaded file tracking database here!
+
+            //            new PreviouslyUploadedFilesFilter(requireContext(), getListAdapter(), newFolder.getAbsolutePath(), serverProfileId).execute();
+
+        }
+    }
+
+    private void buildBreadcrumbs(File newFolder) {
+        if (folderRootsAdapter == null) {
+            return;
+            // still building the ui
+        }
+        String item = folderRootsAdapter.getItemByValue(newFolder);
+        if (item == null) {
+            // reset the selection
+            if (folderRootFolderSpinner.getSelectedItemId() >= 0) {
+                folderRootFolderSpinner.setAdapter(folderRootsAdapter);
+            }
+        } else {
+            folderRootFolderSpinner.setSelection(folderRootsAdapter.getPosition(item), false);
+        }
+
+        folderPathView.populate(newFolder);
+    }
+
+    @Override
+    public boolean onBackButton() {
+        getListAdapter().cancelAnyActiveFolderMediaScan();
+        File parent = getListAdapter().getActiveFolder().getParentFile();
+        if (parent.getName().isEmpty()) {
+            return false;
+        } else {
+            getListAdapter().changeFolderViewed(parent);
+            return true;
+        }
+    }
+
+    private void applyNewRootsAdapter(MappedArrayAdapter<String, File> mappedArrayAdapter) {
+        folderRootsAdapter = mappedArrayAdapter;
+        folderRootFolderSpinner.setAdapter(folderRootsAdapter);
+        buildBreadcrumbs(getListAdapter().getActiveFolder());
+    }
+
     private void bindDataToView(Bundle savedInstanceState) {
+
+        new DataBinderTask(this).execute();
+
 
         File activeFolder = null;
         if (savedInstanceState != null) {
@@ -225,25 +358,31 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         if(getListAdapter() == null) {
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
-            if (activeFolder != null) {
-                viewAdapter.setActiveFolder(activeFolder);
-            } else {
-                // ??? can this ever occur?
-            }
+
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, MediaScanner.instance(getContext()), new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
+
             if (!viewAdapter.isItemSelectionAllowed()) {
                 viewAdapter.toggleItemSelection();
             }
 
-            viewAdapter.setInitiallySelectedItems();
+
+            // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
+            HashSet<Long> currentSelection = getCurrentSelection();
 
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
+
+            // update the adapter content
+            viewAdapter.changeFolderViewed(activeFolder != null ? activeFolder : getViewPrefs().getInitialFolderAsFile());
+
+            // select the items to view.
+            viewAdapter.setInitiallySelectedItems();
+            viewAdapter.setSelectedItems(currentSelection);
         }
 
         // call this here to ensure page reformats if orientation changes for example.
-        getViewPrefs().withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getPrefs(), getActivity()));
-        getViewPrefs().withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getPrefs(), getActivity()));
+        getViewPrefs().withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getPrefs(), requireActivity()));
+        getViewPrefs().withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getPrefs(), requireActivity()));
 
         int colsOnScreen = Math.max(getViewPrefs().getColumnsOfFiles(), getViewPrefs().getColumnsOfFolders());
         if (getViewPrefs().getColumnsOfFiles() % getViewPrefs().getColumnsOfFolders() > 0) {
@@ -253,17 +392,6 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         layoutMan.setSpanSizeLookup(new SpanSizeLookup(getListAdapter(), colsOnScreen));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(getListAdapter());
-    }
-
-    @Override
-    public boolean onBackButton() {
-        File parent = getListAdapter().getActiveFolder().getParentFile();
-        if (parent.getName().isEmpty()) {
-            return false;
-        } else {
-            getListAdapter().updateContent(parent);
-            return true;
-        }
     }
 
     private MappedArrayAdapter<String, File> buildFolderRootsAdapter() {
@@ -304,9 +432,58 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         rootLabels.add(0, "");
         rootPaths.add(0, null);
 
-        MappedArrayAdapter adapter = new MappedArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, rootLabels, rootPaths);
+        Context context = getContext();
+        if (context == null) {
+            throw new IllegalStateException("Context is null while attempting to build list adapter");
+        }
+
+        MappedArrayAdapter<String, File> adapter = new MappedArrayAdapter<>(context, android.R.layout.simple_spinner_item, rootLabels, rootPaths);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         return adapter;
+    }
+
+    @Override
+    protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
+        FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
+        HashSet<FolderItemRecyclerViewAdapter.FolderItem> selectedItems = listAdapter.getSelectedItems();
+        if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
+            selectedItems = new HashSet<>(1);
+            selectedItems.add(new FolderItemRecyclerViewAdapter.FolderItem(listAdapter.getActiveFolder()));
+        }
+        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
+        listAdapter.cancelAnyActiveFolderMediaScan();
+        // now pop this screen off the stack.
+        if (isVisible() && getParentFragmentManager() != null) {
+            getParentFragmentManager().popBackStackImmediate();
+        }
+    }
+
+    private static class DataBinderTask extends AsyncTask<Void, Void, MappedArrayAdapter<String, File>> {
+
+        WeakReference<RecyclerViewFolderItemSelectFragment> parentFragmentRef;
+
+        DataBinderTask(RecyclerViewFolderItemSelectFragment parentFragment) {
+            this.parentFragmentRef = new WeakReference<>(parentFragment);
+        }
+
+        @Override
+        protected MappedArrayAdapter<String, File> doInBackground(Void... voids) {
+            RecyclerViewFolderItemSelectFragment parentFragment = parentFragmentRef.get();
+            if (parentFragment != null) {
+                return parentFragment.buildFolderRootsAdapter();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(MappedArrayAdapter<String, File> mappedArrayAdapter) {
+            // building this stuff is slow - lets do it async!
+            RecyclerViewFolderItemSelectFragment parentFragment = parentFragmentRef.get();
+            if (parentFragment != null && mappedArrayAdapter != null) {
+                parentFragment.applyNewRootsAdapter(mappedArrayAdapter);
+            }
+        }
     }
 
     @Override
@@ -325,26 +502,37 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     protected void rerunRetrievalForFailedPages() {
     }
 
-    @Override
-    protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
-        HashSet<File> selectedItems = listAdapter.getSelectedItems();
-        if(selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
-            selectedItems = new HashSet<>(1);
-            selectedItems.add(listAdapter.getActiveFolder());
+    private class FileExtControlListener implements CompoundButton.OnCheckedChangeListener {
+
+        public FileExtControlListener() {
+            //TODO maybe add the ListAdapter here and use that.
         }
-        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems), actionTimeMillis));
-        // now pop this screen off the stack.
-        if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            String fileExt = buttonView.getText().toString();
+            FolderItemRecyclerViewAdapter adapter = getListAdapter();
+            SortedSet<String> visibleFileTypes = adapter.getAdapterPrefs().getVisibleFileTypes();
+            if (isChecked) {
+                // local model used when rebuilding each folder view
+                selectedVisibleFileExts.add(fileExt);
+                // current folder view
+                visibleFileTypes.add(fileExt);
+            } else {
+                // local model used when rebuilding each folder view
+                selectedVisibleFileExts.remove(fileExt);
+                // current folder view
+                visibleFileTypes.remove(fileExt);
+            }
+            adapter.rebuildContentView();
         }
     }
 
     @Override
     public void onCancelChanges() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null, actionTimeMillis));
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis));
+        getListAdapter().cancelAnyActiveFolderMediaScan();
         super.onCancelChanges();
     }
 
@@ -378,4 +566,18 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         }
     }
 
+    private class RootFolderSelectionListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (id > 0) {
+                MappedArrayAdapter<String, File> adapter = (MappedArrayAdapter) parent.getAdapter();
+                File newRoot = adapter.getItemValue(position);
+                getListAdapter().changeFolderViewed(newRoot);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    }
 }

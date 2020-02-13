@@ -4,21 +4,27 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -33,12 +39,15 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     /**
      * An {@link Executor} that can be used to execute tasks in parallel.
      */
+    private static final long MAX_TIMEOUT_MILLIS = 1000 * 60; // 1 minute - I can't think of a reason for a single call to exceed this time. Unless debugging!
     private static final ThreadPoolExecutor HTTP_THREAD_POOL_EXECUTOR;
     private static final ThreadPoolExecutor HTTP_LOGIN_THREAD_POOL_EXECUTOR;
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int CORE_POOL_SIZE = 6;
     private static final int MAXIMUM_POOL_SIZE = Math.max(6, CPU_COUNT * 2 + 1);
     private static final int KEEP_ALIVE_SECONDS = 60;
+    private static final List<String> runningExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
+    private static final List<String> queuedExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
             new LinkedBlockingQueue<Runnable>(128) {
                 @Override
@@ -128,18 +137,23 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     @Override
     protected final Boolean doInBackground(Long... params) {
+        boolean result;
         try {
             if (params.length != 1) {
                 throw new IllegalArgumentException("Exactly one parameter must be passed - the id for this call");
             }
             long messageId = params[0];
-            return executeCall(messageId);
+            result = executeCall(messageId);
+            Log.d(tag, "Worker returning : " + result);
+            return result;
         } catch (RuntimeException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "ASync code crashed unexpectedly", e);
             }
-            return false;
+            result = false;
+            Log.d(tag, "Worker returning : " + result);
+            return result;
         }
     }
 
@@ -148,9 +162,14 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     protected boolean executeCall(long messageId) {
+
+        recordExcutionStart();
+
 //        Thread.currentThread().setName(handler.getClass().getSimpleName());
 
-        Log.e(tag, "Running worker for handler " + handler.getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+        if (BuildConfig.DEBUG) {
+            Crashlytics.log(Log.ERROR, tag, "Running worker for handler " + handler.getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+        }
 
         SharedPreferences prefs = null;
         if (context != null) {
@@ -179,7 +198,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
         if (haveValidSession) {
             handler.beforeCall();
-            handler.runCall();
+            handler.runCall(false);
 
             // this is the absolute timeout - in case something is seriously wrong.
             long callTimeoutAtTime = System.currentTimeMillis() + 300000;
@@ -187,7 +206,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             synchronized (handler) {
                 boolean timedOut = false;
                 while (handler.isRunning() && !isCancelled() && !timedOut) {
-                    long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
+                    long waitForMillis = Math.min(1000, callTimeoutAtTime - System.currentTimeMillis());
                     if (waitForMillis > 0) {
                         try {
                             handler.wait(waitForMillis);
@@ -215,14 +234,62 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         return handler.isSuccess();
     }
 
+    private void recordExcutionStart() {
+        synchronized (queuedExecutorTasks) {
+            synchronized (runningExecutorTasks) {
+                queuedExecutorTasks.remove(handler.getTag());
+                runningExecutorTasks.add(handler.getTag());
+            }
+        }
+    }
+
+    private void recordExcutionQueued() {
+        synchronized (queuedExecutorTasks) {
+            queuedExecutorTasks.add(getTaskName());
+        }
+    }
+
+    protected String getTaskName() {
+        return handler != null ? handler.getTag() : "Unknown";
+    }
+
+    private void recordExcutionFinished() {
+        synchronized (runningExecutorTasks) {
+            runningExecutorTasks.remove(getTaskName());
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
+        recordExcutionFinished();
+    }
+
     protected @NonNull AbstractPiwigoDirectResponseHandler getHandler(SharedPreferences prefs) {
         return handler;
     }
 
     public long start(long messageId) {
-        AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
-        //TODO collect a list of tasks and kill them all if the app exits.
-        return messageId;
+        try {
+            AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
+            recordExcutionQueued();
+            //TODO collect a list of tasks and kill them all if the app exits.
+            return messageId;
+        } catch (RejectedExecutionException e) {
+            StringBuilder sb = new StringBuilder();
+            synchronized (queuedExecutorTasks) {
+                synchronized (runningExecutorTasks) {
+                    String runningTaskFreqMapStr = CollectionUtils.getFrequencyMapAsString(CollectionUtils.toFrequencyMap(runningExecutorTasks));
+                    String queuedTaskFreqMapStr = CollectionUtils.getFrequencyMapAsString(CollectionUtils.toFrequencyMap(queuedExecutorTasks));
+                    sb.append("Main Executor is Running Task: ").append(runningTaskFreqMapStr);
+                    sb.append('\n');
+                    sb.append("Main Executor has Queued Tasks: ").append(queuedTaskFreqMapStr);
+                    sb.append('\n');
+                    sb.append("This task was of type : ").append(handler.getTag());
+                }
+            }
+            throw new RejectedExecutionException(sb.toString(), e);
+        }
     }
 
     /**
@@ -245,12 +312,32 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
         //TODO collect a list of tasks and kill them all if the app exits.
         Boolean retVal = null;
-        while (!task.isCancelled() && !task.getStatus().equals(FINISHED)) {
+        boolean timedOut = false;
+        long timeoutAt = System.currentTimeMillis() + MAX_TIMEOUT_MILLIS;
+        while (!task.isCancelled() && !task.getStatus().equals(FINISHED) && !timedOut) {
+
+            if(retVal != null) {
+                timedOut = System.currentTimeMillis() > timeoutAt;
+            }
             try {
                 if (BuildConfig.DEBUG) {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + handler.getClass().getSimpleName());
                 }
-                retVal = task.get();
+                if(retVal == null) {
+                    try {
+                        retVal = task.get(1000, TimeUnit.MILLISECONDS); // allow it to loop around until timed out (rather than hang forever)
+                    } catch (TimeoutException e) {
+
+                        Log.e(tag, " Thread " + Thread.currentThread().getName() + " timed out waiting for response from handler " + handler.getClass().getSimpleName() + " in task with status : " + task.getStatus().name());
+                    }
+                    if (retVal != null) {
+                        timeoutAt = System.currentTimeMillis() + 1500;
+                    }
+                } else {
+                    synchronized (task) {
+                        task.wait(500);
+                    }
+                }
             } catch (InterruptedException e) {
                 // ignore unless the worker is cancelled.
                 if (BuildConfig.DEBUG) {
@@ -261,6 +348,12 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Error retrieving result from handler " + handler.getClass().getSimpleName(), e);
                 }
             }
+        }
+        if(timedOut) {
+            if (BuildConfig.DEBUG) {
+                Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Task not correctly being updated as finished from handler " + handler.getClass().getSimpleName());
+            }
+            task.cancel(true);
         }
         return retVal == null ? false : retVal;
     }

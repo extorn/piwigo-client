@@ -6,7 +6,9 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.BuildConfig;
 import com.google.android.vending.licensing.LicenseChecker;
@@ -17,9 +19,9 @@ import com.google.android.vending.licensing.ServerManagedPolicy;
 import java.util.Date;
 import java.util.Random;
 
+import delit.libs.ui.util.PreferenceUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.util.PreferenceUtils;
 
 /**
  * Created by gareth on 28/10/17.
@@ -49,8 +51,6 @@ public class LicenceCheckingHelper {
 
         // Library calls this when it's done.
         mLicenseCheckerCallback = new MyLicenseCheckerCallback();
-        // Construct the LicenseChecker with a policy
-        String myPackageName = activity.getPackageName();
 
         //Force the licence response to be invalidated every time a new version is installed.
         byte[] salt = new byte[20];
@@ -58,41 +58,59 @@ public class LicenceCheckingHelper {
 
         mChecker = new LicenseChecker(
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
-                new AESObfuscator(salt, myPackageName, deviceId)),
+                new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, deviceId, true)),
                 BASE64_PUBLIC_KEY);
-        doVisualCheck();
+        doVisualCheck(activity.getApplicationContext());
     }
 
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultAdapter() {
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction(activity.getUiHelper(), showRetryButton) {
 
-            @Override
-            public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    if (showRetryButton) {
-                        doCheck();
-                    } else {
-                        Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "http://market.android.com/details?id=" + activity.getPackageName()));
-                        activity.startActivity(marketIntent);
-                    }
-                } else {
-                    activity.finish();
-                }
-            }
+
         });
+    }
+
+    private synchronized void forceCheck() {
+        lastChecked = null;
+        doCheck();
     }
 
     public void doSilentCheck() {
         doCheck();
     }
 
-    private void doVisualCheck() {
-        if(BuildConfig.DEBUG) {
-            activity.getUiHelper().showToast(R.string.checking_license);
+    private void doVisualCheck(Context applicationContext) {
+        if (BuildConfig.DEBUG) {
+            activity.getUiHelper().showDetailedShortMsg(R.string.alert_information, applicationContext.getString(R.string.checking_license));
         }
         doCheck();
+    }
+
+    private static class LicenceCheckAction<T extends ActivityUIHelper<MyActivity>> extends UIHelper.QuestionResultAdapter<T> {
+        private final boolean allowRetry;
+
+        public LicenceCheckAction(T uiHelper, boolean allowRetry) {
+            super(uiHelper);
+            this.allowRetry = allowRetry;
+        }
+
+        @Override
+        public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
+            MyActivity activity = getUiHelper().getParent();
+            if (Boolean.TRUE == positiveAnswer) {
+                if (allowRetry) {
+                    activity.getLicencingHelper().forceCheck();
+                } else {
+                    Crashlytics.log(Log.DEBUG, TAG, "Starting Market Intent");
+                    Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                            "http://market.android.com/details?id=" + activity.getPackageName()));
+                    activity.startActivity(Intent.createChooser(marketIntent, ""));
+                }
+            } else {
+                activity.finish();
+            }
+        }
     }
 
     private synchronized void doCheck() {
@@ -119,7 +137,7 @@ public class LicenceCheckingHelper {
     private void displayResult(final String result) {
         mHandler.post(new Runnable() {
             public void run() {
-                activity.getUiHelper().showOrQueueDialogMessage(R.string.alert_information, result);
+                activity.getUiHelper().showDetailedMsg(R.string.alert_information, result);
             }
         });
     }

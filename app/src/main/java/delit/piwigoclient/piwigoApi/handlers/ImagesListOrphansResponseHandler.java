@@ -11,17 +11,17 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import delit.libs.http.RequestParams;
+import delit.libs.util.VersionUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
-import delit.piwigoclient.util.VersionUtils;
 
 public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHandler {
 
-    private static final String TAG = "GetResourcesRspHdlr";
+    private static final String TAG = "ListOrphansRspHdlr";
     private final int pageSize;
     private final int page;
     private boolean retrieveFullList;
@@ -58,12 +58,12 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
         if(retrieveFullList) {
             runSequenceOfNestedHandlers();
             return null;
         } else {
-            return super.runCall(client, handler);
+            return super.runCall(client, handler, forceResponseRevalidation);
         }
     }
 

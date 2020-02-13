@@ -5,8 +5,11 @@
 
     <!-- Non editable preferences -->
 
+    <string name="preference_advert_free_time_key" translatable="false">preference_advert_free_time</string>
+
     <string name="preference_agreed_eula_version_key" translatable="false">preference_agreed_eula_version</string>
     <string name="preference_app_prefs_version_key" translatable="false">preference_app_prefs_version</string>
+    <string name="usage_hints_shown_list_key" translatable="false">usage_hints_shown_list</string>
 
     <!-- Server Page -->
 
@@ -50,6 +53,11 @@
     <string name="preference_server_alter_cache_directives_title">Alter Server Http Cache Directives</string>
     <string name="preference_server_alter_cache_directives_summary">Enable to allow offline access to gallery</string>
     <bool name="preference_server_alter_cache_directives_default">false</bool>
+
+    <string name="preference_server_connection_uri_path_segment_encoding_key" translatable="false">preference_server_connection_uri_path_segment_encoding</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Encode URI path for requests for resources</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Try enabling this if you are receiving 404 errors for files that exist</string>
+    <bool name="preference_server_connection_uri_path_segment_encoding_default">false</bool>
 
     <string name="preference_server_connection_retries_key" translatable="false">preference_server_connection_retries</string>
     <string name="preference_server_connection_retries_title">Connection retries before failure</string>
@@ -173,7 +181,7 @@
     <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_summary">Should videos be shown when browsing a gallery in slideshow mode?</string>
-    <bool name="preference_gallery_include_videos_in_slideshow_default">false</bool>
+    <bool name="preference_gallery_include_videos_in_slideshow_default">true</bool>
 
     <string name="preference_gallery_enable_video_playback_key" translatable="false">preference_gallery_enable_video_playback</string>
     <string name="preference_gallery_enable_video_playback_title">Allow video playback</string>
@@ -181,9 +189,16 @@
     <bool name="preference_gallery_enable_video_playback_default">true</bool>
 
     <string name="preference_piwigo_playable_media_extensions_key" translatable="false">preference_piwigo_playable_media_extensions</string>
-    <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions (CSV list)</string>
+    <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions</string>
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-    <string name="preference_piwigo_playable_media_extensions_default">mpg,avi,mp3,ogg,mp4</string>
+
+    <string-array name="preference_piwigo_playable_media_extensions_default" translatable="false">
+        <item>mpg</item>
+        <item>avi</item>
+        <item>mp3</item>
+        <item>ogg</item>
+        <item>mp4</item>
+    </string-array>
 
     <string name="preference_video_cache_enabled_key" translatable="false">preference_video_cache_enabled</string>
     <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
@@ -195,10 +210,23 @@
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
     <integer name="preference_video_cache_maxsize_mb_default">512</integer>
 
-    <string name="preference_gallery_sortOrder_key" translatable="false">preference_gallery_sortOrder</string>
-    <string name="preference_gallery_sortOrder_title">Album sort order</string>
-    <string name="preference_gallery_sortOrder_summary">%1$s</string>
-    <string name="preference_gallery_sortOrder_default" translatable="false">name</string>
+    <string name="preference_gallery_sort_order_key" translatable="false">preference_gallery_sort_order</string>
+    <string name="preference_gallery_sort_order_title">Album sort order</string>
+    <string name="preference_gallery_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_sort_order_default" translatable="false">name</string>
+
+
+    <string name="preference_album_subalbum_sort_order_key" translatable="false">preference_album_subalbum_sort_order</string>
+    <string name="preference_album_subalbum_sort_order_title">Child album sort order</string>
+    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <integer name="preference_album_subalbum_sort_order_default">2
+    </integer> <!--DATE_ALBUM_SORT_ORDER (DSC) -->
+
+
+    <string name="preference_gallery_sort_order_inverted_key" translatable="false">preference_gallery_sort_order_inverted</string>
+    <string name="preference_gallery_sort_order_inverted_title">Invert Album sort order</string>
+    <string name="preference_gallery_sort_order_inverted_summary">When enabled, reverse the selected sort order of album resources</string>
+    <bool name="preference_gallery_sort_order_inverted_default">false</bool>
 
     <string name="preference_gallery_unique_id_key" translatable="false">preference_gallery_unique_id</string>
     <string name="preference_gallery_unique_id_title">Unique Identifier for images</string>
@@ -220,6 +248,21 @@
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d days</string>
     <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
     <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
+
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_key" translatable="false">preference_gallery_slideshow_transparent_extra_info_shadow</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Slideshow drawer is transparent</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Slideshow image information drawer is transparent</string>
+    <bool name="preference_gallery_slideshow_transparent_extra_info_shadow_default">false</bool>
+
+    <string name="preference_gallery_slideshow_image_scaletype_title">Slideshow image scaling type</string>
+    <string name="preference_gallery_slideshow_image_scaletype_key" translatable="false">preference_gallery_slideshow_image_scaletype</string>
+    <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
+    <string name="preference_gallery_slideshow_image_scaletype_default" translatable="false">MATRIX</string>
+
+    <bool name="preference_gallery_slideshow_image_rotate_default">false</bool>
+    <string name="preference_gallery_slideshow_image_rotate_title">Rotate image to match aspect ratio of screen</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Image rotated to fit screen</string>
+    <string name="preference_gallery_slideshow_image_rotate_key" translatable="false">preference_gallery_slideshow_image_rotate</string>
 
     <string name="preference_groups_request_pagesize_key" translatable="false">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
@@ -255,10 +298,19 @@
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Upload</string>
-    <string name="preference_connections_category_data_upload_display">Visual settings</string>
-    <string name="preference_connections_category_data_upload">Data Upload</string>
+    <string name="preference_upload_category_data_upload_display">Visual settings</string>
+    <string name="preference_upload_category_data_upload">Data Upload</string>
+    <string name="preference_upload_category_pre_data_upload_compression">Pre-Upload Compression</string>
+    <string name="preference_upload_category_advanced">Advanced</string>
 
     <!-- prefs -->
+
+    <string name="preference_data_upload_default_local_folder_key" translatable="false">preference_data_upload_default_local_folder</string>
+
+    <integer name="preference_data_upload_default_privacy_level_default">8</integer>
+    <string name="preference_data_upload_default_privacy_level_summary">Uploaded files visible to %1$s</string>
+    <string name="preference_data_upload_default_privacy_level_key" translatable="false">preference_data_upload_automatic_job_privacy_level</string>
+    <string name="preference_data_upload_default_privacy_level_title">Default Privacy Level</string>
 
     <string name="preference_data_upload_chunkSizeKb_key" translatable="false">preference_data_upload_chunkSizeKb</string>
     <string name="preference_data_upload_chunkSizeKb_title">Max Upload Chunk Size (KB)</string>
@@ -283,6 +335,57 @@
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
+    <string name="preference_data_upload_compress_videos_key" translatable="false">preference_data_upload_compress_videos</string>
+    <string name="preference_data_upload_compress_videos_summary">Compress videos before upload</string>
+    <string name="preference_data_upload_compress_videos_title">Compress videos</string>
+    <bool name="preference_data_upload_compress_videos_default">true</bool>
+
+    <string name="preference_data_upload_allow_upload_of_incompressible_videos_key" translatable="false">preference_data_upload_allow_upload_of_incompressible_videos</string>
+    <string name="preference_data_upload_allow_upload_of_incompressible_videos_summary" translatable="false">@string/allow_upload_of_incompressible_videos</string>
+    <string name="preference_data_upload_allow_upload_of_incompressible_videos_title" translatable="false">@string/allow_upload_of_incompressible_videos</string>
+    <bool name="preference_data_upload_allow_upload_of_incompressible_videos_default">true</bool>
+
+    <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
+    <string name="preference_data_upload_compress_videos_quality_key" translatable="false">preference_data_upload_compress_videos_quality</string>
+    <integer name="preference_data_upload_compress_videos_quality_default">700</integer>
+
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audio Bitrate</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio Bitrate %1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_key" translatable="false">preference_data_upload_compress_videos_audio_bitrate</string>
+    <integer name="preference_data_upload_compress_videos_audio_bitrate_default">128000</integer>
+
+    <string name="preference_data_upload_compress_images_key" translatable="false">preference_data_upload_compress_images</string>
+    <string name="preference_data_upload_compress_images_summary">Compress images before upload</string>
+    <string name="preference_data_upload_compress_images_title">Compress images</string>
+    <bool name="preference_data_upload_compress_images_default">false</bool>
+
+    <string name="preference_data_upload_compress_images_quality_title">Image Quality</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Image compression quality %1$s</string>
+    <string name="preference_data_upload_compress_images_quality_key" translatable="false">preference_data_upload_compress_images_quality</string>
+    <integer name="preference_data_upload_compress_images_quality_default">70</integer>
+    <integer name="preference_data_upload_compress_images_quality_max">100</integer>
+    <integer name="preference_data_upload_compress_images_quality_min">10</integer>
+
+    <string name="preference_data_upload_compress_images_max_height_title">Max Height</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Max height (%1$s pixels)</string>
+    <string name="preference_data_upload_compress_images_max_height_key" translatable="false">preference_data_upload_compress_images_max_height</string>
+    <integer name="preference_data_upload_compress_images_max_height_default">1024</integer>
+    <integer name="preference_data_upload_compress_images_max_height_max">3840</integer>
+    <integer name="preference_data_upload_compress_images_max_height_min">120</integer>
+
+    <string name="preference_data_upload_compress_images_max_width_title">Max Width</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Max width (%1$s pixels)</string>
+    <string name="preference_data_upload_compress_images_max_width_key" translatable="false">preference_data_upload_compress_images_max_width</string>
+    <integer name="preference_data_upload_compress_images_max_width_default">768</integer>
+    <integer name="preference_data_upload_compress_images_max_width_max">3840</integer>
+    <integer name="preference_data_upload_compress_images_max_width_min">120</integer>
+
+    <string name="preference_data_upload_compress_images_output_format_title">Image Output Format</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Image compression output format %1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_key" translatable="false">preference_data_upload_compress_images_output_format</string>
+    <string name="preference_data_upload_compress_images_output_format_default" translatable="false">jpeg</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Other</string>
@@ -291,25 +394,63 @@
     <!-- prefs -->
 
     <bool name="preference_data_file_selector_showFilenames_default">true</bool>
-    <string name="preference_data_file_selector_showFilenames_key">preference_data_file_selector_showFilenames</string>
+    <string name="preference_data_file_selector_showFilenames_key" translatable="false">preference_data_file_selector_showFilenames</string>
     <string name="preference_data_file_selector_showFilenames_title">Show file names</string>
     <string name="preference_data_file_selector_showFilenames_summary">Filenames shown for each file</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key">preference_data_file_selector_preferredFileColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key" translatable="false">preference_data_file_selector_preferredFileColumnsLandscape</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landscape: Columns of Files to show</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key">preference_data_file_selector_preferredFileColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key" translatable="false">preference_data_file_selector_preferredFileColumnsPortrait</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrait: Columns of Files to show</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key">preference_data_file_selector_preferredFolderColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key" translatable="false">preference_data_file_selector_preferredFolderColumnsLandscape</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Landscape: Columns of Folders to show</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key" translatable="false">preference_data_file_selector_preferredFolderColumnsPortrait</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrait: Columns of Folders to show</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     <string name="preference_functions_missing_app_version_warned_key" translatable="false">preference_functions_missing_app_version_warned</string>
+
+    <bool name="preference_app_always_show_nav_buttons_default">false</bool>
+    <bool name="preference_app_always_show_status_bar_default">false</bool>
+    <string name="preference_app_always_show_nav_buttons_key" translatable="false">preference_app_always_show_nav_buttons</string>
+    <string name="preference_app_always_show_nav_buttons_title">Always show navigation buttons</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Enable to prevent auto-hide of the navigation buttons</string>
+
+    <string name="preference_app_always_show_status_bar_key" translatable="false">preference_app_always_show_status_bar</string>
+    <string name="preference_app_always_show_status_bar_title">Always show the status bar</string>
+    <string name="preference_app_always_show_status_bar_summary">Enable to prevent auto-hide of the status bar</string>
+
+    <string name="preference_app_desired_language_key" translatable="false">preference_app_desired_language</string>
+    <string name="preference_app_desired_language_title">Language</string>
+    <string name="preference_app_desired_language_summary">Preferred Translation</string>
+
+    <!-- TODO implement this concept - Don't forget to make translatable again! -->
+
+    <string name="preference_user_hint_display_time_millis_key" translatable="false">preference_user_hint_display_time_millis</string>
+    <string name="preference_user_hint_display_time_millis_title" translatable="false">User Hints shown for (ms)</string>
+    <string name="preference_user_hint_display_time_millis_summary" translatable="false">%1$d millisecs</string>
+    <integer name="preference_user_hint_display_time_millis_default">7000</integer>
+
+    <!-- short snackbar messages -->
+    <string name="preference_short_message_display_time_millis_key" translatable="false">preference_short_message_display_time_millis</string>
+    <string name="preference_short_message_display_time_millis_title" translatable="false">Short messages shown for (ms)</string>
+    <string name="preference_short_message_display_time_millis_summary" translatable="false">%1$d millisecs</string>
+    <integer name="preference_short_message_display_time_millis_default">2000</integer>
+
+    <!-- long snackbar messages -->
+    <string name="preference_long_message_display_time_millis_key" translatable="false">preference_long_message_display_time_millis</string>
+    <string name="preference_long_message_display_time_millis_title" translatable="false">Longer messages shown for (ms)</string>
+    <string name="preference_long_message_display_time_millis_summary" translatable="false">%1$d millisecs</string>
+    <integer name="preference_long_message_display_time_millis_default">3500</integer>
+
+    <!--TODO end implement this concept! -->
+
+    <string name="preference_server_connection_warn_internal_uri_exposed_key" translatable="false">preference_server_connection_warn_internal_uri_exposed</string>
+
 </resources>

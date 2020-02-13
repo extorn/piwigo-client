@@ -1,8 +1,11 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,8 +19,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.User;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -123,6 +126,16 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
+        if (users.size() == 0) {
+            Bundle bundle = new Bundle();
+            if (userId >= 0) {
+                bundle.putLong("userId", userId);
+            } else {
+                bundle.putString("username", username);
+                bundle.putString("status", userType);
+            }
+            FirebaseAnalytics.getInstance(getContext()).logEvent("noUserFound", bundle);
+        }
         PiwigoGetUserDetailsResponse r = new PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users, isCached);
         storeResponse(r);
     }
@@ -133,7 +146,11 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
 
         public PiwigoGetUserDetailsResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users, boolean isCached) {
             super(messageId, piwigoMethod, page, pageSize, itemsOnPage, users, isCached);
-            selectedUser = getUsers().remove(0);
+            if (!getUsers().isEmpty()) {
+                selectedUser = getUsers().remove(0);
+            } else {
+                selectedUser = null;
+            }
         }
 
         public User getSelectedUser() {

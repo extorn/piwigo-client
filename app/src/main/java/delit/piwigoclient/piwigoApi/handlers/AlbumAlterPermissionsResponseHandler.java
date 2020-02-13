@@ -2,10 +2,9 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import java.util.HashSet;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public abstract class AlbumAlterPermissionsResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -33,11 +32,7 @@ public abstract class AlbumAlterPermissionsResponseHandler extends AbstractPiwig
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
@@ -56,7 +51,7 @@ public abstract class AlbumAlterPermissionsResponseHandler extends AbstractPiwig
         if (recursive) {
             params.put("recursive", "true");
         }
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

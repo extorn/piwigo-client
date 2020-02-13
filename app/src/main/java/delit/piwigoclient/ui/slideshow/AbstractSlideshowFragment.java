@@ -3,14 +3,16 @@ package delit.piwigoclient.ui.slideshow;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
@@ -20,21 +22,28 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Set;
+
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.CustomViewPager;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.CustomViewPager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -43,6 +52,7 @@ import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static android.view.View.GONE;
@@ -52,71 +62,110 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/05/17.
  */
 
-public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelable> extends MyFragment {
+public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment {
 
-    private static final String STATE_GALLERY = "galleryModel";
-    private static final String ARG_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
+    private static final String TAG = "AbsSlideshowFragment";
+    private static final String ARG_GALLERY_TYPE = "containerModelType";
+    private static final String ARG_GALLERY_ID = "containerId";
+    private static final String ARG_GALLERY_ITEM_DISPLAYED = "indexOfItemInContainerToDisplay";
     private CustomViewPager viewPager;
-    private ResourceContainer<T, GalleryItem> galleryModel;
-    private int rawCurrentGalleryItemPosition;
+    private ResourceContainer<T, GalleryItem> resourceContainer;
     private View progressIndicator;
-    private GalleryItemAdapter<T, CustomViewPager> galleryItemAdapter;
+    private GalleryItemAdapter<T, CustomViewPager, ? extends SlideshowItemFragment<? extends ResourceItem>> galleryItemAdapter;
     private AdView adView;
 
-    public static <T extends Identifiable&Parcelable> Bundle buildArgs(ResourceContainer<T, GalleryItem> gallery, GalleryItem currentGalleryItem) {
+    public static <T extends Identifiable & Parcelable> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> resourceContainer, GalleryItem currentItem) {
         Bundle args = new Bundle();
-        args.putParcelable(STATE_GALLERY, gallery);
-        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
+        args.putSerializable(ARG_GALLERY_TYPE, modelType);
+        args.putLong(ARG_GALLERY_ID, resourceContainer.getId());
+        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, resourceContainer.getDisplayIdx(currentItem));
         return args;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(STATE_GALLERY, galleryModel);
-        outState.putInt(ARG_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
+        if (BuildConfig.DEBUG) {
+            BundleUtils.logSize("SlideshowFragment", outState);
+        }
     }
 
+//    @Override
+//    protected void updatePageTitle() {
+//        // Do nothing. This is handled by the items in the slideshow.
+//    }
+
     @Override
-    protected void updatePageTitle() {
-        // Do nothing. This is handled by the items in the slideshow.
+    protected String buildPageHeading() {
+        return null;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(galleryModel));
+        // Need to unregister it now because if done in onDetach, it alters the UI after the saveInstanceState is called and thus crashes!
+        getUiHelper().deregisterFromActiveServiceCalls();
+        EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(resourceContainer));
+    }
+
+    @Override
+    public void onResume() {
+        if (resourceContainer == null) {
+            loadModelFromArguments();
+        }
+        super.onResume();
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_1);
+        getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_view_2);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        try {
+            loadModelFromArguments();
+
+            if (resourceContainer == null) {
+                // attempt to get back to a working fragment.
+                try {
+                    getParentFragmentManager().popBackStackImmediate();
+                } catch (RuntimeException e) {
+                    Crashlytics.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
+                    getParentFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
+                }
+            }
+            super.onCreate(savedInstanceState);
+
+        } catch (ModelUnavailableException e) {
+            Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
+        }
+    }
+
+    private void loadModelFromArguments() {
+        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
+        long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
+
+        ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
+        resourceContainer = viewModelContainer.getModel();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        Bundle configurationBundle = savedInstanceState;
-        if (configurationBundle == null) {
-            configurationBundle = getArguments();
-            rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
-        }
-        if (configurationBundle != null && galleryModel == null) {
-            galleryModel = configurationBundle.getParcelable(STATE_GALLERY);
-            rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
+        View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
+
+        if (resourceContainer == null) {
+            return view; // because we can't use this, a pop backstack must be in progress
         }
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
 
         boolean largeEnoughScreenSizeForAdvert = false;
         DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         float yInches= metrics.heightPixels/metrics.ydpi;
         if (yInches>=3) {
             largeEnoughScreenSizeForAdvert = true;
@@ -126,7 +175,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         if (AdsManager.getInstance().shouldShowAdverts()
                 && (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT
                 || largeEnoughScreenSizeForAdvert)) {
-            adView.loadAd(new AdRequest.Builder().build());
+            adView.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
             adView.setAdListener(new AdsManager.MyBannerAdListener(adView));
             adView.setVisibility(VISIBLE);
         } else {
@@ -134,58 +183,46 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
 
         viewPager = view.findViewById(R.id.slideshow_viewpager);
-        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
-        shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
+        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
+        shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, requireContext());
+
+        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
+        int rawCurrentGalleryItemPosition = getArguments().getInt(ARG_GALLERY_ITEM_DISPLAYED);
+
         if (galleryItemAdapter == null) {
-            galleryItemAdapter = new GalleryItemAdapter<>(galleryModel, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
-            galleryItemAdapter.setMaxFragmentsToSaveInState(40);
+            galleryItemAdapter = new GalleryItemAdapter<>(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
-            // update settings.
+            // update settings with newest values.
             galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
         }
 
+        viewPager.clearOnPageChangeListeners(); // do before setContainer because that adds a listener
         galleryItemAdapter.setContainer(viewPager);
         viewPager.setAdapter(galleryItemAdapter);
-
-        ViewPager.OnPageChangeListener slideshowPageChangeListener = new ViewPager.OnPageChangeListener() {
-
-            int lastPage = -1;
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                if (!galleryModel.isFullyLoaded()) {
-                    if ((viewPager.getAdapter()).getCount() - position < 10) {
-                        //if within 10 items of the end of those items currently loaded, load some more.
-                        loadMoreGalleryResources();
-                    }
-                }
-
-                if (adView != null && adView.getVisibility() == View.VISIBLE) {
-                    ((AdsManager.MyBannerAdListener) adView.getAdListener()).replaceAd();
-                }
-
-                if (lastPage >= 0) {
-                    ((GalleryItemAdapter) viewPager.getAdapter()).onPageDeselected(lastPage);
-                }
-                ((GalleryItemAdapter) viewPager.getAdapter()).onPageSelected(position);
-                lastPage = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        };
-        viewPager.clearOnPageChangeListeners();
+        ViewPager.OnPageChangeListener slideshowPageChangeListener = new MyPageChangeListener();
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
-        int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
-        viewPager.setCurrentItem(pagerItemsIdx);
+
+        try {
+            int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
+            viewPager.setCurrentItem(pagerItemsIdx);
+        } catch (IllegalArgumentException e) {
+            Crashlytics.log(Log.WARN, TAG, "returning to album - slideshow empty");
+            getParentFragmentManager().popBackStack();
+        }
+
         return view;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        // overrride the gallery item adapter settings restored with up to date user choices
+        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
+        // update settings with newest values.
+        galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
+
     }
 
     @Override
@@ -199,14 +236,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
                 reloadSlideshowModel();
             } else {
                 // immediately leave this screen.
-                getFragmentManager().popBackStack();
+                getParentFragmentManager().popBackStack();
             }
         }
     }
 
     private void reloadSlideshowModel() {
-        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
-        T album = galleryModel.getContainerDetails();
+        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+        T album = resourceContainer.getContainerDetails();
         reloadSlideshowModel(album, preferredAlbumThumbnailSize);
     }
 
@@ -217,33 +254,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     }
 
     private void reloadAlbumSlideshowModel(CategoryItem album, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new UIHelper.Action<AbstractSlideshowFragment,AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse>() {
-
-            @Override
-            public boolean onSuccess(UIHelper uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
-                if(response.getAlbums().isEmpty()) {
-                    // will occur if the album no longer exists.
-                    getFragmentManager().popBackStack();
-                    return false;
-                }
-                CategoryItem currentAlbum = response.getAlbums().get(0);
-                if(currentAlbum.getId() != galleryModel.getId()) {
-                    //Something wierd is going on - this should never happen
-                    Crashlytics.log(Log.ERROR, getTag(), "Closing slideshow - reloaded album had different id to that expected!");
-                    getFragmentManager().popBackStack();
-                    return false;
-                }
-                setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoAlbum(currentAlbum));
-                loadMoreGalleryResources();
-                return true;
-            }
-
-            @Override
-            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                getFragmentManager().popBackStack();
-                return false;
-            }
-        };
+        UIHelper.Action action = new AlbumLoadResponseAction();
         getUiHelper().invokeActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, false), action);
     }
 
@@ -255,12 +266,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    protected ResourceContainer<T, GalleryItem> getGalleryModel() {
-        return galleryModel;
+    protected ResourceContainer<T, GalleryItem> getResourceContainer() {
+        return resourceContainer;
     }
 
-    protected void setContainerDetails(ResourceContainer<T, GalleryItem> piwigoTag) {
-        galleryModel = piwigoTag;
+    protected void setContainerDetails(ResourceContainer<T, GalleryItem> model) {
+        resourceContainer = model;
     }
 
     /**
@@ -286,7 +297,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemActionStartedEvent event) {
-        if (event.getItem().getParentId().equals(galleryModel.getId())) {
+        if (event.getItem().getParentId().equals(resourceContainer.getId())) {
             getUiHelper().setTrackingRequest(event.getActionId());
             viewPager.setEnabled(false);
         }
@@ -296,7 +307,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     public void onEvent(AlbumItemActionFinishedEvent event) {
         //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
         // parentId will be null if the parent is a Tag not an Album (viewing contents of a Tag).
-        if ((event.getItem().getParentId() == null || event.getItem().getParentId().equals(galleryModel.getId()))
+        if ((event.getItem().getParentId() == null || event.getItem().getParentId().equals(resourceContainer.getId()))
                 && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
@@ -304,50 +315,100 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
-        if(galleryModel.getId() == event.item.getParentId()) {
+        if (resourceContainer.getId() == event.item.getParentId()) {
             GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
-            int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
-            adapter.deleteGalleryItem(fullGalleryIdx);
-            if(adapter.getCount() == 0) {
-                // slideshow is now empty close this page.
-                getFragmentManager().popBackStack();
+            if (adapter != null) {
+                int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
+                adapter.deleteGalleryItem(fullGalleryIdx);
+                if (adapter.getCount() == 0) {
+                    // slideshow is now empty close this page.
+                    getParentFragmentManager().popBackStack();
+                }
             }
         }
     }
 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if (galleryModel instanceof PiwigoAlbum && galleryModel.getId() == albumAlteredEvent.getAlbumAltered()) {
+        if (resourceContainer instanceof PiwigoAlbum && resourceContainer.getId() == albumAlteredEvent.getAlbumAltered()) {
         }
     }
 
     protected void loadMoreGalleryResources() {
-        int pageToLoad = galleryModel.getPagesLoaded();
+        int pageToLoad = resourceContainer.getPagesLoaded();
         loadAlbumResourcesPage(pageToLoad);
     }
 
     private void loadAlbumResourcesPage(int pageToLoad) {
-        galleryModel.acquirePageLoadLock();
+        resourceContainer.acquirePageLoadLock();
         try {
-            if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
+            int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+            if (pageToActuallyLoad < 0) {
+                // the sort order is inverted so we know for a fact this page is invalid.
                 return;
             }
 
-            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
-            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
-            long loadingMessageId = invokeResourcePageLoader(galleryModel, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
-            galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
+            if (resourceContainer.isPageLoadedOrBeingLoaded(pageToActuallyLoad)) {
+                return;
+            }
+
+            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
+
+            long loadingMessageId = invokeResourcePageLoader(resourceContainer, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList);
+            resourceContainer.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToActuallyLoad);
         } finally {
-            galleryModel.releasePageLoadLock();
+            resourceContainer.releasePageLoadLock();
         }
     }
 
-    protected abstract long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);
+    private int getPageToActuallyLoad(int pageRequested, int pageSize) {
+        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
+        resourceContainer.setRetrieveItemsInReverseOrder(invertSortOrder);
+        int pageToActuallyLoad = pageRequested;
+        if (invertSortOrder) {
+            int pagesOfPhotos = resourceContainer.getContainerDetails().getPagesOfPhotos(pageSize);
+            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+        }
+        return pageToActuallyLoad;
+    }
+
+    protected abstract long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> containerDetails, String sortOrder, int pageToLoad, int pageSize, Set<String> multimediaExtensionList);
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
+    }
+
+    private static class AlbumLoadResponseAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>, AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
+
+        @Override
+        public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
+            if (response.getAlbums().isEmpty()) {
+                // will occur if the album no longer exists.
+                fragment.getParentFragmentManager().popBackStack();
+                return false;
+            }
+            CategoryItem currentAlbum = response.getAlbums().get(0);
+            if (currentAlbum.getId() != fragment.resourceContainer.getId()) {
+                //Something wierd is going on - this should never happen
+                Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing slideshow - reloaded album had different id to that expected!");
+                fragment.getParentFragmentManager().popBackStack();
+                return false;
+            }
+            fragment.setContainerDetails(new PiwigoAlbum(currentAlbum));
+            fragment.loadMoreGalleryResources();
+            return true;
+        }
+
+        @Override
+        public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
+            fragment.getParentFragmentManager().popBackStack();
+            return false;
+        }
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
@@ -368,13 +429,41 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
 
         public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
-            galleryModel.acquirePageLoadLock();
+            resourceContainer.acquirePageLoadLock();
             try {
-                galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
-                ((GalleryItemAdapter)viewPager.getAdapter()).onDataAppended(response.getResources().size());
+                int firstPositionAddedAt = resourceContainer.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+                ((GalleryItemAdapter) viewPager.getAdapter()).onDataAppended(firstPositionAddedAt, response.getResources().size());
             } finally {
-                galleryModel.releasePageLoadLock();
+                resourceContainer.releasePageLoadLock();
             }
+        }
+    }
+
+    private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
+
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            if (!resourceContainer.isFullyLoaded()) {
+                if ((viewPager.getAdapter()).getCount() - position < 10) {
+                    //if within 10 items of the end of those items currently loaded, load some more.
+                    loadMoreGalleryResources();
+                }
+            }
+
+            if (adView != null && adView.getVisibility() == View.VISIBLE) {
+                ((AdsManager.MyBannerAdListener) adView.getAdListener()).replaceAd();
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
         }
     }
 }

@@ -2,10 +2,7 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AlertDialog;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +15,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 
@@ -25,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +38,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.view.CustomClickTouchListener;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -56,12 +66,9 @@ import delit.piwigoclient.piwigoApi.handlers.UserPermissionsAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserPermissionsRemovedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserUpdateInfoResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
@@ -70,7 +77,6 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
-import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -79,7 +85,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 21/06/17.
  */
 
-public class UserFragment extends MyFragment {
+public class UserFragment extends MyFragment<UserFragment> {
 
     private static final String CURRENT_GROUP_MEMBERSHIPS = "groupMemberships";
     private static final String CURRENT_DIRECT_ALBUM_PERMISSIONS = "currentDirectAlbumPermissions";
@@ -277,7 +283,7 @@ public class UserFragment extends MyFragment {
             newUser = savedInstanceState.getParcelable(NEW_USER);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
             newGroupMembership = BundleUtils.getHashSet(savedInstanceState, STATE_NEW_GROUP_MEMBERSHIP);
-            SetUtils.setNotNull(saveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_SAVE_ACTION_IDS));
+            CollectionUtils.addToCollectionNullSafe(saveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_SAVE_ACTION_IDS));
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 
@@ -375,7 +381,7 @@ public class UserFragment extends MyFragment {
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         }
 
         if (user.getId() < 0) {
@@ -385,14 +391,14 @@ public class UserFragment extends MyFragment {
         } else {
             if (currentGroupMembership == null) {
                 if (user.getGroups().size() > 0) {
-                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()));
                 } else {
                     currentGroupMembership = new HashSet<>();
                 }
             }
             fillGroupMembershipField();
             if (currentDirectAlbumPermissions == null) {
-                addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()));
             }
         }
 
@@ -418,29 +424,32 @@ public class UserFragment extends MyFragment {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UIHelper.Action<UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse>() {
+            UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse>() {
 
                 @Override
-                public boolean onSuccess(UIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
+                public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
                     user = response.getSelectedUser();
                     if(newUser == null) {
-                        setFieldsFromModel(user);
-                        populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
+                        if (user != null) {
+                            setFieldsFromModel(user);
+                            populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
+                        } else {
+                            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.user_details_not_found_on_server));
+                        }
                     }
                     return false;
                 }
 
                 @Override
-                public boolean onFailure(UIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                    getFragmentManager().popBackStack();
+                public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                    getParentFragmentManager().popBackStack();
                     return false;
                 }
             };
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_user_details, new UserGetInfoResponseHandler(user.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -448,13 +457,9 @@ public class UserFragment extends MyFragment {
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
         if (newUser.getId() < 0) {
-            long saveActionId = new UserAddResponseHandler(newUser).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_adding_user, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler(newUser)));
         } else {
-            long saveActionId = new UserUpdateInfoResponseHandler(newUser).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser)));
             saveUserPermissionsChangesIfRequired();
         }
 
@@ -528,25 +533,50 @@ public class UserFragment extends MyFragment {
     private void deleteUser(final User user) {
         String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(user.getUsername())) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
+            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_delete_yourself_pattern, currentUser));
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
-
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if (Boolean.TRUE == positiveAnswer) {
-                        deleteUserNow(user);
-                    }
-                }
-            });
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction(getUiHelper(), user));
         }
+    }
+
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>> {
+
+        private transient User user; // user is not serializable.
+
+        public OnDeleteUserAction(FragmentUIHelper<UserFragment> uiHelper, User user) {
+            super(uiHelper);
+            this.user = user;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                UserFragment fragment = getUiHelper().getParent();
+                fragment.deleteUserNow(user);
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject();
+            Parcel p = Parcel.obtain();
+            p.writeValue(user);
+            ParcelUtils.writeParcel(out, p);
+        }
+
+        private void readObject(java.io.ObjectInputStream in)
+                throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            Parcel p = ParcelUtils.readParcel(in);
+            user = ParcelUtils.readValue(p, User.class.getClassLoader(), User.class);
+        }
+
     }
 
     private void deleteUserNow(User thisItem) {
 
-        addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()));
     }
 
     private void onUserSaved(UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse response) {
@@ -563,7 +593,7 @@ public class UserFragment extends MyFragment {
                 if (user.getGroups().size() == 0) {
                     currentGroupMembership = new HashSet<>(0);
                 } else {
-                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()));
                     currentGroupMembership = null;
                 }
             } else {
@@ -591,14 +621,11 @@ public class UserFragment extends MyFragment {
         HashSet<Long> userPermissionsToAdd = SetUtils.difference(newDirectAlbumPermissions, currentDirectAlbumPermissions);
 
         if (userPermissionsToRemove.size() > 0) {
-            long saveActionId = new UserPermissionsRemovedResponseHandler(newUser.getId(), userPermissionsToRemove).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserPermissionsRemovedResponseHandler(newUser.getId(), userPermissionsToRemove)));
+
         }
         if (userPermissionsToAdd.size() > 0) {
-            long saveActionId = new UserPermissionsAddResponseHandler(newUser.getId(), userPermissionsToAdd).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserPermissionsAddResponseHandler(newUser.getId(), userPermissionsToAdd)));
         }
     }
 
@@ -640,6 +667,7 @@ public class UserFragment extends MyFragment {
     public void onEvent(AlbumPermissionsSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             newDirectAlbumPermissions = event.getSelectedAlbumIds();
+            populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
         }
     }
 
@@ -709,7 +737,7 @@ public class UserFragment extends MyFragment {
         newUser.setId(savedUser.getId());
         newUser.setPassword(null);
         setFieldsFromModel(newUser);
-        addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser));
         saveUserPermissionsChangesIfRequired();
     }
 
@@ -749,7 +777,7 @@ public class UserFragment extends MyFragment {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -761,8 +789,9 @@ public class UserFragment extends MyFragment {
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
-        } else if (!SetUtils.equals(adapter.getSelectedItems(), initialSelection)) {
+        } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)) {
             adapter.setSelectedItems(initialSelection);
+            adapter.setIndirectlySelectedItems(indirectAlbumPermissions);
         }
     }
 
@@ -775,9 +804,10 @@ public class UserFragment extends MyFragment {
 
             HashSet<Long> newGroupsMembership = new HashSet<>(groupSelectionCompleteEvent.getCurrentSelection());
             if (newGroupsMembership.size() > 0) {
-                addActiveServiceCall(R.string.progress_reloading_album_permissions, new GroupGetPermissionsResponseHandler(newGroupsMembership).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_reloading_album_permissions, new GroupGetPermissionsResponseHandler(newGroupsMembership));
             } else {
                 newIndirectAlbumPermissions = new HashSet<>(0);
+                populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
             }
             selectGroupsActionId = -1;
         }
@@ -786,7 +816,7 @@ public class UserFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -795,7 +825,7 @@ public class UserFragment extends MyFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return;
                 }
             }

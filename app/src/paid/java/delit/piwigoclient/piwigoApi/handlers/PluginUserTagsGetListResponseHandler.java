@@ -9,8 +9,8 @@ import org.json.JSONException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.Tag;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 

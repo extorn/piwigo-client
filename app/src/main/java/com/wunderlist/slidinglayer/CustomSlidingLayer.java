@@ -38,19 +38,22 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
-import java.util.Random;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewConfigurationCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import java.util.Random;
+
 import delit.piwigoclient.R;
 
 
@@ -169,6 +172,7 @@ public class CustomSlidingLayer extends FrameLayout {
     private int mFlingDistance;
 
     private LayerTransformer mLayerTransformer;
+    private int offsetFromSideToStickTo;
 
     public CustomSlidingLayer(Context context) {
         this(context, null);
@@ -297,6 +301,57 @@ public class CustomSlidingLayer extends FrameLayout {
         setLayerState(STATE_PREVIEW, smoothAnimation);
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        InsetsListener insetsListener = new InsetsListener();
+        ViewCompat.setOnApplyWindowInsetsListener(this, insetsListener); // Lollipop+ only
+        setOnSystemUiVisibilityChangeListener(insetsListener);
+    }
+
+    /**
+     * Get the destination position based on the velocity
+     *
+     * @return
+     * @since 1.0
+     */
+    private int[] getDestScrollPosForState(int state) {
+
+        int[] pos = new int[2];
+
+        int layerOffset = Math.max(0, state == STATE_CLOSED ? mOffsetDistance : mPreviewOffsetDistance);
+
+        if (state == STATE_OPENED) {
+            int moveTo = (getHeight() - getChildAt(0).getMeasuredHeight()) - mOffsetDistance - offsetFromSideToStickTo;
+            if (moveTo < 0) {
+                //TODO the content doesn't fit on the page any more
+            }
+            pos[1] = -Math.max(0, moveTo);
+            return pos;
+        } else {
+            switch (mScreenSide) {
+                case STICK_TO_RIGHT:
+                    pos[0] = -getWidth() + layerOffset;
+                    break;
+                case STICK_TO_LEFT:
+                    pos[0] = getWidth() - layerOffset;
+                    break;
+                case STICK_TO_TOP:
+                    pos[1] = getHeight() - layerOffset;
+                    break;
+                case STICK_TO_BOTTOM:
+                    if (getChildAt(0) != null) {
+                        pos[1] = -(getHeight() - layerOffset) + offsetFromSideToStickTo;
+                    } else {
+                        pos[1] = -getHeight() + layerOffset + offsetFromSideToStickTo;
+                    }
+                    break;
+            }
+
+            return pos;
+        }
+    }
+
     public void closeLayer(final boolean smoothAnimation) {
         setLayerState(STATE_CLOSED, smoothAnimation);
     }
@@ -408,6 +463,10 @@ public class CustomSlidingLayer extends FrameLayout {
         invalidate(getLeft(), getTop(), getRight(), getBottom());
     }
 
+    public Drawable getShadowDrawable() {
+        return mShadowDrawable;
+    }
+
     /**
      * Sets a drawable resource that will be used to create the shadow for the
      * layer.
@@ -415,7 +474,7 @@ public class CustomSlidingLayer extends FrameLayout {
      * @param resId Resource ID of a drawable
      */
     public void setShadowDrawable(int resId) {
-        setShadowDrawable(ContextCompat.getDrawable(getContext(),resId));
+        setShadowDrawable(AppCompatResources.getDrawable(getContext(), resId));
     }
 
     /**
@@ -709,7 +768,7 @@ public class CustomSlidingLayer extends FrameLayout {
                     }
                 }
 
-                if (mIsDragging) {
+                if ((isCanOpenWithDrag() || isOpened()) && mIsDragging) {
 
                     final float oldScrollX = getScrollX();
                     final float oldScrollY = getScrollY();
@@ -764,20 +823,25 @@ public class CustomSlidingLayer extends FrameLayout {
             case MotionEvent.ACTION_UP: {
 
                 if (mIsDragging) {
-                    final VelocityTracker velocityTracker = mVelocityTracker;
-                    velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                    final int initialVelocityX = (int) velocityTracker.getXVelocity(mActivePointerId);
-                    final int initialVelocityY = (int) velocityTracker.getYVelocity(mActivePointerId);
-                    final int scrollX = getScrollX();
-                    final int scrollY = getScrollY();
 
-                    final int pointerIndex = ev.findPointerIndex(mActivePointerId);
-                    final float x = getViewX(ev);
-                    final float y = getViewY(ev);
+                    if (isCanOpenWithDrag() || isOpened()) { // only allow swipe to close.
 
-                    int nextState = determineNextStateForDrag(scrollX, scrollY, initialVelocityX, initialVelocityY,
-                            (int) mInitialRawX, (int) mInitialRawY, (int) x, (int) y);
-                    setLayerState(nextState, true, true, initialVelocityX, initialVelocityY);
+                        final VelocityTracker velocityTracker = mVelocityTracker;
+                        velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+                        final int initialVelocityX = (int) velocityTracker.getXVelocity(mActivePointerId);
+                        final int initialVelocityY = (int) velocityTracker.getYVelocity(mActivePointerId);
+                        final int scrollX = getScrollX();
+                        final int scrollY = getScrollY();
+
+                        final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+                        final float x = getViewX(ev);
+                        final float y = getViewY(ev);
+
+                        int nextState = determineNextStateForDrag(scrollX, scrollY, initialVelocityX, initialVelocityY,
+                                (int) mInitialRawX, (int) mInitialRawY, (int) x, (int) y);
+                        setLayerState(nextState, true, true, initialVelocityX, initialVelocityY);
+
+                    }
 
                     mActivePointerId = INVALID_VALUE;
                     endDrag();
@@ -815,6 +879,12 @@ public class CustomSlidingLayer extends FrameLayout {
         }
 
         return true;
+    }
+
+    private boolean isCanOpenWithDrag() {
+        boolean canOpenWithDrag = false;
+        canOpenWithDrag = Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2;
+        return canOpenWithDrag;
     }
 
     /**
@@ -1246,10 +1316,10 @@ public class CustomSlidingLayer extends FrameLayout {
                     layoutParams.gravity = Gravity.BOTTOM;
                     break;
                 case STICK_TO_LEFT:
-                    layoutParams.gravity = Gravity.LEFT;
+                    layoutParams.gravity = Gravity.START;
                     break;
                 case STICK_TO_RIGHT:
-                    layoutParams.gravity = Gravity.RIGHT;
+                    layoutParams.gravity = Gravity.END;
                     break;
                 case STICK_TO_TOP:
                     layoutParams.gravity = Gravity.TOP;
@@ -1279,46 +1349,13 @@ public class CustomSlidingLayer extends FrameLayout {
 
     }
 
-    /**
-     * Get the destination position based on the velocity
-     *
-     * @return
-     * @since 1.0
-     */
-    private int[] getDestScrollPosForState(int state) {
-
-        int[] pos = new int[2];
-
-        int layerOffset = Math.max(0, state == STATE_CLOSED ? mOffsetDistance : mPreviewOffsetDistance);
-
-        if (state == STATE_OPENED) {
-            int moveTo = (getHeight() - getChildAt(0).getMeasuredHeight()) - mOffsetDistance;
-            if(moveTo < 0) {
-                //TODO the content doesn't fit on the page any more
-            }
-            pos[1] = -Math.max(0, moveTo);
-            return pos;
-        } else {
-            switch (mScreenSide) {
-                case STICK_TO_RIGHT:
-                    pos[0] = -getWidth() + layerOffset;
-                    break;
-                case STICK_TO_LEFT:
-                    pos[0] = getWidth() - layerOffset;
-                    break;
-                case STICK_TO_TOP:
-                    pos[1] = getHeight() - layerOffset;
-                    break;
-                case STICK_TO_BOTTOM:
-                    if(getChildAt(0) != null) {
-                        pos[1] = -(getHeight() - layerOffset);
-                    } else {
-                        pos[1] = -getHeight() + layerOffset;
-                    }
-                    break;
-            }
-
-            return pos;
+    public void setStickToOffset(int offsetFromSideToStickTo) {
+        if (offsetFromSideToStickTo > this.offsetFromSideToStickTo && getCurrentState() == STATE_CLOSED) {
+            return;
+        }
+        if (this.offsetFromSideToStickTo != offsetFromSideToStickTo) {
+            this.offsetFromSideToStickTo = offsetFromSideToStickTo;
+            setLayerState(mCurrentState, false, true);
         }
     }
 
@@ -1368,6 +1405,35 @@ public class CustomSlidingLayer extends FrameLayout {
 
         // Done with scroll, clean up state.
         completeScroll();
+    }
+
+    private class InsetsListener implements androidx.core.view.OnApplyWindowInsetsListener, View.OnSystemUiVisibilityChangeListener {
+        private WindowInsetsCompat lastInsets;
+
+        @Override
+        public void onSystemUiVisibilityChange(int visibility) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                WindowInsets insets = getRootWindowInsets();
+                setStickToOffset(visibility == VISIBLE ? insets.getSystemWindowInsetBottom() : 0);
+            } else {
+                if (lastInsets != null) {
+                    setStickToOffset(visibility == VISIBLE ? lastInsets.getSystemWindowInsetBottom() : 0);
+                } else {
+                    setStickToOffset(0);
+                }
+            }
+        }
+
+        @Override
+        public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+            lastInsets = insets;
+            int offset = 0;
+            if (insets.getSystemWindowInsetBottom() > insets.getStableInsetBottom()) {
+                offset = insets.getSystemWindowInsetBottom();
+            }
+            setStickToOffset(offset);
+            return insets;
+        }
     }
 
     /**

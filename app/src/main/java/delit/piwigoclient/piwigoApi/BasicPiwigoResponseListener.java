@@ -3,12 +3,22 @@ package delit.piwigoclient.piwigoApi;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.DialogPreference;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+
+import com.crashlytics.android.Crashlytics;
+
+import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 
@@ -18,6 +28,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 
 public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandler.PiwigoResponseListener {
 
+    private static final String TAG = "BasicPiwigoLsnr";
     private static final String HANDLER_ID = "handlerId";
     private long handlerId;
     private UIHelper uiHelper;
@@ -69,14 +80,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         uiHelper.showOrQueueDialogMessage(title, message);
     }
 
-    private void showOrQueueRetryDialogMessageWithDetail(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg, String detail) {
-        if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
-            final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse) response;
-            handleErrorRetryPossible(errorResponse, title, msg, detail);
-
-        } else {
-            handleErrorRetryNotPossible(response, title, msg, detail);
-        }
+    private void showOrQueueRetryDialogMessageWithDetail(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
+        handleErrorRetryPossible(errorResponse, title, msg, detail);
     }
 
     private void showOrQueueRetryDialogMessage(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
@@ -97,21 +102,49 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         }
     }
 
-    protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
-        final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
+    private static class ErrorRetryQuestionResultHandler extends UIHelper.QuestionResultAdapter {
+        private final transient AbstractPiwigoDirectResponseHandler handler;
+        private final transient PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse;
+        private final long handlerId;
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter() {
+        public ErrorRetryQuestionResultHandler(UIHelper uiHelper, AbstractPiwigoDirectResponseHandler handler, PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, long handlerId) {
+            super(uiHelper);
+            this.handlerId = handlerId;
+            this.handler = handler;
+            this.errorResponse = errorResponse;
+        }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE.equals(positiveAnswer)) {
-                    uiHelper.addActiveServiceCall(handler.getMessageId());
-                    handler.rerun(dialog.getContext().getApplicationContext());
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            //TODO fix NPE exception - will occur here because handler and errorResponse are both transient as non serializable.
+            if (Boolean.TRUE.equals(positiveAnswer)) {
+                if (handler == null) {
+                    Crashlytics.log(Log.ERROR, TAG, "attempt to process alert message for handler after app pause resume (handler is now not available)");
+                    Crashlytics.logException(new NullPointerException("unable to handle positive dialog answer"));
                 } else {
-                    onAfterHandlePiwigoResponse(errorResponse);
+                    if (handler.runInBackground()) {
+                        getUiHelper().addBackgroundServiceCall(handler.getMessageId());
+                    } else {
+                        getUiHelper().addActiveServiceCall(handler);
+                    }
+                    handler.rerun(dialog.getContext().getApplicationContext());
+                }
+
+            } else {
+                BasicPiwigoResponseListener listener = (BasicPiwigoResponseListener) PiwigoResponseBufferingHandler.getDefault().getRegisteredHandler(handlerId);
+                if (listener == null) {
+                    Crashlytics.log(Log.ERROR, TAG, "attempt to process alert message for handler after app pause resume (listener is now not available)");
+                    Crashlytics.logException(new NullPointerException("unable to handle negative dialog answer"));
+                } else {
+                    listener.onAfterHandlePiwigoResponse(errorResponse);
                 }
             }
-        };
+        }
+    }
+
+    protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
+        final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
+        UIHelper.QuestionResultListener dialogListener = new ErrorRetryQuestionResultHandler(uiHelper, handler, errorResponse, handlerId);
 
         if(detail == null) {
             uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, dialogListener);
@@ -123,6 +156,9 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
     }
 
+    public void onBeforeHandlePiwigoResponseInListener(PiwigoResponseBufferingHandler.Response response) {
+    }
+
     public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
     }
 
@@ -132,6 +168,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
 
         onBeforeHandlePiwigoResponse(response);
 
+        uiHelper.onServiceCallComplete(response);
+
         UIHelper.Action action = uiHelper.getActionOnResponse(response);
         boolean runListenerHandlerCode = true;
         if(action != null) {
@@ -140,21 +178,38 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             } else {
                 runListenerHandlerCode = action.onSuccess(uiHelper, response);
             }
+            if (response.isEndResponse()) {
+                uiHelper.removeActionForResponse(response);
+            }
         }
 
-        uiHelper.onServiceCallComplete(response);
 
         if(runListenerHandlerCode) {
+            onBeforeHandlePiwigoResponseInListener(response);
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
                 handlePiwigoHttpErrorResponse((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
                 handlePiwigoUnexpectedReplyErrorResponse((PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
                 handlePiwigoServerErrorResponse((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) response);
+            } else if(response instanceof PiwigoResponseBufferingHandler.UrlErrorResponse) {
+                handleUrlErrorResponse((PiwigoResponseBufferingHandler.UrlErrorResponse) response);
             }
             if (!(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse)) {
                 // don't call user code if we may be re-trying. The outcome is not yet know.
                 onAfterHandlePiwigoResponse(response);
+            }
+        }
+    }
+
+    private void handleUrlErrorResponse(PiwigoResponseBufferingHandler.UrlErrorResponse msg) {
+        if (msg.getStatusCode() < 0) {
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), msg.getResponseBody());
+        } else if (msg.getStatusCode() == 0) {
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getResponseBody());
+        } else {
+            if (!(msg.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT && PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()))) {
+                showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), msg.getResponseBody());
             }
         }
     }
@@ -165,11 +220,13 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
 
     protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
         if (msg.getStatusCode() < 0) {
-            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), msg.getResponse());
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), msg.getErrorDetail() + msg.getResponse());
         } else if (msg.getStatusCode() == 0) {
-            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getResponse());
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getErrorDetail() + msg.getResponse());
         } else {
-            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), msg.getResponse());
+            if (!(msg.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT && PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()))) {
+                showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), msg.getErrorDetail() + msg.getResponse());
+            }
         }
     }
 
@@ -197,7 +254,12 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         } else if (parent instanceof AppCompatActivity) {
             retVal = !((AppCompatActivity) parent).isFinishing();
         } else if (parent instanceof ViewGroup) {
-            retVal = ((ViewGroup) parent).isShown();
+            DrawerLayout dl = DisplayUtils.getParentOfType((View) parent, DrawerLayout.class);
+            if (dl != null) {
+                retVal = true; // the drawer is attached regardless of whether visible or not.
+            } else {
+                retVal = ((ViewGroup) parent).isShown();
+            }
         } else if (parent instanceof DialogPreference) {
             retVal = ((DialogPreference) parent).getDialog() != null;
         } else if (parent == null) {

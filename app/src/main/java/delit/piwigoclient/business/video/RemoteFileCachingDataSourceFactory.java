@@ -28,11 +28,12 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
     private boolean cachingEnabled;
     private CustomDatasourceLoadControlPauseListener loadControlPauseListener;
     private RemoteDirectHttpClientBasedHttpDataSource.DownloadListener directDownloadListener;
+    private boolean performUriPathSegmentEncoding;
 
 
     public RemoteFileCachingDataSourceFactory(Context context, TransferListener<? super DataSource> transferListener, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, RemoteDirectHttpClientBasedHttpDataSource.DownloadListener directDownloadListener, String userAgent) {
         this.transferListener = transferListener;
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
         this.directDownloadListener = directDownloadListener;
@@ -49,12 +50,17 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
     }
 
+    public void setPerformUriPathSegmentEncoding(boolean performUriPathSegmentEncoding) {
+        this.performUriPathSegmentEncoding = performUriPathSegmentEncoding;
+    }
+
     private HttpDataSource createDirectDataSource(HttpDataSource.RequestProperties defaultRequestProperties) {
         RemoteDirectHttpClientBasedHttpDataSource ds = new RemoteDirectHttpClientBasedHttpDataSource(context, userAgent, null, transferListener, connectTimeoutMillis,
                 readTimeoutMillis, defaultRequestProperties);
         ds.setEnableRedirects(redirectsAllowed);
         ds.setMaxRedirects(maxRedirects);
         ds.setDownloadListener(directDownloadListener);
+        ds.setPerformUriPathSegmentEncoding(performUriPathSegmentEncoding);
         loadControlPauseListener.setDataSource(ds);
         return ds;
     }
@@ -65,6 +71,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
         ds.setMaxRedirects(maxRedirects);
         ds.setConnectTimeoutMillis(connectTimeoutMillis);
         ds.setReadTimeoutMillis(readTimeoutMillis);
+        ds.setPerformUriPathSegmentEncoding(performUriPathSegmentEncoding);
         loadControlPauseListener.setDataSource(ds);
         return ds;
     }

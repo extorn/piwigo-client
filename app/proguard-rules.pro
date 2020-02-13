@@ -43,19 +43,39 @@
 -keep class com.google.android.exoplayer2.** { public *; }
 #-dontwarn com.google.android.exoplayer2.**
 
--keep class com.google.android.gms.** { public *; }
-#-dontwarn com.google.android.gms.**
+-keep public class com.google.android.gms.** { public *; }
+-keep interface com.google.android.gms.**
+-keep class com.google.android.gms.internal.firebase-perf.** { *; }
 
-#-keep class delit.piwigoclient.ui.common.SlidingTabLayout* { public *; }
--keep class delit.piwigoclient.ui.common.SlidingTabLayout$TabColorizer { public *; }
+-keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.firebase.perf.ModuleDescriptor {
+    java.lang.String MODULE_ID;
+    int MODULE_VERSION;
+}
+
+-keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.ads.dynamite.ModuleDescriptor {
+    java.lang.String MODULE_ID;
+    int MODULE_VERSION;
+}
+
+-keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
+
+-dontwarn com.google.android.gms.**
+
+#-keep class delit.libs.ui.view.SlidingTabLayout* { public *; }
+-keep class delit.libs.ui.view.SlidingTabLayout$TabColorizer { public *; }
 
 -keep class com.google.ads.** { public *; }
 
--keep class com.ortiz.touch.TouchImageView* { public *; }
+-keep class com.ortiz.touchview.TouchImageView* { public *; }
 
 -keep class com.loopj.android.http.SerializableCookie { *; }
 
 -keep class cz.msebera.android.httpclient.cookie.Cookie { *; }
+
+# Weird but this is needed else it gets stripped and the super implementation is presumably used!
+-keepclassmembers class delit.piwigoclient.business.video.RandomAccessFileAsyncHttpResponseHandler {
+    protected byte[] getResponseData(cz.msebera.android.httpclient.HttpEntity);
+}
 
 -keep class com.google.gson.stream.** { *; }
 
@@ -71,17 +91,10 @@
 -keep class delit.piwigoclient.model.piwigo.PiwigoJsonResponse { *; }
 #
 
--keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.firebase.perf.ModuleDescriptor {
-    java.lang.String MODULE_ID;
-    int MODULE_VERSION;
-}
 
--keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.ads.dynamite.ModuleDescriptor {
-    java.lang.String MODULE_ID;
-    int MODULE_VERSION;
+-keepclassmembers class cz.msebera.android.httpclient.entity.HttpEntityWrapper {
+    protected HttpEntity wrappedEntity;
 }
-
--keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
 
 -keepclassmembers class ** {
     @org.greenrobot.eventbus.Subscribe <methods>;
@@ -92,12 +105,24 @@
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
     <init>(java.lang.Throwable);
 }
+# Needed because Fragment constructors are very important - zero args for Bundle gen and int arg for my fragments as example!
+-keepclassmembers public class * extends androidx.fragment.app.Fragment {
+   public <init>(...);
+}
+
+# needed because I use them by name
+-keepclassmembernames class androidx.exifinterface.media.ExifInterface {
+    public static final <fields>;
+}
 
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
+     # <init>(...);
 -keepclassmembers class * implements java.io.Serializable {
      static final long serialVersionUID;
      private static final java.io.ObjectStreamField[] serialPersistentFields;
      !static !transient <fields>;
+     !private <fields>;
+     !private <methods>;
      private void writeObject(java.io.ObjectOutputStream);
      private void readObject(java.io.ObjectInputStream);
      java.lang.Object writeReplace();
@@ -130,15 +155,16 @@
 -keep class io.fabric.sdk.android.Logger { public *; }
 -keep class io.fabric.sdk.android.ActivityLifecycleManager { public *; }
 -keep class io.fabric.sdk.android.ActivityLifecycleManager$Callbacks { public *; }
--keep class com.google.android.gms.internal.firebase-perf.** { *; }
 ###
 -keep class androidx.lifecycle.LifecycleOwner { public *; }
 ###
 -keep class androidx.lifecycle.Observer { public *; }
 -keep class com.drew.** { public *; }
--keep class com.adobe.xmp.** { public *; }
+-keep class com.adobe.internal.xmp.** { public *; } # needed for the metadata-extractor code now.
 -keep class **.R  { public *; }
 -keep class **.R$*  { public *; }
+-keep class delit.piwigoclient.database.**  { public *; }
+
 #-keep public class * implements java.lang.annotation.Annotation { *; }
 ###-keep class delit.piwigoclient.**.*Activity { public *; }
 

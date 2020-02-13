@@ -4,28 +4,30 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+
 import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -35,34 +37,35 @@ import delit.piwigoclient.ui.events.ToolbarEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class MyFragment extends Fragment {
+public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final String STATE_ACTIVE_SERVER_CONNECTION = "activeServerConnection";
     protected SharedPreferences prefs;
     // Stored state below here.
-    private FragmentUIHelper uiHelper;
+    private FragmentUIHelper<T> uiHelper;
     private String piwigoSessionToken;
     private String piwigoServerConnected;
     private boolean onInitialCreate;
 
-    protected long addActiveServiceCall(@StringRes int titleStringId, long messageId) {
-        return addActiveServiceCall(getString(titleStringId), messageId);
+    protected long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+        return addActiveServiceCall(getString(titleStringId), worker);
     }
 
-    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, long messageId) {
-        uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), messageId);
-        return messageId;
+    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, long messageId, String serviceDesc) {
+        return uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), messageId, serviceDesc);
     }
 
-    protected long addNonBlockingActiveServiceCall(String title, long messageId) {
-        uiHelper.addNonBlockingActiveServiceCall(title, messageId);
-        return messageId;
+    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+        return uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), worker);
     }
 
-    protected long addActiveServiceCall(String title, long messageId) {
-        uiHelper.addActiveServiceCall(title, messageId);
-        return messageId;
+    protected long addNonBlockingActiveServiceCall(String title, AbstractPiwigoDirectResponseHandler worker) {
+        return uiHelper.addNonBlockingActiveServiceCall(title, worker);
+    }
+
+    protected long addActiveServiceCall(String title, AbstractPiwigoDirectResponseHandler worker) {
+        return uiHelper.addActiveServiceCall(title, worker);
     }
 
     @Override
@@ -101,8 +104,8 @@ public class MyFragment extends Fragment {
         super.onAttach(context);
     }
 
-    protected FragmentUIHelper buildUIHelper(Context context) {
-        return new FragmentUIHelper(this, prefs, context);
+    protected FragmentUIHelper<T> buildUIHelper(Context context) {
+        return new FragmentUIHelper<>((T) this, prefs, context);
     }
 
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
@@ -140,8 +143,9 @@ public class MyFragment extends Fragment {
 
         updatePageTitle();
 
+
         // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
-        if (getActivity().isDestroyed() || getActivity().isFinishing()) {
+        if ((getFragmentManager() != null && getFragmentManager().isDestroyed()) || getActivity().isFinishing()) {
             return;
         }
 
@@ -153,8 +157,8 @@ public class MyFragment extends Fragment {
         uiHelper.showNextQueuedMessage();
         if(AdsManager.getInstance().hasAdvertLoadProblem(getContext())) {
             Crashlytics.log(Log.INFO, getTag(), "warning user that adverts are unavailable");
-            prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).commit();
-            uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener());
+            prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).apply();
+            uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener(getUiHelper()));
         }
     }
 
@@ -168,37 +172,8 @@ public class MyFragment extends Fragment {
         return "Piwigo Client";
     }
 
-    private class AdLoadErrorDialogListener extends UIHelper.QuestionResultAdapter {
-
-        private long shownAt;
-        LifecycleObserver observer;
-
-        @Override
-        public void onShow(AlertDialog alertDialog) {
-            super.onShow(alertDialog);
-            observer = new LifecycleObserver() {
-                @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-                public void onPause() {
-                    shownAt = System.currentTimeMillis();
-                }
-            };
-            getActivity().getLifecycle().addObserver(observer);
-            shownAt = System.currentTimeMillis();
-        }
-
-        @Override
-        public void onDismiss(AlertDialog dialog) {
-            if(System.currentTimeMillis() < shownAt + 5000) {
-                dialog.show();
-//                uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, this);
-            } else {
-                FragmentActivity a = getActivity();
-                if(a != null) {
-                    a.getLifecycle().removeObserver(observer);
-                    prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
-                }
-            }
-        }
+    public FragmentUIHelper<T> getUiHelper() {
+        return uiHelper;
     }
 
     @Nullable
@@ -228,8 +203,42 @@ public class MyFragment extends Fragment {
         uiHelper.registerToActiveServiceCalls();
     }
 
-    public FragmentUIHelper getUiHelper() {
-        return uiHelper;
+    private static class AdLoadErrorDialogListener<T extends MyFragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>> {
+
+        private long shownAt;
+        private transient LifecycleObserver observer;
+
+        public AdLoadErrorDialogListener(FragmentUIHelper<T> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onShow(AlertDialog alertDialog) {
+            super.onShow(alertDialog);
+            observer = new LifecycleObserver() {
+                @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                public void onPause() {
+                    shownAt = System.currentTimeMillis();
+                }
+            };
+            FragmentActivity activity = getUiHelper().getParent().getActivity();
+            activity.getLifecycle().addObserver(observer);
+            shownAt = System.currentTimeMillis();
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            if(System.currentTimeMillis() < shownAt + 5000) {
+                dialog.show();
+//                uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, this);
+            } else {
+                FragmentActivity activity = getUiHelper().getParent().getActivity();
+                if(activity != null) {
+                    activity.getLifecycle().removeObserver(observer);
+                    getUiHelper().getPrefs().edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).apply();
+                }
+            }
+        }
     }
 
     protected boolean isAppInReadOnlyMode() {

@@ -2,20 +2,26 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
@@ -23,10 +29,6 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
 /**
@@ -98,11 +100,19 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter<Username>() {
         }, getViewPrefs());
 
-        viewAdapter.setInitiallySelectedItems(getInitialSelection());
-        viewAdapter.setSelectedItems(getInitialSelection());
+        // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
+        HashSet<Long> currentSelection = getCurrentSelection();
+
+        // will restore previous selection from state if any
         setListAdapter(viewAdapter);
 
-        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
+
+        // select the items to view.
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(currentSelection);
+
+
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), requireActivity()));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
         getList().addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -135,8 +145,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -173,7 +182,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             }
 
             int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-            usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+            usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
         } finally {
             usernamesModel.releasePageLoadLock();
         }
@@ -213,7 +222,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
                 }
                 //TODO what if there are more than the max page size?! Paging needed :-(
                 // flag that this is a special one off load.
-                usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(usernamesNeededToBeLoaded).invokeAsync(getContext())), PagedList.MISSING_ITEMS_PAGE);
+                usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(usernamesNeededToBeLoaded)), PagedList.MISSING_ITEMS_PAGE);
                 return;
             } finally {
                 usernamesModel.releasePageLoadLock();
@@ -223,7 +232,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         EventBus.getDefault().post(new UsernameSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

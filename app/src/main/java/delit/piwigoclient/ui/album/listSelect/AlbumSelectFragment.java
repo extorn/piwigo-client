@@ -2,14 +2,15 @@ package delit.piwigoclient.ui.album.listSelect;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,6 +29,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 /**
  * Created by gareth on 26/05/17.
  */
+//TODO - Migrate to using ASAP - ListViewLongSelectableSetSelectFragment
 public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
@@ -70,8 +72,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -99,31 +100,46 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     @Override
     protected void rerunRetrievalForFailedPages() {
         if (availableAlbums == null) {
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         } else if (getListAdapter() == null) {
-            AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, getContext());
-            availableGalleries.clear();
-            // leaving the root album out prevents it's selection (not wanted).
+            synchronized (this) {
+                AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, getContext());
+                availableGalleries.clear();
+                // leaving the root album out prevents it's selection (not wanted).
 //            availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
-            availableGalleries.addAll(availableAlbums);
-            ListView listView = getList();
-            listView.setAdapter(availableGalleries);
-            // clear checked items
-            listView.clearChoices();
-            if (isMultiSelectEnabled()) {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-            } else {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-            }
-
-            for (Long selectedAlbum : getCurrentSelection()) {
-                int itemPos = availableGalleries.getPosition(selectedAlbum);
-                if (itemPos >= 0) {
-                    listView.setItemChecked(itemPos, true);
+                availableGalleries.addAll(availableAlbums);
+                ListView listView = getList();
+                listView.setAdapter(availableGalleries);
+                // clear checked items
+                listView.clearChoices();
+                if (isMultiSelectEnabled()) {
+                    listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+                } else {
+                    listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
                 }
+
+                HashSet<Long> currentSelection = getCurrentSelection();
+                if (currentSelection != null) {
+                    for (Long selectedAlbum : currentSelection) {
+                        int itemPos = availableGalleries.getPosition(selectedAlbum);
+                        if (itemPos >= 0) {
+                            listView.setItemChecked(itemPos, true);
+                        }
+                    }
+                } else {
+                    HashSet<Long> initialSelection = getInitialSelection();
+                    if (initialSelection != null) {
+                        for (Long selectedAlbum : initialSelection) {
+                            int itemPos = availableGalleries.getPosition(selectedAlbum);
+                            if (itemPos >= 0) {
+                                listView.setItemChecked(itemPos, true);
+                            }
+                        }
+                    }
+                }
+                setListAdapter(availableGalleries);
+                setAppropriateComponentState();
             }
-            setListAdapter(availableGalleries);
-            setAppropriateComponentState();
         }
     }
 
@@ -134,15 +150,20 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        HashSet<CategoryItemStub> selectedAlbums = new HashSet<>(selectedIdsSet.size());
-        AvailableAlbumsListAdapter listAdapter = getListAdapter();
-        for (Long selectedId : selectedIdsSet) {
-            selectedAlbums.add(listAdapter.getItemById(selectedId));
-        }
-        EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
-        // now pop this screen off the stack.
-        if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+        synchronized (this) {
+            // need to synchronise as the list adapter may be being rebuilt.
+            HashSet<CategoryItemStub> selectedAlbums = new HashSet<>(selectedIdsSet.size());
+            AvailableAlbumsListAdapter listAdapter = getListAdapter();
+            if (listAdapter != null) {
+                for (Long selectedId : selectedIdsSet) {
+                    selectedAlbums.add(listAdapter.getItemById(selectedId));
+                }
+            }
+            EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
+            // now pop this screen off the stack.
+            if (isVisible()) {
+                getParentFragmentManager().popBackStackImmediate();
+            }
         }
     }
 

@@ -1,0 +1,44 @@
+Permet de parcourir une galerie de photos PIWIGO.
+
+REMARQUE : Le CLUF doit être accepté au téléchargement.
+
+Si vous aimez l'application, mais pas les publicités, recherchez la version payante qui est gratuite et qui a progressivement plus de fonctionnalités.
+
+** App is being Actively Developed **
+** ? If something doesn't work - email me - it'll be fixed ?
+
+Voir la liste complète des fonctionnalités ci-dessous.
+
+Connexion à des serveurs fonctionnant sur des ports http ou https non standard
+Accepter les certificats de serveur non valides (mauvais nom d'hôte) ou auto-signés si nécessaire.
+Le brochage des certificats du serveur est pris en charge (vérifiez les certificats par rapport à une copie locale).
+Visualisez les images à une résolution optimisée pour votre écran (ou sélectionnez celle que vous voulez).
+Afficher et autoriser le zoom sur les images de n'importe quelle taille disponible sur le serveur
+Voir les vidéos MP4 (d'autres devraient fonctionner aussi, mais je n'ai pas testé d'autres formats)
+Télécharger des images.
+Enregistrer les vidéos entièrement téléchargées
+Possibilité d'exclure les vidéos des diaporamas
+Évaluez les images et visualisez les cotes d'écoute moyennes
+Télécharger de nouvelles images ou vidéos (peut être compressé en option)
+Définir et modifier les permissions, la description et autres détails des albums et fichiers
+Ajouter ou modifier des albums, leurs permissions, leur description, etc.
+Ajouter, afficher et modifier les utilisateurs de la galerie
+Ajouter, afficher et modifier des groupes de galeries
+Copier ou déplacer des images dans la galerie
+Sélectionnez les images à télécharger à l'aide d'autres applications et partagez-les avec PIWIGO.
+Mode spécial de lecture seule de l'application disponible pour éviter toute altération indésirable de la galerie
+Un certain contrôle sur la disposition des écrans sur l'application (à utiliser pour personnaliser l'écran sur votre appareil)
+
+Plugins de serveur supportés : community, piwigo_privacy, videojs.
+
+Vous voulez quelque chose d'autre qui ne figure pas dans la liste ? Essayez l'application. Si elle ne fait pas exactement ce dont vous avez besoin. Envoyez-moi un courriel en utilisant le lien dans l'application et j'étudierai la possibilité d'ajouter la ou les fonctionnalités manquantes.
+
+Changements à venir :
+
+L'intention est d'améliorer progressivement l'interface utilisateur, et l'un des utilisateurs, David Klement, a aimablement fourni quelques suggestions pour la mise en page des écrans que j'ai commencé à utiliser à partir de la version 1.3.95 et dont je vais sans doute prendre d'autres idées. Les propositions sont disponibles dans leur intégralité :
+https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+
+Limites connues :
+
+1. Les commentaires ne sont actuellement pas pris en charge - vous ne pouvez ni les voir ni les ajouter. Si cette caractéristique manquante est importante pour vous, n'hésitez pas à me contacter.
+2. Le nombre de fichiers qui peuvent être ajoutés à un travail de téléchargement est limité à 5 dans cette version gratuite (utilisez la version payante pour supprimer cette limite).

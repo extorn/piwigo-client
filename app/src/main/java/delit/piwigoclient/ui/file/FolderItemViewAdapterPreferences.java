@@ -1,14 +1,20 @@
 package delit.piwigoclient.ui.file;
 
 import android.os.Bundle;
+import android.webkit.MimeTypeMap;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.IOUtils;
 
 public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
 
@@ -21,12 +27,13 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     private boolean allowFolderSelection;
     private boolean multiSelectAllowed;
     private boolean showFolderContents;
-    private ArrayList<String> visibleFileTypes;
+    private SortedSet<String> visibleFileTypes;
     private int fileSortOrder = ALPHABETICAL;
-    private ArrayList<String> initialSelection;
+    private SortedSet<String> initialSelection;
     private int columnsOfFolders = 3;
     private int columnsOfFiles = 2;
     private boolean showFilenames = true;
+    private SortedSet<String> visibleMimeTypes;
 
     protected FolderItemViewAdapterPreferences() {
     }
@@ -61,11 +68,11 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return this;
     }
 
-    public FolderItemViewAdapterPreferences withVisibleContent(@Nullable ArrayList<String> visibleFileTypes, int fileSortOrder) {
+    public FolderItemViewAdapterPreferences withVisibleContent(@Nullable Set<String> visibleFileTypes, int fileSortOrder) {
         if (visibleFileTypes != null) {
-            this.visibleFileTypes = new ArrayList<>(visibleFileTypes);
-            for (int i = 0; i < visibleFileTypes.size(); i++) {
-                visibleFileTypes.set(i, visibleFileTypes.get(i).toLowerCase());
+            this.visibleFileTypes = new TreeSet<>();
+            for (String inputVal : visibleFileTypes) {
+                this.visibleFileTypes.add(inputVal.toLowerCase());
             }
         }
         this.showFolderContents = true;
@@ -83,9 +90,10 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         b.putInt("columnsOfFolders", columnsOfFolders);
         b.putInt("columnsOfFiles", columnsOfFiles);
         b.putBoolean("showFilenames", showFilenames);
-        b.putStringArrayList("visibleFileTypes", visibleFileTypes);
+        BundleUtils.putStringSet(b, "visibleFileTypes", visibleFileTypes);
+        BundleUtils.putStringSet(b, "visibleMimeTypes", visibleMimeTypes);
         b.putString("initialFolder", initialFolder);
-        b.putStringArrayList("initialSelection", initialSelection);
+        BundleUtils.putStringSet(b, "initialSelection", initialSelection);
         parent.putBundle("FolderItemViewAdapterPreferences", b);
         super.storeToBundle(b);
         return parent;
@@ -101,9 +109,13 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         columnsOfFolders = b.getInt("columnsOfFolders");
         columnsOfFiles = b.getInt("columnsOfFiles");
         showFilenames = b.getBoolean("showFilenames");
-        visibleFileTypes = b.getStringArrayList("visibleFileTypes");
+        visibleFileTypes = BundleUtils.getStringSet(b, "visibleFileTypes", new TreeSet<String>());
+        if (visibleFileTypes.isEmpty()) {
+            visibleFileTypes = null;
+        }
+        visibleMimeTypes = BundleUtils.getStringSet(b, "visibleMimeTypes", new TreeSet<String>());
         initialFolder = b.getString("initialFolder");
-        initialSelection = b.getStringArrayList("initialSelection");
+        initialSelection = BundleUtils.getStringSet(b, "initialSelection", new TreeSet<String>());
         super.loadFromBundle(b);
         return this;
     }
@@ -128,33 +140,76 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return fileSortOrder;
     }
 
-    public FileFilter getFileFilter() {
-        return new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return !showFolderContents || (pathname.isDirectory() || filenameMatches(pathname));
-            }
-
-            private boolean filenameMatches(File pathname) {
-                if (visibleFileTypes == null) {
-                    return true;
-                }
-                for (String fileExt : visibleFileTypes) {
-                    if (pathname.getName().toLowerCase().endsWith(fileExt)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
+    public CustomFileFilter getFileFilter() {
+        return new CustomFileFilter();
     }
 
-    public ArrayList<String> getInitialSelection() {
+    public SortedSet<String> getVisibleFileTypes() {
+        return visibleFileTypes;
+    }
+
+    public SortedSet<String> getVisibleMimeTypes() {
+        return visibleMimeTypes;
+    }
+
+    public void withVisibleMimeTypes(Set<String> visibleMimeTypes) {
+        if (visibleMimeTypes != null) {
+            this.visibleMimeTypes = new TreeSet<>(visibleMimeTypes);
+        }
+    }
+
+    public SortedSet<String> getVisibleFileTypesForMimes(File folder) {
+        SortedSet<String> processedExts = new TreeSet<>();
+        SortedSet<String> wantedExts = new TreeSet<>();
+        if (visibleMimeTypes != null && folder.listFiles() != null) {
+            for (File f : folder.listFiles()) {
+                String ext = IOUtils.getFileExt(f.getName()).toLowerCase();
+                if (processedExts.add(ext)) { // if we didn't check this ext already
+                    String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                    if (mimeType != null) { // if null then it can't be a match!
+                        for (String visibleMimeType : visibleMimeTypes) {
+                            if ((visibleMimeType.endsWith("/") || visibleMimeType.endsWith("/*") || !visibleMimeType.contains("/")) && mimeType.startsWith(visibleMimeType)) {
+                                wantedExts.add(ext);
+                                break;
+                            } else if (mimeType.equals(visibleMimeType)) {
+                                wantedExts.add(ext);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return wantedExts;
+    }
+
+    public class CustomFileFilter implements FileFilter {
+        @Override
+        public boolean accept(File pathname) {
+            return !showFolderContents || (pathname.isDirectory() || filenameMatches(pathname));
+        }
+
+        private boolean filenameMatches(File pathname) {
+            if (visibleFileTypes == null) {
+                return true;
+            }
+            for (String fileExt : visibleFileTypes) {
+                if (pathname.getName().toLowerCase().endsWith(fileExt)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public SortedSet<String> getInitialSelection() {
         return initialSelection;
     }
 
-    public void setInitialSelection(ArrayList<String> initialSelection) {
-        this.initialSelection = initialSelection;
+    public void setInitialSelection(Set<String> initialSelection) {
+        if (initialSelection != null) {
+            this.initialSelection = new TreeSet<>(initialSelection);
+        }
     }
 
     public int getColumnsOfFiles() {

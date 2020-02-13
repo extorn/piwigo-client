@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <!-- Automatic Upload Jobs page -->
+
+    <string name="preference_page_auto_upload_jobs">自动上传</string>
+    <string name="preference_data_upload_automatic_title">自动上传</string>
+    <string name="preference_data_upload_automatic_job_title">自动上传作业</string>
+
+    <!-- prefs -->
+
+
+    <string name="preference_data_upload_automatic_upload_enable_summary">启用后台文件上传</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">自动上传</string>
+
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">仅使用无线自动文件上传</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">仅通过无线</string>
+
+
+    <string name="preference_data_upload_automatic_upload_jobs_title">自动上传作业</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d工作</string>
+
+    <!-- boolean flag set that if false will stop the job running -->
+
+    <string name="preference_data_upload_automatic_job_view_status_title">查看上传状态</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">查看上次作业运行的状态（如果可用）</string>
+
+    <string name="preference_data_upload_automatic_job_is_valid_title">工作有效</string>
+
+
+    <string name="preference_data_upload_automatic_job_enabled_summary">这份工作是在后台听吗？</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">已启用作业</string>
+
+
+    <string name="preference_data_upload_automatic_job_server_title">上传到服务器</string>
+
+    <string name="preference_data_upload_automatic_job_server_summary">个人资料：%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_server_album_title">上传到相册</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">从文件夹上传</string>
+
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">删除成功上传的文件</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">自动删除</string>
+
+
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize已上传</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">文件扩展名</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">使用ext %1$s 上传文件</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">隐私级别</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件对%1$s 可见</string>
+
+
+</resources>

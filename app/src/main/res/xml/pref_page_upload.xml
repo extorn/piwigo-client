@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_data_upload_display"
+        android:title="@string/preference_upload_category_data_upload_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
-            app:setDefaultOnAttach="false"
             android:key="@string/preference_data_upload_preferredColumnsPortrait_key"
             android:title="@string/preference_data_upload_preferredColumnsPortrait_title"
             android:summary="@string/preference_data_upload_preferredColumnsPortrait_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
-            app:setDefaultOnAttach="false"
             android:key="@string/preference_data_upload_preferredColumnsLandscape_key"
             android:title="@string/preference_data_upload_preferredColumnsLandscape_title"
             android:summary="@string/preference_data_upload_preferredColumnsLandscape_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-    </PreferenceCategory>
-    <PreferenceCategory
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_data_upload"
+        android:title="@string/preference_upload_category_data_upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
-            app:defValue="@integer/preference_data_upload_chunkSizeKb_default"
+        <delit.libs.ui.view.preference.IntListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@integer/preference_data_upload_default_privacy_level_default"
+            android:key="@string/preference_data_upload_default_privacy_level_key"
+            android:summary="@string/preference_data_upload_default_privacy_level_summary"
+            android:title="@string/preference_data_upload_default_privacy_level_title"
+            app:entries="@array/privacy_levels_groups_array"
+            app:entryValues="@array/privacy_levels_values_array" />
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
             app:minValue="256"
             app:maxValue="10240"
             android:key="@string/preference_data_upload_chunkSizeKb_key"
@@ -40,8 +48,8 @@
             android:summary="@string/preference_data_upload_chunkSizeKb_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
-            app:defValue="@integer/preference_data_upload_chunk_auto_retries_default"
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
             app:minValue="0"
             app:maxValue="5"
             android:key="@string/preference_data_upload_chunk_auto_retries_key"
@@ -49,21 +57,112 @@
             android:summary="@string/preference_data_upload_chunk_auto_retries_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
-            app:defValue="@integer/preference_data_upload_max_filesize_mb_default"
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
             app:minValue="0"
-            app:maxValue="150"
+            app:maxValue="10240"
             android:key="@string/preference_data_upload_max_filesize_mb_key"
             android:title="@string/preference_data_upload_max_filesize_mb_title"
             android:summary="@string/preference_data_upload_max_filesize_mb_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <Preference
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@android:layout/preference_category"
+        android:title="@string/preference_upload_category_pre_data_upload_compression">
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_data_upload_compress_images_default"
+            android:key="@string/preference_data_upload_compress_images_key"
+            android:summary="@string/preference_data_upload_compress_images_summary"
+            android:title="@string/preference_data_upload_compress_images_title" />
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/preference_data_upload_compress_images_quality_key"
+            android:summary="@string/preference_data_upload_compress_images_quality_summary"
+            android:title="@string/preference_data_upload_compress_images_quality_title"
+            android:defaultValue="@integer/preference_data_upload_compress_images_quality_default"
+            app:maxValue="@integer/preference_data_upload_compress_images_quality_max"
+            app:minValue="@integer/preference_data_upload_compress_images_quality_min" />
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/preference_data_upload_compress_images_max_height_key"
+            android:summary="@string/preference_data_upload_compress_images_max_height_summary"
+            android:title="@string/preference_data_upload_compress_images_max_height_title"
+            android:defaultValue="@integer/preference_data_upload_compress_images_max_height_default"
+            app:maxValue="@integer/preference_data_upload_compress_images_max_height_max"
+            app:minValue="@integer/preference_data_upload_compress_images_max_height_min" />
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/preference_data_upload_compress_images_max_width_key"
+            android:summary="@string/preference_data_upload_compress_images_max_width_summary"
+            android:title="@string/preference_data_upload_compress_images_max_width_title"
+            android:defaultValue="@integer/preference_data_upload_compress_images_max_width_default"
+            app:maxValue="@integer/preference_data_upload_compress_images_max_width_max"
+            app:minValue="@integer/preference_data_upload_compress_images_max_width_min" />
+        <androidx.preference.ListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@string/preference_data_upload_compress_images_output_format_default"
+            android:key="@string/preference_data_upload_compress_images_output_format_key"
+            android:summary="@string/preference_data_upload_compress_images_output_format_summary"
+            android:title="@string/preference_data_upload_compress_images_output_format_title"
+            app:entries="@array/preference_data_upload_compress_images_output_format_items"
+            app:entryValues="@array/preference_data_upload_compress_images_output_format_items" />
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_data_upload_compress_videos_default"
+            android:key="@string/preference_data_upload_compress_videos_key"
+            android:summary="@string/preference_data_upload_compress_videos_summary"
+            android:title="@string/preference_data_upload_compress_videos_title" />
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_data_upload_allow_upload_of_incompressible_videos_default"
+            android:key="@string/preference_data_upload_allow_upload_of_incompressible_videos_key"
+            android:summary="@string/preference_data_upload_allow_upload_of_incompressible_videos_summary"
+            android:title="@string/preference_data_upload_allow_upload_of_incompressible_videos_title" />
+        <delit.libs.ui.view.preference.IntListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@integer/preference_data_upload_compress_videos_quality_default"
+            android:key="@string/preference_data_upload_compress_videos_quality_key"
+            android:summary="@string/preference_data_upload_compress_videos_quality_summary"
+            android:title="@string/preference_data_upload_compress_videos_quality_title"
+            app:entries="@array/preference_data_upload_compress_videos_quality_items"
+            app:entryValues="@array/preference_data_upload_compress_videos_quality_values" />
+        <delit.libs.ui.view.preference.IntListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@integer/preference_data_upload_compress_videos_audio_bitrate_default"
+            android:key="@string/preference_data_upload_compress_videos_audio_bitrate_key"
+            android:summary="@string/preference_data_upload_compress_videos_audio_bitrate_summary"
+            android:title="@string/preference_data_upload_compress_videos_audio_bitrate_title"
+            app:entries="@array/preference_data_upload_compress_videos_audio_bitrate_items"
+            app:entryValues="@array/preference_data_upload_compress_videos_audio_bitrate_values" />
+
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@android:layout/preference_category"
+        android:title="@string/preference_upload_category_advanced">
+
+        <androidx.preference.Preference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="true"
             android:key="@string/preference_data_upload_clear_failed_uploads_from_server_key"
             android:summary="@string/preference_data_upload_clear_failed_uploads_from_server_summary"
             android:title="@string/preference_data_upload_clear_failed_uploads_from_server_title" />
-    </PreferenceCategory>
-</PreferenceScreen>
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

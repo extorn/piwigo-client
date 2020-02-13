@@ -2,37 +2,37 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Handler;
+import android.os.Bundle;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import androidx.annotation.DrawableRes;
-import android.util.SparseIntArray;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.CustomNetworkRequestHandler;
 import com.squareup.picasso.Downloader;
+import com.squareup.picasso.NetworkPolicy;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
-import delit.piwigoclient.R;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
-import delit.piwigoclient.util.ToastUtils;
 
 /**
  * Created by gareth on 18/05/17.
@@ -44,8 +44,9 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     public static final String EXIF_WANTED_URI_PARAM = "pwgCliEW";
     public static final String EXIF_WANTED_URI_FLAG = EXIF_WANTED_URI_PARAM + "=true";
     private final Context context;
-    private final SparseIntArray errorDrawables = new SparseIntArray();
+
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
+
 
     public AbstractBaseCustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         this.context = context;
@@ -56,60 +57,56 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         this(context, ConnectionPreferences.getActiveProfile());
     }
 
-    public AbstractBaseCustomImageDownloader addErrorDrawable(int statusCode, @DrawableRes int drawable) {
-        errorDrawables.put(statusCode, drawable);
-        return this;
-    }
-
     @Override
     public Downloader.Response load(Uri uri, int networkPolicy) throws IOException {
 
-        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriString(uri));
+        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriStringEncodingPathSegments(context, uri));
         handler.setCallDetails(context, connectionPrefs, false);
-        handler.runCall();
-//        handler.invokeAndWait(context, connectionPrefs);
+        Looper currentLooper = Looper.myLooper();
+        if (currentLooper == null || currentLooper.getThread() != Looper.getMainLooper().getThread()) {
+            if (BuildConfig.DEBUG) {
+                Crashlytics.log(Log.DEBUG, TAG, "Image downloader has been called on background thread for URI: " + uri);
+            }
+            handler.runCall(!NetworkPolicy.shouldReadFromDiskCache(networkPolicy));
+        } else {
+            if (BuildConfig.DEBUG) {
+                // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
+                Crashlytics.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread! - URI: " + uri);
+            }
+            handler.invokeAndWait(context, connectionPrefs);
+        }
 
         if (!handler.isSuccess()) {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();
 
-            StringBuilder msgBuilder= new StringBuilder();
-            msgBuilder.append(errorResponse.getUrl());
-            msgBuilder.append('\n');
-            msgBuilder.append(errorResponse.getErrorMessage());
-            msgBuilder.append('\n');
-            msgBuilder.append(errorResponse.getErrorDetail());
-            msgBuilder.append('\n');
-            msgBuilder.append(errorResponse.getResponseBody());
-
-            final String toastMessage = msgBuilder.toString();
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            if (uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
-                EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));
+            if ("http".equalsIgnoreCase(uri.getScheme()) && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
+                EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs, uri));
             }
             if (errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
-                EventBus.getDefault().post(new BadRequestUsesRedirectionServerEvent(connectionPrefs));
+                EventBus.getDefault().post(new BadRequestUsesRedirectionServerEvent(connectionPrefs, uri));
             }
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    ToastUtils.makeDetailedToast(context, R.string.alert_error, toastMessage, Toast.LENGTH_LONG).show();
-                }
-            });
-            int drawableId = errorDrawables.get(errorResponse.getStatusCode());
-            if (drawableId > 0) {
-                //return locked padlock image.
-                Bitmap icon = PicassoFactory.getInstance().getPicassoSingleton(context).load(drawableId).get();
-                return new Downloader.Response(icon, true);
-            }
-            return null;
-//            throw new ResponseException("Error downloading " + uri.toString() + " : " + handler.getError(), networkPolicy, errorResponse.getStatusCode());
+
+            final String errMsg = errorResponse.getUrl() +
+                    '\n' +
+                    errorResponse.getErrorMessage() +
+                    '\n' +
+                    errorResponse.getErrorDetail() +
+                    '\n' +
+                    errorResponse.getResponseBody();
+
+            // these are going to be caught by listeners registered on a uri basis with the PicassoFactory.
+            throw new CustomResponseException(errMsg, networkPolicy, errorResponse.getStatusCode());
         }
         byte[] imageData = ((PiwigoResponseBufferingHandler.UrlSuccessResponse) handler.getResponse()).getData();
 
         ByteArrayInputStream imageDataStream = new ByteArrayInputStream(imageData);
-        Metadata exifMetadata = loadExifMetadata(uri, imageDataStream);
-        imageDataStream.reset();
-        int exitRotationDegrees = getExifRotationDegrees(exifMetadata);
+        int exitRotationDegrees = 0;
+        if (handler.isSuccess()) {
+            Metadata exifMetadata = loadExifMetadata(uri, imageDataStream);
+            imageDataStream.reset();
+            exitRotationDegrees = getExifRotationDegrees(exifMetadata);
+        }
         return new CustomNetworkRequestHandler.DownloaderResponse(imageDataStream, false, imageData.length, exitRotationDegrees);
     }
 
@@ -156,13 +153,48 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         }
     }
 
-    protected String getUriString(Uri uri) {
-        String uriStr = uri.toString();
-        int idx = uriStr.indexOf(EXIF_WANTED_URI_FLAG) - 1;
-        if(idx > 0) {
-            uriStr = uriStr.substring(0, idx);
+    protected String getUriStringEncodingPathSegments(Context c, Uri uri) {
+
+        List<String> pathSegments = uri.getPathSegments();
+        Uri.Builder builder = uri.buildUpon().encodedPath(null);
+        Set<String> queryParamIds = new HashSet<>(uri.getQueryParameterNames());
+        queryParamIds.remove(EXIF_WANTED_URI_PARAM);
+
+        boolean pathSegmentsPossiblyAlreadyEncoded = false;
+        for (int i = 0; i < pathSegments.size(); i++) {
+            builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
         }
-        return uriStr;
+
+        if (queryParamIds.contains(EXIF_WANTED_URI_PARAM)) {
+            builder.clearQuery();
+            boolean piwigoFragmentAdded = false;
+            boolean paramAdded = false;
+            for (String param : queryParamIds) {
+                if (!EXIF_WANTED_URI_PARAM.equalsIgnoreCase(param)) {
+                    List<String> paramVals = uri.getQueryParameters(param);
+                    if (paramVals.size() > 0) {
+                        for (String paramVal : paramVals) {
+                            builder.appendQueryParameter(param, paramVal);
+                            paramAdded = true;
+                        }
+                    } else if (!piwigoFragmentAdded) {
+                        if (paramAdded) {
+                            Bundle b = new Bundle();
+                            b.putString("uri", uri.toString());
+                            FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
+                            Crashlytics.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
+                        }
+                        builder.encodedQuery(param);
+                        piwigoFragmentAdded = true;
+                    }
+                }
+            }
+
+        }
+
+
+
+        return builder.build().toString();
     }
 
     @Override

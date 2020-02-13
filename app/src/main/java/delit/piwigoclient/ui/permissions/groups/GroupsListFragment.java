@@ -1,20 +1,22 @@
 package delit.piwigoclient.ui.permissions.groups;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,8 +24,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGroups;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -32,28 +40,25 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
+import delit.piwigoclient.ui.model.PiwigoGroupsModel;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class GroupsListFragment extends MyFragment {
+public class GroupsListFragment extends MyFragment<GroupsListFragment> {
 
     private static final String GROUPS_MODEL = "groupsModel";
     private final ConcurrentHashMap<Long, Group> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
-    private PiwigoGroups groupsModel = new PiwigoGroups();
+    private PiwigoGroups groupsModel;
     private GroupRecyclerViewAdapter viewAdapter;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
@@ -109,9 +114,12 @@ public class GroupsListFragment extends MyFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
+        groupsModel = ViewModelProviders.of(this).get(PiwigoGroupsModel.class).getPiwigoGroups().getValue();
 
-        if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
+        if (isSessionDetailsChanged()) {
+            groupsModel.clear();
+        } else if (savedInstanceState != null) {
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
@@ -156,7 +164,7 @@ public class GroupsListFragment extends MyFragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
 
-        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfGroups(getPrefs(), getActivity()));
 
         recyclerView.setLayoutManager(layoutMan);
 
@@ -207,8 +215,7 @@ public class GroupsListFragment extends MyFragment {
             groupsModel.clear();
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -226,7 +233,7 @@ public class GroupsListFragment extends MyFragment {
         try {
             if (!groupsModel.isPageLoadedOrBeingLoaded(pageToLoad) && !groupsModel.isFullyLoaded()) {
                 int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
-                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
             }
         } finally {
             groupsModel.releasePageLoadLock();
@@ -244,21 +251,29 @@ public class GroupsListFragment extends MyFragment {
 
     private void onDeleteGroup(final Group thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), thisItem));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    deleteGroupNow(thisItem);
-                }
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupsListFragment>> {
+
+        private final Group group;
+
+        public OnDeleteGroupAction(FragmentUIHelper<GroupsListFragment> uiHelper, Group group) {
+            super(uiHelper);
+            this.group = group;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                GroupsListFragment fragment = getUiHelper().getParent();
+                fragment.deleteGroupNow(group);
             }
-        });
+        }
     }
 
     private void deleteGroupNow(Group thisItem) {
-        long deleteActionId = new GroupDeleteResponseHandler(thisItem.getId()).invokeAsync(this.getContext());
-        this.deleteActionsPending.put(deleteActionId, thisItem);
-        addActiveServiceCall(R.string.progress_delete_group, deleteActionId);
+        this.deleteActionsPending.put(addActiveServiceCall(R.string.progress_delete_group, new GroupDeleteResponseHandler(thisItem.getId())), thisItem);
     }
 
     @Override
@@ -281,7 +296,7 @@ public class GroupsListFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupDeletedEvent event) {
         viewAdapter.remove(event.getGroup());
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), event.getGroup().getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_group_delete_success_pattern, event.getGroup().getName()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -292,18 +307,18 @@ public class GroupsListFragment extends MyFragment {
     private void onGroupDeleted(final GroupDeleteResponseHandler.PiwigoDeleteGroupResponse response) {
         Group group = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(group);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), group.getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_group_delete_success_pattern, group.getName()));
     }
 
     private void onGroupDeleteFailed(final long messageId) {
         Group group = deleteActionsPending.remove(messageId);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_failed_pattern), group.getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_group_delete_failed_pattern, group.getName()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -321,7 +336,7 @@ public class GroupsListFragment extends MyFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return;
                 }
             }

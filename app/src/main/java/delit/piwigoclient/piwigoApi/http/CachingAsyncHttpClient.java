@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,9 +68,13 @@ import cz.msebera.android.httpclient.impl.client.BasicAuthCache;
 import cz.msebera.android.httpclient.impl.client.BasicCredentialsProvider;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
-import cz.msebera.android.httpclient.impl.client.cache.CachingHttpClients;
 import cz.msebera.android.httpclient.impl.conn.PoolingHttpClientConnectionManager;
 import cz.msebera.android.httpclient.protocol.HttpContext;
+import delit.libs.http.AsyncHttpRequest;
+import delit.libs.http.RequestParams;
+import delit.libs.http.RetryHandler;
+import delit.libs.util.Utils;
+import delit.piwigoclient.piwigoApi.http.cache.RestartableManagedHttpCacheStorage;
 
 
 /**
@@ -132,9 +137,9 @@ public class CachingAsyncHttpClient implements Closeable {
     private CookieStore cookieStore;
     private BasicCredentialsProvider credentialsProvider;
     private boolean usePreemptiveAuth;
-    private long maxCachedObjectSizeBytes = 8192;
-    private int maxCacheEntries = 1000;
+    private CacheConfig cacheConfig;
     private File cacheFolder;
+    private RestartableManagedHttpCacheStorage cacheStorage;
     private String userAgent;
     private RetryHandler retryHandler;
     private int maxConcurrentConnections = DEFAULT_MAX_CONNECTIONS;
@@ -336,10 +341,10 @@ public class CachingAsyncHttpClient implements Closeable {
         }
     }
 
-    public void setCacheSettings(File cacheFolder, int maxCacheEntries, int maxCachedObjectSizeBytes) {
+    public void setCacheSettings(File cacheFolder, CacheConfig cacheConfig, RestartableManagedHttpCacheStorage cacheStorage) {
         this.cacheFolder = cacheFolder;
-        this.maxCacheEntries = maxCacheEntries;
-        this.maxCachedObjectSizeBytes = maxCachedObjectSizeBytes;
+        this.cacheConfig = cacheConfig;
+        this.cacheStorage = cacheStorage;
     }
 
     private synchronized HttpClient getHttpClient() {
@@ -357,13 +362,8 @@ public class CachingAsyncHttpClient implements Closeable {
         this.maxConcurrentConnections = maxConcurrentConnections;
     }
 
-    protected HttpClient buildHttpClient() {
-        CacheConfig cacheConfig = CacheConfig.custom()
-                .setMaxCacheEntries(maxCacheEntries)
-                .setSharedCache(false)
-                .setMaxObjectSize(maxCachedObjectSizeBytes)
-                .build();
-        RequestConfig requestConfig = RequestConfig.custom()
+    protected RequestConfig buildRequestConfig() {
+        return RequestConfig.custom()
                 .setConnectTimeout(connectTimeout)
                 .setSocketTimeout(responseTimeout)
                 .setConnectionRequestTimeout(connectTimeout)
@@ -372,6 +372,11 @@ public class CachingAsyncHttpClient implements Closeable {
                 .setRelativeRedirectsAllowed(enableRelativeRedirects)
                 .setCircularRedirectsAllowed(enableCircularRedirects)
                 .build();
+    }
+
+    protected HttpClient buildHttpClient() {
+
+        RequestConfig requestConfig = buildRequestConfig();
 
         this.retryHandler = new RetryHandler(maxRetries, retrySleep);
 // These are the defaults
@@ -383,6 +388,9 @@ public class CachingAsyncHttpClient implements Closeable {
         final HttpClientConnectionManager cm = createConnectionManager();
         Utils.asserts(cm != null, "Custom implementation of HttpClientConnectionManager returned null");
         CloseableHttpClient cachingClient = new MyCachingHttpClientBuilder(ignoreServerCacheDirectives)
+//                .setHttpCacheStorage(new PersistentHttpManagedCacheStorage(cacheConfig)) - Make this so that the cache persists between app restarts properly.
+//                .setHttpCacheStorage(new EhcacheCacheStorage(cacheConfig))
+                .setCloseableHttpCacheStorage(cacheStorage) // adding this here means it won't be closed with the clients. Closing will clear it.
                 .setCacheConfig(cacheConfig)
                 .setCacheDir(cacheFolder)
 //TODO custom cache control - offline access etc                .setHttpCacheInvalidator()
@@ -1455,13 +1463,19 @@ public class CachingAsyncHttpClient implements Closeable {
                 }
             }
 
-            requestList.add(requestHandle);
+            synchronized (requestList) {
 
-            Iterator<RequestHandle> iterator = requestList.iterator();
-            while (iterator.hasNext()) {
-                if (iterator.next().shouldBeGarbageCollected()) {
-                    iterator.remove();
+                requestList.add(requestHandle);
+
+                Iterator<RequestHandle> iterator = requestList.iterator();
+                List<RequestHandle> garbageCollect = new ArrayList<>();
+                while (iterator.hasNext()) {
+                    RequestHandle thisItem = iterator.next();
+                    if (thisItem.shouldBeGarbageCollected()) {
+                        garbageCollect.add(thisItem);
+                    }
                 }
+                requestList.removeAll(garbageCollect);
             }
         }
 

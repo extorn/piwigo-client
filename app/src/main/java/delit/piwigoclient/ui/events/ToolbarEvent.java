@@ -25,6 +25,9 @@ public class ToolbarEvent {
 
     public void setTitle(String title) {
         this.title = title;
+        if(title == null) {
+            setContractToolbarView(true);
+        }
     }
 
     public String getTitle() {

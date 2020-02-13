@@ -39,8 +39,6 @@
         <attr name="maxValue" format="integer"/>
         <attr name="minValue" format="integer"/>
         <attr name="multiplier" format="integer"/>
-        <attr name="defValue" format="integer"/>
-        <attr name="setDefaultOnAttach" format="boolean"/>
         <attr name="wrapPickList" format="boolean"/>
     </declare-styleable>
 
@@ -55,6 +53,7 @@
     <declare-styleable name="EditableListPreference">
         <attr name="entriesPref" format="reference"/>
         <attr name="allowItemEdit" format="boolean"/>
+        <attr name="allowMultiSelect" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="MappedListPreference">

@@ -1,14 +1,15 @@
 package delit.piwigoclient.ui.album.drillDownSelect;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.HashSet;
 
-import androidx.annotation.Nullable;
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 
 public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
 

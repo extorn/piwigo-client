@@ -27,6 +27,7 @@
     <string name="alert_title_connectionTest">Verbindungstest</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warning\nServer hat keine verfügbaren Bildgrößen gemeldet.</string>
+    <string name="alert_title_login">Anmeldung</string>
     <string name="alert_success">ERFOLG!</string>
     <string name="alert_partial_success">UNVOLLSTÄNDIG</string>
     <string name="alert_error">Fehler</string>
@@ -41,13 +42,19 @@
     <string name="tools_menu_title">Werkzeuge</string>
     <string name="settings_menu_title">App Einstellungen</string>
     <string name="gallery_menu_title">Galerie</string>
+    <string name="offline_mode_menu_title">Offline-Modus</string>
+    <string name="online_mode_menu_title">Online-Modus</string>
     <string name="upload_menu_title">Hochladen</string>
     <string name="upload_page_title">Piwigo Hochladen</string>
     <string name="gallery_to_alter_title">Hochladen auf</string>
     <string name="login_button_title">Anmeldung</string>
 
+    <string name="alert_question_enable_network_access">Datenabruf vom Server zulassen?</string>
+    <string name="alert_question_disable_network_access">Nur Daten verwenden, die bereits auf diesem Gerät zwischengespeichert sind?</string>
+
     <string name="upload_file_privacy_level_title">Datei-Datenschutzstufe</string>
     <string name="cacheCleared_title">Cache</string>
+    <string name="cacheClearingStarted_message">Cache leeren</string>
     <string name="cacheCleared_message">Cache gelöscht. Alle Bilder werden bei der nächsten Anforderung vom Remote-Server heruntergeladen.</string>
     <string name="cacheClearFailed_message">Der Cache konnte zu diesem Zeitpunkt nicht gelöscht werden. Wenn das Problem weiterhin besteht, melden Sie bitte den Fehler.</string>
     <string name="videoCacheCleared_message">Video Cache gelöscht. Alle Videos werden bei der nächsten Anforderung vom Remote-Server heruntergeladen.</string>
@@ -92,6 +99,7 @@
 
     <string name="delete_upload_job_button_title">Job löschen</string>
     <string name="upload_files_button_title">Hochladen</string>
+    <string name="upload_files_finish_job_button_title">Beenden</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Präferenz in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
@@ -269,6 +277,7 @@ Ein großes Dankeschön an alle, die mir mit Vorschlägen oder Fehlern gemailt h
 Bitte wählen Sie, ob Sie jeden auftretenden Absturz melden möchten. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu schreiben. Es ist wahrscheinlich, dass ich ein wenig mehr Kontext um das, was passiert, brauche, kurz bevor der Fehler auftritt.
 
 Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass sich die Häufigkeit der Veröffentlichungen mit zunehmendem Alter der App verringert. Der Release-Zeitplan und die Historie sind unten dargestellt. Das kann sich ändern und die Dinge können sich verzögern, aber du kannst sehen, was auf der Liste steht."</string>
+    <string name="licences_heading">Lizenzen für Ressourcen, die in dieser App verwendet werden</string>
     <string name="slideshow_image_details_name_title">Name der Ressource</string>
     <string name="slideshow_image_details_description_title">Ressourcenbeschreibung</string>
     <string name="unlock_menu_title">Entsperren</string>
@@ -293,7 +302,11 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="files_for_upload_title">Dateien zum Hochladen</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Herunterladen</string>
-    <string name="alert_image_download_message">Bitte wählen Sie die Dateigröße, die Sie herunterladen möchten</string>
+    <string name="alert_image_download_message">Bitte wählen Sie die Dateigröße</string>
+    <string name="action">Aktion</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="download_file">Datei herunterladen</string>
+    <string name="share_with_an_app">Mit einer App teilen</string>
     <string name="alert_image_show_image_title">Bildwiedergabesteuerung</string>
     <string name="alert_image_show_image_message">Bitte wählen Sie die Dateigröße, die Sie anzeigen möchten</string>
     <string name="alert_image_download_complete_message">Download abgeschlossen.</string>
@@ -409,6 +422,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_upload_file_verification_failed">Verifizierung der Datei auf dem Server fehlgeschlagen für den Upload von %1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">Diese Datei wurde teilweise hochgeladen und Sie müssen daran denken, danach auf die Schaltfläche Hochladen zu klicken, um die beschädigte Datei vom Server zu entfernen. Weitermachen?</string>
     <string name="alert_message_file_upload_cancelled_pattern">Upload der Datei (%1$s) abgebrochen.</string>
+    <string name="alert_message_upload_cancelled">Der Upload wurde abgebrochen</string>
+    <string name="alert_message_upload_cancelled_message">Wenn du den Upload nicht später neu starten möchtest. Sie sollten die Dateien aus dem Upload-Job entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen gewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild in der Größe der nächsten Übereinstimmung zurück.</string>
     <string name="logging_out_of_piwigo_pattern">Abmelden von %1$s</string>
     <string name="preference_connections_category_connections_caching">Web-Antwort-Caching</string>
@@ -445,6 +460,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Diese Berechtigungen sind erforderlich, um einen Upload-Prozess zu starten und den Upload-Prozess nach dem Ausschalten des Bildschirms weiterzuführen</string>
     <string name="alert_no_scheme_specified">Sie müssen Ihrer Serveradresse entweder http:// oder https://. voranstellen. Andere Systeme werden nicht unterstützt. Port ist optional, wenn der Standard - 80 für http oder 443 für https. Beispiel http://piwigo.org/demo oder http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Die folgenden %1$d-Dateien haben die Warnschwelle überschritten: %2$s. Möchten Sie diese aus dem Upload entfernen?</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">Möchten Sie Videos vor dem Hochladen komprimieren?</string>
     <string name="alert_trusted_certificates_polling">Nicht vertrauenswürdige Zertifikate, die vom Server bei der Verbindung bereitgestellt werden, werden Ihnen angezeigt, damit Sie diese dem Vertrauensspeicher hinzufügen können. Wenn Sie ablehnen, werden Sie nicht erneut nach dem gleichen Zertifikat gefragt. Um erneut aufgefordert zu werden, deaktivieren Sie die Option, einen benutzerdefinierten vertrauenswürdigen Zertifikatsspeicher zu verwenden.</string>
     <string name="button_copy_link">Link kopieren</string>
     <string name="download_link_clipboard_data_desc">Download-Link für %1$s</string>
@@ -460,8 +476,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="heading_keystore_filename">Schlüsselspeicher</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Fehler beim Upload</string>
-    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später erneut versuchen, und er kann durchaus erfolgreich sein, oder Sie können diesen Job vom Gerät löschen und dann alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
-    <string name="alert_message_error_uploading_start">Vor dem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
+    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload neu, um von dort fortzufahren, wo er hingegangen ist, und löschen Sie alle verbleibenden temporären Daten vom Server.</string>
+    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie entweder den Upload neu, um dort fortzufahren, wo er hingekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Auftrag und klicken Sie dann auf die Schaltfläche Fertigstellen, um alle verbleibenden temporären Daten vom Server zu löschen.</string>
     <string name="release_history">Freigabehistorie</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
     <string name="tags_heading">Schilder</string>
@@ -472,6 +488,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="tag_usage_count_pattern">(%1$d verwendet)</string>
     <string name="progress_loading_tag_details">Abrufen von Ressourcen, die dem Tag entsprechen</string>
     <string name="tags_menu_title">Tags</string>
+    <string name="favorites_menu_title">Favoriten</string>
     <string name="tag_empty_text">Keine Artikel mit diesem Tag getaggt</string>
     <string name="tag_content_load_failed_text">Ressourcen, die mit dem Tag verknüpft sind, konnten nicht geladen werden.</string>
     <string name="tag_heading">Anhänger</string>
@@ -520,7 +537,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_temporary_upload_album_deleted">Temporäres Upload-Album erfolgreich gelöscht</string>
     <string name="alert_deleting_temporary_upload_album">Löschen eines temporären Upload-Albums</string>
     <string name="alert_invalid_uri_pattern">Ungültige URI. %1$s</string>
+    <string name="alert_invalid_uri_pattern_spaces">Ungültige URI. Es gibt ein Leerzeichen im URI an der Position %1$d</string>
     <string name="album_section_heading_albums">Alben</string>
+    <string name="album_section_heading_albums_pattern">Alben (%1$d)</string>
     <string name="album_section_heading_resources">Fotos in diesem Album</string>
     <string name="album_title_home">home</string>
     <string name="upload_file_rating">Meine Bewertung</string>
@@ -559,5 +578,61 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Deine Version von PiwigoClientWsExts ist veraltet. Bitte aktualisieren Sie es als Priorität.</string>
     <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
     <string name="please_read_and_agree_with_eula_first">Bitte lesen und bestätigen Sie zuerst die Zustimmung zu den Bedingungen der EULA</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen.</string>
+    <string name="default_str">Standard</string>
+    <string name="copied_to_clipboard">In die Zwischenablage kopieren</string>
+    <string name="alert_plugin_required_pattern">%1$s Plugin serveur requis - Version %2$s ou plus récente</string>
+    <string name="certificate_chain_not_verifiable_error">Die Zertifikatskette konnte nicht mit den Zertifikaten auf diesem Gerät verifiziert werden.</string>
+    <string name="certificate_chain_not_verifiable_error_detail">Die Zertifikatskette konnte nicht mit den Zertifikaten auf diesem Gerät verifiziert werden. Um dies zu beheben, erlauben Sie dieser App, eine Liste der vertrauenswürdigen Zertifikate zu führen (innerhalb dieser App-Verbindungseinstellungen).</string>
+    <string name="undefined_error_msg">Undefinierter Fehler</string>
+    <string name="resource_unavailable_error_msg_pattern">Auf die angeforderte Ressource konnte nicht zugegriffen werden.\nHTTP Statuscode (%1$d)</string>
+    <string name="server_error_msg_pattern">Etwas ist im Server oder zwischen dem Server und Ihrem Gerät schief gelaufen.\nHTTP Status Code (%1$d)</string>
+    <string name="redirect_error_msg_pattern">Fehler bei der Umleitung von Anfragen : \nHTTP Status Code (%1$d)</string>
+    <string name="http_error_msg_pattern">HTTP-Fehlermeldung (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Unerwartete Antwort : \nHTTP Status Code (%1$d)</string>
+    <string name="connection_error_msg_pattern">Verbindung zum Server kann nicht hergestellt werden</string>
+    <string name="preference_corrupt_please_re_type_pattern">"Die Präferenz %1$s ist unwiederbringlich und wurde auf %2$s voreingestellt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück."</string>
+    <string name="switch_to_cached_mode">Der Server ist derzeit nicht verfügbar. Cache-Daten verwenden?</string>
+    <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="compress_videos">Videos komprimieren</string>
+    <string name="compress_images">Bilder komprimieren</string>
+    <string name="upload_tab_title_settings">Einstellungen</string>
+    <string name="upload_tab_title_files">Dateien</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">Die gemeinsame Datei kann nicht verarbeitet werden. Fehlende Detailinformationen wie Dateiname und genauer Dateityp. Bitte laden Sie die Datei zuerst auf Ihr Gerät herunter.</string>
+    <string name="alert_internal_server_exposed_pattern">Unerwartete Autorität %1$s in der URL gefunden und durch %2$s ersetzt. Ihr Server könnte falsch konfiguriert sein.</string>
+    <string name="buy_time_menu_title">Anzeigen ausblenden</string>
+    <string name="watch_advert_to_buy_advert_free_time">Möchten Sie eine Anzeige sehen, um einen kurzen Zeitraum ohne Werbung zu kaufen? Sie können dies mehrmals tun, um die Zeitspanne bei Bedarf zu verlängern.</string>
+    <string name="reward_video_not_yet_loaded">Sorry, aber das Belohnungsvideo wurde noch nicht geladen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="bought_time_menu_title_pattern">Anzeigen in %1$02d:%2$02d</string>
+    <string name="allow_upload_of_incompressible_videos">Rohdatei hochladen, wenn keine Komprimierung möglich ist</string>
+    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
+    <string name="upload_status_tab_title_details">Details</string>
+    <string name="upload_status_tab_title_errors">Fehler</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API Call %1$s reports file checksum stimmt nicht überein, aber API call %2$s berichtet, dass es übereinstimmt. Dies kann ein Fehler im PIWIGO-Server oder ein Plugin sein, das Sie verwenden, und kann es wert sein, gemeldet zu werden.</string>
+    <string name="alert_bulk_image_permissions_title">Zugriffsberechtigung festlegen</string>
+    <string name="alert_bulk_image_permissions_message">Setzt Zugriffsberechtigungsstufen für die ausgewählten Ressourcen %1$d</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Es können keine Dateien verarbeitet werden, die mit einem %1$s Mime-Typ geteilt werden.</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit folgenden Erweiterungen können nicht hochgeladen werden und wurden ignoriert: %1$s</string>
+    <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album aus</string>
+    <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Es gibt ein Problem mit dem Zugriff auf die Google Play Services.</string>
+    <string name="hint_album_view">Tippen Sie unten auf dem Bildschirm auf, um Details zu diesem Album anzuzeigen</string>
+    <string name="usage_hint_title">Hinweis</string>
+    <string name="hint_slideshow_view_1">Tippen Sie unten auf dem Bildschirm auf, um Details zu dieser Ressource aufzurufen</string>
+    <string name="hint_slideshow_view_2">Wischen Sie nach links oder rechts, um zwischen Ressourcen zu navigieren</string>
+    <string name="hint_slideshow_item_view_1">Die Bewertung kann durch Tippen oder Streichen auf die gewünschte Sternebewertung angepasst werden. Dies hat sofortige Wirkung</string>
+    <string name="hint_slideshow_view_3">Tippen Sie auf das Herzsymbol rechts neben dem Namen der Bildressource, um diese Ressource als Favorit zu markieren</string>
+    <string name="hint_navigation_panel_1">Tippen Sie auf das App-Symbol oben, um die Abmeldung und Anmeldung eines Servers zu erzwingen</string>
+    <string name="user_details_not_found_on_server">Es konnten keine Benutzerdetails auf dem Server gefunden werden</string>
+    <string name="resource_queued_for_download">Ressource zum Herunterladen in die Warteschlange gestellt. Es ist Position %1$d in der Warteschlange.</string>
+    <string name="alert_message_showing_images_of_size">Anzeigen von Bildern vom Server der Größe %1$s</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">Anzeigen von Miniaturbildern vom Server der Größe %1$s</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">Anzeigen von Miniaturansichten des Albums vom Server der Größe %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload %1$s</string>
+    <string name="uploading_progress_bar_message">Hochladen</string>
+    <string name="compressing_progress_bar_message">Komprimieren</string>
+    <string name="preference_app_desired_language_summary">Bevorzugte Übersetzung</string>
+    <string name="preference_app_desired_language_title">Sprache</string>
+    <string name="warning_missing_tags_links_removed_from_resource">Nicht alle mit diesem Artikel verknüpften Tags sind noch in der Datenbank vorhanden. Die Links zu %1$d wurden entfernt</string>
+    <string name="button_stop_warning_me">Sag es mir nicht noch einmal</string>
 </resources>
 

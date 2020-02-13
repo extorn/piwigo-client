@@ -1,6 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -10,6 +11,9 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
+import java.net.UnknownHostException;
+
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -17,7 +21,7 @@ import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
@@ -26,6 +30,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     private static final String TAG = "LoginRspHdlr";
     private String password = null;
     private boolean haveValidSessionKey;
+    private boolean acceptCachedResponse;
 
     public LoginResponseHandler() {
         super("n/a", TAG);
@@ -36,6 +41,11 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         super(null, TAG);
         this.password = password;
         setPerformingLogin();
+    }
+
+    public LoginResponseHandler withCachedResponsesAllowed(boolean acceptCachedResponse) {
+        this.acceptCachedResponse = acceptCachedResponse;
+        return this;
     }
 
     @Override
@@ -49,7 +59,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionPrefs();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -68,7 +78,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
 
         if (canContinue && isSessionDetailsOutOfDate(PiwigoSessionDetails.getInstance(connectionPrefs))) {
-            canContinue = getNewSessionDetails(loginResponse);
+            canContinue = getNewSessionDetails();
         }
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
@@ -77,12 +87,18 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             canContinue = loadMethodsAvailable();
         }
 
-        if (canContinue && PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
-            canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
-        } else {
-            PiwigoSessionDetails instance = PiwigoSessionDetails.getInstance(connectionPrefs);
-            if(instance != null) {
-                instance.setUseCommunityPlugin(false);
+        if (canContinue) {
+            if (PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
+                canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
+            } else {
+                PiwigoSessionDetails instance = PiwigoSessionDetails.getInstance(connectionPrefs);
+                if (instance != null) {
+                    instance.setUseCommunityPlugin(false);
+                } else {
+                    Bundle b = new Bundle();
+                    b.putString("location", "LoginCode");
+                    FirebaseAnalytics.getInstance(getContext()).logEvent("SessionNull", b);
+                }
             }
         }
 
@@ -100,6 +116,10 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             }
         }
 
+        if(canContinue) {
+            loadGalleryConfig();
+        }
+
         setError(getNestedFailure());
         storeResponse(loginResponse);
 
@@ -109,6 +129,24 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
 
         return null;
+    }
+
+    private boolean loadGalleryConfig() {
+        GalleryGetConfigResponseHandler handler = new GalleryGetConfigResponseHandler();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails.isMethodAvailable(handler.getPiwigoMethod())) {
+            handler.setPerformingLogin();
+            handler.invokeAndWait(getContext(), getConnectionPrefs());
+            if (!handler.isSuccess()) {
+                reportNestedFailure(handler);
+                return false;
+            } else {
+                GalleryGetConfigResponseHandler.PiwigoGalleryGetConfigResponse response = (GalleryGetConfigResponseHandler.PiwigoGalleryGetConfigResponse) handler.getResponse();
+                sessionDetails.setServerConfig(response.getServerConfig());
+            }
+        }
+        // we don't need this information (not always available) so lets not fail the login.
+        return true;
     }
 
     private boolean loadPiwigoClientPluginDetails() {
@@ -149,6 +187,16 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         newSessionKeyHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         newSessionKeyHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (!newSessionKeyHandler.isSuccess()) {
+            Throwable error = newSessionKeyHandler.getError();
+            if (error != null && error.getCause() instanceof UnknownHostException) {
+                if (acceptCachedResponse) {
+                    return true;
+                }
+                BlockingUserInteractionQuestion userQuestion = new BlockingUserInteractionQuestion(R.string.switch_to_cached_mode);
+                userQuestion.askQuestion();
+                boolean userWantsCachedMode = userQuestion.getResponse();
+                return userWantsCachedMode;
+            }
             reportNestedFailure(newSessionKeyHandler);
             return false;
         }
@@ -180,7 +228,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
     }
 
-    private boolean getNewSessionDetails(PiwigoOnLoginResponse loginResponse) {
+    private boolean getNewSessionDetails() {
         GetSessionStatusResponseHandler sessionLoadHandler = new GetSessionStatusResponseHandler();
         sessionLoadHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         sessionLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());
@@ -189,6 +237,10 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             return false;
         }
         return true;
+    }
+
+    private boolean isOnPiwigoComSite() {
+        return getPiwigoServerUrl().matches("https://[^.]*\\.piwigo\\.com[/]?");
     }
 
     private boolean loadUserDetails() {
@@ -206,15 +258,21 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             sessionDetails.setUserDetails(userDetails);
             canContinue = true;
         } else {
-            canContinue = false;
+            canContinue = isOnPiwigoComSite(); // this particular site hides the community plugin api calls.
             PiwigoResponseBufferingHandler.ErrorResponse response = (PiwigoResponseBufferingHandler.ErrorResponse) userInfoHandler.getResponse();
             if((response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse && ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response).getStatusCode() == 401)
              && sessionDetails.isAdminUser()) {
                 FirebaseAnalytics.getInstance(getContext()).logEvent("UserDowngrade_General", null);
                 sessionDetails.updateUserType("general");
-                EventBus.getDefault().post(new ServerConfigErrorEvent(getContext().getString(R.string.admin_user_missing_admin_permissions_after_login_warning_pattern, userInfoHandler.getPiwigoServerUrl())));
+                if (!canContinue) {
+                    EventBus.getDefault().post(new ServerConfigErrorEvent(getContext().getString(R.string.admin_user_missing_admin_permissions_after_login_warning_pattern, userInfoHandler.getPiwigoServerUrl())));
+                } else {
+                    sessionDetails.setUseCommunityPlugin(true);
+                }
             }
-            reportNestedFailure(userInfoHandler);
+            if (!canContinue) {
+                reportNestedFailure(userInfoHandler);
+            }
         }
         return canContinue;
     }

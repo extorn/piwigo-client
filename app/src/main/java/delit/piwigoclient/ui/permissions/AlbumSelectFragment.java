@@ -2,35 +2,36 @@ package delit.piwigoclient.ui.permissions;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
-import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.fragment.ListViewLongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
+public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
@@ -96,8 +97,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -124,7 +124,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     protected void rerunRetrievalForFailedPages() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         } else if (getListAdapter() == null) {
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();
@@ -141,15 +141,22 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        HashSet<String> selectedItemNamesSet = new HashSet<>(selectedIdsSet.size());
-        AlbumSelectionListAdapter listAdapter = getListAdapter();
-        for(Long selectedId : selectedIdsSet) {
-            selectedItemNamesSet.add(listAdapter.getItemById(selectedId).getName());
+        int selectedItemCount = selectedIdsSet == null ? 0 : selectedIdsSet.size();
+        HashSet<String> selectedItemNamesSet = new HashSet<>(selectedItemCount);
+        HashSet<Long> selectedItemIdsSet = new HashSet<>(selectedItemCount);
+
+        if (selectedIdsSet != null) {
+            AlbumSelectionListAdapter listAdapter = getListAdapter();
+            for (Long selectedId : selectedIdsSet) {
+                selectedItemNamesSet.add(listAdapter.getItemById(selectedId).getName());
+                selectedItemIdsSet.add(selectedId);
+            }
         }
-        EventBus.getDefault().post(new AlbumPermissionsSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItemNamesSet));
+        EventBus.getDefault().post(new AlbumPermissionsSelectionCompleteEvent(getActionId(), selectedItemIdsSet, selectedItemNamesSet));
+
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

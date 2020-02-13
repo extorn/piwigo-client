@@ -1,9 +1,12 @@
 package delit.piwigoclient.ui.file;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +14,8 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.common.util.ArrayUtils;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,100 +23,190 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseViewHolder;
+import delit.libs.ui.view.recycler.CustomClickListener;
+import delit.libs.util.IOUtils;
+import delit.libs.util.ObjectUtils;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
-import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
-import delit.piwigoclient.util.ObjectUtils;
 
-public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemRecyclerViewAdapter.FolderItemViewHolder> {
+
+public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, FolderItemRecyclerViewAdapter.FolderItem, FolderItemRecyclerViewAdapter.FolderItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<FolderItemRecyclerViewAdapter.FolderItem>> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
-    private transient List<File> currentDisplayContent;
+    private final MediaScanner mediaScanner;
+    private transient List<FolderItem> currentDisplayContent;
     private File activeFolder;
-    private Comparator<? super File> fileComparator;
+    private Comparator<? super FolderItem> fileComparator;
     private NavigationListener navigationListener;
+    private SortedSet<String> currentVisibleFileExts;
 
-    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MultiSelectStatusListener multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
+    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MediaScanner mediaScanner, MultiSelectStatusListener<FolderItem> multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
-        updateContent(folderViewPrefs.getInitialFolderAsFile());
+        this.mediaScanner = mediaScanner;
     }
 
     public void setInitiallySelectedItems() {
-        List<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
+        SortedSet<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
+        HashSet<Long> initialSelectionIds = null;
         if (initialSelectionItems != null) {
-            HashSet<Long> initialSelectionIds = new HashSet<>(initialSelectionItems.size());
+            initialSelectionIds = new HashSet<>(initialSelectionItems.size());
             for (String selectedItem : initialSelectionItems) {
-                int pos = getItemPosition(new File(selectedItem));
+                int pos = getItemPositionForFile(new File(selectedItem));
                 if (pos >= 0) {
                     initialSelectionIds.add(getItemId(pos));
                 }
             }
-            // update the visible selection.
-            setInitiallySelectedItems(initialSelectionIds);
-            setSelectedItems(initialSelectionIds);
+        }
+        // update the visible selection.
+        setInitiallySelectedItems(initialSelectionIds);
+        setSelectedItems(initialSelectionIds);
+    }
+
+    protected void updateContent(File newContent, boolean force) {
+        boolean refreshingExistingFolder = false;
+        if (ObjectUtils.areEqual(activeFolder, newContent)) {
+            if (!force && currentDisplayContent != null) {
+                return;
+            } else {
+                refreshingExistingFolder = true;
+            }
+        }
+
+        File oldFolder = activeFolder;
+
+        if (!refreshingExistingFolder) {
+            navigationListener.onPreFolderOpened(oldFolder, newContent);
+        }
+
+        activeFolder = newContent;
+        getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
+        File[] folderContent = activeFolder.listFiles(getAdapterPrefs().getFileFilter());
+
+        currentDisplayContent = buildDisplayContent(folderContent);
+        currentVisibleFileExts = getUniqueFileExtsInFolder(currentDisplayContent);
+        Collections.sort(currentDisplayContent, getFileComparator());
+
+        notifyDataSetChanged();
+        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(activeFolder.getAbsolutePath(), getDisplayedFiles(), 15) {
+
+            @Override
+            public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "processing icons from  " + firstResultIdx + " to " + lastResultIdx + "   " + System.currentTimeMillis());
+                }
+                for (Map.Entry<File, Uri> entry : batchResults.entrySet()) {
+                    FolderItem item = getItemByFile(entry.getKey());
+                    if (item != null) {
+                        item.setContentUri(entry.getValue());
+                    }
+                }
+                notifyItemRangeChanged(firstResultIdx, batchResults.size());
+            }
+        });
+
+        if (!refreshingExistingFolder) {
+            navigationListener.onPostFolderOpened(oldFolder, newContent);
         }
     }
 
-    protected void updateContent(File newContent) {
-        if (ObjectUtils.areEqual(activeFolder, newContent)) {
-            return;
+    public void rebuildContentView() {
+        updateContent(activeFolder, true);
+    }
+
+    public void changeFolderViewed(File newContent) {
+        updateContent(newContent, false);
+    }
+
+    private List<File> getDisplayedFiles() {
+        ArrayList<File> files = new ArrayList<>(currentDisplayContent.size());
+        for (FolderItem item : currentDisplayContent) {
+            files.add(item.getFile());
         }
-        navigationListener.onFolderOpened(activeFolder, newContent);
-        activeFolder = newContent;
-        getSelectedItemIds().clear();
-        File[] folderContent = activeFolder.listFiles(getAdapterPrefs().getFileFilter());
-        currentDisplayContent = folderContent != null ? ArrayUtils.toArrayList(folderContent) : new ArrayList(0);
-        Collections.sort(currentDisplayContent, getFileComparator());
-        notifyDataSetChanged();
+        return files;
+    }
+
+    private FolderItem getItemByFile(File key) {
+        for (FolderItem item : currentDisplayContent) {
+            if (item.getFile().equals(key)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private List<FolderItem> buildDisplayContent(File[] folderContent) {
+        if (folderContent == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<FolderItem> displayContent = new ArrayList<>();
+        for (File f : folderContent) {
+            displayContent.add(new FolderItem(f));
+        }
+        return displayContent;
+    }
+
+    private SortedSet<String> getUniqueFileExtsInFolder(List<FolderItem> currentDisplayContent) {
+        SortedSet<String> currentVisibleFileExts = new TreeSet<>();
+        for (FolderItem f : currentDisplayContent) {
+            if (f.getFile().isDirectory()) {
+                continue;
+            }
+            currentVisibleFileExts.add(IOUtils.getFileExt(f.getFile().getName()).toLowerCase());
+        }
+        return currentVisibleFileExts;
+    }
+
+    @Override
+    protected CustomClickListener<FolderItemViewAdapterPreferences, FolderItem, FolderItemViewHolder> buildCustomClickListener(FolderItemViewHolder viewHolder) {
+        return new FolderItemCustomClickListener(viewHolder, this);
     }
 
     public File getActiveFolder() {
         return activeFolder;
     }
 
-    public void setActiveFolder(File activeFolder) {
-        this.activeFolder = activeFolder;
-    }
-
-    @Override
-    protected CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> buildCustomClickListener(FolderItemViewHolder viewHolder) {
-        return new FolderItemCustomClickListener(viewHolder, this);
-    }
-
-    public Comparator<? super File> getFileComparator() {
+    public Comparator<? super FolderItem> getFileComparator() {
         if (fileComparator == null) {
             fileComparator = buildFileComparator();
         }
         return fileComparator;
     }
 
-    protected Comparator<? super File> buildFileComparator() {
-        return new Comparator<File>() {
+    protected Comparator<? super FolderItem> buildFileComparator() {
+        return new Comparator<FolderItem>() {
 
             @Override
-            public int compare(File o1, File o2) {
-                if (o1.isDirectory() && !o2.isDirectory()) {
+            public int compare(FolderItem o1, FolderItem o2) {
+                File file1 = o1.getFile();
+                File file2 = o2.getFile();
+                if (file1.isDirectory() && !file2.isDirectory()) {
                     return -1;
                 }
-                if (!o1.isDirectory() && o2.isDirectory()) {
+                if (!file1.isDirectory() && file2.isDirectory()) {
                     return 1;
                 }
                 switch (getAdapterPrefs().getFileSortOrder()) {
                     case FolderItemViewAdapterPreferences.ALPHABETICAL:
-                        return o1.getName().compareTo(o2.getName());
+                        return file1.getName().compareTo(file2.getName());
                     case FolderItemViewAdapterPreferences.LAST_MODIFIED_DATE:
-                        if (o1.lastModified() == o2.lastModified()) {
-                            return o1.getName().compareTo(o2.getName());
+                        if (file1.lastModified() == file2.lastModified()) {
+                            return file1.getName().compareTo(file2.getName());
                         } else {
                             // this is reversed order
-                            return o1.lastModified() > o2.lastModified() ? -1 : 1;
+                            return file1.lastModified() > file2.lastModified() ? -1 : 1;
                         }
                     default:
                         return 0;
@@ -123,17 +216,22 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     @Override
+    public int getItemViewType(int position) {
+        FolderItem f = getItemByPosition(position);
+        if (f.getFile().isDirectory()) {
+            return VIEW_TYPE_FOLDER;
+        }
+        return VIEW_TYPE_FILE;
+    }
+
+    @Override
     public long getItemId(int position) {
         return position;
     }
 
     @Override
-    public int getItemViewType(int position) {
-        File f = getItemByPosition(position);
-        if (f.isDirectory()) {
-            return VIEW_TYPE_FOLDER;
-        }
-        return VIEW_TYPE_FILE;
+    protected FolderItem getItemById(Long selectedId) {
+        return getItemByPosition(selectedId.intValue());
     }
 
     @NonNull
@@ -162,55 +260,124 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         //TODO allow blank "folder" spacer items to correct the visual display.
     }
 
-    @Override
-    protected File getItemById(Long selectedId) {
-        return getItemByPosition(selectedId.intValue());
+    private int getItemPositionForFile(File f) {
+        for (int i = 0; i < currentDisplayContent.size(); i++) {
+            if (currentDisplayContent.get(i).getFile().equals(f)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getItemPositionForFilename(String filename) {
+        for (int i = 0; i < currentDisplayContent.size(); i++) {
+            if (currentDisplayContent.get(i).getFile().getName().equals(filename)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
-    public int getItemPosition(File item) {
+    public int getItemPosition(FolderItem item) {
+        if (currentDisplayContent == null) {
+            throw new IllegalStateException("Please set the initial folder and initialise the list before attempting to access the items in the list");
+        }
         return currentDisplayContent.indexOf(item);
     }
 
     @Override
     protected void removeItemFromInternalStore(int idxRemoved) {
-        File f = currentDisplayContent.get(idxRemoved);
-        if (f.exists()) {
-            f.delete();
+        FolderItem f = currentDisplayContent.get(idxRemoved);
+        if (f.getFile().exists()) {
+            f.getFile().delete();
         }
         currentDisplayContent.remove(idxRemoved);
     }
 
     @Override
-    protected void replaceItemInInternalStore(int idxToReplace, File newItem) {
+    protected void replaceItemInInternalStore(int idxToReplace, FolderItem newItem) {
         throw new UnsupportedOperationException("This makes no sense for a file structure traversal");
     }
 
     @Override
-    protected File getItemFromInternalStoreMatching(File item) {
+    protected FolderItem getItemFromInternalStoreMatching(FolderItem item) {
         // they'll always be the same
         return item;
     }
 
     @Override
-    protected void addItemToInternalStore(File item) {
-        if (!item.exists()) {
+    protected void addItemToInternalStore(FolderItem item) {
+        if (!item.getFile().exists()) {
             throw new IllegalStateException("Cannot add File to display that does not yet exist");
         }
-        if (!item.getParentFile().equals(activeFolder)) {
+        if (!item.getFile().getParentFile().equals(activeFolder)) {
             throw new IllegalArgumentException("File is not a child of the currently displayed folder");
         }
         currentDisplayContent.add(item);
     }
 
     @Override
-    public File getItemByPosition(int position) {
+    public FolderItem getItemByPosition(int position) {
         return currentDisplayContent.get(position);
     }
 
     @Override
-    public boolean isHolderOutOfSync(FolderItemViewHolder holder, File newItem) {
-        return isDirtyItemViewHolder(holder) || !(getItemPosition(holder.getItem()) == getItemPosition(newItem));
+    public boolean isHolderOutOfSync(FolderItemViewHolder holder, FolderItem newItem) {
+        return isDirtyItemViewHolder(holder, newItem);
+    }
+
+    public void cancelAnyActiveFolderMediaScan() {
+        MediaScanner.instance(getContext()).cancelActiveScan(getActiveFolder().getAbsolutePath());
+    }
+
+    public static class FolderItem implements Parcelable {
+        public static final Parcelable.Creator<FolderItem> CREATOR
+                = new Parcelable.Creator<FolderItem>() {
+            public FolderItem createFromParcel(Parcel in) {
+                return new FolderItem(in);
+            }
+
+            public FolderItem[] newArray(int size) {
+                return new FolderItem[size];
+            }
+        };
+        private File file;
+        private Uri contentUri;
+
+        public FolderItem(File file) {
+            this.file = file;
+        }
+
+        public FolderItem(Parcel in) {
+            file = ParcelUtils.readFile(in);
+            contentUri = ParcelUtils.readUri(in);
+        }
+
+        public Uri getContentUri() {
+            return contentUri;
+        }
+
+        public void setContentUri(Uri contentUri) {
+            this.contentUri = contentUri;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            ParcelUtils.writeFile(dest, file);
+            ParcelUtils.writeUri(dest, contentUri);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+
     }
 
     @Override
@@ -220,22 +387,28 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     public int getItemCount() {
-        return currentDisplayContent.size();
+        return currentDisplayContent == null ? 0 : currentDisplayContent.size();
+    }
+
+    public SortedSet<String> getFileExtsInCurrentFolder() {
+        return currentVisibleFileExts;
     }
 
     public interface NavigationListener {
-        void onFolderOpened(File oldFolder, File newFolder);
+        void onPreFolderOpened(File oldFolder, File newFolder);
+
+        void onPostFolderOpened(File oldFolder, File newFolder);
     }
 
-    class FolderItemCustomClickListener extends CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> {
-        public <Q extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemViewHolder>> FolderItemCustomClickListener(FolderItemViewHolder viewHolder, Q parentAdapter) {
+    class FolderItemCustomClickListener extends CustomClickListener<FolderItemViewAdapterPreferences, FolderItem, FolderItemViewHolder> {
+        public FolderItemCustomClickListener(FolderItemViewHolder viewHolder, FolderItemRecyclerViewAdapter parentAdapter) {
             super(viewHolder, parentAdapter);
         }
 
         @Override
         public void onClick(View v) {
             if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
-                updateContent(getViewHolder().getItem());
+                changeFolderViewed(getViewHolder().getItem().getFile());
             } else if (getAdapterPrefs().isAllowFileSelection()) {
                 super.onClick(v);
             }
@@ -257,21 +430,21 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         @Override
-        public void fillValues(Context context, File newItem, boolean allowItemDeletion) {
+        public void fillValues(Context context, FolderItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getTxtTitle().setVisibility(View.VISIBLE);
-            getTxtTitle().setText(newItem.getName());
+            getTxtTitle().setText(newItem.getFile().getName());
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItems().contains(newItem));
+            getCheckBox().setChecked(getSelectedItems().contains(newItem.getFile()));
             getCheckBox().setEnabled(isEnabled());
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure() {
-            super.cacheViewFieldsAndConfigure();
+        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
             getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.accent), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             getIconViewLoader().load();
@@ -280,16 +453,24 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     protected class FolderItemFileViewHolder extends FolderItemViewHolder {
 
+        private TextView itemHeading;
+
         public FolderItemFileViewHolder(View view) {
             super(view);
         }
 
         @Override
-        public void fillValues(Context context, File newItem, boolean allowItemDeletion) {
+        public void fillValues(Context context, FolderItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
+
+            long bytes = newItem.getFile().length();
+            double sizeMb = ((double)bytes)/1024/1024;
+            itemHeading.setVisibility(View.VISIBLE);
+            itemHeading.setText(String.format("%1$.2fMB", sizeMb));
+
             if (getAdapterPrefs().isShowFilenames()) {
                 getTxtTitle().setVisibility(View.VISIBLE);
-                getTxtTitle().setText(newItem.getName());
+                getTxtTitle().setText(newItem.getFile().getName());
             } else {
                 getTxtTitle().setVisibility(View.GONE);
             }
@@ -299,26 +480,30 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFileSelection() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
-            getIconViewLoader().setFileToLoad(getItem());
+            Uri itemUri = newItem.getContentUri();
+            if (itemUri != null) {
+                getIconViewLoader().setUriToLoad(itemUri.toString());
+            } else {
+                getIconViewLoader().setFileToLoad(newItem.getFile());
+            }/*TODO why was this else statement needed?
+             else {
+                getIconViewLoader().setResourceToLoad(R.drawable.ic_file_gray_24dp);
+            }*/
         }
 
         @Override
-        public void cacheViewFieldsAndConfigure() {
-            super.cacheViewFieldsAndConfigure();
+        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
+            itemHeading = itemView.findViewById(R.id.list_item_heading);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
             final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
-                    try {
-                        if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
+                    if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
 
-                            int imgSize = getIconView().getMeasuredWidth();
-                            getIconViewLoader().setResizeTo(imgSize, imgSize);
-                            getIconViewLoader().load();
-                        }
-                    } catch (IllegalStateException e) {
-                        Crashlytics.logException(e);
-                        // image loader not configured yet...
+                        int imgSize = getIconView().getMeasuredWidth();
+                        getIconViewLoader().setResizeTo(imgSize, imgSize);
+                        getIconViewLoader().load();
                     }
                     return true;
                 }
@@ -339,23 +524,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    protected abstract class FolderItemViewHolder extends CustomViewHolder<FolderItemViewAdapterPreferences, File> {
-        private TextView txtTitle;
-        private View deleteButton;
-        private AppCompatCheckboxTriState checkBox;
+    protected abstract class FolderItemViewHolder extends BaseViewHolder<FolderItemViewAdapterPreferences, FolderItem> implements PicassoLoader.PictureItemImageLoaderListener {
+
         private ImageView iconView;
-        private ResizingPicassoLoader iconViewLoader;
+        private ResizingPicassoLoader<ImageView> iconViewLoader;
 
         public FolderItemViewHolder(View view) {
             super(view);
-        }
-
-        public TextView getTxtTitle() {
-            return txtTitle;
-        }
-
-        public AppCompatCheckboxTriState getCheckBox() {
-            return checkBox;
         }
 
         public ImageView getIconView() {
@@ -366,50 +541,31 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return iconViewLoader;
         }
 
-        public View getDeleteButton() {
-            return deleteButton;
-        }
+        public abstract void fillValues(Context context, FolderItem newItem, boolean allowItemDeletion);
 
         @Override
-        public String toString() {
-            return super.toString() + " '" + txtTitle.getText() + "'";
-        }
+        public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
 
-        public abstract void fillValues(Context context, File newItem, boolean allowItemDeletion);
-
-        @Override
-        public void setChecked(boolean checked) {
-            checkBox.setChecked(checked);
-        }
-
-        @Override
-        public void cacheViewFieldsAndConfigure() {
-
-            checkBox = itemView.findViewById(R.id.list_item_checked);
-            checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
-            checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
-            if (isMultiSelectionAllowed()) {
-                checkBox.setButtonDrawable(R.drawable.checkbox);
-            } else {
-                checkBox.setButtonDrawable(R.drawable.radio_button);
-            }
-
-            txtTitle = itemView.findViewById(R.id.list_item_name);
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
 
             iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
-            iconViewLoader = new ResizingPicassoLoader(getIconView(), 0, 0);
-
-            deleteButton = itemView.findViewById(R.id.list_item_delete_button);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItemButtonClick(v);
-                }
-            });
+            iconView.setContentDescription("folder item thumb");
+            iconViewLoader = new ResizingPicassoLoader<>(getIconView(), this, 0, 0);
         }
 
-        private void onDeleteItemButtonClick(View v) {
-            getItemActionListener().getParentAdapter().onDeleteItem(this, v);
+        @Override
+        public void onBeforeImageLoad(PicassoLoader loader) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageLoaded(PicassoLoader loader, boolean success) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+            getIconView().setBackgroundColor(Color.DKGRAY);
         }
     }
 

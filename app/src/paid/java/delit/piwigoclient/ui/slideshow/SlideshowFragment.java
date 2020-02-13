@@ -9,33 +9,48 @@ import com.crashlytics.android.Crashlytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.Set;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.PhotoContainer;
+import delit.piwigoclient.model.piwigo.PiwigoFavorites;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.FavoritesGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 /**
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment<T extends Identifiable&Parcelable> extends AbstractSlideshowFragment<T> {
+public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
 
-    public static <S extends Identifiable&Parcelable> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
+    private static final String TAG = "SlideshowFragment";
+
+    public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(Class<ViewModelContainer> modelType, ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
-        fragment.setArguments(buildArgs(gallery, currentGalleryItem));
+        fragment.setArguments(buildArgs(modelType, gallery, currentGalleryItem));
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_3);
     }
 
     @Override
@@ -48,13 +63,14 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
     }
 
     private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new UIHelper.Action<AbstractSlideshowFragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
+        UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>,
+                AbstractSlideshowFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
 
             @Override
-            public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+            public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
                 boolean updated = false;
                 for(Tag t : response.getTags()) {
-                    if(t.getId() == getGalleryModel().getId()) {
+                    if (t.getId() == getResourceContainer().getId()) {
                         // tag has been located!
                         setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoTag(t));
                         updated = true;
@@ -63,7 +79,7 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
                 if(!updated) {
                     //Something wierd is going on - this should never happen
                     Crashlytics.log(Log.ERROR, getTag(), "Closing tag slideshow - tag was not available after refreshing session");
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return false;
                 }
                 loadMoreGalleryResources();
@@ -71,8 +87,8 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
             }
 
             @Override
-            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                getFragmentManager().popBackStack();
+            public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                getParentFragmentManager().popBackStack();
                 return false;
             }
         };
@@ -97,13 +113,22 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
     }
 
     @Override
-    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList) {
+    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, Set<String> multimediaExtensionList) {
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {
             loadingMessageId = new ImagesGetResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
         } else if(containerDetails instanceof Tag) {
             loadingMessageId = new TagGetImagesResponseHandler((Tag) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+        } else if(container instanceof PiwigoFavorites) {
+            // not sure which of these blocks is irrelevant if either!
+            if(container.getImgResourceCount() > 0) {
+                // no need to load the images as already loaded.
+                loadingMessageId = 0;
+            } else {
+                //TODO maybe this occurs when the favorites are not available as the page has been reopened after closing the app. Maybe need to reload the favorites here...
+                loadingMessageId = new FavoritesGetImagesResponseHandler(sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+            }
         } else {
             throw new IllegalArgumentException("unsupported container type : " + container);
         }
@@ -112,9 +137,9 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
 
     @Subscribe
     public void onEvent(TagContentAlteredEvent tagContentAlteredEvent) {
-        ResourceContainer<T,GalleryItem> gallery = getGalleryModel();
+        ResourceContainer<T, GalleryItem> gallery = getResourceContainer();
         if(gallery instanceof PiwigoTag && gallery.getId() == tagContentAlteredEvent.getId()) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_tag));
+            getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_tag));
         }
     }
 }

@@ -1,0 +1,10 @@
+Fix all string patterns
+
+replace: (%)\s(\d*)\s(\$)\s(s|\d*d|[\d\.]*f|t[A-Z])
+with: $1$2$3$4
+
+
+Now remove all integers and bools
+
+replace: <(integer|bool)(?idmsux:.)*?</\1>.*
+with:

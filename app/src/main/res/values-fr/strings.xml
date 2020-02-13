@@ -50,8 +50,9 @@
     <string name="alert_title_connectionTest">Test de connexion</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Avertissement @nServer n\'a pas signalé les tailles d\'image disponibles.</string>
+    <string name="alert_title_login">Connexion</string>
     <string name="alert_success">SUCCÈS !</string>
-    <string name="alert_partial_success">INCOMPLETE</string>
+    <string name="alert_partial_success">INCOMPLET</string>
     <string name="alert_error">Erreur</string>
     <string name="alert_error_no_app_available_to_rate_app">Aucune application n\'a pu être trouvée pour noter cette application. Merci d\'avoir essayé.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Téléchargement annulé. Les permissions requises ne sont pas accordées.</string>
@@ -64,13 +65,19 @@
     <string name="tools_menu_title">Outils</string>
     <string name="settings_menu_title">Paramètres de l\'application</string>
     <string name="gallery_menu_title">Galerie</string>
+    <string name="offline_mode_menu_title">Mode hors ligne</string>
+    <string name="online_mode_menu_title">Mode en ligne</string>
     <string name="upload_menu_title">Télécharger</string>
     <string name="upload_page_title">Piwigo Télécharger</string>
     <string name="gallery_to_alter_title">Télécharger sur</string>
     <string name="login_button_title">Connexion</string>
 
+    <string name="alert_question_enable_network_access">Autoriser l\'extraction de données depuis le serveur?</string>
+    <string name="alert_question_disable_network_access">N\'utilisez que des données déjà mises en cache sur cet appareil?</string>
+
     <string name="upload_file_privacy_level_title">Niveau de confidentialité des fichiers</string>
     <string name="cacheCleared_title">Cache</string>
+    <string name="cacheClearingStarted_message">Effacer le cache</string>
     <string name="cacheCleared_message">Cache effacé. Toutes les images seront téléchargées à partir du serveur distant à la prochaine demande.</string>
     <string name="cacheClearFailed_message">Le cache n\'a pas pu être effacé pour le moment. Si le problème persiste, veuillez signaler l\'erreur.</string>
     <string name="videoCacheCleared_message">Le cache vidéo est effacé. Toutes les vidéos seront téléchargées à partir du serveur distant à la prochaine demande.</string>
@@ -115,6 +122,7 @@
 
     <string name="delete_upload_job_button_title">Supprimer job</string>
     <string name="upload_files_button_title">Télécharger</string>
+    <string name="upload_files_finish_job_button_title">Finir</string>
     <string name="upload_job_status_button">Statut</string>
     <string name="alert_really_delete_upload_job">Ceci supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - upload settings page). Les travaux seront souvent terminés avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir prendre cette mesure radicale ?</string>
     <string name="loading_please_wait">Chargement, Veuillez patienter</string>
@@ -160,7 +168,7 @@
     <string name="other_licences_button_text">Autres composants sous licence</string>
     <string name="oss_licences_menu_title">Licences OSS</string>
     <string name="about_heading">A propos de cette application</string>
-    <integer name="eula_version">4</integer>
+
     <string name="eula" formatted="false">" Contrat de licence d\'utilisateur final (\" Contrat ")
 Dernière mise à jour : 7 août 2018
 
@@ -321,7 +329,11 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="files_for_upload_title">Fichiers à télécharger</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Télécharger</string>
-    <string name="alert_image_download_message">Veuillez choisir la taille du fichier que vous souhaitez télécharger</string>
+    <string name="alert_image_download_message">Veuillez choisir la taille du fichier</string>
+    <string name="action">Action</string>
+    <string name="copy_link">Copier le lien</string>
+    <string name="download_file">Télécharger le fichier</string>
+    <string name="share_with_an_app">Partager avec une application</string>
     <string name="alert_image_show_image_title">Contrôle du rendu de l\'image</string>
     <string name="alert_image_show_image_message">Veuillez choisir la taille du fichier que vous souhaitez visualiser</string>
     <string name="alert_image_download_complete_message">Téléchargement terminé.</string>
@@ -437,6 +449,8 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="error_upload_file_verification_failed">La vérification du fichier sur le serveur a échoué pour le téléchargement de %1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">Ce fichier a été partiellement téléchargé et vous devez vous rappeler de cliquer sur le bouton de téléchargement après cela pour supprimer le fichier corrompu du serveur. Continuer ?</string>
     <string name="alert_message_file_upload_cancelled_pattern">Chargement du fichier (%1$s) annulé.</string>
+    <string name="alert_message_upload_cancelled">Le téléchargement a été annulé</string>
+    <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquer sur Télécharger. Ceci nettoiera l\'état de téléchargement annulé du serveur.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge nativement par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille \"correspondance la plus proche".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de %1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
@@ -453,7 +467,6 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_add_cert_to_truststore_pattern">Ajouter la chaîne de certificats à la liste des AC de confiance ?</string>
     <string name="certificate_summary_pattern">Sujet : %1$s\nValide : %2$s - %3$s\nSérie : %4$s</string>
     <string name="alert_http_engine_shutdown">Arrêt du moteur HTTP. Redémarrage automatique selon les besoins.</string>
-    <string name="certificate_chain_seperator">\n----n----&gt;\n\n\n</string>
     <string name="alert_clearing_certificate_use_history">Réinitialisation de la liste des certificats choisis pour la confiance</string>
     <string name="alert_delete_all_files_selected_for_upload">Supprimer tous les fichiers sélectionnés pour le téléchargement ?</string>
     <string name="alert_partial_upload_deleted">Annuler le téléchargement d\'un fichier après qu\'il ait été partiellement transféré sur le serveur aura pour conséquence que le téléchargement partiel restera sur le serveur. Nettoyez manuellement le dossier de téléchargement sur le serveur (par exemple /var/www/piwigo/upload/buffer) pour gagner de la place.</string>
@@ -473,6 +486,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Ces permissions sont nécessaires pour démarrer un processus de téléchargement, puis maintenir le processus de téléchargement en cours une fois l\'écran éteint.</string>
     <string name="alert_no_scheme_specified">Vous devez préfixer l\'adresse de votre serveur par http:// ou https://. Aucun autre régime n\'est soutenu. Le port est optionnel si par défaut - 80 pour http ou 443 pour https. Exemple http://piwigo.org/demo ou http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Les fichiers %1$d suivants dépassaient le seuil d\'avertissement : %2$s. Souhaitez-vous les supprimer du téléchargement ?</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">Souhaitez-vous compresser des vidéos avant de les télécharger ?</string>
     <string name="alert_trusted_certificates_polling">Les certificats non fiables fournis par le serveur lors de la connexion vous seront présentés afin que vous puissiez choisir de les ajouter au Trust Store. Si vous refusez, le système ne vous demandera pas de nouveau de fournir le même certificat. Pour être invité à nouveau, désélectionnez et ré-sélectionnez l\'option pour utiliser une liste de certificats de confiance personnalisée.</string>
     <string name="button_copy_link">Copier le lien</string>
     <string name="download_link_clipboard_data_desc">Lien de téléchargement pour %1$s</string>
@@ -488,8 +502,8 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Téléchargement d\'erreur</string>
-    <string name="alert_message_error_uploading_end">Une erreur s\'est produite après le téléchargement réussi de tous les fichiers. Vous pouvez réessayer le travail plus tard et il peut très bien réussir, ou vous pouvez supprimer ce travail de l\'appareil et ensuite nettoyer manuellement toutes les modifications incomplètes apportées au serveur. Supprimer un travail ?</string>
-    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement de tous les fichiers. Vous pouvez réessayer le travail plus tard et il peut très bien réussir, mais vous pouvez supprimer ce travail de l\'appareil, mais nettoyer manuellement toutes les modifications incomplètes apportées au serveur. Supprimer un travail ?</string>
+    <string name="alert_message_error_uploading_end">"Une erreur s'est produite après le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer à partir de l'endroit où il s'est rendu et effacez toutes les données temporaires résiduelles du serveur."</string>
+    <string name="alert_message_error_uploading_start">"Une erreur s'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer à partir d'où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer toutes les données temporaires résiduelles du serveur."</string>
     <string name="release_history">Historique des versions</string>
     <string name="planned_releases">Rejets prévus</string>
     <string name="tags_heading">Tags</string>
@@ -500,6 +514,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="tag_usage_count_pattern">(%1$d utilise)</string>
     <string name="progress_loading_tag_details">Récupérer les ressources correspondant à la balise</string>
     <string name="tags_menu_title">Étiquettes</string>
+    <string name="favorites_menu_title">Favoris</string>
     <string name="tag_empty_text">Aucun article marqué avec cette balise</string>
     <string name="tag_content_load_failed_text">N\'a pas réussi à charger les ressources liées à la balise</string>
     <string name="tag_heading">Tag</string>
@@ -549,7 +564,9 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_temporary_upload_album_deleted">L\'album de téléchargement temporaire a été supprimé avec succès.</string>
     <string name="alert_deleting_temporary_upload_album">Suppression de l\'album de téléchargement temporaire</string>
     <string name="alert_invalid_uri_pattern">URI invalide. %1$s</string>
+    <string name="alert_invalid_uri_pattern_spaces">URI invalide. Il y a un espace dans l\'URI à la position %1$d</string>
     <string name="album_section_heading_albums">albums</string>
+    <string name="album_section_heading_albums_pattern">albums (%1$d)</string>
     <string name="album_section_heading_resources">photos dans cet album</string>
     <string name="album_title_home">accueil</string>
     <string name="upload_file_rating">Ma note</string>
@@ -588,4 +605,60 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Votre version de PiwigoClientWsExts est dépassée. Veuillez le mettre à jour en priorité.</string>
     <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
     <string name="please_read_and_agree_with_eula_first">Veuillez d\'abord lire et confirmer votre accord avec les termes du CLUF</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled">Les autorisations requises n\'ont pas été accordées. Action annulée.</string>
+    <string name="default_str">défaut</string>
+    <string name="copied_to_clipboard">Copié dans le Presse-papiers</string>
+    <string name="alert_plugin_required_pattern">%1$s Plugin serveur requis - Version %2$s ou plus récente</string>
+    <string name="certificate_chain_not_verifiable_error">La chaîne de certificats n\'a pas pu être vérifiée</string>
+    <string name="certificate_chain_not_verifiable_error_detail">La chaîne de certificats n\'a pas pu être vérifiée à l\'aide des certificats de cet appareil. Pour résoudre ce problème, autorisez cette application à maintenir une liste de certificats approuvés (dans les paramètres de connexion de cette application).</string>
+    <string name="undefined_error_msg">Erreur non définie</string>
+    <string name="resource_unavailable_error_msg_pattern">La ressource demandée n\'était pas accessible.\nHTTP Status Code (%1$d)</string>
+    <string name="server_error_msg_pattern">Quelque chose a mal tourné sur le serveur ou entre le serveur et votre appareil.\nHTTP Status Code (%1$d)</string>
+    <string name="redirect_error_msg_pattern">Erreur de redirection de requête : \nHTTP Status Code (%1$d)</string>
+    <string name="http_error_msg_pattern">Message d\'erreur HTTP (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Réponse inattendue : \nHTTP Status Code (%1$d)</string>
+    <string name="connection_error_msg_pattern">Impossible de se connecter au serveur</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La préférence %1$s est irrécupérable et a été fixée par défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l'application"</string>
+    <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données en cache?</string>
+    <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="compress_videos">Compresser les vidéos</string>
+    <string name="compress_images">Compression d\'images</string>
+    <string name="upload_tab_title_settings">Réglages</string>
+    <string name="upload_tab_title_files">Fichiers</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">"Impossible de gérer les fichiers partagés. Informations détaillées manquantes telles que le nom du fichier et le type de fichier exact. Veuillez d'abord télécharger le fichier sur votre appareil."</string>
+    <string name="alert_internal_server_exposed_pattern">Autorité inattendue %1$s trouvée dans l\'url et remplacée par %2$s. Votre serveur peut être mal configuré.</string>
+    <string name="buy_time_menu_title">Masquer les annonces</string>
+    <string name="watch_advert_to_buy_advert_free_time">Souhaitez-vous regarder une publicité pour acheter une courte période sans aucune publicité ? Vous pouvez le faire plusieurs fois pour augmenter la durée si vous le souhaitez.</string>
+    <string name="reward_video_not_yet_loaded">Désolé, mais la vidéo de la récompense n\'a pas encore été chargée. Veuillez réessayer plus tard.</string>
+    <string name="bought_time_menu_title_pattern">Annonces en %1$02d:%2$02d</string>
+    <string name="allow_upload_of_incompressible_videos">Téléchargez le fichier brut s\'il est impossible de compresser</string>
+    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
+    <string name="upload_status_tab_title_details">Détails</string>
+    <string name="upload_status_tab_title_errors">erreurs</string>
+    <string name="message_piwigo_server_inconsistent_results">"Piwigo API Call %1$s rapporte la somme de contrôle du fichier ne correspond pas, mais API call %2$s rapporte qu'il correspond. Il peut s'agir d'un bogue sur le serveur PIWIGO ou d'un plugin que vous utilisez, et cela peut valoir la peine d'être signalé."</string>
+    <string name="alert_bulk_image_permissions_title">Définir les droits d\'accès</string>
+    <string name="alert_bulk_image_permissions_message">Définir les niveaux d\'autorisation d\'accès pour les ressources sélectionnées %1$d</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec une %1$s de type mime</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">Les fichiers avec les extensions suivantes ne peuvent pas être téléchargés et ont été ignorés : %1$s</string>
+    <string name="please_select_a_parent_album">Veuillez sélectionner un album parent</string>
+    <string name="unsupported_device">Désolé, cet appareil n\'est pas supporté. Il y a un problème avec l\'accès aux services Google Play.</string>
+    <string name="hint_album_view">Touchez au bas de l\'écran pour afficher les détails de cet album.</string>
+    <string name="usage_hint_title">Allusion</string>
+    <string name="hint_slideshow_view_1">Appuyez sur au bas de l\'écran pour afficher les détails de cette ressource</string>
+    <string name="hint_slideshow_view_2">Balayez vers la gauche ou la droite pour naviguer entre les ressources</string>
+    <string name="hint_slideshow_item_view_1">Le classement peut être ajusté en tapotant ou en glissant sur le classement souhaité. Cela a un effet immédiat</string>
+    <string name="hint_slideshow_view_3">Pour marquer cette ressource comme favorite, appuyez sur l’icône du cœur à droite du nom de la ressource d’image</string>
+    <string name="hint_navigation_panel_1">Appuyez sur l\'icône de l\'application ci-dessus pour forcer un serveur à se déconnecter et à se connecter</string>
+    <string name="user_details_not_found_on_server">Impossible de trouver les détails de l\'utilisateur sur le serveur</string>
+    <string name="resource_queued_for_download">Ressource en file d\'attente pour le téléchargement. C\'est la position %1$d dans la file d\'attente.</string>
+    <string name="alert_message_showing_images_of_size">Affichage des images du serveur de taille %1$s</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">Affichage des vignettes d’image du serveur de taille %1$s</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">Affichage des vignettes d’album du serveur de taille %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Erreur lors de la compression du fichier pour le téléchargement %1$s</string>
+    <string name="uploading_progress_bar_message">Téléchargement</string>
+    <string name="compressing_progress_bar_message">Compression</string>
+    <string name="preference_app_desired_language_summary">Traduction préférée</string>
+    <string name="preference_app_desired_language_title">Langue</string>
+    <string name="warning_missing_tags_links_removed_from_resource">Toutes les balises liées à cet élément n\'existent pas encore dans la base de données. Les liens vers %1$d ont été supprimés</string>
+    <string name="button_stop_warning_me">Ne me redis plus</string>
 </resources>

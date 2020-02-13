@@ -8,15 +8,16 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Set;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "UpdateResourceInfoRspHdlr";
     private final T piwigoResource;
+    private String filename;
 
     public BaseImageUpdateInfoResponseHandler(T piwigoResource) {
         super("pwg.images.setInfo", TAG);
@@ -32,15 +33,18 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("image_id", String.valueOf(piwigoResource.getId()));
+        if(filename != null) {
+            params.put("file", filename.replace('/', '_')); // attempt to make uploads safe
+        }
         params.put("name", piwigoResource.getName());
         params.put("comment", piwigoResource.getDescription());
         params.put("level", String.valueOf(piwigoResource.getPrivacyLevel()));
-        params.put("single_value_mode", "replace");
         params.put("categories", getLinkedAlbumList(piwigoResource.getLinkedAlbums()));
         if (piwigoResource.getCreationDate() != null) {
-            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             params.put("date_creation", dateTimeOriginalFormat.format(piwigoResource.getCreationDate()));
         }
+        params.put("single_value_mode", "replace");
         params.put("multiple_value_mode", "replace");
         return params;
     }
@@ -79,8 +83,16 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         storeResponse(r);
     }
 
-    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
-        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource, boolean isCached) {
+    /**
+     * This is the filename (original) of the image. It is only set when uploading.
+     * @param filename
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse<T> {
+        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, T piwigoResource, boolean isCached) {
             super(messageId, piwigoMethod, piwigoResource, isCached);
         }
     }

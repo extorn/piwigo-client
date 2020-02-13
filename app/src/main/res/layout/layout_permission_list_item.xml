@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--delit.piwigoclient.ui.common.list.Checkable -->
+<?xml version="1.0" encoding="utf-8"?><!--delit.libs.ui.view.list.Checkable -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+    <delit.libs.ui.view.button.AppCompatCheckboxTriState
         android:id="@+id/permission_status_icon"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"

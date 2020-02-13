@@ -2,7 +2,11 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,13 +14,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 /**
  * An item representing a piece of content.
  */
 public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable, Serializable {
 
+    private static final String TAG = "GalleryItem";
     public static final int CATEGORY_TYPE = 0;
     public static final int PICTURE_RESOURCE_TYPE = 1;
     public static final int VIDEO_RESOURCE_TYPE = 2;
@@ -40,45 +45,59 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
             return "PicturesHeading";
         }
     };
-    private static final long serialVersionUID = 7684159305897923971L;
-    private final long id;
-    private String thumbnailUrl;
+    private static final long serialVersionUID = -8486162043348525674L;
+    private long id; // this is final... except blank category items need to alter it
     private String name;
     private String description;
     private Date lastAltered;
     private ArrayList<Long> parentageChain;
     private long loadedAt;
+    private String baseResourceUrl;
 
 
-    public GalleryItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
+    public GalleryItem(long id, String name, String description, Date lastAltered, String baseResourceUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.thumbnailUrl = thumbnailUrl;
         this.lastAltered = lastAltered;
         parentageChain = new ArrayList<>();
         this.loadedAt = System.currentTimeMillis();
+        this.baseResourceUrl = baseResourceUrl;
     }
 
     public GalleryItem(Parcel in) {
         id = in.readLong();
-        thumbnailUrl = in.readString();
         name = in.readString();
         description = in.readString();
         lastAltered = ParcelUtils.readDate(in);
-        parentageChain = ParcelUtils.readLongArrayList(in, null);
+        parentageChain = ParcelUtils.readLongArrayList(in);
         loadedAt = in.readLong();
+        baseResourceUrl = in.readString();
+    }
+
+    protected final String getFullPath(String urlPath) {
+//        if (urlPath != null && baseResourceUrl != null) {
+//            return baseResourceUrl + urlPath;
+//        }
+        return urlPath;
+    }
+
+    protected final String getRelativePath(String urlPath) {
+//        if (urlPath != null && baseResourceUrl != null) {
+//            return urlPath.substring(baseResourceUrl.length());
+//        }
+        return urlPath;
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(id);
-        out.writeString(thumbnailUrl);
         out.writeString(name);
         out.writeString(description);
         ParcelUtils.writeDate(out, lastAltered);
         ParcelUtils.writeLongArrayList(out, parentageChain);
         out.writeLong(loadedAt);
+        out.writeString(baseResourceUrl);
     }
 
     public long getId() {
@@ -87,6 +106,10 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
 
     public Long getParentId() {
         return parentageChain.size() == 0 ? null : parentageChain.get(parentageChain.size() - 1);
+    }
+
+    protected String getBaseResourceUrl() {
+        return baseResourceUrl;
     }
 
     public void setParentageChain(List<Long> parentageChain, long directParent) {
@@ -130,9 +153,9 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         }
         // both are categories
         if (isCategory) {
-            if (this == CategoryItem.BLANK || o == CategoryItem.ALBUM_HEADING) {
+            if (CategoryItem.BLANK.equals(this)  || CategoryItem.ALBUM_HEADING.equals(o)) {
                 return 1;
-            } else if (o == CategoryItem.BLANK || this == CategoryItem.ALBUM_HEADING) {
+            } else if (CategoryItem.BLANK.equals(o) || CategoryItem.ALBUM_HEADING.equals(this)) {
                 return -1;
             }
             return -this.name.compareTo(o.name);
@@ -166,11 +189,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     }
 
     public String getThumbnailUrl() {
-        return thumbnailUrl;
-    }
-
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
+        return null;
     }
 
     public void copyFrom(GalleryItem other, boolean copyParentage) {
@@ -179,7 +198,6 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         }
         this.name = other.name;
         this.description = other.description;
-        this.thumbnailUrl = other.thumbnailUrl;
         this.lastAltered = other.lastAltered;
         if (copyParentage) {
             parentageChain = other.parentageChain;
@@ -192,10 +210,15 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         return 0;
     }
 
-    public static final Parcelable.Creator<GalleryItem> CREATOR
-            = new Parcelable.Creator<GalleryItem>() {
+    public static final Creator<GalleryItem> CREATOR
+            = new Creator<GalleryItem>() {
         public GalleryItem createFromParcel(Parcel in) {
-            return new GalleryItem(in);
+            try {
+                return new GalleryItem(in);
+            } catch(RuntimeException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to create gallery item from parcel: " + in.toString());
+                throw e;
+            }
         }
 
         public GalleryItem[] newArray(int size) {
@@ -209,5 +232,16 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
 
     public boolean isLikelyOutdated() {
         return isLikelyOutdated(loadedAt);
+    }
+
+    protected void setId(long id) {
+        this.id = id;
+    }
+
+    public ArrayList<Long> getFullPath() {
+        ArrayList<Long> fullPath = new ArrayList<>(parentageChain.size() + 1);
+        fullPath.addAll(parentageChain);
+        fullPath.add(id);
+        return fullPath;
     }
 }

@@ -2,15 +2,23 @@ package delit.piwigoclient.piwigoApi.upload;
 
 import android.content.Context;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.upload.PiwigoFileUploadResponseListener;
 
 public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUploadResponseListener {
 
     public BackgroundPiwigoFileUploadResponseListener(Context context) {
         super(context);
+    }
+
+    @Override
+    protected void onMessageForUser(Context context, BasePiwigoUploadService.MessageForUserResponse response) {
+
     }
 
     @Override
@@ -44,8 +52,25 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+    protected void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
+        // Do nothing for now.
+    }
 
+    @Override
+    protected void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+        if (response.getProgress() == 100) {
+            onFileUploadComplete(context, response);
+        }
+    }
+
+    private void onFileUploadComplete(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+        UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJobByJobId(context, response.getJobId());
+        if (uploadJob != null) {
+            for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+            }
+            EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
+        }
     }
 
     @Override
@@ -60,5 +85,10 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
 
     @Override
     protected void onUploadComplete(Context context, UploadJob job) {
+        // update the album view(s) if relevant.
+        for (Long albumParent : job.getUploadToCategoryParentage()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+        }
+        EventBus.getDefault().post(new AlbumAlteredEvent(job.getUploadToCategory()));
     }
 }

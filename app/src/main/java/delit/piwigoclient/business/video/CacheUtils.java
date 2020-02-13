@@ -18,9 +18,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.util.IOUtils;
+import delit.piwigoclient.piwigoApi.HttpClientFactory;
 
 /**
  * Created by gareth on 01/07/17.
@@ -28,6 +29,7 @@ import delit.piwigoclient.util.IOUtils;
 
 public class CacheUtils {
 
+    private static final String TAG = "CacheUtils";
     private static final FilenameFilter metadataFileFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
@@ -51,7 +53,7 @@ public class CacheUtils {
     };
 
     private static File getVideoCacheFolder(Context c) throws IOException {
-        File f = new File(c.getApplicationContext().getExternalCacheDir(), "videos");
+        File f = new File(c.getExternalCacheDir(), "videos");
         if (!f.exists() || !f.isDirectory()) {
             boolean created = f.mkdir();
             if (!created) {
@@ -62,6 +64,9 @@ public class CacheUtils {
     }
 
     public static void clearResponseCache(Context c) {
+        // do an incremental clean
+        HttpClientFactory.getInstance(c).clearCache();
+        // now delete the theoretically empty folder.
         File cacheDir = getBasicCacheFolder(c);
         deleteQuietly(cacheDir);
     }
@@ -71,7 +76,7 @@ public class CacheUtils {
         if (deleteQuietly(cacheDir)) {
             cacheDir.mkdir();
         } else {
-            Log.e("CacheUtils", "Error deleting video cache. Delete failed");
+            Log.e(TAG, "Error deleting video cache. Delete failed");
         }
 //        for(File f : cacheDir.listFiles()) {
 //            if(f.isDirectory()) {
@@ -86,6 +91,13 @@ public class CacheUtils {
         CachedContent cachedContent = IOUtils.readObjectFromFile(f);
         if (cachedContent != null) {
             cachedContent.setPersistTo(f);
+        } else {
+            if (f.exists()) {
+                if (!f.delete()) {
+                    Crashlytics.log(Log.ERROR, TAG, "Error deleting corrupt file : " + f.getAbsolutePath());
+                }
+            }
+            Log.e(TAG, "Unable to load cached content from file " + f);
         }
         return cachedContent;
     }
@@ -261,11 +273,12 @@ public class CacheUtils {
     public static File getBasicCacheFolder(Context context) {
         File cacheFolder;
         try {
-            cacheFolder = new File(context.getApplicationContext().getExternalCacheDir(), "basic-cache");
-            if (!cacheFolder.exists()) {
-                cacheFolder.mkdir();
+            cacheFolder = new File(context.getExternalCacheDir(), "basic-cache");
+            boolean created = cacheFolder.exists();
+            if (!created) {
+                created = cacheFolder.mkdir();
             }
-            if (!(cacheFolder.canRead() && cacheFolder.canWrite())) {
+            if (!(created && cacheFolder.canRead() && cacheFolder.canWrite())) {
                 //Permission has been revoked!
                 throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
             }
@@ -309,5 +322,9 @@ public class CacheUtils {
             }
         }
         return length;
+    }
+
+    public static long getItemsInResponseCache(Context context) {
+        return HttpClientFactory.getInstance(context).getItemsInResponseCache();
     }
 }

@@ -20,7 +20,7 @@
         </com.google.android.gms.ads.AdView>
 
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/album_header_bar"
             android:layout_below="@+id/gallery_adView"
             android:layout_width="match_parent"
@@ -28,33 +28,39 @@
 
             <TextView
                 android:id="@+id/gallery_details_name_header"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
+                app:layout_constraintBottom_toTopOf="@id/gallery_details_description_header"
+                app:layout_constraintEnd_toStartOf="@+id/gallery_details_description_dropdown_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:layout_margin="5dp"
                 android:maxLines="2"
                 android:ellipsize="end"
                 tools:text="Gallery name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title.Clickable" />
 
             <TextView
                 android:id="@+id/gallery_details_description_header"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/gallery_details_description_dropdown_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gallery_details_name_header"
                 tools:text="Gallery Description"
-                android:layout_below="@+id/gallery_details_name_header"
                 android:layout_margin="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-            <delit.piwigoclient.ui.common.button.CustomImageButton
+            <delit.libs.ui.view.button.CustomImageButton
                 android:id="@+id/gallery_details_description_dropdown_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/gallery_details_description_header"
-                android:layout_alignParentEnd="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_more_horiz_black_24px"/>
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/gallery_retryAction_actionButton"
@@ -107,11 +113,19 @@
             android:layout_marginBottom="30dp">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/gallery_action_tag_bulk"
+                android:id="@+id/gallery_action_permissions_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="10dp"
+                app:srcCompat="@drawable/ic_vpn_key_black_24dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/gallery_action_tag_bulk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_toEndOf="@+id/gallery_action_permissions_bulk"
                 app:srcCompat="@drawable/ic_add_tag_black_24dp" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -178,28 +192,28 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="14dp">
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_details_edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_details_save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/gallery_details_edit_button"
                     app:srcCompat="@drawable/ic_save_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_details_discard_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/gallery_details_save_button"
                     app:srcCompat="@drawable/ic_undo_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/album_add_new_album_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -207,26 +221,28 @@
                     android:layout_toStartOf="@+id/gallery_action_delete"
                     app:srcCompat="@drawable/ic_create_new_folder_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_action_paste"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/album_add_new_album_button"
                     app:srcCompat="@drawable/ic_content_paste_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_action_cut"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/gallery_action_paste"
                     app:srcCompat="@drawable/ic_content_cut_black_24px" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_action_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignWithParentIfMissing="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="0dp"
                     app:srcCompat="@drawable/ic_delete_black_24px" />
 
 
@@ -258,7 +274,8 @@
                         android:focusable="true"
                         android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="3"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:importantForAutofill="no" tools:targetApi="o"/>
 
                     <TextView
                         android:id="@+id/gallery_details_description_label"
@@ -277,7 +294,8 @@
                         android:layout_marginTop="2dp"
                         android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="10"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:importantForAutofill="no" tools:targetApi="o"/>
 
                     <TextView
                         android:id="@+id/gallery_details_status_label"
@@ -287,7 +305,7 @@
                         android:text="@string/gallery_details_status_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+                    <delit.libs.ui.view.button.AppCompatCheckboxTriState
                         android:id="@+id/gallery_details_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

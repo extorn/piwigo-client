@@ -37,14 +37,14 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
     public CookieImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         super(context);
         this.connectionPrefs = connectionPrefs;
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     @Override
     protected HttpURLConnection openConnection(Uri path) throws IOException {
         HttpURLConnection conn = super.openConnection(path);
 
-        PersistentCookieStore cookieStore = new PersistentCookieStore(context.getApplicationContext());
+        PersistentCookieStore cookieStore = new PersistentCookieStore(context);
 
         List<Cookie> cookies = cookieStore.getCookies();
         if (cookies.size() > 0) {

@@ -14,4 +14,17 @@
     <string name="alert_auto_upload_service_job_finished_failure">Abgeschlossener Hintergrund-Upload-Job zum Server %1$s. Es konnten keine Dateien hochgeladen werden. Job wird später erneut versucht.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Hintergrund-Upload-Service zur Überprüfung von Aufgaben</string>
     <string name="progress_creating_tag">Tag erstellen</string>
+    <string name="error_updating_favorites_pattern">Fehler beim Entfernen der Ressource (%1$s) aus den Favoriten: %2$s</string>
+    <string name="favorites_content_load_failed_text">Ressourcen, die als Favorit markiert waren, konnten nicht geladen werden</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Du hast beantragt, %1$d Ressourcen zu löschen. Möchten Sie diese aus allen Alben (und dem Server) löschen - dauerhaft, oder einfach von diesem Favoriten trennen?</string>
+    <string name="progress_remove_favorite_resources">Ressourcen aus der Favoritenliste entfernen</string>
+    <string name="favorites_empty_text">Du hast derzeit keine Favoriten</string>
+    <string name="favorites_heading">Ihre Favoriten</string>
+    <string name="button_unfavorite">Nicht Favorit</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Server Einstellungen</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Lokale Einstellungen</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload-Komprimierung</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindungsprofil auf Offline-Modus eingestellt. Job ignorieren</string>
+    <string name="ignoring_job_local_folder_not_found">Lokaler Ordner existiert nicht mehr. Job ignorieren</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Keine Dateierweiterungen zum Hochladen ausgewählt. Job ignorieren</string>
 </resources>

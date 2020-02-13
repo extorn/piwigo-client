@@ -5,10 +5,10 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class TagAddResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -29,7 +29,7 @@ public class TagAddResponseHandler extends AbstractPiwigoWsResponseHandler {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("name", tagname);
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

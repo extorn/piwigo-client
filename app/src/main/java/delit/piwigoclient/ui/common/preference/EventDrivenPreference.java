@@ -70,7 +70,7 @@ public abstract class EventDrivenPreference<T extends TrackableRequestEvent> ext
 
     public void persistStringValue(String value)
     {
-        final boolean changed = !TextUtils.equals(currentValue, value);
+        final boolean changed = !TextUtils.equals(getPersistedString(null), value);
         if (changed) {
             currentValue = value;
             persistString(value);

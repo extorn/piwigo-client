@@ -1,23 +1,24 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 
 /**
  * Created by gareth on 12/05/17.
  */
 
-public class OtherPreferenceFragment extends MyPreferenceFragment {
+public class OtherPreferenceFragment extends MyPreferenceFragment<OtherPreferenceFragment> {
 
-    // Not needed from API v23 and above
-    public Context getContext() {
-        return getActivity().getApplicationContext();
+    public OtherPreferenceFragment() {
+    }
+
+    public OtherPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
     }
 
     @Override

@@ -5,18 +5,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -26,9 +27,12 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.wunderlist.slidinglayer.CustomSlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -49,24 +54,24 @@ import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.business.video.RemoteDirectHttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
+import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.IOUtils;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
 
     private static final String TAG = "VideoItemFragment";
 
     private static final String STATE_CACHED_VIDEO_FILENAME = "cachedVideoFileName";
-    private static final String STATE_VIDEO_PLAY_AUTOMATICALLY = "videoPlayAutomatically";
+    private static final String ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY = "videoPlayAutomatically";
     private static final String STATE_VIDEO_IS_PLAYING = "videoIsPlayingWhenVisible";
     private static final String STATE_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
     private static final String STATE_PERMISSION_TO_CACHE_GRANTED = "permissionToCacheToDisk";
     private static final String STATE_CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
-    private static final String STATE_SHOWING_STANDALONE = "showingOutsideSlideshow";
+    private static final String ARG_AND_STATE_SHOWING_STANDALONE = "showingOutsideSlideshow";
 
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
@@ -85,7 +90,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private TextView downloadedByteCountView;
     private TextView cachedByteCountView;
-    private PlayerView simpleExoPlayerView;
     private CustomCacheListener cacheListener;
     private DefaultTrackSelector trackSelector;
     private boolean showingOutsideSlideshow;
@@ -93,15 +97,15 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     public AlbumVideoItemFragment() {
     }
 
-    public static Bundle buildStandaloneArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
-        Bundle b = buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay);
-        b.putBoolean(STATE_SHOWING_STANDALONE, true);
+    public static Bundle buildStandaloneArgs(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle b = buildArgs(modelType, albumId, albumItemId, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay);
+        b.putBoolean(ARG_AND_STATE_SHOWING_STANDALONE, true);
         return b;
     }
 
-    public static Bundle buildArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
-        Bundle args = SlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
-        args.putBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY, startPlaybackOnFragmentDisplay);
+    public static Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle args = SlideshowItemFragment.buildArgs(modelType, albumId, albumItemId, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
+        args.putBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY, startPlaybackOnFragmentDisplay);
         return args;
     }
 
@@ -149,13 +153,13 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     public void onSaveInstanceState(@NonNull Bundle outState) {
         logStatus("saving state");
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY, playVideoAutomatically);
+        outState.putBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY, playVideoAutomatically);
         outState.putBoolean(STATE_VIDEO_IS_PLAYING, videoIsPlayingWhenVisible);
         outState.putBoolean(STATE_PERMISSION_TO_CACHE_GRANTED, permissionToCache);
         outState.putString(STATE_CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
         outState.putString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
         outState.putLong(STATE_VIDEO_PLAYBACK_POSITION, videoPlaybackPosition);
-        outState.putBoolean(STATE_SHOWING_STANDALONE, showingOutsideSlideshow);
+        outState.putBoolean(ARG_AND_STATE_SHOWING_STANDALONE, showingOutsideSlideshow);
     }
 
     @Override
@@ -167,9 +171,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         trackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
 
-        String userAgent = Util.getUserAgent(getContext(), getActivity().getApplicationContext().getPackageName());
+        String userAgent = Util.getUserAgent(getContext(), getContext().getPackageName());
         cacheListener = new CustomCacheListener();
         dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, cacheListener, userAgent);
+        dataSourceFactory.setPerformUriPathSegmentEncoding(ConnectionPreferences.getActiveProfile().isPerformUriPathSegmentEncoding(getPrefs(), getContext()));
         PausableLoadControl.Listener loadControlPauseListener = dataSourceFactory.getLoadControlPauseListener();
 
         loadControl = new PausableLoadControl();
@@ -184,20 +189,19 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        super.onViewCreated(view, savedInstanceState);
-        setAllowDownload(false);
-
         if (getArguments() != null) {
             logStatus("loading arguments");
-            playVideoAutomatically = getArguments().getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
+            playVideoAutomatically = getArguments().getBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY);
+            showingOutsideSlideshow = getArguments().getBoolean(ARG_AND_STATE_SHOWING_STANDALONE);
+            // now initialise whether to play the video or not.
             videoIsPlayingWhenVisible = playVideoAutomatically;
-            showingOutsideSlideshow = getArguments().getBoolean(STATE_SHOWING_STANDALONE);
         }
         if (savedInstanceState != null) {
             logStatus("loading saved state");
-            showingOutsideSlideshow = savedInstanceState.getBoolean(STATE_SHOWING_STANDALONE);
-            playVideoAutomatically = savedInstanceState.getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
+            // these two are only ever loaded from the args... then state. (args are deleted though atm in super.super class!)
+            playVideoAutomatically = savedInstanceState.getBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY);
+            showingOutsideSlideshow = savedInstanceState.getBoolean(ARG_AND_STATE_SHOWING_STANDALONE);
+
             videoIsPlayingWhenVisible = savedInstanceState.getBoolean(STATE_VIDEO_IS_PLAYING);
             permissionToCache = savedInstanceState.getBoolean(STATE_PERMISSION_TO_CACHE_GRANTED);
             videoPlaybackPosition = savedInstanceState.getLong(STATE_VIDEO_PLAYBACK_POSITION);
@@ -209,6 +213,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
             originalVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME);
         }
+        super.onViewCreated(view, savedInstanceState);
+        setAllowDownload(false);
+
         logStatus("view state restored");
         displayItemDetailsControlsBasedOnSessionState();
     }
@@ -220,23 +227,89 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         logStatus("Creating item content");
 
         View itemContentView = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
-        simpleExoPlayerView = itemContentView.findViewById(R.id.slideshow_video_player);
+        PlayerView simpleExoPlayerView = itemContentView.findViewById(R.id.slideshow_video_player);
 
         downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
         cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
 
+        simpleExoPlayerView.getVideoSurfaceView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getOverlaysVisibilityControl().runWithDelay(getView());
+            }
+        });
 
-        CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
-        simpleExoPlayerView.setOnTouchListener(customTouchListener);
+        simpleExoPlayerView.getVideoSurfaceView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!isUseCache()) {
+                    stopVideoDownloadAndPlay();
+                    player.stop(); // this is terminal.
+                    videoPlaybackPosition = 0; // ensure it starts at the beginning again
+                    configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
+                }
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction(getUiHelper()));
+                return true;
+            }
+        });
 
         CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
         cacheListener.setTimebar(timebar);
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
+        player.addListener(new Player.DefaultEventListener() {
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+                Throwable e = error;
+                while (e != null) {
+                    if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException || e instanceof HttpDataSource.InvalidResponseCodeException) {
+                        break;
+                    }
+                    e = e.getCause();
+                }
+                if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException) {
+                    RemoteAsyncFileCachingDataSource.HttpIOException err = (RemoteAsyncFileCachingDataSource.HttpIOException) e;
+                    String response = null;
+                    try {
+                        response = new String(err.getResponseData());
+                    } catch (RuntimeException e1) {
+                        // do nothing.
+                    }
+                    getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
+                } else if (e instanceof HttpDataSource.InvalidResponseCodeException) {
+                    HttpDataSource.InvalidResponseCodeException err = (HttpDataSource.InvalidResponseCodeException) e;
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.responseCode, getModel().getDownloadFileName(getModel().getFullSizeFile())));
+                } else {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.error_unexpected_error_calling_server));
+                }
+            }
+        });
         simpleExoPlayerView.setPlayer(player);
-
+        View exoPlayerControlsView = simpleExoPlayerView.findViewById(R.id.exo_player_controls_container);
+        simpleExoPlayerView.setControllerVisibilityListener(new CustomVidePlayerControlsVisibilityListener(exoPlayerControlsView, getBottomSheet()));
         logStatus("finished created item content");
         return itemContentView;
+    }
+
+    private static class CustomVidePlayerControlsVisibilityListener implements PlayerControlView.VisibilityListener {
+
+        private final View playerControlsView;
+        private final CustomSlidingLayer videoMetadataContainerView;
+        private int naturalHeightPx = -1;
+
+        private CustomVidePlayerControlsVisibilityListener(View playerControlsView, CustomSlidingLayer videoMetadataContainerView) {
+            this.playerControlsView = playerControlsView;
+            this.videoMetadataContainerView = videoMetadataContainerView;
+        }
+
+        @Override
+        public void onVisibilityChange(int visibility) {
+            if (visibility == View.VISIBLE) {
+                videoMetadataContainerView.setVisibility(View.GONE);
+            } else {
+                videoMetadataContainerView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -247,7 +320,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
         if(event.item.getId() == this.getModel().getId() && isVisible() && showingOutsideSlideshow) {
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -268,7 +341,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     protected void doOnceOnPageSelectedAndAdded() {
         super.doOnceOnPageSelectedAndAdded();
-        configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
+        if (getParentFragment() != null) {
+            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
+        }
     }
 
     private void clearCacheAndRestartVideo() {
@@ -276,7 +351,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         player.stop(); // this is terminal.
         videoPlaybackPosition = 0; // ensure it starts at the beginning again
         try {
-            CacheUtils.deleteCachedContent(getContext(), getModel().getFullSizeFile().getUrl());
+            CacheUtils.deleteCachedContent(getContext(), getModel().getFileUrl(getModel().getFullSizeFile().getName()));
             // now update stored state and UI display
             setAllowDownload(false);
             displayItemDetailsControlsBasedOnSessionState();
@@ -305,16 +380,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (getUiHelper().getPermissionsNeededReason() == PERMISSIONS_FOR_DOWNLOAD) {
                 if (event.areAllPermissionsGranted()) {
-                    try {
-                        File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                        File toFile = new File(downloadsFolder, originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1"));
-                        IOUtils.copy(cachedVideoFile, toFile);
-                        onGetResource(new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(0, getModel().getFullSizeFile().getUrl(), toFile));
-                        getUiHelper().showToast(getString(R.string.alert_image_download_complete_message));
-                    } catch (IOException e) {
-                        Crashlytics.logException(e);
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern), e.getMessage()));
-                    }
+                    String downloadFilename = originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1");
+                    String remoteUri = getModel().getFileUrl(getModel().getFullSizeFile().getName());
+                    EventBus.getDefault().post(new DownloadFileRequestEvent(getModel().getName(), remoteUri, cachedVideoFile, downloadFilename));
+                    getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
                 } else {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
                 }
@@ -326,7 +395,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     logStatus("Not all permissions granted - tweak datasource factory settings and configure player now!");
                     permissionToCache = false;
                     if (isPrimarySlideshowItem()) {
-                        getUiHelper().showToast(R.string.video_caching_disabled_warning);
+                        getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_warning));
                     }
                 }
                 boolean factorySettingsAltered = dataSourceFactory.setCachingEnabled(isUseCache());
@@ -352,7 +421,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private void configureDatasourceAndPlayerRequestingPermissions(final boolean startPlayback) {
 
-        logStatus("configuring datasource factory with current cache enabled etc setttings");
+        logStatus("configuring datasource factory with current cache enabled etc settings");
 
         boolean factorySettingsAltered = dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
         factorySettingsAltered |= dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
@@ -360,7 +429,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         if (factorySettingsAltered) {
             logStatus("Need to create a new datasource");
             stopVideoDownloadAndPlay();
-            player.stop();
+            if (player != null) {
+                player.stop();
+            }
         }
         videoIsPlayingWhenVisible = startPlayback;
 
@@ -372,7 +443,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             logStatus("configuring datasource and player - no caching enabled - do now!");
             configurePlayer(videoIsPlayingWhenVisible);
             if (isPrimarySlideshowItem()) {
-                getUiHelper().showToast(R.string.video_caching_disabled_warning);
+                getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_warning));
             }
         }
     }
@@ -381,10 +452,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         if (player.getPlaybackState() == Player.STATE_IDLE) {
             logStatus("configuring the player with a brand new datasource from factory");
-            Uri videoUri = Uri.parse(getModel().getFullSizeFile().getUrl());
+            Uri videoUri = Uri.parse(getModel().getFileUrl(getModel().getFullSizeFile().getName()));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            if (connectionPrefs.isForceHttps(prefs, getContext()) && videoUri.getScheme().equalsIgnoreCase("http")) {
+            if (connectionPrefs.isForceHttps(prefs, getContext()) && "http".equalsIgnoreCase(videoUri.getScheme())) {
                 videoUri = videoUri.buildUpon().scheme("https").build();
             }
             ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(dataSourceFactory);
@@ -431,7 +502,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 CacheUtils.manageVideoCache(getContext(), maxCacheSizeBytes);
             } catch (IOException e) {
                 Crashlytics.logException(e);
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_tidying_video_cache));
+                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_tidying_video_cache));
             }
         }
     }
@@ -526,28 +597,17 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    private class CustomExoPlayerTouchListener extends CustomClickTouchListener {
-        public CustomExoPlayerTouchListener(View linkedView) {
-            super(linkedView);
+    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AlbumVideoItemFragment>> {
+
+        public ClearCachedContentAction(FragmentUIHelper<AlbumVideoItemFragment> uiHelper) {
+            super(uiHelper);
         }
 
         @Override
-        public void onLongClick() {
-            if (!isUseCache()) {
-                stopVideoDownloadAndPlay();
-                player.stop(); // this is terminal.
-                videoPlaybackPosition = 0; // ensure it starts at the beginning again
-                configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                getUiHelper().getParent().clearCacheAndRestartVideo();
             }
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
-
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if (Boolean.TRUE == positiveAnswer) {
-                        clearCacheAndRestartVideo();
-                    }
-                }
-            });
         }
     }
 }

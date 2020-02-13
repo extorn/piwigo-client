@@ -26,6 +26,7 @@ import com.google.android.exoplayer2.C;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,7 @@ import cz.msebera.android.httpclient.ConnectionClosedException;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 
 
@@ -55,10 +57,14 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private long totalFileContentBytes;
     private long lastContentByte;
     private long firstContentByte;
-    private CachedContent cacheMetaData;
+    private final CachedContent cacheMetaData;
     private boolean loadSucceeded;
     private boolean canParseResponseData;
     private boolean isIdle;
+    private boolean failed;
+    private Throwable error;
+    private int statusCode;
+    private byte[] responseData;
 
     public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) {
         super(cacheMetaData.getCachedDataFile(), false, false, usePoolThread);
@@ -68,7 +74,25 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
     @Override
     public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+        failed = true;
+        error = throwable;
+        this.statusCode = statusCode;
+    }
 
+    public byte[] getResponseData() {
+        return responseData;
+    }
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public Throwable getError() {
+        return error;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 
     @Override
@@ -99,6 +123,10 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 try {
                     if (canParseResponseData) {
                         storeResponseDataToRandomAccessFile(contentLength, instream);
+                    } else {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        IOUtils.write(instream, baos);
+                        responseData = baos.toByteArray();
                     }
                 } finally {
                     synchronized (cacheMetaData) {
@@ -122,7 +150,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
             existingRange = cacheMetaData.getRangeContaining(firstContentByte - 1);
         }
         FileChannel destinationChannel = null;
-        long onePercent = contentLength / 100; // send progress update every 1%
+        double onePercent = (double) contentLength / 100; // send progress update every 1%
         try {
             byte[] tmp = new byte[BUFFER_SIZE];
             ByteBuffer buffer = ByteBuffer.wrap(tmp);
@@ -168,7 +196,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     cacheMetaData.notifyAll();
                 }
 //                        destinationFile.write(tmp, 0, l);
-                int thisPercentDone = (int) (contentLength / onePercent);
+                int thisPercentDone = contentLength == 0 ? 0 : (int) Math.floor((double) contentLength / onePercent);
                 if (thisPercentDone > percentDone) {
                     percentDone = thisPercentDone;
                     sendProgressMessage(count, contentLength);
@@ -207,7 +235,10 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private void parseContentLengthDetails(HttpResponse httpResponse) {
         long contentLength = -1;
         Header header = httpResponse.getFirstHeader("Content-Length");
-        String contentLengthHeader = header.getValue();
+        String contentLengthHeader = null;
+        if (header != null) {
+            contentLengthHeader = header.getValue();
+        }
         if (!TextUtils.isEmpty(contentLengthHeader)) {
             try {
                 contentLength = Long.parseLong(contentLengthHeader);

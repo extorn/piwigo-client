@@ -14,10 +14,10 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 
 import cz.msebera.android.httpclient.Header;
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
 

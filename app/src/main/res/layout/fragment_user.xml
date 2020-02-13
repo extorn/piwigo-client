@@ -11,28 +11,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/user_action_edit_button"
             android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/user_action_save_button"
             android:layout_toEndOf="@id/user_action_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_save_black_24dp"/>
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/user_action_discard_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_undo_black_24dp"
             android:layout_toEndOf="@id/user_action_save_button"/>
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/user_action_delete_button"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
@@ -193,7 +193,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 tools:text="some text"/>
 
-            <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+            <delit.libs.ui.view.button.AppCompatCheckboxTriState
                 android:id="@+id/user_high_definition_field"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
@@ -242,7 +242,7 @@
                 android:layout_marginBottom="3dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-            <delit.piwigoclient.ui.common.list.ForcedMinimumHeightListView
+            <delit.libs.ui.view.list.ForcedMinimumHeightListView
                 android:id="@+id/user_access_rights"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

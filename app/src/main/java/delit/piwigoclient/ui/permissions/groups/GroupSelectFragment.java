@@ -2,14 +2,15 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -17,7 +18,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
 
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.model.piwigo.PiwigoGroups;
@@ -25,10 +31,6 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
@@ -94,11 +96,19 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             viewAdapter.toggleItemSelection();
         }
 
-        viewAdapter.setInitiallySelectedItems(getInitialSelection());
-        viewAdapter.setSelectedItems(getInitialSelection());
+        // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
+        HashSet<Long> currentSelection = getCurrentSelection();
+
+        // will restore previous selection from state if any
         setListAdapter(viewAdapter);
 
-        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
+
+        // select the items to view.
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(currentSelection);
+
+
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfGroups(getPrefs(), getActivity()));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
         getList().addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -131,8 +141,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -169,7 +178,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             }
 
             int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
-            groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+            groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
         } finally {
             groupsModel.releasePageLoadLock();
         }
@@ -208,7 +217,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
                 }
                 //TODO what if there are more than the max page size?! Paging needed :-(
                 // flag that this is a special one off load.
-                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(groupsNeededToBeLoaded).invokeAsync(getContext())), PagedList.MISSING_ITEMS_PAGE);
+                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(groupsNeededToBeLoaded)), PagedList.MISSING_ITEMS_PAGE);
                 return;
             } finally {
                 groupsModel.releasePageLoadLock();
@@ -218,7 +227,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         EventBus.getDefault().post(new GroupSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 

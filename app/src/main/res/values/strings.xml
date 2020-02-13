@@ -8,6 +8,7 @@
     <string name="unlicensed_dialog_body">Unable to validate license. Check to see if a network connection is available.</string>
     <string name="unlicensed_dialog_title">Application not licensed</string>
     <string name="application_error">Application error: %1$d</string>
+    <!--<string name="appbar_scrolling_view_behavior" translatable="false">delit.piwigoclient.ui.CustomScrollingViewBehavior</string>-->
 
     <string name="ad_id_album_banner" translatable="false">ca-app-pub-1408465472557768/1316125026</string>
     <string name="ad_id_album_create_banner" translatable="false">ca-app-pub-1408465472557768/9877975475</string>
@@ -23,10 +24,11 @@
     <string name="ad_id_app_top_tips_banner" translatable="false">ca-app-pub-1408465472557768/3659572555</string>
     <string name="ad_id_app_licences_banner" translatable="false">ca-app-pub-1408465472557768/5519449132</string>
     <string name="ad_id_app_eula_banner" translatable="false">ca-app-pub-1408465472557768/4753162372</string>
+    <string name="ad_id_reward_ad" translatable="false">ca-app-pub-1408465472557768/9874441359</string>
 
     <string name="app_name" translatable="false">PiwigoClient</string>
-    <string name="app_name_and_version_pattern" translatable="false">PiwigoClient v%1$s</string>
-    <string name="app_paid_name_and_version_pattern" translatable="false">PiwigoClient v%1$s (paid)</string>
+    <string name="app_name_and_version_pattern" translatable="false">PiwigoClient v%1$s (free)</string>
+    <string name="app_paid_name_and_version_pattern" translatable="false">PiwigoClient v%1$s</string>
 
     <string name="alert_title_permissions_needed">Extra Permissions Required</string>
     <string name="alert_write_permission_needed_for_download">Permission is needed to write to the filesystem in order to download files</string>
@@ -47,6 +49,7 @@
     <string name="gallery_photos_summary_text_pattern">%1$d photos</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$d sub-albums and %2$d photos</string>
     <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
+    <string name="alert_title_login">Login</string>
     <string name="alert_title_connectionTest">Connection Test</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warning\nServer did not report available image sizes.</string>
@@ -63,14 +66,20 @@
     <string name="button_close">Close</string>
     <string name="tools_menu_title">Tools</string>
     <string name="settings_menu_title">App Settings</string>
+    <string name="offline_mode_menu_title">Offline Mode</string>
+    <string name="online_mode_menu_title">Online Mode</string>
     <string name="gallery_menu_title">Gallery</string>
     <string name="upload_menu_title">Upload</string>
     <string name="upload_page_title">Piwigo Upload</string>
     <string name="gallery_to_alter_title">Upload to</string>
     <string name="login_button_title">Login</string>
 
+    <string name="alert_question_enable_network_access">Allow data retrieval from the server?</string>
+    <string name="alert_question_disable_network_access">Only use data already cached on this device?</string>
+
     <string name="upload_file_privacy_level_title">File Privacy Level</string>
     <string name="cacheCleared_title">Cache</string>
+    <string name="cacheClearingStarted_message">Clearing Cache</string>
     <string name="cacheCleared_message">Cache cleared. All images will be downloaded from the remote server when next requested.</string>
     <string name="cacheClearFailed_message">Cache could not be cleared at this time. If the problem continues, please report the error.</string>
     <string name="videoCacheCleared_message">Video Cache cleared. All videos will be downloaded from the remote server when next requested.</string>
@@ -115,6 +124,7 @@
 
     <string name="delete_upload_job_button_title">Delete Job</string>
     <string name="upload_files_button_title">Upload</string>
+    <string name="upload_files_finish_job_button_title">Finish</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup any files partially uploaded to the server (or use the preference in this app - upload settings page). Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
     <string name="loading_please_wait">Loading, Please wait</string>
@@ -312,6 +322,124 @@ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMP
 
 
 
+*** android-gif-drawable - pl.droidsonroids.gif:android-gif-drawable
+
+MIT License
+Copyright (c) 2016 Karol Wrótniak, Droids on Roids
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+SKIA:
+// Copyright (c) 2011 Google Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+GIFLIB:
+The GIFLIB distribution is Copyright (c) 1997  Eric S. Raymond
+
+ReLinker:
+Copyright 2015 KeepSafe Software, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+memset.arm.S:
+Copyright (C) 2010 The Android Open Source Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+memset32_neon.S:
+Copyright (c) 2009,2010, Code Aurora Forum. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file (SKIA section).
+
+
+
+
+
+
+*** qtfaststart - https://github.com/ypresto/qtfaststart-java
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Yuya Tanaka
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 *** Android-Rate - com.github.hotchemi:android-rate
 
@@ -344,7 +472,6 @@ SOFTWARE.
 *** play-services-oss-licenses
 *** com.android.support
 
-
 *** GSON - https://github.com/google/gson - Apache License 2.0
 *** Picasso - http://square.github.io/picasso/ - Copyright 2013 Square, Inc. - Apache License 2.0
 *** Material Icons - https://material.io/icons - Apache License 2.0
@@ -353,6 +480,7 @@ SOFTWARE.
 *** android-async-http - http://loopj.com/android-async-http/ - Apache License 2.0
 *** android-sliding-layer-lib - https://github.com/wunderlist/android-sliding-layer-lib - Apache License 2.0
 *** Metadata Extractor - https://drewnoakes.com/code/exif/ - Apache License 2.0
+*** Compressor - https://github.com/zetbaitsu/Compressor - Apache License 2.0
 
  Apache License
                            Version 2.0, January 2004
@@ -557,7 +685,11 @@ SOFTWARE.
     <string name="files_for_upload_title">Files for Upload</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Download</string>
-    <string name="alert_image_download_message">Please choose the file size you wish to download</string>
+    <string name="alert_image_download_message">Please choose a file size</string>
+    <string name="action">Action</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="download_file">Download File</string>
+    <string name="share_with_an_app">Share with an App</string>
     <string name="alert_image_show_image_title">Image Render Control</string>
     <string name="alert_image_show_image_message">Please choose the file size you wish to view</string>
     <string name="alert_image_download_complete_message">Download complete.</string>
@@ -673,6 +805,8 @@ SOFTWARE.
     <string name="error_upload_file_verification_failed">Verification of file on server failed for upload of %1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">This file has been partially uploaded and you must remember to click the upload button after this to remove the corrupt file from the server. Continue?</string>
     <string name="alert_message_file_upload_cancelled_pattern">Upload of file (%1$s) cancelled.</string>
+    <string name="alert_message_upload_cancelled">Upload cancelled</string>
+    <string name="alert_message_upload_cancelled_message">If you don\'t wish to restart the upload later. You should remove the files from the upload job, then click upload. This will clean the cancelled upload state from the server.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">The image size you have selected is not natively supported by the server you are connected to. The server will return the \"nearest match\" sized image.</string>
     <string name="logging_out_of_piwigo_pattern">Logging out of %1$s</string>
     <string name="loading_new_server_configuration">Loading new server connection configuration</string>
@@ -689,7 +823,7 @@ SOFTWARE.
     <string name="alert_add_cert_to_truststore_pattern">Add Certificate chain to list of trusted CAs?\n\n</string>
     <string name="certificate_summary_pattern">Subject: %1$s\nValid: %2$s - %3$s\nSerial: %4$s</string>
     <string name="alert_http_engine_shutdown">HTTP Engine shutdown. Will be restarted automatically as needed.</string>
-    <string name="certificate_chain_seperator"><![CDATA[\n\n---->\n\n]]></string>
+    <string name="certificate_chain_seperator" translatable="false"><![CDATA[\n\n---->\n\n]]></string>
     <string name="alert_clearing_certificate_use_history">Resetting the list of certificates chosen to be trusted</string>
     <string name="alert_delete_all_files_selected_for_upload">Delete all files selected for upload?</string>
     <string name="alert_partial_upload_deleted">Cancelling a file upload after it has been partially transferred to the server will result in the partial upload remaining on the server. Manually clean the upload folder on the server (e.g. /var/www/piwigo/upload/buffer) to save space.</string>
@@ -709,6 +843,7 @@ SOFTWARE.
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">These permissions are needed to start an upload process, and then keep the upload process running once the screen has switched off</string>
     <string name="alert_no_scheme_specified">You must prefix your server address with either http:// or https://. No other schemes are supported. Port is optional if the default - 80 for http or 443 for https. Example http://piwigo.org/demo or http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">The following %1$d files exceeded the warning threshold: %2$s. Would you like to remove these from the upload?</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">Would you like to compress any videos before upload?</string>
     <string name="alert_trusted_certificates_polling">Untrusted certificates supplied by the server upon connection will be presented to you so as you may choose to add these to the trust store. If you decline, you will not be prompted again for the same certificate. In order to be prompted again, deselect and reselect the option to use a custom trusted certificate store.</string>
     <string name="button_copy_link">Copy Link</string>
     <string name="download_link_clipboard_data_desc">Download link for %1$s</string>
@@ -724,8 +859,8 @@ SOFTWARE.
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Error Uploading</string>
-    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. You can retry the job later and it may well succeed, or you can delete this job from the device and then manually clean up any incomplete changes made to the server. Delete Job?</string>
-    <string name="alert_message_error_uploading_start">An error occurred before uploading all files. You can retry the job later and it may well succeed, but you can delete this job from the device, but manually clean up any incomplete changes made to the server. Delete Job?</string>
+    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. Restart the upload to continue from where it got to and clear any residual temporary data from the server.</string>
+    <string name="alert_message_error_uploading_start">An error occurred before successful uploading all files. Either restart the upload to continue from where it got to, or, delete any remaining files from the job, then click on the finish button to clear any residual temporary data from the server.</string>
     <string name="release_history">Release History</string>
     <string name="planned_releases">Planned Releases</string>
     <string name="tags_heading">Tags</string>
@@ -736,6 +871,7 @@ SOFTWARE.
     <string name="tag_usage_count_pattern">(%1$d uses)</string>
     <string name="progress_loading_tag_details">Retrieving resources matching tag</string>
     <string name="tags_menu_title">Tags</string>
+    <string name="favorites_menu_title">Favorites</string>
     <string name="tag_empty_text">No items tagged with this tag</string>
     <string name="tag_content_load_failed_text">Failed to load resources linked to tag</string>
     <string name="tag_heading">Tag</string>
@@ -785,7 +921,9 @@ SOFTWARE.
     <string name="alert_temporary_upload_album_deleted">Temporary upload album deleted successfully</string>
     <string name="alert_deleting_temporary_upload_album">Deleting temporary upload album</string>
     <string name="alert_invalid_uri_pattern">Invalid URI. %1$s</string>
+    <string name="alert_invalid_uri_pattern_spaces">Invalid URI. There is a space character in the URI at position %1$d</string>
     <string name="album_section_heading_albums">albums</string>
+    <string name="album_section_heading_albums_pattern">albums (%1$d)</string>
     <string name="album_section_heading_resources">photos in this album</string>
     <string name="album_title_home">home</string>
     <string name="upload_file_rating">My rating</string>
@@ -824,4 +962,59 @@ SOFTWARE.
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Your version of PiwigoClientWsExts is out dated. Please update it as a priority.</string>
     <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
     <string name="please_read_and_agree_with_eula_first">Please read and confirm agreement with the terms of the EULA first</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled">Required Permissions were not granted. Action cancelled.</string>
+    <string name="default_str">default</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
+    <string name="alert_plugin_required_pattern">%1$s Server Plugin Required - Version %2$s or newer</string>
+    <string name="certificate_chain_not_verifiable_error">Certificate chain could not be verified using the certificates on this device.</string>
+    <string name="certificate_chain_not_verifiable_error_detail">Certificate chain could not be verified using the certificates on this device. To resolve this, allow this app to maintain a list of trusted certificates (within this app connection settings).</string>
+    <string name="undefined_error_msg">Undefined error</string>
+    <string name="resource_unavailable_error_msg_pattern">Requested resource could not be accessed.\nHTTP Status Code (%1$d)</string>
+    <string name="server_error_msg_pattern">Something went wrong in the server or between the server and your device.\nHTTP Status Code (%1$d)</string>
+    <string name="redirect_error_msg_pattern">Request redirection error :\nHTTP Status Code (%1$d)</string>
+    <string name="http_error_msg_pattern">HTTP Error Message (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Unexpected response : \nHTTP Status Code (%1$d)</string>
+    <string name="connection_error_msg_pattern">Unable to connect to server</string>
+    <string name="preference_corrupt_please_re_type_pattern">"Preference %1$s is irretrievable and has been defaulted to %2$s. Please reset this value in the app settings"</string>
+    <string name="switch_to_cached_mode">The server is presently not available. Use cached data?</string>
+    <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="compress_videos">Compress Videos</string>
+    <string name="compress_images">Compress Images</string>
+    <string name="upload_tab_title_settings">Settings</string>
+    <string name="upload_tab_title_files">Files</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">Unable to handle shared File. Missing detailed information such as filename and exact file type. Please download the file to your device first.</string>
+    <string name="alert_internal_server_exposed_pattern">Unexpected authority %1$s found in url and replaced with %2$s. Your server could be misconfigured.</string>
+    <string name="buy_time_menu_title">Hide Adverts</string>
+    <string name="watch_advert_to_buy_advert_free_time">Would you like to watch an advertisement to buy a short period without any adverts? You can do this multiple times to increase the length of time if wanted.</string>
+    <string name="reward_video_not_yet_loaded">Sorry, but the reward video has not yet loaded. Please try again later.</string>
+    <string name="bought_time_menu_title_pattern">Adverts in %1$02d:%2$02d</string>
+    <string name="allow_upload_of_incompressible_videos">Upload raw file if unable to compress</string>
+    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
+    <string name="upload_status_tab_title_details">Details</string>
+    <string name="upload_status_tab_title_errors">Errors</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API Call %1$s reports file checksum doesn\'t match, but API call %2$s reports that it matches. This could be a bug in the PIWIGO server or a plugin you use, and may be worth reporting.</string>
+    <string name="alert_bulk_image_permissions_title">Set Access Permissions</string>
+    <string name="alert_bulk_image_permissions_message">Set access permission levels for the %1$d selected resources</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Unable to handle files shared with an %1$s mime type</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">Files with the following extensions cannot be uploaded and have been removed: %1$s</string>
+    <string name="please_select_a_parent_album">Please select a parent album</string>
+    <string name="unsupported_device">Sorry, this device is not supported. There is an issue with accessing Google Play Services.</string>
+    <string name="hint_album_view">Tap at the bottom of the screen to bring up details for this album</string>
+    <string name="usage_hint_title">Hint</string>
+    <string name="hint_slideshow_view_1">Tap at the bottom of the screen or on the resource name to bring up details for this resource</string>
+    <string name="hint_slideshow_view_2">Swipe left or right to navigate between resources</string>
+    <string name="hint_slideshow_item_view_1">Rating can be adjusted by tapping or swiping on the desired star rating. This has immediate effect.</string>
+    <string name="hint_slideshow_view_3">To mark this resource as a favorite, tap the heart icon to right of image resource name</string>
+    <string name="hint_navigation_panel_1">Tap on the app icon above to force a server log out and log in</string>
+    <string name="user_details_not_found_on_server">Unable to find user details on server</string>
+    <string name="resource_queued_for_download">Resource queued for download. It is position %1$d in the queue.</string>
+    <string name="alert_message_showing_images_of_size">Showing images from server of size %1$s</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">Showing image thumbnails from server of size %1$s</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">Showing album thumbnails from server of size %1$s</string>
+    <string name="subAlbum_text" translatable="false">... / %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Error while compressing file for upload %1$s</string>
+    <string name="uploading_progress_bar_message">Uploading</string>
+    <string name="compressing_progress_bar_message">Compressing</string>
+    <string name="warning_missing_tags_links_removed_from_resource">Not all Tags linked to this item still exist in the database. The links to %1$d have been removed</string>
+    <string name="button_stop_warning_me">Don\'t tell me again</string>
 </resources>

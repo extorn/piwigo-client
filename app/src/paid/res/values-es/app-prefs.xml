@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <!-- Automatic Upload Jobs page -->
+
+    <string name="preference_page_auto_upload_jobs">Subidas automáticas</string>
+    <string name="preference_data_upload_automatic_title">Subidas automáticas</string>
+    <string name="preference_data_upload_automatic_job_title">Trabajo automático de carga de archivos</string>
+
+    <!-- prefs -->
+
+    <string name="preference_data_upload_automatic_upload_enable_summary">Habilitar carga de archivos en segundo plano</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Subidas automáticas</string>
+
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilice solo la carga inalámbrica automática de archivos</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo por conexión inalámbrica</string>
+
+
+    <string name="preference_data_upload_automatic_upload_jobs_title">Trabajos de carga automática</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Empleos</string>
+
+    <!-- boolean flag set that if false will stop the job running -->
+
+    <string name="preference_data_upload_automatic_job_view_status_title">Ver estado de carga</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Ver el estado de la última ejecución de trabajo (si está disponible)</string>
+
+    <string name="preference_data_upload_automatic_job_is_valid_title">El trabajo es valido</string>
+
+    <string name="preference_data_upload_automatic_job_enabled_summary">¿Este trabajo está escuchando en el fondo?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Trabajo habilitado</string>
+
+
+    <string name="preference_data_upload_automatic_job_server_title">Subir al servidor</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Perfil:%1$s</string>
+
+    <string name="preference_data_upload_automatic_job_server_album_title">Subir al álbum</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">Subir desde carpeta</string>
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Eliminar archivos cargados correctamente</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Eliminación automática</string>
+
+
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Tamaño máximo de archivo cargado</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensiones de archivo</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Subir archivos con ext%1$s</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Nivel de privacidad</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Archivos cargados visibles para%1$s</string>
+
+
+</resources>

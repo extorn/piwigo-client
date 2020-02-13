@@ -6,16 +6,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.view.Enableable;
+import delit.libs.ui.view.list.SelectableItemsAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.Enableable;
-import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 
 /**
  * Created by gareth on 03/01/18.
  */
 
-public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter, Z extends BaseRecyclerViewAdapterPreferences> extends LongSetSelectFragment<RecyclerView, X, Z> {
+public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter<?>, Z extends BaseRecyclerViewAdapterPreferences> extends LongSelectableSetSelectFragment<RecyclerView, X, Z> {
 
     @Override
     @LayoutRes
@@ -33,7 +33,7 @@ public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & S
 
     @Override
     protected void selectOnlyListItems(Set<Long> selectionIds) {
-        getListAdapter().setSelectedItems(new HashSet(selectionIds));
+        getListAdapter().setSelectedItems(new HashSet<>(selectionIds));
     }
 
     @Override

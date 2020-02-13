@@ -4,9 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.util.DisplayUtils;
 
 public class AlbumViewPreferences {
 
@@ -19,11 +26,11 @@ public class AlbumViewPreferences {
         }
     }
 
-    public static int getDefaultImagesColumnCount(Activity activity, int screenOrientation) {
+    public static int getDefaultImagesColumnCount(@NonNull Activity activity, int screenOrientation) {
         return DisplayUtils.getDefaultColumnCount(activity, screenOrientation, 1);
     }
 
-    public static int getDefaultAlbumColumnCount(Activity activity, int screenOrientation) {
+    public static int getDefaultAlbumColumnCount(@NonNull Activity activity, int screenOrientation) {
         return DisplayUtils.getDefaultColumnCount(activity, screenOrientation, 2);
     }
 
@@ -65,12 +72,22 @@ public class AlbumViewPreferences {
         return prefs.getString(context.getString(R.string.preference_gallery_album_thumbnail_size_key), context.getString(R.string.preference_gallery_album_thumbnail_size_default));
     }
 
-    public static String getKnownMultimediaExtensions(SharedPreferences prefs, Context context) {
-        return prefs.getString(context.getString(R.string.preference_piwigo_playable_media_extensions_key), context.getString(R.string.preference_piwigo_playable_media_extensions_default));
+    public static Set<String> getKnownMultimediaExtensions(SharedPreferences prefs, Context context) {
+
+        Set<String> value = prefs.getStringSet(context.getString(R.string.preference_piwigo_playable_media_extensions_key), null);
+        if (value == null) {
+            value = new HashSet<>();
+            Collections.addAll(value, context.getResources().getStringArray(R.array.preference_piwigo_playable_media_extensions_default));
+        }
+        return value;
     }
 
     public static String getResourceSortOrder(SharedPreferences prefs, Context context) {
-        return prefs.getString(context.getString(R.string.preference_gallery_sortOrder_key), context.getString(R.string.preference_gallery_sortOrder_default));
+        return prefs.getString(context.getString(R.string.preference_gallery_sort_order_key), context.getString(R.string.preference_gallery_sort_order_default));
+    }
+
+    public static boolean getResourceSortOrderInverted(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_sort_order_inverted_key), context.getResources().getBoolean(R.bool.preference_gallery_sort_order_inverted_default));
     }
 
     public static int getResourceRequestPageSize(SharedPreferences prefs, Context context) {
@@ -88,4 +105,24 @@ public class AlbumViewPreferences {
     public static boolean isIncludeVideosInSlideshow(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_include_videos_in_slideshow_key), context.getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
     }
+
+    public static boolean isSlideshowExtraInfoShadowTransparent(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_transparent_extra_info_shadow_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_transparent_extra_info_shadow_default));
+    }
+
+
+    public static int getAlbumChildAlbumsSortOrder(SharedPreferences prefs, Context context) {
+        return prefs.getInt(context.getString(R.string.preference_album_subalbum_sort_order_key), context.getResources().getInteger(R.integer.preference_album_subalbum_sort_order_default));
+    }
+
+    public static ImageView.ScaleType getSlideshowImageScalingType(SharedPreferences prefs, Context context) {
+        String scaleTypeName = prefs.getString(context.getString(R.string.preference_gallery_slideshow_image_scaletype_key), context.getResources().getString(R.string.preference_gallery_slideshow_image_scaletype_default));
+        return ImageView.ScaleType.valueOf(scaleTypeName);
+    }
+
+    public static boolean isRotateImageSoAspectMatchesScreenAspect(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_image_rotate_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_image_rotate_default));
+    }
+
+
 }

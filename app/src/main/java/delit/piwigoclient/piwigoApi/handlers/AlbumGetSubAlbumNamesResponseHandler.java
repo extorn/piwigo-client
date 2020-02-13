@@ -11,11 +11,11 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -49,26 +49,33 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
-        JsonObject result = rsp.getAsJsonObject();
-        ArrayList<CategoryItemStub> availableGalleries = null;
+        ArrayList<CategoryItemStub> availableGalleries;
 
-        if(result.has("categories")) {
-            JsonElement elem = result.get("categories");
-            if(elem != null && !elem.isJsonNull()) {
-                JsonArray categories = elem.getAsJsonArray();
-                availableGalleries = new ArrayList<>(categories.size());
-                parseCategories(categories, availableGalleries);
-            }
+        if (rsp.isJsonArray()) {
+            availableGalleries = parseCategoriesArray(rsp);
         } else {
-            JsonElement elem = result.get("item");
-            if(elem != null && !elem.isJsonNull()) {
-                JsonArray categories = elem.getAsJsonArray();
-                availableGalleries = new ArrayList<>(categories.size());
-                parseCategories(categories, availableGalleries);
+            JsonObject result = rsp.getAsJsonObject();
+            if (result.has("categories")) {
+                JsonElement elem = result.get("categories");
+                availableGalleries = parseCategoriesArray(elem);
+            } else {
+                JsonElement elem = result.get("item");
+                availableGalleries = parseCategoriesArray(elem);
             }
         }
         PiwigoGetSubAlbumNamesResponse r = new PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries, isCached);
         storeResponse(r);
+    }
+
+    private ArrayList<CategoryItemStub> parseCategoriesArray(JsonElement elem) throws JSONException {
+        if (elem != null && !elem.isJsonNull()) {
+            JsonArray categories = elem.getAsJsonArray();
+            ArrayList<CategoryItemStub> availableGalleries = new ArrayList<>(categories.size());
+            parseCategories(categories, availableGalleries);
+            return availableGalleries;
+        } else {
+            return new ArrayList<>(0);
+        }
     }
 
     private void parseCategories(JsonArray categories, ArrayList<CategoryItemStub> availableGalleries) {
@@ -85,9 +92,17 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             if (category.has("id_uppercat")
                     && !category.get("id_uppercat").isJsonNull()) {
                 parentId = category.get("id_uppercat").getAsLong();
+            } else if (category.has("uppercats")) {
+                String[] parentage = category.get("uppercats").getAsString().split(",");
+                if (parentage.length > 1) {
+                    parentId = Long.valueOf(parentage[parentage.length - 2]);
+                } else {
+                    parentId = 0L;
+                }
             }
+
             CategoryItemStub album = new CategoryItemStub(name, id, null);
-            if (parentId != null) {
+            if (parentId != null && parentId != 0) {
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
                 if (parentAlbum != null) {
                     album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());

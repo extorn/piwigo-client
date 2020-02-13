@@ -3,6 +3,17 @@
 
     <group android:checkableBehavior="none">
 
+
+        <item
+            android:id="@+id/nav_online_mode"
+            android:icon="@drawable/ic_airplanemode_inactive_black_24dp"
+            android:title="@string/online_mode_menu_title" />
+
+        <item
+            android:id="@+id/nav_offline_mode"
+            android:icon="@drawable/ic_airplanemode_active_black_24dp"
+            android:title="@string/offline_mode_menu_title" />
+
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
@@ -27,6 +38,11 @@
             android:id="@+id/nav_tags"
             android:icon="@drawable/ic_tag_black_24dp"
             android:title="@string/tags_menu_title" />
+
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_favorite_black_24px"
+            android:title="@string/favorites_menu_title" />
 
         <item
             android:id="@+id/nav_settings"
@@ -62,5 +78,10 @@
             android:id="@+id/nav_unlock"
             android:icon="@drawable/ic_lock_open_black_24dp"
             android:title="@string/unlock_menu_title" />
+
+        <item
+            android:id="@+id/nav_buy_time"
+            android:icon="@drawable/ic_access_time_black_24dp"
+            android:title="@string/buy_time_menu_title" />
     </group>
 </menu>

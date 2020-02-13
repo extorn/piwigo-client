@@ -1,14 +1,15 @@
 package delit.piwigoclient.ui.upload;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -19,13 +20,13 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
-public class UploadJobStatusDetailsFragment extends MyFragment {
+public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDetailsFragment> {
     private static final String STATE_UPLOAD_JOB_ID = "uploadJobId";
     private UploadJob uploadJob;
 
@@ -69,7 +70,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
         }
 
         if(uploadJob == null) {
-            getFragmentManager().popBackStack();
+            getParentFragmentManager().popBackStack();
             return;
         }
 
@@ -126,9 +127,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
 
         public UploadJobErrorsListAdapter(LinkedHashMap<Date,String> errors) {
             this.dataIndex = new ArrayList<Map.Entry<Date, String>>();
-            for(Map.Entry<Date,String> d : errors.entrySet()) {
-                dataIndex.add(d);
-            }
+            dataIndex.addAll(errors.entrySet());
         }
 
         @Override
@@ -160,10 +159,10 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
             if(v == null) {
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_list_item, null);
             }
-            TextView view = v.findViewById(R.id.name);
+            TextView view = v.findViewById(R.id.list_item_name);
             view.setText(piwigoDateFormat.format(thisDataItem.getKey()));
 
-            view = v.findViewById(R.id.details);
+            view = v.findViewById(R.id.list_item_details);
             view.setText(thisDataItem.getValue());
 
             return v;

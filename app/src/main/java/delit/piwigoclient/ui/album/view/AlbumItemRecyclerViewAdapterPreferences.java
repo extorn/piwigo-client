@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import java.util.Date;
 
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
 public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
     public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;

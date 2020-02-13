@@ -1,40 +1,77 @@
 package delit.piwigoclient.ui;
 
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.FrameLayout;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.appbar.AppBarLayout;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
+import java.util.Iterator;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.ProgressIndicator;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.IOUtils;
+import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
@@ -46,17 +83,22 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
+import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
+import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
-import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
+import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
+import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
 import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
 import delit.piwigoclient.ui.events.GenericLowMemoryEvent;
@@ -65,6 +107,7 @@ import delit.piwigoclient.ui.events.MemoryTrimmedRunningAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
+import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
@@ -78,6 +121,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -87,22 +131,30 @@ import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
-import delit.piwigoclient.util.DisplayUtils;
-import delit.piwigoclient.util.VersionUtils;
 import hotchemi.android.rate.MyAppRate;
 
-public abstract class AbstractMainActivity extends MyActivity implements ComponentCallbacks2 {
+import static android.view.View.VISIBLE;
+
+public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> extends MyActivity<T> implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
+    private static final String STATE_QUEUED_DOWNLOADS = "queuedDownloads";
+    private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
+    private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
+    private static final String MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE = "id_downloadedFile";
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
     private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
     private Toolbar toolbar;
+    private AppBarLayout appBar;
+    //TODO move the download mechanism into a background service so it isn't cancelled if the user leaves the app.
+    private final ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
+    private final ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
 
     public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
         final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
@@ -130,13 +182,24 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        LoaderManager.getInstance(this).getLoader(0);
         outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putParcelable(STATE_BASKET, basket);
+        outState.putParcelableArrayList(STATE_ACTIVE_DOWNLOADS, activeDownloads);
+        outState.putParcelableArrayList(STATE_QUEUED_DOWNLOADS, queuedDownloads);
+//        if(BuildConfig.DEBUG) {
+//            getSupportFragmentManager().enableDebugLogging(true);
+//        }
         super.onSaveInstanceState(outState);
-
         if(BuildConfig.DEBUG) {
-            BundleUtils.logSize("Current Activity", outState);
+//            getSupportFragmentManager().enableDebugLogging(false);
+            BundleUtils.logSizeVerbose("Current Main Activity", outState);
         }
+    }
+
+    @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
     }
 
     @Override
@@ -145,12 +208,23 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         if (savedInstanceState != null) {
             currentAlbum = savedInstanceState.getParcelable(STATE_CURRENT_ALBUM);
             basket = savedInstanceState.getParcelable(STATE_BASKET);
+            ArrayList<DownloadFileRequestEvent> readVal;
+            readVal = savedInstanceState.getParcelableArrayList(STATE_QUEUED_DOWNLOADS);
+            if (readVal != null) {
+                queuedDownloads.addAll(readVal);
+            }
+            readVal = savedInstanceState.getParcelableArrayList(STATE_ACTIVE_DOWNLOADS);
+            if (readVal != null) {
+                activeDownloads.addAll(readVal);
+            }
         }
 
         setContentView(R.layout.activity_main);
+
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        appBar = findViewById(R.id.appbar);
         /*
         Floating action button (all screens!) - if wanted
 
@@ -158,14 +232,47 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         fab.setOnClickListener(pkg View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.makeSnackbar(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });*/
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ViewCompat.setOnApplyWindowInsetsListener(drawer, new OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
+                    if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
+                        insets.replaceSystemWindowInsets(
+                                insets.getStableInsetLeft(),
+                                0,
+                                insets.getStableInsetRight(),
+                                0);
+                        insets.consumeStableInsets();
+                        //TODO forcing the top margin like this is really not a great idea. Find a better way.
+                        ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
+                    } else {
+                        if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
+                            int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
+                            if (topMargin == 0) {
+                                ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
+                            }
+                        }
+                    }
+                    return insets;
+                }
+            });
+        }
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                ((CustomNavigationView) drawerView).onDrawerOpened();
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -210,9 +317,28 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         super.onResume();
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        Dialog dialog = googleApi.getErrorDialog(this, result, new Random().nextInt());
-        if(dialog != null) {
-            dialog.show();
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleApi.isUserResolvableError(result)) {
+                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
+                d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (!BuildConfig.DEBUG) {
+                            finish();
+                        }
+                    }
+                });
+                d.show();
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                        if (!BuildConfig.DEBUG) {
+                            finish();
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -234,19 +360,26 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (preferencesShowing) {
-
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-
-            if (!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
-                doDefaultBackOperation();
-            } else {
-                // pop the current fragment off, close app if it is the last one
-                doDefaultBackOperation();
-            }
         } else {
             // pop the current fragment off, close app if it is the last one
-            doDefaultBackOperation();
+            boolean blockDefaultBackOperation = false;
+            if (backstackCount == 1) {
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
+                if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
+                    // get the next album to show
+                    CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
+                    if (nextAlbumToShow != null) {
+                        // remove this fragment (so we don't have an illogical fragment back-stack - child album first)
+                        removeFragmentsFromHistory(ViewAlbumFragment.class, true);
+                        // open this fragment again, but with new album
+                        showGallery(nextAlbumToShow);
+                        blockDefaultBackOperation = true;
+                    }
+                }
+            }
+            if (!blockDefaultBackOperation) {
+                doDefaultBackOperation();
+            }
         }
     }
 
@@ -275,7 +408,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!hasAgreedToEula()) {
-            getUiHelper().showDetailedToast(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
+            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
             return true;
         }
         // Handle action bar item clicks here. The action bar will
@@ -302,17 +435,319 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         showFragmentNow(EulaFragment.newInstance());
     }
 
+    protected abstract void showFavorites();
+
     private void showGallery(final CategoryItem gallery) {
-        if (CategoryItem.ROOT_ALBUM.equals(gallery)) {
+        boolean restore = false;
+        if (gallery != null && gallery.isRoot()) {
             // check if we've shown any albums before. If so, pop everything off the stack.
-            removeFragmentsFromHistory(ViewAlbumFragment.class, true);
+            if (!removeFragmentsFromHistory(ViewAlbumFragment.class, true)) {
+                // we're opening the activity freshly.
+
+                // check for reopen details and use them instead if possible.
+                if (AbstractViewAlbumFragment.canHandleReopenAction(getUiHelper())) {
+                    restore = true;
+                }
+
+            }
         }
-        showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
+        if (restore) {
+            showFragmentNow(new ViewAlbumFragment(), true);
+        } else {
+            showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
+        }
         AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(DownloadFileRequestEvent event) {
+        synchronized (activeDownloads) {
+            queuedDownloads.add(event);
+            if (activeDownloads.size() == 0) {
+                processNextQueuedDownloadEvent();
+            } else {
+                getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_queued_for_download, queuedDownloads.size()));
+            }
+        }
+    }
+
+    protected void processNextQueuedDownloadEvent() {
+        synchronized (activeDownloads) {
+            DownloadFileRequestEvent nextEvent = queuedDownloads.remove(0);
+            File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File destinationFile = new File(downloadsFolder, nextEvent.getOutputFilename());
+            activeDownloads.add(nextEvent);
+
+            if (nextEvent.getLocalFileToCopy() != null) {
+                try {
+                    IOUtils.copy(nextEvent.getLocalFileToCopy(), destinationFile);
+                    onFileDownloaded(nextEvent.getRemoteUri(), destinationFile);
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
+                }
+            } else {
+                nextEvent.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(nextEvent.getRemoteUri(), destinationFile), new DownloadAction()));
+            }
+        }
+    }
+
+//TODO add some sort of cancel operation  if the activity is backgrounded perhaps.
+//    @Override
+//    public void onDetach() {
+//        if (activeDownloadAction != null) {
+//            EventBus.getDefault().post(new CancelDownloadEvent(activeDownloadAction.getActiveDownloadActionId()));
+//        }
+//        super.onDetach();
+//    }
+//
+//    private static class DownloadAction implements Parcelable {
+//        private long activeDownloadActionId;
+//        private boolean shareDownloadedResource;
+//
+//        public DownloadAction(long activeDownloadActionId, boolean shareDownloadedResource) {
+//            this.activeDownloadActionId = activeDownloadActionId;
+//            this.shareDownloadedResource = shareDownloadedResource;
+//        }
+//
+//        public DownloadAction(Parcel in) {
+//            activeDownloadActionId = in.readLong();
+//            shareDownloadedResource = ParcelUtils.readBool(in);
+//        }
+//
+//        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
+//            public DownloadAction createFromParcel(Parcel in) {
+//                return new DownloadAction(in);
+//            }
+//
+//            public DownloadAction[] newArray(int size) {
+//                return new DownloadAction[size];
+//            }
+//        };
+//
+//        @Override
+//        public int describeContents() {
+//            return 0;
+//        }
+//
+//        public long getActiveDownloadActionId() {
+//            return activeDownloadActionId;
+//        }
+//
+//        public boolean isShareDownloadedResource() {
+//            return shareDownloadedResource;
+//        }
+//
+//        @Override
+//        public void writeToParcel(Parcel dest, int flags) {
+//            dest.writeLong(activeDownloadActionId);
+//            ParcelUtils.writeBool(dest, shareDownloadedResource);
+//        }
+//    }
+
+
+    public void onFileDownloaded(String remoteUri, File destinationFile) {
+        // add the file details to the media store :-)
+        MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, destinationFile));
+        DownloadFileRequestEvent event = removeActionDownloadEvent();
+        if (event != null) {
+            if (event.isShareDownloadedWithAppSelector()) {
+                shareFileDownloaded(this, destinationFile);
+            } else {
+                notifyUserFileDownloadComplete(getUiHelper(), destinationFile);
+            }
+        }
+    }
+
+    private void notifyUserFileDownloadComplete(final UIHelper uiHelper, final File downloadedFile) {
+        uiHelper.showDetailedMsg(R.string.alert_image_download_title, uiHelper.getContext().getString(R.string.alert_image_download_complete_message));
+        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getContext()).load(R.drawable.ic_notifications_black_24dp).into(new DownloadTarget(uiHelper, downloadedFile));
+    }
+
+    private void shareFileDownloaded(Context context, final File downloadedFile) {
+//        File sharedFolder = new File(getContext().getExternalCacheDir(), "shared");
+//        sharedFolder.mkdir();
+//        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
+//        tmpFile.deleteOnExit();
+
+        //Send multiple seems essential to allow to work with the other apps. Not clear why.
+        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = FileProvider.getUriForFile(
+                context,
+                BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
+
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(downloadedFile).toString());
+        String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
+        intent.setType(mimeType);
+        ArrayList<Uri> files = new ArrayList<>(1);
+        files.add(uri);
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        }
+        context.startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(CancelDownloadEvent event) {
+        synchronized (activeDownloads) {
+            Iterator<DownloadFileRequestEvent> iter = activeDownloads.iterator();
+            while (iter.hasNext()) {
+                DownloadFileRequestEvent evt = iter.next();
+                if (evt.getRequestId() == event.messageId) {
+                    iter.remove();
+                    break;
+                }
+            }
+
+        }
+    }
+
+    private void scheduleNextDownloadIfPresent() {
+        synchronized (activeDownloads) {
+            if (!queuedDownloads.isEmpty() && activeDownloads.isEmpty()) {
+                processNextQueuedDownloadEvent();
+            }
+        }
+    }
+
+    private @Nullable
+    DownloadFileRequestEvent removeActionDownloadEvent() {
+        synchronized (activeDownloads) {
+            if (activeDownloads.isEmpty()) {
+                return null;
+            }
+            return activeDownloads.remove(0);
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNavigationItemSelected(NavigationItemSelectEvent event) {
+    public void onEvent(AlbumItemSelectedEvent event) {
+
+        Fragment newFragment = null;
+
+        ResourceContainer<?, GalleryItem> albumOpen = event.getResourceContainer();
+        GalleryItem selectedItem = event.getSelectedItem();
+
+        if (selectedItem instanceof CategoryItem) {
+            currentAlbum = (CategoryItem) selectedItem;
+            showGallery(currentAlbum);
+        } else {
+            boolean showVideosInSlideshow = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, this);
+            boolean allowVideoPlayback = AlbumViewPreferences.isVideoPlaybackEnabled(prefs, this);
+            if (selectedItem instanceof VideoResourceItem) {
+                if (showVideosInSlideshow) {
+                    newFragment = new SlideshowFragment();
+                    newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
+                } else if (allowVideoPlayback) {
+                    newFragment = new AlbumVideoItemFragment();
+                    newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs(event.getModelType(), albumOpen.getId(), selectedItem.getId(), 1, 1, 1, true));
+                    ((AlbumVideoItemFragment) newFragment).onPageSelected();
+                }
+            } else if (selectedItem instanceof PictureResourceItem) {
+                newFragment = new SlideshowFragment();
+                newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
+            }
+        }
+
+        if (newFragment != null) {
+            showFragmentNow(newFragment);
+        }
+    }
+
+    private static class DownloadTarget implements Target {
+
+
+        private final UIHelper uiHelper;
+        private final File downloadedFile;
+
+        public DownloadTarget(UIHelper uiHelper, File downloadedFile) {
+            this.uiHelper = uiHelper;
+            this.downloadedFile = downloadedFile;
+        }
+
+        private Context getContext() {
+            return uiHelper.getContext();
+        }
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            Intent notificationIntent;
+            Context context;
+            try {
+                context = getContext();
+            } catch (IllegalStateException e) {
+                Crashlytics.log(Log.ERROR, TAG, "No context to create notification in");
+                return;
+            }
+
+//        if(openImageNotFolder) {
+            notificationIntent = new Intent(Intent.ACTION_VIEW);
+            // Action on click on notification
+            Uri selectedUri = Uri.fromFile(downloadedFile);
+            MimeTypeMap map = MimeTypeMap.getSingleton();
+            String ext = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
+            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
+            //notificationIntent.setDataAndType(selectedUri, mimeType);
+
+            Uri apkURI = FileProvider.getUriForFile(
+                    context,
+                    BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
+            notificationIntent.setDataAndType(apkURI, mimeType);
+            notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            notificationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            }
+
+//        } else {
+            // N.B.this only works with a very select few android apps - folder browsing seemingly isn't a standard thing in android.
+//            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
+//            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
+//            notificationIntent.setDataAndType(selectedUri, "resource/folder");
+//        }
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
+                    notificationIntent, 0);
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), uiHelper.getDefaultNotificationChannelId())
+                    .setLargeIcon(bitmap)
+                    .setContentTitle(getContext().getString(R.string.notification_download_event))
+                    .setContentText(downloadedFile.getAbsolutePath())
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                // this is not a vector graphic
+                mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
+                mBuilder.setCategory("event");
+            } else {
+                mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
+                mBuilder.setCategory(Notification.CATEGORY_EVENT);
+            }
+
+            uiHelper.clearNotification(TAG, 1);
+            uiHelper.showNotification(TAG, 1, mBuilder.build());
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            //Do nothing... Should never ever occur
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            // Don't need to do anything before loading image
+        }
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public final void onNavigationItemSelected(NavigationItemSelectEvent event) {
         // Handle navigation view item clicks here.
         int id = event.navigationitemSelected;
 
@@ -335,6 +770,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             case R.id.nav_gallery:
                 showGallery(CategoryItem.ROOT_ALBUM);
                 break;
+            case R.id.nav_favorites:
+                showFavorites();
+                break;
             case R.id.nav_about:
                 showAboutFragment();
                 break;
@@ -348,10 +786,14 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 showEula();
                 break;
             default:
+                onNavigationItemSelected(event, id);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    protected void onNavigationItemSelected(NavigationItemSelectEvent event, @IdRes int itemId) {
     }
 
     private void showTopTips() {
@@ -371,7 +813,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private void showUpload() {
         try {
-            startActivity(UploadActivity.buildIntent(getBaseContext(), currentAlbum.toStub()));
+            startActivity(UploadActivity.buildIntent(this, currentAlbum.toStub()));
         } catch(ActivityNotFoundException e) {
             Crashlytics.logException(e);
         }
@@ -406,38 +848,26 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         currentAlbum = event.getAlbum();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(AlbumItemSelectedEvent event) {
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
 
-        Fragment newFragment = null;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
 
-        ResourceContainer albumOpen = event.getResourceContainer();
-        GalleryItem selectedItem = event.getSelectedItem();
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
 
-        if (selectedItem instanceof CategoryItem) {
-            currentAlbum = (CategoryItem) selectedItem;
-            showGallery(currentAlbum);
+        if (hasFocus) {
+            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
-            boolean showVideosInSlideshow = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
-            boolean allowVideoPlayback = prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
-            if (selectedItem instanceof VideoResourceItem) {
-                if (showVideosInSlideshow) {
-                    newFragment = new SlideshowFragment();
-                    newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
-                } else if (allowVideoPlayback) {
-                    newFragment = new AlbumVideoItemFragment();
-                    newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
-                    ((AlbumVideoItemFragment) newFragment).onPageSelected();
-                }
-            } else if (selectedItem instanceof PictureResourceItem) {
-                newFragment = new SlideshowFragment();
-                newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
-            }
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
         }
 
-        if (newFragment != null) {
-            showFragmentNow(newFragment);
-        }
+//        v.requestApplyInsets(); // is this needed
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -449,10 +879,71 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
+        Intent intent = new Intent(this, FileSelectActivity.class);
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
+    }
+
+    private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
+        @Override
+        public boolean onSuccess(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.Response response) {
+            //UrlProgressResponse, UrlToFileSuccessResponse,
+            if (response instanceof PiwigoResponseBufferingHandler.UrlProgressResponse) {
+                onProgressUpdate(uiHelper, (PiwigoResponseBufferingHandler.UrlProgressResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) {
+                onGetResource(uiHelper, (PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) response);
+            }
+            return super.onSuccess(uiHelper, response);
+        }
+
+        @Override
+        public boolean onFailure(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
+                onGetResourceCancelled(uiHelper, (PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
+            }
+            if (response.isEndResponse()) {
+                //TODO handle the failure and retry here so we can keep the activeDownloads field in sync properly. Presently two downloads may occur simulataneously.
+                uiHelper.getParent().removeActionDownloadEvent();
+                uiHelper.getParent().scheduleNextDownloadIfPresent();
+            }
+            return super.onFailure(uiHelper, response);
+        }
+
+        private void onProgressUpdate(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
+            ProgressIndicator progressIndicator = uiHelper.getProgressIndicator();
+            if (response.getProgress() < 0) {
+                progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
+            } else {
+                if (response.getProgress() == 0) {
+                    progressIndicator.showProgressIndicator(R.string.progress_downloading, response.getProgress(), new CancelDownloadListener(response.getMessageId()));
+                } else if (progressIndicator.getVisibility() == VISIBLE) {
+                    progressIndicator.updateProgressIndicator(response.getProgress());
+                }
+            }
+        }
+
+        public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
+            uiHelper.getParent().onFileDownloaded(response.getUrl(), response.getFile());
+        }
+
+
+        private void onGetResourceCancelled(UIHelper uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
+            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.alert_image_download_cancelled_message));
+        }
+
+        private static class CancelDownloadListener implements View.OnClickListener {
+            private final long downloadMessageId;
+
+            public CancelDownloadListener(long messageId) {
+                downloadMessageId = messageId;
+            }
+
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
+            }
+        }
     }
 
     @Override
@@ -462,13 +953,18 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(data.getExtras(), FileSelectActivity.INTENT_SELECTED_FILES);
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload, actionTimeMillis);
+                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
                 EventBus.getDefault().postSticky(event);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 
     /**
@@ -568,7 +1064,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showLowMemoryWarningMessage(int messageId, int memoryLevel) {
-        getUiHelper().showToast(getString(messageId, memoryLevel));
+        getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(messageId, memoryLevel));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -598,7 +1094,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getTag());
+        Crashlytics.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
         checkLicenceIfNeeded();
 
         DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
@@ -702,10 +1198,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     public void onEvent(ToolbarEvent event) {
         toolbar.setTitle(event.getTitle());
         if(event.isExpandToolbarView()) {
-            ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
+            appBar.setExpanded(true, event.getTitle()!= null);
         } else if(event.isContractToolbarView()) {
-            ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
+            appBar.setExpanded(false, event.getTitle()!= null);
         }
+        appBar.setEnabled(event.getTitle()!= null);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -737,15 +1234,16 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         if (!VersionCompatability.INSTANCE.isSupportedVersion()) {
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();
             String minimumVersion = VersionCompatability.INSTANCE.getMinimumTestedVersionString();
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_version_pattern), serverVersion, minimumVersion));
+            getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_error_unsupported_piwigo_version_pattern, serverVersion, minimumVersion));
         }
 
-        if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(new int[]{1,0,5}, VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it)));
+        if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(VersionUtils.parseVersionString(BuildConfig.PIWIGO_CLIENT_WS_VERSION), VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
+            if(sessionDetails.getServerUrl().equalsIgnoreCase("https://piwigo.com"))
+            getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it));
         }
 
         if(showUserWarning && !VersionCompatability.INSTANCE.isFavoritesEnabled()) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_features_pattern)));
+            getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_error_unsupported_features_pattern));
         }
     }
 
@@ -788,5 +1286,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }
+
 
 }

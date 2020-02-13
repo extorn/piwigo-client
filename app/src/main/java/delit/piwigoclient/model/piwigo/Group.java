@@ -3,7 +3,7 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 /**
  * Created by gareth on 26/06/17.
@@ -19,16 +19,16 @@ public class Group implements Identifiable, Parcelable {
 
     public Group(Parcel in) {
         id = in.readLong();
-        name = in.readString();
-        isDefault = ParcelUtils.readValue(in,null, boolean.class);
+        name = ParcelUtils.readString(in);
+        isDefault = ParcelUtils.readBool(in);
         memberCount = in.readInt();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
-        dest.writeString(name);
-        dest.writeValue(isDefault);
+        dest.writeValue(name);
+        ParcelUtils.writeBool(dest, isDefault);
         dest.writeInt(memberCount);
     }
 

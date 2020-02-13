@@ -1,7 +1,9 @@
 package delit.piwigoclient.business.video;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -10,7 +12,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
-import com.loopj.android.http.ResponseHandlerInterface;
 
 import java.io.EOFException;
 import java.io.File;
@@ -25,13 +26,18 @@ import java.util.List;
 import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.message.BasicHeaderElement;
+import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
+import delit.libs.http.RequestParams;
+import delit.libs.util.UriUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 import static com.google.android.exoplayer2.C.LENGTH_UNSET;
 import static com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSourceException.TYPE_CLOSE;
@@ -44,6 +50,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private final TransferListener<? super DataSource> listener;
     private final Map<String, String> defaultRequestProperties;
     private final boolean logEnabled = false;
+    private final SharedPreferences sharedPrefs;
     private Context context;
     private DataSpec dataSpec;
     private CachedContent cacheMetaData;
@@ -58,16 +65,18 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private boolean enableRedirects;
     private int maxRedirects;
     private long readFromFilePosition;
+    private boolean performUriPathSegmentEncoding;
 
     /**
      * @param listener An optional listener.
      */
     public RemoteAsyncFileCachingDataSource(Context context, TransferListener<? super DataSource> listener, CacheListener cacheListener, RequestProperties defaultRequestProperties, String userAgent) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.listener = listener;
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
         this.defaultRequestProperties = defaultRequestProperties.getSnapshot();
+        this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void setEnableRedirects(boolean enableRedirects) {
@@ -119,6 +128,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         }
     }
 
+    public void setPerformUriPathSegmentEncoding(boolean performUriPathSegmentEncoding) {
+        this.performUriPathSegmentEncoding = performUriPathSegmentEncoding;
+    }
+
     private void cancelAnyExistingOpenConnectionToServerAndWaitUntilDone() {
         if (activeRequestHandle != null && !activeRequestHandle.isFinished()) {
             activeRequestHandle.cancel(true);
@@ -126,11 +139,12 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         }
     }
 
-    private void openConnectionToServerInBackgroundAndContinueLoading(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) {
+    private RandomAccessFileAsyncHttpResponseHandler openConnectionToServerInBackgroundAndContinueLoading(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) {
         if (retrieveMaxBytes == 0) {
-            return;
+            return null;
         }
-        CachingAsyncHttpClient client = HttpClientFactory.getInstance(context).getVideoDownloadASyncHttpClient(ConnectionPreferences.getPreferences(null), context);
+        ConnectionPreferences.ProfilePreferences activeConnectionPreferences = ConnectionPreferences.getPreferences(null, sharedPrefs, context);
+        CachingAsyncHttpClient client = HttpClientFactory.getInstance(context).getVideoDownloadASyncHttpClient(activeConnectionPreferences, context);
         RequestParams requestParams = new RequestParams(defaultRequestProperties);
 
         List<Header> headers = new ArrayList<>();
@@ -156,19 +170,36 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             headers.add(new BasicHeader("Accept-Encoding", "identity"));
         }
 
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(activeConnectionPreferences);
+        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+        if (onlyUseCache) {
+            BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString()),
+                    new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE)};
+            String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
+            headers.add(new BasicHeader(HeaderConstants.CACHE_CONTROL, value));
+        }
+
         client.setConnectTimeout(connectTimeoutMillis);
         client.setResponseTimeout(readTimeoutMillis);
         client.setEnableRedirects(enableRedirects, maxRedirects);
-        Header[] headersArray = headers.toArray(new Header[headers.size()]);
+        Header[] headersArray = headers.toArray(new Header[0]);
 
         for (Header h : headersArray) {
             Log.d(TAG, h.getValue());
         }
 
-        activeRequestHandle = client.get(context, uri.toString(), headersArray, requestParams, getResponseHandler(cacheMetaData));
+        boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
+        boolean testForExposingProxiedServer = activeConnectionPreferences.isWarnInternalUriExposed(sharedPrefs, context);
+        String checkedUriStr = UriUtils.sanityCheckFixAndReportUri(uri.toString(), sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
+        if (performUriPathSegmentEncoding) {
+            checkedUriStr = UriUtils.encodeUriSegments(Uri.parse(checkedUriStr));
+        }
+        RandomAccessFileAsyncHttpResponseHandler thisResponseHandler = getResponseHandler(cacheMetaData);
+        activeRequestHandle = client.get(context, checkedUriStr, headersArray, requestParams, thisResponseHandler);
+        return thisResponseHandler;
     }
 
-    private ResponseHandlerInterface getResponseHandler(CachedContent cacheMetaData) {
+    private RandomAccessFileAsyncHttpResponseHandler getResponseHandler(CachedContent cacheMetaData) {
         if (httpResponseHandler == null) {
             httpResponseHandler = new RandomAccessFileAsyncHttpResponseHandler(cacheMetaData, cacheListener, true);
         }
@@ -176,25 +207,53 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         return httpResponseHandler;
     }
 
-    private long openConnectionToServerAndBlockUntilContentLengthKnown(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) throws FileNotFoundException {
+    private long openConnectionToServerAndBlockUntilContentLengthKnown(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) throws IOException {
         if (retrieveMaxBytes == 0) {
             return 0;
         }
-        openConnectionToServerInBackgroundAndContinueLoading(uri, allowGzip, firstByteToRetrieve, retrieveMaxBytes);
+        RandomAccessFileAsyncHttpResponseHandler responseHandler = openConnectionToServerInBackgroundAndContinueLoading(uri, allowGzip, firstByteToRetrieve, retrieveMaxBytes);
         synchronized (cacheMetaData) {
-            while (null == cacheMetaData.getRangeContaining(firstByteToRetrieve)) {
+            while (null == cacheMetaData.getRangeContaining(firstByteToRetrieve) && !responseHandler.isFailed()) {
                 try {
-                    cacheMetaData.wait();
+                    cacheMetaData.wait(1000);
                 } catch (InterruptedException e) {
                     if (logEnabled && BuildConfig.DEBUG) {
                         Log.d(TAG, "Awoken from slumber - do we have any more data yet?");
                     }
                 }
             }
+            if (responseHandler.isFailed()) {
+                throw new HttpIOException(responseHandler.getStatusCode(), responseHandler.getResponseData(), responseHandler.getRequestURI().toString());
+            }
         }
         long bytesRemaining = dataSpec.length == LENGTH_UNSET ? cacheMetaData.getTotalBytes() - dataSpec.position
                 : dataSpec.length;
         return bytesRemaining;
+    }
+
+    public static class HttpIOException extends IOException {
+        private int statusCode;
+        private byte[] responseData;
+        private String uri;
+
+        public HttpIOException(int statusCode, byte[] responseData, String uri) {
+            super("Error loading uri : " + uri);
+            this.statusCode = statusCode;
+            this.responseData = responseData;
+            this.uri = uri;
+        }
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public byte[] getResponseData() {
+            return responseData;
+        }
+
+        public String getUri() {
+            return uri;
+        }
     }
 
     private long getBytesToRetrieveFromServer(long position, CachedContent.SerializableRange cachedRangeDetail) {

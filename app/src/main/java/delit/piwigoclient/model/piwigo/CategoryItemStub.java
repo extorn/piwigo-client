@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 public class CategoryItemStub implements Parcelable, Identifiable {
 
@@ -31,17 +31,17 @@ public class CategoryItemStub implements Parcelable, Identifiable {
 
     public CategoryItemStub(Parcel in) {
         id = in.readLong();
-        name = in.readString();
-        parentageChain = ParcelUtils.readLongArrayList(in, null);
-        isUserSelectable = ParcelUtils.readValue(in,null, boolean.class);
+        name = ParcelUtils.readString(in);
+        parentageChain = ParcelUtils.readLongArrayList(in);
+        isUserSelectable = ParcelUtils.readBool(in);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
-        dest.writeString(name);
+        dest.writeValue(name);
         ParcelUtils.writeLongArrayList(dest,parentageChain);
-        dest.writeValue(isUserSelectable);
+        ParcelUtils.writeBool(dest, isUserSelectable);
     }
 
     public Long getParentId() {
@@ -88,7 +88,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
     }
 
     public CategoryItemStub markNonUserSelectable() {
-        if (this == ROOT_GALLERY) {
+        if (this.equals(ROOT_GALLERY)) {
             return ROOT_GALLERY_NON_SELECTABLE;
         }
         this.isUserSelectable = false;
@@ -114,4 +114,12 @@ public class CategoryItemStub implements Parcelable, Identifiable {
             return new CategoryItemStub[size];
         }
     };
+
+    public boolean isRoot() {
+        return this.equals(ROOT_GALLERY);
+    }
+
+    public boolean isParentRoot() {
+        return getParentId() != null && getParentId() == CategoryItemStub.ROOT_GALLERY.getId();
+    }
 }

@@ -14,9 +14,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UsersGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 

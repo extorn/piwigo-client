@@ -6,4 +6,9 @@ package delit.piwigoclient.ui.preferences;
 
 public class ConnectionPreferenceFragment extends BaseConnectionPreferenceFragment {
 
+    public ConnectionPreferenceFragment(){}
+
+    public ConnectionPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
+    }
 }

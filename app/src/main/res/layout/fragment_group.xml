@@ -10,28 +10,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/group_action_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/group_action_save_button"
             android:layout_toEndOf="@id/group_action_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_save_black_24dp"/>
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/group_action_discard_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/group_action_save_button"
             app:srcCompat="@drawable/ic_undo_black_24dp" />
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/group_action_delete_button"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
@@ -76,9 +76,10 @@
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:focusable="true" />
+                android:focusable="true"
+                android:importantForAutofill="no" />
 
-            <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+            <delit.libs.ui.view.button.AppCompatCheckboxTriState
                 android:id="@+id/group_is_default"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,7 +129,7 @@
                 android:layout_marginBottom="7dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
-            <delit.piwigoclient.ui.common.list.ForcedMinimumHeightListView
+            <delit.libs.ui.view.list.ForcedMinimumHeightListView
                 android:id="@+id/group_access_rights"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

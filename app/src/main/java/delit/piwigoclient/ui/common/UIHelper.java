@@ -4,13 +4,18 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +26,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -38,20 +53,27 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.util.TransientMsgUtils;
+import delit.libs.ui.view.ProgressIndicator;
+import delit.libs.util.CustomSnackbar;
+import delit.libs.util.ObjectUtils;
+import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -59,12 +81,12 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
-import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.events.BadRequestExposesInternalServerEvent;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.ToastUtils;
-import delit.piwigoclient.util.X509Utils;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by gareth on 13/10/17.
@@ -79,13 +101,18 @@ public abstract class UIHelper<T> {
     private static final String STATE_ACTIONS_ON_RESPONSES = "UIHelper.actionOnResponse";
     private static final String STATE_RUN_WITH_PERMS_LIST = "UIHelper.runWithPermsList";
     private static final String STATE_PERMS_FOR_REASON = "UIHelper.reasonForPermissionsRequired";
+    private static final String STATE_SIMPLE_MESSAGE_QUEUE = "UIHelper.simpleMessageQueue";
+    private static final String STATE_DIALOG_MESSAGE_QUEUE = "UIHelper.dialogMessageQueue";
+    private static ExecutorService executors;
     private final T parent;
     private final SharedPreferences prefs;
-    private final Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
+    private final Deque<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingDeque<>(20);
+    private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(50);
+    private boolean toastShowing = false;
     private Context context;
     private DismissListener dismissListener;
     private AlertDialog alertDialog;
-    private Set<Long> activeServiceCalls = Collections.synchronizedSet(new HashSet<Long>(3));
+    private Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<Long, String>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
@@ -162,54 +189,157 @@ public abstract class UIHelper<T> {
         return this.context != context;
     }
 
-    public void showShortDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
-        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_SHORT);
+    public void showDetailedMsg(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedMsg(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
     }
 
-    public void showDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
-        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
+    public void showDetailedShortMsg(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedMsg(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
     }
 
-    public void showShortDetailedToast(@StringRes int titleResId, String message) {
-        showDetailedToast(titleResId, message, Toast.LENGTH_SHORT);
+    public void showDetailedShortMsg(@StringRes int titleResId, String message) {
+        showDetailedMsg(titleResId, message, Toast.LENGTH_SHORT);
     }
 
-    public void showDetailedToast(@StringRes int titleResId, String message) {
-        showDetailedToast(titleResId, message, Toast.LENGTH_LONG);
+    public void showDetailedMsg(@StringRes int titleResId, String message) {
+        showDetailedMsg(titleResId, message, Toast.LENGTH_LONG);
     }
 
-    public void showDetailedToast(@StringRes int titleResId, String message, int duration) {
-        ToastUtils.makeDetailedToast(getContext(), titleResId, message, duration).show();
+    public void showDetailedMsg(@StringRes int titleResId, String message, int duration, int id) {
+        QueuedSimpleMessage msg = new QueuedSimpleMessage(titleResId, message, duration);
+        msg.setId(id);
+        showDetailedMsg(msg);
     }
 
-    public void showToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_SHORT);
-        toast.show();
+    public void showDetailedMsg(@StringRes int titleResId, String message, int duration) {
+        QueuedSimpleMessage msg = new QueuedSimpleMessage(titleResId, message, duration);
+        showDetailedMsg(msg);
     }
 
-    public void showToast(String message) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_SHORT);
-        toast.show();
+    private synchronized void showDetailedMsg(QueuedSimpleMessage newItem) {
+        if(!toastShowing) {
+            // do this here in case the queue is already full (will only occur if there is a bug in the display logic really).
+            showQueuedMsg();
+        }
+        if (newItem.id >= 0) {
+            if (!simpleMessageQueue.isEmpty()) {
+                simpleMessageQueue.remove(newItem);
+            }
+        }
+        if(!simpleMessageQueue.contains(newItem)) {
+            try {
+                simpleMessageQueue.add(newItem);
+            } catch(IllegalStateException e) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("SimpleMessageQueue Full : \n");
+                for(QueuedSimpleMessage item : simpleMessageQueue) {
+                    sb.append("title : ");
+                    sb.append(getContext().getString(item.titleResId));
+                    sb.append('\n');
+                    sb.append("msg : ");
+                    sb.append(item.message);
+                    sb.append('\n');
+                    sb.append("duration : ");
+                    sb.append(item.duration);
+                    sb.append('\n');
+                }
+                Crashlytics.log(Log.ERROR, TAG, sb.toString());
+                Crashlytics.logException(e);
+            }
+        }
+        if(!toastShowing) {
+            showQueuedMsg();
+        }
     }
 
-    public void showLongToast(String message) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_LONG);
-        toast.show();
+    public void showShortMsg(@StringRes int messageResId) {
+        showDetailedShortMsg(messageResId, null);
     }
 
-    public void showLongToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_LONG);
-        toast.show();
+    protected void showQueuedMsg() {
+        View parentView = getParentView();
+        if(parentView == null || !canShowDialog()) {
+            return;
+        }
+        if(simpleMessageQueue.isEmpty()) {
+            return;
+        }
+        final CustomSnackbar snackbar;
+        toastShowing = true;
+        QueuedSimpleMessage toastMsg = simpleMessageQueue.remove();
+        final String message;
+        if(toastMsg.message == null) {
+            message = getContext().getString(toastMsg.titleResId);
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, null, toastMsg.getSnackbarDuration());
+        } else {
+            message = toastMsg.message;
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, toastMsg.message, toastMsg.getSnackbarDuration());
+        }
+        snackbar.addCallback(new CustomSnackbar.BaseCallback() {
+            private boolean dismissHandled;
+
+            @Override
+            public void onDismissed(CustomSnackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+                if(!dismissHandled) {
+                    toastShowing = false;
+                    showQueuedMsg();
+                }
+            }
+            
+            @Override
+            public boolean onLongClick(View v) {
+                if(v == null) {
+                    //TODO check why... this can occur if the app is minimised at this point?
+                    return false;
+                }
+                ClipboardManager clipboardService = (ClipboardManager) v.getContext().getSystemService(CLIPBOARD_SERVICE);
+                clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
+                dismissHandled = true;
+                snackbar.dismiss();
+                CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(v, R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
+                snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                    @Override
+                    public void onViewAttachedToWindow(View v) {
+                        //do nothing.
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(View v) {
+                        toastShowing = false;
+                        showQueuedMsg();
+                    }
+                });
+                snackbarNotification.show();
+                return false;
+            }
+        });
+        snackbar.show();
     }
+
+    protected abstract View getParentView();
 
     public T getParent() {
         return parent;
     }
 
+    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker) {
+        worker.setRunInBackground(true);
+        long msgId = worker.getMessageId();
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(msgId, piwigoResponseListener);
+        worker.invokeAsync(context);
+        return msgId;
+    }
+
+    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+        addActionOnResponse(worker.getMessageId(), actionOnResponse);
+        return invokeSilentServiceCall(worker);
+    }
+
     public void addBackgroundServiceCall(long messageId) {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
-    
+
     private  boolean isProgressIndicatorVisible() {
         if(progressIndicator == null) {
             loadProgressIndicatorIfPossible();
@@ -230,32 +360,51 @@ public abstract class UIHelper<T> {
     /**
      * Called when retrying a failed call.
      */
-    public void addActiveServiceCall(long messageId) {
-        activeServiceCalls.add(messageId);
+    public long addActiveServiceCall(AbstractPiwigoDirectResponseHandler handler) {
+        long messageId = handler.invokeAsync(getContext());
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.put(messageId, handler.getTag());
+        }
         if (!isProgressIndicatorVisible()) {
             // assume it still has the correct text... (fingers crossed)
             showProgressIndicator();
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return messageId;
     }
 
-    public void addNonBlockingActiveServiceCall(String titleString, long messageId) {
+    public long addNonBlockingActiveServiceCall(String titleString, AbstractPiwigoDirectResponseHandler handler) {
 //        activeServiceCalls.add(messageId);
-//        showToast(titleString);
+//        showShortMsg(titleString);
 //        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
-        addActiveServiceCall(titleString, messageId);
+        return addActiveServiceCall(titleString, handler);
     }
 
-    public void addActiveServiceCall(String titleString, long messageId) {
-        activeServiceCalls.add(messageId);
+    public long addNonBlockingActiveServiceCall(String titleString, long messageId, String serviceDesc) {
+//        activeServiceCalls.add(messageId);
+//        showShortMsg(titleString);
+//        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return addActiveServiceCall(titleString, messageId, serviceDesc);
+    }
+
+    public static <T extends AsyncTask<S, ?, ?>, S> T submitAsyncTask(T task, S... params) {
+        if (executors == null) {
+            executors = Executors.newCachedThreadPool();
+        }
+        task.executeOnExecutor(executors, params);
+        return task;
+    }
+
+    public long addActiveServiceCall(String titleString, AbstractPiwigoDirectResponseHandler handler) {
+        long messageId = handler.invokeAsync(getContext());
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.put(messageId, handler.getTag());
+        }
         if (!isProgressIndicatorVisible()) {
-            if(progressIndicator == null) {
-                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
-            } else {
-                progressIndicator.showProgressIndicator(titleString, -1);
-            }
+            showProgressIndicator(titleString, -1);
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return messageId;
     }
 
     private void setupDialogBoxes() {
@@ -314,11 +463,19 @@ public abstract class UIHelper<T> {
         nextMessage.getListener().onShow(alertDialog);
     }
 
-    protected void showDialog(final QueuedMessage nextMessage) {
+    protected void showDialog(final QueuedDialogMessage nextMessage) {
         buildAlertDialog();
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
         alertDialog.setMessage(nextMessage.getMessage());
+
+        if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
+            LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
+            final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
+            alertDialog.setView(dialogView);
+            nextMessage.populateCustomView(dialogView);
+        }
+
         Button b = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         if (b != null) {
             b.setVisibility(View.GONE);
@@ -328,7 +485,7 @@ public abstract class UIHelper<T> {
             public void onClick(DialogInterface dialog, int which) {
                 QuestionResultListener l = nextMessage.getListener();
                 if (l != null) {
-                    l.onResult(alertDialog, true);
+                    l.onResultInternal(alertDialog, true);
                 }
             }
         });
@@ -340,18 +497,23 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
-        addActionOnResponse(worker.getMessageId(), actionOnResponse);
-        addActiveServiceCall(progressMsg, worker.getMessageId());
+    public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker) {
+        addActiveServiceCall(progressMsg, worker);
         worker.invokeAsync(context);
+    }
+
+    public long invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+        addActionOnResponse(worker.getMessageId(), actionOnResponse);
+        addActiveServiceCall(progressMsg, worker);
+        return worker.getMessageId();
     }
 
     public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
         invokeActiveServiceCall(context.getString(progressMsgId), worker, actionOnResponse);
     }
 
-    public void addActiveServiceCall(int titleStringId, long messageId) {
-        addActiveServiceCall(context.getString(titleStringId), messageId);
+    public long addActiveServiceCall(int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+        return addActiveServiceCall(context.getString(titleStringId), worker);
     }
 
     public BasicPiwigoResponseListener getPiwigoResponseListener() {
@@ -363,44 +525,67 @@ public abstract class UIHelper<T> {
     }
 
     public boolean isServiceCallInProgress() {
-        return activeServiceCalls.size() > 0;
+        synchronized (activeServiceCalls) {
+            return activeServiceCalls.size() > 0;
+        }
     }
 
     public void deregisterFromActiveServiceCalls() {
 
         EventBus.getDefault().unregister(this);
-        for (long activeCall : activeServiceCalls) {
-            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeCall);
+        synchronized (activeServiceCalls) {
+            for (long activeCall : activeServiceCalls.keySet()) {
+                PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeCall);
+            }
         }
     }
 
     public void onSaveInstanceState(Bundle outState) {
         Bundle thisBundle = new Bundle();
-        BundleUtils.putLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
+        synchronized (activeServiceCalls) {
+            BundleUtils.writeMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
+        }
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
-        thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
-        thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
+        BundleUtils.writeMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
+        BundleUtils.writeMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
         thisBundle.putInt(STATE_PERMS_FOR_REASON, permissionsNeededReason);
+        BundleUtils.writeQueue(thisBundle, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
+        BundleUtils.writeQueue(thisBundle, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
+
         piwigoResponseListener.onSaveInstanceState(thisBundle);
         outState.putBundle(STATE_UIHELPER, thisBundle);
+
     }
 
     public void onRestoreSavedInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
-            if (thisBundle != null) {
-                activeServiceCalls = Collections.synchronizedSet(BundleUtils.getLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS));
-                trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
-                runWithPermissions = BundleUtils.getSerializable(thisBundle, STATE_RUN_WITH_PERMS_LIST, HashMap.class);
-                try {
-                    actionOnServerCallComplete = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, ConcurrentHashMap.class);
-                } catch(IllegalStateException e) {
-                    Map<Long, Action> map = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, HashMap.class);
-                    actionOnServerCallComplete = new ConcurrentHashMap<>(map);
+        try {
+            if (savedInstanceState != null) {
+                Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
+                if (thisBundle != null) {
+                    synchronized (activeServiceCalls) {
+                        BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls, null);
+                    }
+                    trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
+                    runWithPermissions = BundleUtils.readMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, PermissionsWantedRequestEvent.class.getClassLoader());
+                    actionOnServerCallComplete = BundleUtils.readMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, new ConcurrentHashMap<Long, Action>(), Action.class.getClassLoader());
+                    permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
+
+                    BundleUtils.readQueue(savedInstanceState, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
+                    BundleUtils.readQueue(savedInstanceState, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
+
+
+                    piwigoResponseListener.onRestoreInstanceState(thisBundle);
+
+                    for (QueuedDialogMessage message : dialogMessageQueue) {
+                        if (message.getListener() != null) {
+                            message.getListener().setUiHelper(this);
+                        }
+                    }
                 }
-                permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
-                piwigoResponseListener.onRestoreInstanceState(thisBundle);
             }
+        } catch (RuntimeException e) {
+            Crashlytics.log(Log.WARN, TAG, "Ditching all saved instance state due to error loading");
+            Crashlytics.logException(e);
         }
     }
 
@@ -417,13 +602,15 @@ public abstract class UIHelper<T> {
     }
 
     public void showNextQueuedMessage() {
-        if (messageQueue.size() > 0 && !isDialogShowing()) {
-            // show the dialog now we're able.
-            QueuedMessage nextMessage = messageQueue.peek();
-            if (nextMessage instanceof QueuedQuestionMessage) {
-                showDialog((QueuedQuestionMessage) nextMessage);
-            } else if (nextMessage != null) {
-                showDialog(nextMessage);
+        synchronized (dialogMessageQueue) {
+            if (dialogMessageQueue.size() > 0 && !isDialogShowing()) {
+                // show the dialog now we're able.
+                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                if (nextMessage instanceof QueuedQuestionMessage) {
+                    showDialog((QueuedQuestionMessage) nextMessage);
+                } else if (nextMessage != null) {
+                    showDialog(nextMessage);
+                }
             }
         }
     }
@@ -507,7 +694,7 @@ public abstract class UIHelper<T> {
                 alert.setNegativeButton(context.getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing, automatically the dialog is going to be closed.
-                        onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[permissionsNeeded.size()]), new int[0]);
+                        onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[0]), new int[0]);
                     }
                 });
                 alert.create().show();
@@ -521,7 +708,7 @@ public abstract class UIHelper<T> {
             // have permission - run immediately.
             int[] permissionResponses = new int[permissionsWanted.size()];
             Arrays.fill(permissionResponses, PackageManager.PERMISSION_GRANTED);
-            onRequestPermissionsResult(activity, event.getActionId(), permissionsWanted.toArray(new String[permissionsWanted.size()]), permissionResponses);
+            onRequestPermissionsResult(activity, event.getActionId(), permissionsWanted.toArray(new String[0]), permissionResponses);
         }
         return event.getActionId();
     }
@@ -537,25 +724,101 @@ public abstract class UIHelper<T> {
     }
 
     public boolean messagesQueuedOrShowing() {
-        return messageQueue.size() > 0;
+        return dialogMessageQueue.size() > 0;
     }
 
     protected boolean canShowDialog() {
-        return alertDialog != null;
+        return true;
+    }
+
+    public void showProgressIndicator(final String titleString, final int progress) {
+        if (progressIndicator == null) {
+            Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+        } else {
+            if (DisplayUtils.isRunningOnUIThread()) {
+                progressIndicator.showProgressIndicator(titleString, progress);
+            } else {
+                // publish on the main thread
+                progressIndicator.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressIndicator.showProgressIndicator(titleString, progress);
+                    }
+                });
+            }
+        }
     }
 
     public void showProgressIndicator() {
-        if(progressIndicator == null) {
+
+        if (progressIndicator == null) {
             Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
-            progressIndicator.setVisibility(View.VISIBLE);
+            if (DisplayUtils.isRunningOnUIThread()) {
+                progressIndicator.setVisibility(View.VISIBLE);
+            } else {
+                // publish on the main thread
+                progressIndicator.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressIndicator.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
         }
     }
 
     public void hideProgressIndicator() {
         if(progressIndicator != null) {
-            progressIndicator.setVisibility(View.GONE);
+            if (DisplayUtils.isRunningOnUIThread()) {
+                progressIndicator.setVisibility(View.GONE);
+            } else {
+                // publish on the main thread
+                progressIndicator.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressIndicator.setVisibility(View.GONE);
+                    }
+                });
+            }
         }
+    }
+
+    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage message) {
+        if (!canShowDialog()) {
+            return false;
+        }
+        synchronized (dialogMessageQueue) {
+            if (!dialogMessageQueue.contains(message)) {
+                if (isDialogShowing()) {
+                    dismissListener.setDialogClosingForUrgentMessage(true);
+                    alertDialog.dismiss();
+                }
+                dialogMessageQueue.addFirst(message);
+                showNextQueuedMessage();
+                return true;
+            } else {
+                QueuedDialogMessage msg = dialogMessageQueue.peek();
+                msg.getListener().chainResult(message.getListener());
+                return true;
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final BadRequestExposesInternalServerEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
+        String msg = getContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority());
+        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new QuestionResultAdapter<UIHelper<T>>(this) {
+            @Override
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if (Boolean.FALSE.equals(positiveAnswer)) {
+                    ConnectionPreferences.getActiveProfile().setWarnInternalUriExposed(getUiHelper().getPrefs(), getUiHelper().getContext(), false);
+                }
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -598,37 +861,46 @@ public abstract class UIHelper<T> {
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    KeyStore trustStore = X509Utils.loadTrustedCaKeystore(context);
-                    try {
-                        for (Map.Entry<String, X509Certificate> entry : event.getUntrustedCerts().entrySet()) {
-                            trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
-                        }
-                        X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
-                    } catch (KeyStoreException e) {
-                        Crashlytics.logException(e);
-                        showOrQueueDialogMessage(R.string.alert_error, context.getString(R.string.alert_error_adding_certificate_to_truststore));
-                    }
-                    preNotifiedCerts.addAll(event.getUntrustedCerts().keySet());
-                    prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                    long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), context).start();
-                    PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
-                        @Override
-                        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                            showOrQueueMessage(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
-                        }
-                    });
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction(this, event.getUntrustedCerts()));
+    }
+
+    public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, titleString);
+        }
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.put(messageId, serviceDesc);
+        }
+        if (!isProgressIndicatorVisible()) {
+            showProgressIndicator(titleString, -1);
+        }
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return messageId;
+    }
+
+    public <S extends QueuedDialogMessage> void showOrQueueDialogMessage(S message) {
+        synchronized (dialogMessageQueue) {
+            if (!isDialogShowing() && canShowDialog()) {
+                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                if (nextMessage instanceof QueuedQuestionMessage) {
+                    showDialog((QueuedQuestionMessage) nextMessage);
+                } else if (nextMessage != null) {
+                    showDialog(nextMessage);
                 }
             }
 
-            @Override
-            public void onShow(AlertDialog alertDialog) {
-
+            if (!dialogMessageQueue.contains(message)) {
+                dialogMessageQueue.add(message);
             }
-        });
+            if (!isDialogShowing() && canShowDialog()) {
+                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                if (nextMessage instanceof QueuedQuestionMessage) {
+                    showDialog((QueuedQuestionMessage) nextMessage);
+                } else if (nextMessage != null) {
+                    showDialog(nextMessage);
+                }
+            }
+        }
     }
 
     public void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
@@ -643,63 +915,51 @@ public abstract class UIHelper<T> {
         showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 
+    public void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
+    }
+
     public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null, positiveButtonTextId));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null, positiveButtonTextId, cancellable, listener));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId, cancellable, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null, listener));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null));
     }
 
-    public <S extends QueuedMessage> void showOrQueueDialogMessage(S message) {
-        if (!isDialogShowing() && canShowDialog()) {
-            QueuedMessage nextMessage = messageQueue.peek();
-            if (nextMessage instanceof QueuedQuestionMessage) {
-                showDialog((QueuedQuestionMessage) nextMessage);
-            } else if (nextMessage != null) {
-                showDialog(nextMessage);
-            }
-        }
-
-        if (!messageQueue.contains(message)) {
-            messageQueue.add(message);
-        }
-        if (!isDialogShowing() && canShowDialog()) {
-            QueuedMessage nextMessage = messageQueue.peek();
-            if (nextMessage instanceof QueuedQuestionMessage) {
-                showDialog((QueuedQuestionMessage) nextMessage);
-            } else if (nextMessage != null) {
-                showDialog(nextMessage);
-            }
-        }
+    public void removeActionForResponse(PiwigoResponseBufferingHandler.Response response) {
+        actionOnServerCallComplete.remove(response.getMessageId());
     }
 
     public void registerToActiveServiceCalls() {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        for (long activeCall : activeServiceCalls) {
-            PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(activeCall, piwigoResponseListener);
+        synchronized (activeServiceCalls) {
+            for (long activeCall : activeServiceCalls.keySet()) {
+                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(activeCall, piwigoResponseListener);
+            }
         }
     }
 
     public void onServiceCallComplete(long messageId) {
-        actionOnServerCallComplete.remove(messageId);
-        activeServiceCalls.remove(messageId);
-        if (activeServiceCalls.size() == 0) {
-            hideProgressIndicator();
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.remove(messageId);
+            if (activeServiceCalls.size() == 0) {
+                hideProgressIndicator();
+            }
         }
     }
 
@@ -753,6 +1013,50 @@ public abstract class UIHelper<T> {
         return progressIndicator;
     }
 
+    public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {
+        Set<String> hintsShown = getPrefs().getStringSet(context.getString(R.string.usage_hints_shown_list_key), new HashSet<String>());
+        if (hintsShown.add(tag + '_' + hintId)) {
+            int userHintDuration = Toast.LENGTH_LONG; //TODO use custom toast impl so I can set other duration perhaps. - AppPreferences.getUserHintDuration(getPrefs(), context);
+            TransientMsgUtils.makeDetailedToast(context, R.string.usage_hint_title, context.getString(hintStrResId), userHintDuration);
+            SharedPreferences.Editor editor = getPrefs().edit();
+            editor.putStringSet(context.getString(R.string.usage_hints_shown_list_key), hintsShown);
+            editor.apply();
+        }
+    }
+
+    public SharedPreferences getResumePrefs() {
+        return getContext().getSharedPreferences("resume-actions", Context.MODE_PRIVATE);
+    }
+
+    public void doOnce(@NonNull String key, @NonNull String newValue, @NonNull Runnable action) {
+
+        synchronized (UIHelper.class) {
+            SharedPreferences globalsPrefs = getContext().getSharedPreferences("globals", Context.MODE_PRIVATE);
+            String globalVal = globalsPrefs.getString(key, null);
+            if (!newValue.equals(globalVal)) {
+                globalsPrefs.edit().putString(key, newValue).apply();
+                // notify user once and only once
+                action.run();
+            }
+        }
+    }
+
+    public interface QuestionResultListener<S extends UIHelper> extends Serializable {
+        void onDismiss(AlertDialog dialog);
+
+        void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
+
+        void onResult(AlertDialog dialog, Boolean positiveAnswer);
+
+        void onShow(AlertDialog alertDialog);
+
+        void setUiHelper(S uiHelper);
+
+        void chainResult(QuestionResultListener listener);
+
+        void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId);
+    }
+
     public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
         return actionOnServerCallComplete.get(response.getMessageId());
     }
@@ -761,12 +1065,86 @@ public abstract class UIHelper<T> {
         actionOnServerCallComplete.put(msgId, loginAction);
     }
 
-    public static abstract class QuestionResultAdapter implements QuestionResultListener {
+    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter<UIHelper<?>> {
+        private final HashMap<String, X509Certificate> untrustedCerts;
+
+        public NewUnTrustedCaCertificateReceivedAction(UIHelper<?> uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
+            super(uiHelper);
+            this.untrustedCerts = untrustedCerts;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+
+                final Set<String> preNotifiedCerts = getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>());
+                if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
+                    // already dealt with this
+                    return;
+                }
+
+                KeyStore trustStore = X509Utils.loadTrustedCaKeystore(getContext());
+                try {
+                    for (Map.Entry<String, X509Certificate> entry : untrustedCerts.entrySet()) {
+                        trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
+                    }
+                    X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
+                } catch (KeyStoreException e) {
+                    Crashlytics.logException(e);
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.alert_error_adding_certificate_to_truststore));
+                }
+                preNotifiedCerts.addAll(untrustedCerts.keySet());
+                getUiHelper().prefs.edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
+                long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext(), true).start();
+                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
+                    @Override
+                    public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+                        getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                    }
+                });
+            }
+        }
+
         @Override
         public void onShow(AlertDialog alertDialog) {
 
         }
+    }
 
+    public static abstract class QuestionResultAdapter<Q extends UIHelper<?>> implements QuestionResultListener<Q> {
+
+        private QuestionResultListener chainedListener;
+
+        private Q uiHelper;
+
+        public QuestionResultAdapter(Q uiHelper) {
+            this.uiHelper = uiHelper;
+        }
+
+        public Q getUiHelper() {
+            return uiHelper;
+        }
+
+        @Override
+        public void setUiHelper(Q uiHelper) {
+            this.uiHelper = uiHelper;
+        }
+
+        public Context getContext() {
+            return uiHelper.getContext();
+        }
+
+        @Override
+        public void onShow(AlertDialog alertDialog) {
+        }
+
+        @Override
+        public void onResultInternal(AlertDialog dialog, Boolean positiveAnswer) {
+            onResult(dialog, positiveAnswer);
+            if (chainedListener != null) {
+                chainedListener.onResult(dialog, positiveAnswer);
+            }
+        }
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
 
@@ -776,38 +1154,137 @@ public abstract class UIHelper<T> {
         public void onDismiss(AlertDialog dialog) {
 
         }
+
+        @Override
+        public void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId) {
+            Crashlytics.log(Log.DEBUG, TAG, "Unsupported layout id for dialog message : " + layoutId);
+        }
+
+        @Override
+        public void chainResult(QuestionResultListener listener) {
+            chainedListener = listener;
+        }
     }
 
-    public interface QuestionResultListener extends Serializable {
-        void onDismiss(AlertDialog dialog);
+    private static class QueuedSimpleMessage implements Parcelable {
+        private int id = -1;
+        private final int duration;
+        private final int titleResId;
+        private final String message;
 
-        void onResult(AlertDialog dialog, Boolean positiveAnswer);
+        public QueuedSimpleMessage(@StringRes int titleResId, String message, int duration) {
+            this.duration = duration;
+            this.titleResId = titleResId;
+            this.message = message;
+        }
 
-        void onShow(AlertDialog alertDialog);
+        public QueuedSimpleMessage(Parcel in) {
+            duration = in.readInt();
+            titleResId = in.readInt();
+            message = in.readString();
+            id = in.readInt();
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public static final Creator<QueuedSimpleMessage> CREATOR = new Creator<QueuedSimpleMessage>() {
+            @Override
+            public QueuedSimpleMessage createFromParcel(Parcel in) {
+                return new QueuedSimpleMessage(in);
+            }
+
+            @Override
+            public QueuedSimpleMessage[] newArray(int size) {
+                return new QueuedSimpleMessage[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(duration);
+            dest.writeInt(titleResId);
+            dest.writeString(message);
+            dest.writeInt(id);
+        }
+
+        public int getSnackbarDuration() {
+            return duration == Toast.LENGTH_SHORT ? CustomSnackbar.LENGTH_SHORT : duration == Toast.LENGTH_LONG ? CustomSnackbar.LENGTH_LONG : CustomSnackbar.LENGTH_INDEFINITE;
+        }
+
+        @Override
+        public int hashCode() {
+            return duration + (titleResId * 3) + (5 * message.hashCode());
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if(!(obj instanceof QueuedSimpleMessage)) {
+                return false;
+            }
+            QueuedSimpleMessage other = (QueuedSimpleMessage) obj;
+            return (id >= 0 && id == other.id) || (duration == other.duration && titleResId == other.titleResId && ObjectUtils.areEqual(message, other.message));
+        }
     }
 
-    private static class QueuedMessage implements Serializable {
-        private static final long serialVersionUID = 3026567735215782957L;
+    public static class QueuedDialogMessage implements Parcelable {
+        private static final AtomicInteger idGen = new AtomicInteger();
+        private final int id;
         private final int titleId;
         private final String message;
         private final int positiveButtonTextId;
         private final boolean cancellable;
         private final String detail;
         private final QuestionResultListener listener;
+        private final boolean hasListener;
 
-        public QueuedMessage(int titleId, String message, String detail) {
+        public QueuedDialogMessage(Parcel in) {
+            id = in.readInt();
+            titleId = in.readInt();
+            message = in.readString();
+            positiveButtonTextId = in.readInt();
+            cancellable = ParcelUtils.readBool(in);
+            detail = in.readString();
+            listener = ParcelUtils.readValue(in, QuestionResultListener.class.getClassLoader(), QuestionResultListener.class);
+            hasListener = ParcelUtils.readBool(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(id);
+            dest.writeInt(titleId);
+            dest.writeString(message);
+            dest.writeInt(positiveButtonTextId);
+            ParcelUtils.writeBool(dest, cancellable);
+            dest.writeString(detail);
+            try {
+                dest.writeSerializable(listener);
+            } catch(RuntimeException e) {
+                dest.writeSerializable(null); // so we can still read the non serializable object in (as null)
+            }
+            ParcelUtils.writeBool(dest, listener != null); // has listener
+        }
+
+        public QueuedDialogMessage(int titleId, String message, String detail) {
             this(titleId, message, detail, R.string.button_ok, true, null);
         }
 
-        public QueuedMessage(int titleId, String message, String detail, QuestionResultListener listener) {
+        public QueuedDialogMessage(int titleId, String message, String detail, QuestionResultListener listener) {
             this(titleId, message, detail, R.string.button_ok, true, listener);
         }
 
-        public QueuedMessage(int titleId, String message, String detail, int positiveButtonTextId) {
+        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId) {
             this(titleId, message, detail, positiveButtonTextId, true, null);
         }
 
-        public QueuedMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
+        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
+            this.id = idGen.incrementAndGet();
             this.titleId = titleId;
             if (message == null) {
                 throw new IllegalArgumentException("Message cannot be null");
@@ -817,7 +1294,20 @@ public abstract class UIHelper<T> {
             this.listener = listener;
             this.detail = detail;
             this.cancellable = cancellable;
+            this.hasListener = listener != null;
         }
+
+        public static final Creator<QueuedDialogMessage> CREATOR = new Creator<QueuedDialogMessage>() {
+            @Override
+            public QueuedDialogMessage createFromParcel(Parcel in) {
+                return new QueuedDialogMessage(in);
+            }
+
+            @Override
+            public QueuedDialogMessage[] newArray(int size) {
+                return new QueuedDialogMessage[size];
+            }
+        };
 
         public int getTitleId() {
             return titleId;
@@ -845,22 +1335,83 @@ public abstract class UIHelper<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof QueuedMessage)) {
+            if (!(obj instanceof UIHelper.QueuedDialogMessage)) {
                 return false;
             }
-            QueuedMessage other = ((QueuedMessage) obj);
+            QueuedDialogMessage other = ((QueuedDialogMessage) obj);
             return titleId == other.titleId && message.equals(other.message);
         }
 
         public void populateCustomView(LinearLayout dialogView) {
+            int layoutId = getLayoutId();
+
+            if (layoutId == R.layout.layout_dialog_detailed) {
+                final TextView detailView = dialogView.findViewById(R.id.list_item_details);
+                detailView.setText(getDetail());
+
+                ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
+                detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                    }
+                });
+                detailsVisibleButton.toggle();
+            } else {
+                listener.onPopulateDialogView(dialogView, layoutId);
+            }
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public boolean isHasListener() {
+            return hasListener;
+        }
+
+        protected int getLayoutId() {
+            if (detail != null && !detail.trim().isEmpty()) {
+                return R.layout.layout_dialog_detailed;
+            } else {
+                return Integer.MIN_VALUE;
+            }
         }
     }
 
-    private static class QueuedQuestionMessage extends QueuedMessage {
+    protected static class QueuedQuestionMessage extends QueuedDialogMessage {
 
         private final int negativeButtonTextId;
         private final int layoutId;
         private final int neutralButtonTextId;
+
+        public QueuedQuestionMessage(Parcel in) {
+            super(in);
+            negativeButtonTextId = in.readInt();
+            layoutId = in.readInt();
+            neutralButtonTextId = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeInt(negativeButtonTextId);
+            dest.writeInt(layoutId);
+            dest.writeInt(neutralButtonTextId);
+        }
+
+        public static final Creator<QueuedQuestionMessage> CREATOR = new Creator<QueuedQuestionMessage>() {
+            @Override
+            public QueuedQuestionMessage createFromParcel(Parcel in) {
+                return new QueuedQuestionMessage(in);
+            }
+
+            @Override
+            public QueuedQuestionMessage[] newArray(int size) {
+                return new QueuedQuestionMessage[size];
+            }
+        };
 
         public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
             this(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, listener);
@@ -906,23 +1457,6 @@ public abstract class UIHelper<T> {
             return layoutId;
         }
 
-        @Override
-        public void populateCustomView(LinearLayout dialogView) {
-            if(layoutId == R.layout.layout_dialog_detailed) {
-                final TextView detailView = dialogView.findViewById(R.id.details);
-                detailView.setText(getDetail());
-
-                ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
-                detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                    }
-                });
-                detailsVisibleButton.toggle();
-            }
-            super.populateCustomView(dialogView);
-        }
     }
 
     private static class ActivityPermissionRequester implements PermissionRequester {
@@ -936,7 +1470,7 @@ public abstract class UIHelper<T> {
         public void requestPermission(int requestId, final HashSet<String> permissionsNeeded) {
             ActivityCompat.requestPermissions(
                     activity,
-                    permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
+                    permissionsNeeded.toArray(new String[0]),
                     requestId);
         }
     }
@@ -945,16 +1479,30 @@ public abstract class UIHelper<T> {
 
         private QuestionResultListener listener;
         private boolean buildNewDialogOnDismiss;
+        private boolean dialogClosingForUrgentMessage;
 
         public void setListener(QuestionResultListener listener) {
             this.listener = listener;
         }
 
+        public void setDialogClosingForUrgentMessage(boolean dialogClosingForUrgentMessage) {
+            this.dialogClosingForUrgentMessage = dialogClosingForUrgentMessage;
+        }
+
         @Override
         public void onDismiss(DialogInterface dialog) {
+            if (dialogClosingForUrgentMessage) {
+                dialogClosingForUrgentMessage = false;
+                if (buildNewDialogOnDismiss) {
+                    // build a new dialog (needed if the view was altered)
+                    buildAlertDialog();
+                }
+                return;
+            }
+
             // remove the item we've just shown.
-            if (messageQueue.size() > 0) {
-                messageQueue.remove();
+            if (dialogMessageQueue.size() > 0) {
+                dialogMessageQueue.remove();
             } else {
                 Log.w("UiHelper", "Message queue was empty - strange");
             }
@@ -968,19 +1516,36 @@ public abstract class UIHelper<T> {
                 buildAlertDialog();
             }
 
-            if (messageQueue.size() > 0 && canShowDialog()) {
-                QueuedMessage nextMessage = messageQueue.peek();
-                if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
-                } else if (nextMessage != null) {
-                    showDialog(nextMessage);
+            if (canShowDialog()) {
+
+                if (dialogMessageQueue.size() > 0 && canShowDialog()) {
+                    QueuedDialogMessage nextMessage;
+                    do {
+                        nextMessage = dialogMessageQueue.peek();
+                        if (nextMessage.isHasListener() && nextMessage.getListener() == null) {
+                            Crashlytics.log(Log.WARN, TAG, "Discarding corrupt message");
+                            dialogMessageQueue.remove();
+                            nextMessage = null;
+                        }
+
+                    } while (nextMessage == null && dialogMessageQueue.size() > 0);
+                    if (nextMessage instanceof QueuedQuestionMessage) {
+                        showDialog((QueuedQuestionMessage) nextMessage);
+                    } else if (nextMessage != null) {
+                        showDialog(nextMessage);
+                    } else {
+                        onNoDialogToShow();
+                    }
+                } else {
+                    onNoDialogToShow();
                 }
-            } else {
-                onNoDialogToShow();
             }
         }
 
         protected void onNoDialogToShow() {
+            if(!toastShowing) {
+                showQueuedMsg();
+            }
         }
 
         public void setBuildNewDialogOnDismiss(boolean buildNewDialogOnDismiss) {
@@ -988,17 +1553,22 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action<T,S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
+    public static class Action<P extends UIHelper<T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
 
-        protected T getActionParent(UIHelper<T> uiHelper) {
+        protected T getActionParent(P uiHelper) {
             return uiHelper.getParent();
         }
 
-        public boolean onSuccess(UIHelper<T> uiHelper, S response){
+        /**
+         * @param uiHelper
+         * @param response
+         * @return run normal listener code
+         */
+        public boolean onSuccess(P uiHelper, S response) {
             return true;
         }
 
-        public boolean onFailure(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
+        public boolean onFailure(P uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             return true;
         }
     }

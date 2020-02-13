@@ -5,9 +5,9 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class PiwigoClientGetPluginDetailResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -50,7 +50,6 @@ public class PiwigoClientGetPluginDetailResponseHandler extends AbstractPiwigoWs
     }
 
     public boolean isUseHttpGet() {
-        //TODO update the plugin and then set this true!
-        return false;
+        return true;
     }
 }

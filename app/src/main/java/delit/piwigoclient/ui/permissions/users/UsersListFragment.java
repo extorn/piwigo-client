@@ -2,19 +2,21 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,8 +24,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
@@ -32,28 +40,24 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
+import delit.piwigoclient.ui.model.PiwigoUsersModel;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class UsersListFragment extends MyFragment {
+public class UsersListFragment extends MyFragment<UsersListFragment> {
 
-    private static final String USERS_MODEL = "usersModel";
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
-    private PiwigoUsers usersModel = new PiwigoUsers();
+    private PiwigoUsers usersModel;
     private UserRecyclerViewAdapter viewAdapter;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
@@ -95,7 +99,6 @@ public class UsersListFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(USERS_MODEL, usersModel);
         viewPrefs.storeToBundle(outState);
     }
 
@@ -110,9 +113,11 @@ public class UsersListFragment extends MyFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
+        usersModel = ViewModelProviders.of(this).get(PiwigoUsersModel.class).getPiwigoUsers().getValue();
 
-        if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            usersModel = savedInstanceState.getParcelable(USERS_MODEL);
+        if (isSessionDetailsChanged()) {
+            usersModel.clear();
+        } else if (savedInstanceState != null) {
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 
@@ -158,7 +163,7 @@ public class UsersListFragment extends MyFragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
 
-        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
 
         recyclerView.setLayoutManager(layoutMan);
 
@@ -208,8 +213,7 @@ public class UsersListFragment extends MyFragment {
             usersModel.clear();
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return;
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -227,7 +231,7 @@ public class UsersListFragment extends MyFragment {
         try {
             if (!usersModel.isPageLoadedOrBeingLoaded(pageToLoad) && !usersModel.isFullyLoaded()) {
                 int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-                usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+                usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
             }
         } finally {
             usersModel.releasePageLoadLock();
@@ -246,26 +250,34 @@ public class UsersListFragment extends MyFragment {
     private void onDeleteUser(final User thisItem) {
         String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(thisItem.getUsername())) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_delete_yourself_pattern, currentUser));
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction(getUiHelper(), thisItem));
+        }
+    }
 
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if (Boolean.TRUE == positiveAnswer) {
-                        deleteUserNow(thisItem);
-                    }
-                }
-            });
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UsersListFragment>> {
+
+        private final User user;
+
+        public OnDeleteUserAction(FragmentUIHelper<UsersListFragment> uiHelper, User user) {
+            super(uiHelper);
+            this.user = user;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                UsersListFragment fragment = getUiHelper().getParent();
+                fragment.deleteUserNow(user);
+            }
         }
     }
 
     private void deleteUserNow(User thisItem) {
-        long deleteActionId = new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(this.getContext());
-        this.deleteActionsPending.put(deleteActionId, thisItem);
-        addActiveServiceCall(R.string.progress_delete_user, deleteActionId);
+        this.deleteActionsPending.put(addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId())), thisItem);
     }
 
     @Override
@@ -288,7 +300,7 @@ public class UsersListFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserDeletedEvent event) {
         viewAdapter.remove(event.getUser());
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), event.getUser().getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_success_pattern, event.getUser().getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -299,18 +311,18 @@ public class UsersListFragment extends MyFragment {
     private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(user);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_success_pattern, user.getUsername()));
     }
 
     private void onUserDeleteFailed(final long messageId) {
         User user = deleteActionsPending.remove(messageId);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_failed_pattern), user.getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_failed_pattern, user.getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+            getParentFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -328,7 +340,7 @@ public class UsersListFragment extends MyFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getFragmentManager().popBackStack();
+                    getParentFragmentManager().popBackStack();
                     return;
                 }
             }

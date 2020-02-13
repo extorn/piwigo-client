@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 /**
  * Created by gareth on 23/05/17.
@@ -38,26 +38,25 @@ public class PiwigoGalleryDetails implements Parcelable {
     }
 
     public PiwigoGalleryDetails(Parcel in) {
-        parentageChain = new ArrayList<>();
-        in.readList(parentageChain, getClass().getClassLoader());
+        parentageChain = ParcelUtils.readLongArrayList(in);
         parentGallery = in.readParcelable(getClass().getClassLoader());
-        galleryName = in.readString();
-        galleryDescription = in.readString();
-        userCommentsAllowed = ParcelUtils.readValue(in,null, boolean.class);
-        isPrivate = ParcelUtils.readValue(in,null, boolean.class);
-        galleryId = ParcelUtils.readValue(in,null, Long.class);
-        allowedGroups = ParcelUtils.readLongSet(in, null);
-        allowedUsers = ParcelUtils.readLongSet(in, null);
+        galleryName = ParcelUtils.readString(in);
+        galleryDescription = ParcelUtils.readString(in);
+        userCommentsAllowed = ParcelUtils.readBool(in);
+        isPrivate = ParcelUtils.readBool(in);
+        galleryId = ParcelUtils.readLong(in);
+        allowedGroups = ParcelUtils.readLongSet(in);
+        allowedUsers = ParcelUtils.readLongSet(in);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(parentageChain);
+        ParcelUtils.writeLongArrayList(dest, parentageChain);
         dest.writeParcelable(parentGallery, flags);
-        dest.writeString(galleryName);
-        dest.writeString(galleryDescription);
-        dest.writeValue(userCommentsAllowed);
-        dest.writeValue(isPrivate);
+        dest.writeValue(galleryName);
+        dest.writeValue(galleryDescription);
+        ParcelUtils.writeBool(dest, userCommentsAllowed);
+        ParcelUtils.writeBool(dest, isPrivate);
         dest.writeValue(galleryId);
         ParcelUtils.writeLongSet(dest, allowedGroups);
         ParcelUtils.writeLongSet(dest, allowedUsers);

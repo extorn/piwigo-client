@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.album.expandingListSelect;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +10,17 @@ import android.widget.ExpandableListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.util.SetUtils;
 
 /**
  * UNUSED - Use this once it works!

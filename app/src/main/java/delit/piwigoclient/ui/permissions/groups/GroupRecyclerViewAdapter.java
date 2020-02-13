@@ -1,24 +1,27 @@
 package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGroups;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.common.recyclerview.BaseViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Group}
  */
-public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder> {
 
-    public GroupRecyclerViewAdapter(final PiwigoGroups groups, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(groups, multiSelectStatusListener, prefs);
+public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> {
+
+    public GroupRecyclerViewAdapter(final PiwigoGroups groups, MultiSelectStatusListener<Group> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+        super(null, groups, multiSelectStatusListener, prefs);
     }
 
     @NonNull

@@ -3,7 +3,8 @@ package delit.piwigoclient.piwigoApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -31,15 +32,17 @@ import cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory;
 import cz.msebera.android.httpclient.conn.ssl.SSLContextBuilder;
 import cz.msebera.android.httpclient.conn.ssl.TrustStrategy;
 import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
+import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
 import cz.msebera.android.httpclient.util.TextUtils;
+import delit.libs.http.UntrustedCaCertificateInterceptingTrustStrategy;
+import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.PersistentProfileCookieStore;
-import delit.piwigoclient.piwigoApi.http.UntrustedCaCertificateInterceptingTrustStrategy;
-import delit.piwigoclient.util.X509Utils;
+import delit.piwigoclient.piwigoApi.http.cache.RestartableManagedHttpCacheStorage;
 
 /**
  * Created by gareth on 07/07/17.
@@ -56,8 +59,12 @@ public class HttpClientFactory {
     private final HashMap<ConnectionPreferences.ProfilePreferences, CachingSyncHttpClient> syncClientMap;
     private final HashMap<ConnectionPreferences.ProfilePreferences, CachingAsyncHttpClient> videoDownloadClientMap;
     private final HashMap<ConnectionPreferences.ProfilePreferences, CachingSyncHttpClient> videoDownloadSyncClientMap;
+    private final Handler handler;
+    private RestartableManagedHttpCacheStorage cacheStorage;
 
     public HttpClientFactory(Context c) {
+        Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
+        handler = new Handler(eventLooper);
         cookieStoreMap = new HashMap<>(3);
         prefs = PreferenceManager.getDefaultSharedPreferences(c.getApplicationContext());
         asyncClientMap = new HashMap<>(3);
@@ -86,6 +93,32 @@ public class HttpClientFactory {
         PersistentProfileCookieStore cookieStore = cookieStoreMap.get(profile);
         if (cookieStore != null) {
             cookieStore.clear();
+        }
+    }
+
+    public synchronized void cancelAllRunningHttpRequests(ConnectionPreferences.ProfilePreferences profile) {
+        if (profile == null) {
+            // clear ALL.
+            HashSet<ConnectionPreferences.ProfilePreferences> keys = new HashSet<>();
+            keys.addAll(asyncClientMap.keySet());
+            keys.addAll(syncClientMap.keySet());
+            keys.addAll(videoDownloadClientMap.keySet());
+            keys.addAll(videoDownloadSyncClientMap.keySet());
+            for (ConnectionPreferences.ProfilePreferences aProfile : keys) {
+                cancelAllRunningHttpRequests(aProfile);
+            }
+            return;
+        }
+        cancelAllRequests(asyncClientMap.get(profile));
+        cancelAllRequests(syncClientMap.get(profile));
+        cancelAllRequests(videoDownloadClientMap.get(profile));
+        cancelAllRequests(videoDownloadSyncClientMap.get(profile));
+        flushCookies(profile);
+    }
+
+    private void cancelAllRequests(CachingAsyncHttpClient client) {
+        if (client != null) {
+            client.cancelAllRequests(true);
         }
     }
 
@@ -223,7 +256,12 @@ public class HttpClientFactory {
         if (!forceDisableCache) {
             String cacheLevel = ConnectionPreferences.getCacheLevel(prefs, context);
             if (cacheLevel.equals("disabled")) {
-                client.setCacheSettings(null, 0, 0);
+                CacheConfig cacheConfig = CacheConfig.custom()
+                        .setMaxCacheEntries(0)
+                        .setSharedCache(false)
+                        .setMaxObjectSize(0)
+                        .build();
+                client.setCacheSettings(null, cacheConfig, null);
             } else {
                 File cacheFolder = null;
                 if (cacheLevel.equals("disk")) {
@@ -232,15 +270,36 @@ public class HttpClientFactory {
                 int maxCacheEntries = ConnectionPreferences.getMaxCacheEntries(prefs, context);
 
                 int maxCacheEntrySize = ConnectionPreferences.getMaxCacheEntrySizeBytes(prefs, context);
-                client.setCacheSettings(cacheFolder, maxCacheEntries, maxCacheEntrySize);
+
+                CacheConfig cacheConfig = CacheConfig.custom()
+                        .setMaxCacheEntries(maxCacheEntries)
+                        .setSharedCache(false)
+                        .setMaxObjectSize(maxCacheEntrySize)
+                        .build();
+
+                client.setCacheSettings(cacheFolder, cacheConfig, getCacheStorage(cacheFolder, cacheConfig));
             }
         } else {
-            client.setCacheSettings(null, 0, 0);
+            CacheConfig cacheConfig = CacheConfig.custom()
+                    .setMaxCacheEntries(0)
+                    .setSharedCache(false)
+                    .setMaxObjectSize(0)
+                    .build();
+            client.setCacheSettings(null, cacheConfig, null);
         }
 
         configureBasicServerAuthentication(connectionPrefs, context, client);
 
         return client;
+    }
+
+    private RestartableManagedHttpCacheStorage getCacheStorage(File cacheFolder, CacheConfig cacheConfig) {
+        if (this.cacheStorage == null || !cacheStorage.isActive()) {
+            this.cacheStorage = new RestartableManagedHttpCacheStorage(cacheFolder, cacheConfig, handler);
+        } else if (cacheConfig.getMaxCacheEntries() != cacheStorage.getMaxCacheEntries()) {
+            cacheStorage.setMaxCacheEntries(cacheConfig.getMaxCacheEntries());
+        }
+        return this.cacheStorage;
     }
 
     private PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
@@ -369,5 +428,18 @@ public class HttpClientFactory {
 
     public boolean isInitialised(ConnectionPreferences.ProfilePreferences connectionProfile) {
         return asyncClientMap.containsKey(connectionProfile) || syncClientMap.containsKey(connectionProfile) || videoDownloadClientMap.containsKey(connectionProfile) || videoDownloadSyncClientMap.containsKey(connectionProfile);
+    }
+
+    public void clearCache() {
+        if (cacheStorage != null) {
+            cacheStorage.shutdown();
+        }
+    }
+
+    public long getItemsInResponseCache() {
+        if (cacheStorage == null) {
+            return 0;
+        }
+        return cacheStorage.getEntryCount();
     }
 }

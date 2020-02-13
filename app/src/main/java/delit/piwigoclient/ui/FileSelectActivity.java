@@ -2,13 +2,20 @@ package delit.piwigoclient.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AlertDialog;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -16,12 +23,16 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -35,6 +46,9 @@ import delit.piwigoclient.ui.file.RecyclerViewFolderItemSelectFragment;
  */
 
 public class FileSelectActivity extends MyActivity {
+
+    private static final String TAG = "FileSelAct";
+
     public static final String INTENT_SELECTED_FILES = "FileSelectActivity.selectedFiles";
 //    public static final String INTENT_SOURCE_EVENT_ID = "FileSelectActivity.sourceEventId";
     private static final String STATE_STARTED_ALREADY = "FileSelectActivity.startedAlready";
@@ -72,6 +86,10 @@ public class FileSelectActivity extends MyActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
+
+        if(BuildConfig.DEBUG) {
+            BundleUtils.logSize("Current File Select Activity", outState);
+        }
     }
 
     @Override
@@ -79,16 +97,24 @@ public class FileSelectActivity extends MyActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
 
-        if (savedInstanceState != null) {
-            startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
-        }
-
         if (!hasAgreedToEula()) {
             finish();
         } else {
             setContentView(R.layout.activity_file_select);
-            showFileSelectFragment();
         }
+
+        if (savedInstanceState == null) {
+
+            // open a new instance of the file select fragment
+            showFileSelectFragment();
+        } else {
+            startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
+        }
+    }
+
+    @Override
+    protected String getDesiredLanguage(Context context) {
+        return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
     }
 
     @Override
@@ -104,11 +130,34 @@ public class FileSelectActivity extends MyActivity {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
+
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
+
+        if (hasFocus) {
+            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+        } else {
+            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+        }
+
+        v.requestApplyInsets();
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
+    }
+
     private void showFileSelectFragment() {
 
         FileSelectionNeededEvent event = (FileSelectionNeededEvent) getIntent().getSerializableExtra(INTENT_DATA);
         if(event == null) {
             event = new FileSelectionNeededEvent(true,true, true);
+            event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
         String initialFolder = event.getInitialFolder();
 
@@ -122,6 +171,7 @@ public class FileSelectActivity extends MyActivity {
         // custom settings
         prefs.withInitialFolder(initialFolder);
         prefs.withVisibleContent(event.getVisibleFileTypes(), event.getFileSortOrder());
+        prefs.withVisibleMimeTypes(event.getVisibleMimeTypes());
         // basic settings
         prefs.selectable(event.isMultiSelectAllowed(), false);
         prefs.setInitialSelection(event.getInitialSelection());
@@ -165,14 +215,22 @@ public class FileSelectActivity extends MyActivity {
 
         final int trackingRequestId = TrackableRequestEvent.getNextEventId();
         getUiHelper().setTrackingRequest(trackingRequestId);
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction(getUiHelper(), trackingRequestId));
+    }
 
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-                //exit the app.
-                EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
-            }
-        });
+    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
+        private final int trackingRequestId;
+
+        public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
+            super(uiHelper);
+            this.trackingRequestId = trackingRequestId;
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            //exit the app.
+            EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -196,8 +254,8 @@ public class FileSelectActivity extends MyActivity {
             Intent result = this.getIntent();
 //            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
             result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
-            if (event.getSelectedFiles() != null) {
-                BundleUtils.putFileArrayListExtra(result,INTENT_SELECTED_FILES, event.getSelectedFiles());
+            if (event.getSelectedFolderItems() != null) {
+                result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
                 setResult(Activity.RESULT_OK, result);
             } else {
                 setResult(Activity.RESULT_CANCELED, result);

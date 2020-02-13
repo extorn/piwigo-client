@@ -2,25 +2,26 @@ package delit.piwigoclient.ui.album.listSelect;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.IdRes;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+
 import com.crashlytics.android.Crashlytics;
 
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.list.CustomSelectListAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
-import delit.piwigoclient.ui.common.list.CustomSelectListAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.util.DisplayUtils;
 
 import static android.view.View.GONE;
 

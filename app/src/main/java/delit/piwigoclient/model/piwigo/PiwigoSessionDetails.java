@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanResponseHandler;
@@ -42,6 +45,8 @@ public class PiwigoSessionDetails {
     private boolean sessionMayHaveExpired;
     private int loginStatus = NOT_LOGGED_IN;
     private Boolean useCommunityPlugin;
+    private ServerConfig serverConfig;
+    private boolean isCached;
 
     public PiwigoSessionDetails(ConnectionPreferences.ProfilePreferences connectionPrefs, String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
         this.connectionPrefs = connectionPrefs;
@@ -72,6 +77,21 @@ public class PiwigoSessionDetails {
         this.webInterfaceUploadChunkSizeKB = webInterfaceUploadChunkSizeKB;
     }
 
+    public static void writeToBundle(Bundle b, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails piwigoSessionDetails = getInstance(connectionPrefs);
+        if (piwigoSessionDetails != null) {
+            piwigoSessionDetails.writeToBundle(b);
+        }
+    }
+
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean cached) {
+        isCached = cached;
+    }
+
     public static boolean isLoggedInAndHaveSessionAndUserDetails(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         PiwigoSessionDetails instance = getInstance(connectionPrefs);
         return instance != null && instance.isLoggedInAndHaveSessionAndUserDetails();
@@ -85,6 +105,22 @@ public class PiwigoSessionDetails {
     public static boolean isLoggedIn(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         PiwigoSessionDetails instance = getInstance(connectionPrefs);
         return instance != null && instance.isLoggedIn();
+    }
+
+    public static boolean isCached(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails instance = getInstance(connectionPrefs);
+        return instance != null && instance.isCached();
+    }
+
+    public static void logoutAll(Context context) {
+        Iterator<Map.Entry<ConnectionPreferences.ProfilePreferences, PiwigoSessionDetails>> iter = sessionDetailsMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<ConnectionPreferences.ProfilePreferences, PiwigoSessionDetails> entry = iter.next();
+            if (entry.getValue() != null) {
+                HttpClientFactory.getInstance(context).flushCookies(entry.getValue().connectionPrefs);
+            }
+            iter.remove();
+        }
     }
 
     public synchronized static PiwigoSessionDetails getInstance(ConnectionPreferences.ProfilePreferences activeProfile) {
@@ -115,6 +151,11 @@ public class PiwigoSessionDetails {
     public static boolean isAdminUser(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         PiwigoSessionDetails instance = getInstance(connectionPrefs);
         return instance != null && instance.isAdminUser();
+    }
+
+    public static boolean isCommunityApiAvailable(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails instance = getInstance(connectionPrefs);
+        return instance != null && instance.isCommunityApiAvailable();
     }
 
     public static boolean isUseCommunityPlugin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
@@ -308,12 +349,26 @@ public class PiwigoSessionDetails {
     }
 
     public void writeToBundle(Bundle out) {
-        out.putStringArrayList("piwigo.methods", getMethodsAvailable());
-        out.putBoolean("is.admin.user", isAdminUser());
-        out.putBoolean("community.plugin.installed.", isCommunityPluginInstalled());
-        out.putBoolean("community.plugin.in_use", isUseCommunityPlugin());
-        out.putString("user.type", getUserType());
-        out.putInt("login.status", loginStatus);
-        out.putString("piwigo.client.ws.ext.plugin.version", getPiwigoClientPluginVersion());
+        out.putStringArrayList("piwigo_methods", getMethodsAvailable());
+        out.putBoolean("is_admin_user", isAdminUser());
+        out.putBoolean("community_plugin_installed", isCommunityPluginInstalled());
+        out.putBoolean("community_plugin_in_use", isUseCommunityPlugin());
+        out.putString("user_type", getUserType());
+        out.putInt("login_status", loginStatus);
+        out.putInt("app_version", BuildConfig.VERSION_CODE);
+        out.putString("app_version_name", BuildConfig.VERSION_NAME);
+        out.putString("piwigo_client_ws_ext_plugin_version", getPiwigoClientPluginVersion());
+    }
+
+    public void setServerConfig(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
+    }
+
+    public ServerConfig getServerConfig() {
+        return serverConfig;
+    }
+
+    public boolean isCommunityApiAvailable() {
+        return isMethodAvailable("community.categories.getList");
     }
 }
