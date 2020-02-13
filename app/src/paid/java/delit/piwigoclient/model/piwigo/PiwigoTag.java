@@ -19,6 +19,16 @@ public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> {
     }
 
     @Override
+    public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
+        throw new UnsupportedOperationException("cannot reverse the order");
+    }
+
+    @Override
+    protected void sortItems() {
+        throw new UnsupportedOperationException("cannot sort the items");
+    }
+
+    @Override
     public int getImgResourceCount() {
         return getContainerDetails().getUsageCount();
     }

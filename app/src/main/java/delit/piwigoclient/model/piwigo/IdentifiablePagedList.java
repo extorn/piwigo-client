@@ -12,7 +12,7 @@ import java.util.List;
  * Created by gareth on 02/01/18.
  */
 
-public class IdentifiablePagedList<T extends Identifiable&Parcelable> extends PagedList<T> {
+public abstract class IdentifiablePagedList<T extends Identifiable&Parcelable> extends PagedList<T> {
 
     public IdentifiablePagedList(String itemType) {
         super(itemType);
@@ -50,15 +50,4 @@ public class IdentifiablePagedList<T extends Identifiable&Parcelable> extends Pa
         }
         return id;
     }
-
-    public static final Parcelable.Creator<IdentifiablePagedList> CREATOR
-            = new Parcelable.Creator<IdentifiablePagedList>() {
-        public IdentifiablePagedList createFromParcel(Parcel in) {
-            return new IdentifiablePagedList(in);
-        }
-
-        public IdentifiablePagedList[] newArray(int size) {
-            return new IdentifiablePagedList[size];
-        }
-    };
 }

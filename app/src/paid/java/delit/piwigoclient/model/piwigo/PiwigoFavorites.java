@@ -13,6 +13,16 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
         super(in);
     }
 
+    @Override
+    public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
+        throw new UnsupportedOperationException("cannot reverse the order");
+    }
+
+    @Override
+    protected void sortItems() {
+        throw new UnsupportedOperationException("cannot sort the items");
+    }
+
     public void clear() {
         super.clear();
     }

@@ -176,15 +176,15 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
-        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
+        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, requireContext());
 
-        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, getContext());
+        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, requireContext());
 
-        String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs, getContext());
+        String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs, requireContext());
 
-        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
+        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
 
-        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
+        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, requireContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
         if(viewPrefs == null) {
@@ -260,7 +260,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(tagModel == null) {
             tagIsDirty = true;
-            tagModel = ViewModelProviders.of(getActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
+            tagModel = ViewModelProviders.of(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -343,7 +343,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 int pageToLoad = page;
 
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
                 int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
 
                 if (tagModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || tagModel.isFullyLoaded()) {
@@ -363,7 +363,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     }
 
     private void reloadTagModel(Tag tag) {
-        tagModel = ViewModelProviders.of(getActivity()).get("" + tag.getId(), PiwigoTagModel.class).updatePiwigoTag(tag).getValue();
+        tagModel = ViewModelProviders.of(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).updatePiwigoTag(tag).getValue();
     }
 
     private PiwigoTag getTagModel() {
@@ -407,7 +407,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     }
 
     private Basket getBasket() {
-        MainActivity activity = (MainActivity)getActivity();
+        MainActivity activity = (MainActivity)requireActivity();
         return activity.getBasket();
     }
 
@@ -561,7 +561,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         synchronized (loadingMessageIds) {
             tagModel.acquirePageLoadLock();
             try {
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
                 int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
 
                 if (pageToActuallyLoad < 0) {
@@ -573,8 +573,8 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 }
 
 
-                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
-                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
+                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
 
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new TagGetImagesResponseHandler(tag, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
                 tagModel.recordPageBeingLoaded(loadingMessageId, pageToLoad);
@@ -586,13 +586,13 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
-        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
-        tagModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+//        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+//        tagModel.setRetrieveItemsInReverseOrder(invertSortOrder);
         int pageToActuallyLoad = pageRequested;
-        if (invertSortOrder) {
-            int pagesOfPhotos = tagModel.getContainerDetails().getPagesOfPhotos(pageSize);
-            pageToActuallyLoad = pagesOfPhotos - pageRequested;
-        }
+//        if (invertSortOrder) {
+//            int pagesOfPhotos = tagModel.getContainerDetails().getPagesOfPhotos(pageSize);
+//            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+//        }
         return pageToActuallyLoad;
     }
 
@@ -794,12 +794,12 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
                 if(itemToLoad != null) {
-                    switch (itemToLoad) {
-                        default:
+//                    switch (itemToLoad) {
+//                        default:
                             int page = Integer.valueOf(itemToLoad);
                             loadAlbumResourcesPage(page);
-                            break;
-                    }
+//                            break;
+//                    }
                 } else {
                     Crashlytics.log(Log.ERROR, getTag(), "User told tag page failed to load, but nothing to retry loading!");
                 }
@@ -812,7 +812,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         @Override
         public boolean onSuccess(FragmentUIHelper<ViewTagFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
             boolean updated = false;
-            ViewTagFragment fragment = ((ViewTagFragment) uiHelper.getParent());
+            ViewTagFragment fragment = uiHelper.getParent();
             for (Tag t : response.getTags()) {
                 if (t.getId() == fragment.getTagModel().getId()) {
                     // tag has been located!
@@ -832,7 +832,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
         @Override
         public boolean onFailure(FragmentUIHelper<ViewTagFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            ViewTagFragment fragment = ((ViewTagFragment) uiHelper.getParent());
+            ViewTagFragment fragment = uiHelper.getParent();
             fragment.getParentFragmentManager().popBackStack();
             return false;
         }

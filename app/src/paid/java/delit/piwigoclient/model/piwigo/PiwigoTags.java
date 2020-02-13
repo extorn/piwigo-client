@@ -28,6 +28,16 @@ public class PiwigoTags extends IdentifiablePagedList<Tag> {
         pageSources = in.readInt();
     }
 
+    @Override
+    public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
+        throw new UnsupportedOperationException("cannot reverse the order");
+    }
+
+    @Override
+    protected void sortItems() {
+        throw new UnsupportedOperationException("cannot sort the items");
+    }
+
     public int getPageSources() {
         return pageSources;
     }

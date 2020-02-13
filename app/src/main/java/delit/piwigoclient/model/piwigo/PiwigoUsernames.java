@@ -17,6 +17,16 @@ public class PiwigoUsernames extends IdentifiablePagedList<Username> {
         super(in);
     }
 
+    @Override
+    public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
+        throw new UnsupportedOperationException("cannot reverse the order");
+    }
+
+    @Override
+    protected void sortItems() {
+        throw new UnsupportedOperationException("cannot sort the items");
+    }
+
     public static final Parcelable.Creator<PiwigoUsernames> CREATOR
             = new Parcelable.Creator<PiwigoUsernames>() {
         public PiwigoUsernames createFromParcel(Parcel in) {

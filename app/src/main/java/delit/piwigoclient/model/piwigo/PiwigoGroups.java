@@ -17,6 +17,16 @@ public class PiwigoGroups extends IdentifiablePagedList<Group> {
         super(in);
     }
 
+    @Override
+    public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
+        throw new UnsupportedOperationException("cannot reverse the order");
+    }
+
+    @Override
+    protected void sortItems() {
+        throw new UnsupportedOperationException("cannot sort the items");
+    }
+
     public static final Parcelable.Creator<PiwigoGroups> CREATOR
             = new Parcelable.Creator<PiwigoGroups>() {
         public PiwigoGroups createFromParcel(Parcel in) {

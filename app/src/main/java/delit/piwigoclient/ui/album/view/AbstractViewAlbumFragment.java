@@ -489,6 +489,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
             galleryIsDirty = galleryIsDirty || savedInstanceState.getBoolean(STATE_GALLERY_DIRTY);
+
             loadingMessageIds.clear();
             BundleUtils.readMap(savedInstanceState, STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds, null);
             Set<Long> messageIdsExpired = PiwigoResponseBufferingHandler.getDefault().getUnknownMessageIds(loadingMessageIds.keySet());
@@ -541,8 +542,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         }
 
+        boolean sortOrderChanged = false;
         if (galleryModel != null) {
-            galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, getContext()));
+            sortOrderChanged = galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, requireContext()));
+            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+            sortOrderChanged &= galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
         } else {
             Crashlytics.log(Log.WARN, getTag(), "Attempt to set album sort order but album model is still null");
         }
@@ -926,7 +930,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private Basket getBasket() {
-        MainActivity activity = (MainActivity) getActivity();
+        MainActivity activity = (MainActivity) requireActivity();
         return activity.getBasket();
     }
 
@@ -1014,7 +1018,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         synchronized (loadingMessageIds) {
             galleryModel.acquirePageLoadLock();
             try {
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
                 int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
                 if (pageToActuallyLoad < 0) {
                     // the sort order is inverted so we know for a fact this page is invalid.
@@ -1025,8 +1029,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     return;
                 }
 
-                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
-                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
+                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
 
 
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
@@ -1039,9 +1043,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
-        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
-
-        galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
+        if(galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder)) {
+            this.viewAdapter.notifyDataSetChanged();
+            this.galleryListView.invalidate();
+        }
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
             int pagesOfPhotos = galleryModel.getContainerDetails().getPagesOfPhotos(pageSize);
@@ -1072,6 +1078,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     private void setupEditFields(View editFields) {
         galleryNameView = editFields.findViewById(R.id.gallery_details_name);
+        galleryDescriptionView = editFields.findViewById(R.id.gallery_details_description);
         allowedGroupsFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_groups_label);
         allowedGroupsField = editFields.findViewById(R.id.gallery_details_allowed_groups);
         allowedGroupsField.setOnClickListener(new View.OnClickListener() {
@@ -1286,7 +1293,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private void onResourceMoved(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
-        Crashlytics.log(String.format("deleting 1 album items from the UI display after moving it to different album"));
+        Crashlytics.log("deleting 1 album items from the UI display after moving it to different album");
         Basket basket = getBasket();
         if (basket == null) {
             Crashlytics.log("Basket is null when expecting to handle onResourceMoved event");
@@ -1919,8 +1926,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
-            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
             int firstPage = invertSortOrder ? galleryModel.getContainerDetails().getPagesOfPhotos(pageSize) : 0;
 
             if (response.getPage() == firstPage && response.getResources().size() > 0) {
@@ -2434,7 +2441,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             if (Boolean.TRUE == positiveAnswer) {
                 BulkResourceActionData currentBulkResourceActionData = getUiHelper().getParent().getBulkResourceActionData();
                 if (currentBulkResourceActionData != null) {
-                    currentBulkResourceActionData.trackMessageId(getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<T>(selectedItemIds, selectedItems)));
+                    currentBulkResourceActionData.trackMessageId(getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<>(selectedItemIds, selectedItems)));
                 }
             }
         }
@@ -2839,7 +2846,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         public void onLoadMore(int requestedPage, int totalItemsCount, RecyclerView view) {
             int pageToLoad = requestedPage;
 
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
             int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
 
             if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || galleryModel.isFullyLoaded()) {
@@ -2893,7 +2900,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
             PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null, null);
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
             ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
             long messageId = handler.invokeAsync(getContext());
             albumThumbnailLoadActions.put(messageId, mItem);
