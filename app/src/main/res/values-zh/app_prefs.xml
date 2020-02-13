@@ -143,6 +143,8 @@
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">显示Zoomed专辑缩略图</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">相册缩略图是中心裁剪的</string>
 
+    <string name="preference_gallery_show_file_size_showing_title">显示已查看照片的服务器大小</string>
+    <string name="preference_gallery_show_file_size_showing_summary">显示显示的每张照片的大小</string>
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">肖像：要显示的专辑列</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>

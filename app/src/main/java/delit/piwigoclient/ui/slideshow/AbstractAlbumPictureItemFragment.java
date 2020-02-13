@@ -36,6 +36,7 @@ import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
@@ -47,7 +48,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     private PicassoLoader loader;
     private ImageView imageView;
     private ImageView imageLoadErrorView;
-    private String filesizeToShow;
+    private String fileSizeToShow;
 
     public AbstractAlbumPictureItemFragment() {
     }
@@ -208,11 +209,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     protected void doOnceOnPageSelectedAndAdded() {
         super.doOnceOnPageSelectedAndAdded();
-        if (filesizeToShow != null) {
-            getUiHelper().doOnce("currentImageSizeDisplayed", filesizeToShow, new Runnable() {
+        boolean showFileSizeShowingMessage = AlbumViewPreferences.isShowFileSizeShowingMessage(prefs, requireContext());
+        if (fileSizeToShow != null && showFileSizeShowingMessage) {
+            getUiHelper().doOnce("currentImageSizeDisplayed", fileSizeToShow, new Runnable() {
                 @Override
                 public void run() {
-                    getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_images_of_size, filesizeToShow));
+                    getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_images_of_size, fileSizeToShow));
                 }
             });
         }
@@ -255,7 +257,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         if (currentImageUrlDisplayed == null) {
 
             String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, requireContext());
-            filesizeToShow = preferredImageSize;
+            fileSizeToShow = preferredImageSize;
             for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
                 if (rf.getName().equals(preferredImageSize)) {
                     currentImageUrlDisplayed = model.getFileUrl(rf.getName());
@@ -276,12 +278,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                     bestFitFile = model.getBestFitFile(appWidth, appHeight);
                 }
                 if (bestFitFile != null) {
-                    filesizeToShow = bestFitFile.getName();
+                    fileSizeToShow = bestFitFile.getName();
                     currentImageUrlDisplayed = model.getFileUrl(bestFitFile.getName());
                 } else {
                     // this is theoretically never going to happen. Only if bug in the image selection code.
-                    filesizeToShow = "original";
-                    currentImageUrlDisplayed = model.getFileUrl(filesizeToShow);
+                    fileSizeToShow = "original";
+                    currentImageUrlDisplayed = model.getFileUrl(fileSizeToShow);
                 }
             }
         }

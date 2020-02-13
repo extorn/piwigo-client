@@ -149,6 +149,8 @@
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Zeige gezoomtes Album Thumbnail</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album-Thumbnails sind in der Mitte abgeschnitten</string>
 
+    <string name="preference_gallery_show_file_size_showing_title">Servergröße der angezeigten Fotos anzeigen</string>
+    <string name="preference_gallery_show_file_size_showing_summary">Zeigen Sie die Größe jedes angezeigten Fotos an</string>
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Porträt: Spalten von Alben zum Anzeigen</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>

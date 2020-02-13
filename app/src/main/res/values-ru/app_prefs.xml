@@ -101,14 +101,19 @@
 
     <string name="preference_gallery_albums_preferredColumnsLandscape_title">Пейзаж: колонны альбомов, чтобы показать</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
-    <string name="preference_gallery_show_image_name_title">Показать названия изображений в альбоме</string>
 
+    <string name="preference_gallery_show_image_name_title">Показать названия изображений в альбоме</string>
     <string name="preference_gallery_show_image_name_summary">Показывает название изображения под каждым изображением</string>
+
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Пейзаж: столбцы изображений, чтобы показать</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Показать уменьшенное изображение альбома</string>
 
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Показать уменьшенное изображение альбома</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Миниатюры альбомов обрезаны по центру</string>
+
+    <string name="preference_gallery_show_file_size_showing_title">Показать размер сервера просмотренных фотографий</string>
+    <string name="preference_gallery_show_file_size_showing_summary">Показать размер каждой фотографии отображается</string>
+
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Портрет: колонки альбомов, чтобы показать</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
