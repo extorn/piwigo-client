@@ -22,6 +22,11 @@ android {
 
     compileSdkVersion 29
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildToolsVersion '28.0.3'
     defaultConfig {
         buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.9\""
