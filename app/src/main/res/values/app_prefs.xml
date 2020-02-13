@@ -171,7 +171,7 @@
     <bool name="preference_gallery_show_album_thumbnail_zoomed_default">true</bool>
 
 
-    <string name="preference_gallery_show_file_size_showing_key" translatable="false">preference_gallery_show_album_thumbnail_zoomed</string>
+    <string name="preference_gallery_show_file_size_showing_key" translatable="false">preference_gallery_show_file_size_showing</string>
     <string name="preference_gallery_show_file_size_showing_title">Show Server Size of Photos Viewed</string>
     <string name="preference_gallery_show_file_size_showing_summary">Show the size of each photo displayed</string>
     <bool name="preference_gallery_show_file_size_showing_default">false</bool>
