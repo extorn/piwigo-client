@@ -2,7 +2,9 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+import com.crashlytics.android.BuildConfig;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import delit.libs.util.ObjectUtils;
  */
 public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Parcelable {
 
+    private static final String TAG = "PwgAlb";
     public static final int DEFAULT_ALBUM_SORT_ORDER = 0;
     public static final int NAME_ALBUM_SORT_ORDER = 1;
     public static final int DATE_ALBUM_SORT_ORDER = 2;
@@ -87,8 +90,14 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
 
     @Override
     public int getDisplayIdx(GalleryItem item) {
-        //TODO add offsets for the headers etc?
-        return super.getDisplayIdx(item);
+        int rawIdx = super.getDisplayIdx(item);
+        if (hideAlbums) {
+            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
+            if (rawIdx > subAlbumCount + bannerOffset) {
+                rawIdx -= subAlbumCount;
+            }
+        }
+        return rawIdx;
     }
 
     @Override
@@ -199,6 +208,10 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         // remove all spacers
         ArrayList<GalleryItem> items = getItems();
         while (items.remove(CategoryItem.BLANK)) {
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG, "removing spacer album");
+            }
+            // loop will exit once there are no more items to remove
         }
         spacerAlbums = spacerAlbumsNeeded;
         if (spacerAlbumsNeeded > 0) {

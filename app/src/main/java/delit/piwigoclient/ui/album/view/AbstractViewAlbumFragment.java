@@ -280,6 +280,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
         albumDetails.forcePermissionsReload();
         galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+
         galleryModel.setContainerDetails(albumDetails);
         galleryIsDirty = true;
     }
@@ -1039,6 +1040,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
         boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+
         galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
@@ -1070,27 +1072,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     private void setupEditFields(View editFields) {
         galleryNameView = editFields.findViewById(R.id.gallery_details_name);
-        galleryNameView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (galleryNameView.getLineCount() > galleryNameView.getMaxLines()) {
-//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
-        galleryDescriptionView = editFields.findViewById(R.id.gallery_details_description);
-        galleryDescriptionView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (galleryDescriptionView.getLineCount() > galleryDescriptionView.getMaxLines()) {
-//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
-
         allowedGroupsFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_groups_label);
         allowedGroupsField = editFields.findViewById(R.id.gallery_details_allowed_groups);
         allowedGroupsField.setOnClickListener(new View.OnClickListener() {

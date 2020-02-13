@@ -43,22 +43,23 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         this.gallery = gallery;
         galleryResourceItems = new ArrayList<>(gallery.getResourcesCount());
         this.shouldShowVideos = shouldShowVideos;
-        addResourcesToIndex(0, gallery.getItemCount(), selectedItem);
+        addResourcesToIndex(0, gallery.getItems().size(), selectedItem); // use get items.size to ignore issues when hide
     }
 
     private void addResourcesToIndex(int fromIdx, int items, int selectedItem) {
+        int toIndex = fromIdx;
         if (fromIdx == 0) {
             // need to reload all items.
             galleryResourceItems.clear();
-            items = gallery.getItemCount();
+            toIndex += gallery.getItemCount();
         }
-        int toIndex = fromIdx + items;
+
         for (int i = fromIdx; i < toIndex; i++) {
             GalleryItem currentItem = gallery.getItemByIdx(i);
             if (!(currentItem instanceof ResourceItem)) {
-                if (gallery.getItemCount() > toIndex + 1) {
-                    toIndex++;
-                }
+//                if (gallery.getItemCount() < items) {
+//                    toIndex++;
+//                }
                 continue;
             }
             if (!shouldShowVideos && currentItem instanceof VideoResourceItem && i != selectedItem) {
