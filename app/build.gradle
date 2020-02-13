@@ -20,14 +20,14 @@ android {
         }
     }
 
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     buildToolsVersion '28.0.3'
     defaultConfig {
         buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.9\""
         applicationId "delit.piwigoclient"
         minSdkVersion 17
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 273
         versionName "1.4.0.52.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -150,15 +150,15 @@ dependencies {
     // annotations support
     implementation 'androidx.annotation:annotation:1.1.0'
     // drawers, snackbars etc
-    implementation 'com.google.android.material:material:1.0.0' //1.1.0-alpha01
+    implementation 'com.google.android.material:material:1.1.0'
     // parse and edit exif and IPTC etc information
-    //implementation 'com.drewnoakes:metadata-extractor:2.12.0' - use this once they have increased the version number to remove awt dependency https://github.com/drewnoakes/metadata-extractor
+    implementation 'com.drewnoakes:metadata-extractor:2.13.0' //- use this once they have increased the version number to remove awt dependency https://github.com/drewnoakes/metadata-extractor
     // TODO remove the settings.gradle include for the metadata-extractor project! relative path below won't work - using absolute.
-    implementation files('/home/gareth/AndroidStudioProjects/metadata-extractor/build/libs/metadata-extractor-2.1.1.jar')
+    //implementation files('/home/gareth/AndroidStudioProjects/metadata-extractor/build/libs/metadata-extractor-2.1.1.jar')
     implementation 'com.adobe.xmp:xmpcore:6.0.6' // only needed because I'm forcing use of an external jar (this is a transient dependency)
 
     // custom tab support
-    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'androidx.browser:browser:1.2.0'
     //EXIF Support
     implementation 'androidx.exifinterface:exifinterface:1.1.0'
     // Core libraries (v4)

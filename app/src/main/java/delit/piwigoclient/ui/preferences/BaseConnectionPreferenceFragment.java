@@ -220,12 +220,18 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            if (!initialising) {
-                forceHttpConnectionCleanupAndRebuild();
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    getListView().getAdapter().notifyDataSetChanged();
+            getPrefs().registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if (!initialising) {
+                        forceHttpConnectionCleanupAndRebuild();
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                            getListView().getAdapter().notifyDataSetChanged();
+                        }
+                    }
+                    getPrefs().unregisterOnSharedPreferenceChangeListener(this);
                 }
-            }
+            });
             return true;
         }
     }
@@ -304,8 +310,8 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-        }
+//        if (savedInstanceState != null) {
+//        }
         super.onCreate(savedInstanceState);
     }
 
@@ -477,7 +483,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 if (!initialising) {
                     getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
                 }
-            } else if(valueChanged) {
+            } else {
                 if (!initialising) {
                     // clear the existing session - it's not valid any more.
                     logoutSession();
