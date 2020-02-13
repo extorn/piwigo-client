@@ -53,9 +53,23 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return retrieveItemsInReverseOrder;
     }
 
-    public void setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
-        this.retrieveItemsInReverseOrder = retrieveItemsInReverseOrder;
+    /**
+     *
+     * @param retrieveItemsInReverseOrder
+     * @return true if the items were resorted
+     */
+    public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
+        if(this.retrieveItemsInReverseOrder != retrieveItemsInReverseOrder) {
+            this.retrieveItemsInReverseOrder = retrieveItemsInReverseOrder;
+            if (items.size() > 0) {
+                sortItems();
+                return true;
+            }
+        }
+        return false;
     }
+
+    protected abstract void sortItems();
 
     public Integer getAMissingPage() {
         if(!pagesFailedToLoad.isEmpty()) {

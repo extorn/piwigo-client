@@ -27,7 +27,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
  */
 public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, S extends AlbumItemViewHolder<T, Q, S, M>, M extends ResourceContainer<? extends T, GalleryItem>> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, M, S, Q> {
 
-    public AlbumItemRecyclerViewAdapter(final Context context, final Class<ViewModelContainer> modelType, final M gallery, Q multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
+    public AlbumItemRecyclerViewAdapter(final Context context, final Class<? extends ViewModelContainer> modelType, final M gallery, Q multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
         super(modelType, gallery, multiSelectStatusListener, prefs);
     }
 

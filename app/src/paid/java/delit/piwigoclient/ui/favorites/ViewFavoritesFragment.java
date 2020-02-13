@@ -163,12 +163,12 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
 
 //        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
-        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
+        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, requireContext());
 
 
-        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, getContext());
+        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, requireContext());
 
-        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
+        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, requireContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
         if(viewPrefs == null) {
@@ -229,7 +229,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
             }
         }
 
-        favoritesModel = ViewModelProviders.of(getActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites().getValue();
+        favoritesModel = ViewModelProviders.of(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites().getValue();
 
         FavoritesUpdatedEvent favoritesUpdatedEvent = EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class);
         if(favoritesUpdatedEvent != null) {
@@ -243,7 +243,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(favoritesModel == null) {
             favoritesIsDirty = true;
-            favoritesModel = ViewModelProviders.of(getActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
+            favoritesModel = ViewModelProviders.of(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -326,7 +326,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 int pageToLoad = page;
 
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
                 int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
 
                 if (favoritesModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || favoritesModel.isFullyLoaded()) {
@@ -346,7 +346,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     }
 
     private void reloadFavoritesModel() {
-        favoritesModel = ViewModelProviders.of(getActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
+        favoritesModel = ViewModelProviders.of(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         loadAlbumResourcesPage(0);
     }
 
@@ -368,7 +368,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     }
 
     private Basket getBasket() {
-        MainActivity activity = (MainActivity)getActivity();
+        MainActivity activity = (MainActivity)requireActivity();
         return activity.getBasket();
     }
 
@@ -496,7 +496,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     private void onDeleteResources(final DeleteActionData deleteActionData) {
 
         if (!deleteActionData.isResourceInfoAvailable()) {
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
                 deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList)));
             }
@@ -518,7 +518,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         synchronized (loadingMessageIds) {
             favoritesModel.acquirePageLoadLock();
             try {
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
                 int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
                 if (pageToActuallyLoad < 0) {
                     // the sort order is inverted so we know for a fact this page is invalid.
@@ -529,8 +529,8 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
                 }
 
 
-                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
-                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
+                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
 
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new FavoritesGetImagesResponseHandler(sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
                 favoritesModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
@@ -542,13 +542,13 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
-        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
-        favoritesModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+//        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+//        favoritesModel.setRetrieveItemsInReverseOrder(invertSortOrder);
         int pageToActuallyLoad = pageRequested;
-        if (invertSortOrder) {
-            int pagesOfPhotos = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize);
-            pageToActuallyLoad = pagesOfPhotos - pageRequested;
-        }
+//        if (invertSortOrder) {
+//            int pagesOfPhotos = favoritesModel.getContainerDetails().getPagesOfPhotos(pageSize);
+//            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+//        }
         return pageToActuallyLoad;
     }
 
@@ -765,12 +765,12 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
                 if(itemToLoad != null) {
-                    switch (itemToLoad) {
-                        default:
-                            int page = Integer.valueOf(itemToLoad);
-                            loadAlbumResourcesPage(page);
-                            break;
-                    }
+//                    switch (itemToLoad) {
+//                        default:
+                        int page = Integer.valueOf(itemToLoad);
+                        loadAlbumResourcesPage(page);
+//                        break;
+//                    }
                 } else {
                     Crashlytics.log(Log.ERROR, getTag(), "User told favorites page failed to load, but nothing to retry loading!");
                 }

@@ -80,12 +80,13 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         return itemCount;
     }
 
-    public void setAlbumSortOrder(int albumSortOrder) {
+    public boolean setAlbumSortOrder(int albumSortOrder) {
         this.albumSortOrder = albumSortOrder;
-        if (albumSortOrder != itemComparator.getAlbumSortOrder()) {
-            itemComparator.setAlbumSortOrder(albumSortOrder);
-            Collections.sort(getItems(), itemComparator);
+        if (albumSortOrder != itemComparator.getAlbumSortOrder() && getItems().size() > 0) {
+            sortItems();
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -153,9 +154,14 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             bannerCount++;
         }
         // ensure these are always placed above other resources.
+        sortItems();
+//        Log.d("Order", getItems().toString());
+    }
+
+    @Override
+    protected void sortItems() {
         itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
         Collections.sort(getItems(), itemComparator);
-//        Log.d("Order", getItems().toString());
     }
 
     public void addItem(CategoryItem item) {
@@ -170,8 +176,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         }
         super.addItem(item);
         // ensure these are always placed first.
-        itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
-        Collections.sort(getItems(), itemComparator);
+        sortItems();
 //        Log.d("Order", getItems().toString());
     }
 
@@ -184,8 +189,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         }
         if (isRetrieveItemsInReverseOrder()) {
             // need to resort the list to bubble the albums back to the end!
-            itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
-            Collections.sort(getItems(), itemComparator);
+            sortItems();
         }
     }
 
@@ -221,8 +225,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
                 items.add(CategoryItem.BLANK.clone().withId(blankId++));
             }
             // ensure spacers are always placed before images etc.
-            itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
-            Collections.sort(items, itemComparator);
+            sortItems();
         }
     }
 

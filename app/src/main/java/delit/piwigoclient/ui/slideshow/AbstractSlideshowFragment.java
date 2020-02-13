@@ -140,8 +140,16 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     }
 
     private void loadModelFromArguments() {
-        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
-        long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
+        Bundle arguments = getArguments();
+        if(arguments == null) {
+            throw new IllegalStateException("Unable to load model from null arguments");
+        }
+        Class<? extends ViewModelContainer> galleryModelClass = (Class) arguments.getSerializable(ARG_GALLERY_TYPE);
+        long galleryModelId = arguments.getLong(ARG_GALLERY_ID);
+
+        if(galleryModelClass == null) {
+            throw new IllegalStateException("gallery model type not available");
+        }
 
         ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
@@ -365,7 +373,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
         boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
-        resourceContainer.setRetrieveItemsInReverseOrder(invertSortOrder);
+        if(resourceContainer.setRetrieveItemsInReverseOrder(invertSortOrder)) {
+            // need to refresh this page as the sort order flipped.
+            //TODO
+        }
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
             int pagesOfPhotos = resourceContainer.getContainerDetails().getPagesOfPhotos(pageSize);
