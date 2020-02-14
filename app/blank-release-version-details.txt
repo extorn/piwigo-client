@@ -16,7 +16,7 @@ Changes:
 - Aktualisieren Sie die Albumansicht sofort nach dem Ändern der Sortierreihenfolge der Ressource oder des untergeordneten Albums
 - Fehler bei der allgemeinen Sortierung der Alben behoben
 - Der Zugriff auf die Diashow beim Quetschen von untergeordneten Alben wurde korrigiert (durch Berühren des Album-Headers).
-- Möglicher Fehler, bei dem einige Änderungen der Verbindungseinstellungen (z. B. die Verwendung der Basisauthentifizierung) erst beim nächsten Neustart der App vollständig verwendet werden
+- Möglicher Fehler, bei dem einige Änderungen der Verbin...
 </de-DE>
 
 <fr-FR>
@@ -26,7 +26,7 @@ Changements:
 - Actualisez la vue de l'album immédiatement après avoir changé l'ordre de tri des ressources ou des albums enfants
 - correction d'un bug avec le tri général des albums
 - accès fixe au diaporama lorsque les albums enfants sont écrasés (en touchant l'en-tête des albums)
-- Bug possible où certains changements de paramètres de connexion (tels que l'utilisation de l'authentification de base) ne seraient pas entièrement utilisés jusqu'au prochain redémarrage de l'application
+- Bug possible où certains changements de paramètres de connexion (tel...
 </fr-FR>
 
 <es-ES>
@@ -36,7 +36,7 @@ Cambios:
 - Actualizar la vista del álbum inmediatamente después de cambiar el recurso o el orden de clasificación del álbum secundario
 - Corregir error con la clasificación general de álbumes
 - acceso fijo a la presentación de diapositivas cuando se aplastan los álbumes secundarios (al tocar el encabezado de los álbumes)
-- Posible error en el que algunos cambios en la configuración de la conexión (como el uso de autenticación básica) no se utilizarían por completo hasta el próximo reinicio de la aplicación
+- Posible error en el qu...
 </es-ES>
 
 <zh-CN>
@@ -56,5 +56,5 @@ Cambios:
 - Обновить вид альбома сразу после изменения ресурса или порядка сортировки дочерних альбомов.
 - исправить ошибку с общей сортировкой альбомов
 - исправлен доступ к слайд-шоу при сжатии дочерних альбомов (при касании заголовка альбома)
-- Возможная ошибка, при которой некоторые изменения настроек соединения (например, использование базовой аутентификации) не будут полностью использованы до следующего перезапуска приложения
+- Возможная ошибка, при которой некоторые изменения настроек соединения (например, использование базовой аутентиф...
 </ru-RU>
