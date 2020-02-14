@@ -133,6 +133,14 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.53</item>
+        <item>"Changements:
+            - Ajout d'une préférence pour contrôler l'affichage du message montrant la taille de l'image chargée à partir du serveur
+              Correction d'un bug:
+            - Actualisez la vue de l'album immédiatement après avoir changé l'ordre de tri des ressources ou des albums enfants
+            - correction d'un bug avec le tri général des albums
+            - accès fixe au diaporama lorsque les albums enfants sont écrasés (en touchant l'en-tête des albums)
+            - Bug possible où certains changements de paramètres de connexion (tels que l'utilisation de l'authentification de base) ne seraient pas entièrement utilisés jusqu'au prochain redémarrage de l'application"</item>
         <item>1.4.0.52</item>
         <item>"Correction d'un bug:
              - L'annulation d'un téléchargement de fichier et la sortie de la page de téléchargement avant l'annulation signalée provoquent un crash

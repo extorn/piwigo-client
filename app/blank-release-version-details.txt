@@ -1,60 +1,60 @@
 
 <en-GB>
-Bugfix:
-- Cancelling a file upload and leaving upload page before cancellation reported causes crash
-- paid app:
-    crash using russian on automatic upload job configuration page
-    Updating tags list for a resource where at least one tag previously selected no longer exists causes crash (now warn user and remove them)
-    App can crash when selecting destination album for auto upload job
-    selecting the root album as destination album for auto upload job displays first album name as sel...
+Changes:
+- Added preference to control display of message showing image size loaded from server
+ Bugfix:
+- Refresh album view immediately after changing resource or child album sort order
+- fix bug with general album sorting
+- fixed access to slideshow when child albums are squashed (by touching albums header)
+- Possible bug where some connection settings changes (such as use basic authentication) wouldn't be fully used until next app restart
 </en-GB>
 
 <de-DE>
-Bug-Fix:
- - Das Abbrechen eines Datei-Uploads und das Verlassen der Upload-Seite vor dem gemeldeten Abbruch führt zum Absturz
- - Bezahlte App:
-  Absturz mit Russisch auf der Konfigurationsseite für den automatischen Upload-Auftrag
-  Das Aktualisieren der Tags-Liste für eine Ressource, bei der mindestens ein z...
-  Die App kann abstürzen, wenn das Zielalbum für den automatischen Upload-Auftrag ausgewählt wird
-  Wenn Sie das Stammverzeichnis als Zielalbum für den automatischen Upload-Auftrag au...
+Änderungen:
+- Einstellung zur Steuerung der Anzeige von Nachrichten mit der vom Server geladenen Bildgröße hinzugefügt
+  Bug-Fix:
+- Aktualisieren Sie die Albumansicht sofort nach dem Ändern der Sortierreihenfolge der Ressource oder des untergeordneten Albums
+- Fehler bei der allgemeinen Sortierung der Alben behoben
+- Der Zugriff auf die Diashow beim Quetschen von untergeordneten Alben wurde korrigiert (durch Berühren des Album-Headers).
+- Möglicher Fehler, bei dem einige Änderungen der Verbindungseinstellungen (z. B. die Verwendung der Basisauthentifizierung) erst beim nächsten Neustart der App vollständig verwendet werden
 </de-DE>
 
 <fr-FR>
-Correction d'un bug:
- - L'annulation d'un téléchargement de fichier et la sortie de la page de téléchargement avant l'annulation signalée provoquent un crash
- - application payante:
- plantage en russe sur la page de configuration de la tâche de téléchargement automatique
- la mise à jour de la liste des balises pour une ressource où au moi...
- l'application peut se bloquer lors de la sélection de l'album de dest...
- la sélection de l'album racine comme album de destination pour le travail d...
+Changements:
+- Ajout d'une préférence pour contrôler l'affichage du message montrant la taille de l'image chargée à partir du serveur
+  Correction d'un bug:
+- Actualisez la vue de l'album immédiatement après avoir changé l'ordre de tri des ressources ou des albums enfants
+- correction d'un bug avec le tri général des albums
+- accès fixe au diaporama lorsque les albums enfants sont écrasés (en touchant l'en-tête des albums)
+- Bug possible où certains changements de paramètres de connexion (tels que l'utilisation de l'authentification de base) ne seraient pas entièrement utilisés jusqu'au prochain redémarrage de l'application
 </fr-FR>
 
 <es-ES>
-Arreglo del fallo:
- - Cancelar la carga de un archivo y abandonar la página de carga antes de que se informe de la cancelación causa un bloqueo
- - aplicación paga:
- falla al usar ruso en la página de configuración de carga automática
- la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente selecciona...
- la aplicación puede bloquearse al seleccionar el álbum de destino pa...
- al seleccionar el álbum raíz como álbum de destino para el trabajo de carga...
+Cambios:
+- Se agregó preferencia para controlar la visualización del mensaje que muestra el tamaño de la imagen cargada desde el servidor
+  Arreglo del fallo:
+- Actualizar la vista del álbum inmediatamente después de cambiar el recurso o el orden de clasificación del álbum secundario
+- Corregir error con la clasificación general de álbumes
+- acceso fijo a la presentación de diapositivas cuando se aplastan los álbumes secundarios (al tocar el encabezado de los álbumes)
+- Posible error en el que algunos cambios en la configuración de la conexión (como el uso de autenticación básica) no se utilizarían por completo hasta el próximo reinicio de la aplicación
 </es-ES>
 
 <zh-CN>
-错误修正：
- -在取消报告之前取消文件上传并离开上传页面会导致崩溃
- -付费应用程序：在自动上传任务配置页面上使用俄语时崩溃
- -付费应用程序：更新至少以前不再存在的一个标签的资源的标签列表会导致崩溃（现在警告用户并删除它们）
- -付费应用程序：选择目标相册进行自动上传时，应用可能崩溃
- -付费应用程序：选择根相册作为自动上传作业的目标相册会显示第一个相册名称作为所选相册（不正确）
- -付费应用程序：注意：我不清楚选择画廊根作为上传目的地是否明智，但是在某些情况下允许这样做。
+变化：
+-添加了首选项来控制显示从服务器加载的图像大小的消息的显示
+  错误修正：
+-更改资源或子相册排序顺序后立即刷新相册视图
+-修复了常规专辑排序的错误
+-固定了压缩子相册时（通过触摸相册标题）对幻灯片放映的访问权限
+-可能的错误，其中某些连接设置更改（例如，使用基本身份验证）在下一次应用重新启动之前不会得到充分利用
 </zh-CN>
 
 <ru-RU>
-Исправлена ошибка:
- - Отмена загрузки файла и выход из страницы загрузки до отмены, о которой сообщается, приводит к сбою
- - платное приложение:
- сбой при использовании русского языка на странице конфигурации задания автоматической загрузки
- обновление списка тегов для ресурса, где хотя бы один ранее выбранный тег бо...
- может произойти сбой приложения при выборе целевого альбома для автоматической загрузки задания
- при выборе корневого альбома в качестве целевого альбома для задания автомат...
+Изменения:
+- Добавлена возможность управления отображением сообщения, показывающего размер изображения, загруженного с сервера.
+  Исправлена ошибка:
+- Обновить вид альбома сразу после изменения ресурса или порядка сортировки дочерних альбомов.
+- исправить ошибку с общей сортировкой альбомов
+- исправлен доступ к слайд-шоу при сжатии дочерних альбомов (при касании заголовка альбома)
+- Возможная ошибка, при которой некоторые изменения настроек соединения (например, использование базовой аутентификации) не будут полностью использованы до следующего перезапуска приложения
 </ru-RU>

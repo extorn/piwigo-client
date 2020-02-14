@@ -44,6 +44,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -212,6 +213,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private EndlessRecyclerViewScrollListener galleryListViewScrollListener;
     private CategoryItem albumDetails;
     private boolean reopening;
+    private String currentResourceSortOrder;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -274,7 +276,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     protected void loadModelFromArguments() {
-        albumDetails = getArguments().getParcelable(ARG_ALBUM);
+        Bundle args = getArguments();
+        if(args != null) {
+            albumDetails = args.getParcelable(ARG_ALBUM);
+        }
         if (albumDetails == null) {
             throw new IllegalStateException("album details are null for some reason");
         }
@@ -405,11 +410,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
 
-        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
+        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, requireContext());
 
-        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, getContext());
+        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, requireContext());
 
-        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
+        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, requireContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
         if (viewPrefs == null) {
@@ -418,9 +423,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         }
 
-        String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs,getContext());
+        String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs,requireContext());
 
-        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
+        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
 
         viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
         viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
@@ -456,6 +461,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         cacheViewComponentReferences(view);
+
+        String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
+        if(!sortOrder.equals(currentResourceSortOrder)) {
+            // we need to get all the data again (in future, maybe sort locally.
+            galleryIsDirty = true;
+            currentResourceSortOrder = sortOrder;
+        }
 
         if (!reopening) {
             populateViewFromModelEtc(view, savedInstanceState);
@@ -545,7 +557,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         boolean sortOrderChanged = false;
         if (galleryModel != null) {
             sortOrderChanged = galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, requireContext()));
-            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
             sortOrderChanged &= galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
         } else {
             Crashlytics.log(Log.WARN, getTag(), "Attempt to set album sort order but album model is still null");
@@ -1201,7 +1213,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         }
 
-
         // why would this ever be null?
         List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
         SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
@@ -1211,7 +1222,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
         editor.putString("reopenProfileId", profileId);
         editor.putString("reopenAlbumName", buildPageHeading());
-        editor.commit();
+        editor.apply();
 
 
         if (galleryIsDirty) {
@@ -1935,7 +1946,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     galleryModel.addItem(CategoryItem.PICTURE_HEADING);
                 }
             }
-            galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+            ArrayList<GalleryItem> resources = response.getResources();
+//            if(invertSortOrder) {
+//                Collections.reverse(resources);
+//            }
+            galleryModel.addItemPage(response.getPage(), response.getPageSize(), resources);
             viewAdapter.notifyDataSetChanged();
         }
         emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);

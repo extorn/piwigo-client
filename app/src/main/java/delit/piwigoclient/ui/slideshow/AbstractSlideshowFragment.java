@@ -22,6 +22,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
@@ -442,7 +444,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
             resourceContainer.acquirePageLoadLock();
             try {
-                int firstPositionAddedAt = resourceContainer.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+                ArrayList<GalleryItem> resources = response.getResources();
+//                if(resourceContainer.isRetrieveItemsInReverseOrder()) {
+//                    Collections.reverse(resources);
+//                }
+                int firstPositionAddedAt = resourceContainer.addItemPage(response.getPage(), response.getPageSize(), resources);
                 ((GalleryItemAdapter) viewPager.getAdapter()).onDataAppended(firstPositionAddedAt, response.getResources().size());
             } finally {
                 resourceContainer.releasePageLoadLock();

@@ -263,9 +263,13 @@
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
         <item>1.4.0.53</item>
-        <item>"Bugfix:
-                - Currently viewed album content now correctly sorted after reversing sort order
-                - TODO Bug where some connection settings changes (such as use basic authentication) wouldn't be fully used until next app restart</item>
+        <item>"Changes:
+                - Added preference to control display of message showing image size loaded from server
+               Bugfix:
+                - Refresh album view immediately after changing resource or child album sort order
+                - fix bug with general album sorting
+                - fixed access to slideshow when child albums are squashed (by touching albums header)
+                - Possible bug where some connection settings changes (such as use basic authentication) wouldn't be fully used until next app restart"</item>
         <item>1.4.0.52</item>
         <item>"Bugfix:
             - Cancelling a file upload and leaving upload page before cancellation reported causes crash
@@ -351,7 +355,7 @@
                 - Setting resource rating in Russian Locale now works again"</item>
         <item>1.4.0.36</item>
         <item>"Changes:
-                - The download for files now occurs in a rudimentatry queue and is managed at an app level. However, you must still currently keep the app open for then download to continue.
+                - The download for files now occurs in a rudimentary queue and is managed at an app level. However, you must still currently keep the app open for then download to continue.
                Bugfix:
                 - Download of files now works where server does not report file size
                 - Files added to file upload screen are now shown again (were initially invisible)

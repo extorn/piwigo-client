@@ -27,12 +27,11 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     public static final int NAME_ALBUM_SORT_ORDER = 1;
     public static final int DATE_ALBUM_SORT_ORDER = 2;
 
-    private transient AlbumComparator itemComparator;
+    private AlbumComparator itemComparator;
     private int subAlbumCount;
     private int spacerAlbums;
     private int bannerCount;
     private boolean hideAlbums;
-    private int albumSortOrder;
 
     public PiwigoAlbum(CategoryItem albumDetails) {
         this(albumDetails, DEFAULT_ALBUM_SORT_ORDER);
@@ -40,7 +39,6 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
 
     public PiwigoAlbum(CategoryItem albumDetails, int albumSortOrder) {
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
-        this.albumSortOrder = albumSortOrder;
         itemComparator = new AlbumComparator(albumSortOrder);
     }
     
@@ -49,10 +47,13 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         subAlbumCount = in.readInt();
         spacerAlbums = in.readInt();
         bannerCount = in.readInt();
-        albumSortOrder = in.readInt();
+        int albumSortOrder = in.readInt();
         if(itemComparator == null) {
             itemComparator = new AlbumComparator(albumSortOrder);
+        } else {
+            itemComparator.setAlbumSortOrder(albumSortOrder);
         }
+        itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
         hideAlbums = ParcelUtils.readBool(in);
     }
     
@@ -67,7 +68,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         dest.writeInt(subAlbumCount);
         dest.writeInt(spacerAlbums);
         dest.writeInt(bannerCount);
-        dest.writeInt(albumSortOrder);
+        dest.writeInt(itemComparator.albumSortOrder);
         ParcelUtils.writeBool(dest, hideAlbums);
     }
 
@@ -81,8 +82,8 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     public boolean setAlbumSortOrder(int albumSortOrder) {
-        this.albumSortOrder = albumSortOrder;
         if (albumSortOrder != itemComparator.getAlbumSortOrder() && getItems().size() > 0) {
+            itemComparator.setAlbumSortOrder(albumSortOrder);
             sortItems();
             return true;
         }
