@@ -138,6 +138,14 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.53</item>
+        <item>"Cambios:
+            - Se agregó preferencia para controlar la visualización del mensaje que muestra el tamaño de la imagen cargada desde el servidor
+              Arreglo del fallo:
+            - Actualizar la vista del álbum inmediatamente después de cambiar el recurso o el orden de clasificación del álbum secundario
+            - Corregir error con la clasificación general de álbumes
+            - acceso fijo a la presentación de diapositivas cuando se aplastan los álbumes secundarios (al tocar el encabezado de los álbumes)
+            - Posible error en el que algunos cambios en la configuración de la conexión (como el uso de autenticación básica) no se utilizarían por completo hasta el próximo reinicio de la aplicación"</item>
         <item>1.4.0.52</item>
         <item>"Arreglo del fallo:
              - Cancelar la carga de un archivo y abandonar la página de carga antes de que se informe de la cancelación causa un bloqueo
