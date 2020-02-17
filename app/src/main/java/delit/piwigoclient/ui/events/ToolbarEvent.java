@@ -1,6 +1,9 @@
 package delit.piwigoclient.ui.events;
 
+import android.text.SpannableString;
+
 public class ToolbarEvent {
+    private SpannableString spannableTitle;
     private String title;
     private boolean expandToolbarView;
     private boolean contractToolbarView;
@@ -23,6 +26,13 @@ public class ToolbarEvent {
         return contractToolbarView;
     }
 
+    public void setSpannableTitle(SpannableString spannableTitle) {
+        this.spannableTitle = spannableTitle;
+        if(title == null) {
+            setContractToolbarView(true);
+        }
+    }
+
     public void setTitle(String title) {
         this.title = title;
         if(title == null) {
@@ -34,4 +44,7 @@ public class ToolbarEvent {
         return title;
     }
 
+    public SpannableString getSpannableTitle() {
+        return spannableTitle;
+    }
 }

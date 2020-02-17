@@ -6,6 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ClickableSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -118,6 +122,7 @@ import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
@@ -1157,6 +1162,24 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             // never want to load permissions for the root album (it's not legal to call this service with category id 0).
             addActiveServiceCall(R.string.progress_loading_album_permissions, new AlbumGetPermissionsResponseHandler(galleryModel.getContainerDetails()));
         }
+    }
+
+    @Override
+    protected void updatePageTitle() {
+        ToolbarEvent event = new ToolbarEvent();
+        event.setTitle(buildPageHeading());
+        if(event.getTitle().startsWith("... / ")) {
+            SpannableString spannableTitle = new SpannableString(event.getTitle());
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(@NonNull View widget) {
+                    requireActivity().onBackPressed();
+                }
+            };
+            spannableTitle.setSpan(clickableSpan, 0 , 5, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            event.setSpannableTitle(spannableTitle);
+        }
+        EventBus.getDefault().post(event);
     }
 
     @Override

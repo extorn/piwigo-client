@@ -432,7 +432,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected abstract void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response);
 
-    protected void runJob(long jobId) {
+    protected final void runJob(long jobId) {
         UploadJob thisUploadJob = getActiveForegroundJob(this, jobId);
         runJob(thisUploadJob, null, true, false);
     }

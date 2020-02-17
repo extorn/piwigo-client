@@ -133,6 +133,12 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.54</item>
+        <item>"Changements:
+                 - titre de la page cliquable - accédez à l'album parent
+                 Correction d'un bug:
+                 - L'ordre de tri des albums n'est pas toujours correct
+                 - traductions éventuellement non sélectionnées automatiquement dans un ordre optimal."</item>
         <item>1.4.0.53</item>
         <item>"Changements:
             - Ajout d'une préférence pour contrôler l'affichage du message montrant la taille de l'image chargée à partir du serveur

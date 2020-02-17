@@ -123,6 +123,12 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.54</item>
+        <item>"Änderungen:
+                 - Seitentitel anklickbar - Navigieren Sie zum übergeordneten Album
+                 Bug-Fix:
+                 - Die Sortierreihenfolge des Albums ist nicht immer korrekt
+                 - Übersetzungen möglicherweise nicht automatisch in optimaler Reihenfolge ausgewählt."</item>
         <item>1.4.0.53</item>
         <item>"Änderungen:
             - Einstellung zur Steuerung der Anzeige von Nachrichten mit der vom Server geladenen Bildgröße hinzugefügt

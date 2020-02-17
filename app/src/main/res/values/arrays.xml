@@ -262,6 +262,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.54</item>
+        <item>"Changes:
+                - page title clickable - navigate to parent album
+                Bugfix:
+                - Album sort order not always correct
+                - translations possibly not selected in optimum order automatically."</item>
         <item>1.4.0.53</item>
         <item>"Changes:
                 - Added preference to control display of message showing image size loaded from server

@@ -28,7 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
+import delit.libs.ui.view.CustomToolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
@@ -150,7 +150,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private String onLoginActionMethodName = null;
     private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
-    private Toolbar toolbar;
+    private CustomToolbar toolbar;
     private AppBarLayout appBar;
     //TODO move the download mechanism into a background service so it isn't cancelled if the user leaves the app.
     private final ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
@@ -1196,7 +1196,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ToolbarEvent event) {
-        toolbar.setTitle(event.getTitle());
+        if(event.getSpannableTitle() != null) {
+            toolbar.setSpannableTitle(event.getSpannableTitle());
+        } else {
+            toolbar.setTitle(event.getTitle());
+        }
         if(event.isExpandToolbarView()) {
             appBar.setExpanded(true, event.getTitle()!= null);
         } else if(event.isContractToolbarView()) {

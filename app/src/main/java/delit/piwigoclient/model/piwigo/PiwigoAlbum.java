@@ -82,10 +82,12 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     public boolean setAlbumSortOrder(int albumSortOrder) {
-        if (albumSortOrder != itemComparator.getAlbumSortOrder() && getItems().size() > 0) {
+        if (albumSortOrder != itemComparator.getAlbumSortOrder()) {
             itemComparator.setAlbumSortOrder(albumSortOrder);
-            sortItems();
-            return true;
+            if(getItems().size() > 0) {
+                sortItems();
+                return true;
+            }
         }
         return false;
     }
@@ -324,7 +326,11 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     public boolean addMissingAlbums(List<CategoryItem> adminCategories) {
-        return super.addMissingItems(adminCategories);
+        boolean changed =  super.addMissingItems(adminCategories);
+        if(changed) {
+            sortItems();
+        }
+        return changed;
     }
 
     public void updateSpacerAlbumCount(int albumsPerRow) {
