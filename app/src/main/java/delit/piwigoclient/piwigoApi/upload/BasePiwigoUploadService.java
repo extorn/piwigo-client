@@ -943,9 +943,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
                 uploadJob.cancelFileUpload(rawVideo);
             }
-            return outputVideo;
         }
-        return null;
+        return outputVideo;
     }
 
     private File compressImage(UploadJob uploadJob, File rawImage) {
@@ -1322,6 +1321,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 // notify the listener of the final error we received from the server
                 String errorMsg = getString(R.string.error_upload_file_verification_failed, fileForUpload.getName());
                 notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUpload, errorMsg);
+                // this file isn't on the server at all, so just clear the upload progress to allow retry.
+                thisUploadJob.clearUploadProgress(fileForUpload);
             } else if (verifiedUploadedFile) {
                 //TODO send AJAX request to generate all derivatives. Need Custom method in piwigo client plugin. - method will be sent id of image and the server will invoke a get on all derivative urls (obtained using a ws call to pwg.getDerivatives).
 

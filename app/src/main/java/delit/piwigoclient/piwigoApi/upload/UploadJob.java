@@ -344,15 +344,21 @@ public class UploadJob implements Serializable {
             if(!f.exists()) {
                 // Remove file from upload list
                 cancelFileUpload(f);
-            } else if (needsUpload(f)) {
+            } else if (needsUpload(f) || needsVerification(f)) {
+                File fileForChecksumCalc = null;
                 if (!((isPhoto(f) && isCompressPhotosBeforeUpload())
                         || canCompressVideoFile(f) && isCompressVideosBeforeUpload())) {
-                    // if its not a file we're going to compress
+                    fileForChecksumCalc = f;
+                } else if(getCompressedFile(f) != null) {
+                    fileForChecksumCalc = getCompressedFile(f);
+                }
+                if(fileForChecksumCalc != null) {
+                    // if its not a file we're going to compress but haven't yet
 
                     // recalculate checksums for all files not yet uploaded
                     String checksum = null;
                     try {
-                        checksum = Md5SumUtils.calculateMD5(f);
+                        checksum = Md5SumUtils.calculateMD5(fileForChecksumCalc);
                     } catch (Md5SumUtils.Md5SumException e) {
                         failures.put(f, e);
                         Crashlytics.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
