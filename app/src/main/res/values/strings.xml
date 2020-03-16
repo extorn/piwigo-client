@@ -99,8 +99,8 @@
     <string name="alert_upload_failed_webserver">Upload failed due to web server error (%1$d : %2$s).</string>
     <string name="alert_upload_failed_webresponse">Upload failed due to error processing PIWIGO response. This is probably due to a PIWIGO API change. Unparseable response : %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Upload of chunk for file %1$s failed. Abandoning upload of file.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">File %1$s is no longer available on the device.Perhaps it has been deleted or moved.</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Error while uploading file %1$s</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">File %1$s is no longer available on the device.Perhaps it has been deleted or moved.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Error while uploading file %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Uploaded file %1$s is already present on the server, action cancelled.</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">Error adding uploaded file %1$s to album. Retry?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload file %1$s failed due to error in PIWIGO server (%2$d : %3$s).</string>
@@ -1012,7 +1012,7 @@ SOFTWARE.
     <string name="alert_message_showing_image_thumbnails_of_size">Showing image thumbnails from server of size %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Showing album thumbnails from server of size %1$s</string>
     <string name="subAlbum_text" translatable="false">... / %1$s</string>
-    <string name="alert_error_upload_file_compression_error_message_pattern">Error while compressing file for upload %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Error while compressing file for upload %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Uploading</string>
     <string name="compressing_progress_bar_message">Compressing</string>
     <string name="warning_missing_tags_links_removed_from_resource">Not all Tags linked to this item still exist in the database. The links to %1$d have been removed</string>

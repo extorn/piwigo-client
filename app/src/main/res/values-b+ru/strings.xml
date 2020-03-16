@@ -76,8 +76,8 @@
     <string name="alert_upload_failed_webserver">Загрузка не удалась из-за ошибки веб-сервера (%1$d: %2$s).</string>
     <string name="alert_upload_failed_webresponse">Загрузка не удалась из-за ошибки обработки ответа PIWIGO. Вероятно, это связано с изменением API-интерфейса PIWIGO. Непонятный ответ: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Загрузка чанка для файла %1$s не удалась. Отказаться от загрузки файла.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Файл %1$s больше не доступен на устройстве. Возможно, он был удален или перемещен.</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Ошибка при загрузке файла %1$s</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Файл %1$s больше не доступен на устройстве. Возможно, он был удален или перемещен.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Ошибка при загрузке файла %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Загруженный файл %1$s уже присутствует на сервере, действие отменено.</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">Ошибка добавления загруженного файла %1$s в альбом. Повторить попытку?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Ошибка загрузки файла %1$s из-за ошибки на сервере PIWIGO (%2$d: %3$s).</string>
@@ -630,7 +630,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="alert_message_showing_images_of_size">Отображение изображений с сервера размером %1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">Отображение миниатюр изображений с сервера размером %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Отображение миниатюр альбомов с сервера размером %1$s</string>
-    <string name="alert_error_upload_file_compression_error_message_pattern">Ошибка при сжатии файла для загрузки %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Ошибка при сжатии файла для загрузки %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Выгрузка</string>
     <string name="compressing_progress_bar_message">сжимающий</string>
     <string name="preference_app_desired_language_summary">Предпочитаемый перевод</string>

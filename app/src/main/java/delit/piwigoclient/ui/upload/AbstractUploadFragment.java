@@ -1069,11 +1069,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     private void processError(Context context, PiwigoResponseBufferingHandler.Response error) {
         String errorMessage = null;
+        Throwable cause;
         if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
             errorMessage = String.format(context.getString(R.string.alert_upload_failed_webserver), err.getStatusCode(), err.getErrorMessage());
+            cause = err.getError(); //TODO maybe extract info from this cause too if wanted.
         } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
-            errorMessage = String.format(context.getString(R.string.alert_upload_failed_webresponse), ((PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error).getRawResponse());
+            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse err = (PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error;
+            errorMessage = String.format(context.getString(R.string.alert_upload_failed_webresponse), err.getRawResponse());
         } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
             PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
             errorMessage = String.format(context.getString(R.string.alert_upload_failed_piwigo), err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
@@ -1457,13 +1460,16 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         protected void onLocalFileError(Context context, final BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
             String errorMessage;
+            String cause = response.getError().getMessage();
+            File file = response.getFileForUpload();
             if (response.getError() instanceof FileNotFoundException) {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), response.getFileForUpload().getName());
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), file.getName(),file.getAbsolutePath());
             } else if (response.getError() instanceof ExoPlaybackException) {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_compression_error_message_pattern), response.getFileForUpload().getName());
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_compression_error_message_pattern), file.getName(), file.getAbsolutePath());
             } else {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), response.getFileForUpload().getName());
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), file.getName(), file.getAbsolutePath());
             }
+            //TODO show the user the full cause perhaps
             notifyUser(context, R.string.alert_error, errorMessage);
         }
 

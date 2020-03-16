@@ -17,6 +17,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,6 +96,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         activeFolder = newContent;
         getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
         File[] folderContent = activeFolder.listFiles(getAdapterPrefs().getFileFilter());
+        if(folderContent == null) {
+            FirebaseAnalytics.getInstance(getContext()).logEvent("no_folder_access", null);
+        }
 
         currentDisplayContent = buildDisplayContent(folderContent);
         currentVisibleFileExts = getUniqueFileExtsInFolder(currentDisplayContent);

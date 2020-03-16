@@ -430,6 +430,33 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected abstract void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<File, String> uploadedFileChecksums);
 
+    private void recordAndPostNewResponse(UploadJob thisUploadJob, PiwigoResponseBufferingHandler.Response response) {
+        if(!(response instanceof PiwigoUploadProgressUpdateResponse
+         || response instanceof PiwigoVideoCompressionProgressUpdateResponse
+         || response instanceof PiwigoStartUploadFileResponse
+        || response instanceof PiwigoUploadFileFilesExistAlreadyResponse
+        || response instanceof PiwigoUploadFileJobCompleteResponse)) {
+            if(response instanceof PiwigoPrepareUploadFailedResponse) {
+                thisUploadJob.recordError(new Date(), "PiwigoPrepareUpload:Failed");
+            }
+            if(response instanceof PiwigoCleanupPostUploadFailedResponse) {
+                thisUploadJob.recordError(new Date(), "PiwigoCleanupPostUpload:Failed");
+            }
+            if(response instanceof PiwigoUploadFileAddToAlbumFailedResponse) {
+                thisUploadJob.recordError(new Date(), "PiwigoUploadFileAddToAlbum:Failed : " + ((PiwigoUploadFileAddToAlbumFailedResponse) response).getFileForUpload().getAbsolutePath());
+            }
+            if(response instanceof PiwigoUploadFileChunkFailedResponse) {
+                thisUploadJob.recordError(new Date(), "PiwigoUploadFileChunk:Failed : " + ((PiwigoUploadFileChunkFailedResponse) response).getFileForUpload().getAbsolutePath());
+            }
+            if(response instanceof PiwigoUploadFileLocalErrorResponse) {
+                String error = ((PiwigoUploadFileLocalErrorResponse) response).error.getMessage();
+                thisUploadJob.recordError(new Date(), "PiwigoUploadFileLocalError: " + error);
+            }
+
+        }
+        postNewResponse(thisUploadJob.getJobId(), response);
+    }
+    
     protected abstract void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response);
 
     protected final void runJob(long jobId) {
@@ -460,14 +487,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 if (handler.isSuccess()) {
                     sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
                 } else {
-                    postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
+                    recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
                     return;
                 }
                 if (sessionDetails == null) {
                     Bundle b = new Bundle();
                     b.putString("location", "upload - get login");
                     FirebaseAnalytics.getInstance(this).logEvent("SessionNull", b);
-                    postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
+                    recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
                     return;
                 }
             }
@@ -501,7 +528,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             Map<File, Md5SumUtils.Md5SumException> failures = thisUploadJob.calculateChecksums();
             if (!failures.isEmpty()) {
                 for (Map.Entry<File, Md5SumUtils.Md5SumException> entry : failures.entrySet()) {
-                    postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), entry.getKey(), entry.getValue()));
+                    recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), entry.getKey(), entry.getValue()));
                 }
             }
 
@@ -539,13 +566,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     } else {
                         // this is bizarre - a failure was recorded as a success!
                         // notify the listener of the final error we received from the server
-                        postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
+                        recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
                     }
 
                 }
                 if (!imageFindExistingHandler.isSuccess()) {
                     // notify the listener of the final error we received from the server
-                    postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
+                    recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
                     return;
                 }
 
@@ -599,7 +626,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 deleteStateFromDisk(this, thisUploadJob, deleteJobConfigFileOnSuccess);
             }
 
-            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
+            recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
             PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(thisUploadJob.getJobId());
             AbstractPiwigoDirectResponseHandler.unblockMessageId(thisUploadJob.getJobId());
         }
@@ -618,12 +645,12 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             handler.invokeAndWait(this, thisUploadJob.getConnectionPrefs());
         }
         if(!handler.isSuccess()) {
-            thisUploadJob.recordError(new Date(), buildErrorMessage(handler));
+            thisUploadJob.recordError(new Date(), buildPiwigoServerCallErrorMessage(handler));
             recordServerCallError(handler, thisUploadJob.getConnectionPrefs());
         }
     }
 
-    protected String buildErrorMessage(AbstractPiwigoWsResponseHandler handler) {
+    protected String buildPiwigoServerCallErrorMessage(AbstractPiwigoWsResponseHandler handler) {
         StringBuilder sb = new StringBuilder();
         sb.append("PiwigoMethod:");
         sb.append('\n');
@@ -681,7 +708,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse rsp = (AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) handler.getResponse();
                 return rsp.getAdminList().flattenTree();
             } else {
-                postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
+                recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
         } else if (sessionDetails.isUseCommunityPlugin() && sessionDetails.isCommunityApiAvailable()) {
             final boolean recursive = true;
@@ -691,7 +718,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse rsp = (CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) handler.getResponse();
                 return rsp.getAlbumNames();
             } else {
-                postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
+                recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
         } else {
             AlbumGetSubAlbumNamesResponseHandler handler = new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, true);
@@ -700,7 +727,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse rsp = (AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) handler.getResponse();
                 return rsp.getAlbumNames();
             } else {
-                postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
+                recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
         }
         return null;
@@ -721,7 +748,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         invokeWithRetries(thisUploadJob, albumDelHandler, 2);
         if (!albumDelHandler.isSuccess()) {
             // notify the listener of the final error we received from the server
-            postNewResponse(thisUploadJob.getJobId(), new PiwigoCleanupPostUploadFailedResponse(getNextMessageId(), albumDelHandler.getResponse()));
+            recordAndPostNewResponse(thisUploadJob, new PiwigoCleanupPostUploadFailedResponse(getNextMessageId(), albumDelHandler.getResponse()));
         } else {
             thisUploadJob.setTemporaryUploadAlbum(-1);
         }
@@ -741,7 +768,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
             if (!albumGenHandler.isSuccess() || uploadAlbumId < 0) {
                 // notify the listener of the final error we received from the server
-                postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), albumGenHandler.getResponse()));
+                recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), albumGenHandler.getResponse()));
                 return false;
             } else {
                 thisUploadJob.setTemporaryUploadAlbum(uploadAlbumId);
@@ -792,7 +819,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         if (filesExistingOnServerAlready.size() > 0) {
 //            thisUploadJob.getFilesForUpload().removeAll(filesExistingOnServerAlready);
-            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileFilesExistAlreadyResponse(getNextMessageId(), filesExistingOnServerAlready));
+            recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileFilesExistAlreadyResponse(getNextMessageId(), filesExistingOnServerAlready));
         }
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
@@ -823,7 +850,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         if (rsp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
                             success = true; // image is on the server, but not yet approved.
                             thisUploadJob.addFileUploaded(entry.getKey(), null);
-                            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), entry.getKey(), thisUploadJob.getUploadProgress(entry.getKey())));
+                            recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), entry.getKey(), thisUploadJob.getUploadProgress(entry.getKey())));
                         } else {
                             recordServerCallError(getImageInfoHandler, thisUploadJob.getConnectionPrefs());
                         }
@@ -844,13 +871,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (orphanListHandler.isSuccess()) {
                 ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse resp = (ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse) orphanListHandler.getResponse();
                 if (resp.getTotalCount() > resp.getResources().size()) {
-                    postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getString(R.string.upload_error_too_many_orphaned_files_exist_on_server))));
+                    recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getString(R.string.upload_error_too_many_orphaned_files_exist_on_server))));
                     return null;
                 } else {
                     orphans = resp.getResources();
                 }
             }
-            postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getString(R.string.upload_error_orphaned_file_retrieval_failed))));
+            recordAndPostNewResponse(thisUploadJob, new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getString(R.string.upload_error_orphaned_file_retrieval_failed))));
         } else {
             orphans = new ArrayList<>(0);
             thisUploadJob.recordError(new Date(), getString(R.string.upload_error_orphaned_file_retrieval_unavailable));
@@ -1054,7 +1081,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         Bundle b = new Bundle();
                         b.putString("error", "error calculating md5sum for compressed file.");
                         FirebaseAnalytics.getInstance(this).logEvent("md5sum", b);
-                        postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), compressedFile, e));
+                        recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), compressedFile, e));
                     }
                 }
             }
@@ -1225,7 +1252,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                             }
                             thisUploadJob.markFileAsPartiallyUploaded(uploadJobKey, uploadToFilename, fileChecksum, fileForUpload.length(), fileBytesUploaded, chunkId);
                             saveStateToDisk(thisUploadJob);
-                            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), uploadJobKey, thisUploadJob.getUploadProgress(uploadJobKey)));
+                            recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), uploadJobKey, thisUploadJob.getUploadProgress(uploadJobKey)));
                         } else {
                             bytesOfDataInChunk = -1; // don't upload the rest of the chunks.
                         }
@@ -1242,7 +1269,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (fileBytesUploaded < totalBytesInFile) {
                 if (!thisUploadJob.isFileUploadStillWanted(uploadJobKey)) {
                     // notify the listener that upload has been cancelled for this file (at user's request)
-                    postNewResponse(thisUploadJob.getJobId(), new FileUploadCancelledResponse(getNextMessageId(), uploadJobKey));
+                    recordAndPostNewResponse(thisUploadJob, new FileUploadCancelledResponse(getNextMessageId(), uploadJobKey));
                 }
             }
         } finally {
@@ -1279,7 +1306,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
                 } else {
                     thisUploadJob.markFileAsConfigured(fileForUpload);
-                    postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
+                    recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
                 }
             }
         } else {
@@ -1299,7 +1326,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 //TODO send AJAX request to generate all derivatives. Need Custom method in piwigo client plugin. - method will be sent id of image and the server will invoke a get on all derivative urls (obtained using a ws call to pwg.getDerivatives).
 
                 thisUploadJob.markFileAsVerified(fileForUpload);
-                postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
+                recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
                 deleteCompressedVersionIfExists(thisUploadJob, fileForUpload);
             } else {
                 // the file verification failed - this file is corrupt (needs delete but then re-upload).
@@ -1511,7 +1538,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         if (!imageChunkUploadHandler.isSuccess()) {
             // notify listener of failure
-            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileChunkFailedResponse(getNextMessageId(), uploadJobKey, imageChunkUploadHandler.getResponse()));
+            recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileChunkFailedResponse(getNextMessageId(), uploadJobKey, imageChunkUploadHandler.getResponse()));
         } else {
             if (currentUploadFileChunk.getChunkId() == 0) {
                 thisUploadJob.markFileAsUploading(uploadJobKey);

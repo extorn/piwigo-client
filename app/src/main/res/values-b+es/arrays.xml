@@ -138,6 +138,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.55</item>
+        <item>"Arreglo del fallo:
+                 - optó por el almacenamiento con alcance por ahora - permite que la aplicación vea archivos para cargar nuevamente en android 10"</item>
         <item>1.4.0.54</item>
         <item>"Cambios:
                  - se puede hacer clic en el título de la página - navegar al álbum principal

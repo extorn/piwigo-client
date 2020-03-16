@@ -74,8 +74,8 @@
     <string name="alert_upload_failed_webserver">Upload fehlgeschlagen wegen Webserver-Fehler (%1$d : %2$s).</string>
     <string name="alert_upload_failed_webresponse">Upload fehlgeschlagen wegen Fehlerbehandlung PIWIGO Antwort. Dies ist wahrscheinlich auf eine PIWIGO-API-Änderung zurückzuführen. Unvorhersehbare Antwort: %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Upload von Chunk für Datei %1$s fehlgeschlagen. Upload der Datei abbrechen.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Die Datei %1$s ist auf dem Gerät nicht mehr verfügbar, vielleicht wurde sie gelöscht oder verschoben.</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Fehler beim Hochladen der Datei %1$s</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Die Datei %1$s ist auf dem Gerät nicht mehr verfügbar, vielleicht wurde sie gelöscht oder verschoben.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Fehler beim Hochladen der Datei %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Hochgeladene Datei %1$s ist bereits auf dem Server vorhanden, Aktion abgebrochen.</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">Fehler beim Hinzufügen der hochgeladenen Datei %1$s zum Album. Wiederholen?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload der Datei %1$s ist aufgrund eines Fehlers im PIWIGO-Server fehlgeschlagen (%2$d : %3$s).</string>
@@ -627,7 +627,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_showing_images_of_size">Anzeigen von Bildern vom Server der Größe %1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">Anzeigen von Miniaturbildern vom Server der Größe %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Anzeigen von Miniaturansichten des Albums vom Server der Größe %1$s</string>
-    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Hochladen</string>
     <string name="compressing_progress_bar_message">Komprimieren</string>
     <string name="preference_app_desired_language_summary">Bevorzugte Übersetzung</string>

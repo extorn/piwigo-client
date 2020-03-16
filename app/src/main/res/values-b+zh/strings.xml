@@ -78,8 +78,8 @@
     <string name="alert_upload_failed_webserver">由于Web服务器错误（%1$d：%2$s），上载失败。</string>
     <string name="alert_upload_failed_webresponse">由于错误处理PIWIGO响应，上载失败。这可能是由于PIWIGO API的变化。无法解析的响应：%1$s。</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">上传文件%1$s的块失败。放弃上传文件。</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">文件%1$s在设备上不再可用。也许它已被删除或移动。</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">上传文件%1$s时出错</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">文件%1$s在设备上不再可用。也许它已被删除或移动。\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">上传文件%1$s时出错。\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">上传的文件%1$s已存在于服务器上，操作已取消。</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">将上传的文件%1$s添加到相册时出错。重试？</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">由于PIWIGO服务器中的错误，上传文件%1$s失败（%2$d：%3$s）。</string>
@@ -503,7 +503,7 @@
     <string name="alert_message_showing_images_of_size">正在显示尺寸为 %1$s 的服务器中的图像</string>
     <string name="alert_message_showing_image_thumbnails_of_size">显示大小为 %1$s 的服务器中的图像缩略图</string>
     <string name="alert_message_showing_album_thumbnails_of_size">正在显示大小为 %1$s 的服务器中的相册缩略图</string>
-    <string name="alert_error_upload_file_compression_error_message_pattern">压缩文件以上传%1$s时出错</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">压缩文件以上传%1$s时出错。\n%2$s</string>
     <string name="uploading_progress_bar_message">上载中</string>
     <string name="compressing_progress_bar_message">压缩方式</string>
     <string name="preference_app_desired_language_summary">首选翻译</string>

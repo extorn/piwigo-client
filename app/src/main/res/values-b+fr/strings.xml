@@ -97,8 +97,8 @@
     <string name="alert_upload_failed_webserver">Le téléchargement échoue à cause d\'une erreur du serveur web (%1$d : %2$s).</string>
     <string name="alert_upload_failed_webresponse">Le téléchargement a échoué en raison de la réponse PIWIGO du traitement des erreurs. Ceci est probablement dû à une modification de l\'API PIWIGO. Réponse inséparable : %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Le téléchargement du morceau pour le fichier %1$s a échoué. Abandon du téléchargement du fichier.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Le fichier %1$s n\'est plus disponible sur le périphérique, il a peut-être été supprimé ou déplacé.</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Erreur lors du téléchargement d\'un fichier %1$s</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Le fichier %1$s n\'est plus disponible sur le périphérique, il a peut-être été supprimé ou déplacé.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Erreur lors du téléchargement d\'un fichier %1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Le fichier téléchargé %1$s est déjà présent sur le serveur, action annulée.</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">Erreur lors de l\'ajout d\'un fichier téléchargé %1$s à l\'album. Réessayer ?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload fichier %1$s échoué en raison d\'une erreur dans le serveur PIWIGO (%2$d : %3$s).</string>
@@ -654,7 +654,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_message_showing_images_of_size">Affichage des images du serveur de taille %1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">Affichage des vignettes d’image du serveur de taille %1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Affichage des vignettes d’album du serveur de taille %1$s</string>
-    <string name="alert_error_upload_file_compression_error_message_pattern">Erreur lors de la compression du fichier pour le téléchargement %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Erreur lors de la compression du fichier pour le téléchargement %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Téléchargement</string>
     <string name="compressing_progress_bar_message">Compression</string>
     <string name="preference_app_desired_language_summary">Traduction préférée</string>

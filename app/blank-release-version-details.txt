@@ -1,48 +1,30 @@
 
 <en-GB>
-Changes:
-- page title clickable - navigate to parent album
 Bugfix:
-- Album sort order not always correct
-- translations possibly not selected in optimum order automatically.
+- opted out of scoped storage for now - allows app to see files for upload again on android 10
 </en-GB>
 
 <de-DE>
-Änderungen:
-- Seitentitel anklickbar - Navigieren Sie zum übergeordneten Album
 Bug-Fix:
-- Die Sortierreihenfolge des Albums ist nicht immer korrekt
-- Übersetzungen möglicherweise nicht automatisch in optimaler Reihenfolge ausgewählt.
+- Vorerst aus dem Speicherbereich deaktiviert - Ermöglicht der App, Dateien zum erneuten Hochladen auf Android 10 anzuzeigen
 </de-DE>
 
 <fr-FR>
-Changements:
-- titre de la page cliquable - accédez à l'album parent
 Correction d'un bug:
-- L'ordre de tri des albums n'est pas toujours correct
-- traductions éventuellement non sélectionnées automatiquement dans un ordre optimal.
+- Désactivé pour le moment du stockage limité - permet à l'application de voir à nouveau les fichiers à télécharger sur Android 10
 </fr-FR>
 
 <es-ES>
-Cambios:
-- se puede hacer clic en el título de la página - navegar al álbum principal
 Arreglo del fallo:
-- El orden de clasificación del álbum no siempre es correcto
-- Traducciones posiblemente no seleccionadas en orden óptimo automáticamente.
+- optó por el almacenamiento con alcance por ahora - permite que la aplicación vea archivos para cargar nuevamente en android 10
 </es-ES>
 
 <zh-CN>
-变化：
--页面标题可点击-导航至父相册
 错误修正：
--专辑排序顺序并不总是正确
--可能未自动以最佳顺序选择翻译。
+-目前已选择退出作用域存储-允许应用查看在Android 10上再次上传的文件
 </zh-CN>
 
 <ru-RU>
-Изменения:
-- заголовок страницы кликабелен - перейдите в родительский альбом
 Исправлена ошибка:
-- Порядок сортировки альбомов не всегда правильный
-- переводы, возможно, не выбраны в оптимальном порядке автоматически.
+- на данный момент выбрано свободное хранилище - приложение позволяет снова просматривать файлы для загрузки на Android 10
 </ru-RU>

@@ -470,6 +470,10 @@ public class PiwigoResponseBufferingHandler {
             return errorDetail;
         }
 
+        public Throwable getError() {
+            return error;
+        }
+
         @Override
         public AbstractPiwigoWsResponseHandler getHttpResponseHandler() {
             return requestHandler;

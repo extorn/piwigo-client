@@ -75,8 +75,8 @@
     <string name="alert_upload_failed_webserver">La carga falló debido a un error del servidor web (%1$d:%2$s).</string>
     <string name="alert_upload_failed_webresponse">La carga falló debido a un error al procesar la respuesta de PIWIGO. Esto probablemente se deba a un cambio en la API de PIWIGO. Respuesta no analizable:%1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Error al cargar el fragmento para el archivo%1$s. Abandonando carga de archivo.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">El archivo%1$s ya no está disponible en el dispositivo, tal vez se haya eliminado o movido.</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Error al cargar el archivo%1$s</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">El archivo%1$s ya no está disponible en el dispositivo, tal vez se haya eliminado o movido.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Error al cargar el archivo%1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">El archivo cargado%1$s ya está presente en el servidor, acción cancelada.</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">Error al agregar el archivo cargado%1$s al álbum. ¿Procesar de nuevo?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Error al cargar el archivo%1$s debido a un error en el servidor PIWIGO (%2$d:%3$s).</string>
@@ -499,7 +499,7 @@
     <string name="alert_message_showing_images_of_size">Mostrando imágenes del servidor de tamaño%1$s</string>
     <string name="alert_message_showing_image_thumbnails_of_size">Mostrando miniaturas de imágenes del servidor de tamaño%1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Mostrando miniaturas de álbum del servidor de tamaño%1$s</string>
-    <string name="alert_error_upload_file_compression_error_message_pattern">Error al comprimir el archivo para cargar %1$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Error al comprimir el archivo para cargar %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Cargando</string>
     <string name="compressing_progress_bar_message">Apresamiento</string>
     <string name="preference_app_desired_language_summary">Traducción preferida</string>
