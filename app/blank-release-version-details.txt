@@ -1,30 +1,30 @@
 
 <en-GB>
 Bugfix:
-- opted out of scoped storage for now - allows app to see files for upload again on android 10
+- videos sometimes only recognised as photos depending on the case of server url entered in connection settings
 </en-GB>
 
 <de-DE>
 Bug-Fix:
-- Vorerst aus dem Speicherbereich deaktiviert - Ermöglicht der App, Dateien zum erneuten Hochladen auf Android 10 anzuzeigen
+- Videos werden manchmal nur als Fotos erkannt, abhängig von der in den Verbindungseinstellungen eingegebenen Server-URL
 </de-DE>
 
 <fr-FR>
 Correction d'un bug:
-- Désactivé pour le moment du stockage limité - permet à l'application de voir à nouveau les fichiers à télécharger sur Android 10
+- les vidéos ne sont parfois reconnues que comme des photos selon le cas de l'URL du serveur entrée dans les paramètres de connexion
 </fr-FR>
 
 <es-ES>
 Arreglo del fallo:
-- optó por el almacenamiento con alcance por ahora - permite que la aplicación vea archivos para cargar nuevamente en android 10
+- los videos a veces solo se reconocen como fotos según el caso de la URL del servidor ingresada en la configuración de conexión
 </es-ES>
 
 <zh-CN>
 错误修正：
--目前已选择退出作用域存储-允许应用查看在Android 10上再次上传的文件
+-视连接设置中输入的服务器网址的情况而定，有时视频有时仅被识别为照片
 </zh-CN>
 
 <ru-RU>
 Исправлена ошибка:
-- на данный момент выбрано свободное хранилище - приложение позволяет снова просматривать файлы для загрузки на Android 10
+- видео иногда распознаются только как фотографии, в зависимости от случая URL сервера, введенного в настройках подключения
 </ru-RU>

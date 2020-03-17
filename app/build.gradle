@@ -33,8 +33,8 @@ android {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 29
-        versionCode 277
-        versionName "1.4.0.55"
+        versionCode 278
+        versionName "1.4.0.56"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -122,7 +122,7 @@ android {
 
 dependencies {
     // room database persistence libs used to track files previously uploaded
-    def room_version = "2.2.3"
+    def room_version = "2.2.4"
     paidImplementation "androidx.room:room-runtime:$room_version"
     paidAnnotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
 
@@ -130,7 +130,7 @@ dependencies {
     implementation project(path: ':google-licencing-library')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     // prevent side loading (validate if this is attempted)
-    implementation 'com.google.android.play:core:1.6.4'
+    implementation 'com.google.android.play:core:1.7.0'
     //implementation 'com.android.tools.build:bundletool:0.9.0'
 
     implementation 'com.wunderlist:sliding-layer:1.2.5'
@@ -179,13 +179,13 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     // v14 stuff
     //implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation 'androidx.transition:transition:1.3.0'
+    implementation 'androidx.transition:transition:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout-solver:1.1.3' //2.0.0-alpha2
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3' //2.0.0-alpha2
-    implementation 'com.google.firebase:firebase-core:17.2.2'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
     //implementation com.google.firebase:firebase-analytics:16.0.3
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-ads:18.3.0'
+    implementation 'com.google.firebase:firebase-ads:19.0.0'
     implementation 'com.google.android.gms:play-services-base:17.1.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     // firebase-perf must be lower version than firebase-core and play-services*
