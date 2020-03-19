@@ -132,6 +132,9 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
+        <item>1.4.0.57</item>
+        <item>"错误修正：
+                 -目前已选择退出作用域存储-允许应用查看在Android 10上再次上传的文件"</item>
         <item>1.4.0.56</item>
         <item>"错误修正：
                  -视连接设置中输入的服务器网址的情况而定，有时视频有时仅被识别为照片"</item>

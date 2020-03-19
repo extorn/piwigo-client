@@ -138,6 +138,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.57</item>
+        <item>"Исправлена ошибка:
+                 - на данный момент выбрано свободное хранилище - приложение позволяет снова просматривать файлы для загрузки на Android 10"</item>
         <item>1.4.0.56</item>
         <item>"Исправлена ошибка:
                  - видео иногда распознаются только как фотографии, в зависимости от случая URL сервера, введенного в настройках подключения"</item>

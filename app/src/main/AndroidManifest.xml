@@ -42,7 +42,8 @@
         android:supportsRtl="true"
         android:largeHeap="true"
         android:theme="@style/Custom.Theme"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:fullBackupContent="@xml/backup_descriptor"
+        tools:ignore="UnusedAttribute">
 
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 

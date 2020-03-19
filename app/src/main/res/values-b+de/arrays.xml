@@ -123,6 +123,9 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.57</item>
+        <item>"Bug-Fix:
+                 - Vorerst aus dem Speicherbereich deaktiviert - Ermöglicht der App, Dateien zum erneuten Hochladen auf Android 10 anzuzeigen"</item>
         <item>1.4.0.56</item>
         <item>"Bug-Fix:
                  - Videos werden manchmal nur als Fotos erkannt, abhängig von der in den Verbindungseinstellungen eingegebenen Server-URL"</item>

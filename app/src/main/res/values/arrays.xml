@@ -262,6 +262,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.57</item>
+        <item>"Bugfix:
+                - opted out of scoped storage for now - allows app to see files for upload again on android 10"</item>
         <item>1.4.0.56</item>
         <item>"Bugfix:
                 - videos sometimes only recognised as photos depending on the case of server url entered in connection settings"</item>

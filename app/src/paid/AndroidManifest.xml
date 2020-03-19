@@ -5,10 +5,11 @@
 
     <!--ignore error as manifest is merged with the main one which is indexable -->
 
-    <application
+    <application android:requestLegacyExternalStorage="true"
         android:name="delit.piwigoclient.ui.MyApplication"
         tools:node="merge"
-        android:fullBackupContent="@xml/backup_descriptor">
+        android:fullBackupContent="@xml/backup_descriptor"
+        tools:ignore="UnusedAttribute">
 
         <service
             android:name=".piwigoApi.upload.BackgroundPiwigoUploadService"
