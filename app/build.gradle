@@ -13,26 +13,28 @@ android {
         config {
             keyAlias 'piwigo-client-upload-key'
             keyPassword 'twkbmp'
-            storeFile file('/home/gareth/Android/android-app-keys.jks')
+            storeFile file('C:\\Users\\Garet\\android-app-keys.jks')
+            //storeFile file('/home/gareth/Android/android-app-keys.jks')
             storePassword 'twkbmp'
             v1SigningEnabled true
             v2SigningEnabled true
         }
     }
 
-    compileSdkVersion 29
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.3'
+    compileSdkVersion 29
+
     defaultConfig {
         buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.9\""
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 29
+
         versionCode 279
         versionName "1.4.0.57"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

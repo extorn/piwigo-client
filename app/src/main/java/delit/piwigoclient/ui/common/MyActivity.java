@@ -67,7 +67,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
 
     public SharedPreferences getSharedPrefs(Context c) {
         if (prefs == null) {
-            prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            prefs = PreferenceManager.getDefaultSharedPreferences(c.getApplicationContext());
         }
         return getSharedPrefs();
     }

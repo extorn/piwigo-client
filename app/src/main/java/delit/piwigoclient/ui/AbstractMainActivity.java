@@ -879,7 +879,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(this, FileSelectActivity.class);
+        Intent intent = new Intent(Intent.ACTION_VIEW, null, this, FileSelectActivity.class);
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());

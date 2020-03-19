@@ -101,7 +101,7 @@ public class UploadActivity extends MyActivity {
     private String MEDIA_SCANNER_TASK_ID_SHARED_FILES = "id_sharedFiles";
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
-        Intent intent = new Intent(context, UploadActivity.class);
+        Intent intent = new Intent("delit.piwigoclient.MANUAL_UPLOAD", null, context.getApplicationContext(), UploadActivity.class);
         intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
         return intent;
     }
@@ -163,8 +163,16 @@ public class UploadActivity extends MyActivity {
         }
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-
-        if (!hasAgreedToEula() || connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+        boolean canContinue = true;
+        if(!hasAgreedToEula()) {
+            Log.e(TAG, "User agreement to EULA could not be found");
+            canContinue = false;
+        }
+        if(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+            Log.e(TAG, "No PIWIGO server address found in settings : " + connectionPrefs.getAbsoluteProfileKey(prefs, getApplicationContext()));
+            canContinue = false;
+        }
+        if (!canContinue) {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
@@ -639,6 +647,10 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ToolbarEvent event) {
+        if(toolbar == null) {
+            Log.e(TAG, "Cannot set title. Toolbar not initialised yet");
+            return;
+        }
         toolbar.setTitle(event.getTitle());
         if(event.isExpandToolbarView()) {
             ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
