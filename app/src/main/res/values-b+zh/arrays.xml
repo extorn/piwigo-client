@@ -132,6 +132,9 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
+        <item>1.4.0.58</item>
+        <item>"更改：
+                 -免费版本：移除了所有非页内广告两个月，因此可以将其用作付费版本的试用版"</item>
         <item>1.4.0.57</item>
         <item>"错误修正：
                  -目前已选择退出作用域存储-允许应用查看在Android 10上再次上传的文件"</item>

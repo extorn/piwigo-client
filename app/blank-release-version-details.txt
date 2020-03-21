@@ -1,30 +1,30 @@
 
 <en-GB>
-Bugfix:
-- videos sometimes only recognised as photos depending on the case of server url entered in connection settings
+Change:
+- Free version: removed all interstitial adverts for a couple of months so its use as more than a trial of the paid version is tolerable
 </en-GB>
 
 <de-DE>
-Bug-Fix:
-- Videos werden manchmal nur als Fotos erkannt, abhängig von der in den Verbindungseinstellungen eingegebenen Server-URL
+Veränderung:
+- Kostenlose Version: Alle interstitiellen Anzeigen wurden für ein paar Monate entfernt, sodass die Verwendung als mehr als eine Testversion der kostenpflichtigen Version tolerierbar ist
 </de-DE>
 
 <fr-FR>
-Correction d'un bug:
-- les vidéos ne sont parfois reconnues que comme des photos selon le cas de l'URL du serveur entrée dans les paramètres de connexion
+Changement:
+- Version gratuite: suppression de toutes les publicités interstitielles pendant quelques mois afin que son utilisation comme plus qu'un essai de la version payante soit tolérable
 </fr-FR>
 
 <es-ES>
-Arreglo del fallo:
-- los videos a veces solo se reconocen como fotos según el caso de la URL del servidor ingresada en la configuración de conexión
+Cambio:
+- Versión gratuita: eliminó todos los anuncios intersticiales durante un par de meses, por lo que su uso como más que una versión de prueba de la versión paga es tolerable
 </es-ES>
 
 <zh-CN>
-错误修正：
--视连接设置中输入的服务器网址的情况而定，有时视频有时仅被识别为照片
+更改：
+-免费版本：移除了所有非页内广告两个月，因此可以将其用作付费版本的试用版
 </zh-CN>
 
 <ru-RU>
-Исправлена ошибка:
-- видео иногда распознаются только как фотографии, в зависимости от случая URL сервера, введенного в настройках подключения
+Изменить:
+- Бесплатная версия: удалила все рекламные вставки за пару месяцев, так что ее использование в качестве пробной версии платной версии терпимо
 </ru-RU>

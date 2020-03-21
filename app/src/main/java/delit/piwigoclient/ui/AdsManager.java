@@ -28,6 +28,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.BuildConfig;
@@ -140,7 +142,12 @@ public class AdsManager {
 
     private synchronized boolean acceptableToShowAdvert(InterstitialAd ad, long minDelayBetweenAds) {
         long currentTime = System.currentTimeMillis();
-        if (showAds && !advertsDisabled && ad != null) {
+        Calendar c = GregorianCalendar.getInstance();
+        c.set(Calendar.YEAR, 2020); // this year
+        c.set(Calendar.MONTH, 5);//June
+        c.set(Calendar.DAY_OF_MONTH, 1); // 1st
+
+        if (Calendar.getInstance().getTime().after(c.getTime()) && showAds && !advertsDisabled && ad != null) {
             if (ad.isLoaded() && currentTime - lastShowedAdvert > minDelayBetweenAds) {
                 lastShowedAdvert = currentTime;
                 return true;
@@ -260,7 +267,7 @@ public class AdsManager {
             if (oldVal != null) {
                 endsAt = endsAt.max(new BigInteger(oldVal));
             }
-            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTimeMaximum * 2); // 30 sec vs time ad watched for
+            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTimeMaximum * 5); // time declared in advert portal for each advert vs 5 * time ad watched for
             rewardTime = Math.min(rewardTime, 300000); // 5 minutes absolute maximum!
             endsAt = endsAt.add(BigInteger.valueOf(rewardTime));
 
