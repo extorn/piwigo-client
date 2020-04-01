@@ -130,14 +130,16 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                         private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareFilesWithOtherApps) {
                             DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareFilesWithOtherApps);
                             for(ResourceItem item : items) {
-                                String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
-                                String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
                                 if(item instanceof VideoResourceItem) {
                                     File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
                                     if(localCache != null) {
+                                        String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
+                                        String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
                                         evt.addFileDetail(item.getName(), remoteUri, downloadFilename, localCache);
                                     }
                                 } else {
+                                    String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
+                                    String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
                                     evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
                                 }
                             }
