@@ -636,5 +636,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="button_stop_warning_me">Sag es mir nicht noch einmal</string>
     <string name="create_email_using_app">Erstellen Sie eine E-Mail mit der App</string>
     <string name="open_files">Öffnen Sie Dateien in der App</string>
+    <string name="files_unavailable_to_download_removed_pattern">Ihre Auswahl enthielt Dateien, die nicht verarbeitet werden konnten. Diese %1$d Dateien wurden ignoriert. Um eine Videodatei freizugeben, muss sie zuerst vollständig lokal zwischengespeichert werden.</string>
 </resources>
 

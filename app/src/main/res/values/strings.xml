@@ -1019,4 +1019,5 @@ SOFTWARE.
     <string name="button_stop_warning_me">Don\'t tell me again</string>
     <string name="create_email_using_app">Create an Email using app</string>
     <string name="open_files">Open Files in app</string>
+    <string name="files_unavailable_to_download_removed_pattern">Your selection contained files that could not be processed. These %1$d files have been ignored. To share a video file, it must be fully cached locally first.</string>
 </resources>

@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
@@ -39,7 +38,6 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.Basket;
-import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
@@ -51,9 +49,9 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
-import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
@@ -123,8 +121,32 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                     AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, filesAvailableToDownload, new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
                         @Override
-                        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-                            doDownloadAction(items, selectedPiwigoFilesizeName,false);
+                        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+                            if(filesUnavailableToDownload.size() > 0) {
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    @Override
+                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                        doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                                    }
+                                });
+                            } else {
+                                doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                            }
+                        }
+
+                        @Override
+                        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+
+                            if(filesUnavailableToDownload.size() > 0) {
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    @Override
+                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                        doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                                    }
+                                });
+                            } else {
+                                doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                            }
                         }
 
                         private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareFilesWithOtherApps) {
@@ -144,11 +166,6 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                                 }
                             }
                             EventBus.getDefault().post(evt);
-                        }
-
-                        @Override
-                        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-                            doDownloadAction(items, selectedPiwigoFilesizeName,true);
                         }
 
                         @Override

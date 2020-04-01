@@ -27,7 +27,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Set;
 
 import delit.libs.ui.util.DisplayUtils;
@@ -36,7 +35,6 @@ import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
-import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -46,7 +44,6 @@ import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.ui.model.ViewModelContainer;
 import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
@@ -339,13 +336,32 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
                     @Override
-                    public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-                        doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                    public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+                        if(filesUnavailableToDownload.size() > 0) {
+                            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                @Override
+                                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                    doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                                }
+                            });
+                        } else {
+                            doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                        }
+
                     }
 
                     @Override
-                    public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-                        doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                    public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+                        if(filesUnavailableToDownload.size() > 0) {
+                            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                @Override
+                                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                    doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                                }
+                            });
+                        } else {
+                            doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                        }
                     }
 
                     private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareWithOtherAppsAfterDownload) {

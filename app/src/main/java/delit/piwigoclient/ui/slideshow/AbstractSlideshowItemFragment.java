@@ -184,7 +184,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     public void setAllowDownload(boolean allowDownload) {
-        this.allowDownload = allowDownload;
+        //this.allowDownload = allowDownload;
     }
 
     private void intialiseFields() {

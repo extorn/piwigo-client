@@ -1,6 +1,8 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
@@ -32,6 +34,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +44,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
 
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
@@ -53,11 +57,14 @@ import delit.piwigoclient.business.video.PausableLoadControl;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.business.video.RemoteDirectHttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
+import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
+import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
+import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
@@ -380,15 +387,90 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (getUiHelper().getPermissionsNeededReason() == PERMISSIONS_FOR_DOWNLOAD) {
                 if (event.areAllPermissionsGranted()) {
-                    String downloadFilename = originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1");
-                    String remoteUri = getModel().getFileUrl(getModel().getFullSizeFile().getName());
-                    DownloadFileRequestEvent evt = new DownloadFileRequestEvent(false);
-                    evt.addFileDetail(getModel().getName(), remoteUri, downloadFilename, cachedVideoFile);
-                    EventBus.getDefault().post(evt);
-                    getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
+                    //Granted
+                    DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
+                    AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
+
+                        @Override
+                        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+                            if(filesUnavailableToDownload.size() > 0) {
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    @Override
+                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                        doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                                    }
+                                });
+                            } else {
+                                doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                            }
+
+                        }
+
+                        @Override
+                        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+                            if(filesUnavailableToDownload.size() > 0) {
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    @Override
+                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                        doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                                    }
+                                });
+                            } else {
+                                doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                            }
+                        }
+
+                        private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareWithOtherAppsAfterDownload) {
+                            ResourceItem item = items.iterator().next();
+                            DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareWithOtherAppsAfterDownload);
+                            if(item instanceof VideoResourceItem) {
+                                File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
+                                if(localCache != null) {
+                                    String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
+                                    String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
+                                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename, localCache);
+                                }
+                            } else {
+                                String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
+                                String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
+                                evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
+                            }
+                            EventBus.getDefault().post(evt);
+                            EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
+                        }
+
+                        @Override
+                        public void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+                            ResourceItem item = items.iterator().next();
+                            String resourceName = item.getName();
+                            ResourceItem.ResourceFile resourceFile = item.getFile(selectedPiwigoFilesizeName);
+                            Uri uri = Uri.parse(item.getFileUrl(resourceFile.getName()));
+                            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                            if(mgr != null) {
+                                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
+                                mgr.setPrimaryClip(clipData);
+                            } else {
+                                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+                            }
+                            EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
+                        }
+                    });
+                    dialog.show();
+
                 } else {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+                    EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), getModel()));
                 }
+//                    String downloadFilename = originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1");
+//                    String remoteUri = getModel().getFileUrl(getModel().getFullSizeFile().getName());
+//                    DownloadFileRequestEvent evt = new DownloadFileRequestEvent(false);
+//                    evt.addFileDetail(getModel().getName(), remoteUri, downloadFilename, cachedVideoFile);
+//                    EventBus.getDefault().post(evt);
+//                    getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
+//
+//                } else {
+//                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+//                }
             } else if (getUiHelper().getPermissionsNeededReason() == PERMISSIONS_FOR_CACHE) {
                 if (event.areAllPermissionsGranted()) {
                     permissionToCache = true;

@@ -108,11 +108,11 @@ public class DownloadSelectionMultiItemDialog {
                     break;
                 case R.id.download_option_download_file:
                     itemsToDownload.removeAll(vidsUnableToDownload);
-                    onDownloadFile(itemsToDownload, selectedFilesizeName);
+                    onDownloadFile(itemsToDownload, selectedFilesizeName, vidsUnableToDownload);
                     break;
                 case R.id.download_option_share_with_an_app:
                     itemsToDownload.removeAll(vidsUnableToDownload);
-                    onShareFile(itemsToDownload, selectedFilesizeName);
+                    onShareFile(itemsToDownload, selectedFilesizeName, vidsUnableToDownload);
                     break;
                 default:
                     // no selection
@@ -133,12 +133,12 @@ public class DownloadSelectionMultiItemDialog {
         return downloadLinks;
     }
 
-    private void onShareFile(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-        downloadSelectionListener.onShare(items, selectedPiwigoFilesizeName);
+    private void onShareFile(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+        downloadSelectionListener.onShare(items, selectedPiwigoFilesizeName, filesUnavailableToDownload);
     }
 
-    private void onDownloadFile(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-        downloadSelectionListener.onDownload(items, selectedPiwigoFilesizeName);
+    private void onDownloadFile(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+        downloadSelectionListener.onDownload(items, selectedPiwigoFilesizeName, filesUnavailableToDownload);
     }
 //
     private void onCopyLink(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
@@ -146,8 +146,8 @@ public class DownloadSelectionMultiItemDialog {
     }
 
     public interface DownloadSelectionMultiItemListener extends Serializable {
-        void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName);
-        void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName);
+        void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload);
+        void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload);
         void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName);
     }
 }
