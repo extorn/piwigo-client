@@ -634,5 +634,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="preference_app_desired_language_title">Sprache</string>
     <string name="warning_missing_tags_links_removed_from_resource">Nicht alle mit diesem Artikel verknüpften Tags sind noch in der Datenbank vorhanden. Die Links zu %1$d wurden entfernt</string>
     <string name="button_stop_warning_me">Sag es mir nicht noch einmal</string>
+    <string name="create_email_using_app">Erstellen Sie eine E-Mail mit der App</string>
+    <string name="open_files">Öffnen Sie Dateien in der App</string>
 </resources>
 

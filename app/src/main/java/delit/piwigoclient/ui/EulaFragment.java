@@ -108,7 +108,7 @@ public class EulaFragment extends MyFragment<EulaFragment> {
             serverVersion = sessionDetails.getPiwigoVersion();
         }
         intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: " + appVersion + "\nType and model of Device Being Used:\n");
-        getContext().startActivity(Intent.createChooser(intent, ""));
+        getContext().startActivity(Intent.createChooser(intent, getString(R.string.create_email_using_app)));
     }
 
     private void onDontAgreeToEula() {

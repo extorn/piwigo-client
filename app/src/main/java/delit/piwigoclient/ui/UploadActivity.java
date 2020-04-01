@@ -354,7 +354,8 @@ public class UploadActivity extends MyActivity {
                     getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
                 }
             } else if ("application/octet-stream".equals(type)) {
-                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
+                return handleSendMultipleImages(intent); // Handle multiple images being sent
+//                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
             }
             return null;
 

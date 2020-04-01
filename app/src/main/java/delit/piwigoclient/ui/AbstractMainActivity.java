@@ -612,7 +612,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if(mimesOfSharedUris.size() == 1) {
             intent.setType(mimesOfSharedUris.get(0));
         } else {
-            //TODO choose a reasonable mime type?
+            intent.setType("application/octet-stream");
         }
 
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urisToShare);
@@ -622,7 +622,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         }
-        context.startActivity(intent);
+        context.startActivity(Intent.createChooser(intent, getString(R.string.open_files)));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

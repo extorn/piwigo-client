@@ -506,4 +506,6 @@
     <string name="preference_app_desired_language_title">Idioma</string>
     <string name="warning_missing_tags_links_removed_from_resource">No todas las etiquetas vinculadas a este elemento todavía existen en la base de datos. Se han eliminado los enlaces a %1$d</string>
     <string name="button_stop_warning_me">No me digas otra vez</string>
+    <string name="create_email_using_app">Crear un correo electrónico usando la aplicación</string>
+    <string name="open_files">Abrir archivos en la aplicación</string>
 </resources>

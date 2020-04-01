@@ -1017,4 +1017,6 @@ SOFTWARE.
     <string name="compressing_progress_bar_message">Compressing</string>
     <string name="warning_missing_tags_links_removed_from_resource">Not all Tags linked to this item still exist in the database. The links to %1$d have been removed</string>
     <string name="button_stop_warning_me">Don\'t tell me again</string>
+    <string name="create_email_using_app">Create an Email using app</string>
+    <string name="open_files">Open Files in app</string>
 </resources>
