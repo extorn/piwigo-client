@@ -138,6 +138,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.59</item>
+        <item>"Изменить:
+                 - Разрешить загрузку или обмен несколькими файлами после выбора их в представлении альбома"</item>
         <item>1.4.0.58</item>
         <item>"Изменить:
                  - Бесплатная версия: удалила все рекламные вставки за пару месяцев, так что ее использование в качестве пробной версии платной версии терпимо"</item>

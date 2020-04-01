@@ -123,6 +123,9 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.59</item>
+        <item>"Veränderung:
+                 - Ermöglichen Sie das Herunterladen oder Freigeben mehrerer Dateien, nachdem Sie diese in der Albumansicht ausgewählt haben"</item>
         <item>1.4.0.58</item>
         <item>"Veränderung:
                  - Kostenlose Version: Alle interstitiellen Anzeigen wurden für ein paar Monate entfernt, sodass die Verwendung als mehr als eine Testversion der kostenpflichtigen Version tolerierbar ist"</item>

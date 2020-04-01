@@ -60,6 +60,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
@@ -474,21 +475,39 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     protected void processNextQueuedDownloadEvent() {
         synchronized (activeDownloads) {
             DownloadFileRequestEvent nextEvent = queuedDownloads.remove(0);
-            File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File destinationFile = new File(downloadsFolder, nextEvent.getOutputFilename());
-            activeDownloads.add(nextEvent);
 
-            if (nextEvent.getLocalFileToCopy() != null) {
+            activeDownloads.add(nextEvent);
+            processDownloadEvent(nextEvent);
+        }
+    }
+
+    private File getDestinationFile(String outputFilename) {
+        File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        return new File(downloadsFolder, outputFilename);
+    }
+
+    private void processDownloadEvent(DownloadFileRequestEvent event) {
+        DownloadFileRequestEvent.FileDetails fileDetail = event.getNextFileDetailToDownload();
+        if(fileDetail != null) {
+            if (fileDetail.getLocalFileToCopy() != null) {
+                // copy this local download cache to the destination.
                 try {
-                    IOUtils.copy(nextEvent.getLocalFileToCopy(), destinationFile);
-                    onFileDownloaded(nextEvent.getRemoteUri(), destinationFile);
+                    File outputFile = getDestinationFile(fileDetail.getOutputFilename());
+                    IOUtils.copy(fileDetail.getLocalFileToCopy(), outputFile);
+                    fileDetail.setDownloadedFile(outputFile);
+                    processDownloadEvent(event);
                 } catch (IOException e) {
                     Crashlytics.logException(e);
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
                 }
             } else {
-                nextEvent.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(nextEvent.getRemoteUri(), destinationFile), new DownloadAction()));
+                // invoke a download of this file
+                File destinationFile = getDestinationFile(fileDetail.getOutputFilename());
+                event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile), new DownloadAction(event)));
             }
+        } else {
+            // all items downloaded - process them as needed.
+            onFileDownloadEventProcessed(event);
         }
     }
 
@@ -546,16 +565,19 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //    }
 
 
-    public void onFileDownloaded(String remoteUri, File destinationFile) {
-        // add the file details to the media store :-)
-        MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, destinationFile));
-        DownloadFileRequestEvent event = removeActionDownloadEvent();
-        if (event != null) {
-            if (event.isShareDownloadedWithAppSelector()) {
-                shareFileDownloaded(this, destinationFile);
-            } else {
-                notifyUserFileDownloadComplete(getUiHelper(), destinationFile);
+    public void onFileDownloadEventProcessed(DownloadFileRequestEvent event) {
+        //DownloadFileRequestEvent event =
+        removeActionDownloadEvent(); // we've got the event, so ignore the return
+        for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
+            // add the file details to the media store :-)
+            MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, fileDetail.getDownloadedFile()));
+        }
+        if (event.isShareDownloadedWithAppSelector()) {
+            Set<File> destinationFiles = new HashSet<>(event.getFileDetails().size());
+            for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
+                destinationFiles.add(fileDetail.getDownloadedFile());
             }
+            shareFilesWithOtherApps(this, destinationFiles);
         }
     }
 
@@ -564,7 +586,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getContext()).load(R.drawable.ic_notifications_black_24dp).into(new DownloadTarget(uiHelper, downloadedFile));
     }
 
-    private void shareFileDownloaded(Context context, final File downloadedFile) {
+    private void shareFilesWithOtherApps(Context context, final Set<File> filesToShare) {
 //        File sharedFolder = new File(getContext().getExternalCacheDir(), "shared");
 //        sharedFolder.mkdir();
 //        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
@@ -573,17 +595,28 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         //Send multiple seems essential to allow to work with the other apps. Not clear why.
         Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = FileProvider.getUriForFile(
-                context,
-                BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
-
         MimeTypeMap map = MimeTypeMap.getSingleton();
-        String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(downloadedFile).toString());
-        String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-        intent.setType(mimeType);
-        ArrayList<Uri> files = new ArrayList<>(1);
-        files.add(uri);
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
+
+        ArrayList<Uri> urisToShare = new ArrayList<>(filesToShare.size());
+        ArrayList<String> mimesOfSharedUris = new ArrayList<>(filesToShare.size());
+
+        for(File fileToShare : filesToShare) {
+            Uri uri = FileProvider.getUriForFile(
+                    context,
+                    BuildConfig.APPLICATION_ID + ".provider", fileToShare);
+            String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(fileToShare).toString());
+            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
+            urisToShare.add(uri);
+            mimesOfSharedUris.add(mimeType);
+        }
+        if(mimesOfSharedUris.size() == 1) {
+            intent.setType(mimesOfSharedUris.get(0));
+        } else {
+            //TODO choose a reasonable mime type?
+        }
+
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urisToShare);
+        intent.putStringArrayListExtra(Intent.EXTRA_MIME_TYPES, mimesOfSharedUris);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -886,6 +919,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
+        private final DownloadFileRequestEvent downloadEvent;
+
+        public DownloadAction(DownloadFileRequestEvent event) {
+            super();
+            downloadEvent = event;
+        }
+
         @Override
         public boolean onSuccess(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.Response response) {
             //UrlProgressResponse, UrlToFileSuccessResponse,
@@ -924,7 +964,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-            uiHelper.getParent().onFileDownloaded(response.getUrl(), response.getFile());
+            downloadEvent.markDownloaded(response.getUrl(), response.getFile());
+            uiHelper.getParent().notifyUserFileDownloadComplete(uiHelper, response.getFile());
+            uiHelper.getParent().processDownloadEvent(downloadEvent);
         }
 
 

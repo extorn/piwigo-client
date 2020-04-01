@@ -34,6 +34,15 @@ public class ParcelUtils {
         return store;
     }
 
+    public static <T extends Parcelable> ArrayList<T> readArrayList(@NonNull Parcel in, ClassLoader loader, @NonNull ArrayList<T> destList) {
+        ArrayList<T> data = readArrayList(in, loader);
+        if(data != null) {
+            destList.clear();
+            destList.addAll(data);
+        }
+        return destList;
+    }
+
     public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
         ArrayList<T> store = readValue(in, loader, ArrayList.class);
         if(store != null) {

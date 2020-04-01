@@ -1,6 +1,11 @@
 package delit.piwigoclient.ui.album.view;
 
+import android.Manifest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,15 +14,21 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
@@ -25,10 +36,14 @@ import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
+import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.Basket;
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
@@ -36,9 +51,13 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
+import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
+import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
+import delit.piwigoclient.ui.slideshow.DownloadSelectionMultiItemDialog;
 
 public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
@@ -79,15 +98,84 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         } else {
             bulkActionButtonTag.hide();
         }
-        bulkActionButtonTag.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    onBulkActionTagButtonPressed();
-                }
-                return true; // consume the event
+        bulkActionButtonTag.setOnTouchListener((v, event) -> {
+            if(event.getActionMasked() == MotionEvent.ACTION_UP) {
+                onBulkActionTagButtonPressed();
             }
+            return true; // consume the event
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(PermissionsWantedResponse event) {
+
+        if (getUiHelper().completePermissionsWantedRequest(event)) {
+            if (event.areAllPermissionsGranted()) {
+                //Granted
+                AbstractViewAlbumFragment.BulkResourceActionData bulkActionData = getBulkResourceActionData();
+
+                if (!bulkActionData.getSelectedItems().isEmpty()) {
+                    // examine data for each resource and find common file sizes available to download.
+                    // Note that videos will always be downloaded in original size.
+                    List<String> filesAvailableToDownload = getFileSizesAvailableForAllResources(bulkActionData);
+                    HashSet<ResourceItem> selectedItems = bulkActionData.getSelectedItems();
+                    DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
+                    AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, filesAvailableToDownload, new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
+
+                        @Override
+                        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+                            doDownloadAction(items, selectedPiwigoFilesizeName,false);
+                        }
+
+                        private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareFilesWithOtherApps) {
+                            DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareFilesWithOtherApps);
+                            for(ResourceItem item : items) {
+                                String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
+                                String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
+                                if(item instanceof VideoResourceItem) {
+                                    File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
+                                    if(localCache != null) {
+                                        evt.addFileDetail(item.getName(), remoteUri, downloadFilename, localCache);
+                                    }
+                                } else {
+                                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
+                                }
+                            }
+                            EventBus.getDefault().post(evt);
+                        }
+
+                        @Override
+                        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+                            doDownloadAction(items, selectedPiwigoFilesizeName,true);
+                        }
+
+                        @Override
+                        public void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+                            ResourceItem item = items.iterator().next();
+                            String resourceName = item.getName();
+                            ResourceItem.ResourceFile resourceFile = item.getFile(selectedPiwigoFilesizeName);
+                            Uri uri = Uri.parse(item.getFileUrl(resourceFile.getName()));
+                            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                            if(mgr != null) {
+                                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
+                                mgr.setPrimaryClip(clipData);
+                            } else {
+                                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+                            }
+                        }
+                    });
+                    dialog.show();
+                }
+
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+            }
+        }
+    }
+
+    @Override
+    protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems, List<String> filesAvailableToDownload) {
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }
 
     private boolean showBulkTagAction(Basket basket) {

@@ -382,7 +382,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 if (event.areAllPermissionsGranted()) {
                     String downloadFilename = originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1");
                     String remoteUri = getModel().getFileUrl(getModel().getFullSizeFile().getName());
-                    EventBus.getDefault().post(new DownloadFileRequestEvent(getModel().getName(), remoteUri, cachedVideoFile, downloadFilename));
+                    DownloadFileRequestEvent evt = new DownloadFileRequestEvent(false);
+                    evt.addFileDetail(getModel().getName(), remoteUri, downloadFilename, cachedVideoFile);
+                    EventBus.getDefault().post(evt);
                     getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
                 } else {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));

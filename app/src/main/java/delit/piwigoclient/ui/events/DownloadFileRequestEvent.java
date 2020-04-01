@@ -4,15 +4,115 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import delit.libs.ui.util.ParcelUtils;
 
 public class DownloadFileRequestEvent implements Parcelable {
     private final boolean shareDownloadedWithAppSelector;
-    private final String resourceName;
-    private final String remoteUri;
-    private final String outputFilename;
-    private final File localFileToCopy;
+    private final ArrayList<FileDetails> details = new ArrayList<>();
+
+    public FileDetails getNextFileDetailToDownload() {
+        for(FileDetails detail : details) {
+            if(!detail.isDownloaded()) {
+                return detail;
+            }
+        }
+        return null;
+    }
+
+    public void markDownloaded(String url, File downloadedFile) {
+        for(FileDetails detail : details) {
+            if(detail.getRemoteUri().equals(url)) {
+                detail.setDownloadedFile(downloadedFile);
+                break; // don't check the rest.
+            }
+        }
+    }
+
+    public List<FileDetails> getFileDetails() {
+        return details;
+    }
+
+    public static class FileDetails implements Parcelable {
+        private final String resourceName;
+        private final String remoteUri;
+        private final String outputFilename;
+        private final File localFileToCopy;
+        private File downloadedFile;
+
+        public File getLocalFileToCopy() {
+            return localFileToCopy;
+        }
+
+        public String getResourceName() {
+            return resourceName;
+        }
+
+        public String getRemoteUri() {
+            return remoteUri;
+        }
+
+        public String getOutputFilename() {
+            return outputFilename;
+        }
+
+        public void setDownloadedFile(File downloadedFile) {
+            this.downloadedFile = downloadedFile;
+        }
+
+        public File getDownloadedFile() {
+            return downloadedFile;
+        }
+
+        public boolean isDownloaded() {
+            return downloadedFile != null;
+        }
+
+        public static final Creator<FileDetails> CREATOR = new Creator<FileDetails>() {
+            @Override
+            public FileDetails createFromParcel(Parcel in) {
+                return new FileDetails(in);
+            }
+
+            @Override
+            public FileDetails[] newArray(int size) {
+                return new FileDetails[size];
+            }
+
+        };
+
+        public FileDetails(String resourceName, String remoteUri, String outputFilename, File localFileToCopy) {
+            this.resourceName = resourceName;
+            this.remoteUri = remoteUri;
+            this.outputFilename = outputFilename;
+            this.localFileToCopy = localFileToCopy;
+        }
+
+        public FileDetails(Parcel in) {
+            resourceName = ParcelUtils.readString(in);
+            remoteUri = ParcelUtils.readString(in);
+            outputFilename = ParcelUtils.readString(in);
+            localFileToCopy = ParcelUtils.readFile(in);
+            downloadedFile = ParcelUtils.readFile(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeValue(resourceName);
+            dest.writeValue(remoteUri);
+            dest.writeValue(outputFilename);
+            ParcelUtils.writeFile(dest, localFileToCopy);
+            ParcelUtils.writeFile(dest, downloadedFile);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+    }
+
     public static final Creator<DownloadFileRequestEvent> CREATOR = new Creator<DownloadFileRequestEvent>() {
         @Override
         public DownloadFileRequestEvent createFromParcel(Parcel in) {
@@ -26,29 +126,22 @@ public class DownloadFileRequestEvent implements Parcelable {
     };
     private long requestId;
 
-    public DownloadFileRequestEvent(String resourceName, String remoteUri, String outputFilename, boolean shareDownloadedWithAppSelector) {
-        this.resourceName = resourceName;
-        this.remoteUri = remoteUri;
-        this.outputFilename = outputFilename;
-        this.shareDownloadedWithAppSelector = shareDownloadedWithAppSelector;
-        this.localFileToCopy = null;
+    public void addFileDetail(String resourceName, String remoteUri, String outputFilename) {
+        details.add(new FileDetails(resourceName, remoteUri, outputFilename, null));
     }
 
-    public DownloadFileRequestEvent(String name, String remoteUri, File localFileToCopy, String outputFilename) {
-        this.resourceName = name;
-        this.localFileToCopy = localFileToCopy;
-        this.outputFilename = outputFilename;
-        this.shareDownloadedWithAppSelector = false;
-        this.remoteUri = remoteUri;
+    public void addFileDetail(String resourceName, String remoteUri, String outputFilename, File preDownloadedFile) {
+        details.add(new FileDetails(resourceName, remoteUri, outputFilename, preDownloadedFile));
+    }
+
+    public DownloadFileRequestEvent(boolean shareDownloadedWithAppSelector) {
+        this.shareDownloadedWithAppSelector = shareDownloadedWithAppSelector;
     }
 
     public DownloadFileRequestEvent(Parcel in) {
         shareDownloadedWithAppSelector = ParcelUtils.readBool(in);
-        resourceName = ParcelUtils.readString(in);
-        remoteUri = ParcelUtils.readString(in);
-        outputFilename = ParcelUtils.readString(in);
         requestId = in.readLong();
-        localFileToCopy = ParcelUtils.readFile(in);
+        ParcelUtils.readArrayList(in, FileDetails.class.getClassLoader(),details);
     }
 
     public long getRequestId() {
@@ -57,22 +150,6 @@ public class DownloadFileRequestEvent implements Parcelable {
 
     public void setRequestId(long requestId) {
         this.requestId = requestId;
-    }
-
-    public File getLocalFileToCopy() {
-        return localFileToCopy;
-    }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public String getRemoteUri() {
-        return remoteUri;
-    }
-
-    public String getOutputFilename() {
-        return outputFilename;
     }
 
     public boolean isShareDownloadedWithAppSelector() {
@@ -96,10 +173,7 @@ public class DownloadFileRequestEvent implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         ParcelUtils.writeBool(dest, shareDownloadedWithAppSelector);
-        dest.writeValue(resourceName);
-        dest.writeValue(remoteUri);
-        dest.writeValue(outputFilename);
         dest.writeLong(requestId);
-        ParcelUtils.writeFile(dest, localFileToCopy);
+        ParcelUtils.writeArrayList(dest, details);
     }
 }

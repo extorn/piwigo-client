@@ -95,37 +95,60 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         this.connectTimeoutMillis = connectTimeoutMillis;
     }
 
-    private CachedContent loadCacheMetaData(Uri remoteFileLocation) throws HttpDataSourceException {
+    private CachedContent loadCacheAndReturnCacheMetaData(Uri remoteFileLocation) throws HttpDataSourceException {
         try {
-            //TODO this is rubbish - it will cause clashes as is not UUID!
-            String filenameStem = CacheUtils.getVideoCacheFilenameStemFromVideoUri(remoteFileLocation.toString());
-            File cacheFileMetadataFile = CacheUtils.getCacheMetadataFile(context, filenameStem);
-            File cacheDataFile = CacheUtils.getCacheDataFile(context, filenameStem);
-
-            if (cacheFileMetadataFile.exists()) {
-                if (!cacheDataFile.exists()) {
-                    // cache is corrupt - delete meta data file
-                    cacheFileMetadataFile.delete();
-                } else {
-                    if (cacheMetaData == null || !cacheMetaData.getCachedDataFile().equals(cacheDataFile)) {
-                        cacheMetaData = CacheUtils.loadCachedContent(cacheFileMetadataFile);
-                    }
-                    if (cacheMetaData != null) {
-                        return cacheMetaData;
-                    } else {
-                        cacheDataFile.delete();
-                    }
-                }
-            }
-            cacheMetaData = new CachedContent();
-            cacheMetaData.setOriginalUri(remoteFileLocation.toString());
-            cacheMetaData.setCacheDataFilename(cacheDataFile.getName());
-            cacheMetaData.setPersistTo(cacheFileMetadataFile);
+            cacheMetaData = loadCacheMetaData(cacheMetaData, context, remoteFileLocation);
             return cacheMetaData;
         } catch (IOException e) {
             Crashlytics.logException(e);
             throw new HttpDataSourceException("Error loading cache", e, dataSpec, HttpDataSourceException.TYPE_OPEN);
         }
+    }
+
+    public static boolean isFileFullyCached(Context context, Uri remoteFileLocation) {
+        try {
+            CachedContent cacheMetaData = loadCacheMetaData(null, context, remoteFileLocation);
+            return cacheMetaData.isComplete();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static File getFullyLoadedCacheFile(Context context, Uri remoteFileLocation) {
+        try {
+            CachedContent cacheMetaData = loadCacheMetaData(null, context, remoteFileLocation);
+            return cacheMetaData.getCachedDataFile();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private static CachedContent loadCacheMetaData(CachedContent cacheMetaData, Context context, Uri remoteFileLocation) throws IOException {
+        //TODO this is rubbish - it will cause clashes as is not UUID!
+        String filenameStem = CacheUtils.getVideoCacheFilenameStemFromVideoUri(remoteFileLocation.toString());
+        File cacheFileMetadataFile = CacheUtils.getCacheMetadataFile(context, filenameStem);
+        File cacheDataFile = CacheUtils.getCacheDataFile(context, filenameStem);
+
+        if (cacheFileMetadataFile.exists()) {
+            if (!cacheDataFile.exists()) {
+                // cache is corrupt - delete meta data file
+                cacheFileMetadataFile.delete();
+            } else {
+                if (cacheMetaData == null || !cacheMetaData.getCachedDataFile().equals(cacheDataFile)) {
+                    cacheMetaData = CacheUtils.loadCachedContent(cacheFileMetadataFile);
+                }
+                if (cacheMetaData != null) {
+                    return cacheMetaData;
+                } else {
+                    cacheDataFile.delete();
+                }
+            }
+        }
+        cacheMetaData = new CachedContent();
+        cacheMetaData.setOriginalUri(remoteFileLocation.toString());
+        cacheMetaData.setCacheDataFilename(cacheDataFile.getName());
+        cacheMetaData.setPersistTo(cacheFileMetadataFile);
+        return cacheMetaData;
     }
 
     public void setPerformUriPathSegmentEncoding(boolean performUriPathSegmentEncoding) {
@@ -301,7 +324,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             listener.onTransferStart(this, dataSpec);
         }
         if (cacheMetaData == null) {
-            cacheMetaData = loadCacheMetaData(dataSpec.uri);
+            cacheMetaData = loadCacheAndReturnCacheMetaData(dataSpec.uri);
             cacheListener.onCacheLoaded(cacheMetaData, dataSpec.position);
             if (cacheMetaData.isComplete()) {
                 cacheListener.onFullyCached(cacheMetaData);
@@ -387,7 +410,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     private void ensureCacheFileExistsAndCacheMetadataInSync() throws IOException {
         if (!cacheMetaData.getCachedDataFile().exists()) {
-            loadCacheMetaData(dataSpec.uri);
+            loadCacheAndReturnCacheMetaData(dataSpec.uri);
             initialiseRandomAccessCacheFile();
             cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
         }

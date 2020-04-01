@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.util.DisplayMetrics;
@@ -48,7 +47,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,6 +80,7 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.ServerConfig;
 import delit.piwigoclient.model.piwigo.Username;
+import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -186,6 +185,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private RelativeLayout bulkActionsContainer;
     private FloatingActionButton bulkActionButtonPermissions;
     private FloatingActionButton bulkActionButtonDelete;
+    private FloatingActionButton bulkActionButtonDownload;
     private FloatingActionButton bulkActionButtonCopy;
     private FloatingActionButton bulkActionButtonCut;
     private FloatingActionButton bulkActionButtonPaste;
@@ -727,18 +727,22 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         bulkActionButtonPermissions = bulkActionsContainer.findViewById(R.id.gallery_action_permissions_bulk);
         bulkActionButtonTag = bulkActionsContainer.findViewById(R.id.gallery_action_tag_bulk);
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
+        bulkActionButtonDownload = bulkActionsContainer.findViewById(R.id.gallery_action_download_bulk);
         bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
         bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
         bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
 
-        bulkActionButtonPermissions.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    onBulkActionPermissionsButtonPressed();
-                }
-                return true; // consume the event
+        bulkActionButtonPermissions.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                onBulkActionPermissionsButtonPressed();
             }
+            return true; // consume the event
+        });
+        bulkActionButtonDownload.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                onBulkActionDownloadButtonPressed();
+            }
+            return true; // consume the event
         });
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -829,6 +833,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         loadingMessageIds.put(loadingMessageId, "AL");
     }
 
+    private void onDownloadAllItemsButtonClick(HashSet<Long> imageIds, HashSet<ResourceItem> selectedItems) {
+        BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, selectedItems, BulkResourceActionData.ACTION_DOWNLOAD_ALL);
+        this.bulkResourceActionData = bulkActionData;
+        onDownloadAllItems(bulkActionData);
+    }
+
     private void onUpdateImagePermissionsButtonClick(HashSet<Long> imageIds, HashSet<ResourceItem> selectedItems) {
         BulkResourceActionData bulkActionData = new BulkResourceActionData(imageIds, selectedItems, BulkResourceActionData.ACTION_UPDATE_PERMISSIONS);
         this.bulkResourceActionData = bulkActionData;
@@ -869,6 +879,53 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
+    private void onDownloadAllItems(final BulkResourceActionData downloadActionData) {
+        if (!downloadActionData.isResourceInfoAvailable()) {
+            downloadActionData.getResourcesInfoIfNeeded(this);
+            return;
+        }
+
+        if (!downloadActionData.getSelectedItems().isEmpty()) {
+            // examine data for each resource and find common file sizes available to download.
+            // Note that videos will always be downloaded in original size.
+            List<String> filesAvailableToDownload = getFileSizesAvailableForAllResources(downloadActionData);
+            showDownloadResourcesDialog(downloadActionData.getSelectedItems(), filesAvailableToDownload);
+        }
+    }
+
+    protected abstract void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems, List<String> filesAvailableToDownload);
+
+    /**
+     * Examine data for each resource and find common file sizes available to download.
+     * Note that videos will always be downloaded in original size.
+     *
+     * @param downloadActionData
+     * @return
+     */
+    protected List<String> getFileSizesAvailableForAllResources(BulkResourceActionData downloadActionData) {
+        List<String> filesAvailableToDownload = null;
+        for(ResourceItem item : downloadActionData.getSelectedItems()) {
+            if(!(item instanceof VideoResourceItem)) {
+                List<String> availableSizesForResource = new ArrayList<>();
+                for (ResourceItem.ResourceFile f : item.getAvailableFiles()) {
+                    availableSizesForResource.add(f.getName());
+                }
+                if (filesAvailableToDownload == null) {
+                    filesAvailableToDownload = new ArrayList<>(availableSizesForResource);
+                } else {
+                    CollectionUtils.removeItemsNotInRhsCollection(filesAvailableToDownload, availableSizesForResource);
+                }
+            }
+        }
+
+        if(filesAvailableToDownload == null) {
+            // all items are video resources (download original for all)
+            filesAvailableToDownload = new ArrayList<>(1);
+            filesAvailableToDownload.add(downloadActionData.getSelectedItems().iterator().next().getFullSizeFile().getName());
+        }
+        return filesAvailableToDownload;
+    }
+
     private void onDeleteResources(final BulkResourceActionData deleteActionData) {
         final HashSet<ResourceItem> sharedResources = new HashSet<>();
         if (deleteActionData.isResourceInfoAvailable()) {
@@ -889,6 +946,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             deleteResourcesFromServerForever(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
         }
 
+    }
+
+    private void onBulkActionDownloadButtonPressed() {
+        HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
+        if (selectedItemIds.size() > 0) {
+            onDownloadAllItemsButtonClick(selectedItemIds, viewAdapter.getSelectedItems());
+        }
     }
 
     private void onBulkActionPermissionsButtonPressed() {
@@ -1089,7 +1153,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private BulkResourceActionData getBulkResourceActionData() {
+    protected BulkResourceActionData getBulkResourceActionData() {
         return bulkResourceActionData;
     }
 
@@ -1801,6 +1865,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     case BulkResourceActionData.ACTION_UPDATE_PERMISSIONS:
                         onUpdateImagePermissions(bulkResourceActionData);
                         break;
+                    case BulkResourceActionData.ACTION_DOWNLOAD_ALL:
+                        onDownloadAllItems(bulkResourceActionData);
                 }
 
             } else {
@@ -2587,9 +2653,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class BulkResourceActionData implements Parcelable {
+    protected static class BulkResourceActionData implements Parcelable {
         public final static int ACTION_DELETE = 1;
         public final static int ACTION_UPDATE_PERMISSIONS = 2;
+        public final static int ACTION_DOWNLOAD_ALL = 3;
         public static final Creator<BulkResourceActionData> CREATOR = new Creator<BulkResourceActionData>() {
             @Override
             public BulkResourceActionData createFromParcel(Parcel in) {
@@ -2603,6 +2670,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         };
         final HashSet<Long> selectedItemIds;
         final HashSet<Long> itemsUpdated;
+        final HashMap<Long, Long> itemsUpdating;
         final HashSet<ResourceItem> selectedItems;
         boolean resourceInfoAvailable;
         private ArrayList<Long> trackedMessageIds = new ArrayList<>();
@@ -2613,12 +2681,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             this.selectedItems = selectedItems;
             this.resourceInfoAvailable = false; //FIXME when Piwigo provides this info as standard, this can be removed and the method simplified.
             itemsUpdated = new HashSet<>(selectedItemIds.size());
+            itemsUpdating = new HashMap<>();
             this.action = action;
         }
 
         public BulkResourceActionData(Parcel in) {
             selectedItemIds = ParcelUtils.readLongSet(in);
             itemsUpdated = ParcelUtils.readLongSet(in);
+            itemsUpdating = ParcelUtils.readMap(in, null);
             selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             resourceInfoAvailable = ParcelUtils.readBool(in);
             trackedMessageIds = ParcelUtils.readLongArrayList(in);
@@ -2670,8 +2740,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 return selectedItems;
             }
             Set<ResourceItem> itemsWithoutLinkedAlbumData = new HashSet<>();
+            Iterator<Map.Entry<Long,Long>> entriesIter = itemsUpdating.entrySet().iterator();
+            while(entriesIter.hasNext()) { // remove any supposedly updating but that whose service calls are not running.
+                Map.Entry<Long,Long> itemUpdating = entriesIter.next();
+                if(!trackedMessageIds.contains(itemUpdating.getValue())) {
+                    entriesIter.remove();
+                }
+            }
             for (ResourceItem r : selectedItems) {
-                if (!itemsUpdated.contains(r.getId())) {
+                if (!itemsUpdated.contains(r.getId()) && itemsUpdating.get(r.getId()) == null) {
                     itemsWithoutLinkedAlbumData.add(r);
                 }
             }
@@ -2703,8 +2780,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return selectedItemIds.isEmpty();
         }
 
-        public void trackMessageId(long messageId) {
+        public long trackMessageId(long messageId) {
             trackedMessageIds.add(messageId);
+            return messageId;
         }
 
         public boolean isTrackingMessageId(long messageId) {
@@ -2728,7 +2806,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             if (maxHttpRequestsQueued > simultaneousCalls) {
                 for (ResourceItem item : getItemsWithoutLinkedAlbumData()) {
                     simultaneousCalls++;
-                    trackMessageId(fragment.addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList)));
+                    itemsUpdating.put(item.getId(), trackMessageId(fragment.addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList))));
                     if (simultaneousCalls >= maxHttpRequestsQueued) {
                         break;
                     }
