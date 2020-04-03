@@ -513,4 +513,5 @@
     <string name="create_email_using_app">使用应用创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。 这些 %1$d 文件已被忽略。 要共享视频文件，必须先将其完全本地缓存。</string>
+    <string name="slideshow_auto_drive_paused">Slideshow Autodrive paused</string>
 </resources>

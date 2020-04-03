@@ -53,5 +53,10 @@
     <string name="preference_data_upload_automatic_job_privacy_level_title">Nivel de privacidad</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Archivos cargados visibles para%1$s</string>
 
-
+        <string name="preference_gallery_slideshow_auto_drive_title">Progresión automática de diapositivas</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Después del tiempo establecido, la siguiente imagen o video mostrará</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retardo de imagen de auto manejo</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisegundas</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retardo automático de video</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisegundas</string>
 </resources>

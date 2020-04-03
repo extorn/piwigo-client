@@ -10,15 +10,22 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.Metadata;
+import com.ortiz.touchview.TouchImageView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.InlineViewPagerAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
+import delit.piwigoclient.ui.events.SlideshowItemPageFinished;
 import delit.piwigoclient.ui.model.ViewModelContainer;
+import pl.droidsonroids.gif.GifDrawable;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
@@ -55,6 +62,37 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
             }
         });
         setupExifDataTab(resourceDetailsViewPager, null);
+    }
+
+    private void notifyPagerItemFinished() {
+        if(getImageView().getDrawable() instanceof GifDrawable) {
+            GifDrawable gifDrawable = (GifDrawable)getImageView().getDrawable();
+            int duration = gifDrawable.getDuration();
+            DisplayUtils.runOnUiThread(() -> {
+                // then this image is showing to the user and we should notify the pager that we're done.
+                EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex()));
+            }, duration + AlbumViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
+        } else {
+            // then this image is showing to the user and we should notify the pager that we're done.
+            EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex()));
+        }
+    }
+
+    @Override
+    protected void doOnPageSelectedAndAdded() {
+        super.doOnPageSelectedAndAdded();
+        if (getPicassoImageLoader().hasPlaceholder() && getPicassoImageLoader().isImageLoaded()) {
+            // then the actual image has been loaded.
+            notifyPagerItemFinished();
+        }
+    }
+
+    @Override
+    public void onImageLoaded(PicassoLoader<TouchImageView> loader, boolean success) {
+        if (success && loader.hasPlaceholder() && loader.isImageLoaded() && isPrimarySlideshowItem()) {
+            notifyPagerItemFinished();
+        }
+        super.onImageLoaded(loader, success);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

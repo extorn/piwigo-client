@@ -181,6 +181,10 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         }
     }
 
+    public GalleryItem getItemByPagerPosition(int position) {
+        return gallery.getItemByIdx(galleryResourceItems.get(position));
+    }
+
     private void deleteItem(int itemIdx) {
         if (itemIdx >= 0) {
             // remove the item from the list of items in the slideshow.

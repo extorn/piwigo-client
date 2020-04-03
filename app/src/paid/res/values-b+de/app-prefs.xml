@@ -57,5 +57,10 @@
     <string name="preference_data_upload_automatic_job_privacy_level_title">Datenschutzstufe</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Hochgeladene Dateien sichtbar für %1$s</string>
 
-
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatische Diashow-Progression</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Nach der eingestellten Zeit wird das nächste Bild oder Video angezeigt</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Bildverzögerung des automatischen Laufwerks</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s Millisekunden</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Video-Verzögerung für automatische Fahrt</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s Millisekunden</string>
 </resources>

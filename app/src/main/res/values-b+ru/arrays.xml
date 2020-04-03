@@ -138,6 +138,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.60</item>
+        <item>"Изменить:
+             - Добавлена функция автоматического вождения в слайд-шоу - новая настройка в разделе слайд-шоу настроек галереи"</item>
         <item>1.4.0.59</item>
         <item>"Изменить:
                  - Разрешить загрузку или обмен несколькими файлами после выбора их в представлении альбома"</item>

@@ -509,4 +509,5 @@
     <string name="create_email_using_app">Crear un correo electrónico usando la aplicación</string>
     <string name="open_files">Abrir archivos en la aplicación</string>
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no pudieron procesarse. Estos %1$d archivos han sido ignorados. Para compartir un archivo de video, primero debe almacenarse en caché local.</string>
+    <string name="slideshow_auto_drive_paused">Slideshow Autodrive paused</string>
 </resources>

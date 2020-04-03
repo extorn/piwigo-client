@@ -133,6 +133,9 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.60</item>
+        <item>"Changement:
+             - Ajout d'une fonction de lecteur automatique sur le diaporama - nouveau paramètre dans la section diaporama des préférences de la galerie"</item>
         <item>1.4.0.59</item>
         <item>"Changement:
                  - Autorisez le téléchargement ou le partage de plusieurs fichiers après les avoir sélectionnés dans la vue de l'album"</item>

@@ -134,5 +134,22 @@
 
     <string name="preference_data_upload_automatic_job_files_uploaded_already_key" translatable="false">preference_data_upload_automatic_job_files_uploaded_already</string>
 
+    <bool name="preference_gallery_slideshow_auto_drive_default">false</bool>
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatic slideshow progression</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">After the set time, the next image or video will show</string>
+    <string name="preference_gallery_slideshow_auto_drive_key" translatable="false">preference_gallery_slideshow_auto_drive</string>
 
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Auto drive image delay</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_key" translatable="false">preference_gallery_slideshow_auto_drive_delay</string>
+    <integer name="preference_gallery_slideshow_auto_drive_delay_default">2000</integer>
+    <integer name="preference_gallery_slideshow_auto_drive_delay_max">60000</integer>
+    <integer name="preference_gallery_slideshow_auto_drive_delay_min">500</integer>
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Auto drive video delay</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_key" translatable="false">preference_gallery_slideshow_auto_drive_video_delay</string>
+    <integer name="preference_gallery_slideshow_auto_drive_video_delay_default">1000</integer>
+    <integer name="preference_gallery_slideshow_auto_drive_video_delay_max">60000</integer>
+    <integer name="preference_gallery_slideshow_auto_drive_video_delay_min">0</integer>
 </resources>

@@ -46,7 +46,7 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
  * Created by gareth on 12/05/17.
  */
 
-public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPreferenceFragment> {
+public class BaseGalleryPreferenceFragment extends MyPreferenceFragment<BaseGalleryPreferenceFragment> {
 
     private static final String TAG = "Gallery Settings";
     private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
@@ -54,7 +54,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPrefe
         public boolean onPreferenceChange(final Preference preference, Object value) {
             final Boolean val = (Boolean) value;
             if (Boolean.TRUE.equals(val)) {
-                getUiHelper().runWithExtraPermissions(GalleryPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
+                getUiHelper().runWithExtraPermissions(BaseGalleryPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
             } else {
                 getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
                 getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_not_recommended));
@@ -88,10 +88,10 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPrefe
         }
     };
 
-    public GalleryPreferenceFragment() {
+    public BaseGalleryPreferenceFragment() {
     }
 
-    public GalleryPreferenceFragment(int pagerIndex) {
+    public BaseGalleryPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
     }
 
@@ -111,6 +111,12 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment<GalleryPrefe
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // Load the preferences from an XML resource
+//        preferencesKey = rootKey;
+        buildPreferencesViewAndInitialise(rootKey);
+    }
+
+    protected void buildPreferencesViewAndInitialise(String rootKey) {
         setPreferencesFromResource(R.xml.pref_page_gallery, rootKey);
         setHasOptionsMenu(true);
 

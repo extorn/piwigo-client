@@ -69,7 +69,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     private Fragment mCurrentPrimaryItem;
     private int lastPosition;
     private S container;
-    private ViewPager.OnPageChangeListener pageListener = new CustomPageChangeListener(this);
+    private CustomPageChangeListener pageListener = new CustomPageChangeListener(this);
     private boolean blockDestroy;
 
     public MyFragmentRecyclerPagerAdapter(FragmentManager fm) {
@@ -461,6 +461,10 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     public void setContainer(S container) {
         this.container = container;
         container.addOnPageChangeListener(pageListener);
+    }
+
+    public void setPageListener(ViewPager.OnPageChangeListener pageListener) {
+        this.pageListener.setWrapped(pageListener);
     }
 
     private static class CustomPageChangeListener<T extends MyFragmentRecyclerPagerAdapter<?, ?>> implements ViewPager.OnPageChangeListener {

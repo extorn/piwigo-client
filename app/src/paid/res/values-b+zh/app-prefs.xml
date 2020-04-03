@@ -60,5 +60,10 @@
     <string name="preference_data_upload_automatic_job_privacy_level_title">隐私级别</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件对%1$s 可见</string>
 
-
+    <string name="preference_gallery_slideshow_auto_drive_title">自动幻灯片进度</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">在设定的时间之后，将显示下一个图像或视频</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">自动驱动影像延迟</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s 毫厘</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">自动驾驶视频延迟</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s 毫厘</string>
 </resources>

@@ -1,17 +1,29 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Set;
 
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.TouchObservingRelativeLayout;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -22,6 +34,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
@@ -30,6 +43,7 @@ import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.events.SlideshowItemPageFinished;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
@@ -40,6 +54,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
 
     private static final String TAG = "SlideshowFragment";
+    private SlideshowDriver currentSlideshowDriver;
 
     public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(Class<ViewModelContainer> modelType, ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
@@ -51,6 +66,18 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     public void onResume() {
         super.onResume();
         getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_3);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        ((TouchObservingRelativeLayout)view).setTouchObserver(ev -> {
+            if(currentSlideshowDriver != null) {
+                getUiHelper().showDetailedMsg(R.string.alert_information, R.string.slideshow_auto_drive_paused);
+                currentSlideshowDriver.cancel();
+            }
+        });
+        return view;
     }
 
     @Override
@@ -140,6 +167,47 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
         ResourceContainer<T, GalleryItem> gallery = getResourceContainer();
         if(gallery instanceof PiwigoTag && gallery.getId() == tagContentAlteredEvent.getId()) {
             getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_tag));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(SlideshowItemPageFinished event) {
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "Handling slideshow item finished with event for item at pager index : " + event.getPagerItemIndex());
+        }
+        if(AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext())) {
+            GalleryItem item = getGalleryItemAdapter().getItemByPagerPosition(getViewPager().getCurrentItem());
+            int moveToItem = getViewPager().getCurrentItem() + 1;
+            int items = getGalleryItemAdapter().getCount();
+            if(items > moveToItem) {
+                currentSlideshowDriver = new SlideshowDriver(moveToItem);
+                if (item instanceof VideoResourceItem) {
+                    DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
+                } else {
+                    DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveDelayMillis(prefs, requireContext()));
+                }
+            }
+        }
+    }
+
+    private class SlideshowDriver implements Runnable {
+
+        private final int moveToPage;
+        private boolean cancelled;
+
+        public SlideshowDriver(int moveToPage) {
+            this.moveToPage = moveToPage;
+        }
+
+        @Override
+        public void run() {
+            if(!cancelled) {
+                getViewPager().setCurrentItem(moveToPage);
+            }
+        }
+
+        public void cancel() {
+            cancelled = true;
         }
     }
 }

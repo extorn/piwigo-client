@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -23,7 +24,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
@@ -157,6 +157,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         resourceContainer = viewModelContainer.getModel();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -291,9 +292,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public void onDestroy() {
         if (viewPager != null) {
             // clean up any existing adapter.
-            GalleryItemAdapter adapter = (GalleryItemAdapter) viewPager.getAdapter();
-            if (adapter != null) {
-                adapter.destroy();
+            if (galleryItemAdapter != null) {
+                galleryItemAdapter.destroy();
             }
             viewPager.setAdapter(null);
         }
@@ -326,11 +326,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
         if (resourceContainer.getId() == event.item.getParentId()) {
-            GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
-            if (adapter != null) {
-                int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
-                adapter.deleteGalleryItem(fullGalleryIdx);
-                if (adapter.getCount() == 0) {
+            if (galleryItemAdapter != null) {
+                int fullGalleryIdx = galleryItemAdapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
+                galleryItemAdapter.deleteGalleryItem(fullGalleryIdx);
+                if (galleryItemAdapter.getCount() == 0) {
                     // slideshow is now empty close this page.
                     getParentFragmentManager().popBackStack();
                 }
@@ -342,6 +341,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         if (resourceContainer instanceof PiwigoAlbum && resourceContainer.getId() == albumAlteredEvent.getAlbumAltered()) {
         }
+    }
+
+    protected GalleryItemAdapter<T, CustomViewPager, ? extends SlideshowItemFragment<? extends ResourceItem>> getGalleryItemAdapter() {
+        return galleryItemAdapter;
+    }
+
+    public CustomViewPager getViewPager() {
+        return viewPager;
     }
 
     protected void loadMoreGalleryResources() {
@@ -445,11 +452,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             resourceContainer.acquirePageLoadLock();
             try {
                 ArrayList<GalleryItem> resources = response.getResources();
-//                if(resourceContainer.isRetrieveItemsInReverseOrder()) {
-//                    Collections.reverse(resources);
-//                }
                 int firstPositionAddedAt = resourceContainer.addItemPage(response.getPage(), response.getPageSize(), resources);
-                ((GalleryItemAdapter) viewPager.getAdapter()).onDataAppended(firstPositionAddedAt, response.getResources().size());
+                galleryItemAdapter.onDataAppended(firstPositionAddedAt, response.getResources().size());
             } finally {
                 resourceContainer.releasePageLoadLock();
             }
@@ -458,10 +462,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
 
-
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
         }
 
         @Override

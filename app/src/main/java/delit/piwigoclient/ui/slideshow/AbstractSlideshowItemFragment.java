@@ -824,7 +824,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    private void doOnPageSelectedAndAdded() {
+    protected void doOnPageSelectedAndAdded() {
         if(!doOnPageSelectedAndAddedRun) {
             doOnPageSelectedAndAddedRun = true;
             doOnceOnPageSelectedAndAdded();

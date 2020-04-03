@@ -50,4 +50,10 @@
 
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Загруженные файлы видны%1$s</string>
 
+    <string name="preference_gallery_slideshow_auto_drive_title">Автоматическая демонстрация слайдов</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">По истечении заданного времени появится следующее изображение или видео.</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Автоматическая задержка изображения диска</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s миллисекунды</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Автоматическая задержка видео</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s миллисекунды</string>
 </resources>

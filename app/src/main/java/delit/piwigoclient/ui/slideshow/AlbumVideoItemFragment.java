@@ -49,6 +49,7 @@ import java.util.Set;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.business.video.CachedContent;
@@ -64,6 +65,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
+import delit.piwigoclient.ui.events.SlideshowItemPageFinished;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.model.ViewModelContainer;
@@ -220,6 +222,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
             originalVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME);
         }
+        playVideoAutomatically |= AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext());
+        videoIsPlayingWhenVisible |= AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext());
+
         super.onViewCreated(view, savedInstanceState);
         setAllowDownload(false);
 
@@ -265,6 +270,17 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
         player.addListener(new Player.DefaultEventListener() {
+
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if(Player.STATE_ENDED == playbackState && playWhenReady) {
+                    player.stop();
+                    player.seekTo(0); // get ready to play again.
+                    int itemIdx = getPagerIndex();
+                    EventBus.getDefault().post(new SlideshowItemPageFinished(itemIdx));
+                }
+            }
+
             @Override
             public void onPlayerError(ExoPlaybackException error) {
                 Throwable e = error;
@@ -294,6 +310,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         simpleExoPlayerView.setPlayer(player);
         View exoPlayerControlsView = simpleExoPlayerView.findViewById(R.id.exo_player_controls_container);
         simpleExoPlayerView.setControllerVisibilityListener(new CustomVidePlayerControlsVisibilityListener(exoPlayerControlsView, getBottomSheet()));
+        simpleExoPlayerView.showController();
         logStatus("finished created item content");
         return itemContentView;
     }
@@ -312,8 +329,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         @Override
         public void onVisibilityChange(int visibility) {
             if (visibility == View.VISIBLE) {
+                videoMetadataContainerView.setEnabled(false);
                 videoMetadataContainerView.setVisibility(View.GONE);
             } else {
+                videoMetadataContainerView.setEnabled(true);
                 videoMetadataContainerView.setVisibility(View.VISIBLE);
             }
         }

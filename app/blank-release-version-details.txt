@@ -1,30 +1,30 @@
 
 <en-GB>
 Change:
-- Allow download or sharing of multiple files after selecting them in the album view
+- Added an auto drive feature on the slideshow - new setting in the slideshow section of gallery preferences
 </en-GB>
 
 <de-DE>
 Veränderung:
-- Ermöglichen Sie das Herunterladen oder Freigeben mehrerer Dateien, nachdem Sie diese in der Albumansicht ausgewählt haben
+- In der Diashow wurde eine automatische Laufwerksfunktion hinzugefügt - neue Einstellung im Diashow-Bereich der Galerieeinstellungen
 </de-DE>
 
 <fr-FR>
 Changement:
-- Autorisez le téléchargement ou le partage de plusieurs fichiers après les avoir sélectionnés dans la vue de l'album
+- Ajout d'une fonction de lecteur automatique sur le diaporama - nouveau paramètre dans la section diaporama des préférences de la galerie
 </fr-FR>
 
 <es-ES>
 Cambio:
-- Permitir descargar o compartir múltiples archivos después de seleccionarlos en la vista del álbum
+- Se agregó una función de unidad automática en la presentación de diapositivas: nueva configuración en la sección de presentación de diapositivas de las preferencias de la galería
 </es-ES>
 
 <zh-CN>
 更改：
--在相册视图中选择多个文件后，允许下载或共享多个文件
+-在幻灯片上添加了自动驱动功能-画廊首选项的幻灯片部分中的新设置
 </zh-CN>
 
 <ru-RU>
 Изменить:
-- Разрешить загрузку или обмен несколькими файлами после выбора их в представлении альбома
+- Добавлена функция автоматического вождения в слайд-шоу - новая настройка в разделе слайд-шоу настроек галереи
 </ru-RU>

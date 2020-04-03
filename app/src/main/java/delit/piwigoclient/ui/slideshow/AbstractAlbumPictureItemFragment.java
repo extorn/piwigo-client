@@ -78,6 +78,10 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         outState.putString(STATE_CURRENT_IMAGE_URL, currentImageUrlDisplayed);
     }
 
+    protected PicassoLoader getPicassoImageLoader() {
+        return loader;
+    }
+
     /**
      * @param inflater
      * @param container
@@ -152,6 +156,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setMinimumHeight(DisplayUtils.dpToPx(requireContext(), 120));
         imageView.setMinimumWidth(DisplayUtils.dpToPx(requireContext(), 120));
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        imageView.setFreezesAnimation(true);
+
         imageView.setLayoutParams(layoutParams);
         //TODO allow zooming in on the image.... or scrap all of this and load the gif into the ExoPlayer as a movie (probably better!)
 //        imageView.setScaleType(ImageView.ScaleType.MATRIX);
@@ -211,6 +217,10 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         if (!PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()) && lastLoadError != null) {
             getUiHelper().showDetailedMsg(R.string.alert_error, lastLoadError);
         }
+    }
+
+    protected ImageView getImageView() {
+        return imageView;
     }
 
     @Override
