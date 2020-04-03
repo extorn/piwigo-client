@@ -27,4 +27,5 @@
     <string name="ignoring_job_connection_profile_set_for_offline_access">连接配置文件设置为脱机模式。 忽略工作</string>
     <string name="ignoring_job_local_folder_not_found">本地文件夹不再存在。 忽略工作</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">没有选择要上传的文件扩展名。 忽略工作</string>
+    <string name="slideshow_auto_drive_paused">幻灯片自动驱动暂停，直到下一张幻灯片</string>
 </resources>

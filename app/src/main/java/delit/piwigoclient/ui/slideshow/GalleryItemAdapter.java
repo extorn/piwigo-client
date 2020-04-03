@@ -137,7 +137,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
             Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItems.size(), totalSlideshowItems);
             item.setArguments(b);
         } else if (galleryItem instanceof VideoResourceItem) {
-            Bundle args = AlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItems.size(), totalSlideshowItems, false);
+            Bundle args = AbstractAlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItems.size(), totalSlideshowItems, false);
             item.setArguments(args);
         }
         return item;

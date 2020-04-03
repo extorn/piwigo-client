@@ -27,4 +27,5 @@
     <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindungsprofil auf Offline-Modus eingestellt. Job ignorieren</string>
     <string name="ignoring_job_local_folder_not_found">Lokaler Ordner existiert nicht mehr. Job ignorieren</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Keine Dateierweiterungen zum Hochladen ausgewählt. Job ignorieren</string>
+    <string name="slideshow_auto_drive_paused">Diashow Autodrive pausierte bis zur nächsten Folie</string>
 </resources>

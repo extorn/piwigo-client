@@ -27,4 +27,5 @@
     <string name="ignoring_job_local_folder_not_found">La carpeta local ya no existe. Ignorando el trabajo</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">No hay extensiones de archivo seleccionadas para cargar. Ignorando el trabajo</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Perfil de conexión configurado en modo fuera de línea. Ignorando el trabajo</string>
+    <string name="slideshow_auto_drive_paused">Presentación automática de diapositivas en pausa hasta la próxima diapositiva</string>
 </resources>

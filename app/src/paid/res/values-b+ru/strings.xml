@@ -27,4 +27,5 @@
     <string name="ignoring_job_connection_profile_set_for_offline_access">Профиль подключения установлен в автономный режим. Игнорируя работу</string>
     <string name="ignoring_job_local_folder_not_found">Локальная папка больше не существует. Игнорируя работу</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Не выбраны расширения файлов для загрузки. Игнорируя работу</string>
+    <string name="slideshow_auto_drive_paused">Слайд-шоу Autodrive приостановлено до следующего слайда</string>
 </resources>

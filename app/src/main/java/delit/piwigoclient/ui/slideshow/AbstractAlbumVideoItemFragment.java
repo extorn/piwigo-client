@@ -70,7 +70,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
-public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
+public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
 
     private static final String TAG = "VideoItemFragment";
 
@@ -103,7 +103,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private DefaultTrackSelector trackSelector;
     private boolean showingOutsideSlideshow;
 
-    public AlbumVideoItemFragment() {
+    public AbstractAlbumVideoItemFragment() {
     }
 
     public static Bundle buildStandaloneArgs(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
@@ -191,6 +191,22 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         super.onCreate(savedInstanceState);
     }
 
+    public void setPlayVideoAutomatically(boolean playVideoAutomatically) {
+        this.playVideoAutomatically = playVideoAutomatically;
+    }
+
+    public void setVideoIsPlayingWhenVisible(boolean videoIsPlayingWhenVisible) {
+        this.videoIsPlayingWhenVisible = videoIsPlayingWhenVisible;
+    }
+
+    public boolean isPlayVideoAutomatically() {
+        return playVideoAutomatically;
+    }
+
+    public boolean isVideoIsPlayingWhenVisible() {
+        return videoIsPlayingWhenVisible;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -222,14 +238,16 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
             originalVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME);
         }
-        playVideoAutomatically |= AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext());
-        videoIsPlayingWhenVisible |= AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext());
+        onViewCreatedAndStateLoaded(view, savedInstanceState);
 
         super.onViewCreated(view, savedInstanceState);
         setAllowDownload(false);
 
         logStatus("view state restored");
         displayItemDetailsControlsBasedOnSessionState();
+    }
+
+    protected void onViewCreatedAndStateLoaded(View view, Bundle savedInstanceState) {
     }
 
     @Nullable
@@ -269,50 +287,17 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         cacheListener.setTimebar(timebar);
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
-        player.addListener(new Player.DefaultEventListener() {
-
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if(Player.STATE_ENDED == playbackState && playWhenReady) {
-                    player.stop();
-                    player.seekTo(0); // get ready to play again.
-                    int itemIdx = getPagerIndex();
-                    EventBus.getDefault().post(new SlideshowItemPageFinished(itemIdx));
-                }
-            }
-
-            @Override
-            public void onPlayerError(ExoPlaybackException error) {
-                Throwable e = error;
-                while (e != null) {
-                    if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException || e instanceof HttpDataSource.InvalidResponseCodeException) {
-                        break;
-                    }
-                    e = e.getCause();
-                }
-                if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException) {
-                    RemoteAsyncFileCachingDataSource.HttpIOException err = (RemoteAsyncFileCachingDataSource.HttpIOException) e;
-                    String response = null;
-                    try {
-                        response = new String(err.getResponseData());
-                    } catch (RuntimeException e1) {
-                        // do nothing.
-                    }
-                    getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
-                } else if (e instanceof HttpDataSource.InvalidResponseCodeException) {
-                    HttpDataSource.InvalidResponseCodeException err = (HttpDataSource.InvalidResponseCodeException) e;
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.responseCode, getModel().getDownloadFileName(getModel().getFullSizeFile())));
-                } else {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.error_unexpected_error_calling_server));
-                }
-            }
-        });
+        player.addListener(buildNewPlayerEventListener());
         simpleExoPlayerView.setPlayer(player);
         View exoPlayerControlsView = simpleExoPlayerView.findViewById(R.id.exo_player_controls_container);
         simpleExoPlayerView.setControllerVisibilityListener(new CustomVidePlayerControlsVisibilityListener(exoPlayerControlsView, getBottomSheet()));
         simpleExoPlayerView.showController();
         logStatus("finished created item content");
         return itemContentView;
+    }
+
+    protected Player.EventListener buildNewPlayerEventListener() {
+        return new MyPlayerEventListener();
     }
 
     private static class CustomVidePlayerControlsVisibilityListener implements PlayerControlView.VisibilityListener {
@@ -700,9 +685,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AlbumVideoItemFragment>> {
+    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractAlbumVideoItemFragment>> {
 
-        public ClearCachedContentAction(FragmentUIHelper<AlbumVideoItemFragment> uiHelper) {
+        public ClearCachedContentAction(FragmentUIHelper<AbstractAlbumVideoItemFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -710,6 +695,43 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
                 getUiHelper().getParent().clearCacheAndRestartVideo();
+            }
+        }
+    }
+
+    protected class MyPlayerEventListener extends Player.DefaultEventListener {
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            if(Player.STATE_ENDED == playbackState && playWhenReady) {
+                player.stop();
+                player.seekTo(0); // get ready to play again.
+            }
+        }
+
+        @Override
+        public void onPlayerError(ExoPlaybackException error) {
+            Throwable e = error;
+            while (e != null) {
+                if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException || e instanceof HttpDataSource.InvalidResponseCodeException) {
+                    break;
+                }
+                e = e.getCause();
+            }
+            if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException) {
+                RemoteAsyncFileCachingDataSource.HttpIOException err = (RemoteAsyncFileCachingDataSource.HttpIOException) e;
+                String response = null;
+                try {
+                    response = new String(err.getResponseData());
+                } catch (RuntimeException e1) {
+                    // do nothing.
+                }
+                getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
+            } else if (e instanceof HttpDataSource.InvalidResponseCodeException) {
+                HttpDataSource.InvalidResponseCodeException err = (HttpDataSource.InvalidResponseCodeException) e;
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.responseCode, getModel().getDownloadFileName(getModel().getFullSizeFile())));
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.error_unexpected_error_calling_server));
             }
         }
     }

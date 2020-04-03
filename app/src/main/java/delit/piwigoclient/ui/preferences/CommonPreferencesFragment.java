@@ -141,7 +141,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
     protected List<Class<? extends MyPreferenceFragment>> getTabFragmentClasses() {
         ArrayList<Class<? extends MyPreferenceFragment>> tabClasses = new ArrayList<>();
         tabClasses.add(ConnectionPreferenceFragment.class);
-        tabClasses.add(BaseGalleryPreferenceFragment.class);
+        tabClasses.add(GalleryPreferenceFragment.class);
         tabClasses.add(UploadPreferenceFragment.class);
         tabClasses.add(OtherPreferenceFragment.class);
         return tabClasses;

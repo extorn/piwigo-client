@@ -1020,5 +1020,5 @@ SOFTWARE.
     <string name="create_email_using_app">Create an Email using app</string>
     <string name="open_files">Open Files in app</string>
     <string name="files_unavailable_to_download_removed_pattern">Your selection contained files that could not be processed. These %1$d files have been ignored. To share a video file, it must be fully cached locally first.</string>
-    <string name="slideshow_auto_drive_paused">Slideshow Autodrive paused</string>
+
 </resources>

@@ -27,4 +27,5 @@
     <string name="ignoring_job_local_folder_not_found">Local folder no longer exists. Ignoring job</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">No file extensions selected for upload. Ignoring job</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Connection profile set to offline mode. Ignoring job</string>
+    <string name="slideshow_auto_drive_paused">Slideshow Autodrive paused until next slide</string>
 </resources>

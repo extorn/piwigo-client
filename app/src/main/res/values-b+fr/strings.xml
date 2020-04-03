@@ -664,5 +664,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="create_email_using_app">Créer un e-mail à l\'aide d\'une application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contient des fichiers qui n\'ont pas pu être traités. Ces fichiers %1$d ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
-    <string name="slideshow_auto_drive_paused">Slideshow Autodrive paused</string>
+
 </resources>
