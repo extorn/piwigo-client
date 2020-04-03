@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -54,7 +55,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
 
     private static final String TAG = "SlideshowFragment";
-    private SlideshowDriver currentSlideshowDriver;
+    private SlideshowDriver currentSlideshowDriver = new SlideshowDriver();
 
     public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(Class<ViewModelContainer> modelType, ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
@@ -71,10 +72,17 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+
+        // Add a touch observer for the whole slideshow view.
         ((TouchObservingRelativeLayout)view).setTouchObserver(ev -> {
-            if(currentSlideshowDriver != null) {
+            int currentSlideshowPage = getViewPager().getCurrentItem();
+            if(currentSlideshowDriver != null && currentSlideshowDriver.isActive(currentSlideshowPage)) {
                 getUiHelper().showDetailedMsg(R.string.alert_information, R.string.slideshow_auto_drive_paused);
-                currentSlideshowDriver.cancel();
+                // stop the driver from being used on this slide
+                currentSlideshowDriver.cancel(currentSlideshowPage);
+                if(BuildConfig.DEBUG) {
+                    Log.d(TAG, "Slideshow driver cancelled for page : " + getViewPager().getCurrentItem());
+                }
             }
         });
         return view;
@@ -176,15 +184,21 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
             Log.d(TAG, "Handling slideshow item finished with event for item at pager index : " + event.getPagerItemIndex());
         }
         if(AlbumViewPreferences.isAutoDriveSlideshow(prefs, requireContext())) {
-            GalleryItem item = getGalleryItemAdapter().getItemByPagerPosition(getViewPager().getCurrentItem());
-            int moveToItem = getViewPager().getCurrentItem() + 1;
+            int currentSlideshowPage = getViewPager().getCurrentItem();
+            int moveToItem = currentSlideshowPage + 1;
             int items = getGalleryItemAdapter().getCount();
             if(items > moveToItem) {
-                currentSlideshowDriver = new SlideshowDriver(moveToItem);
-                if (item instanceof VideoResourceItem) {
-                    DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
+                if(currentSlideshowDriver.isActive(currentSlideshowPage)) {
+                    currentSlideshowDriver.setMoveToPage(moveToItem);
+                    GalleryItem item = getGalleryItemAdapter().getItemByPagerPosition(currentSlideshowPage);
+                    if (item instanceof VideoResourceItem) {
+                        DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
+                    } else {
+                        DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveDelayMillis(prefs, requireContext()));
+                    }
                 } else {
-                    DisplayUtils.runOnUiThread(currentSlideshowDriver, AlbumViewPreferences.getAutoDriveDelayMillis(prefs, requireContext()));
+//                     create a blank driver for use on the next slide (cannot be certain the existing one isn't already scheduled to run)
+                    currentSlideshowDriver = new SlideshowDriver();
                 }
             }
         }
@@ -192,22 +206,33 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
 
     private class SlideshowDriver implements Runnable {
 
-        private final int moveToPage;
-        private boolean cancelled;
+        private int moveToPage;
+        private int cancelledPage = -1;
 
-        public SlideshowDriver(int moveToPage) {
+        public SlideshowDriver() {
+        }
+
+        public void setMoveToPage(int moveToPage) {
             this.moveToPage = moveToPage;
+            this.cancelledPage = -1;
         }
 
         @Override
         public void run() {
-            if(!cancelled) {
+            if(cancelledPage < 0) {
+                if(BuildConfig.DEBUG) {
+                    Log.d(TAG, "Moving to slideshow page : " + moveToPage);
+                }
                 getViewPager().setCurrentItem(moveToPage);
             }
         }
 
-        public void cancel() {
-            cancelled = true;
+        public void cancel(int currentPage) {
+            cancelledPage = currentPage;
+        }
+
+        public boolean isActive(int currentPage) {
+            return cancelledPage != currentPage;
         }
     }
 }

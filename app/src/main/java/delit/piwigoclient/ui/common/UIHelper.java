@@ -317,6 +317,7 @@ public abstract class UIHelper<T> {
         snackbar.show();
     }
 
+
     protected abstract View getParentView();
 
     public T getParent() {

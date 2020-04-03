@@ -64,17 +64,17 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         setupExifDataTab(resourceDetailsViewPager, null);
     }
 
-    private void notifyPagerItemFinished() {
+    private void notifyPagerItemFinished(boolean immediate) {
         if(getImageView().getDrawable() instanceof GifDrawable) {
             GifDrawable gifDrawable = (GifDrawable)getImageView().getDrawable();
             int duration = gifDrawable.getDuration();
             DisplayUtils.runOnUiThread(() -> {
                 // then this image is showing to the user and we should notify the pager that we're done.
-                EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex()));
+                EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex(), immediate));
             }, duration + AlbumViewPreferences.getAutoDriveVideoDelayMillis(prefs, requireContext()));
         } else {
             // then this image is showing to the user and we should notify the pager that we're done.
-            EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex()));
+            EventBus.getDefault().post(new SlideshowItemPageFinished(getPagerIndex(), immediate));
         }
     }
 
@@ -83,14 +83,14 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         super.doOnPageSelectedAndAdded();
         if (getPicassoImageLoader().hasPlaceholder() && getPicassoImageLoader().isImageLoaded()) {
             // then the actual image has been loaded.
-            notifyPagerItemFinished();
+            notifyPagerItemFinished(true);
         }
     }
 
     @Override
     public void onImageLoaded(PicassoLoader<TouchImageView> loader, boolean success) {
         if (success && loader.hasPlaceholder() && loader.isImageLoaded() && isPrimarySlideshowItem()) {
-            notifyPagerItemFinished();
+            notifyPagerItemFinished(false);
         }
         super.onImageLoaded(loader, success);
     }
