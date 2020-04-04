@@ -36,13 +36,7 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="preference_test_server_connection_key" translatable="false">preference_test_server_connection</string>
-    <string name="preference_test_server_connection_title">Test Connection</string>
-    <string name="preference_test_server_connection_summary">Test connection to the server</string>
 
-    <string name="preference_data_upload_clear_failed_uploads_from_server_key" translatable="false">preference_data_upload_clear_failed_uploads_from_server</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
     <string name="progress_clearing_failed_uploads_from_server">Clearing any failed uploads from the server</string>
     <string name="cleared_failed_uploads_from_server_pattern">Cleared %1$d failed uploads from the server</string>
 
@@ -775,7 +769,7 @@ SOFTWARE.
     <string name="alert_error_admin_user_required">Only admin users can upload unless the community plugin is installed. Sorry.</string>
     <string name="upload_username_title">Upload as</string>
     <string name="certificates_heading">Certificates</string>
-    <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
+
     <string name="alert_slideshow_out_of_sync_with_album">This slideshow no longer accurately reflects the current album contents</string>
     <string name="alert_slideshow_out_of_sync_with_tag">This slideshow no longer accurately reflects the current tag contents</string>
     <string name="alert_error_app_not_yet_configured">App not yet configured and connected to a PIWIGO server. Please open the app manually and configure it before attempting to share items with it.</string>
@@ -785,7 +779,7 @@ SOFTWARE.
     <string name="top_tips_menu_title">Top Tips</string>
     <string name="top_tips_heading">Top Tips</string>
     <string name="alert_error_please_select_upload_album">Please select an album to upload to</string>
-    <string name="preference_connections_category_advanced">Advanced Settings</string>
+
     <string name="alert_title_select_album">Select Album</string>
     <string name="alert_title_set_album_thumbnail">Update album thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Update album thumbnail to this image?</string>
@@ -880,11 +874,7 @@ SOFTWARE.
     <string name="paid_feature_only">paid app only</string>
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Search</string>
-    <string name="preference_connections_category_connections_caching">Web Response Caching</string>
-    <string name="server_connection_preference_summary_default">Please select a value</string>
-    <string name="server_album_preference_summary_default">Please select a value</string>
-    <string name="local_folder_preference_summary_default">Please select a value</string>
-    <string name="server_connection_preference_user_guest">guest</string>
+
     <string name="file_selection_heading">File Selection</string>
     <string name="tag_heading_pattern">Tag: %1$s</string>
     <string name="error_updating_tag_pattern">Error removing resource (%1$s) from tag: %2$s</string>
@@ -1001,10 +991,10 @@ SOFTWARE.
     <string name="unsupported_device">Sorry, this device is not supported. There is an issue with accessing Google Play Services.</string>
     <string name="hint_album_view">Tap at the bottom of the screen to bring up details for this album</string>
     <string name="usage_hint_title">Hint</string>
-    <string name="hint_slideshow_view_1">Tap at the bottom of the screen or on the resource name to bring up details for this resource</string>
-    <string name="hint_slideshow_view_2">Swipe left or right to navigate between resources</string>
+    <string name="hint_slideshow_base_view_1">Tap at the bottom of the screen or on the resource name to bring up details for this resource</string>
+    <string name="hint_slideshow_base_view_2">Swipe left or right to navigate between resources</string>
     <string name="hint_slideshow_item_view_1">Rating can be adjusted by tapping or swiping on the desired star rating. This has immediate effect.</string>
-    <string name="hint_slideshow_view_3">To mark this resource as a favorite, tap the heart icon to right of image resource name</string>
+    <string name="hint_slideshow_paid_view_3">To mark this resource as a favorite, tap the heart icon to right of image resource name</string>
     <string name="hint_navigation_panel_1">Tap on the app icon above to force a server log out and log in</string>
     <string name="user_details_not_found_on_server">Unable to find user details on server</string>
     <string name="resource_queued_for_download">Resource queued for download. It is position %1$d in the queue.</string>
@@ -1020,5 +1010,6 @@ SOFTWARE.
     <string name="create_email_using_app">Create an Email using app</string>
     <string name="open_files">Open Files in app</string>
     <string name="files_unavailable_to_download_removed_pattern">Your selection contained files that could not be processed. These %1$d files have been ignored. To share a video file, it must be fully cached locally first.</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"All one-time user hints will be shown again"</string>
 
 </resources>

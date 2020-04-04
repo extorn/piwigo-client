@@ -3,6 +3,13 @@
 
     <string name="preferences_overall_heading">设置</string>
 
+    <string name="preference_test_server_connection_title">测试连接</string>
+    <string name="preference_test_server_connection_summary">测试与服务器的连接</string>
+
+
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">清洁服务器</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">清除服务器上的PiwigoClient上传失败</string>
+
     <!-- Non editable preferences -->
 
 
@@ -12,6 +19,13 @@
     <string name="preference_connections_category_piwigo">基于Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">服务器基本认证</string>
 
+    <string name="preference_connections_category_client_certificate_auth">客户端证书认证</string>
+    <string name="preference_connections_category_advanced">高级设置</string>
+    <string name="preference_connections_category_connections_caching">Web响应缓存</string>
+    <string name="server_connection_preference_summary_default">请选择一个值</string>
+    <string name="server_album_preference_summary_default">请选择一个值</string>
+    <string name="local_folder_preference_summary_default">请选择一个值</string>
+    <string name="server_connection_preference_user_guest">客人</string>
     <!-- prefs -->
 
 
@@ -296,6 +310,9 @@
     <string name="preference_data_upload_compress_images_output_format_title">图像输出格式</string>
     <string name="preference_data_upload_compress_images_output_format_summary">图像压缩输出格式 %1$s</string>
 
+    <!-- App page -->
+    <string name="preference_page_app">应用程式</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">其他</string>
@@ -329,4 +346,7 @@
     <string name="preference_app_always_show_status_bar_title">始终显示状态栏</string>
     <string name="preference_app_always_show_status_bar_summary">启用以防止自动隐藏状态栏</string>
 
+    <string name="preference_app_desired_language_summary">%1$s</string>
+    <string name="preference_app_desired_language_title">语言</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">再次显示所有用户提示</string>
 </resources>

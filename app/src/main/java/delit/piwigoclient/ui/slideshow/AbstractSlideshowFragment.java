@@ -116,8 +116,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             loadModelFromArguments();
         }
         super.onResume();
-        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_1);
-        getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_view_2);
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_base_view_1);
+        getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_base_view_2);
     }
 
     @Override
@@ -371,7 +371,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             }
 
             String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
+            Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
 
             long loadingMessageId = invokeResourcePageLoader(resourceContainer, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList);
             resourceContainer.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToActuallyLoad);

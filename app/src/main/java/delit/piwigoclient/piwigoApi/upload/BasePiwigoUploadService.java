@@ -58,7 +58,6 @@ import delit.libs.util.Md5SumUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
@@ -537,7 +536,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
 
             // is name or md5sum used for uniqueness on this server?
-            boolean nameUnique = isUseFilenamesOverMd5ChecksumForUniqueness();
+            boolean nameUnique = isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob);
             Collection<String> uniqueIdsList;
             if (nameUnique) {
                 uniqueIdsList = thisUploadJob.getFileToFilenamesMap().values();
@@ -633,8 +632,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         runPostJobCleanup(thisUploadJob, deleteUploadedFilesFromDevice);
     }
 
-    private boolean isUseFilenamesOverMd5ChecksumForUniqueness() {
-        return "name".equals(prefs.getString(getString(R.string.preference_gallery_unique_id_key), getResources().getString(R.string.preference_gallery_unique_id_default)));
+    private boolean isUseFilenamesOverMd5ChecksumForUniqueness(UploadJob thisUploadJob) {
+        String uniqueResourceKey = thisUploadJob.getConnectionPrefs().getPiwigoUniqueResourceKey(prefs, this);
+        return "name".equals(uniqueResourceKey);
     }
 
     private void invokeWithRetries(UploadJob thisUploadJob, AbstractPiwigoWsResponseHandler handler, int maxRetries) {
@@ -824,7 +824,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
 
-        Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, this);
+        Set<String> multimediaExtensionList = thisUploadJob.getConnectionPrefs().getKnownMultimediaExtensions(prefs, this);
         for (Map.Entry<File, Long> entry : resourcesToRetrieve.entrySet()) {
 
             long imageId = entry.getValue();
@@ -1189,7 +1189,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
 
         String newChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
-        if (isUseFilenamesOverMd5ChecksumForUniqueness()) {
+        if (isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob)) {
             newChecksum = fileForUpload.getName();
         }
         // pre-set the upload progress through file to where we got to last time.
@@ -1246,7 +1246,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         if (chunkUploadedOk) {
                             fileBytesUploaded += bytesOfDataInChunk;
                             String fileChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
-                            if (isUseFilenamesOverMd5ChecksumForUniqueness()) {
+                            if (isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob)) {
                                 fileChecksum = fileForUpload.getName();
                             }
                             thisUploadJob.markFileAsPartiallyUploaded(uploadJobKey, uploadToFilename, fileChecksum, fileForUpload.length(), fileBytesUploaded, chunkId);
@@ -1475,7 +1475,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         invokeWithRetries(uploadJob, imageFileCheckHandler, 2);
         Boolean val = imageFileCheckHandler.isSuccess() ? imageFileCheckHandler.isFileMatch() : null;
         if (Boolean.FALSE.equals(val)) {
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, this);
+            Set<String> multimediaExtensionList = uploadJob.getConnectionPrefs().getKnownMultimediaExtensions(prefs, this);
             ResourceItem uploadedResourceDummy = new ResourceItem(uploadedResource.getId(), uploadedResource.getName(), null, null, null, null);
             ImageGetInfoResponseHandler<ResourceItem> imageDetailsHandler = new ImageGetInfoResponseHandler<>(uploadedResourceDummy, multimediaExtensionList);
             invokeWithRetries(uploadJob, imageDetailsHandler, 2);

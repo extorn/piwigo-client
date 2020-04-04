@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -66,7 +65,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     @Override
     public void onResume() {
         super.onResume();
-        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_view_3);
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_paid_view_3);
     }
 
     @Override

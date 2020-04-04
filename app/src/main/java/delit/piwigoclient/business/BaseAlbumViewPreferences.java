@@ -8,15 +8,10 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 
-public class AlbumViewPreferences {
-
+public class BaseAlbumViewPreferences {
     public static int getAlbumsToDisplayPerRow(Activity activity, SharedPreferences prefs) {
         int defaultColumns = getDefaultAlbumColumnCount(activity, activity.getResources().getConfiguration().orientation);
         if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -77,16 +72,6 @@ public class AlbumViewPreferences {
         return prefs.getString(context.getString(R.string.preference_gallery_album_thumbnail_size_key), context.getString(R.string.preference_gallery_album_thumbnail_size_default));
     }
 
-    public static Set<String> getKnownMultimediaExtensions(SharedPreferences prefs, Context context) {
-
-        Set<String> value = prefs.getStringSet(context.getString(R.string.preference_piwigo_playable_media_extensions_key), null);
-        if (value == null) {
-            value = new HashSet<>();
-            Collections.addAll(value, context.getResources().getStringArray(R.array.preference_piwigo_playable_media_extensions_default));
-        }
-        return value;
-    }
-
     public static String getResourceSortOrder(SharedPreferences prefs, Context context) {
         return prefs.getString(context.getString(R.string.preference_gallery_sort_order_key), context.getString(R.string.preference_gallery_sort_order_default));
     }
@@ -127,18 +112,5 @@ public class AlbumViewPreferences {
 
     public static boolean isRotateImageSoAspectMatchesScreenAspect(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_image_rotate_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_image_rotate_default));
-    }
-
-
-    public static boolean isAutoDriveSlideshow(SharedPreferences prefs, Context context) {
-        return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_auto_drive_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_auto_drive_default));
-    }
-
-    public static long getAutoDriveDelayMillis(SharedPreferences prefs, Context context) {
-        return prefs.getInt(context.getString(R.string.preference_gallery_slideshow_auto_drive_delay_key), context.getResources().getInteger(R.integer.preference_gallery_slideshow_auto_drive_delay_default));
-    }
-
-    public static long getAutoDriveVideoDelayMillis(SharedPreferences prefs, Context context) {
-        return prefs.getInt(context.getString(R.string.preference_gallery_slideshow_auto_drive_video_delay_key), context.getResources().getInteger(R.integer.preference_gallery_slideshow_auto_drive_video_delay_default));
     }
 }

@@ -16,11 +16,7 @@
 
     <!-- Example General settings -->
     <string name="alert_write_permission_needed_for_download">Для загрузки файлов необходимо разрешение на запись в файловую систему.</string>
-    <string name="preference_test_server_connection_title">Тестовое соединение</string>
 
-    <string name="preference_test_server_connection_summary">Тестовое соединение с сервером</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Чистый сервер</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Очистить неудачные загрузки PiwigoClient с сервера</string>
     <string name="progress_clearing_failed_uploads_from_server">Очистка всех неудачных загрузок с сервера</string>
 
     <string name="cleared_failed_uploads_from_server_pattern">Сброс %1$d неудачных загрузок с сервера</string>
@@ -395,7 +391,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="alert_error_admin_user_required">Только пользователи с правами администратора могут загружать файлы, если не установлен плагин сообщества. Сожалею.</string>
     <string name="upload_username_title">Загрузить как</string>
     <string name="certificates_heading">Сертификаты</string>
-    <string name="preference_connections_category_client_certificate_auth">Аутентификация сертификата клиента</string>
+
     <string name="alert_slideshow_out_of_sync_with_album">Это слайд-шоу больше не точно отражает текущее содержимое альбома</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Это слайд-шоу более точно не отражает текущее содержимое тега</string>
     <string name="alert_error_app_not_yet_configured">Приложение еще не настроено и не подключено к серверу PIWIGO. Пожалуйста, откройте приложение вручную и настройте его, прежде чем пытаться поделиться с ним элементами.</string>
@@ -405,7 +401,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="top_tips_menu_title">Лучшие советы</string>
     <string name="top_tips_heading">Лучшие советы</string>
     <string name="alert_error_please_select_upload_album">Пожалуйста, выберите альбом для загрузки</string>
-    <string name="preference_connections_category_advanced">Расширенные настройки</string>
+
     <string name="alert_title_select_album">Выберите альбом</string>
     <string name="alert_title_set_album_thumbnail">Обновить миниатюру альбома?</string>
     <string name="alert_message_set_album_thumbnail">Обновить миниатюру альбома на это изображение?</string>
@@ -499,11 +495,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="paid_feature_only">только платное приложение</string>
     <string name="slideshow_image_details_tags_title">Теги</string>
     <string name="button_search">Поиск</string>
-    <string name="preference_connections_category_connections_caching">Кэширование веб-ответов</string>
-    <string name="server_connection_preference_summary_default">Пожалуйста, выберите значение</string>
-    <string name="server_album_preference_summary_default">Пожалуйста, выберите значение</string>
-    <string name="local_folder_preference_summary_default">Пожалуйста, выберите значение</string>
-    <string name="server_connection_preference_user_guest">гость</string>
+
     <string name="file_selection_heading">Выбор файла</string>
     <string name="tag_heading_pattern">День: %1$s</string>
     <string name="error_updating_tag_pattern">Ошибка удаления ресурса (%1$s) из тега: %2$s</string>
@@ -620,10 +612,10 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="unsupported_device">Извините, это устройство не поддерживается. Существует проблема с доступом к Сервисам Google Play.</string>
     <string name="hint_album_view">Нажмите в нижней части экрана, чтобы открыть сведения об этом альбоме.</string>
     <string name="usage_hint_title">намек</string>
-    <string name="hint_slideshow_view_1">Нажмите в нижней части экрана или на название ресурса, чтобы открыть сведения об этом ресурсе.</string>
-    <string name="hint_slideshow_view_2">Проведите пальцем влево или вправо для перемещения между ресурсами</string>
+    <string name="hint_slideshow_base_view_1">Нажмите в нижней части экрана или на название ресурса, чтобы открыть сведения об этом ресурсе.</string>
+    <string name="hint_slideshow_base_view_2">Проведите пальцем влево или вправо для перемещения между ресурсами</string>
     <string name="hint_slideshow_item_view_1">Рейтинг можно откорректировать, нажав или проведя пальцем по желаемому рейтингу звезды. Это имеет немедленный эффект.</string>
-    <string name="hint_slideshow_view_3">Чтобы пометить этот ресурс как избранное, нажмите значок сердца справа от имени ресурса изображения</string>
+    <string name="hint_slideshow_paid_view_3">Чтобы пометить этот ресурс как избранное, нажмите значок сердца справа от имени ресурса изображения</string>
     <string name="hint_navigation_panel_1">Нажмите на значок приложения выше, чтобы заставить сервер выйти из системы и войти</string>
     <string name="user_details_not_found_on_server">Невозможно найти данные пользователя на сервере</string>
     <string name="resource_queued_for_download">Ресурс в очереди на скачивание. Это позиция %1$d в очереди.</string>
@@ -633,12 +625,11 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="alert_error_upload_file_compression_error_message_pattern">Ошибка при сжатии файла для загрузки %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Выгрузка</string>
     <string name="compressing_progress_bar_message">сжимающий</string>
-    <string name="preference_app_desired_language_summary">Предпочитаемый перевод</string>
-    <string name="preference_app_desired_language_title">язык</string>
     <string name="warning_missing_tags_links_removed_from_resource">Не все теги, связанные с этим элементом, все еще существуют в базе данных. Ссылки на %1$d были удалены</string>
     <string name="button_stop_warning_me">Не говори мне снова</string>
     <string name="create_email_using_app">Создать электронную почту с помощью приложения</string>
     <string name="open_files">Открытые файлы в приложении</string>
     <string name="files_unavailable_to_download_removed_pattern">Ваш выбор содержал файлы, которые не могли быть обработаны. Эти файлы %1$d были проигнорированы. Чтобы поделиться видеофайлом, он должен быть сначала полностью кэширован локально.</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Все одноразовые пользовательские подсказки будут показаны снова"</string>
 
 </resources>

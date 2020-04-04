@@ -7,6 +7,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Set;
 
+import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -20,6 +21,8 @@ import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 
 public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
 
+    private static final String TAG = "SlideshowFragment";
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -30,6 +33,12 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_free_view_1);
     }
 
     @Override

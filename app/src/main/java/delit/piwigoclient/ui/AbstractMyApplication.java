@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
@@ -92,13 +93,14 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                     editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
                     editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
                     editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
+
                     Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
                     for (String profile : connectionProfiles) {
                         ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
                         int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
                         if (currentTimeout >= 1000) {
                             currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
-                            editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
+                            connPrefs.getPrefActor().with(R.string.preference_server_connection_timeout_secs_key).writeInt(editor, context, currentTimeout);
                         }
                     }
                 }
@@ -151,7 +153,46 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 }
             }
         });
+        migrators.add(new PreferenceMigrator(282) {
+
+            @Override
+            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
+                copyStringPreferenceToConnectionSettingsProfiles(context, editor, R.string.preference_gallery_unique_id_default);
+                copyStringSetPreferenceToConnectionSettingsProfiles(context, editor, R.string.preference_piwigo_playable_media_extensions_key);
+                editor.remove(getString(R.string.usage_hints_shown_list_key)); // force all hints to be shown once more.
+            }
+        });
         return migrators;
+    }
+
+    protected void copyStringPreferenceToConnectionSettingsProfiles(Context context, SharedPreferences.Editor editor, @StringRes int prefId) {
+        // delete and move into all profiles
+        String prefKey = context.getString(prefId);
+        if(prefs.contains(prefKey)) {
+            String value = prefs.getString(prefKey, null); // default value is NEVER used
+            Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
+            for (String profile : connectionProfiles) {
+                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
+                if(!ConnectionPreferences.getActiveProfile().equals(connPrefs)) { // because its already in the active profile.
+                    connPrefs.getPrefActor().with(prefId).writeString(editor, context, value);
+                }
+            }
+        }
+    }
+
+    protected void copyStringSetPreferenceToConnectionSettingsProfiles(Context context, SharedPreferences.Editor editor, @StringRes int prefId) {
+        // move into all profiles
+        String prefKey = context.getString(prefId);
+        if(prefs.contains(prefKey)) {
+            Set<String> value = prefs.getStringSet(prefKey, null); // default value is NEVER used
+            Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
+            for (String profile : connectionProfiles) {
+                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
+                if(!ConnectionPreferences.getActiveProfile().equals(connPrefs)) { // because its already in the active profile.
+                    connPrefs.getPrefActor().with(prefId).writeStringSet(editor, context, value);
+                }
+            }
+        }
     }
 
     @Override

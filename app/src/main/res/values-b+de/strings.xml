@@ -14,11 +14,7 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="preference_test_server_connection_title">Testverbindung</string>
-    <string name="preference_test_server_connection_summary">Verbindung zum Server testen</string>
 
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Fehlerhafte PiwigoClient-Uploads vom Server bereinigen</string>
     <string name="progress_clearing_failed_uploads_from_server">Löschen von fehlgeschlagenen Uploads vom Server</string>
     <string name="cleared_failed_uploads_from_server_pattern">Gelöscht %1$d fehlgeschlagene Uploads vom Server</string>
 
@@ -392,7 +388,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_admin_user_required">Nur Admin-Benutzer können hochladen, wenn das Community-Plugin nicht installiert ist. Entschuldigung.</string>
     <string name="upload_username_title">Hochladen als</string>
     <string name="certificates_heading">Zertifikate</string>
-    <string name="preference_connections_category_client_certificate_auth">Client-Zertifikat-Authentifizierung</string>
+
     <string name="alert_slideshow_out_of_sync_with_album">Diese Diashow spiegelt nicht mehr exakt den aktuellen Albuminhalt wider.</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Diese Slideshow spiegelt den aktuellen Tag-Inhalt nicht mehr exakt wider.</string>
     <string name="alert_error_app_not_yet_configured">App noch nicht konfiguriert und mit einem PIWIGO-Server verbunden. Bitte öffnen Sie die Anwendung manuell und konfigurieren Sie sie, bevor Sie versuchen, Elemente mit ihr zu teilen.</string>
@@ -402,7 +398,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="top_tips_menu_title">Top-Tipps</string>
     <string name="top_tips_heading">Top-Tipps</string>
     <string name="alert_error_please_select_upload_album">Bitte wählen Sie ein Album aus, das Sie hochladen möchten.</string>
-    <string name="preference_connections_category_advanced">Erweiterte Einstellungen</string>
+
     <string name="alert_title_select_album">Album auswählen</string>
     <string name="alert_title_set_album_thumbnail">Album-Miniaturansicht aktualisieren?</string>
     <string name="alert_message_set_album_thumbnail">Album-Thumbnail auf dieses Bild aktualisieren?</string>
@@ -426,7 +422,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_upload_cancelled_message">Wenn du den Upload nicht später neu starten möchtest. Sie sollten die Dateien aus dem Upload-Job entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen gewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild in der Größe der nächsten Übereinstimmung zurück.</string>
     <string name="logging_out_of_piwigo_pattern">Abmelden von %1$s</string>
-    <string name="preference_connections_category_connections_caching">Web-Antwort-Caching</string>
+
     <string name="loading_new_server_configuration">Neue Serververbindungskonfiguration laden</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Um das Caching auf der Festplatte zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn verweigert, wird das Caching im Speicher sein.</string>
     <string name="error_request_timed_out">Anruf zum Server abgebrochen, da es zu lange gedauert hat.</string>
@@ -497,10 +493,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="paid_feature_only">nur bezahlte Anwendung</string>
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Suche</string>
-    <string name="server_connection_preference_summary_default">Bitte wählen Sie einen Wert aus</string>
-    <string name="server_album_preference_summary_default">Bitte wählen Sie einen Wert aus</string>
-    <string name="local_folder_preference_summary_default">Bitte wählen Sie einen Wert aus</string>
-    <string name="server_connection_preference_user_guest">Gast</string>
+
     <string name="file_selection_heading">Dateiauswahl</string>
     <string name="tag_heading_pattern">Tag: %1$s</string>
     <string name="error_updating_tag_pattern">Fehler beim Entfernen der Ressource (%1$s) aus dem Tag: %2$s</string>
@@ -617,10 +610,10 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Es gibt ein Problem mit dem Zugriff auf die Google Play Services.</string>
     <string name="hint_album_view">Tippen Sie unten auf dem Bildschirm auf, um Details zu diesem Album anzuzeigen</string>
     <string name="usage_hint_title">Hinweis</string>
-    <string name="hint_slideshow_view_1">Tippen Sie unten auf dem Bildschirm auf, um Details zu dieser Ressource aufzurufen</string>
-    <string name="hint_slideshow_view_2">Wischen Sie nach links oder rechts, um zwischen Ressourcen zu navigieren</string>
+    <string name="hint_slideshow_base_view_1">Tippen Sie unten auf dem Bildschirm auf, um Details zu dieser Ressource aufzurufen</string>
+    <string name="hint_slideshow_base_view_2">Wischen Sie nach links oder rechts, um zwischen Ressourcen zu navigieren</string>
     <string name="hint_slideshow_item_view_1">Die Bewertung kann durch Tippen oder Streichen auf die gewünschte Sternebewertung angepasst werden. Dies hat sofortige Wirkung</string>
-    <string name="hint_slideshow_view_3">Tippen Sie auf das Herzsymbol rechts neben dem Namen der Bildressource, um diese Ressource als Favorit zu markieren</string>
+    <string name="hint_slideshow_paid_view_3">Tippen Sie auf das Herzsymbol rechts neben dem Namen der Bildressource, um diese Ressource als Favorit zu markieren</string>
     <string name="hint_navigation_panel_1">Tippen Sie auf das App-Symbol oben, um die Abmeldung und Anmeldung eines Servers zu erzwingen</string>
     <string name="user_details_not_found_on_server">Es konnten keine Benutzerdetails auf dem Server gefunden werden</string>
     <string name="resource_queued_for_download">Ressource zum Herunterladen in die Warteschlange gestellt. Es ist Position %1$d in der Warteschlange.</string>
@@ -630,13 +623,12 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Hochladen</string>
     <string name="compressing_progress_bar_message">Komprimieren</string>
-    <string name="preference_app_desired_language_summary">Bevorzugte Übersetzung</string>
-    <string name="preference_app_desired_language_title">Sprache</string>
     <string name="warning_missing_tags_links_removed_from_resource">Nicht alle mit diesem Artikel verknüpften Tags sind noch in der Datenbank vorhanden. Die Links zu %1$d wurden entfernt</string>
     <string name="button_stop_warning_me">Sag es mir nicht noch einmal</string>
     <string name="create_email_using_app">Erstellen Sie eine E-Mail mit der App</string>
     <string name="open_files">Öffnen Sie Dateien in der App</string>
     <string name="files_unavailable_to_download_removed_pattern">Ihre Auswahl enthielt Dateien, die nicht verarbeitet werden konnten. Diese %1$d Dateien wurden ignoriert. Um eine Videodatei freizugeben, muss sie zuerst vollständig lokal zwischengespeichert werden.</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Alle einmaligen Benutzertipps werden erneut angezeigt"</string>
 
 </resources>
 

@@ -15,11 +15,6 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="preference_test_server_connection_title">Conexión de prueba</string>
-    <string name="preference_test_server_connection_summary">Probar la conexión al servidor</string>
-
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Servidor limpio</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Limpie las cargas fallidas de PiwigoClient desde el servidor</string>
     <string name="progress_clearing_failed_uploads_from_server">Borrar cualquier carga fallida del servidor</string>
     <string name="cleared_failed_uploads_from_server_pattern">Se borraron%1$d cargas fallidas del servidor</string>
 
@@ -264,7 +259,7 @@
     <string name="alert_error_admin_user_required">Solo los usuarios administradores pueden subir a menos que el complemento comunitario esté instalado. Lo siento.</string>
     <string name="upload_username_title">Subir como</string>
     <string name="certificates_heading">Certificados</string>
-    <string name="preference_connections_category_client_certificate_auth">Autenticación de certificado de cliente</string>
+
     <string name="alert_slideshow_out_of_sync_with_album">Esta presentación de diapositivas ya no refleja con precisión el contenido actual del álbum.</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Esta presentación de diapositivas ya no refleja con precisión el contenido actual de la etiqueta</string>
     <string name="alert_error_app_not_yet_configured">La aplicación aún no está configurada y conectada a un servidor PIWIGO. Abra la aplicación manualmente y configúrela antes de intentar compartir elementos con ella.</string>
@@ -274,7 +269,6 @@
     <string name="top_tips_menu_title">Consejos principales</string>
     <string name="top_tips_heading">Consejos principales</string>
     <string name="alert_error_please_select_upload_album">Seleccione un álbum para cargar</string>
-    <string name="preference_connections_category_advanced">Ajustes avanzados</string>
     <string name="alert_title_select_album">Seleccionar álbum</string>
     <string name="alert_title_set_album_thumbnail">¿Actualizar miniatura del álbum?</string>
     <string name="alert_message_set_album_thumbnail">¿Actualizar la miniatura del álbum a esta imagen?</string>
@@ -368,11 +362,7 @@
     <string name="paid_feature_only">solo aplicación paga</string>
     <string name="slideshow_image_details_tags_title">Etiquetas</string>
     <string name="button_search">Buscar</string>
-    <string name="preference_connections_category_connections_caching">Caché de respuesta web</string>
-    <string name="server_connection_preference_summary_default">Por favor seleccione un valor</string>
-    <string name="server_album_preference_summary_default">Por favor seleccione un valor</string>
-    <string name="local_folder_preference_summary_default">Por favor seleccione un valor</string>
-    <string name="server_connection_preference_user_guest">invitado</string>
+
     <string name="file_selection_heading">Selección de archivo</string>
     <string name="tag_heading_pattern">Día:%1$s</string>
     <string name="error_updating_tag_pattern">Error al eliminar el recurso (%1$s) de la etiqueta:%2$s</string>
@@ -489,10 +479,10 @@
     <string name="unsupported_device">Lo sentimos, este dispositivo no es compatible. Hay un problema con el acceso a los servicios de Google Play.</string>
     <string name="hint_album_view">Toca en la parte inferior de la pantalla para ver los detalles de este álbum.</string>
     <string name="usage_hint_title">Insinuación</string>
-    <string name="hint_slideshow_view_1">Toque en la parte inferior de la pantalla o en el nombre del recurso para que aparezcan los detalles de este recurso</string>
-    <string name="hint_slideshow_view_2">Deslice hacia la izquierda o hacia la derecha para navegar entre los recursos.</string>
+    <string name="hint_slideshow_base_view_1">Toque en la parte inferior de la pantalla o en el nombre del recurso para que aparezcan los detalles de este recurso</string>
+    <string name="hint_slideshow_base_view_2">Deslice hacia la izquierda o hacia la derecha para navegar entre los recursos.</string>
     <string name="hint_slideshow_item_view_1">La calificación se puede ajustar tocando o deslizando la calificación de estrellas deseada. Esto tiene efecto inmediato.</string>
-    <string name="hint_slideshow_view_3">Para marcar este recurso como favorito, toque el icono del corazón a la derecha del nombre del recurso de imagen</string>
+    <string name="hint_slideshow_paid_view_3">Para marcar este recurso como favorito, toque el icono del corazón a la derecha del nombre del recurso de imagen</string>
     <string name="hint_navigation_panel_1">Toque el ícono de la aplicación que se encuentra arriba para forzar que un servidor cierre sesión e inicie sesión</string>
     <string name="user_details_not_found_on_server">No se pueden encontrar los detalles del usuario en el servidor</string>
     <string name="resource_queued_for_download">Recurso en cola para descargar. Es la posición%1$d en la cola.</string>
@@ -502,12 +492,11 @@
     <string name="alert_error_upload_file_compression_error_message_pattern">Error al comprimir el archivo para cargar %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Cargando</string>
     <string name="compressing_progress_bar_message">Apresamiento</string>
-    <string name="preference_app_desired_language_summary">Traducción preferida</string>
-    <string name="preference_app_desired_language_title">Idioma</string>
     <string name="warning_missing_tags_links_removed_from_resource">No todas las etiquetas vinculadas a este elemento todavía existen en la base de datos. Se han eliminado los enlaces a %1$d</string>
     <string name="button_stop_warning_me">No me digas otra vez</string>
     <string name="create_email_using_app">Crear un correo electrónico usando la aplicación</string>
     <string name="open_files">Abrir archivos en la aplicación</string>
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no pudieron procesarse. Estos %1$d archivos han sido ignorados. Para compartir un archivo de video, primero debe almacenarse en caché local.</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Todos los consejos de usuario únicos se mostrarán nuevamente"</string>
 
 </resources>

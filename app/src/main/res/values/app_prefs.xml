@@ -12,11 +12,23 @@
     <string name="usage_hints_shown_list_key" translatable="false">usage_hints_shown_list</string>
 
     <!-- Server Page -->
+    <string name="preference_test_server_connection_key" translatable="false">preference_test_server_connection</string>
+    <string name="preference_test_server_connection_title">Test Connection</string>
+    <string name="preference_test_server_connection_summary">Test connection to the server</string>
 
+    <string name="preference_data_upload_clear_failed_uploads_from_server_key" translatable="false">preference_data_upload_clear_failed_uploads_from_server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
     <string name="preference_page_connection">Connection</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">Server Basic Authentication</string>
-
+    <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
+    <string name="preference_connections_category_advanced">Advanced Settings</string>
+    <string name="preference_connections_category_connections_caching">Web Response Caching</string>
+    <string name="server_connection_preference_summary_default">Please select a value</string>
+    <string name="server_album_preference_summary_default">Please select a value</string>
+    <string name="local_folder_preference_summary_default">Please select a value</string>
+    <string name="server_connection_preference_user_guest">guest</string>
     <!-- prefs -->
 
     <string name="preference_server_connection_max_redirects_key" translatable="false">preference_server_connection_max_redirects</string>
@@ -392,6 +404,9 @@
     <string name="preference_data_upload_compress_images_output_format_key" translatable="false">preference_data_upload_compress_images_output_format</string>
     <string name="preference_data_upload_compress_images_output_format_default" translatable="false">jpeg</string>
 
+    <!-- App page -->
+    <string name="preference_page_app">App</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Other</string>
@@ -434,7 +449,10 @@
 
     <string name="preference_app_desired_language_key" translatable="false">preference_app_desired_language</string>
     <string name="preference_app_desired_language_title">Language</string>
-    <string name="preference_app_desired_language_summary">Preferred Translation</string>
+    <string name="preference_app_desired_language_summary">%1$s</string>
+
+    <string name="preference_app_clear_list_of_user_hints_shown_key" translatable="false">preference_clear_list_of_user_hints_shown</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Show All user hints again</string>
 
     <!-- TODO implement this concept - Don't forget to make translatable again! -->
 

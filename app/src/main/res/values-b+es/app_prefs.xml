@@ -6,11 +6,21 @@
     <!-- Non editable preferences -->
 
     <!-- Server Page -->
+    <string name="preference_test_server_connection_title">Conexión de prueba</string>
+    <string name="preference_test_server_connection_summary">Probar la conexión al servidor</string>
 
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Servidor limpio</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Limpie las cargas fallidas de PiwigoClient desde el servidor</string>
     <string name="preference_page_connection">Conexión</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">Autenticación básica del servidor</string>
-
+    <string name="preference_connections_category_client_certificate_auth">Autenticación de certificado de cliente</string>
+    <string name="preference_connections_category_advanced">Ajustes avanzados</string>
+    <string name="preference_connections_category_connections_caching">Caché de respuesta web</string>
+    <string name="server_connection_preference_summary_default">Por favor seleccione un valor</string>
+    <string name="server_album_preference_summary_default">Por favor seleccione un valor</string>
+    <string name="local_folder_preference_summary_default">Por favor seleccione un valor</string>
+    <string name="server_connection_preference_user_guest">invitado</string>
     <!-- prefs -->
 
     <string name="preference_server_connection_max_redirects_title">Redirecciones máximas del servidor</string>
@@ -264,6 +274,9 @@
 
     <string name="preference_data_upload_compress_images_output_format_title">Formato de salida de imagen</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Formato de salida de compresión de imagen%1$s</string>
+    <!-- App page -->
+    <string name="preference_page_app">App</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Otro</string>
@@ -293,4 +306,7 @@
     <string name="preference_app_always_show_status_bar_title">Mostrar siempre la barra de estado</string>
     <string name="preference_app_always_show_status_bar_summary">Habilitar para evitar el ocultamiento automático de la barra de estado</string>
 
+    <string name="preference_app_desired_language_summary">%1$s</string>
+    <string name="preference_app_desired_language_title">Idioma</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Mostrar todos los consejos de usuario nuevamente</string>
 </resources>

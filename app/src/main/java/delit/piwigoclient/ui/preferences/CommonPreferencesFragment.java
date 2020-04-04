@@ -134,6 +134,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         tabTitles.add(getString(R.string.preference_page_connection));
         tabTitles.add(getString(R.string.preference_page_gallery));
         tabTitles.add(getString(R.string.preference_page_upload));
+        tabTitles.add(getString(R.string.preference_page_app));
         tabTitles.add(getString(R.string.preference_page_other));
         return tabTitles;
     }
@@ -143,6 +144,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         tabClasses.add(ConnectionPreferenceFragment.class);
         tabClasses.add(GalleryPreferenceFragment.class);
         tabClasses.add(UploadPreferenceFragment.class);
+        tabClasses.add(AppPreferenceFragment.class);
         tabClasses.add(OtherPreferenceFragment.class);
         return tabClasses;
     }

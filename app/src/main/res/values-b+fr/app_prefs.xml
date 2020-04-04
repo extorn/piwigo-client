@@ -9,11 +9,24 @@
 
 
     <!-- Server Page -->
+    <string name="preference_test_server_connection_title">Tester la connexion</string>
+    <string name="preference_test_server_connection_summary">Tester la connexion au serveur</string>
+
+
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Nettoyer le serveur</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Nettoyer les téléchargements de PiwigoClient ayant échoué depuis le serveur</string>
 
     <string name="preference_page_connection">Connexion</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">Authentification de base du serveur</string>
 
+    <string name="preference_connections_category_client_certificate_auth">Authentification par certificat client</string>
+    <string name="preference_connections_category_advanced">Paramètres avancés</string>
+    <string name="preference_connections_category_connections_caching">Mise en cache de la réponse Web</string>
+    <string name="server_connection_preference_summary_default">Veuillez sélectionner une valeur</string>
+    <string name="server_album_preference_summary_default">Veuillez sélectionner une valeur</string>
+    <string name="local_folder_preference_summary_default">Veuillez sélectionner une valeur</string>
+    <string name="server_connection_preference_user_guest">invité</string>
     <!-- prefs -->
 
 
@@ -300,6 +313,9 @@
     <string name="preference_data_upload_compress_images_output_format_title">Format de sortie de l\'image</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Format de sortie de compression d\'image %1$s</string>
 
+    <!-- App page -->
+    <string name="preference_page_app">App</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Autres</string>
@@ -333,4 +349,7 @@
     <string name="preference_app_always_show_status_bar_title">Toujours afficher la barre d\'état</string>
     <string name="preference_app_always_show_status_bar_summary">Activer pour empêcher le masquage automatique de la barre d\'état</string>
 
+    <string name="preference_app_desired_language_summary">%1$s</string>
+    <string name="preference_app_desired_language_title">Langue</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Afficher à nouveau tous les conseils utilisateur</string>
 </resources>

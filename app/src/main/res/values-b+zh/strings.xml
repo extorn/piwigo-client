@@ -16,12 +16,6 @@
 
     <!-- Example General settings -->
 
-    <string name="preference_test_server_connection_title">测试连接</string>
-    <string name="preference_test_server_connection_summary">测试与服务器的连接</string>
-
-
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">清洁服务器</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">清除服务器上的PiwigoClient上传失败</string>
     <string name="progress_clearing_failed_uploads_from_server">清除服务器上的任何失败上传</string>
     <string name="cleared_failed_uploads_from_server_pattern">已清除%1$d从服务器上传失败</string>
 
@@ -268,7 +262,7 @@
     <string name="alert_error_admin_user_required">除非安装了社区插件，否则只有管理员用户可以上传。抱歉。</string>
     <string name="upload_username_title">上传为</string>
     <string name="certificates_heading">证书</string>
-    <string name="preference_connections_category_client_certificate_auth">客户端证书认证</string>
+
     <string name="alert_slideshow_out_of_sync_with_album">此幻灯片不再准确反映当前的专辑内容</string>
     <string name="alert_slideshow_out_of_sync_with_tag">此幻灯片不再准确反映当前标记内容</string>
     <string name="alert_error_app_not_yet_configured">应用程序尚未配置并连接到PIWIGO服务器。请在尝试与其共享项目之前手动打开应用程序并进行配置。</string>
@@ -278,7 +272,7 @@
     <string name="top_tips_menu_title">重要提示</string>
     <string name="top_tips_heading">重要提示</string>
     <string name="alert_error_please_select_upload_album">请选择要上传的相册</string>
-    <string name="preference_connections_category_advanced">高级设置</string>
+
     <string name="alert_title_select_album">选择相册</string>
     <string name="alert_title_set_album_thumbnail">更新专辑缩略图？</string>
     <string name="alert_message_set_album_thumbnail">将相册缩略图更新为此图像？</string>
@@ -372,11 +366,7 @@
     <string name="paid_feature_only">仅限付费应用</string>
     <string name="slideshow_image_details_tags_title">标签</string>
     <string name="button_search">搜索</string>
-    <string name="preference_connections_category_connections_caching">Web响应缓存</string>
-    <string name="server_connection_preference_summary_default">请选择一个值</string>
-    <string name="server_album_preference_summary_default">请选择一个值</string>
-    <string name="local_folder_preference_summary_default">请选择一个值</string>
-    <string name="server_connection_preference_user_guest">客人</string>
+
     <string name="file_selection_heading">文件选择</string>
     <string name="tag_heading_pattern">日：%1$s</string>
     <string name="error_updating_tag_pattern">从标记中删除资源（%1$s）时出错：%2$s</string>
@@ -493,10 +483,10 @@
     <string name="unsupported_device">抱歉，此设备不受支持。 访问Google Play Services时出现问题。</string>
     <string name="hint_album_view">点击屏幕底部以显示此相册的详细信息</string>
     <string name="usage_hint_title">暗示</string>
-    <string name="hint_slideshow_view_1">点击屏幕底部以显示此资源的详细信息</string>
-    <string name="hint_slideshow_view_2">向左或向右滑动以在资源之间导航</string>
+    <string name="hint_slideshow_base_view_1">点击屏幕底部以显示此资源的详细信息</string>
+    <string name="hint_slideshow_base_view_2">向左或向右滑动以在资源之间导航</string>
     <string name="hint_slideshow_item_view_1">可以通过点击或滑动所需的星级来调整评级。 这立即生效</string>
-    <string name="hint_slideshow_view_3">要将此资源标记为收藏，请点击图像资源名称右侧的心形图标</string>
+    <string name="hint_slideshow_paid_view_3">要将此资源标记为收藏，请点击图像资源名称右侧的心形图标</string>
     <string name="hint_navigation_panel_1">点击上面的应用程序图标以强制服务器注销并登录</string>
     <string name="user_details_not_found_on_server">在服务器上找不到用户详细信息</string>
     <string name="resource_queued_for_download">资源排队等待下载。 它在队列中的位置%1$d。</string>
@@ -506,12 +496,11 @@
     <string name="alert_error_upload_file_compression_error_message_pattern">压缩文件以上传%1$s时出错。\n%2$s</string>
     <string name="uploading_progress_bar_message">上载中</string>
     <string name="compressing_progress_bar_message">压缩方式</string>
-    <string name="preference_app_desired_language_summary">首选翻译</string>
-    <string name="preference_app_desired_language_title">语言</string>
     <string name="warning_missing_tags_links_removed_from_resource">并非所有链接到该项目的标签都仍然存在于数据库中。 指向 %1$d 的链接已删除</string>
     <string name="button_stop_warning_me">不要再告诉我</string>
     <string name="create_email_using_app">使用应用创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。 这些 %1$d 文件已被忽略。 要共享视频文件，必须先将其完全本地缓存。</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"所有一次性用户提示将再次显示"</string>
 
 </resources>

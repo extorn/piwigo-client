@@ -60,8 +60,13 @@ public class SecurePrefsUtil {
 
     public void writeSecurePreference(SharedPreferences prefs, String preferenceKey, String preferenceValue) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(preferenceKey, encryptValue(preferenceKey, preferenceValue));
+        writeSecurePreference(editor, preferenceKey, preferenceValue);
         editor.commit();
+    }
+
+    public SharedPreferences.Editor writeSecurePreference(SharedPreferences.Editor editor, String preferenceKey, String preferenceValue) {
+        editor.putString(preferenceKey, encryptValue(preferenceKey, preferenceValue));
+        return editor;
     }
 
     public byte[] readSecurePreferenceRawBytes(SharedPreferences prefs, String preferenceKey, byte[] defaultValue) {

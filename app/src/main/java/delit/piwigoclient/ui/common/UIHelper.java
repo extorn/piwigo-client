@@ -1018,7 +1018,7 @@ public abstract class UIHelper<T> {
         Set<String> hintsShown = getPrefs().getStringSet(context.getString(R.string.usage_hints_shown_list_key), new HashSet<String>());
         if (hintsShown.add(tag + '_' + hintId)) {
             int userHintDuration = Toast.LENGTH_LONG; //TODO use custom toast impl so I can set other duration perhaps. - AppPreferences.getUserHintDuration(getPrefs(), context);
-            TransientMsgUtils.makeDetailedToast(context, R.string.usage_hint_title, context.getString(hintStrResId), userHintDuration);
+            TransientMsgUtils.makeDetailedToast(context, R.string.usage_hint_title, context.getString(hintStrResId), userHintDuration).show();
             SharedPreferences.Editor editor = getPrefs().edit();
             editor.putStringSet(context.getString(R.string.usage_hints_shown_list_key), hintsShown);
             editor.apply();

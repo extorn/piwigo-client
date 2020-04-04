@@ -49,15 +49,28 @@
             android:summary="@string/preference_piwigo_server_password_summary"
             android:title="@string/preference_piwigo_server_password_title" />
 
-        <androidx.preference.ListPreference
+        <delit.libs.ui.view.preference.EditableListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
-            android:entries="@array/server_ssl_certificate_hostname_verification_entries"
-            android:entryValues="@array/server_ssl_certificate_hostname_verification_values"
-            android:key="@string/preference_server_ssl_certificate_hostname_verification_key"
-            android:summary="@string/preference_server_ssl_certificate_hostname_verification_summary"
-            android:title="@string/preference_server_ssl_certificate_hostname_verification_title" />
+            android:key="@string/preference_piwigo_playable_media_extensions_key"
+            android:summary="@string/preference_piwigo_playable_media_extensions_summary"
+            android:defaultValue="@array/preference_piwigo_playable_media_extensions_default"
+            android:title="@string/preference_piwigo_playable_media_extensions_title"
+            app:allowItemEdit="true"
+            app:allowMultiSelect="true"
+            app:entriesPref="@string/preference_piwigo_playable_media_extensions_key" />
+        <androidx.preference.ListPreference
+            android:defaultValue="@string/preference_gallery_unique_id_default"
+            android:entries="@array/preference_gallery_unique_id_entries"
+            android:entryValues="@array/preference_gallery_unique_id_entryValues"
+            android:key="@string/preference_gallery_unique_id_key"
+            android:title="@string/preference_gallery_unique_id_title"
+            android:summary="@string/preference_gallery_unique_id_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
@@ -137,6 +150,15 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_advanced">
+        <androidx.preference.ListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
+            android:entries="@array/server_ssl_certificate_hostname_verification_entries"
+            android:entryValues="@array/server_ssl_certificate_hostname_verification_values"
+            android:key="@string/preference_server_ssl_certificate_hostname_verification_key"
+            android:summary="@string/preference_server_ssl_certificate_hostname_verification_summary"
+            android:title="@string/preference_server_ssl_certificate_hostname_verification_title" />
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

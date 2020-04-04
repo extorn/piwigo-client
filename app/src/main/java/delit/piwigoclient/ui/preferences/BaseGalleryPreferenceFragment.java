@@ -174,49 +174,6 @@ public class BaseGalleryPreferenceFragment extends MyPreferenceFragment<BaseGall
 
             }
         });
-
-        EditableListPreference playableMultimediaExts = (EditableListPreference) findPreference(R.string.preference_piwigo_playable_media_extensions_key);
-        playableMultimediaExts.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
-            @Override
-            public String filterUserInput(String value) {
-                String val = value.toLowerCase();
-                int dotIdx = val.indexOf('.');
-                if (dotIdx >= 0) {
-                    val = val.substring(dotIdx);
-                }
-                return val;
-            }
-
-            @Override
-            public void onItemSelectionChange(Set<String> oldSelection, Set<String> newSelection, boolean oldSelectionExists) {
-                super.onItemSelectionChange(oldSelection, newSelection, oldSelectionExists);
-            }
-
-            @Override
-            public Set<String> filterNewUserSelection(Set<String> userSelectedItems) {
-                return new TreeSet<>(userSelectedItems);
-            }
-        });
-
-        ListPreference desiredLanguagePref = (ListPreference) findPreference(R.string.preference_app_desired_language_key);
-        List<Locale> localeOptions = ProjectUtils.listLocalesWithUniqueTranslationOf(getContext(), R.string.album_create_failed);
-        List<String> entries = new ArrayList<>(localeOptions.size());
-        List<String> values = new ArrayList<>(localeOptions.size());
-        for (Locale l : localeOptions) {
-            entries.add(l.getDisplayName(l));
-            values.add(l.toString());
-        }
-        desiredLanguagePref.setDefaultValue(values.get(0));
-        desiredLanguagePref.setEntries(CollectionUtils.asStringArray(entries));
-        desiredLanguagePref.setEntryValues(CollectionUtils.asStringArray(values));
-        desiredLanguagePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Locale newVal = (Locale) newValue;
-                getResources().getConfiguration().setLocale(newVal);
-                return true;
-            }
-        });
     }
 
     private String suffixCacheSize(String basicString, long cacheSizeBytes) {
@@ -235,54 +192,6 @@ public class BaseGalleryPreferenceFragment extends MyPreferenceFragment<BaseGall
         videoCacheEnabledPref.setOnPreferenceChangeListener(videoCacheEnabledPrefListener);
         videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey(), R.bool.preference_video_cache_enabled_default));
 
-        Preference alwaysShowNavButtonsPref = findPreference(R.string.preference_app_always_show_nav_buttons_key);
-
-        alwaysShowNavButtonsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Boolean newVal = (Boolean) newValue;
-                FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
-                DisplayUtils.setUiFlags(fragmentActivity, newVal, AppPreferences.isAlwaysShowStatusBar(getUiHelper().getPrefs(), getUiHelper().getContext()));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                    getUiHelper().getParent().requireView().requestApplyInsets();
-                }
-                return true;
-            }
-        });
-        Preference alwaysShowStatusBarPref = findPreference(R.string.preference_app_always_show_status_bar_key);
-        alwaysShowStatusBarPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Boolean newVal = (Boolean) newValue;
-                FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
-                DisplayUtils.setUiFlags(fragmentActivity, AppPreferences.isAlwaysShowNavButtons(getUiHelper().getPrefs(), getUiHelper().getContext()), newVal);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                    getUiHelper().getParent().requireView().requestApplyInsets();
-                }
-                return true;
-            }
-        });
-        Preference desiredLanguagePref = findPreference(R.string.preference_app_desired_language_key);
-        desiredLanguagePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Locale newVal = new Locale((String) newValue);
-
-                DisplayUtils.updateContext(getContext(), newVal);
-//                getActivity().recreate();
-
-                DisplayUtils.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Activity activity = getActivity();
-                        if (activity != null) {
-                            activity.recreate();
-                        }
-                    }
-                }, 2000);
-                return true;
-            }
-        });
     }
 
     @Override

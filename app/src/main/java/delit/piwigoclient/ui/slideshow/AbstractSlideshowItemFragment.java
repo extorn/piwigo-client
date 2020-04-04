@@ -248,7 +248,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         if (model.isResourceDetailsLikelyOutdated() || model.isLikelyOutdated()) {
             // call this quietly in the background to avoid it ruining the slideshow experience.
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
+            Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
             long messageId = new ImageGetInfoResponseHandler<T>(model, multimediaExtensionList).invokeAsync(getContext());
             getUiHelper().addBackgroundServiceCall(messageId);
         }
@@ -378,6 +378,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         resourceTitleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!bottomSheet.isEnabled()) {
+                    bottomSheet.setEnabled(true);
+                    bottomSheet.setVisibility(VISIBLE);
+                }
                 bottomSheet.openLayer(true);
             }
         });

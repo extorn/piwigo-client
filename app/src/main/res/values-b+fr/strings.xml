@@ -9,25 +9,6 @@
     <string name="unlicensed_dialog_title">Application non autorisée</string>
     <string name="application_error">Erreur d\'application : %1$d</string>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <string name="alert_title_permissions_needed">Autorisations supplémentaires requises</string>
     <string name="alert_write_permission_needed_for_download">L\'autorisation est nécessaire pour écrire dans le système de fichiers afin de télécharger des fichiers</string>
 
@@ -35,12 +16,7 @@
 
     <!-- Example General settings -->
 
-    <string name="preference_test_server_connection_title">Tester la connexion</string>
-    <string name="preference_test_server_connection_summary">Tester la connexion au serveur</string>
 
-
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Nettoyer le serveur</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Nettoyer les téléchargements de PiwigoClient ayant échoué depuis le serveur</string>
     <string name="progress_clearing_failed_uploads_from_server">Effacement de tous les téléchargements échoués sur le serveur</string>
     <string name="cleared_failed_uploads_from_server_pattern">Effacé %1$d uploads échoués depuis le serveur</string>
 
@@ -419,7 +395,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_error_admin_user_required">Seuls les utilisateurs admins peuvent télécharger à moins que le plugin de la communauté ne soit installé. Désolée.</string>
     <string name="upload_username_title">Télécharger en tant que</string>
     <string name="certificates_heading">Certificats</string>
-    <string name="preference_connections_category_client_certificate_auth">Authentification par certificat client</string>
+
     <string name="alert_slideshow_out_of_sync_with_album">Ce diaporama ne reflète plus exactement le contenu actuel de l\'album.</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Ce diaporama ne reflète plus exactement le contenu actuel de la balise</string>
     <string name="alert_error_app_not_yet_configured">L\'application n\'est pas encore configurée et connectée à un serveur PIWIGO. Veuillez ouvrir l\'application manuellement et la configurer avant d\'essayer de partager des éléments avec elle.</string>
@@ -429,7 +405,6 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="top_tips_menu_title">Les meilleurs conseils</string>
     <string name="top_tips_heading">Les meilleurs conseils</string>
     <string name="alert_error_please_select_upload_album">Veuillez sélectionner un album à télécharger sur</string>
-    <string name="preference_connections_category_advanced">Paramètres avancés</string>
     <string name="alert_title_select_album">Sélectionner un album</string>
     <string name="alert_title_set_album_thumbnail">Mise à jour de la vignette de l\'album ?</string>
     <string name="alert_message_set_album_thumbnail">Mettre à jour la vignette de l\'album avec cette image ?</string>
@@ -523,11 +498,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="paid_feature_only">application payante uniquement</string>
     <string name="slideshow_image_details_tags_title">Étiquettes</string>
     <string name="button_search">Recherche</string>
-    <string name="preference_connections_category_connections_caching">Mise en cache de la réponse Web</string>
-    <string name="server_connection_preference_summary_default">Veuillez sélectionner une valeur</string>
-    <string name="server_album_preference_summary_default">Veuillez sélectionner une valeur</string>
-    <string name="local_folder_preference_summary_default">Veuillez sélectionner une valeur</string>
-    <string name="server_connection_preference_user_guest">invité</string>
+
     <string name="file_selection_heading">Sélection des fichiers</string>
     <string name="tag_heading_pattern">Tag : %1$s</string>
     <string name="error_updating_tag_pattern">Erreur enlevant la ressource (%1$s) de l\'étiquette : %2$s</string>
@@ -644,10 +615,10 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="unsupported_device">Désolé, cet appareil n\'est pas supporté. Il y a un problème avec l\'accès aux services Google Play.</string>
     <string name="hint_album_view">Touchez au bas de l\'écran pour afficher les détails de cet album.</string>
     <string name="usage_hint_title">Allusion</string>
-    <string name="hint_slideshow_view_1">Appuyez sur au bas de l\'écran pour afficher les détails de cette ressource</string>
-    <string name="hint_slideshow_view_2">Balayez vers la gauche ou la droite pour naviguer entre les ressources</string>
+    <string name="hint_slideshow_base_view_1">Appuyez sur au bas de l\'écran pour afficher les détails de cette ressource</string>
+    <string name="hint_slideshow_base_view_2">Balayez vers la gauche ou la droite pour naviguer entre les ressources</string>
     <string name="hint_slideshow_item_view_1">Le classement peut être ajusté en tapotant ou en glissant sur le classement souhaité. Cela a un effet immédiat</string>
-    <string name="hint_slideshow_view_3">Pour marquer cette ressource comme favorite, appuyez sur l’icône du cœur à droite du nom de la ressource d’image</string>
+    <string name="hint_slideshow_paid_view_3">Pour marquer cette ressource comme favorite, appuyez sur l’icône du cœur à droite du nom de la ressource d’image</string>
     <string name="hint_navigation_panel_1">Appuyez sur l\'icône de l\'application ci-dessus pour forcer un serveur à se déconnecter et à se connecter</string>
     <string name="user_details_not_found_on_server">Impossible de trouver les détails de l\'utilisateur sur le serveur</string>
     <string name="resource_queued_for_download">Ressource en file d\'attente pour le téléchargement. C\'est la position %1$d dans la file d\'attente.</string>
@@ -657,12 +628,11 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_error_upload_file_compression_error_message_pattern">Erreur lors de la compression du fichier pour le téléchargement %1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Téléchargement</string>
     <string name="compressing_progress_bar_message">Compression</string>
-    <string name="preference_app_desired_language_summary">Traduction préférée</string>
-    <string name="preference_app_desired_language_title">Langue</string>
     <string name="warning_missing_tags_links_removed_from_resource">Toutes les balises liées à cet élément n\'existent pas encore dans la base de données. Les liens vers %1$d ont été supprimés</string>
     <string name="button_stop_warning_me">Ne me redis plus</string>
     <string name="create_email_using_app">Créer un e-mail à l\'aide d\'une application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contient des fichiers qui n\'ont pas pu être traités. Ces fichiers %1$d ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d'utilisation uniques s'afficheront à nouveau"</string>
 
 </resources>

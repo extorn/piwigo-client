@@ -9,6 +9,19 @@
 
     <!-- prefs -->
 
+    <string name="preference_test_server_connection_title">Тестовое соединение</string>
+
+    <string name="preference_test_server_connection_summary">Тестовое соединение с сервером</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Чистый сервер</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Очистить неудачные загрузки PiwigoClient с сервера</string>
+
+    <string name="preference_connections_category_client_certificate_auth">Аутентификация сертификата клиента</string>
+    <string name="preference_connections_category_advanced">Расширенные настройки</string>
+    <string name="preference_connections_category_connections_caching">Кэширование веб-ответов</string>
+    <string name="server_connection_preference_summary_default">Пожалуйста, выберите значение</string>
+    <string name="server_album_preference_summary_default">Пожалуйста, выберите значение</string>
+    <string name="local_folder_preference_summary_default">Пожалуйста, выберите значение</string>
+    <string name="server_connection_preference_user_guest">гость</string>
 
     <!-- list of connection profiles to select from -->
 
@@ -219,6 +232,9 @@
 
     <string name="preference_data_upload_compress_images_output_format_title">Формат вывода изображения</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Выходной формат сжатия изображения%1$s</string>
+    <!-- App page -->
+    <string name="preference_page_app">Приложение</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Другие</string>
@@ -247,4 +263,7 @@
     <string name="preference_app_always_show_status_bar_title">Всегда показывать строку состояния</string>
     <string name="preference_app_always_show_status_bar_summary">Включить, чтобы запретить автоматическое скрытие строки состояния</string>
 
+    <string name="preference_app_desired_language_summary">%1$s</string>
+    <string name="preference_app_desired_language_title">язык</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Показать все пользовательские подсказки снова</string>
 </resources>

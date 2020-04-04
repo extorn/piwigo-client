@@ -22,6 +22,7 @@ import java.net.URI;
 import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.preference.ClientCertificatePreference;
@@ -214,6 +215,30 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 return true;
             }
         });
+
+        EditableListPreference playableMultimediaExts = (EditableListPreference) findPreference(R.string.preference_piwigo_playable_media_extensions_key);
+        playableMultimediaExts.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
+            @Override
+            public String filterUserInput(String value) {
+                String val = value.toLowerCase();
+                int dotIdx = val.indexOf('.');
+                if (dotIdx >= 0) {
+                    val = val.substring(dotIdx);
+                }
+                return val;
+            }
+
+            @Override
+            public void onItemSelectionChange(Set<String> oldSelection, Set<String> newSelection, boolean oldSelectionExists) {
+                super.onItemSelectionChange(oldSelection, newSelection, oldSelectionExists);
+            }
+
+            @Override
+            public Set<String> filterNewUserSelection(Set<String> userSelectedItems) {
+                return new TreeSet<>(userSelectedItems);
+            }
+        });
+
     }
 
     private class HttpConnectionEngineInvalidListener implements Preference.OnPreferenceChangeListener {

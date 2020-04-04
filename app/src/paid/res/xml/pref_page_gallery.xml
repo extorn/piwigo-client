@@ -8,15 +8,7 @@
         android:title="@string/preference_gallery_category_general"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <androidx.preference.ListPreference
-            android:defaultValue="@string/preference_gallery_unique_id_default"
-            android:entries="@array/preference_gallery_unique_id_entries"
-            android:entryValues="@array/preference_gallery_unique_id_entryValues"
-            android:key="@string/preference_gallery_unique_id_key"
-            android:title="@string/preference_gallery_unique_id_title"
-            android:summary="@string/preference_gallery_unique_id_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:defaultValue="@integer/preference_gallery_recentlyAlteredAgeDays_default"
             app:minValue="0"
@@ -34,26 +26,6 @@
             android:title="@string/preference_gallery_enable_video_playback_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_app_always_show_status_bar_default"
-            android:key="@string/preference_app_always_show_status_bar_key"
-            android:summary="@string/preference_app_always_show_status_bar_summary"
-            android:title="@string/preference_app_always_show_status_bar_title" />
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_app_always_show_nav_buttons_default"
-            android:key="@string/preference_app_always_show_nav_buttons_key"
-            android:summary="@string/preference_app_always_show_nav_buttons_summary"
-            android:title="@string/preference_app_always_show_nav_buttons_title" />
-        <androidx.preference.ListPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_app_desired_language_key"
-            android:summary="@string/preference_app_desired_language_summary"
-            android:title="@string/preference_app_desired_language_title" />
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
@@ -309,16 +281,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <delit.libs.ui.view.preference.EditableListPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_piwigo_playable_media_extensions_key"
-            android:summary="@string/preference_piwigo_playable_media_extensions_summary"
-            android:defaultValue="@array/preference_piwigo_playable_media_extensions_default"
-            android:title="@string/preference_piwigo_playable_media_extensions_title"
-            app:allowItemEdit="true"
-            app:allowMultiSelect="true"
-            app:entriesPref="@string/preference_piwigo_playable_media_extensions_key" />
         <androidx.preference.SwitchPreference
             android:defaultValue="@bool/preference_video_cache_enabled_default"
             android:key="@string/preference_video_cache_enabled_key"

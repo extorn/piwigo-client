@@ -9,11 +9,21 @@
 
 
     <!-- Server Page -->
+    <string name="preference_test_server_connection_title">Testverbindung</string>
+    <string name="preference_test_server_connection_summary">Verbindung zum Server testen</string>
 
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Fehlerhafte PiwigoClient-Uploads vom Server bereinigen</string>
+    <string name="preference_connections_category_client_certificate_auth">Client-Zertifikat-Authentifizierung</string>
+    <string name="preference_connections_category_advanced">Erweiterte Einstellungen</string>
     <string name="preference_page_connection">Anschluss</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">Server Basic-Authentifizierung</string>
-
+    <string name="server_connection_preference_summary_default">Bitte wählen Sie einen Wert aus</string>
+    <string name="server_album_preference_summary_default">Bitte wählen Sie einen Wert aus</string>
+    <string name="local_folder_preference_summary_default">Bitte wählen Sie einen Wert aus</string>
+    <string name="server_connection_preference_user_guest">Gast</string>
+    <string name="preference_connections_category_connections_caching">Web-Antwort-Caching</string>
     <!-- prefs -->
 
     <string name="preference_server_connection_force_https_title">Http-URLs in Https umwandeln</string>
@@ -303,6 +313,9 @@
     <string name="preference_data_upload_compress_images_output_format_title">Bildausgabeformat</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Ausgabeformat für die Bildkompression %1$s</string>
 
+    <!-- App page -->
+    <string name="preference_page_app">App</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Andere</string>
@@ -331,4 +344,8 @@
     <string name="preference_app_always_show_status_bar_title">Immer die Statusleiste anzeigen</string>
     <string name="preference_app_always_show_status_bar_summary">Aktivieren Sie diese Option, um das automatische Ausblenden der Statusleiste zu verhindern</string>
 
+    <string name="preference_app_desired_language_summary">%1$s</string>
+    <string name="preference_app_desired_language_title">Sprache</string>
+
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Alle Benutzertipps erneut anzeigen</string>
 </resources>

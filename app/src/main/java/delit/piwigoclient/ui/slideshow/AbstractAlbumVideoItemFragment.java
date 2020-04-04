@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
+import com.wunderlist.slidinglayer.OnInteractAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
