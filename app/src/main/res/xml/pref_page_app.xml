@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.preference.PreferenceCategory
+        android:layout="@android:layout/preference_category"
+        android:title="@string/preference_gallery_category_general"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.preference.ListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/preference_app_desired_language_key"
+            android:summary="@string/preference_app_desired_language_summary"
+            android:title="@string/preference_app_desired_language_title" />
+
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_app_always_show_status_bar_default"
+            android:key="@string/preference_app_always_show_status_bar_key"
+            android:summary="@string/preference_app_always_show_status_bar_summary"
+            android:title="@string/preference_app_always_show_status_bar_title" />
+
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_app_always_show_nav_buttons_default"
+            android:key="@string/preference_app_always_show_nav_buttons_key"
+            android:summary="@string/preference_app_always_show_nav_buttons_summary"
+            android:title="@string/preference_app_always_show_nav_buttons_title" />
+
+        <androidx.preference.Preference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+            android:key="@string/preference_app_clear_list_of_user_hints_shown_key"
+            android:title="@string/preference_app_clear_list_of_user_hints_shown_title" />
+
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>
