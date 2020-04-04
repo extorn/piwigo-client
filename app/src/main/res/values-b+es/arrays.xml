@@ -140,6 +140,8 @@
         -->
         <item>1.4.0.60</item>
         <item>"Cambio:
+             - Cambios en la página de preferencias de la aplicación
+             - Se agregó una nueva preferencia para forzar que las sugerencias de un usuario se muestren nuevamente
              - aplicación paga: Se agregó una función de unidad automática en la presentación de diapositivas: nueva configuración en la sección de presentación de diapositivas de las preferencias de la galería"</item>
         <item>1.4.0.59</item>
         <item>"Cambio:
