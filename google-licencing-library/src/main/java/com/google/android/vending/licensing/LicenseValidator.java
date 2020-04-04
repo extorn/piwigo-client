@@ -52,17 +52,15 @@ class LicenseValidator {
     private final LicenseCheckerCallback mCallback;
     private final int mNonce;
     private final String mPackageName;
-    private final String mVersionCode;
     private final DeviceLimiter mDeviceLimiter;
 
     LicenseValidator(Policy policy, DeviceLimiter deviceLimiter, LicenseCheckerCallback callback,
-             int nonce, String packageName, String versionCode) {
+             int nonce, String packageName) {
         mPolicy = policy;
         mDeviceLimiter = deviceLimiter;
         mCallback = callback;
         mNonce = nonce;
         mPackageName = packageName;
-        mVersionCode = versionCode;
     }
 
     public LicenseCheckerCallback getCallback() {
@@ -157,14 +155,6 @@ Crashlytics.logException(e);
             if (!data.packageName.equals(mPackageName)) {
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Package name doesn't match.");
-                }
-                handleInvalidResponse();
-                return;
-            }
-
-            if (!data.versionCode.equals(mVersionCode)) {
-                if(BuildConfig.DEBUG) {
-                    Log.e(TAG, "Version codes don't match.");
                 }
                 handleInvalidResponse();
                 return;

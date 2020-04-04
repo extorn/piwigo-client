@@ -82,7 +82,6 @@ public class LicenseChecker implements ServiceConnection {
      */
     private final Handler mHandler;
     private final String mPackageName;
-    private final String mVersionCode;
     private final Set<LicenseValidator> mChecksInProgress = new HashSet<>();
     private final Queue<LicenseValidator> mPendingChecks = new LinkedList<>();
 
@@ -97,7 +96,6 @@ public class LicenseChecker implements ServiceConnection {
         mPolicy = policy;
         mPublicKey = generatePublicKey(encodedPublicKey);
         mPackageName = mContext.getPackageName();
-        mVersionCode = getVersionCode(context, mPackageName);
         HandlerThread handlerThread = new HandlerThread("background thread");
         handlerThread.start();
         mHandler = new Handler(handlerThread.getLooper());
@@ -189,7 +187,7 @@ public class LicenseChecker implements ServiceConnection {
             callback.allow(Policy.LICENSED);
         } else {
             LicenseValidator validator = new LicenseValidator(mPolicy, new NullDeviceLimiter(),
-                    callback, generateNonce(), mPackageName, mVersionCode);
+                    callback, generateNonce(), mPackageName);
 
             if (mService == null) {
                 if (BuildConfig.DEBUG) {
