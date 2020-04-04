@@ -42,4 +42,11 @@ public class AppPreferences {
         editor.apply();
     }
 
+    public static boolean isUseVideoCache(Context context, SharedPreferences prefs) {
+        return prefs.getBoolean(context.getString(R.string.preference_video_cache_enabled_key), context.getResources().getBoolean(R.bool.preference_video_cache_enabled_default));
+    }
+
+    public static int getVideoCacheSizeMb(SharedPreferences prefs, Context context) {
+        return prefs.getInt(context.getString(R.string.preference_video_cache_maxsize_mb_key), context.getResources().getInteger(R.integer.preference_video_cache_maxsize_mb_default));
+    }
 }

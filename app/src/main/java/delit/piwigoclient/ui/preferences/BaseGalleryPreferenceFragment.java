@@ -1,46 +1,17 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-import androidx.preference.SwitchPreference;
 
-import com.crashlytics.android.Crashlytics;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-
-import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
-import delit.libs.ui.view.preference.EditableListPreference;
 import delit.libs.ui.view.preference.NumberPickerPreference;
-import delit.libs.util.CollectionUtils;
-import delit.libs.util.IOUtils;
-import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
-import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
 /**
  * Created by gareth on 12/05/17.
@@ -49,19 +20,7 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 public class BaseGalleryPreferenceFragment extends MyPreferenceFragment<BaseGalleryPreferenceFragment> {
 
     private static final String TAG = "Gallery Settings";
-    private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object value) {
-            final Boolean val = (Boolean) value;
-            if (Boolean.TRUE.equals(val)) {
-                getUiHelper().runWithExtraPermissions(BaseGalleryPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
-            } else {
-                getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
-                getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_not_recommended));
-            }
-            return true;
-        }
-    };
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its pkg value.
@@ -95,19 +54,7 @@ public class BaseGalleryPreferenceFragment extends MyPreferenceFragment<BaseGall
         super(pagerIndex);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(PermissionsWantedResponse event) {
-        if (getUiHelper().completePermissionsWantedRequest(event)) {
-            if (event.areAllPermissionsGranted()) {
-                getPreferenceManager().findPreference(getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(true);
-            } else {
-                Preference videoCacheEnabledPref = findPreference(R.string.preference_video_cache_enabled_key);
-                ((SwitchPreference) videoCacheEnabledPref).setChecked(false);
-                getPreferenceManager().findPreference(getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
-                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_information_video_caching_disabled));
-            }
-        }
-    }
+
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -145,75 +92,5 @@ public class BaseGalleryPreferenceFragment extends MyPreferenceFragment<BaseGall
         findPreference(R.string.preference_gallery_item_thumbnail_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
         findPreference(R.string.preference_gallery_item_slideshow_image_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
 
-        Preference button = findPreference(R.string.preference_gallery_clearMemoryCache_key);
-        button.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
-        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                PicassoFactory.getInstance().clearPicassoCache(getContext(), true);
-                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
-                preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
-                return true;
-            }
-        });
-
-        Preference videoCacheFlushButton = findPreference(R.string.preference_gallery_clearVideoCache_key);
-        setVideoCacheButtonText(videoCacheFlushButton);
-        videoCacheFlushButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                try {
-                    CacheUtils.clearVideoCache(getContext());
-                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheCleared_message));
-                } catch (IOException e) {
-                    Crashlytics.logException(e);
-                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheClearFailed_message));
-                }
-                setVideoCacheButtonText(preference);
-                return true;
-
-            }
-        });
-    }
-
-    private String suffixCacheSize(String basicString, long cacheSizeBytes) {
-        return basicString + '(' + IOUtils.toNormalizedText(cacheSizeBytes) + ')';
-    }
-
-    private void setVideoCacheButtonText(Preference videoCacheFlushButton) {
-        String newTitle = suffixCacheSize(getString(R.string.preference_gallery_clearVideoCache_title), CacheUtils.getVideoCacheSize(getContext()));
-        videoCacheFlushButton.setTitle(newTitle);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Preference videoCacheEnabledPref = findPreference(R.string.preference_video_cache_enabled_key);
-        videoCacheEnabledPref.setOnPreferenceChangeListener(videoCacheEnabledPrefListener);
-        videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey(), R.bool.preference_video_cache_enabled_default));
-
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onDetach() {
-        EventBus.getDefault().unregister(this);
-        super.onDetach();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == android.R.id.home) {
-//            startActivity(pkg Intent(getActivity(), SettingsActivity.class));
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-        return true;
     }
 }

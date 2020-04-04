@@ -251,36 +251,5 @@
             android:summary="@string/preference_groups_request_pagesize_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-
-        <androidx.preference.SwitchPreference
-            android:defaultValue="@bool/preference_video_cache_enabled_default"
-            android:key="@string/preference_video_cache_enabled_key"
-            android:summary="@string/preference_video_cache_enabled_summary"
-            android:title="@string/preference_video_cache_enabled_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:defaultValue="@integer/preference_video_cache_maxsize_mb_default"
-            app:minValue="10"
-            app:maxValue="10240"
-            android:key="@string/preference_video_cache_maxsize_mb_key"
-            android:title="@string/preference_video_cache_maxsize_mb_title"
-            android:summary="@string/preference_video_cache_maxsize_mb_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <androidx.preference.Preference
-            android:title="@string/preference_gallery_clearVideoCache_title"
-            android:key="@string/preference_gallery_clearVideoCache_key"
-            android:summary="@string/preference_gallery_clearVideoCache_summary"
-            android:dependency="@string/preference_video_cache_enabled_key"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <androidx.preference.Preference
-            android:title="@string/preference_gallery_clearMemoryCache_title"
-            android:key="@string/preference_gallery_clearMemoryCache_key"
-            android:summary="@string/preference_gallery_clearMemoryCache_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>

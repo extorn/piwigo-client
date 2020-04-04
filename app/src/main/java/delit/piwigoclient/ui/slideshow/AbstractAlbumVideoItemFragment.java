@@ -50,6 +50,7 @@ import java.util.Set;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.business.video.CachedContent;
@@ -271,7 +272,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         simpleExoPlayerView.getVideoSurfaceView().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (!isUseCache()) {
+                if (!AppPreferences.isUseVideoCache(requireContext(), prefs)) {
                     stopVideoDownloadAndPlay();
                     player.stop(); // this is terminal.
                     videoPlaybackPosition = 0; // ensure it starts at the beginning again
@@ -485,7 +486,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                         getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_warning));
                     }
                 }
-                boolean factorySettingsAltered = dataSourceFactory.setCachingEnabled(isUseCache());
+                boolean factorySettingsAltered = dataSourceFactory.setCachingEnabled(AppPreferences.isUseVideoCache(requireContext(), prefs));
                 if (factorySettingsAltered) {
                     logStatus("Need to create a new datasource (video playback stopped and data load paused)");
                     player.setPlayWhenReady(false);
@@ -501,18 +502,13 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         }
     }
 
-    private boolean isUseCache() {
-        // assume have permission until proven otherwise.
-        return prefs.getBoolean(getString(R.string.preference_video_cache_enabled_key), getResources().getBoolean(R.bool.preference_video_cache_enabled_default));
-    }
-
     private void configureDatasourceAndPlayerRequestingPermissions(final boolean startPlayback) {
 
         logStatus("configuring datasource factory with current cache enabled etc settings");
 
         boolean factorySettingsAltered = dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
         factorySettingsAltered |= dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
-        factorySettingsAltered |= dataSourceFactory.setCachingEnabled(isUseCache());
+        factorySettingsAltered |= dataSourceFactory.setCachingEnabled(AppPreferences.isUseVideoCache(requireContext(), prefs));
         if (factorySettingsAltered) {
             logStatus("Need to create a new datasource");
             stopVideoDownloadAndPlay();
@@ -582,8 +578,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     }
 
     private void manageCache() {
-        if (isUseCache()) {
-            long maxCacheSizeBytes = 1024 * 1024 * prefs.getInt(getString(R.string.preference_video_cache_maxsize_mb_key), getResources().getInteger(R.integer.preference_video_cache_maxsize_mb_default));
+        if (AppPreferences.isUseVideoCache(requireContext(), prefs)) {
+            long maxCacheSizeBytes = 1024 * 1024 * AppPreferences.getVideoCacheSizeMb(prefs, requireContext());
             logStatus("managing the disk cache - max size = " + IOUtils.toNormalizedText(maxCacheSizeBytes));
             try {
                 CacheUtils.manageVideoCache(getContext(), maxCacheSizeBytes);
