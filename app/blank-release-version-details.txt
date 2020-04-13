@@ -1,42 +1,42 @@
 
 <en-GB>
+Bugfix:
+ - Several little bug fixes
 Change:
-- Changes to the app preferences page
-- Added new preference for forcing one time user hints to be shown again
-- paid app: Added an auto drive feature on the slideshow - new setting in the slideshow section of gallery preferences
+ - Enabled support for Android 11 - Please let me know if you can't see files to upload any more
 </en-GB>
 
 <de-DE>
+Bug-Fix:
+ - Einige kleine Fehlerbehebungen
 Veränderung:
-- Änderungen an der Seite mit den App-Einstellungen
-- Neue Einstellung hinzugefügt, um zu erzwingen, dass einmalige Benutzertipps erneut angezeigt werden
-- Bezahlte App: In der Diashow wurde eine automatische Laufwerksfunktion hinzugefügt - neue Einstellung im Diashow-Bereich der Galerieeinstellungen
+ - Unterstützung für Android 11 aktiviert - Bitte lassen Sie mich wissen, wenn Sie keine Dateien mehr zum Hochladen sehen können
 </de-DE>
 
 <fr-FR>
+Correction d'un bug:
+ - Plusieurs petites corrections de bugs
 Changement:
-- Modifications de la page des préférences de l'application
-- Ajout d'une nouvelle préférence pour forcer les conseils utilisateur uniques à s'afficher à nouveau
-- application payante: Ajout d'une fonction de lecteur automatique sur le diaporama - nouveau paramètre dans la section diaporama des préférences de la galerie
+ - Prise en charge activée pour Android 11 - Veuillez me faire savoir si vous ne pouvez plus voir les fichiers à télécharger
 </fr-FR>
 
 <es-ES>
+Arreglo del fallo:
+ - Varias pequeñas correcciones de errores
 Cambio:
-- Cambios en la página de preferencias de la aplicación
-- Se agregó una nueva preferencia para forzar que las sugerencias de un usuario se muestren nuevamente
-- aplicación paga: Se agregó una función de unidad automática en la presentación de diapositivas: nueva configuración en la sección de presentación de diapositivas de las preferencias de la galería
+ - Soporte habilitado para Android 11 - Avíseme si ya no puede ver los archivos para cargar
 </es-ES>
 
 <zh-CN>
+错误修正：
+ -修复了一些小错误
 更改：
--更改了应用程序首选项页面
--添加了新的首选项，以强制一次再次显示用户提示
--付费应用程序：在幻灯片上添加了自动驱动功能-画廊首选项的幻灯片部分中的新设置
+ -已启用对Android 11的支持-如果看不到要上传的文件，请告知我
 </zh-CN>
 
 <ru-RU>
+Исправлена ошибка:
+ - Несколько небольших исправлений ошибок
 Изменить:
-- Изменения на странице настроек приложения
-- Добавлены новые настройки для принудительного отображения однократных пользовательских подсказок.
-- платное приложение: Добавлена функция автоматического вождения в слайд-шоу - новая настройка в разделе слайд-шоу настроек галереи
+ - Включена поддержка Android 11 - Пожалуйста, дайте мне знать, если вы не видите файлы для загрузки больше
 </ru-RU>

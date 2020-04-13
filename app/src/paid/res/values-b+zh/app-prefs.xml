@@ -28,7 +28,7 @@
     <string name="preference_data_upload_automatic_job_is_valid_title">工作有效</string>
 
 
-    <string name="preference_data_upload_automatic_job_enabled_summary">这份工作是在后台听吗？</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">上传服务会使用此作业吗？</string>
     <string name="preference_data_upload_automatic_job_enabled_title">已启用作业</string>
 
 

@@ -30,7 +30,7 @@
     <string name="preference_data_upload_automatic_job_is_valid_title">L\'emploi est valide</string>
 
 
-    <string name="preference_data_upload_automatic_job_enabled_summary">Est-ce que ce travail écoute en arrière-plan ?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Le service de téléchargement utilisera-t-il ce travail?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Activation de l\'emploi</string>
 
 

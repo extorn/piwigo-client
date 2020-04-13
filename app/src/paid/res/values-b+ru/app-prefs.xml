@@ -21,7 +21,7 @@
 
     <string name="preference_data_upload_automatic_job_is_valid_title">Работа действительна</string>
 
-    <string name="preference_data_upload_automatic_job_enabled_summary">Эта работа слушает в фоновом режиме?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Будет ли служба загрузки использовать эту работу?</string>
 
 
     <string name="preference_data_upload_automatic_job_enabled_title">Работа включена</string>

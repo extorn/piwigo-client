@@ -132,6 +132,11 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
+        <item>1.4.0.61</item>
+        <item>"错误修正：
+                 -修复了一些小错误
+                更改：
+                 -已启用对Android 11的支持-如果看不到要上传的文件，请告知我"</item>
         <item>1.4.0.60</item>
         <item>"更改：
              -更改了应用程序首选项页面

@@ -32,7 +32,7 @@
     <string name="preference_data_upload_automatic_job_is_valid_title">Job is Valid</string>
 
     <string name="preference_data_upload_automatic_job_enabled_key" translatable="false">preference_data_upload_automatic_server_enabled</string>
-    <string name="preference_data_upload_automatic_job_enabled_summary">Is this job listening in the background?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Will the upload service use this job?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Job Enabled</string>
     <bool name="preference_data_upload_automatic_job_enabled_default">true</bool>
 

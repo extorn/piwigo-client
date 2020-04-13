@@ -26,7 +26,7 @@
     <string name="preference_data_upload_automatic_job_is_valid_title">Auftrag ist gültig</string>
 
 
-    <string name="preference_data_upload_automatic_job_enabled_summary">Hört dieser Job im Hintergrund zu?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Wird der Upload-Dienst diesen Job verwenden?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Job aktiviert</string>
 
     <string name="preference_data_upload_automatic_job_server_title">Auf den Server hochladen</string>

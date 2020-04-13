@@ -26,7 +26,7 @@
 
     <string name="preference_data_upload_automatic_job_is_valid_title">El trabajo es valido</string>
 
-    <string name="preference_data_upload_automatic_job_enabled_summary">¿Este trabajo está escuchando en el fondo?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">¿El servicio de carga utilizará este trabajo?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Trabajo habilitado</string>
 
 
