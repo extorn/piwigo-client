@@ -101,12 +101,27 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 tools:text="x/y" />
 
+            <ImageView
+                android:id="@+id/show_information_action_button"
+                app:srcCompat="@drawable/ic_info_black_24dp"
+                android:tint="@color/accent"
+                android:layout_below="@id/slideshow_image_ratingBar"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:clickable="true"
+                android:visibility="visible"
+                app:fabSize="mini"
+                android:focusable="true" />
+
             <TextView
                 android:id="@+id/slideshow_resource_item_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/slideshow_image_ratingBar"
                 android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/show_information_action_button"
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
@@ -132,6 +147,7 @@
                 android:shadowRadius="6"
                 android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
                 tools:text="The image here is a really dull image showing lots of squares on circles of nothing particular" />
+
 
             <delit.libs.ui.view.button.AppCompatCheckboxTriState
                 android:id="@+id/slideshow_image_favorite"

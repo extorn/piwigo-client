@@ -375,22 +375,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         resourceTitleView = v.findViewById(R.id.slideshow_resource_item_title);
         resourceDescTitleView = v.findViewById(R.id.slideshow_resource_item_desc_title);
-        resourceTitleView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!bottomSheet.isEnabled()) {
-                    bottomSheet.setEnabled(true);
-                    bottomSheet.setVisibility(VISIBLE);
-                }
-                bottomSheet.openLayer(true);
-            }
-        });
-//        resourceDescTitleView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                bottomSheet.openLayer(true);
-//            }
-//        });
+        resourceTitleView.setOnClickListener(v12 -> openInformationPanelIfAppropriate());
+        resourceDescTitleView.setOnClickListener(v1 -> openInformationPanelIfAppropriate());
+        v.findViewById(R.id.show_information_action_button).setOnClickListener(v12 -> openInformationPanelIfAppropriate());
 
         averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -419,6 +406,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
 
         return v;
+    }
+
+    private void openInformationPanelIfAppropriate() {
+        if(!bottomSheet.isEnabled()) {
+            bottomSheet.setEnabled(true);
+            bottomSheet.setVisibility(VISIBLE);
+        }
+        bottomSheet.openLayer(true);
     }
 
     protected void addViewVisibleControl(View v) {
