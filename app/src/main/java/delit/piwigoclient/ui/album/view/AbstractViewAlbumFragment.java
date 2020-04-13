@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.album.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.os.Parcelable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -57,6 +55,7 @@ import java.util.Map;
 import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
@@ -436,15 +435,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
-        viewPrefs.withAlbumWidth(getScreenWidth(requireActivity()) / albumsPerRow);
+        viewPrefs.withAlbumWidthInches(DisplayUtils.getScreenWidthInches(requireActivity()) / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
         return viewPrefs;
-    }
-
-    private float getScreenWidth(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.widthPixels / dm.xdpi;
     }
 
     public AlbumItemRecyclerViewAdapterPreferences getViewPrefs() {
@@ -700,6 +693,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (getSelectedItemsNoException().size() > 0 && basket.isEmpty());
     }
 
+    private boolean showBulkDownloadAction(Basket basket) {
+        return viewAdapter.isItemSelectionAllowed() && (getSelectedItemsNoException().size() > 0 && basket.isEmpty());
+    }
+
     private boolean showBulkPermissionsAction(Basket basket) {
         return PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && viewAdapter.isItemSelectionAllowed() && (getSelectedItemsNoException().size() > 0 && basket.isEmpty());
     }
@@ -809,6 +806,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 bulkActionButtonDelete.show();
             } else {
                 bulkActionButtonDelete.hide();
+            }
+            if (!reopening && showBulkDownloadAction(basket)) {
+                bulkActionButtonDownload.show();
+            } else {
+                bulkActionButtonDownload.hide();
             }
             if (!reopening && showBulkCopyAction(basket)) {
                 bulkActionButtonCopy.show();
@@ -1078,6 +1080,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 bulkActionButtonDelete.show();
             } else {
                 bulkActionButtonDelete.hide();
+            }
+            if (showBulkDownloadAction(basket)) {
+                bulkActionButtonDownload.show();
+            } else {
+                bulkActionButtonDownload.hide();
             }
             if (showBulkCopyAction(basket)) {
                 bulkActionButtonCopy.show();

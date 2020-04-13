@@ -198,16 +198,27 @@ public class DisplayUtils {
         return hideKeyboardFrom(context, window);
     }
 
-    private static float getScreenWidthInches(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
+    public static float getScreenWidthInches(Activity activity) {
+        DisplayMetrics dm = activity.getResources().getDisplayMetrics();
+//        DisplayMetrics dm = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.widthPixels / dm.xdpi;
+        float dpi = dm.xdpi;
+        if(dm.xdpi == dm.scaledDensity) {
+            //xdpi is garbage. Use DPI
+            dpi = dm.densityDpi;
+        }
+        return (float) dm.widthPixels / dpi;
     }
 
-    private static float getScreenHeightInches(Activity activity) {
+    public static float getScreenHeightInches(Activity activity) {
         DisplayMetrics dm = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.heightPixels / dm.xdpi;
+        float dpi = dm.xdpi;
+        if(dm.xdpi == dm.scaledDensity) {
+            //xdpi is garbage. Use DPI
+            dpi = dm.densityDpi;
+        }
+        return (float) dm.heightPixels / dpi;
     }
 
     public static int getDefaultColumnCount(@NonNull Activity activity, int screenOrientation, double minWidthInches) {
@@ -219,6 +230,7 @@ public class DisplayUtils {
             screenWidth = getScreenHeightInches(activity);
         }
         int columnsToShow = (int) Math.max(1, Math.round(screenWidth) / minWidthInches); // never allow less than one column by default.
+        columnsToShow = Math.min(columnsToShow, 20); // sanity catch all!
         return columnsToShow;
     }
 

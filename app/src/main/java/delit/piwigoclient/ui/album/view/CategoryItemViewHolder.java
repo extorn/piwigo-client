@@ -67,12 +67,12 @@ public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
         }
 
 
-        float albumWidth = parentAdapter.getAdapterPrefs().getAlbumWidth();
-//        if (albumWidth > 3) {
+        float albumWidthInches = parentAdapter.getAdapterPrefs().getAlbumWidthInches();
+//        if (albumWidthInches > 3) {
 //            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
-//        } else if (albumWidth > 2.4) {
+//        } else if (albumWidthInches > 2.4) {
 //            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-//        } else if (albumWidth > 1.8) {
+//        } else if (albumWidthInches > 1.8) {
 //            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 //        } else {
 //            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);

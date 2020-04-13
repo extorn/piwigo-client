@@ -6,7 +6,7 @@
     <!--ignore error as manifest is merged with the main one which is indexable -->
 
     <application
-        android:requestLegacyExternalStorage="true"
+        android:requestLegacyExternalStorage="false"
         android:name="delit.piwigoclient.ui.MyApplication"
         tools:node="merge"
         android:fullBackupContent="@xml/backup_descriptor"

@@ -27,7 +27,7 @@ android {
     }
 
     buildToolsVersion '29.0.3'
-    compileSdkVersion 29
+    compileSdkVersion 'android-R'
 
     defaultConfig {
         buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.9\""
@@ -124,7 +124,7 @@ android {
 
 dependencies {
     // room database persistence libs used to track files previously uploaded
-    def room_version = "2.2.4"
+    def room_version = "2.2.5"
     paidImplementation "androidx.room:room-runtime:$room_version"
     paidAnnotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
 
@@ -132,7 +132,7 @@ dependencies {
     implementation project(path: ':google-licencing-library')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     // prevent side loading (validate if this is attempted)
-    implementation 'com.google.android.play:core:1.7.0'
+    implementation 'com.google.android.play:core:1.7.2'
     //implementation 'com.android.tools.build:bundletool:0.9.0'
 
     implementation 'com.wunderlist:sliding-layer:1.2.5'
@@ -167,7 +167,7 @@ dependencies {
     // custom tab support
     implementation 'androidx.browser:browser:1.2.0'
     //EXIF Support
-    implementation 'androidx.exifinterface:exifinterface:1.1.0'
+    implementation 'androidx.exifinterface:exifinterface:1.2.0'
     // Core libraries (v4)
     //implementation 'androidx.legacy:legacy-support-v4:1.0.0' // needed for v7 libs since 27.1.1
     //implementation 'com.android.support:support-core-ui:27.1.1'
@@ -184,14 +184,14 @@ dependencies {
     implementation 'androidx.transition:transition:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout-solver:1.1.3' //2.0.0-alpha2
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3' //2.0.0-alpha2
-    implementation 'com.google.firebase:firebase-core:17.2.3'
+    implementation 'com.google.firebase:firebase-core:17.3.0'
     //implementation com.google.firebase:firebase-analytics:16.0.3
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-ads:19.0.0'
-    implementation 'com.google.android.gms:play-services-base:17.1.0'
+    implementation 'com.google.firebase:firebase-ads:19.0.1'
+    implementation 'com.google.android.gms:play-services-base:17.2.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     // firebase-perf must be lower version than firebase-core and play-services*
-    implementation 'com.google.firebase:firebase-perf:19.0.5'
+    implementation 'com.google.firebase:firebase-perf:19.0.6'
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

@@ -19,7 +19,7 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
     private String preferredThumbnailSize;
     private String preferredAlbumThumbnailSize;
     private boolean showAlbumThumbnailsZoomed;
-    private float albumWidth;
+    private float albumWidthInches;
     private boolean showResourceNames;
 
     public AlbumItemRecyclerViewAdapterPreferences() {
@@ -32,7 +32,7 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         b.putString("preferredThumbnailSize", preferredThumbnailSize);
         b.putString("preferredAlbumThumbnailSize", preferredAlbumThumbnailSize);
         b.putBoolean("showAlbumThumbnailsZoomed", showAlbumThumbnailsZoomed);
-        b.putFloat("albumWidth", albumWidth);
+        b.putFloat("albumWidth", albumWidthInches);
         b.putBoolean("showResourceNames", showResourceNames);
 //                b.putInt("scalingQuality", scalingQuality);
         super.storeToBundle(b);
@@ -48,7 +48,7 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
             preferredThumbnailSize = b.getString("preferredThumbnailSize");
             preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
             showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
-            albumWidth = b.getFloat("albumWidth");
+            albumWidthInches = b.getFloat("albumWidth");
             showResourceNames = b.getBoolean("showResourceNames");
 //                scalingQuality = b.getInt("scalingQuality");
             super.loadFromBundle(b);
@@ -71,8 +71,8 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return this;
     }
 
-    public AlbumItemRecyclerViewAdapterPreferences withAlbumWidth(float albumWidth) {
-        this.albumWidth = albumWidth;
+    public AlbumItemRecyclerViewAdapterPreferences withAlbumWidthInches(float albumWidthInches) {
+        this.albumWidthInches = albumWidthInches;
         return this;
     }
 
@@ -94,8 +94,8 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return preferredThumbnailSize;
     }
 
-    public float getAlbumWidth() {
-        return albumWidth;
+    public float getAlbumWidthInches() {
+        return albumWidthInches;
     }
 
     public int getScalingQuality() {

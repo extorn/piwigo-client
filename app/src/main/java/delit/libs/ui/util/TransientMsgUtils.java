@@ -21,7 +21,13 @@ public class TransientMsgUtils {
         View v = inflater.inflate(R.layout.toast_detailed_notification, null);
         toast.setView(v);
         toast.setDuration(duration);
-        toast.setText(message);
+        try {
+            toast.setText(message);
+        } catch (IllegalStateException e) {
+            // on Android 11
+            TextView textView = v.findViewById(android.R.id.message);
+            textView.setText(message);
+        }
         ((TextView)v.findViewById(R.id.toast_title)).setText(titleResId);
         ImageView icon = v.findViewById(R.id.toast_icon);
         switch(titleResId) {
