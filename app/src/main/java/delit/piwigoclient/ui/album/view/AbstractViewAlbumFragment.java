@@ -863,7 +863,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     protected HashSet<ResourceItem> getSelectedItems() {
-        return viewAdapter.getSelectedItems();
+        try {
+            return viewAdapter.getSelectedItems();
+        } catch(IllegalStateException e) {
+            if(galleryModel.isFullyLoaded()) {
+                viewAdapter.clearSelectedItemIds(); // the items aren't here any more, but we have all items
+                return viewAdapter.getSelectedItems();
+            } else {
+                throw e;
+            }
+        }
     }
 
     private void updateResourcePermissions(final HashSet<Long> imageIds, final byte privacyLevel) {
