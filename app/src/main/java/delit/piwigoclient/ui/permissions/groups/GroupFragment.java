@@ -286,33 +286,48 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse>() {
-
-                @Override
-                public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
-                    HashSet<Group> groups = response.getGroups();
-                    if(groups.isEmpty()) {
-                        getParentFragmentManager().popBackStack();
-                        return false;
-                    }
-                    currentGroup = groups.iterator().next();
-                    if(newGroup == null) {
-                        setFieldsFromModel(currentGroup);
-                    }
-                    return false;
-                }
-
-                @Override
-                public boolean onFailure(FragmentUIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                    getParentFragmentManager().popBackStack();
-                    return false;
-                }
-            };
+            UIHelper.Action action = new GroupFragmentAction();
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_group_details, new GroupsGetListResponseHandler(currentGroup.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getParentFragmentManager().popBackStack();
         }
+    }
+
+    private static class GroupFragmentAction extends UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse> {
+
+        @Override
+        public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+            HashSet<Group> groups = response.getGroups();
+            GroupFragment groupFragment = uiHelper.getParent();
+            if(groups.isEmpty()) {
+                groupFragment.getParentFragmentManager().popBackStack();
+                return false;
+            }
+            groupFragment.setCurrentGroup(groups.iterator().next());
+            if(groupFragment.getNewGroup() == null) {
+                groupFragment.setFieldsFromModel(groupFragment.getCurrentGroup());
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onFailure(FragmentUIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            uiHelper.getParent().getParentFragmentManager().popBackStack();
+            return false;
+        }
+    };
+
+    public Group getNewGroup() {
+        return newGroup;
+    }
+
+    public void setCurrentGroup(Group currentGroup) {
+        this.currentGroup = currentGroup;
+    }
+
+    public Group getCurrentGroup() {
+        return currentGroup;
     }
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {

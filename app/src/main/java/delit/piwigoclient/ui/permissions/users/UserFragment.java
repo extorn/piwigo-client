@@ -419,33 +419,57 @@ public class UserFragment extends MyFragment<UserFragment> {
         return v;
     }
 
+    User getUser() {
+        return user;
+    }
+
+    void setUser(User user) {
+        this.user = user;
+    }
+
+    User getNewUser() {
+        return newUser;
+    }
+
+    HashSet<Long> getCurrentDirectAlbumPermissions() {
+        return currentDirectAlbumPermissions;
+    }
+
+    HashSet<Long> getCurrentIndirectAlbumPermissions() {
+        return currentIndirectAlbumPermissions;
+    }
+
+    private static class UserFragmentAction extends UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> {
+
+        @Override
+        public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
+            UserFragment userFragment = uiHelper.getParent();
+            userFragment.setUser(response.getSelectedUser());
+
+            if(userFragment.getNewUser() == null) {
+                if (userFragment.getUser() != null) {
+                    userFragment.setFieldsFromModel(userFragment.getUser());
+                    userFragment.populateAlbumPermissionsList(userFragment.getCurrentDirectAlbumPermissions(), userFragment.getCurrentIndirectAlbumPermissions());
+                } else {
+                    uiHelper.showDetailedMsg(R.string.alert_error, userFragment.getString(R.string.user_details_not_found_on_server));
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            uiHelper.getParent().getParentFragmentManager().popBackStack();
+            return false;
+        }
+    };
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse>() {
-
-                @Override
-                public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
-                    user = response.getSelectedUser();
-                    if(newUser == null) {
-                        if (user != null) {
-                            setFieldsFromModel(user);
-                            populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
-                        } else {
-                            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.user_details_not_found_on_server));
-                        }
-                    }
-                    return false;
-                }
-
-                @Override
-                public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                    getParentFragmentManager().popBackStack();
-                    return false;
-                }
-            };
+            UIHelper.Action action = new UserFragmentAction();
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_user_details, new UserGetInfoResponseHandler(user.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.

@@ -96,36 +96,44 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
         }
     }
 
+    @Override
+    public String getLogTag() {
+        return TAG;
+    }
+
+    private static class ReloadTagSlideshowModelAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>,
+            AbstractSlideshowFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
+
+        @Override
+        public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+            boolean updated = false;
+            AbstractSlideshowFragment slideshowFragment = uiHelper.getParent();
+            for(Tag t : response.getTags()) {
+                if (t.getId() == slideshowFragment.getResourceContainer().getId()) {
+                    // tag has been located!
+                    slideshowFragment.setContainerDetails(new PiwigoTag(t));
+                    updated = true;
+                }
+            }
+            if(!updated) {
+                //Something wierd is going on - this should never happen
+                Crashlytics.log(Log.ERROR, slideshowFragment.getLogTag(), "Closing tag slideshow - tag was not available after refreshing session");
+                slideshowFragment.getParentFragmentManager().popBackStack();
+                return false;
+            }
+            slideshowFragment.loadMoreGalleryResources();
+            return false;
+        }
+
+        @Override
+        public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            uiHelper.getParent().getParentFragmentManager().popBackStack();
+            return false;
+        }
+    };
+
     private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>,
-                AbstractSlideshowFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
-
-            @Override
-            public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-                boolean updated = false;
-                for(Tag t : response.getTags()) {
-                    if (t.getId() == getResourceContainer().getId()) {
-                        // tag has been located!
-                        setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoTag(t));
-                        updated = true;
-                    }
-                }
-                if(!updated) {
-                    //Something wierd is going on - this should never happen
-                    Crashlytics.log(Log.ERROR, getTag(), "Closing tag slideshow - tag was not available after refreshing session");
-                    getParentFragmentManager().popBackStack();
-                    return false;
-                }
-                loadMoreGalleryResources();
-                return false;
-            }
-
-            @Override
-            public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                getParentFragmentManager().popBackStack();
-                return false;
-            }
-        };
+        UIHelper.Action action = new ReloadTagSlideshowModelAction();
 
         if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), action);
