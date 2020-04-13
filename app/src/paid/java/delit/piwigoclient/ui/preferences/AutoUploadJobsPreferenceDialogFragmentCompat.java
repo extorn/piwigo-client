@@ -109,6 +109,14 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         loadListValues(uploadJobIds);
     }
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog d =  super.onCreateDialog(savedInstanceState);
+        d.setCancelable(!jobsHaveChanged); // force explicit cancel if the jobs list has altered
+        return d;
+    }
+
     @Override
     protected View onCreateDialogView(Context context) {
         return buildListView();
@@ -132,6 +140,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
         view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
         view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
+        view.findViewById(R.id.list_action_save_button).setVisibility(View.GONE);
 
         TextView heading = view.findViewById(R.id.heading);
         heading.setText(R.string.preference_data_upload_automatic_upload_jobs_title);
@@ -139,8 +148,6 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
         itemListView = view.findViewById(R.id.list);
 
-//        view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
-        view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
         View addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +155,6 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
                 onDisplayUploadJob(null);
             }
         });
-        view.findViewById(R.id.list_action_save_button).setVisibility(View.GONE);
 
         return view;
     }

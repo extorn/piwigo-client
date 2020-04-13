@@ -1825,7 +1825,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                         onResourceUpdateProcessed(response);
                         break;
                     default:
-                        Crashlytics.log(Log.WARN, getTag(), "unsupported bulk resource action type");
+                        Crashlytics.log(Log.WARN, TAG, "unsupported bulk resource action type");
                 }
             } else {
                 onResourceMoved(response);

@@ -39,6 +39,7 @@ import delit.piwigoclient.ui.events.ToolbarEvent;
 
 public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
+    private static final String TAG = "MyFrag";
     private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final String STATE_ACTIVE_SERVER_CONNECTION = "activeServerConnection";
     protected SharedPreferences prefs;
@@ -156,7 +157,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
         if(AdsManager.getInstance().hasAdvertLoadProblem(getContext())) {
-            Crashlytics.log(Log.INFO, getTag(), "warning user that adverts are unavailable");
+            Crashlytics.log(Log.INFO, TAG, "warning user that adverts are unavailable");
             prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).apply();
             uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener(getUiHelper()));
         }

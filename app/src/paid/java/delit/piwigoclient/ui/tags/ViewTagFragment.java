@@ -822,7 +822,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             }
             if (!updated) {
                 //Something wierd is going on - this should never happen
-                Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing tag - tag was not available after refreshing session");
+                Crashlytics.log(Log.ERROR, TAG, "Closing tag - tag was not available after refreshing session");
                 fragment.getParentFragmentManager().popBackStack();
                 return false;
             }

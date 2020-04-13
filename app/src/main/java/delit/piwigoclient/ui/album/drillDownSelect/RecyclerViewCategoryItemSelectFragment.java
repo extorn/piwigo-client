@@ -55,6 +55,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEve
 import static android.view.View.NO_ID;
 
 public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter, CategoryItemViewAdapterPreferences> implements BackButtonHandler {
+    private static final String TAG = "RecViewCatItemSelFr";
     private static final String ACTIVE_ITEM = "RecyclerViewCategoryItemSelectFragment.activeCategory";
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewCategoryItemSelectFragment.actionStartTime";
@@ -142,7 +143,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             public void onClick(View v) {
                 CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
                 if (listAdapter == null) {
-                    Crashlytics.log(Log.ERROR, getTag(), "List adapter is null - weird");
+                    Crashlytics.log(Log.ERROR, TAG, "List adapter is null - weird");
                 } else {
                     CategoryItem selectedAlbum = listAdapter.getActiveItem();
                     if (selectedAlbum != null) {

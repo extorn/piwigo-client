@@ -137,7 +137,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             super.onCreate(savedInstanceState);
 
         } catch (ModelUnavailableException e) {
-            Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
+            Crashlytics.log(Log.ERROR, TAG, "Unable to create fragment as model isn't available.");
         }
     }
 
@@ -401,6 +401,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         return new CustomPiwigoResponseListener();
     }
 
+    public String getLogTag() {
+        return TAG;
+    }
+
     private static class AlbumLoadResponseAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>, AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
 
         @Override
@@ -414,7 +418,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             CategoryItem currentAlbum = response.getAlbums().get(0);
             if (currentAlbum.getId() != fragment.resourceContainer.getId()) {
                 //Something wierd is going on - this should never happen
-                Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing slideshow - reloaded album had different id to that expected!");
+                Crashlytics.log(Log.ERROR, TAG, "Closing slideshow - reloaded album had different id to that expected!");
                 fragment.getParentFragmentManager().popBackStack();
                 return false;
             }

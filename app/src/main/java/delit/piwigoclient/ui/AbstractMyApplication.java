@@ -8,12 +8,14 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -121,6 +123,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                         }
                         editor.remove(key);
                         editor.putStringSet(key, cleanedValues);
+                        Crashlytics.log(Log.DEBUG, TAG, "Upgraded media extensions preference from string to Set<String>");
                     } catch (ClassCastException e) {
                         // will occur if the user has previously migrated preferences at version 222!
                     }
@@ -235,6 +238,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             bundle.putInt("from_version", currentPrefsVersion);
             bundle.putInt("to_version", latestAppVersion);
             FirebaseAnalytics.getInstance(this).logEvent("app_upgraded", bundle);
+            Crashlytics.log(Log.DEBUG, TAG, "Upgraded app Preferences from " + currentPrefsVersion +" to " + latestAppVersion + " and saved");
         }
     }
 
@@ -256,10 +260,12 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
         public final void execute(Context context, SharedPreferences prefs, int currentPrefsVersion) {
             if (currentPrefsVersion < prefsVersion) {
+                Crashlytics.log(Log.DEBUG, TAG, "Upgrading app Preferences from " + currentPrefsVersion +" to " + prefsVersion);
                 SharedPreferences.Editor editor = prefs.edit();
                 upgradePreferences(context, prefs, editor);
                 editor.putInt(context.getString(R.string.preference_app_prefs_version_key), prefsVersion);
                 editor.commit(); // need to wait for it - make sure they're written to disk in order
+                Crashlytics.log(Log.DEBUG, TAG, "Upgraded app Preferences to " + prefsVersion);
             }
         }
 

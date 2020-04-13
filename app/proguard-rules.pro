@@ -149,7 +149,8 @@
 ###-keep class android.support.v7.** { public *; }
 
 -keep class com.google.firebase.** { public *; }
--keep class com.crashlytics.** { public *; }
+-keep class com.crashlytics.** { *; } # faster builds - don't obfuscate crashlytics
+-dontwarn com.crashlytics.** # faster builds - don't warn for crashlytics
 -keep class io.fabric.sdk.android.services.** { public *; }
 -keep class io.fabric.sdk.android.Kit { public *; }
 -keep class io.fabric.sdk.android.Logger { public *; }
@@ -165,6 +166,7 @@
 -keep class **.R$*  { public *; }
 -keep class delit.piwigoclient.database.**  { public *; }
 
+-keepattributes *Annotation* # Keep crashlytics annotations (allow deobfuscated crashlytics stacktraces - unconfirmed as correct
 #-keep public class * implements java.lang.annotation.Annotation { *; }
 ###-keep class delit.piwigoclient.**.*Activity { public *; }
 

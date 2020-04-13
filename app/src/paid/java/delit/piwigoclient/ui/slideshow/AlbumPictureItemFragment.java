@@ -29,6 +29,7 @@ import pl.droidsonroids.gif.GifDrawable;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
+    private static final String TAG = "AlbumPicItemFr";
     private ViewPager resourceDetailsViewPager;
 
     public static AlbumPictureItemFragment newInstance(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
@@ -98,7 +99,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ExifDataRetrievedEvent event) {
         if(event.getUri() == null) {
-            Crashlytics.log(Log.ERROR, getTag(), "invalid event received");
+            Crashlytics.log(Log.ERROR, TAG, "invalid event received");
         } else if(getCurrentImageUrlDisplayed() != null && event.getUri().startsWith(getCurrentImageUrlDisplayed())) {
             setupExifDataTab(resourceDetailsViewPager, event.getMetadata());
         }

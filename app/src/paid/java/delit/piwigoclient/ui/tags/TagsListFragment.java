@@ -59,7 +59,7 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
  * Created by gareth on 26/05/17.
  */
 public class TagsListFragment extends MyFragment<TagsListFragment> {
-
+    private static final String TAG = "TagsListFrag";
     private static final String TAGS_MODEL = "tagsModel";
     private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
@@ -284,7 +284,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
                     addNewTagDialog.getButton(
                             AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
                 } catch (RuntimeException e) {
-                    Crashlytics.log(Log.ERROR, getTag(), "Error in on tag name change");
+                    Crashlytics.log(Log.ERROR, TAG, "Error in on tag name change");
                     Crashlytics.logException(e);
                 }
             }
