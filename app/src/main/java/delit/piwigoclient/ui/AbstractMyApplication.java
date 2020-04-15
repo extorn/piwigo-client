@@ -59,6 +59,15 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         return resources;
     }
 
+    private void upgradeConnectionProfilePreference(Context context, String profileId, @StringRes int profileKey, ConnectionPreferenceUpgradeAction action) {
+        ConnectionPreferences.ProfilePreferences.PreferenceActor actor = ConnectionPreferences.getPreferenceActor(context, profileId, profileKey);
+        action.upgrade(actor);
+    }
+
+    private interface ConnectionPreferenceUpgradeAction {
+        void upgrade(ConnectionPreferences.ProfilePreferences.PreferenceActor actor);
+    }
+
     protected List<PreferenceMigrator> getPreferenceMigrators() {
         List<PreferenceMigrator> migrators = new ArrayList<>();
 
@@ -95,38 +104,40 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                     editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
                     editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
                     editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
-
-                    Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
-                    for (String profile : connectionProfiles) {
-                        ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
-                        int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
-                        if (currentTimeout >= 1000) {
-                            currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
-                            connPrefs.getPrefActor().with(R.string.preference_server_connection_timeout_secs_key).writeInt(editor, context, currentTimeout);
-                        }
-                    }
                 }
-
-                String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
-                if (prefs.contains(key)) {
-                    try {
-                        String multimediaCsvList = prefs.getString(key, null);
-                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                        HashSet<String> cleanedValues = new HashSet<>(values.size());
-                        for (String value : values) {
-                            int dotIdx = value.indexOf('.');
-                            if (dotIdx < 0) {
-                                cleanedValues.add(value.toLowerCase());
-                            } else {
-                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
+                for (String profileId : connectionProfiles) {
+                    upgradeConnectionProfilePreference(context, profileId, R.string.preference_server_connection_timeout_secs_key, new ConnectionPreferenceUpgradeAction() {
+                        public void upgrade(ConnectionPreferences.ProfilePreferences.PreferenceActor actor) {
+                            int currentTimeout = actor.readInt(prefs, getApplicationContext(), -1);
+                            if (currentTimeout >= 1000) {
+                                currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
+                                actor.writeInt(editor, context, currentTimeout);
                             }
                         }
-                        editor.remove(key);
-                        editor.putStringSet(key, cleanedValues);
-                        Crashlytics.log(Log.DEBUG, TAG, "Upgraded media extensions preference from string to Set<String>");
-                    } catch (ClassCastException e) {
-                        // will occur if the user has previously migrated preferences at version 222!
-                    }
+                    });
+                    upgradeConnectionProfilePreference(context, profileId, R.string.preference_piwigo_playable_media_extensions_key, new ConnectionPreferenceUpgradeAction() {
+                        public void upgrade(ConnectionPreferences.ProfilePreferences.PreferenceActor actor) {
+                            try {
+                                String multimediaCsvList = actor.readString(prefs, context, null);
+                                HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+                                HashSet<String> cleanedValues = new HashSet<>(values.size());
+                                for (String value : values) {
+                                    int dotIdx = value.indexOf('.');
+                                    if (dotIdx < 0) {
+                                        cleanedValues.add(value.toLowerCase());
+                                    } else {
+                                        cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                                    }
+                                }
+                                actor.remove(editor, context);
+                                actor.writeStringSet(editor, context, cleanedValues);
+                                Crashlytics.log(Log.DEBUG, TAG, "Upgraded media extensions preference from string to Set<String>");
+                            } catch (ClassCastException e) {
+                                // will occur if the user has previously migrated preferences at version 222!
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -134,25 +145,28 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
             @Override
             protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
-                String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
-                if (prefs.contains(key)) {
-                    try {
-                        String multimediaCsvList = prefs.getString(key, null);
-                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                        HashSet<String> cleanedValues = new HashSet<>(values.size());
-                        for (String value : values) {
-                            int dotIdx = value.indexOf('.');
-                            if (dotIdx < 0) {
-                                cleanedValues.add(value.toLowerCase());
-                            } else {
-                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
+                for (String profileId : connectionProfiles) {
+                    upgradeConnectionProfilePreference(context, profileId, R.string.preference_piwigo_playable_media_extensions_key, actor -> {
+                        try {
+                            String multimediaCsvList = actor.readString(prefs, context, null);
+                            HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+                            HashSet<String> cleanedValues = new HashSet<>(values.size());
+                            for (String value : values) {
+                                int dotIdx = value.indexOf('.');
+                                if (dotIdx < 0) {
+                                    cleanedValues.add(value.toLowerCase());
+                                } else {
+                                    cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                                }
                             }
+                            actor.remove(editor, context);
+                            actor.writeStringSet(editor, context, cleanedValues);
+                            Crashlytics.log(Log.DEBUG, TAG, "Upgraded media extensions preference from string to Set<String>");
+                        } catch (ClassCastException e) {
+                            // will occur if the user has previously migrated preferences at version 222!
                         }
-                        editor.remove(key);
-                        editor.putStringSet(key, cleanedValues);
-                    } catch (ClassCastException e) {
-                        // will occur if the user has previously migrated preferences at version 240!
-                    }
+                    });
                 }
             }
         });
@@ -174,11 +188,13 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         if(prefs.contains(prefKey)) {
             String value = prefs.getString(prefKey, null); // default value is NEVER used
             Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
-            for (String profile : connectionProfiles) {
-                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
-                if(!ConnectionPreferences.getActiveProfile().equals(connPrefs)) { // because its already in the active profile.
-                    connPrefs.getPrefActor().with(prefId).writeString(editor, context, value);
-                }
+            for (String profileId : connectionProfiles) {
+                upgradeConnectionProfilePreference(context, profileId, prefId, actor -> {
+
+                    if(!actor.isForActiveProfile()) { // because its already in the active profile.
+                        actor.writeString(editor, context, value);
+                    }
+                });
             }
         }
     }
@@ -189,11 +205,13 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         if(prefs.contains(prefKey)) {
             Set<String> value = prefs.getStringSet(prefKey, null); // default value is NEVER used
             Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
-            for (String profile : connectionProfiles) {
-                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
-                if(!ConnectionPreferences.getActiveProfile().equals(connPrefs)) { // because its already in the active profile.
-                    connPrefs.getPrefActor().with(prefId).writeStringSet(editor, context, value);
-                }
+            for (String profileId : connectionProfiles) {
+                upgradeConnectionProfilePreference(context, profileId, prefId, actor -> {
+
+                    if(!actor.isForActiveProfile()) { // because its already in the active profile.
+                        actor.writeStringSet(editor, context, value);
+                    }
+                });
             }
         }
     }

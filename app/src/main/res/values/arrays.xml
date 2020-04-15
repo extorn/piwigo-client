@@ -262,6 +262,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.62</item>
+        <item>"Bugfix:
+            - Preference upgrade process fixed for people upgrading a several versions old version off the app to the latest available
+            - Upload job status file not saving
+            - Upload job (incorrectly) started while video still being written to by device camera"</item>
         <item>1.4.0.61</item>
         <item>"Bugfix:
                 - Several little bug fixes

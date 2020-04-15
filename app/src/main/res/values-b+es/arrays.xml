@@ -138,6 +138,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.62</item>
+        <item>"Arreglo del fallo:
+             - Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones de la aplicación a la última disponible
+             - Subir archivo de estado del trabajo no se guarda
+             - El trabajo de carga (incorrectamente) comenzó mientras la cámara del dispositivo todavía escribía el video"</item>
         <item>1.4.0.61</item>
         <item>"Arreglo del fallo:
                  - Varias pequeñas correcciones de errores

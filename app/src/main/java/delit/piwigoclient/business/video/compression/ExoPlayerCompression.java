@@ -423,10 +423,16 @@ public class ExoPlayerCompression {
 
         @Override
         public void run() {
-            super.run();
-            synchronized (activeCompressionThreads) {
-                activeCompressionThreads.remove(this);
-                activeCompressionThreads.notifyAll();
+            try {
+                super.run();
+                synchronized (activeCompressionThreads) {
+                    activeCompressionThreads.remove(this);
+                    activeCompressionThreads.notifyAll();
+                }
+            } catch(Exception e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.");
+                Crashlytics.logException(e);
+                cancel();
             }
         }
 

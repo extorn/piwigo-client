@@ -448,15 +448,75 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     private class CustomFileObserver extends FileObserver {
         private final BackgroundPiwigoUploadService uploadService;
+        private final File watchedFile;
+        private EventProcessor eventProcessor;
 
         CustomFileObserver(BackgroundPiwigoUploadService uploadService, File f) {
             super(f.getAbsolutePath(), FileObserver.CREATE ^ FileObserver.MOVED_TO);
             this.uploadService = uploadService;
+            this.watchedFile = f;
         }
 
         @Override
         public void onEvent(int event, @Nullable String path) {
-            uploadService.wakeIfWaiting();
+            switch(event) {
+                case FileObserver.CLOSE_WRITE:
+                case FileObserver.MOVED_TO:
+                case FileObserver.CREATE:
+                case FileObserver.MODIFY:
+                case FileObserver.ATTRIB:
+                    if(eventProcessor == null) {
+                        eventProcessor = new EventProcessor();
+                    }
+                    eventProcessor.execute(new File(watchedFile, path));
+                    break;
+                default:
+                    // do nothing for other events.
+            }
         }
+
+        private class EventProcessor extends Thread {
+
+            private File eventSourceFile;
+            private int lastEventId;
+            private boolean running;
+
+            @Override
+            public void run() {
+                while(!processEvent(eventSourceFile, lastEventId)){} // do until processed.
+                lastEventId = 0;
+            }
+
+            public void execute(File eventSourceFile) {
+                lastEventId++;
+                if(lastEventId <= 0) {
+                    lastEventId = 1;
+                }
+                this.eventSourceFile = eventSourceFile;
+                synchronized (this) {
+                    if (!running) {
+                        running = true;
+                        start();
+                    }
+                }
+            }
+
+            private boolean processEvent(File eventSourceFile, int eventId) {
+                long len = eventSourceFile.length();
+                long lastMod = eventSourceFile.lastModified();
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(eventId == lastEventId && len == eventSourceFile.length() && lastMod == eventSourceFile.lastModified()) {
+                    uploadService.wakeIfWaiting();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+
     }
 }

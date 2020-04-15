@@ -1,42 +1,42 @@
 
 <en-GB>
 Bugfix:
- - Several little bug fixes
-Change:
- - Enabled support for Android 11 - Please let me know if you can't see files to upload any more
+- Preference upgrade process fixed for people upgrading a several versions old version off the app to the latest available
+- Upload job status file not saving
+- Upload job (incorrectly) started while video still being written to by device camera
 </en-GB>
 
 <de-DE>
 Bug-Fix:
- - Einige kleine Fehlerbehebungen
-Veränderung:
- - Unterstützung für Android 11 aktiviert - Bitte lassen Sie mich wissen, wenn Sie keine Dateien mehr zum Hochladen sehen können
+- Der bevorzugte Aktualisierungsprozess wurde für Benutzer behoben, die eine alte Version mehrerer Versionen von der App auf die neueste verfügbare Version aktualisieren
+- Jobstatusdatei hochladen, nicht gespeichert
+- Der Upload-Auftrag wurde (falsch) gestartet, während das Video noch von der Gerätekamera beschrieben wird
 </de-DE>
 
 <fr-FR>
 Correction d'un bug:
- - Plusieurs petites corrections de bugs
-Changement:
- - Prise en charge activée pour Android 11 - Veuillez me faire savoir si vous ne pouvez plus voir les fichiers à télécharger
+- Processus de mise à niveau des préférences corrigé pour les personnes mettant à niveau une ancienne version de plusieurs versions de l'application vers la dernière version disponible
+- Le fichier de statut de la tâche de téléchargement n'est pas enregistré
+- La tâche de téléchargement (incorrecte) a commencé alors que la vidéo est toujours en cours d'écriture par la caméra de l'appareil
 </fr-FR>
 
 <es-ES>
 Arreglo del fallo:
- - Varias pequeñas correcciones de errores
-Cambio:
- - Soporte habilitado para Android 11 - Avíseme si ya no puede ver los archivos para cargar
+- Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones de la aplicación a la última disponible
+- Subir archivo de estado del trabajo no se guarda
+- El trabajo de carga (incorrectamente) comenzó mientras la cámara del dispositivo todavía escribía el video
 </es-ES>
 
 <zh-CN>
 错误修正：
- -修复了一些小错误
-更改：
- -已启用对Android 11的支持-如果看不到要上传的文件，请告知我
+-固定的首选项升级过程，使人们可以将应用程序的多个版本的旧版本升级到最新版本
+-上传作业状态文件未保存
+-在设备摄像机仍在写入视频的同时（错误地）开始了上传作业
 </zh-CN>
 
 <ru-RU>
 Исправлена ошибка:
- - Несколько небольших исправлений ошибок
-Изменить:
- - Включена поддержка Android 11 - Пожалуйста, дайте мне знать, если вы не видите файлы для загрузки больше
+- Исправлен процесс обновления настроек для людей, обновляющих несколько версий старой версии приложения до последней доступной
+- Загрузить файл статуса задания не сохраняется
+- Задание загрузки (неправильно) запущено, когда видео еще записывается на камеру устройства.
 </ru-RU>
