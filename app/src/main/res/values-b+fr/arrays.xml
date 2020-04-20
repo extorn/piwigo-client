@@ -133,6 +133,12 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.63</item>
+        <item>"Changements:
+                 - Ajout de la possibilité de sélectionner un dossier de téléchargement dans les préférences de l'application
+               Correction d'un bug:
+                 - Arrêtez les avertissements qui s'affichent pour le lecteur automatique de diaporama lorsqu'il est désactivé.
+                 - Sélectionnez le fichier actuellement visible lors de l'affichage de la boîte de dialogue de téléchargement de fichier"</item>
         <item>1.4.0.62</item>
         <item>"Correction d'un bug:
              - Processus de mise à niveau des préférences corrigé pour les personnes mettant à niveau une ancienne version de plusieurs versions de l'application vers la dernière version disponible

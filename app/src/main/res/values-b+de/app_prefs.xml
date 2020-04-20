@@ -341,6 +341,9 @@
     <string name="preference_app_always_show_nav_buttons_title">Navigationsschaltflächen immer anzeigen</string>
     <string name="preference_app_always_show_nav_buttons_summary">Aktivieren Sie diese Option, um das automatische Ausblenden der Navigationsschaltflächen zu verhindern</string>
 
+    <string name="preference_app_default_download_folder_title">In Ordner herunterladen</string>
+    <string name="preference_app_default_download_folder_summary">%1$s</string>
+
     <string name="preference_app_always_show_status_bar_title">Immer die Statusleiste anzeigen</string>
     <string name="preference_app_always_show_status_bar_summary">Aktivieren Sie diese Option, um das automatische Ausblenden der Statusleiste zu verhindern</string>
 

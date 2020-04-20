@@ -20,7 +20,12 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:choiceMode="singleChoice" />
-
+<!-- extra  attribs for spinner
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="9dp"
+        android:spinnerMode="dialog"
+        -->
     <TextView
         android:layout_margin="5dp"
         android:id="@+id/action"

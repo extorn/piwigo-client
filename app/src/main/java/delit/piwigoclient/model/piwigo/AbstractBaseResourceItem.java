@@ -444,4 +444,13 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     public boolean isResourceDetailsLikelyOutdated() {
         return isLikelyOutdated(resourceDetailsLoadedAt);
     }
+
+    public ResourceFile getResourceFileWithUri(@NonNull String uri) {
+        for(ResourceFile file : availableFiles) {
+            if(uri.equals(file.getUrl())) {
+                return file;
+            }
+        }
+        throw new IllegalArgumentException("No file could be found with the uri " + uri);
+    }
 }

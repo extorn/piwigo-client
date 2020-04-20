@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.ListPreference;
@@ -17,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.ui.common.preference.LocalFoldersListPreference;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
 public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFragment> {
@@ -142,6 +145,14 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
 
             }
         });
+
+        LocalFoldersListPreference appDownloadFolder = (LocalFoldersListPreference) findPreference(R.string.preference_app_default_download_folder_key);
+        if(!getPrefs().contains(appDownloadFolder.getKey())) {
+            File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            appDownloadFolder.setDefaultValue(downloadsFolder.getAbsolutePath());
+            appDownloadFolder.persistStringValue(downloadsFolder.getAbsolutePath());
+        }
+
     }
 
     @Override

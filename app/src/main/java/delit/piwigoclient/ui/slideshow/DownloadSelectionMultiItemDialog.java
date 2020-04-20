@@ -86,8 +86,14 @@ public class DownloadSelectionMultiItemDialog {
 
         int defaultFileSelectionPos = adapter.getPosition(defaultSelectedFilesizeName);
         if(defaultFileSelectionPos >= 0) {
+//            Spinner
+//            fileSelectList.setSelection(defaultFileSelectionPos, true);
+//            List view
             fileSelectList.setItemChecked(defaultFileSelectionPos, true);
         } else {
+            //            Spinner
+//            fileSelectList.setSelection(adapter.getCount() - 1, true);
+//            List view
             fileSelectList.setItemChecked(adapter.getCount() - 1, true);
         }
 
@@ -96,7 +102,10 @@ public class DownloadSelectionMultiItemDialog {
         });
 
         builder1.setPositiveButton(R.string.button_ok, (dialog, which) -> {
-            int pos = fileSelectList.getCheckedItemPosition();
+            // spinner
+            int pos = fileSelectList.getSelectedItemPosition();
+            // List view
+//            int pos = fileSelectList.getCheckedItemPosition();
             if(pos < 0) {
                 throw new IllegalStateException("OK button pressed without a valid file size selected");
             }

@@ -1,42 +1,48 @@
 
 <en-GB>
+Changes:
+- Added the option to select a download folder in app preferences
 Bugfix:
-- Preference upgrade process fixed for people upgrading a several versions old version off the app to the latest available
-- Upload job status file not saving
-- Upload job (incorrectly) started while video still being written to by device camera
+- Stop warnings showing for slideshow auto-drive when it is disabled.
+- Select currently visible file when showing file download dialog
 </en-GB>
 
 <de-DE>
-Bug-Fix:
-- Der bevorzugte Aktualisierungsprozess wurde für Benutzer behoben, die eine alte Version mehrerer Versionen von der App auf die neueste verfügbare Version aktualisieren
-- Jobstatusdatei hochladen, nicht gespeichert
-- Der Upload-Auftrag wurde (falsch) gestartet, während das Video noch von der Gerätekamera beschrieben wird
+Änderungen:
+- Die Option zum Auswählen eines Download-Ordners in den App-Einstellungen wurde hinzugefügt
+Fehlerbehebung:
+- Beenden Sie die Warnungen, die für das automatische Fahren der Diashow angezeigt werden, wenn diese deaktiviert ist.
+- Wählen Sie die aktuell sichtbare Datei aus, wenn der Dialog zum Herunterladen von Dateien angezeigt wird
 </de-DE>
 
 <fr-FR>
+Changements:
+- Ajout de la possibilité de sélectionner un dossier de téléchargement dans les préférences de l'application
 Correction d'un bug:
-- Processus de mise à niveau des préférences corrigé pour les personnes mettant à niveau une ancienne version de plusieurs versions de l'application vers la dernière version disponible
-- Le fichier de statut de la tâche de téléchargement n'est pas enregistré
-- La tâche de téléchargement (incorrecte) a commencé alors que la vidéo est toujours en cours d'écriture par la caméra de l'appareil
+- Arrêtez les avertissements qui s'affichent pour le lecteur automatique de diaporama lorsqu'il est désactivé.
+- Sélectionnez le fichier actuellement visible lors de l'affichage de la boîte de dialogue de téléchargement de fichier
 </fr-FR>
 
 <es-ES>
+Cambios:
+- Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación
 Arreglo del fallo:
-- Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones de la aplicación a la última disponible
-- Subir archivo de estado del trabajo no se guarda
-- El trabajo de carga (incorrectamente) comenzó mientras la cámara del dispositivo todavía escribía el video
+- Detenga las advertencias que se muestran para la presentación automática de diapositivas cuando está deshabilitada.
+- Seleccione el archivo actualmente visible al mostrar el diálogo de descarga de archivos
 </es-ES>
 
 <zh-CN>
+变化：
+-添加了在应用程序首选项中选择下载文件夹的选项
 错误修正：
--固定的首选项升级过程，使人们可以将应用程序的多个版本的旧版本升级到最新版本
--上传作业状态文件未保存
--在设备摄像机仍在写入视频的同时（错误地）开始了上传作业
+-当幻灯片自动播放功能被禁用时，停止显示警告。
+-显示文件下载对话框时选择当前可见的文件
 </zh-CN>
 
 <ru-RU>
+Изменения:
+- Добавлена возможность выбора папки для скачивания в настройках приложения
 Исправлена ошибка:
-- Исправлен процесс обновления настроек для людей, обновляющих несколько версий старой версии приложения до последней доступной
-- Загрузить файл статуса задания не сохраняется
-- Задание загрузки (неправильно) запущено, когда видео еще записывается на камеру устройства.
+- Остановить предупреждения, показывающие слайд-шоу автоматического вождения, когда он отключен.
+- Выберите текущий видимый файл при отображении диалога загрузки файла
 </ru-RU>

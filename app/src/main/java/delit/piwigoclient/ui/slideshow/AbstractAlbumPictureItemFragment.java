@@ -35,6 +35,7 @@ import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
+import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -343,7 +344,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             if (event.areAllPermissionsGranted()) {
                 //Granted
                 DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
-                AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
+                AbstractBaseResourceItem.ResourceFile resourceFile = getModel().getResourceFileWithUri(getCurrentImageUrlDisplayed());
+                AlertDialog dialog = dialogFactory.buildDialog(resourceFile.getName(), getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
                     @Override
                     public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {

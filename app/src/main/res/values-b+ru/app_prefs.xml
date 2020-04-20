@@ -260,6 +260,9 @@
     <string name="preference_app_always_show_nav_buttons_title">Всегда показывать кнопки навигации</string>
     <string name="preference_app_always_show_nav_buttons_summary">Включить, чтобы запретить автоматическое скрытие кнопок навигации</string>
 
+    <string name="preference_app_default_download_folder_title">Скачать в папку</string>
+    <string name="preference_app_default_download_folder_summary">%1$s</string>
+
     <string name="preference_app_always_show_status_bar_title">Всегда показывать строку состояния</string>
     <string name="preference_app_always_show_status_bar_summary">Включить, чтобы запретить автоматическое скрытие строки состояния</string>
 

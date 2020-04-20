@@ -482,8 +482,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     private File getDestinationFile(String outputFilename) {
-        File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        return new File(downloadsFolder, outputFilename);
+        return new File(AppPreferences.getAppDownloadFolder(getSharedPrefs(), this), outputFilename);
     }
 
     private void processDownloadEvent(DownloadFileRequestEvent event) {

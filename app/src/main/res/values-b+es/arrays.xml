@@ -138,6 +138,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.63</item>
+        <item>"Cambios:
+                 - Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación
+               Arreglo del fallo:
+                 - Detenga las advertencias que se muestran para la presentación automática de diapositivas cuando está deshabilitada.
+                 - Seleccione el archivo actualmente visible al mostrar el diálogo de descarga de archivos"</item>
         <item>1.4.0.62</item>
         <item>"Arreglo del fallo:
              - Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones de la aplicación a la última disponible

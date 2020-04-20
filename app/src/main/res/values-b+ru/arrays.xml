@@ -138,6 +138,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.63</item>
+        <item>"Изменения:
+                 - Добавлена возможность выбора папки для скачивания в настройках приложения
+               Исправлена ошибка:
+                 - Остановить предупреждения, показывающие слайд-шоу автоматического вождения, когда он отключен.
+                 - Выберите текущий видимый файл при отображении диалога загрузки файла"</item>
         <item>1.4.0.62</item>
         <item>"Исправлена ошибка:
              - Исправлен процесс обновления настроек для людей, обновляющих несколько версий старой версии приложения до последней доступной

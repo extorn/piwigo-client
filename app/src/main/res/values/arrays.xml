@@ -262,11 +262,17 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.63</item>
+        <item>"Changes:
+                - Added the option to select a download folder in app preferences
+              Bugfix:
+                - Stop warnings showing for slideshow auto-drive when it is disabled.
+                - Select currently visible file when showing file download dialog"</item>
         <item>1.4.0.62</item>
         <item>"Bugfix:
-            - Preference upgrade process fixed for people upgrading a several versions old version off the app to the latest available
-            - Upload job status file not saving
-            - Upload job (incorrectly) started while video still being written to by device camera"</item>
+                - Preference upgrade process fixed for people upgrading a several versions old version off the app to the latest available
+                - Upload job status file not saving
+                - Upload job (incorrectly) started while video still being written to by device camera"</item>
         <item>1.4.0.61</item>
         <item>"Bugfix:
                 - Several little bug fixes
@@ -274,9 +280,9 @@
                 - Enabled support for Android 11 - Please let me know if you can't see files to upload any more"</item>
         <item>1.4.0.60</item>
         <item>"Change:
-            - Changes to the app preferences page
-            - Added new preference for forcing one time user hints to be shown again
-            - paid app: Added an auto drive feature on the slideshow - new setting in the slideshow section of gallery preferences"</item>
+                - Changes to the app preferences page
+                - Added new preference for forcing one time user hints to be shown again
+                - paid app: Added an auto drive feature on the slideshow - new setting in the slideshow section of gallery preferences"</item>
         <item>1.4.0.59</item>
         <item>"Change:
                 - Allow download or sharing of multiple files after selecting them in the album view"</item>

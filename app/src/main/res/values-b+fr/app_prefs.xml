@@ -346,6 +346,9 @@
     <string name="preference_app_always_show_nav_buttons_title">Toujours afficher les boutons de navigation</string>
     <string name="preference_app_always_show_nav_buttons_summary">Activer pour empêcher le masquage automatique des boutons de navigation</string>
 
+    <string name="preference_app_default_download_folder_title">Télécharger dans le dossier</string>
+    <string name="preference_app_default_download_folder_summary">%1$s</string>
+
     <string name="preference_app_always_show_status_bar_title">Toujours afficher la barre d\'état</string>
     <string name="preference_app_always_show_status_bar_summary">Activer pour empêcher le masquage automatique de la barre d\'état</string>
 

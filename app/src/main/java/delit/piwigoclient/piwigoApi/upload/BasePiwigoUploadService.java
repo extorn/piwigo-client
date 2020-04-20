@@ -692,10 +692,18 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected void recordServerCallError(AbstractPiwigoWsResponseHandler handler, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         Bundle b = new Bundle();
-        b.putString("piwigoMethod", handler.getPiwigoMethod());
-        b.putString("requestParams", handler.getRequestParameters()==null?"null":handler.getRequestParameters().toString());
-        b.putString("responseType", handler.getResponse() == null ? null : handler.getResponse().getClass().getName());
-        b.putSerializable("error", handler.getError());
+        if(handler.getPiwigoMethod() != null) {
+            b.putString("piwigoMethod", handler.getPiwigoMethod());
+        }
+        if(handler.getRequestParameters() !=null) {
+            b.putString("requestParams", handler.getRequestParameters().toString());
+        }
+        if(handler.getResponse() != null) {
+            b.putString("responseType", handler.getResponse().getClass().getName());
+        }
+        if(handler.getError() != null) {
+            b.putSerializable("error", handler.getError());
+        }
         PiwigoSessionDetails.writeToBundle(b, connectionPrefs);
         FirebaseAnalytics.getInstance(this).logEvent("uploadError", b);
     }

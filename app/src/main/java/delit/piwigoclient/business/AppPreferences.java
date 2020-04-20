@@ -2,14 +2,33 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
+import android.os.FileUtils;
 
 import androidx.core.os.ConfigurationCompat;
+
+import java.io.File;
 
 import delit.piwigoclient.R;
 
 public class AppPreferences {
     public static boolean isAlwaysShowNavButtons(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_app_always_show_nav_buttons_key), context.getResources().getBoolean(R.bool.preference_app_always_show_nav_buttons_default));
+    }
+
+    public static File getAppDownloadFolder(SharedPreferences prefs, Context context) {
+        File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        String folder = prefs.getString(context.getString(R.string.preference_app_default_download_folder_key), null);
+        if(folder != null) {
+            File f = new File(folder);
+            if(!f.exists()) {
+                if(!f.mkdirs()) {
+                    f = downloadsFolder;
+                }
+            }
+            downloadsFolder = f;
+        }
+        return downloadsFolder;
     }
 
     public static boolean isAlwaysShowStatusBar(SharedPreferences prefs, Context context) {

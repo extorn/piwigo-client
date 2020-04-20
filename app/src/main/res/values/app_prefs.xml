@@ -443,6 +443,11 @@
     <string name="preference_app_always_show_nav_buttons_title">Always show navigation buttons</string>
     <string name="preference_app_always_show_nav_buttons_summary">Enable to prevent auto-hide of the navigation buttons</string>
 
+    <string name="preference_app_default_download_folder_key" translatable="false">preference_app_default_download_folder</string>
+    <string name="preference_app_default_download_folder_title">Download to folder</string>
+    <string name="preference_app_default_download_folder_summary">%1$s</string>
+
+
     <string name="preference_app_always_show_status_bar_key" translatable="false">preference_app_always_show_status_bar</string>
     <string name="preference_app_always_show_status_bar_title">Always show the status bar</string>
     <string name="preference_app_always_show_status_bar_summary">Enable to prevent auto-hide of the status bar</string>
