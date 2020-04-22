@@ -103,9 +103,9 @@ public class DownloadSelectionMultiItemDialog {
 
         builder1.setPositiveButton(R.string.button_ok, (dialog, which) -> {
             // spinner
-            int pos = fileSelectList.getSelectedItemPosition();
+//            int pos = fileSelectList.getSelectedItemPosition();
             // List view
-//            int pos = fileSelectList.getCheckedItemPosition();
+            int pos = fileSelectList.getCheckedItemPosition();
             if(pos < 0) {
                 throw new IllegalStateException("OK button pressed without a valid file size selected");
             }
