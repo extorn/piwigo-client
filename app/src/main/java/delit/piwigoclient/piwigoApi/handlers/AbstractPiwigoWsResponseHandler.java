@@ -17,11 +17,11 @@ import org.json.JSONException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
 import delit.libs.http.RequestParams;
+import delit.libs.util.IOUtils;
 import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -292,14 +292,14 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 }
             } else {
                 Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
-                String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+                String rawResponseStr = new String(rawData, IOUtils.getUtf8Charset());
                 PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr, isCached);
                 storeResponse(r);
             }
         } catch (JSONException|JsonIOException|NullPointerException|NumberFormatException e) {
             Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
             Crashlytics.logException(e);
-            String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+            String rawResponseStr = new String(rawData, IOUtils.getUtf8Charset());
             PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr, isCached);
             storeResponse(r);
         }

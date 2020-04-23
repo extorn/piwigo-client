@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import cz.msebera.android.httpclient.cookie.Cookie;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 
@@ -113,7 +114,7 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
         lastConn.setRequestMethod("POST");
         OutputStream os = lastConn.getOutputStream();
         BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(os, "UTF-8"));
+                new OutputStreamWriter(os, IOUtils.getUtf8Charset()));
         writer.write(postBody);
         writer.flush();
         writer.close();

@@ -29,6 +29,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -391,5 +393,13 @@ public class IOUtils {
 
     public static File changeFileExt(File file, String fileExt) {
         return new File(file.getParent(), getFileNameWithoutExt(file.getName()) + '.' + fileExt);
+    }
+
+    public static Charset getUtf8Charset() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return StandardCharsets.UTF_8;
+        } else {
+            return Charset.forName("UTF-8");
+        }
     }
 }
