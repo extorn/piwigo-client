@@ -197,7 +197,7 @@ public class RequestParams implements Serializable {
      * @param files the files array to add.
      * @throws FileNotFoundException if one of passed files is not found at time of assembling the requestparams into request
      */
-    public void put(String key, File files[]) throws FileNotFoundException {
+    public void put(String key, File[] files) throws FileNotFoundException {
         put(key, files, null, null);
     }
 
@@ -210,7 +210,7 @@ public class RequestParams implements Serializable {
      * @param customFileName file name to use instead of real file name
      * @throws FileNotFoundException throws if wrong File argument was passed
      */
-    public void put(String key, File files[], String contentType, String customFileName) throws FileNotFoundException {
+    public void put(String key, File[] files, String contentType, String customFileName) throws FileNotFoundException {
 
         if (key != null) {
             List<FileWrapper> fileWrappers = new ArrayList<>();
