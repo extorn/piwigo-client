@@ -250,9 +250,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             if (activeProfile.getProfileId(uiHelper.getPrefs(), uiHelper.getContext()).equals(resumePrefs.getString("reopenProfileId", null))) {
                 // Can handle it. Lets try.
                 ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
-                if (albumPath.size() > 1) {
-                    return true;
-                }
+                return albumPath.size() > 1;
             }
         }
         return false;
