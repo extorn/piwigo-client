@@ -49,7 +49,7 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
         v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         List<? extends Map<String, ?>> children = childData.get(groupPosition);
-        bindChildDataToView(parent.getContext(), (GridLayout) v.findViewById(R.id.childGrid), children);
+        bindChildDataToView(parent.getContext(), v.findViewById(R.id.childGrid), children);
         return v;
     }
 
@@ -132,10 +132,10 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
         }
 
         // define arrays for displaying data in Expandable list view
-        String groupFrom[] = {NAME/*, VALUE*/};
-        int groupTo[] = {R.id.lblListItemHeader/*, R.id.descListItemHeader*/};
-        String childFrom[] = {NAME, VALUE};
-        int childTo[] = {-1, -1};
+        String[] groupFrom = {NAME/*, VALUE*/};
+        int[] groupTo = {R.id.lblListItemHeader/*, R.id.descListItemHeader*/};
+        String[] childFrom = {NAME, VALUE};
+        int[] childTo = {-1, -1};
 
         // Set up the adapter
         return new ExifDataListAdapter(c, groupData, groupFrom, groupTo, childData, childFrom, childTo);
