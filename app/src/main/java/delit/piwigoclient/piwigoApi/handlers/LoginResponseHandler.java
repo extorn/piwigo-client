@@ -2,7 +2,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
