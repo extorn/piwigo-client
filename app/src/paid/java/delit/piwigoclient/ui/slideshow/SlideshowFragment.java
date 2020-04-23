@@ -133,7 +133,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
         }
-    };
+    }
 
     private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
         UIHelper.Action action = new ReloadTagSlideshowModelAction();
