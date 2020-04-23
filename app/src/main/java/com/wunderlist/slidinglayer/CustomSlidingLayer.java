@@ -376,7 +376,7 @@ public class CustomSlidingLayer extends FrameLayout {
             notifyActionStartedForState(state);
         }
 
-        final int pos[] = getDestScrollPosForState(state);
+        final int[] pos = getDestScrollPosForState(state);
 
         if (smoothAnimation) {
             int velocity = allowedDirection() == HORIZONTAL ? velocityX : velocityY;
