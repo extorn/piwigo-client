@@ -312,10 +312,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             switch (holder.getItemViewType()) {
                 case VIEW_TYPE_PRIVATE_KEY:
-                    populatePrivateKeyDetails((KeyStorePrivateKeyItemViewHolder) holder, position, (KeyStore.PrivateKeyEntry) getItem(position));
+                    populatePrivateKeyDetails((KeyStorePrivateKeyItemViewHolder) holder, position, getItem(position));
                     break;
                 case VIEW_TYPE_CERTIFICATE:
-                    populateCertificateDetails((KeyStoreCertificateItemViewHolder) holder, position, (KeyStore.TrustedCertificateEntry) getItem(position));
+                    populateCertificateDetails((KeyStoreCertificateItemViewHolder) holder, position, getItem(position));
             }
         }
 
