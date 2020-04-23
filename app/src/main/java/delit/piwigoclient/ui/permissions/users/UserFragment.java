@@ -462,7 +462,7 @@ public class UserFragment extends MyFragment<UserFragment> {
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
         }
-    };
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
