@@ -166,7 +166,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
+        SlideshowItemFragment selectedPage = getActiveFragment(position);
         int pagerIndex = -1;
         if (selectedPage != null) {
             pagerIndex = selectedPage.getPagerIndex();
