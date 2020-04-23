@@ -316,7 +316,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
         }
-    };
+    }
 
     public Group getNewGroup() {
         return newGroup;
