@@ -316,8 +316,6 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    ;
-    
     protected abstract class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
