@@ -3,10 +3,14 @@ package delit.piwigoclient.ui.preferences;
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -207,6 +211,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         Preference button = findPreference(R.string.preference_test_server_connection_key);
+        Drawable icon = AppCompatResources.getDrawable(getContext(), R.drawable.ic_sync_black_24dp);
+        DrawableCompat.setTint(icon, ContextCompat.getColor(getContext(), R.color.accent));
+        button.setIcon(icon);
+
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
