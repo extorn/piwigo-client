@@ -390,7 +390,9 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         for (Long tagId : tagsNeededToBeLoaded) {
             listAdapter.deselectItem(tagId, true);
         }
-        getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.warning_missing_tags_links_removed_from_resource, tagsNeededToBeLoaded.size()));
+        if(tagsNeededToBeLoaded.size() > 0) {
+            getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.warning_missing_tags_links_removed_from_resource, tagsNeededToBeLoaded.size()));
+        }
         HashSet<Tag> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new TagSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
