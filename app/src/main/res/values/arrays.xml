@@ -264,7 +264,13 @@
         -->
         <item>1.4.0.64</item>
         <item>"Changes:
-            - Added a button to view hidden password in preferences"</item>
+            - Added a button to view hidden password in preferences
+            - Moved to MaterialComponents based theme (there are some minor changes)
+            - Hide most connection preferences by default - click to expand them to access the rest
+            - moved some upload preferences to advanced section
+               Bugfix:
+            - Added a optional URI encoding for photo retrieval (uses existing uri encoding connection preference)
+            - Stopped warning about missing tags coming up to say 0 were missing"</item>
         <item>1.4.0.63</item>
         <item>"Changes:
                 - Added the option to select a download folder in app preferences

@@ -2,29 +2,65 @@
 <en-GB>
 Changes:
 - Added a button to view hidden password in preferences
+- Moved to MaterialComponents based theme (there are some minor changes)
+- Hide most connection preferences by default - click to expand them to access the rest
+- moved some upload preferences to advanced section
+Bugfix:
+- Added a optional URI encoding for photo retrieval (uses existing uri encoding connection preference)
+- Stopped warning about missing tags coming up to say 0 were missing
 </en-GB>
 
 <de-DE>
 Änderungen:
 - Eine Schaltfläche zum Anzeigen des versteckten Passworts in den Einstellungen wurde hinzugefügt
+- Auf MaterialComponents-basiertes...
+- Die meisten Verbindungseinstellungen standardmäßig ausblenden - Klicken Sie, um sie zu erwei...
+- Einige Upload-Einstellungen...
+Bug-Fix:
+- Eine optionale URI-Codierung für das Abrufen von Fotos wurde hinzugefügt (verwendet die vorhandene Verbindungspräferenz für die Uri-Codierung).
+- Warnung vor fehlenden Tags gestoppt, um zu melden, dass 0 fehlen
 </de-DE>
 
 <fr-FR>
 Changements:
 - Ajout d'un bouton pour afficher le mot de passe caché dans les préférences
+- Déplacé vers le thème basé sur MaterialComponents (il y a qu...
+- Masquer la plupart des préférences de connexion par défaut - cliquez...
+- déplacé certaines préférences...
+Correction d'un bug:
+- Ajout d'un encodage URI optionnel pour la récupération de photos (utilise la préférence de connexion d'encodage uri existante)
+- Arrêt de l'avertissement concernant les balises manquantes indiquant que 0 manquait
 </fr-FR>
 
 <es-ES>
 Cambios:
 - Se agregó un botón para ver la contraseña oculta en las preferencias
+- Movido al tema basado en MaterialCompo...
+- Ocultar la mayoría de las preferencias de conexión de forma predeterminada: haga clic...
+- movió algunas preferencia...
+Arreglo del fallo:
+- Se agregó una codificación URI opcional para la recuperación de fotos (utiliza la preferencia de conexión de codificación uri existente)
+- Se detuvo la advertencia sobre las etiquetas faltantes que aparecían para decir que faltaban 0
 </es-ES>
 
 <zh-CN>
 变化：
 -添加了一个按钮来查看首选项中的隐藏密码
+-移至基于MaterialComponents的主题（有一些小的更改）
+-默认情况下隐藏大多数连接偏好设置-单击以展开它们以访问其余的
+-将一些上传偏好设置移至高级部分
+错误修正：
+-添加了用于照片检索的可选URI编码（使用现有的uri编码连接首选项）
+-停止警告丢失标签，说0丢失
 </zh-CN>
 
 <ru-RU>
 Изменения:
 - Добавлена кнопка для просмотра скрытого пароля в настройках
+- Перемещен в тему на основе MaterialComponents (есть небольшие изменения)
+- Скрыть большинство настроек подключения по умолчанию - нажмите, чтобы разве...
+- перенес некоторые настройки загрузки в...
+Исправлена ошибка:
+- Добавлена дополнительная кодировка URI для поиска фотографий (используется существующая настройка подключения кодировки URI)
+- Прекращено предупреждение об отсутствующих тегах, сообщающих, что 0 отсутствуют
 </ru-RU>

@@ -140,7 +140,13 @@
         -->
         <item>1.4.0.64</item>
         <item>"Cambios:
-             - Se agregó un botón para ver la contraseña oculta en las preferencias"</item>
+             - Se agregó un botón para ver la contraseña oculta en las preferencias
+             - Movido al tema basado en MaterialComponents (hay algunos cambios menores)
+             - Ocultar la mayoría de las preferencias de conexión de forma predeterminada: haga clic para expandirlas para acceder al resto
+             - movió algunas preferencias de carga a la sección avanzada
+                Arreglo del fallo:
+             - Se agregó una codificación URI opcional para la recuperación de fotos (utiliza la preferencia de conexión de codificación uri existente)
+             - Se detuvo la advertencia sobre las etiquetas faltantes que aparecían para decir que faltaban 0"</item>
         <item>1.4.0.63</item>
         <item>"Cambios:
                  - Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación

@@ -125,7 +125,13 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.64</item>
         <item>"Änderungen:
-             - Eine Schaltfläche zum Anzeigen des versteckten Passworts in den Einstellungen wurde hinzugefügt"</item>
+             - Eine Schaltfläche zum Anzeigen des versteckten Passworts in den Einstellungen wurde hinzugefügt
+             - Auf MaterialComponents-basiertes Thema verschoben (es gibt einige geringfügige Änderungen)
+             - Die meisten Verbindungseinstellungen standardmäßig ausblenden - Klicken Sie, um sie zu erweitern und auf den Rest zuzugreifen
+             - Einige Upload-Einstellungen wurden in den erweiterten Bereich verschoben
+                Bug-Fix:
+             - Eine optionale URI-Codierung für das Abrufen von Fotos wurde hinzugefügt (verwendet die vorhandene Verbindungspräferenz für die Uri-Codierung).
+             - Warnung vor fehlenden Tags gestoppt, um zu melden, dass 0 fehlen"</item>
         <item>1.4.0.63</item>
         <item>"Änderungen:
                  - Die Option zum Auswählen eines Download-Ordners in den App-Einstellungen wurde hinzugefügt
