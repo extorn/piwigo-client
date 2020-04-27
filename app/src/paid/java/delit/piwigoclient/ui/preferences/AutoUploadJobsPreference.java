@@ -41,6 +41,7 @@ public class AutoUploadJobsPreference extends DialogPreference {
     }
 
     private void initPreference(Context context, AttributeSet attrs) {
+        setPositiveButtonText(R.string.gallery_details_save_button);
     }
 
     /**
