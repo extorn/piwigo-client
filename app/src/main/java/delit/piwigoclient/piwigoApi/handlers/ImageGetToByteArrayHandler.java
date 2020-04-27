@@ -1,13 +1,21 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.net.Uri;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.net.URI;
+
 import cz.msebera.android.httpclient.Header;
 import delit.libs.util.UriUtils;
 import delit.libs.util.http.HttpUtils;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -64,10 +72,19 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler, boolean forceResponseRevalidation) {
 
+        boolean isPerformUriPathSegmentEncoding = ConnectionPreferences.getActiveProfile().isPerformUriPathSegmentEncoding(getSharedPrefs(), getContext());
         boolean forceHttps = getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext());
         boolean testForExposingProxiedServer = getConnectionPrefs().isWarnInternalUriExposed(getSharedPrefs(), getContext());
         String uri = UriUtils.sanityCheckFixAndReportUri(resourceUrl, getPiwigoServerUrl(), forceHttps, testForExposingProxiedServer, getConnectionPrefs());
-
+        if (isPerformUriPathSegmentEncoding) {
+            try {
+                URI.create(uri);
+            } catch(IllegalArgumentException e) {
+                Crashlytics.log(Log.WARN, TAG, "IllegalUriFixed : " + uri);
+                Crashlytics.logException(e);
+                uri = UriUtils.encodeUriSegments(Uri.parse(uri));
+            }
+        }
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
         return client.get(getContext(), uri, buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), null, handler);
