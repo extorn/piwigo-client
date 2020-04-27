@@ -57,7 +57,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         tools:text="App Name goes here"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        android:textAppearance="?textAppearanceBody2" />
 
     <TextView
         android:id="@+id/admin_email"
@@ -68,6 +68,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/admin_email"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable"/>
+        style="?clickableTextViewStyleBody2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

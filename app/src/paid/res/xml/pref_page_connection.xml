@@ -17,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_piwigo">
+        android:title="@string/preference_connections_category_piwigo"
+        app:initialExpandedChildrenCount="5">
         <delit.libs.ui.view.preference.CustomEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,226 +69,226 @@
             android:summary="@string/preference_gallery_unique_id_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <androidx.preference.PreferenceCategory
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout="@android:layout/preference_category"
+            android:title="@string/preference_connections_category_server_basic_auth">
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_use_basic_auth_default"
+                android:key="@string/preference_server_use_basic_auth_key"
+                android:summary="@string/preference_server_use_basic_auth_summary"
+                android:title="@string/preference_server_use_basic_auth_title" />
+            <delit.libs.ui.view.preference.SecureEditTextPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dependency="@string/preference_server_use_basic_auth_key"
+                android:inputType="text"
+                android:key="@string/preference_server_basic_auth_username_key"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/preference_server_basic_auth_username_title" />
+            <delit.libs.ui.view.preference.SecureEditTextPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dependency="@string/preference_server_use_basic_auth_key"
+                android:inputType="textPassword"
+                android:key="@string/preference_server_basic_auth_password_key"
+                android:maxLines="1"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/preference_server_basic_auth_password_title" />
+        </androidx.preference.PreferenceCategory>
+        <androidx.preference.PreferenceCategory
+            android:layout="@android:layout/preference_category"
+            android:title="@string/preference_connections_category_trusted_server_ca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_use_custom_trusted_ca_certs_default"
+                android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
+                android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
+                android:title="@string/preference_server_use_custom_trusted_ca_certs_title" />
+            <delit.libs.ui.view.preference.TrustedCaCertificatesPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:key="@string/preference_select_trusted_certificate_key"
+                android:summary="@string/preference_select_trusted_certificate_summary"
+                android:title="@string/preference_select_trusted_certificate_title" />
+            <!--android:dependency="@string/preference_server_use_custom_trusted_ca_certs_key"-->
+        </androidx.preference.PreferenceCategory>
+        <androidx.preference.PreferenceCategory
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout="@android:layout/preference_category"
+            android:title="@string/preference_connections_category_client_certificate_auth">
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_use_client_certs_default"
+                android:key="@string/preference_server_use_client_certs_key"
+                android:summary="@string/preference_server_use_client_certs_summary"
+                android:title="@string/preference_server_use_client_certs_title" />
+            <delit.libs.ui.view.preference.ClientCertificatePreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dependency="@string/preference_server_use_client_certs_key"
+                android:key="@string/preference_select_client_certificate_key"
+                android:summary="@string/preference_select_client_certificate_summary"
+                android:title="@string/preference_select_client_certificate_title" />
+        </androidx.preference.PreferenceCategory>
+        <androidx.preference.PreferenceCategory
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout="@android:layout/preference_category"
+            android:title="@string/preference_connections_category_advanced">
+            <androidx.preference.ListPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
+                android:entries="@array/server_ssl_certificate_hostname_verification_entries"
+                android:entryValues="@array/server_ssl_certificate_hostname_verification_values"
+                android:key="@string/preference_server_ssl_certificate_hostname_verification_key"
+                android:summary="@string/preference_server_ssl_certificate_hostname_verification_summary"
+                android:title="@string/preference_server_ssl_certificate_hostname_verification_title" />
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_connection_force_https_default"
+                android:key="@string/preference_server_connection_force_https_key"
+                android:summary="@string/preference_server_connection_force_https_summary"
+                android:title="@string/preference_server_connection_force_https_title" />
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_connection_uri_path_segment_encoding_default"
+                android:key="@string/preference_server_connection_uri_path_segment_encoding_key"
+                android:summary="@string/preference_server_connection_uri_path_segment_encoding_summary"
+                android:title="@string/preference_server_connection_uri_path_segment_encoding_title" />
+
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_connection_allow_redirects_default"
+                android:key="@string/preference_server_connection_allow_redirects_key"
+                android:summary="@string/preference_server_connection_allow_redirects_summary"
+                android:title="@string/preference_server_connection_allow_redirects_title" />
+            <delit.libs.ui.view.preference.NumberPickerPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dependency="@string/preference_server_connection_allow_redirects_key"
+                android:key="@string/preference_server_connection_max_redirects_key"
+                android:summary="@string/preference_server_connection_max_redirects_summary"
+                android:title="@string/preference_server_connection_max_redirects_title"
+                android:defaultValue="@integer/preference_server_connection_max_redirects_default"
+                app:maxValue="100"
+                app:minValue="0"
+                app:wrapPickList="false" />
+
+            <delit.libs.ui.view.preference.NumberPickerPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:key="@string/preference_server_connection_timeout_secs_key"
+                android:summary="@string/preference_server_connection_timeout_secs_summary"
+                android:title="@string/preference_server_connection_timeout_secs_title"
+                android:defaultValue="@integer/preference_server_connection_timeout_secs_default"
+                app:maxValue="30"
+                app:minValue="1"
+                app:wrapPickList="false" />
+
+            <delit.libs.ui.view.preference.NumberPickerPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:key="@string/preference_server_response_timeout_secs_key"
+                android:summary="@string/preference_server_response_timeout_secs_summary"
+                android:title="@string/preference_server_response_timeout_secs_title"
+                android:defaultValue="@integer/preference_server_response_timeout_secs_default"
+                app:maxValue="30"
+                app:minValue="1"
+                app:wrapPickList="false" />
 
 
+            <delit.libs.ui.view.preference.NumberPickerPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:key="@string/preference_server_connection_retries_key"
+                android:summary="@string/preference_server_connection_retries_summary"
+                android:title="@string/preference_server_connection_retries_title"
+                android:defaultValue="@integer/preference_server_connection_retries_default"
+                app:maxValue="10"
+                app:minValue="0"
+                app:wrapPickList="false" />
+        </androidx.preference.PreferenceCategory>
+        <androidx.preference.PreferenceCategory
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout="@android:layout/preference_category"
+            android:title="@string/preference_connections_category_connections_caching">
+            <androidx.preference.ListPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@string/preference_caching_level_default"
+                android:entries="@array/preference_caching_level_items"
+                android:entryValues="@array/preference_caching_level_values"
+                android:key="@string/preference_caching_level_key"
+                android:summary="@string/preference_caching_level_summary"
+                android:title="@string/preference_caching_level_title" />
+            <androidx.preference.Preference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:key="@string/preference_caching_clearResponseCache_key"
+                android:summary="@string/preference_caching_clearResponseCache_summary"
+                android:title="@string/preference_caching_clearResponseCache_title" />
+            <delit.libs.ui.view.preference.NumberPickerPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:key="@string/preference_caching_max_cache_entries_key"
+                android:summary="@string/preference_caching_max_cache_entries_summary"
+                android:title="@string/preference_caching_max_cache_entries_title"
+                android:defaultValue="@integer/preference_caching_max_cache_entries_default"
+                app:maxValue="100000"
+                app:minValue="1000"
+                app:wrapPickList="false"/>
+            <delit.libs.ui.view.preference.NumberPickerPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:key="@string/preference_caching_max_cache_entry_size_key"
+                android:summary="@string/preference_caching_max_cache_entry_size_summary"
+                android:title="@string/preference_caching_max_cache_entry_size_title"
+                android:defaultValue="@integer/preference_caching_max_cache_entry_size_default"
+                app:maxValue="10240"
+                app:minValue="0"
+                app:multiplier="1024"
+                app:wrapPickList="false" />
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_alter_cache_directives_default"
+                android:key="@string/preference_server_alter_cache_directives_key"
+                android:summary="@string/preference_server_alter_cache_directives_summary"
+                android:title="@string/preference_server_alter_cache_directives_title" />
+            <androidx.preference.SwitchPreference
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:defaultValue="@bool/preference_server_connection_offline_mode_default"
+                android:key="@string/preference_server_connection_offline_mode_key"
+                android:summary="@string/preference_server_connection_offline_mode_summary"
+                android:title="@string/preference_server_connection_offline_mode_title" />
+        </androidx.preference.PreferenceCategory>
 
     </androidx.preference.PreferenceCategory>
-    <androidx.preference.PreferenceCategory
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_server_basic_auth">
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_use_basic_auth_default"
-            android:key="@string/preference_server_use_basic_auth_key"
-            android:summary="@string/preference_server_use_basic_auth_summary"
-            android:title="@string/preference_server_use_basic_auth_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:dependency="@string/preference_server_use_basic_auth_key"
-            android:inputType="text"
-            android:key="@string/preference_server_basic_auth_username_key"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/preference_server_basic_auth_username_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:dependency="@string/preference_server_use_basic_auth_key"
-            android:inputType="textPassword"
-            android:key="@string/preference_server_basic_auth_password_key"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/preference_server_basic_auth_password_title" />
-    </androidx.preference.PreferenceCategory>
-    <androidx.preference.PreferenceCategory
-        android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_trusted_server_ca"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_use_custom_trusted_ca_certs_default"
-            android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
-            android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
-            android:title="@string/preference_server_use_custom_trusted_ca_certs_title" />
-        <delit.libs.ui.view.preference.TrustedCaCertificatesPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_select_trusted_certificate_key"
-            android:summary="@string/preference_select_trusted_certificate_summary"
-            android:title="@string/preference_select_trusted_certificate_title" />
-        <!--android:dependency="@string/preference_server_use_custom_trusted_ca_certs_key"-->
-    </androidx.preference.PreferenceCategory>
-    <androidx.preference.PreferenceCategory
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_client_certificate_auth">
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_use_client_certs_default"
-            android:key="@string/preference_server_use_client_certs_key"
-            android:summary="@string/preference_server_use_client_certs_summary"
-            android:title="@string/preference_server_use_client_certs_title" />
-        <delit.libs.ui.view.preference.ClientCertificatePreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:dependency="@string/preference_server_use_client_certs_key"
-            android:key="@string/preference_select_client_certificate_key"
-            android:summary="@string/preference_select_client_certificate_summary"
-            android:title="@string/preference_select_client_certificate_title" />
-    </androidx.preference.PreferenceCategory>
-    <androidx.preference.PreferenceCategory
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_advanced">
-        <androidx.preference.ListPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
-            android:entries="@array/server_ssl_certificate_hostname_verification_entries"
-            android:entryValues="@array/server_ssl_certificate_hostname_verification_values"
-            android:key="@string/preference_server_ssl_certificate_hostname_verification_key"
-            android:summary="@string/preference_server_ssl_certificate_hostname_verification_summary"
-            android:title="@string/preference_server_ssl_certificate_hostname_verification_title" />
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_connection_force_https_default"
-            android:key="@string/preference_server_connection_force_https_key"
-            android:summary="@string/preference_server_connection_force_https_summary"
-            android:title="@string/preference_server_connection_force_https_title" />
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_connection_uri_path_segment_encoding_default"
-            android:key="@string/preference_server_connection_uri_path_segment_encoding_key"
-            android:summary="@string/preference_server_connection_uri_path_segment_encoding_summary"
-            android:title="@string/preference_server_connection_uri_path_segment_encoding_title" />
 
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_connection_allow_redirects_default"
-            android:key="@string/preference_server_connection_allow_redirects_key"
-            android:summary="@string/preference_server_connection_allow_redirects_summary"
-            android:title="@string/preference_server_connection_allow_redirects_title" />
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:dependency="@string/preference_server_connection_allow_redirects_key"
-            android:key="@string/preference_server_connection_max_redirects_key"
-            android:summary="@string/preference_server_connection_max_redirects_summary"
-            android:title="@string/preference_server_connection_max_redirects_title"
-            android:defaultValue="@integer/preference_server_connection_max_redirects_default"
-            app:maxValue="100"
-            app:minValue="0"
-            app:wrapPickList="false" />
-
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_server_connection_timeout_secs_key"
-            android:summary="@string/preference_server_connection_timeout_secs_summary"
-            android:title="@string/preference_server_connection_timeout_secs_title"
-            android:defaultValue="@integer/preference_server_connection_timeout_secs_default"
-            app:maxValue="30"
-            app:minValue="1"
-            app:wrapPickList="false" />
-
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_server_response_timeout_secs_key"
-            android:summary="@string/preference_server_response_timeout_secs_summary"
-            android:title="@string/preference_server_response_timeout_secs_title"
-            android:defaultValue="@integer/preference_server_response_timeout_secs_default"
-            app:maxValue="30"
-            app:minValue="1"
-            app:wrapPickList="false" />
-
-
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_server_connection_retries_key"
-            android:summary="@string/preference_server_connection_retries_summary"
-            android:title="@string/preference_server_connection_retries_title"
-            android:defaultValue="@integer/preference_server_connection_retries_default"
-            app:maxValue="10"
-            app:minValue="0"
-            app:wrapPickList="false" />
-    </androidx.preference.PreferenceCategory>
-    <androidx.preference.PreferenceCategory
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_connections_caching">
-        <androidx.preference.ListPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@string/preference_caching_level_default"
-            android:entries="@array/preference_caching_level_items"
-            android:entryValues="@array/preference_caching_level_values"
-            android:key="@string/preference_caching_level_key"
-            android:summary="@string/preference_caching_level_summary"
-            android:title="@string/preference_caching_level_title" />
-        <androidx.preference.Preference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_caching_clearResponseCache_key"
-            android:summary="@string/preference_caching_clearResponseCache_summary"
-            android:title="@string/preference_caching_clearResponseCache_title" />
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_caching_max_cache_entries_key"
-            android:summary="@string/preference_caching_max_cache_entries_summary"
-            android:title="@string/preference_caching_max_cache_entries_title"
-            android:defaultValue="@integer/preference_caching_max_cache_entries_default"
-            app:maxValue="100000"
-            app:minValue="1000"
-            app:wrapPickList="false"/>
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:key="@string/preference_caching_max_cache_entry_size_key"
-            android:summary="@string/preference_caching_max_cache_entry_size_summary"
-            android:title="@string/preference_caching_max_cache_entry_size_title"
-            android:defaultValue="@integer/preference_caching_max_cache_entry_size_default"
-            app:maxValue="10240"
-            app:minValue="0"
-            app:multiplier="1024"
-            app:wrapPickList="false" />
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_alter_cache_directives_default"
-            android:key="@string/preference_server_alter_cache_directives_key"
-            android:summary="@string/preference_server_alter_cache_directives_summary"
-            android:title="@string/preference_server_alter_cache_directives_title" />
-        <androidx.preference.SwitchPreference
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_server_connection_offline_mode_default"
-            android:key="@string/preference_server_connection_offline_mode_key"
-            android:summary="@string/preference_server_connection_offline_mode_summary"
-            android:title="@string/preference_server_connection_offline_mode_title" />
-    </androidx.preference.PreferenceCategory>
     <androidx.preference.Preference
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="true"
         android:key="@string/preference_test_server_connection_key"
         android:summary="@string/preference_test_server_connection_summary"
-        android:title="@string/preference_test_server_connection_title" />
+        android:title="@string/preference_test_server_connection_title"
+        app:persistent="false"/>
 </androidx.preference.PreferenceScreen>

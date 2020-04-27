@@ -190,7 +190,7 @@
                 android:inputType="text|textNoSuggestions"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="some text"/>
 
             <delit.libs.ui.view.button.AppCompatCheckboxTriState
@@ -223,12 +223,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine|textNoSuggestions"
-            android:background="?attr/editTextBackground"
             android:gravity="center_vertical"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
             android:text="@string/none_selected"
             android:maxLines="2"
-            android:ellipsize="end"/>
+            android:ellipsize="end"
+            style="?clickableTextViewStyleBody1Field"/>
 
 
             <TextView

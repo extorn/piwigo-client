@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_email"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"/>
+                style="?clickableTextViewStyleBody1"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -60,7 +60,8 @@
         android:id="@+id/eula_cancel_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_cancel"/>
+        android:text="@string/button_cancel"
+        style="?materialButtonOutlinedStyle"/>
 
     <Button
         android:id="@+id/eula_agree_button"

@@ -41,7 +41,7 @@
 
             <RatingBar
                 android:id="@+id/slideshow_image_average_ratingBar"
-                style="@style/Widget.AppCompat.RatingBar.Small"
+                style="?ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/slideshow_resource_item_x_of_y_text"
@@ -57,7 +57,7 @@
 
             <RatingBar
                 android:id="@+id/slideshow_image_ratingBar"
-                style="@style/Widget.AppCompat.RatingBar.Indicator"
+                style="?ratingBarStyleIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/slideshow_image_details_rating_label"

@@ -52,7 +52,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="3"/>
 
             <TextView
@@ -73,7 +73,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="3"/>
 
             <TextView
@@ -94,7 +94,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="5"/>
 
             <TextView
@@ -115,7 +115,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="0"/>
 
             <TextView
@@ -136,7 +136,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="0"/>
 
             <TextView
@@ -157,7 +157,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody1"
                 tools:text="10"/>
 
             <TextView

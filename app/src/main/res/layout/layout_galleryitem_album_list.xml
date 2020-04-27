@@ -56,7 +56,7 @@
         android:paddingTop="3dp"
         android:paddingEnd="3dp"
         android:paddingBottom="0dp"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Medium"
+        android:textAppearance="?android:textAppearanceMedium"
         app:layout_constraintBottom_toTopOf="@+id/resource_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="0.7"

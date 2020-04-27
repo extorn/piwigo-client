@@ -45,7 +45,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="7dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="?android:textAppearanceMedium"
         android:textColor="@color/primary_text_default_light"
         tools:text="some title"/>
 
@@ -59,22 +59,21 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="10dp"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+        android:textAppearance="?textAppearanceBody1"
         android:textColor="@color/primary_text_default_light"
         tools:text="message goes here"/>
 
     <Button
         android:id="@+id/snackbar_action"
-        style="?attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/snackbar_text"
         android:layout_marginStart="@dimen/my_design_snackbar_extra_spacing_horizontal"
         android:layout_centerHorizontal="true"
         android:minWidth="48dp"
-        android:textColor="?attr/colorAccent"
         tools:visibility="visible"
         tools:text="button"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        style="?materialButtonStyle"/>
 
 </RelativeLayout>

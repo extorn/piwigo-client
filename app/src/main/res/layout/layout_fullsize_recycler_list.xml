@@ -59,7 +59,8 @@
         android:layout_above="@+id/list_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/button_all" />
+        android:text="@string/button_all"
+        style="?materialButtonOutlinedStyle"/>
 
     <Button
         android:id="@+id/list_action_save_button"

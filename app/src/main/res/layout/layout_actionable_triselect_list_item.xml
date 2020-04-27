@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
+            android:textAppearance="?textAppearanceBody1"/>
 
     </LinearLayout>
 

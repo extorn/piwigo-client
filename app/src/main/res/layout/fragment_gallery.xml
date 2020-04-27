@@ -38,7 +38,7 @@
                 android:maxLines="2"
                 android:ellipsize="end"
                 tools:text="Gallery name"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title.Clickable" />
+                style="?clickableTextViewStyleTitle" />
 
             <TextView
                 android:id="@+id/gallery_details_description_header"
@@ -340,10 +340,10 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="2dp"
-                        android:layout_marginBottom="3dp"/>
+                        android:layout_marginBottom="3dp"
+                        style="?clickableTextViewStyleBody1Field"/>
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_users_label"
@@ -360,10 +360,10 @@
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="2dp"
-                        android:layout_marginBottom="3dp"/>
+                        android:layout_marginBottom="3dp"
+                        style="?clickableTextViewStyleBody1Field"/>
 
                 </LinearLayout>
 

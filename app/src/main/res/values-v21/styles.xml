@@ -12,7 +12,21 @@
         with trailing _dark or _light specifiers if they are not shared between both light and
         dark versions of the theme. -->
 
-    <style name="Custom.Theme" parent="Theme.AppCompat.NoActionBar">
+    <style name="Custom.Theme" parent="Theme.MaterialComponents.NoActionBar">
+
+        <!-- used for the navigation menu for example -->
+        <item name="clickableTextViewStyleBody1">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Body1</item>
+        <item name="clickableTextViewStyleBody1Field">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Body1.Field</item>
+        <item name="clickableTextViewStyleBody2">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Body2</item>
+        <item name="clickableTextViewStyleTitle">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Title</item>
+        <item name="android:textAppearanceMedium">@style/Custom.TextAppearance.AppCompat.Medium</item>
+        <item name="ratingBarStyleIndicator">@style/Widget.AppCompat.RatingBar.Indicator</item>
+        <item name="ratingBarStyleSmall">@style/Widget.AppCompat.RatingBar.Small</item>
+        <item name="textAppearanceBody2">@style/Custom.TextAppearance.AppCompat.Body2</item>
+        <item name="textAppearanceBody1">@style/Custom.TextAppearance.AppCompat.Body1</item>
+        <item name="android:progressBarStyleHorizontal">@style/Custom.Widget.AppCompat.ProgressBar.Horizontal</item>
+        <item name="materialButtonStyle">@style/Custom.Widget.MaterialComponents.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Custom.Widget.MaterialComponents.Button.OutlinedButton</item>
 
         <!-- used for the navigation menu for example -->
         <item name="android:checkboxStyle">@style/Custom.Widget.AppCompat.CompoundButton.CheckBox</item>
@@ -36,38 +50,81 @@
     </style>
 
     <!-- used on the album view - headings for listed albums -->
-    <style name="Custom.TextAppearance.AppCompat.Medium" parent="TextAppearance.AppCompat.Medium">
+    <style name="Custom.TextAppearance.AppCompat.Medium" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">@color/edit_text_color_selector</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body2" parent="TextAppearance.AppCompat.Body2">
+    <style name="Custom.Widget.MaterialComponents.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
+    <style name="Custom.Widget.MaterialComponents.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+
+        <item name="android:textColor">@color/accent</item>
+    </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Body2" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">@color/edit_text_color_selector</item>
     </style>
-    <style name="Custom.TextAppearance.AppCompat.Body1" parent="TextAppearance.AppCompat.Body1">
+    <style name="Custom.TextAppearance.AppCompat.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/edit_text_color_selector</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body1.Clickable" parent="TextAppearance.AppCompat.Body1">
+    <style name="Custom.TextAppearance.AppCompat.Body1.Clickable" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body2.Clickable" parent="TextAppearance.AppCompat.Body2">
+    <style name="Custom.TextAppearance.AppCompat.Body2.Clickable" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
-    <style name="Custom.Widget.AppCompat.CompoundButton.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+    <style name="Custom.TextAppearance.AppCompat.Title.Clickable" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+    </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Headline" parent="TextAppearance.MaterialComponents.Headline5">
+        <!-- this is used for items that are clickable but invisibly so -->
+    </style>
+
+    <style name="Custom.TextAppearance.AppCompat.Headline.Clickable" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+    </style>
+
+
+    <style name="Custom.Widget.AppCompat.CompoundButton.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="buttonTint">@color/checkbox_color_tint</item>
     </style>
     <style name="Custom.CheckBox.TextAppearance" parent="TextAppearance.AppCompat.Widget.Button">
     </style>
-    <style name="Custom.Widget.AppCompat.CompoundButton.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+    <style name="Custom.Widget.AppCompat.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="buttonTint">@color/checkbox_color_tint</item>
     </style>
-    <style name="Custom.Widget.AppCompat.CompoundButton.Switch" parent="Widget.AppCompat.CompoundButton.Switch">
+    <style name="Custom.Widget.AppCompat.CompoundButton.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="buttonTint">@color/checkbox_color_tint</item>
+    </style>
+
+    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body1" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Body1.Clickable</item>
+    </style>
+
+    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body1.Field">
+        <item name="android:background">?attr/editTextBackground</item>
+    </style>
+
+    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body2" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Body2.Clickable</item>
+    </style>
+
+    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Title" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Title.Clickable</item>
+    </style>
+
+    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body2.Field">
+        <item name="android:background">?attr/editTextBackground</item>
     </style>
 
     <style name="Custom.Widget.AppCompat.Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
@@ -89,6 +146,12 @@
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+    </style>
+
+    <style name="Custom.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:minHeight">9dp</item>
+        <item name="android:maxHeight">9dp</item>
+        <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
     </style>
 
 </resources>

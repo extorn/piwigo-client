@@ -54,7 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="@string/button_all" />
+        android:text="@string/button_all"
+        style="?materialButtonOutlinedStyle"/>
 
     <Button
         android:id="@+id/list_action_save_button"

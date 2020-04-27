@@ -39,33 +39,6 @@
             android:title="@string/preference_data_upload_default_privacy_level_title"
             app:entries="@array/privacy_levels_groups_array"
             app:entryValues="@array/privacy_levels_values_array" />
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
-            app:minValue="256"
-            app:maxValue="10240"
-            android:key="@string/preference_data_upload_chunkSizeKb_key"
-            android:title="@string/preference_data_upload_chunkSizeKb_title"
-            android:summary="@string/preference_data_upload_chunkSizeKb_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
-            app:minValue="0"
-            app:maxValue="5"
-            android:key="@string/preference_data_upload_chunk_auto_retries_key"
-            android:title="@string/preference_data_upload_chunk_auto_retries_title"
-            android:summary="@string/preference_data_upload_chunk_auto_retries_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <delit.libs.ui.view.preference.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
-            app:minValue="0"
-            app:maxValue="10240"
-            android:key="@string/preference_data_upload_max_filesize_mb_key"
-            android:title="@string/preference_data_upload_max_filesize_mb_title"
-            android:summary="@string/preference_data_upload_max_filesize_mb_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout_width="match_parent"
@@ -155,7 +128,33 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_upload_category_advanced">
-
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
+            app:minValue="256"
+            app:maxValue="10240"
+            android:key="@string/preference_data_upload_chunkSizeKb_key"
+            android:title="@string/preference_data_upload_chunkSizeKb_title"
+            android:summary="@string/preference_data_upload_chunkSizeKb_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
+            app:minValue="0"
+            app:maxValue="5"
+            android:key="@string/preference_data_upload_chunk_auto_retries_key"
+            android:title="@string/preference_data_upload_chunk_auto_retries_title"
+            android:summary="@string/preference_data_upload_chunk_auto_retries_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <delit.libs.ui.view.preference.NumberPickerPreference
+            android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
+            app:minValue="0"
+            app:maxValue="10240"
+            android:key="@string/preference_data_upload_max_filesize_mb_key"
+            android:title="@string/preference_data_upload_max_filesize_mb_title"
+            android:summary="@string/preference_data_upload_max_filesize_mb_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <androidx.preference.Preference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

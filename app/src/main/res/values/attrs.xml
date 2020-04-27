@@ -4,6 +4,12 @@
          used for button bars depending on the API privacyLevel.
          ?android:attr/buttonBarStyle is pkg as of API 11 so this is
          necessary to support previous API levels. -->
+
+    <attr format="reference" name="clickableTextViewStyleBody1"/>
+    <attr format="reference" name="clickableTextViewStyleBody1Field"/>
+    <attr format="reference" name="clickableTextViewStyleBody2"/>
+    <attr format="reference" name="clickableTextViewStyleTitle"/>
+
     <declare-styleable name="ButtonBarContainerTheme">
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
