@@ -5,6 +5,8 @@
     <string name="notification_text_background_upload_sleeping">Sleeping. Next run at %1$tR</string>
     <string name="notification_text_background_upload_polling">Polling for files to upload.</string>
 
+
+    <string name="alert_warning_auto_upload_service_stopped">Don\'t forget to start the background upload service if you want your jobs to run</string>
     <string name="alert_auto_upload_service_stopped">Background upload service stopped</string>
     <string name="alert_auto_upload_service_started">Background upload service started</string>
     <string name="alert_auto_upload_service_job_restarted">Started uploading a previously incomplete job to server %1$s with %2$d files</string>

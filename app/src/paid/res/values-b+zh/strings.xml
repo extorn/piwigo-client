@@ -5,6 +5,7 @@
     <string name="notification_text_background_upload_sleeping">睡眠。接下来在%1$tR运行</string>
     <string name="notification_text_background_upload_polling">轮询要上载的文件。</string>
 
+    <string name="alert_warning_auto_upload_service_stopped">如果您想运行作业，请不要忘记启动后台上传服务</string>
     <string name="alert_auto_upload_service_stopped">后台上传服务已停止</string>
     <string name="alert_auto_upload_service_started">后台上传服务已启动</string>
     <string name="alert_auto_upload_service_job_restarted">开始使用%2$d文件将以前未完成的作业上传到服务器%1$s</string>

@@ -5,6 +5,7 @@
     <string name="notification_text_background_upload_sleeping">Dormir. Prochaine exécution à %1$tR</string>
     <string name="notification_text_background_upload_polling">Interrogation des fichiers à télécharger.</string>
 
+    <string name="alert_warning_auto_upload_service_stopped">N\'oubliez pas de démarrer le service de téléchargement en arrière-plan si vous souhaitez que vos travaux s\'exécutent</string>
     <string name="alert_auto_upload_service_stopped">Arrêt du service de téléchargement en arrière-plan</string>
     <string name="alert_auto_upload_service_started">Démarrage du service de téléchargement en arrière-plan</string>
     <string name="alert_auto_upload_service_job_restarted">Lancement du téléchargement d\'un travail précédemment incomplet sur le serveur %1$s avec des fichiers %2$d</string>

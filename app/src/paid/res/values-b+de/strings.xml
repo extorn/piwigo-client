@@ -5,6 +5,7 @@
     <string name="notification_text_background_upload_sleeping">Schlafen. Nächster Lauf bei %1$tR</string>
     <string name="notification_text_background_upload_polling">Abfrage nach Dateien zum Hochladen.</string>
 
+    <string name="alert_warning_auto_upload_service_stopped">Vergessen Sie nicht, den Hintergrund-Upload-Dienst zu starten, wenn Ihre Jobs ausgeführt werden sollen</string>
     <string name="alert_auto_upload_service_stopped">Hintergrund-Upload-Dienst gestoppt</string>
     <string name="alert_auto_upload_service_started">Hintergrund-Upload-Dienst gestartet</string>
     <string name="alert_auto_upload_service_job_restarted">Startet das Hochladen eines zuvor unvollständigen Jobs auf den Server %1$s mit %2$d-Dateien.</string>

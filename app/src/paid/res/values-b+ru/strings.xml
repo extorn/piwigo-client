@@ -5,6 +5,7 @@
     <string name="notification_text_background_upload_sleeping">Спать. Следующий запуск на%1$tR</string>
     <string name="notification_text_background_upload_polling">Опрос на файлы для загрузки.</string>
 
+    <string name="alert_warning_auto_upload_service_stopped">Не забудьте запустить службу фоновой загрузки, если вы хотите, чтобы ваши задания запускались</string>
     <string name="alert_auto_upload_service_stopped">Служба фоновой загрузки остановлена</string>
     <string name="alert_auto_upload_service_started">Запущена служба фоновой загрузки</string>
     <string name="alert_auto_upload_service_job_restarted">Начата загрузка ранее незавершенного задания на сервер%1$s с файлами%2$d</string>

@@ -5,6 +5,7 @@
     <string name="notification_text_background_upload_sleeping">Dormido. Próxima ejecución a%1$tR</string>
     <string name="notification_text_background_upload_polling">Sondeo de archivos para cargar.</string>
 
+    <string name="alert_warning_auto_upload_service_stopped">No olvide iniciar el servicio de carga en segundo plano si desea que se ejecuten sus trabajos</string>
     <string name="alert_auto_upload_service_stopped">Servicio de carga en segundo plano detenido</string>
     <string name="alert_auto_upload_service_started">Se inició el servicio de carga en segundo plano.</string>
     <string name="alert_auto_upload_service_job_restarted">Comenzó a cargar un trabajo previamente incompleto al servidor%1$s con archivos%2$d</string>
