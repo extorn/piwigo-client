@@ -133,6 +133,9 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.64</item>
+        <item>"Changements:
+             - Ajout d'un bouton pour afficher le mot de passe caché dans les préférences"</item>
         <item>1.4.0.63</item>
         <item>"Changements:
                  - Ajout de la possibilité de sélectionner un dossier de téléchargement dans les préférences de l'application

@@ -132,6 +132,9 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
+        <item>1.4.0.64</item>
+        <item>"变化：
+             -添加了一个按钮来查看首选项中的隐藏密码"</item>
         <item>1.4.0.63</item>
         <item>"变化：
                  -添加了在应用程序首选项中选择下载文件夹的选项

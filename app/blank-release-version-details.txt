@@ -1,48 +1,30 @@
 
 <en-GB>
 Changes:
-- Added the option to select a download folder in app preferences
-Bugfix:
-- Stop warnings showing for slideshow auto-drive when it is disabled.
-- Select currently visible file when showing file download dialog
+- Added a button to view hidden password in preferences
 </en-GB>
 
 <de-DE>
 Änderungen:
-- Die Option zum Auswählen eines Download-Ordners in den App-Einstellungen wurde hinzugefügt
-Fehlerbehebung:
-- Beenden Sie die Warnungen, die für das automatische Fahren der Diashow angezeigt werden, wenn diese deaktiviert ist.
-- Wählen Sie die aktuell sichtbare Datei aus, wenn der Dialog zum Herunterladen von Dateien angezeigt wird
+- Eine Schaltfläche zum Anzeigen des versteckten Passworts in den Einstellungen wurde hinzugefügt
 </de-DE>
 
 <fr-FR>
 Changements:
-- Ajout de la possibilité de sélectionner un dossier de téléchargement dans les préférences de l'application
-Correction d'un bug:
-- Arrêtez les avertissements qui s'affichent pour le lecteur automatique de diaporama lorsqu'il est désactivé.
-- Sélectionnez le fichier actuellement visible lors de l'affichage de la boîte de dialogue de téléchargement de fichier
+- Ajout d'un bouton pour afficher le mot de passe caché dans les préférences
 </fr-FR>
 
 <es-ES>
 Cambios:
-- Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación
-Arreglo del fallo:
-- Detenga las advertencias que se muestran para la presentación automática de diapositivas cuando está deshabilitada.
-- Seleccione el archivo actualmente visible al mostrar el diálogo de descarga de archivos
+- Se agregó un botón para ver la contraseña oculta en las preferencias
 </es-ES>
 
 <zh-CN>
 变化：
--添加了在应用程序首选项中选择下载文件夹的选项
-错误修正：
--当幻灯片自动播放功能被禁用时，停止显示警告。
--显示文件下载对话框时选择当前可见的文件
+-添加了一个按钮来查看首选项中的隐藏密码
 </zh-CN>
 
 <ru-RU>
 Изменения:
-- Добавлена возможность выбора папки для скачивания в настройках приложения
-Исправлена ошибка:
-- Остановить предупреждения, показывающие слайд-шоу автоматического вождения, когда он отключен.
-- Выберите текущий видимый файл при отображении диалога загрузки файла
+- Добавлена кнопка для просмотра скрытого пароля в настройках
 </ru-RU>

@@ -138,6 +138,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.64</item>
+        <item>"Изменения:
+             - Добавлена кнопка для просмотра скрытого пароля в настройках"</item>
         <item>1.4.0.63</item>
         <item>"Изменения:
                  - Добавлена возможность выбора папки для скачивания в настройках приложения

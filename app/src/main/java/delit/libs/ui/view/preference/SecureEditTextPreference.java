@@ -4,16 +4,14 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
-import androidx.preference.PreferenceManager;
-
 import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.R;
 
 /**
  * Created by gareth on 04/11/17.
  */
-
-public class SecureEditTextPreference extends CustomEditTextPreference implements SecurePreference<String> {
+//TODO these need to move to using byte arrays for security. Currently have to use strings as extend from EditTextPref.
+public class SecureEditTextPreference extends CustomEditTextPreference implements SecurePreference<CharSequence> {
     public SecureEditTextPreference(Context context, AttributeSet attrs, int defStyle, int defStyleRes) {
         super(context, attrs, defStyle, defStyleRes);
         initPreference(context, attrs);
@@ -35,62 +33,49 @@ public class SecureEditTextPreference extends CustomEditTextPreference implement
     }
 
     private void initPreference(Context context, AttributeSet attrs) {
+        setDialogLayoutResource(R.layout.preference_custom_edit_text);
         TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.SecureEditTextPreference, 0, 0);
         a.recycle();
     }
 
-    /**
-     * Attempts to persist a String to the {@link android.content.SharedPreferences}.
-     * <p>
-     * This will check if this Preference is persistent, get an editor from
-     * the {@link PreferenceManager}, put in the string, and check if we should commit (and
-     * commit if so).
-     *
-     * @param value The value to persist.
-     * @return True if the Preference is persistent. (This is not whether the
-     * value was persisted, since we may not necessarily commit if there
-     * will be a batch commit later.)
-     * @see #getPersistedString(String)
-     */
-    protected boolean persistString(String value) {
-        return super.persistString(encrypt(value));
+    @Override
+    public CharSequence encrypt(CharSequence value) {
+        return SecurePrefsUtil.getInstance(getContext()).encryptValue(getKey(), value.toString());
     }
 
     @Override
-    public String encrypt(String value) {
-        return SecurePrefsUtil.getInstance(getContext()).encryptValue(getKey(), value);
-    }
+    public String decrypt(CharSequence encryptedVal, CharSequence defaultReturnValue) {
+        String defaultReturnValueStr = defaultReturnValue != null ? defaultReturnValue.toString() : null;
 
-    @Override
-    public String decrypt(String encryptedVal, String defaultReturnValue) {
         if (encryptedVal == null || encryptedVal.equals(defaultReturnValue)) {
-            return defaultReturnValue; // no way the value is encrypted if it is null or matches the default value (logically unencrypted)
+            return defaultReturnValueStr; // no way the value is encrypted if it is null or matches the default value (logically unencrypted)
         }
-        // should theoretically always have a valid encrypyted value at this point
+        // should always have a valid encrypted value at this point even if empty
+        String encryptedStr = encryptedVal.toString();
+
+
         if (getPreferenceDataStore() != null) {
-            return SecurePrefsUtil.getInstance(getContext()).decryptValue(getPreferenceDataStore(), getKey(), encryptedVal, defaultReturnValue);
+            return SecurePrefsUtil.getInstance(getContext()).decryptValue(getPreferenceDataStore(), getKey(), encryptedStr, defaultReturnValueStr);
         } else {
-            return SecurePrefsUtil.getInstance(getContext()).decryptValue(getPreferenceManager().getSharedPreferences(), getKey(), encryptedVal, defaultReturnValue);
+            return SecurePrefsUtil.getInstance(getContext()).decryptValue(getPreferenceManager().getSharedPreferences(), getKey(), encryptedStr, defaultReturnValueStr);
         }
     }
 
-    /**
-     * Attempts to get a persisted String from the {@link android.content.SharedPreferences}.
-     * <p>
-     * This will check if this Preference is persistent, get the SharedPreferences
-     * from the {@link PreferenceManager}, and get the value.
-     *
-     * @param defaultReturnValue The default value to return if either the
-     *                           Preference is not persistent or the Preference is not in the
-     *                           shared preferences.
-     * @return The value from the SharedPreferences or the default return
-     * value.
-     * @see #persistString(String)
-     */
-    protected String getPersistedString(String defaultReturnValue) {
-        String encryptedVal = super.getPersistedString(defaultReturnValue);
-        return decrypt(encryptedVal, defaultReturnValue);
+    @Override
+    protected void onSetInitialValue(Object defaultValue) {
+        // don't call super. We need to intercept the call to decrypt the persisted value first
+        setText(decrypt(getPersistedString((String) defaultValue), (String)defaultValue));
     }
 
+    @Override
+    public void setText(String text) {
+        CharSequence encryptedText = encrypt(text);
+        super.setText(encryptedText != null ? encryptedText.toString() : null);
+    }
+
+    @Override
+    public String getText() {
+        return decrypt(super.getText(), null);
+    }
 }

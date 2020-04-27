@@ -30,6 +30,7 @@ import delit.libs.ui.view.preference.KeystorePreferenceDialogFragmentCompat;
 import delit.libs.ui.view.preference.MappedListPreferenceDialogFragmentCompat;
 import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.libs.ui.view.preference.NumberPickerPreferenceDialogFragmentCompat;
+import delit.libs.ui.view.preference.SecureCustomEditTextPreferenceDialogFragmentCompat;
 import delit.libs.ui.view.preference.SecureEditTextPreference;
 import delit.libs.ui.view.preference.TrustedCaCertificatesPreference;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
@@ -238,7 +239,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
             } else if (preference instanceof EditableListPreference) {
                 f = EditableListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof SecureEditTextPreference) {
-                f = CustomEditTextPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+                f = SecureCustomEditTextPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof CustomEditTextPreference) {
                 f = CustomEditTextPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof TrustedCaCertificatesPreference) {
