@@ -133,6 +133,7 @@
     <string name="button_ok">D\'accord</string>
     <string name="button_yes">Oui</string>
     <string name="button_no">Non</string>
+    <string name="button_save">Sauvegarder</string>
     <string name="alert_confirm_title">Confirmer</string>
     <string name="alert_question_title">Question</string>
     <string name="alert_confirm_really_delete_from_server">Ceci supprimera définitivement l\'élément du serveur. Continuer ?</string>

@@ -132,6 +132,7 @@
     <string name="button_ok">好的</string>
     <string name="button_yes">是</string>
     <string name="button_no">没有</string>
+    <string name="button_save">保存</string>
     <string name="alert_confirm_title">确认</string>
     <string name="alert_question_title">题</string>
     <string name="alert_confirm_really_delete_from_server">这将从服务器中永久删除该项目。继续？</string>

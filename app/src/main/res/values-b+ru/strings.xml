@@ -132,6 +132,7 @@
     <string name="button_ok">Хорошо</string>
     <string name="button_yes">да</string>
     <string name="button_no">нет</string>
+    <string name="button_save">Сохранить</string>
     <string name="alert_confirm_title">подтвердить</string>
     <string name="alert_question_title">Вопрос</string>
     <string name="alert_confirm_really_delete_from_server">Это удалит элемент навсегда с сервера. Продолжить?</string>

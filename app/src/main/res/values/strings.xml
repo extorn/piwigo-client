@@ -153,6 +153,7 @@
     <string name="button_ok">Okay</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
+    <string name="button_save">Save</string>
     <string name="alert_confirm_title">Confirm</string>
     <string name="alert_question_title">Question</string>
     <string name="alert_confirm_really_delete_from_server">This will delete the item permanently from the server. Continue?</string>

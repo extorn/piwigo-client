@@ -130,6 +130,7 @@
     <string name="button_ok">Okay</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
+    <string name="button_save">Speichern</string>
     <string name="alert_confirm_title">Bestätigen</string>
     <string name="alert_question_title">Frage</string>
     <string name="alert_confirm_really_delete_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Weitermachen?</string>

@@ -130,6 +130,7 @@
     <string name="button_ok">Bueno</string>
     <string name="button_yes">si</string>
     <string name="button_no">No</string>
+    <string name="button_save">Salvar</string>
     <string name="alert_confirm_title">Confirmar</string>
     <string name="alert_question_title">Pregunta</string>
     <string name="alert_confirm_really_delete_from_server">Esto eliminará el elemento permanentemente del servidor. ¿Seguir?</string>
