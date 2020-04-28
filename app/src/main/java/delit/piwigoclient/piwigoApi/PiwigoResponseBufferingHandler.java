@@ -536,7 +536,6 @@ public class PiwigoResponseBufferingHandler {
         public AbstractPiwigoDirectResponseHandler getHttpResponseHandler() {
             return requestHandler;
         }
-
     }
 
     public static class UrlProgressResponse extends BaseUrlResponse {

@@ -211,7 +211,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getResponseBody());
         } else {
             if (!(msg.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT && PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()))) {
-                showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), msg.getResponseBody());
+                String detailStr = uiHelper.getContext().getString(R.string.alert_server_uri_response_pattern, msg.getUrl(), msg.getResponseBody());
+                showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), detailStr);
             }
         }
     }
