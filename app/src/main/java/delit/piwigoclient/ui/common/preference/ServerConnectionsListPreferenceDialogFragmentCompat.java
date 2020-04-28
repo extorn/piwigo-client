@@ -84,9 +84,6 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
             adView.setVisibility(View.GONE);
         }
 
-        view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
-        view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
-
         TextView heading = view.findViewById(R.id.heading);
         heading.setText(R.string.piwigo_connection_profile_heading);
         heading.setVisibility(View.VISIBLE);
