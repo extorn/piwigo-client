@@ -73,7 +73,6 @@
         android:minWidth="48dp"
         tools:visibility="visible"
         tools:text="button"
-        android:visibility="gone"
-        style="?materialButtonStyle"/>
+        android:visibility="gone"/>
 
 </RelativeLayout>

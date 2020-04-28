@@ -16,7 +16,7 @@
             android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+            app:srcCompat="@drawable/ic_mode_edit_black_24dp"/>
 
         <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/user_action_save_button"
