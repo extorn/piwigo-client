@@ -1,8 +1,10 @@
 package delit.piwigoclient.ui.common;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
@@ -94,6 +96,13 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            setTaskDescription(
+                    new ActivityManager.TaskDescription(
+                            null, // Leave the default title.
+                            R.mipmap.ic_launcher_round_new
+                    ));
+        }
         rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         initialisedWithLanguage = AppPreferences.getDesiredLanguage(getSharedPrefs(), this);
