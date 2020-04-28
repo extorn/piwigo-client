@@ -31,6 +31,6 @@
     <include
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/main_view"
-        layout="@layout/content_main"/>
+        layout="@layout/content_upload"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
