@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -265,7 +266,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             }
         };
 
-        addNewTagDialog = new AlertDialog.Builder(getContext()).setView(v)
+        addNewTagDialog = new MaterialAlertDialogBuilder(getContext()).setView(v)
                 .setNegativeButton(R.string.button_cancel, listener)
                 .setPositiveButton(R.string.button_ok, listener)
                 .show();

@@ -38,6 +38,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -414,7 +415,7 @@ public abstract class UIHelper<T> {
     }
 
     protected void buildAlertDialog() {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
         builder1.setCancelable(true);
         dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);
@@ -682,7 +683,7 @@ public abstract class UIHelper<T> {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                final AlertDialog.Builder alert = new AlertDialog.Builder(this.context);
+                final MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(this.context);
                 alert.setTitle(context.getString(R.string.alert_title_permissions_needed));
                 alert.setMessage(event.getJustification());
 

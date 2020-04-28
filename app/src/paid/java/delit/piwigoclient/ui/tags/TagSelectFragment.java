@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -206,7 +207,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext()).setView(v)
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext()).setView(v)
                 .setNegativeButton(R.string.button_cancel, null);
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if(sessionDetails != null && sessionDetails.isUseUserTagPluginForSearch()) {
