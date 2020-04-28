@@ -25,6 +25,11 @@
         <item name="textAppearanceBody2">@style/Custom.TextAppearance.AppCompat.Body2</item>
         <item name="textAppearanceBody1">@style/Custom.TextAppearance.AppCompat.Body1</item>
         <item name="android:progressBarStyleHorizontal">@style/Custom.Widget.AppCompat.ProgressBar.Horizontal</item>
+        <item name="materialAlertDialogTheme">@style/AlertDialogMaterialTheme</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:dialogTheme">@style/AlertDialogTheme</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <!--<item name="dialogTheme">@style/AlertDialogMaterialTheme</item>-->
         <item name="materialButtonStyle">@style/Custom.Widget.MaterialComponents.Button</item>
         <item name="materialButtonOutlinedStyle">@style/Custom.Widget.MaterialComponents.Button.OutlinedButton</item>
         <item name="android:colorBackgroundFloating">@color/background_floating</item>
@@ -41,6 +46,32 @@
         <item name="preferenceTheme">@style/Custom.PreferenceThemeOverlay.v14.Material</item>
         <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>
     </style>
+
+    <style name="AlertDialogMaterialTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Alert.Button.Negative</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+
+    </style>
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Alert.Button.Negative</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+    </style>
+
+    <style name="Alert.Button.Positive" parent="Custom.Widget.MaterialComponents.Button">
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+    </style>
+
+    <style name="Alert.Button.Negative" parent="Custom.Widget.MaterialComponents.Button.OutlinedButton">
+    </style>
+
+    <style name="Alert.Button.Neutral" parent="Custom.Widget.MaterialComponents.Button.OutlinedButton">
+    </style>
+
 
     <style name="Custom.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">
     </style>
