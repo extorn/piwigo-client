@@ -2372,7 +2372,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
 
         @Override
-        public void onPopulateDialogView(LinearLayout dialogView, int layoutId) {
+        public void onPopulateDialogView(ViewGroup dialogView, int layoutId) {
 
             privacyLevelSpinner = dialogView.findViewById(R.id.privacy_level);
             // Create an ArrayAdapter using the string array and a default spinner layout
