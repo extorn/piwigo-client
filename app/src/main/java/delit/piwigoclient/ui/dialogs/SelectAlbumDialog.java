@@ -4,6 +4,8 @@ import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.ArrayList;
 
 import delit.piwigoclient.R;
@@ -36,7 +38,7 @@ public class SelectAlbumDialog {
         this.availableGalleries.clear();
         this.availableGalleries.addAll(albumNames);
 
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
         builder1.setCancelable(true);
         builder1.setTitle(R.string.alert_title_select_album);
 //        builder1.setMessage(R.string.alert_message_select_album);

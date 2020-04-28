@@ -11,6 +11,8 @@ import android.widget.Switch;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.io.Serializable;
 
 import delit.piwigoclient.R;
@@ -34,7 +36,7 @@ class SelectImageRenderDetailsDialog {
     }
 
     public AlertDialog buildDialog(String currentImageUrlDisplayed, final PictureResourceItem model, final RenderDetailSelectListener listener) {
-        androidx.appcompat.app.AlertDialog.Builder builder1 = new androidx.appcompat.app.AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
         builder1.setTitle(R.string.alert_image_show_image_title);
         adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, model);
 
