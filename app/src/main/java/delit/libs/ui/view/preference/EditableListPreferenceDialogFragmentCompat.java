@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -145,7 +146,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     private void showEditBox(Context context, final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
-        androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+        MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext());
         if (editingExistingValue) {
             b.setMessage(R.string.title_editing_item);
         } else {
@@ -244,7 +245,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     protected void onChangeItem(String oldValue, String newValue) {
 
         if (entriesList.contains(newValue)) {
-            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+            MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
@@ -267,7 +268,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     protected void onAddNewItemToList(String newItem) {
         if (entriesList.contains(newItem)) {
-            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+            MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
