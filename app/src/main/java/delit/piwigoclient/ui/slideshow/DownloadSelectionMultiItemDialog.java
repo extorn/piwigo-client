@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +55,7 @@ public class DownloadSelectionMultiItemDialog {
 
     public AlertDialog buildDialog(String defaultSelectedFilesizeName, Set<ResourceItem> itemsSelectedForDownload, final List<String> fileSizes, final DownloadSelectionMultiItemListener downloadSelectionListener) {
         this.downloadSelectionListener = downloadSelectionListener;
-        final AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+        final MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
         builder1.setTitle(R.string.alert_image_download_title);
 
         Set<ResourceItem> itemsToDownload = new HashSet<>(itemsSelectedForDownload.size());
