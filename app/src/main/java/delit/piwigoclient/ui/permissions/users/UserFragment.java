@@ -41,6 +41,8 @@ import java.util.Locale;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
+import delit.libs.ui.view.PasswordInputToggle;
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
@@ -347,6 +349,11 @@ public class UserFragment extends MyFragment<UserFragment> {
 
         TextView passwordFieldLabel = v.findViewById(R.id.user_password_label);
         passwordField = v.findViewById(R.id.user_password_field);
+
+        AppCompatCheckboxTriState viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
+        if (viewUnencryptedToggle != null) {
+            viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
+        }
 
         if (user.getId() < 0) {
             // this is a new user creation.

@@ -2,18 +2,15 @@ package delit.libs.ui.view.preference;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.preference.DialogPreference;
-import androidx.preference.EditTextPreferenceDialogFragmentCompat;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.R;
 
@@ -114,41 +111,16 @@ public class CustomEditTextPreferenceDialogFragmentCompat<T extends CustomEditTe
         // Place cursor at the end
         editText.setSelection(editText.getText().length());
 
-        boolean isTextPassword = InputType.TYPE_TEXT_VARIATION_PASSWORD == (getEditText().getInputType() & InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        boolean isNumberPassword = InputType.TYPE_NUMBER_VARIATION_PASSWORD == (getEditText().getInputType() & InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        boolean isWebPassword = InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD == (getEditText().getInputType() & InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD);
+        boolean isTextPassword = PasswordInputToggle.isTextPassword(getEditText());
+        boolean isNumberPassword = PasswordInputToggle.isNumberPassword(getEditText());
+        boolean isWebPassword = PasswordInputToggle.isWebPassword(getEditText());
 
         AppCompatCheckboxTriState viewUnencryptedToggle = view.findViewById(R.id.toggle_visibility);
         if (viewUnencryptedToggle != null) {
             if(isTextPassword || isNumberPassword || isWebPassword) {
-                viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(getEditText().getInputType()));
+                viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(getEditText()));
             } else {
                 viewUnencryptedToggle.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private class PasswordInputToggle implements CompoundButton.OnCheckedChangeListener {
-        int defaultInputType;
-
-        public PasswordInputToggle(int defaultInputType) {
-            this.defaultInputType = defaultInputType;
-        }
-
-        public int getVisibleInputType(int currentInputType) {
-            return defaultInputType | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
-        }
-
-        public int getDefaultInputType() {
-            return defaultInputType;
-        }
-
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(isChecked) {
-                getEditText().setInputType(getVisibleInputType(getEditText().getInputType()));
-            } else {
-                getEditText().setInputType(getDefaultInputType());
             }
         }
     }

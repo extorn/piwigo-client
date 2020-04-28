@@ -19,6 +19,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -434,7 +435,7 @@ public abstract class UIHelper<T> {
 
         if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
             LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
-            final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
+            final ViewGroup dialogView = (ViewGroup) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
             nextMessage.populateCustomView(dialogView);
         }
@@ -1056,7 +1057,7 @@ public abstract class UIHelper<T> {
 
         void chainResult(QuestionResultListener listener);
 
-        void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId);
+        void onPopulateDialogView(ViewGroup dialogView, @LayoutRes int layoutId);
     }
 
     public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -1158,7 +1159,7 @@ public abstract class UIHelper<T> {
         }
 
         @Override
-        public void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId) {
+        public void onPopulateDialogView(ViewGroup dialogView, @LayoutRes int layoutId) {
             Crashlytics.log(Log.DEBUG, TAG, "Unsupported layout id for dialog message : " + layoutId);
         }
 
@@ -1344,7 +1345,7 @@ public abstract class UIHelper<T> {
             return titleId == other.titleId && message.equals(other.message);
         }
 
-        public void populateCustomView(LinearLayout dialogView) {
+        public void populateCustomView(ViewGroup dialogView) {
             int layoutId = getLayoutId();
 
             if (layoutId == R.layout.layout_dialog_detailed) {

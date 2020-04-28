@@ -57,7 +57,9 @@ import javax.security.auth.x500.X500Principal;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.ProgressIndicator;
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.util.X509Utils;
 import delit.libs.util.security.CertificateLoadException;
@@ -232,6 +234,12 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
             EditText keystoreAliasEditText = v.findViewById(R.id.keystore_alias_editText);
             keystoreAliasEditText.setText(e.getAlias());
+        }
+
+        AppCompatCheckboxTriState viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
+        if (viewUnencryptedToggle != null) {
+            EditText passwordField = v.findViewById(R.id.keystore_password_editText);
+            viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
         }
 
         EditText filenameEditText = v.findViewById(R.id.keystore_filename_editText);

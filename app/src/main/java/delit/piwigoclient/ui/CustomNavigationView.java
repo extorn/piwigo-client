@@ -28,6 +28,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.SecurePrefsUtil;
+import delit.libs.ui.view.PasswordInputToggle;
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -268,6 +270,17 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     private static class OnUnlockAction extends UIHelper.QuestionResultAdapter {
         public OnUnlockAction(UIHelper uiHelper) {
             super(uiHelper);
+        }
+
+        @Override
+        public void onShow(AlertDialog alertDialog) {
+            super.onShow(alertDialog);
+
+            AppCompatCheckboxTriState viewUnencryptedToggle = alertDialog.findViewById(R.id.toggle_visibility);
+            if (viewUnencryptedToggle != null) {
+                EditText passwordField = alertDialog.findViewById(R.id.password);
+                viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
+            }
         }
 
         @Override

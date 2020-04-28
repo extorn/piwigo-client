@@ -93,20 +93,35 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_password_title" />
 
-
-            <EditText
-                android:id="@+id/user_password_field"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="some password"
-                android:autofillHints="password"/>
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/user_password_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/toggle_visibility"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    tools:text="some password"
+                    android:autofillHints="password"/>
+
+                <delit.libs.ui.view.button.AppCompatCheckboxTriState
+                    android:id="@+id/toggle_visibility"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/user_password_field"
+                    android:layout_alignParentEnd="true"
+                    android:button="@drawable/visibility_checkbox"/>
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/user_usertype_label"
