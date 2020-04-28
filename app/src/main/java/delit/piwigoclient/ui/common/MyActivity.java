@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.os.ConfigurationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -96,12 +96,18 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            setTaskDescription(
-                    new ActivityManager.TaskDescription(
-                            null, // Leave the default title.
-                            R.mipmap.ic_launcher_round_new
-                    ));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityManager.TaskDescription taskDesc;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                taskDesc = new ActivityManager.TaskDescription(
+                        null, // Leave the default title.
+                        R.mipmap.ic_launcher_round_new
+                );
+                setTaskDescription(taskDesc);
+            } /*else {
+                taskDesc = new ActivityManager.TaskDescription(null, null, ContextCompat.getColor(this, R.color.primary));
+            }*/
+
         }
         rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

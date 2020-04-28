@@ -13,6 +13,10 @@
         dark versions of the theme. -->
 
     <style name="Custom.Theme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/foreground</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorOnSecondary">@color/primary</item>
 
         <!-- used for the navigation menu for example -->
         <item name="clickableTextViewStyleBody1">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Body1</item>
