@@ -213,7 +213,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
     }
 
     @Override
-    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
+    public boolean onFailure(String uri, int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         if (statusCode != -1) {
             String[] errorDetails = HttpUtils.getHttpErrorMessage(getContext(), statusCode, error);
             PiwigoResponseBufferingHandler.UrlErrorResponse r = new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, statusCode, responseBody, errorDetails[0], errorDetails[1]);

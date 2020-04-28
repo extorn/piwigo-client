@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -189,7 +190,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
     }
 
-    protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
+    protected boolean onFailure(String uri, int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         return false;
     }
 
@@ -278,7 +279,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
         if (!tryingAgain) {
             try {
-                tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
+                tryingAgain = onFailure(getRequestURIAsStr(), statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
             } catch(RuntimeException e) {
                 Crashlytics.logException(e);
                 throw e;
@@ -297,6 +298,11 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 }
             }
         }
+    }
+
+    protected String getRequestURIAsStr() {
+        URI requestUri = getRequestURI();
+        return requestUri != null ? requestUri.toString() : "N/A";
     }
 
     protected boolean acquireNewSessionAndRetryCallIfAcquired() {
@@ -373,7 +379,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     }
 
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
-        onFailure(nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain, isResponseCached(nestedHandler.headers));
+        onFailure(nestedHandler.getRequestURIAsStr(), nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain, isResponseCached(nestedHandler.headers));
     }
 
     protected void onGetNewSessionSuccess() {
@@ -561,7 +567,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         if(serverUri == null) {
             serverUri = "";
         }
-        return serverUri.toLowerCase();
+        return serverUri;
     }
 
     protected SharedPreferences getSharedPrefs() {

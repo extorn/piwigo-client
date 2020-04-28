@@ -17,6 +17,7 @@ import org.json.JSONException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
@@ -41,6 +42,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     private RequestParams requestParams;
     private String nestedFailureMethod;
     private Throwable nestedFailure;
+    private URI nestedRequestURI;
     private Gson gson;
     private String failedOriginalMethod;
     private String piwigoMethodToUse;
@@ -115,12 +117,17 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     public void clearCallDetails() {
         nestedFailureMethod = null;
         nestedFailure = null;
+        nestedRequestURI = null;
         gson = null;
         super.clearCallDetails();
     }
 
     public String getNestedFailureMethod() {
         return nestedFailureMethod;
+    }
+
+    public URI getNestedRequestURI() {
+        return nestedRequestURI;
     }
 
     public Throwable getNestedFailure() {
@@ -243,7 +250,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     private void recordFailureHandingHttp200Response(int statusCode, boolean isCached, Exception e, String responseBodyStr) {
-        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
+        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, getRequestURIAsStr(), statusCode, e.getMessage(), e, isCached);
         r.setResponse(responseBodyStr);
         resetSuccessAsFailure();
         storeResponse(r);
@@ -307,7 +314,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     protected void onPiwigoFailure(PiwigoJsonResponse rsp, boolean isCached) throws JSONException {
         setError(new Throwable(rsp.getMessage()));
-        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage(), isCached);
+        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, getRequestURIAsStr(), rsp.getErr(), rsp.getMessage(), isCached);
         storeResponse(r);
     }
 
@@ -315,6 +322,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         if (nestedHandler instanceof AbstractPiwigoWsResponseHandler) {
             nestedFailureMethod = ((AbstractPiwigoWsResponseHandler) nestedHandler).getPiwigoMethod();
             nestedFailure = nestedHandler.getError();
+            nestedRequestURI = nestedHandler.getRequestURI();
             setError(nestedHandler.getError());
         }
         super.reportNestedFailure(nestedHandler);
@@ -327,7 +335,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     // When the response returned by REST has Http response code other than '200'
     @Override
-    protected boolean onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession, boolean isCached) {
+    protected boolean onFailure(String uri, final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession, boolean isCached) {
 
         if (BuildConfig.DEBUG) {
             String errorBody = "<NONE PRESENT>";
@@ -398,11 +406,19 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             } else {
                 errorDetail[0] = getPiwigoMethod() + " : " + errorDetail[0];
             }
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorDetail[0], errorDetail[1], error, isCached);
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, uri, statusCode, errorDetail[0], errorDetail[1], error, isCached);
             r.setResponse(responseBody != null ? new String(responseBody) : "");
             storeResponse(r);
         }
         return canRetryCall;
+    }
+
+    protected String getRequestURIAsStr() {
+        URI requestUri = getRequestURI();
+        if(requestUri == null) {
+            requestUri = getNestedRequestURI();
+        }
+        return requestUri != null ? requestUri.toString() : "N/A";
     }
 
     @Override

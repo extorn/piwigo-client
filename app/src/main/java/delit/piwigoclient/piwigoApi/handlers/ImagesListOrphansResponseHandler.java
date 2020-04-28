@@ -99,6 +99,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
             }
         }
 
+        setRequestURI(getNestedRequestURI());
         setError(getNestedFailure());
 
         if(nestedResponse != null) {

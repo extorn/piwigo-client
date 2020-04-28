@@ -120,6 +120,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             loadGalleryConfig();
         }
 
+        setRequestURI(getNestedRequestURI());
         setError(getNestedFailure());
         storeResponse(loginResponse);
 
@@ -240,7 +241,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private boolean isOnPiwigoComSite() {
-        return getPiwigoServerUrl().matches("https://[^.]*\\.piwigo\\.com[/]?");
+        return getPiwigoServerUrl().toLowerCase().matches("https://[^.]*\\.piwigo\\.com[/]?");
     }
 
     private boolean loadUserDetails() {

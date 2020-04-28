@@ -1012,5 +1012,6 @@ SOFTWARE.
     <string name="open_files">Open Files in app</string>
     <string name="files_unavailable_to_download_removed_pattern">Your selection contained files that could not be processed. These %1$d files have been ignored. To share a video file, it must be fully cached locally first.</string>
     <string name="alert_all_user_hints_will_be_shown_again">"All one-time user hints will be shown again"</string>
+    <string name="alert_server_uri_response_pattern" translatable="false">%1$s\n%2$s</string>
 
 </resources>

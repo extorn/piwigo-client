@@ -364,12 +364,14 @@ public class PiwigoResponseBufferingHandler {
         private final transient AbstractPiwigoWsResponseHandler requestHandler;
         private final int piwigoErrorCode;
         private final String piwigoErrorMessage;
+        private final String uri;
 
-        public PiwigoServerErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int piwigoErrorCode, String piwigoErrorMessage, boolean isCached) {
+        public PiwigoServerErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, String uri, int piwigoErrorCode, String piwigoErrorMessage, boolean isCached) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
             this.requestHandler = requestHandler;
             this.piwigoErrorCode = piwigoErrorCode;
             this.piwigoErrorMessage = piwigoErrorMessage;
+            this.uri = uri;
         }
 
         public int getPiwigoErrorCode() {
@@ -378,6 +380,10 @@ public class PiwigoResponseBufferingHandler {
 
         public String getPiwigoErrorMessage() {
             return piwigoErrorMessage;
+        }
+
+        public String getUri() {
+            return uri;
         }
 
         @Override
@@ -431,19 +437,21 @@ public class PiwigoResponseBufferingHandler {
     public static class PiwigoHttpErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
 
         private final transient AbstractPiwigoWsResponseHandler requestHandler;
+        private final String uri;
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
         private final Throwable error;
         private String response;
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail, Throwable error, boolean isCached) {
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, String uri, int statusCode, String errorMessage, String errorDetail, Throwable error, boolean isCached) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
             this.error = error;
             this.requestHandler = requestHandler;
             this.statusCode = statusCode;
             this.errorMessage = errorMessage;
             this.errorDetail = errorDetail;
+            this.uri = uri;
         }
 
         public void setResponse(String response) {
@@ -454,8 +462,8 @@ public class PiwigoResponseBufferingHandler {
             return response;
         }
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, Throwable error, boolean isCached) {
-            this(requestHandler, statusCode, errorMessage, null, error, isCached);
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, String uri, int statusCode, String errorMessage, Throwable error, boolean isCached) {
+            this(requestHandler, uri, statusCode, errorMessage, null, error, isCached);
         }
 
         public int getStatusCode() {
@@ -464,6 +472,10 @@ public class PiwigoResponseBufferingHandler {
 
         public String getErrorMessage() {
             return errorMessage;
+        }
+
+        public String getUri() {
+            return uri;
         }
 
         public String getErrorDetail() {

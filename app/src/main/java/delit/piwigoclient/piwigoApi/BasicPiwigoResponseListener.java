@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.net.URI;
+
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
@@ -215,7 +217,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     }
 
     protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-        showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, msg.getPiwigoErrorCode(), msg.getPiwigoErrorMessage()));
+        String httpUriAndError = uiHelper.getContext().getString(R.string.alert_server_uri_response_pattern, msg.getUri(), msg.getPiwigoErrorMessage());
+        showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, msg.getPiwigoErrorCode(), httpUriAndError));
     }
 
     protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
@@ -225,7 +228,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getErrorDetail() + msg.getResponse());
         } else {
             if (!(msg.getStatusCode() == HttpStatus.SC_GATEWAY_TIMEOUT && PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()))) {
-                showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), msg.getErrorDetail() + msg.getResponse());
+                String httpUriAndResponse = uiHelper.getContext().getString(R.string.alert_server_uri_response_pattern, msg.getUri(), msg.getResponse());
+                showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), msg.getErrorDetail() + httpUriAndResponse);
             }
         }
     }
