@@ -123,6 +123,11 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.65</item>
+        <item>"Änderungen:
+             - Das verbleibende Themenproblem für Dialoge wurde behoben
+                Bug-Fix:
+             - Das Server-Uri-Pfadfragment wurde fälschlicherweise in Kleinbuchstaben konvertiert, was zu einem 404-Fehler führte"</item>
         <item>1.4.0.64</item>
         <item>"Änderungen:
              - Eine Schaltfläche zum Anzeigen des versteckten Passworts in den Einstellungen wurde hinzugefügt

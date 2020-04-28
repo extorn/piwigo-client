@@ -35,8 +35,8 @@ android {
         minSdkVersion 17
         targetSdkVersion 29
 
-        versionCode 288
-        versionName "1.4.0.64"
+        versionCode 289
+        versionName "1.4.0.65"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config

@@ -138,6 +138,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.65</item>
+        <item>"Изменения:
+             - Исправлена оставшаяся проблема темы для диалогов
+                Исправлена ошибка:
+             - Фрагмент пути URI сервера неправильно преобразован в нижний регистр, что приводит к ошибке 404"</item>
         <item>1.4.0.64</item>
         <item>"Изменения:
              - Добавлена кнопка для просмотра скрытого пароля в настройках

@@ -262,6 +262,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.65</item>
+        <item>"Changes:
+            - Corrected remaining theme issue for dialogs
+               Bugfix:
+            - Server Uri path fragment incorrectly converted to lowercase resulting in 404 error"</item>
         <item>1.4.0.64</item>
         <item>"Changes:
             - Added a button to view hidden password in preferences
