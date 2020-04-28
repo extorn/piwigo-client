@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -176,7 +177,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     }
 
     private void buildAndShowAlertErrorLoadingFilesDialog(String errorMessage) {
-        alertDialog = new AlertDialog.Builder(getContext())
+        alertDialog = new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.alert_error)
                 .setMessage(errorMessage)
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
@@ -236,7 +237,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         EditText filenameEditText = v.findViewById(R.id.keystore_filename_editText);
         filenameEditText.setText(recoverableError.getFile().getName());
 
-        alertDialog = new AlertDialog.Builder(getContext())
+        alertDialog = new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.alert_information)
                 .setView(v)
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {

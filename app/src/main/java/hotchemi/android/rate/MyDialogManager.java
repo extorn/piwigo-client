@@ -1,6 +1,5 @@
 package hotchemi.android.rate;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -9,13 +8,15 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import static hotchemi.android.rate.IntentHelper.createIntentForAmazonAppstore;
 import static hotchemi.android.rate.IntentHelper.createIntentForGooglePlay;
 import static hotchemi.android.rate.PreferenceHelper.setAgreeShowDialog;
 import static hotchemi.android.rate.PreferenceHelper.setRemindInterval;
-import static hotchemi.android.rate.Utils.getDialogBuilder;
 
 final class MyDialogManager {
 
@@ -23,7 +24,7 @@ final class MyDialogManager {
     }
 
     static Dialog create(final Context context, final DialogOptions options) {
-        AlertDialog.Builder builder = getDialogBuilder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
         builder.setMessage(options.getMessageText(context));
 
         if (options.shouldShowTitle()) builder.setTitle(options.getTitleText(context));
@@ -47,7 +48,7 @@ final class MyDialogManager {
                     Crashlytics.logException(e);
                     // should never happen but will on an emulator almost certainly.
                     //Lets just sink the error for now and let the dialog close.
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+                    MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
                     builder1.setCancelable(false);
                     builder1.setTitle(delit.piwigoclient.R.string.alert_error);
                     builder1.setMessage(delit.piwigoclient.R.string.alert_error_no_app_available_to_rate_app);
