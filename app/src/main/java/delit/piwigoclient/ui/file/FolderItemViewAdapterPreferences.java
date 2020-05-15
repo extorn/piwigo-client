@@ -3,14 +3,13 @@ package delit.piwigoclient.ui.file;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -49,7 +48,7 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         this.multiSelectAllowed = multiSelectAllowed;
     }
 
-    public FolderItemViewAdapterPreferences withInitialFolder(@NonNull Uri initialFolder) {
+    public FolderItemViewAdapterPreferences withInitialFolder(@Nullable Uri initialFolder) {
         this.initialFolder = initialFolder;
         return this;
     }
@@ -129,7 +128,7 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return this;
     }
 
-    public Uri getInitialFolder() {
+    public @Nullable Uri getInitialFolder() {
         return initialFolder;
     }
 
@@ -159,32 +158,16 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         }
     }
 
-    public SortedSet<String> getVisibleFileTypesForMimes(@NonNull DocumentFile[] folderContent) {
-        SortedSet<String> processedExts = new TreeSet<>();
+    public SortedSet<String> getVisibleFileTypesForMimes(@NonNull Map<String,String> extToMimeMap) {
         SortedSet<String> wantedExts = new TreeSet<>();
-        if(folderContent != null) {
-            if (visibleMimeTypes != null) {
-                for (DocumentFile f : folderContent) {
-                    String ext = IOUtils.getFileExt(f.getName());
-                    if (ext != null) {
-                        ext = ext.toLowerCase();
-                        if (processedExts.add(ext)) { // if we didn't check this ext already
-                            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-                            if (mimeType != null) { // if null then it can't be a match!
-                                if(null != MimeTypeFilter.matches(mimeType, CollectionUtils.asStringArray(visibleMimeTypes))) {
-                                    wantedExts.add(ext);
-                                }
-                            }
-                        }
-                    }
+        if (visibleMimeTypes != null) {
+            for(Map.Entry<String,String> extToMime : extToMimeMap.entrySet()) {
+                if(null != MimeTypeFilter.matches(extToMime.getValue(), CollectionUtils.asStringArray(visibleMimeTypes))) {
+                    wantedExts.add(extToMime.getKey());
                 }
             }
         }
         return wantedExts;
-    }
-
-    public void setInitialFolder(Uri uri) {
-        initialFolder = uri;
     }
 
     public DocumentFile getInitialFolderAsLinkedDocumentFile(@NonNull Context context, @NonNull Uri rootUriWithPerms) {
@@ -222,5 +205,9 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
 
     public String getSelectedUriPermissionConsumerId() {
         return selectedUriPermissionsForConsumerId;
+    }
+
+    public boolean isShowFolderContent() {
+        return showFolderContents;
     }
 }

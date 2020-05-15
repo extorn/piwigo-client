@@ -39,6 +39,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
+import delit.piwigoclient.ui.file.LegacyRecyclerViewFolderItemSelectFragment;
 import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
 
 /**
@@ -165,19 +166,22 @@ public class FileSelectActivity extends MyActivity {
         int uniqueEventId = TrackableRequestEvent.getNextEventId();
 
         Fragment fragment;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (isShowUriBasedFileSelection()) {
             Uri uri = folderItemSelectPrefs.getInitialFolder();
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && "file".equals(uri.getScheme())) {
+            if (uri != null && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && "file".equals(uri.getScheme())) {
                 folderItemSelectPrefs.withInitialFolder(null);
             }
             fragment = RecyclerViewDocumentFileFolderItemSelectFragment.newInstance(folderItemSelectPrefs, uniqueEventId);
         } else {
-            //TODO show the old file selection
-            fragment = null;
+            fragment = LegacyRecyclerViewFolderItemSelectFragment.newInstance(folderItemSelectPrefs, uniqueEventId);
         }
 
         setTrackedIntent(uniqueEventId, event.getActionId());
         showFragmentNow(fragment);
+    }
+
+    private boolean isShowUriBasedFileSelection() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     private FileSelectionNeededEvent getFileSelectionNeededEvent() {

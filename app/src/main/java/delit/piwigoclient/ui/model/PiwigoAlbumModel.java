@@ -1,9 +1,8 @@
 package delit.piwigoclient.ui.model;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import com.drew.lang.annotations.NotNull;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
@@ -19,7 +18,7 @@ public class PiwigoAlbumModel extends ViewModelContainer {
         return albumLiveData;
     }
 
-    public LiveData<PiwigoAlbum> getPiwigoAlbum(@NotNull CategoryItem categoryItem) {
+    public LiveData<PiwigoAlbum> getPiwigoAlbum(@NonNull CategoryItem categoryItem) {
         if (albumLiveData.getValue() == null) {
             albumLiveData.setValue(new PiwigoAlbum(categoryItem));
         }

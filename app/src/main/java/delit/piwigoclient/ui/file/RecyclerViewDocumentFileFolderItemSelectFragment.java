@@ -111,7 +111,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         Uri currentFolder = getCurrentFolder();
         if(currentFolder != null) {
             // update the current folder.
-            getViewPrefs().setInitialFolder(currentFolder);
+            getViewPrefs().withInitialFolder(currentFolder);
         }
         super.onSaveInstanceState(outState);
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
@@ -304,7 +304,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             }
         }
         if (fileExtFilters.getAllPossibleFilters() != null) {
-            SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(newFolderContent);
+
+            SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(IOUtils.getUniqueExtAndMimeTypes(newFolderContent));
             if (fileExtsInFolderMatchingMimeTypesWanted != null) {
                 // add any extra that have come from mime types now visible in this folder.
                 fileExtFilters.getAllPossibleFilters().addAll(fileExtsInFolderMatchingMimeTypesWanted);

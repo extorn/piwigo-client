@@ -16,13 +16,13 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
-import com.drew.lang.annotations.Nullable;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -46,9 +46,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -799,7 +797,10 @@ public class IOUtils {
         return updated == 1;
     }
 
-    public static File getFile(Uri fileUri) throws IOException {
+    public static @Nullable File getFile(@Nullable Uri fileUri) throws IOException {
+        if(fileUri == null) {
+            return null;
+        }
         String filePath = fileUri.getPath();
         if(filePath == null) {
             throw new IOException("Uri does not represent a local file " + fileUri);
@@ -1094,5 +1095,34 @@ public class IOUtils {
             Crashlytics.log(Log.INFO, TAG, "Some permissions to remove are no longer held (removing silently)");
         }
         return uris;
+    }
+
+    public static Map<String,String> getUniqueExtAndMimeTypes(DocumentFile[] files) {
+        Map<String, String> map = new HashMap<>();
+        if(files == null) {
+            return map;
+        }
+        for (DocumentFile f : files) {
+            String ext = IOUtils.getFileExt(f);
+            if (ext != null) {
+                map.put(ext, f.getType());
+            }
+        }
+        return map;
+    }
+
+    public static Map<String,String> getUniqueExtAndMimeTypes(File[] files) {
+        Map<String, String> map = new HashMap<>();
+        if(files == null) {
+            return map;
+        }
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        for(File f : files) {
+            String ext = getFileExt(f.getName());
+            if(ext != null) {
+                map.put(ext.toLowerCase(), mimeTypeMap.getMimeTypeFromExtension(ext));
+            }
+        }
+        return map;
     }
 }

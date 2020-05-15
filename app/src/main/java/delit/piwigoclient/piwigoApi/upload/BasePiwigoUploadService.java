@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
@@ -26,8 +28,6 @@ import androidx.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.lang.annotations.NotNull;
-import com.drew.lang.annotations.Nullable;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
@@ -109,7 +109,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         this.tag = tag;
     }
 
-    public static @NotNull
+    public static @NonNull
     UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, List<Uri> filesForUpload, CategoryItemStub category, byte uploadedFilePrivacyLevel, long responseHandlerId, boolean isDeleteFilesAfterUpload) {
         long jobId = getNextMessageId();
         UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUpload, category, uploadedFilePrivacyLevel, isDeleteFilesAfterUpload);

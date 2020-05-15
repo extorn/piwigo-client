@@ -28,7 +28,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
@@ -570,7 +569,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         removeActionDownloadEvent(); // we've got the event, so ignore the return
         for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
             // add the file details to the media store :-)
-            MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, DocumentFile.fromSingleUri(this, fileDetail.getDownloadedFile())));
+            try {
+                //TODO confirm this isn't needed for the new DocumentFile route too.
+                File f = IOUtils.getFile(fileDetail.getDownloadedFile());
+                MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, f));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         if (event.isShareDownloadedWithAppSelector()) {
             Set<Uri> destinationFiles = new HashSet<>(event.getFileDetails().size());
