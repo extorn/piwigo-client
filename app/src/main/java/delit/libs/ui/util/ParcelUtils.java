@@ -53,7 +53,7 @@ public class ParcelUtils {
         return null;
     }
 
-    public static void writeSet(@NonNull Parcel out, HashSet<? extends Parcelable> data) {
+    public static void writeSet(@NonNull Parcel out, Set<? extends Parcelable> data) {
         if(data == null) {
             out.writeValue(null);
         } else {
@@ -150,28 +150,24 @@ public class ParcelUtils {
 
     public static void writeStringSet(Parcel dest, Set<String> entries) {
         if(entries == null) {
-            dest.writeList(null);
+            dest.writeStringList(null);
         } else {
-            dest.writeList(new ArrayList<>(entries));
+            dest.writeStringList(new ArrayList<>(entries));
         }
     }
 
     public static <T extends Set<String>> T readStringSet(Parcel in, @NonNull T dest) {
-        List<String> rawData = readValue(in, null, ArrayList.class);
-        if (rawData != null) {
+        List<String> rawData = in.createStringArrayList();
+        dest.clear();
+        if (rawData != null && rawData.size() > 0) {
             dest.addAll(rawData);
         }
         return dest;
     }
 
-    public static @Nullable
+    public static @NonNull
     HashSet<String> readStringSet(Parcel in) {
-        List<String> rawData = readValue(in, null, ArrayList.class);
-        HashSet<String> data = null;
-        if(rawData != null) {
-            data = new HashSet<>(rawData);
-        }
-        return data;
+        return readStringSet(in, new HashSet<>());
     }
 //
 //    public static <T extends Parcelable,S extends Parcelable> void writeMap(Parcel dest, HashMap<T ,ArrayList<S>> data) {
@@ -252,6 +248,9 @@ public class ParcelUtils {
     public static <S,T,V extends Map<S, T>> V readMap(Parcel in, V dest, ClassLoader loader) {
         ArrayList<S> keys = readValue(in, loader, ArrayList.class);
         ArrayList<T> values = readValue(in, loader, ArrayList.class);
+        if(dest == null) {
+            dest = (V)new HashMap<S,T>(keys.size());
+        }
         if(keys != null && values != null) {
             for(int i = 0; i < values.size(); i++) {
                 dest.put(keys.get(i), values.get(i));
@@ -261,8 +260,7 @@ public class ParcelUtils {
     }
 
     public static <S, T> HashMap<S,T> readMap(Parcel in, ClassLoader loader) {
-        HashMap<S,T> map = new HashMap<>(0);
-        return readMap(in, map, loader);
+        return readMap(in, null, loader);
     }
 
     public static Boolean readBool(Parcel in) {
@@ -305,20 +303,16 @@ public class ParcelUtils {
         return new File(value);
     }
 
-    public static void writeUri(Parcel out, Uri uri) {
-        if (uri != null) {
-            out.writeValue(uri.toString());
-        } else {
-            out.writeValue(null);
-        }
+    public static void writeParcelable(Parcel out, Parcelable p) {
+        out.writeValue(p);
     }
 
-    public static Uri readUri(Parcel in) {
-        String value = readString(in);
-        if (value == null) {
-            return null;
+    public static <T extends Parcelable> T readParcelable(Parcel in, @NonNull Class<T> clazz) {
+        Object value = in.readValue(clazz.getClassLoader());
+        if(value == null || clazz.isInstance(value)) {
+            return clazz.cast(value);
         }
-        return Uri.parse(value);
+        throw new IllegalArgumentException("Value "+value.getClass().getName()+" is not instance of class " +clazz.getName());
     }
 
     public static void writeParcel(ObjectOutputStream os, Parcel p) throws IOException {

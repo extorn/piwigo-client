@@ -20,8 +20,8 @@ import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 
 public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> {
 
-    public GroupRecyclerViewAdapter(final PiwigoGroups groups, MultiSelectStatusListener<Group> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(null, groups, multiSelectStatusListener, prefs);
+    public GroupRecyclerViewAdapter(Context context, final PiwigoGroups groups, MultiSelectStatusListener<Group> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+        super(context, null, groups, multiSelectStatusListener, prefs);
     }
 
     @NonNull

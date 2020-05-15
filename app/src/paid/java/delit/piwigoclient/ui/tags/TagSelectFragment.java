@@ -61,7 +61,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection, HashSet<Tag> unsavedNewTags) {
         TagSelectFragment fragment = new TagSelectFragment();
         Bundle b = buildArgsBundle(prefs, actionId, initialSelection);
-        BundleUtils.putHashSet(b, ARGS_UNSAVED_TAGS, unsavedNewTags);
+        BundleUtils.putSet(b, ARGS_UNSAVED_TAGS, unsavedNewTags);
         fragment.setArguments(b);
         return fragment;
     }
@@ -121,13 +121,10 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             }
         }
 
-        getAddListItemButton().setVisibility(View.VISIBLE);
-        getAddListItemButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewTag();
-            }
-        });
+        if(getAddListItemButton() != null) {
+            getAddListItemButton().setVisibility(View.VISIBLE);
+            getAddListItemButton().setOnClickListener(v1 -> addNewTag());
+        }
 
         if(isServerConnectionChanged()) {
             // immediately leave this screen.
@@ -139,7 +136,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             getViewPrefs().readonly();
         }
 
-        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(PiwigoTagModel.class, tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
+        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(requireContext(), PiwigoTagModel.class, tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
         }, getViewPrefs());
         /*if(!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();

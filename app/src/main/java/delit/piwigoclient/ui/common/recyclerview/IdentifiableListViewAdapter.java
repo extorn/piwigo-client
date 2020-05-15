@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
+import android.content.Context;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -23,8 +24,8 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     private final Class<? extends ViewModelContainer> modelType;
 
 
-    public IdentifiableListViewAdapter(final Class<? extends ViewModelContainer> modelType, final V itemStore, R multiSelectStatusListener, P prefs) {
-        super(multiSelectStatusListener, prefs);
+    public IdentifiableListViewAdapter(Context context, final Class<? extends ViewModelContainer> modelType, final V itemStore, R multiSelectStatusListener, P prefs) {
+        super(context, multiSelectStatusListener, prefs);
         this.itemStore = itemStore;
         this.modelType = modelType;
     }

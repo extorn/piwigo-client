@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi;
 
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -8,7 +9,6 @@ import android.util.LongSparseArray;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -552,15 +552,15 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class UrlToFileSuccessResponse extends BaseUrlResponse {
-        private final File file;
+        private final Uri localFileUri;
 
-        public UrlToFileSuccessResponse(long messageId, String url, File file) {
+        public UrlToFileSuccessResponse(long messageId, String url, Uri localFileUri) {
             super(messageId, url);
-            this.file = file;
+            this.localFileUri = localFileUri;
         }
 
-        public File getFile() {
-            return file;
+        public Uri getLocalFileUri() {
+            return localFileUri;
         }
     }
 

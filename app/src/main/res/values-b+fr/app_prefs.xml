@@ -267,6 +267,9 @@
 
     <!-- prefs -->
 
+    <string name="preference_data_upload_delete_uploaded_title">Suppression automatique par défaut</string>
+    <string name="preference_data_upload_delete_uploaded_summary">Supprimer les fichiers téléchargés avec succès</string>
+
     <string name="preference_data_upload_default_privacy_level_title">Niveau de confidentialité par défaut</string>
     <string name="preference_data_upload_default_privacy_level_summary">Fichiers téléchargés visibles à %1$s</string>
 

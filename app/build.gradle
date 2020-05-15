@@ -36,8 +36,8 @@ android {
         minSdkVersion 17
         targetSdkVersion 29
 
-        versionCode 290
-        versionName "1.4.0.65"
+        versionCode 291
+        versionName "1.4.0.66"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -126,8 +126,9 @@ android {
 dependencies {
     // room database persistence libs used to track files previously uploaded
     def room_version = "2.2.5"
-    paidImplementation "androidx.room:room-runtime:$room_version"
-    paidAnnotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
 
 
     implementation project(path: ':google-licencing-library')
@@ -184,8 +185,9 @@ dependencies {
     implementation 'androidx.transition:transition:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout-solver:1.1.3' //2.0.0-alpha2
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3' //2.0.0-alpha2
-    implementation 'com.google.firebase:firebase-core:17.4.0'
-    implementation 'com.google.firebase:firebase-analytics:17.4.0'
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'com.google.firebase:firebase-core:17.4.1'
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-ads:19.1.0'
     implementation 'com.google.android.gms:play-services-base:17.2.1'

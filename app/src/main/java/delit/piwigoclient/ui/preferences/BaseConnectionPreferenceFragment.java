@@ -515,6 +515,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             if ("disk".equals(newValue) || valueChanged) {
                 if (!initialising) {
                     getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
+                    //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
                 }
             } else {
                 if (!initialising) {

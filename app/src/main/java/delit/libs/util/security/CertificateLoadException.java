@@ -12,16 +12,12 @@ import java.io.File;
 
 public class CertificateLoadException extends SecurityOperationException {
 
-    public CertificateLoadException(File certificateFile, String message, Throwable cause) {
-        super(certificateFile, message, cause);
-    }
-
-    public CertificateLoadException(File certificateFile, Throwable cause) {
-        super(certificateFile, cause);
+    public CertificateLoadException(String keystoreSource, String message, Throwable cause) {
+        super(keystoreSource, message, cause);
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    public CertificateLoadException(File certificateFile, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(certificateFile, message, cause, enableSuppression, writableStackTrace);
+    public CertificateLoadException(String keystoreSource, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(keystoreSource, message, cause, enableSuppression, writableStackTrace);
     }
 }

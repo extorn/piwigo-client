@@ -4,7 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 /**
@@ -20,7 +22,7 @@ public class SquareLinearLayout extends LinearLayoutCompat {
         super(context, attrs);
     }
 
-    public SquareLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public SquareLinearLayout(Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

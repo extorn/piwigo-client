@@ -2,6 +2,8 @@ package delit.libs.util;
 
 import android.webkit.MimeTypeMap;
 
+import androidx.core.content.MimeTypeFilter;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Collection;
@@ -33,7 +35,7 @@ public class CustomFileFilter implements FileFilter {
         }
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(pathname.getName()).toLowerCase());
-        if (mimeType == null || !mimeType.startsWith("video/") || !allowVideosToExceedLimit) {
+        if (mimeType == null || MimeTypeFilter.matches(mimeType, "video/*") || !allowVideosToExceedLimit) {
             return isFilesizeMatch(pathname);
         }
         return true;

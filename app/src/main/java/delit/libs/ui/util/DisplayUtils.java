@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -24,12 +25,17 @@ import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsSpinner;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -335,6 +341,44 @@ public class DisplayUtils {
         }
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         return context;
+    }
+
+    public static LifecycleOwner getLifecycleOwner(Context aContext) {
+        Context context = aContext;
+        while (!(context instanceof LifecycleOwner)) {
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return (LifecycleOwner) context;
+    }
+
+    public static ViewModelStoreOwner getViewModelStoreOwner(Context aContext) {
+        Context context = aContext;
+        while (!(context instanceof ViewModelStoreOwner)) {
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return (ViewModelStoreOwner) context;
+    }
+
+    /**
+     * Note that the view clicked on is null because there was no real click (the view does not actually exist if in dropdown mode).
+     * @param spinner
+     * @param newPos
+     */
+    public static void selectSpinnerItemAndCallItemSelectedListener(AbsSpinner spinner, int newPos) {
+        int itemCount = spinner.getCount();
+        if(newPos >= itemCount) {
+            throw new IllegalArgumentException("Cannot select position "+newPos + " as it is out of range (0 - "+ (itemCount-1)+")");
+        }
+        int currentSelectedItem = spinner.getSelectedItemPosition();
+        spinner.setSelection(newPos);
+        newPos = spinner.getSelectedItemPosition();
+        long itemId = spinner.getItemIdAtPosition(newPos);
+        if(newPos != currentSelectedItem) { // try and avoid the listener being called twice.
+            AdapterView.OnItemSelectedListener listener = spinner.getOnItemSelectedListener();
+            if (listener != null) {
+                listener.onItemSelected(spinner, null, newPos, itemId);
+            }
+        }
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {

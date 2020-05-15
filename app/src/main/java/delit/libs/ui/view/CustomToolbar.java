@@ -27,6 +27,7 @@ public class CustomToolbar extends Toolbar {
         super(context, attrs, defStyleAttr);
     }
 
+
     @Override
     public void setTitle(int resId) {
         super.setTitle(resId);

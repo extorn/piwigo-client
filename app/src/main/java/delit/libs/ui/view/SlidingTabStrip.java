@@ -24,6 +24,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.ContextCompat;
 
@@ -58,7 +60,11 @@ class SlidingTabStrip extends LinearLayoutCompat {
     }
 
     SlidingTabStrip(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    SlidingTabStrip(Context context, AttributeSet attrs, @AttrRes int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         setWillNotDraw(false);
 
         final float density = getResources().getDisplayMetrics().density;

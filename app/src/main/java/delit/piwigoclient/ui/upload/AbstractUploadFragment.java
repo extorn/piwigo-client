@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.upload;
 import android.Manifest;
 import android.app.Notification;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,6 +29,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.MimeTypeFilter;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,7 +49,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -115,6 +117,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final int TAB_IDX_SETTINGS = 1;
     private static final int TAB_IDX_FILES = 0;
     public static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
+
     private Long uploadJobId;
     private long externallyTriggeredSelectFilesActionId;
     private CategoryItemStub uploadToAlbum;
@@ -123,6 +126,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private Button deleteUploadJobButton;
     private TextView selectedGalleryTextView;
     private Spinner privacyLevelSpinner;
+    private CheckBox deleteFilesAfterUploadCheckbox;
     private CustomImageButton fileSelectButton;
     private FilesToUploadRecyclerViewAdapter filesToUploadAdapter;
     private Button uploadJobStatusButton;
@@ -140,6 +144,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private NumberPicker compressImagesMaxHeightNumberPicker;
     private NumberPicker compressImagesMaxWidthNumberPicker;
     private ProgressBar overallUploadProgressBar;
+
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
         Bundle args = new Bundle();
@@ -190,10 +195,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 Set<String> unsupportedExts = new HashSet<>();
                 while (iter.hasNext()) {
                     FolderItemRecyclerViewAdapter.FolderItem f = iter.next();
-                    String fileExt = IOUtils.getFileExt(f.getFile().getName().toLowerCase());
+                    String fileExt = IOUtils.getFileExt(requireContext(), f.getContentUri()).toLowerCase();
                     if (!allowedFileTypes.contains(fileExt)) {
-                        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
-                        if (mimeType == null || !mimeType.startsWith("video/")) {
+                        String mimeType = f.getDocumentFile(requireContext()).getType();
+                        if (mimeType == null || !MimeTypeFilter.matches(mimeType, "video/*")) {
                             iter.remove();
                             unsupportedExts.add(fileExt);
                         }
@@ -202,7 +207,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if (!unsupportedExts.isEmpty()) {
                     getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts)));
                 }
-                updateFilesForUploadList(stickyEvent.getSelectedFolderItems(), stickyEvent.isContentUrisPresent());
+                updateFilesForUploadList(stickyEvent.getSelectedFolderItems());
             }
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
@@ -344,6 +349,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         int defaultAudioBitrate = UploadPreferences.getVideoCompressionAudioBitrate(getContext(), getPrefs());
         compressVideosAudioBitrateSpinner.setSelection(audioBitrateAdapter.getPosition(defaultAudioBitrate));
 
+        deleteFilesAfterUploadCheckbox = view.findViewById(R.id.delete_files_after_upload_checkbox);
+        deleteFilesAfterUploadCheckbox.setChecked(UploadPreferences.isDeleteFilesAfterUploadDefault(getContext(), getPrefs()));
+
         compressVideosCheckbox = view.findViewById(R.id.compress_videos_button);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             compressVideosCheckbox.setVisibility(GONE);
@@ -437,7 +445,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         if (filesToUploadAdapter == null) {
-            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new ArrayList<File>(), mediaScanner, getContext(), this);
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new ArrayList<DocumentFile>(), getContext(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
 
             filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -489,28 +497,32 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getUiHelper().showDetailedMsg(R.string.alert_error, "Video Compression not supported on this version of android");
         } else {
             FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-            List<File> filesForUpload = fileListAdapter.getFiles();
+            List<Uri> filesForUpload = fileListAdapter.getFiles();
             if (filesForUpload.isEmpty()) {
                 return;
             }
-            ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-            long rawVal = compressVideosQualitySpinner.getSelectedItemId();
-            int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
-            double bpps = ((double) rawVal) / 1000;
-            compressionSettings.setAddAudioTrack(audioBitrate != 0);
-            compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
-            compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
+            for(Uri fileForCompression : filesForUpload) {
+                ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
+                long rawVal = compressVideosQualitySpinner.getSelectedItemId();
+                int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
+                double bpps = ((double) rawVal) / 1000;
+                compressionSettings.setAddAudioTrack(audioBitrate != 0);
+                compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
+                compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
 
-            File inputVideo = filesForUpload.get(0);
-            File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-            File outputVideo;
-            int i = 0;
-            do {
-                i++;
-                outputVideo = new File(moviesFolder, "compressed_" + i + inputVideo.getName());
-            } while (outputVideo.exists());
-            outputVideo = IOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType()));
-            new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
+
+                File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+                File outputVideo;
+                int i = 0;
+                DocumentFile inputDocFile = DocumentFile.fromSingleUri(requireContext(), fileForCompression);
+                do {
+                    i++;
+                    String filename = inputDocFile.getName();
+                    outputVideo = new File(moviesFolder, "compressed_" + i + filename);
+                } while (outputVideo.exists());
+                Uri outputVideoUri = Uri.fromFile(IOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType())));
+                new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, outputVideoUri, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
+            }
         }
     }
 
@@ -525,20 +537,20 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     protected boolean isImageFilesWaitingForUpload() {
-        return hasFileMatchingMime("image/");
+        return hasFileMatchingMime("image/*");
     }
 
     protected boolean isVideoFilesWaitingForUpload() {
-        return hasFileMatchingMime("video/");
+        return hasFileMatchingMime("video/*");
     }
 
-    protected boolean hasFileMatchingMime(String mimePrefix) {
-        List<File> files = filesToUploadAdapter.getFiles();
+    protected boolean hasFileMatchingMime(String mimeTypeFilter) {
+        List<Uri> files = filesToUploadAdapter.getFiles();
         MimeTypeMap mimeTypesMap = MimeTypeMap.getSingleton();
-        for (File f : files) {
-            String fileExt = IOUtils.getFileExt(f.getName());
+        for (Uri f : files) {
+            String fileExt = IOUtils.getFileExt(requireContext(), f);
             String mimeType = mimeTypesMap.getMimeTypeFromExtension(fileExt.toLowerCase());
-            if (mimeType != null && mimeType.startsWith(mimePrefix)) {
+            if (mimeType != null && MimeTypeFilter.matches(mimeType,mimeTypeFilter)) {
                 return true;
             }
         }
@@ -562,11 +574,27 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (getContext() != null) {
             // context could be null because there is a 3 second delay before the screen opens during which the user could close the app.
             FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
-            String initialFolder = UploadPreferences.getDefaultLocalUploadFolder(getPrefs(), getContext());
-            event.withInitialFolder(initialFolder);
+            String initialFolder = UploadPreferences.getDefaultLocalUploadFolder(getContext(), getPrefs());
+            event.withInitialFolder(IOUtils.getLocalFileUri(initialFolder));
             event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
+            //        event.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey()); Not currently needed as permissions are transient.
 
-            Set<String> visibleMimeTypes = Collections.singleton("video/");
+            Set<String> visibleMimeTypes = new HashSet<>();
+            visibleMimeTypes.add("video/*");
+            MimeTypeMap map = MimeTypeMap.getSingleton();
+            for(String fileExt : allowedFileTypes) {
+                String mimeType = map.getMimeTypeFromExtension(fileExt.toLowerCase());
+                if(mimeType == null) {
+                    if(fileExt.equals("webmv")) {
+                        mimeType = "video/webm";
+                    }
+                }
+                if(mimeType != null) {
+                    visibleMimeTypes.add(mimeType);
+                } else {
+                    Crashlytics.log(Log.WARN, TAG, "Unrecognised file extension - no mime type found : " + fileExt);
+                }
+            }
             event.withVisibleMimeTypes(visibleMimeTypes);
 
             getUiHelper().setTrackingRequest(event.getActionId());
@@ -650,16 +678,16 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(privacyLevelWanted));
             }
 
-            ArrayList<File> filesToBeUploaded = uploadJob.getFilesNotYetUploaded();
+            ArrayList<Uri> filesToBeUploaded = uploadJob.getFilesNotYetUploaded();
 
             filesForUploadAdapter.clear();
             filesForUploadAdapter.addAll(filesToBeUploaded);
 
-            for (File f : filesForUploadAdapter.getFiles()) {
+            for (Uri f : filesForUploadAdapter.getFiles()) {
                 int progress = uploadJob.getUploadProgress(f);
                 int compressionProgress = uploadJob.getCompressionProgress(f);
                 if (compressionProgress == 100) {
-                    File compressedFile = uploadJob.getCompressedFile(f);
+                    Uri compressedFile = uploadJob.getCompressedFile(f);
                     if (compressedFile != null) {
                         filesForUploadAdapter.updateCompressionProgress(f, compressedFile, 100);
                     }
@@ -720,53 +748,56 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return uploadToAlbum;
     }
 
-    protected void updateFilesForUploadList(ArrayList<FolderItemRecyclerViewAdapter.FolderItem> folderItemsToBeUploaded, boolean contentUrisPresent) {
+    protected void updateFilesForUploadList(ArrayList<FolderItemRecyclerViewAdapter.FolderItem> folderItemsToBeUploaded) {
         if (folderItemsToBeUploaded.size() > 0) {
-            String lastOpenedFolder = folderItemsToBeUploaded.get(0).getFile().getParentFile().getAbsolutePath();
-            getPrefs().edit().putString(getString(R.string.preference_data_upload_default_local_folder_key), lastOpenedFolder).apply();
+            for(FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
+                try {
+                    DocumentFile documentFile = item.getDocumentFile(requireContext());
+                    DocumentFile folder = documentFile.getParentFile();
+                    if (folder != null) { // will be null for any shared files.
+                        Uri lastOpenedFolder = folder.getUri();
+                        UploadPreferences.setDefaultLocalUploadFolder(requireContext(), getPrefs(), lastOpenedFolder);
+                        break; // don't try again. One folder is fine.
+                    }
+                } catch (IllegalArgumentException e) {
+                    // this will occur for any shared files as they're not DocumentFiles. We can safely ignore it.
+                }
+            }
         }
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
         int addedItems = 0;
-        if (contentUrisPresent) {
 
-            ArrayList<File> rawFilesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
-            Iterator<FolderItemRecyclerViewAdapter.FolderItem> iter = folderItemsToBeUploaded.iterator();
-            while (iter.hasNext()) {
-                FolderItemRecyclerViewAdapter.FolderItem item = iter.next();
-                if (item.getContentUri() != null) {
-                    if (adapter.add(item.getFile(), item.getContentUri())) {
-                        addedItems++;
-                    }
-                    iter.remove();
-                } else {
-                    rawFilesToBeUploaded.add(item.getFile());
+        ArrayList<Uri> rawFilesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
+        Iterator<FolderItemRecyclerViewAdapter.FolderItem> iter = folderItemsToBeUploaded.iterator();
+        while (iter.hasNext()) {
+            FolderItemRecyclerViewAdapter.FolderItem item = iter.next();
+            if (item.getContentUri() != null) {
+                if (adapter.add(getContext(), item.getContentUri())) {
+                    addedItems++;
                 }
-            }
-            if (rawFilesToBeUploaded.size() > 0) {
-                addedItems += adapter.addAll(rawFilesToBeUploaded).size();
             } else {
-                adapter.notifyDataSetChanged();
-                adapter.retrieveMissingMediaUris();
+                rawFilesToBeUploaded.add(item.getContentUri());
             }
-        } else {
-            ArrayList<File> filesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
-            for (FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
-                filesToBeUploaded.add(item.getFile());
-            }
-            addedItems = adapter.addAll(filesToBeUploaded).size();
         }
+        if (rawFilesToBeUploaded.size() > 0) {
+            addedItems += adapter.addAll(rawFilesToBeUploaded).size();
+        }
+        if(addedItems > 0) {
+            adapter.notifyDataSetChanged();
+        }
+
         int filesAlreadyPresent = folderItemsToBeUploaded.size() - addedItems;
         if (filesAlreadyPresent > 0) {
-            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.duplicates_ignored_pattern, filesAlreadyPresent));
         }
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
         updateActiveJobActionButtonsStatus();
     }
 
-    private Set<File> getFilesExceedingMaxDesiredUploadThreshold(List<File> filesForUpload) {
+    private Set<DocumentFile> getFilesExceedingMaxDesiredUploadThreshold(List<DocumentFile> filesForUpload) {
         int maxUploadSizeWantedThresholdMB = UploadPreferences.getMaxUploadFilesizeMb(getContext(), prefs);
-        HashSet<File> retVal = new HashSet<>();
-        for (File f : filesForUpload) {
+        HashSet<DocumentFile> retVal = new HashSet<>();
+        for (DocumentFile f : filesForUpload) {
             double fileLengthMB = ((double) f.length()) / 1024 / 1024;
             if (fileLengthMB > maxUploadSizeWantedThresholdMB) {
                 retVal.add(f);
@@ -791,7 +822,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-        List<File> filesForUpload = fileListAdapter.getFiles();
+        List<Uri> filesForUpload = fileListAdapter.getFiles();
 
         if (activeJob == null) {
 
@@ -807,7 +838,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
 
             if (!filesizesChecked) {
-                if (!runAreAllFilesUnderUserChosenMaxUploadThreshold(filesForUpload)) {
+
+                if (!runAreAllFilesUnderUserChosenMaxUploadThreshold(IOUtils.toDocumentFileList(requireContext(), filesForUpload))) {
                     return; // no, they aren't
                 }
             }
@@ -816,7 +848,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (activeJob == null) {
             byte privacyLevelWanted = (byte) privacyLevelSpinner.getSelectedItemId(); // save as just bytes!
             long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-            activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, privacyLevelWanted, handlerId);
+            boolean isDeleteFilesAfterUpload = deleteFilesAfterUploadCheckbox.isChecked();
+            activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, privacyLevelWanted, handlerId, isDeleteFilesAfterUpload);
+            activeJob.withContext(requireContext());
             if (compressVideosCheckbox.isChecked()) {
                 UploadJob.VideoCompressionParams vidCompParams = new UploadJob.VideoCompressionParams();
                 vidCompParams.setQuality(((double) compressVideosQualitySpinner.getSelectedItemId()) / 1000);
@@ -837,13 +871,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         submitUploadJob(activeJob);
     }
 
-    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(List<File> filesForUpload) {
+    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(List<DocumentFile> filesForUpload) {
 
-        final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUpload);
+        final Set<DocumentFile> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUpload);
 
         StringBuilder filenameListStrB = new StringBuilder();
 
-        for (File f : filesForReview) {
+        for (DocumentFile f : filesForReview) {
             double fileLengthMB = ((double) f.length()) / 1024 / 1024;
             if (filesForReview.size() > 0) {
                 filenameListStrB.append(", ");
@@ -852,22 +886,20 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
         }
         if (compressVideosCheckbox.isChecked()) {
-            Iterator<File> iter = filesForReview.iterator();
-            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            Iterator<DocumentFile> iter = filesForReview.iterator();
             while (iter.hasNext()) {
-                String mimeType = mimeTypeMap.getMimeTypeFromExtension(IOUtils.getFileExt(iter.next().getName()).toLowerCase());
-                if (mimeType != null && mimeType.startsWith("video/")) {
+                String mimeType = iter.next().getType();
+                if (mimeType != null && MimeTypeFilter.matches(mimeType, "video/*")) {
                     iter.remove();
                 }
             }
         }
         if (compressImagesCheckbox.isChecked()) {
-            Iterator<File> iter = filesForReview.iterator();
-            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+            Iterator<DocumentFile> iter = filesForReview.iterator();
             while (iter.hasNext()) {
 
-                String mimeType = mimeTypeMap.getMimeTypeFromExtension(IOUtils.getFileExt(iter.next().getName()).toLowerCase());
-                if (mimeType != null && mimeType.startsWith("image/")) {
+                String mimeType = iter.next().getType();
+                if (mimeType != null && MimeTypeFilter.matches(mimeType,"image/*")) {
                     iter.remove();
                 }
             }
@@ -879,18 +911,18 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return true;
     }
 
-    private boolean runIsAllFileTypesAcceptedByServerTests(List<File> filesForUpload) {
+    private boolean runIsAllFileTypesAcceptedByServerTests(List<Uri> filesForUpload) {
         // check for server unacceptable files.
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
         Set<String> serverAcceptedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
-        Set<String> fileTypesForUpload = IOUtils.getUniqueFileExts(filesForUpload);
+        Set<String> fileTypesForUpload = IOUtils.getUniqueFileExts(getContext(), filesForUpload);
         Set<String> unacceptableFileExts = SetUtils.difference(fileTypesForUpload, serverAcceptedFileTypes);
         if (compressVideosCheckbox.isChecked()) {
             Iterator<String> iter = unacceptableFileExts.iterator();
             MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
             while (iter.hasNext()) {
                 String mimeType = mimeTypeMap.getMimeTypeFromExtension(iter.next());
-                if (mimeType != null && mimeType.startsWith("video/")) {
+                if (mimeType != null && MimeTypeFilter.matches(mimeType,"video/*")) {
                     iter.remove();
                 }
             }
@@ -900,7 +932,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
             while (iter.hasNext()) {
                 String mimeType = mimeTypeMap.getMimeTypeFromExtension(iter.next());
-                if (mimeType != null && mimeType.startsWith("image/")) {
+                if (mimeType != null && MimeTypeFilter.matches(mimeType,"image/*")) {
                     iter.remove();
                 }
             }
@@ -924,7 +956,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     @Override
-    public void onRemove(final FilesToUploadRecyclerViewAdapter adapter, final File itemToRemove, boolean longClick) {
+    public void onRemove(final FilesToUploadRecyclerViewAdapter adapter, final Uri itemToRemove, boolean longClick) {
         final UploadJob activeJob = getActiveJob(getContext());
         if (activeJob != null) {
             if (activeJob.isFinished()) {
@@ -939,7 +971,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             } else {
                 // job running.
                 boolean immediatelyCancelled = activeJob.cancelFileUpload(itemToRemove);
-                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_file_upload_cancelled_pattern, itemToRemove.getName()));
+                DocumentFile fileRemoved = DocumentFile.fromSingleUri(requireContext(), itemToRemove);
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_file_upload_cancelled_pattern, fileRemoved.getName()));
                 if (immediatelyCancelled) {
                     adapter.remove(itemToRemove);
                 }
@@ -1161,9 +1194,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
 
-        private final File itemToRemove;
+        private final Uri itemToRemove;
 
-        public PartialUploadFileAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, File itemToRemove) {
+        public PartialUploadFileAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Uri itemToRemove) {
             super(uiHelper);
             this.itemToRemove = itemToRemove;
         }
@@ -1236,7 +1269,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression finished");
                     linkedView.setEnabled(true);
                     AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
-                    File f = fragment.getFilesForUploadViewAdapter().getFiles().get(0);
+                    Uri f = fragment.getFilesForUploadViewAdapter().getFiles().get(0);
                     fragment.getFilesForUploadViewAdapter().updateUploadProgress(f, 0);
                 }
             });
@@ -1254,7 +1287,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 return;
             }
             AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
-            File f = fragment.getFilesForUploadViewAdapter().getFiles().get(0);
+            Uri f = fragment.getFilesForUploadViewAdapter().getFiles().get(0);
             fragment.getFilesForUploadViewAdapter().updateUploadProgress(f, (int) Math.rint(compressionProgress));
 
             long currentTime = System.currentTimeMillis();
@@ -1289,14 +1322,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             if (Boolean.TRUE == positiveAnswer) {
 
-                List<File> unaccceptableFiles = new ArrayList<>(fragment.getFilesForUploadViewAdapter().getFiles());
-                Iterator<File> iter = unaccceptableFiles.iterator();
+                List<Uri> unaccceptableFiles = new ArrayList<>(fragment.getFilesForUploadViewAdapter().getFiles());
+                Iterator<Uri> iter = unaccceptableFiles.iterator();
                 while (iter.hasNext()) {
-                    if (!unacceptableFileExts.contains(IOUtils.getFileExt(iter.next().getName()).toLowerCase())) {
+                    if (!unacceptableFileExts.contains(IOUtils.getFileExt(getContext(), iter.next()).toLowerCase())) {
                         iter.remove();
                     }
                 }
-                for (File file : unaccceptableFiles) {
+                for (Uri file : unaccceptableFiles) {
                     fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
                 }
 
@@ -1306,9 +1339,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-        private Set<File> filesToDelete;
+        private Set<DocumentFile> filesToDelete;
 
-        public FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<File> filesForReview) {
+        public FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<DocumentFile> filesForReview) {
             super(uiHelper);
             this.filesToDelete = filesForReview;
         }
@@ -1318,8 +1351,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             AbstractUploadFragment fragment = getUiHelper().getParent();
 
             if (Boolean.TRUE == positiveAnswer) {
-                for (File file : filesToDelete) {
-                    fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
+                for (DocumentFile file : filesToDelete) {
+                    fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file.getUri(), false);
                 }
             }
             if (positiveAnswer != null) {
@@ -1391,7 +1424,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onRequestedFileUploadCancelComplete(Context context, File cancelledFile) {
+        protected void onRequestedFileUploadCancelComplete(Context context, Uri cancelledFile) {
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                 adapter.remove(cancelledFile);
@@ -1418,7 +1451,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     if (AbstractUploadFragment.this.isAdded()) {
                         ForegroundPiwigoUploadService.removeJob(job);
                     }
-                    HashSet<File> filesPendingApproval = job.getFilesPendingApproval();
+                    HashSet<Uri> filesPendingApproval = job.getFilesPendingApproval();
                     if (filesPendingApproval.size() > 0) {
                         String msg = getString(R.string.alert_message_info_files_already_pending_approval_pattern, filesPendingApproval.size());
                         getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg);
@@ -1461,13 +1494,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         protected void onLocalFileError(Context context, final BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
             String errorMessage;
             String cause = response.getError().getMessage();
-            File file = response.getFileForUpload();
+            Uri fileForUploadUri = response.getFileForUpload();
+            DocumentFile fileForUpload = DocumentFile.fromSingleUri(context, fileForUploadUri);
             if (response.getError() instanceof FileNotFoundException) {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), file.getName(),file.getAbsolutePath());
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), fileForUpload.getName(),fileForUploadUri);
             } else if (response.getError() instanceof ExoPlaybackException) {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_compression_error_message_pattern), file.getName(), file.getAbsolutePath());
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_compression_error_message_pattern), fileForUpload.getName(), fileForUploadUri);
             } else {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), file.getName(), file.getAbsolutePath());
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), fileForUpload.getName(), fileForUploadUri);
             }
             //TODO show the user the full cause perhaps
             notifyUser(context, R.string.alert_error, errorMessage);
@@ -1555,7 +1589,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
                 if (uploadJob != null) {
                     FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
-                    for (File existingFile : response.getExistingFiles()) {
+                    for (Uri existingFile : response.getExistingFiles()) {
                         int progress = uploadJob.getUploadProgress(existingFile);
                         adapter.updateUploadProgress(existingFile, progress);
 //                    adapter.remove(existingFile);
@@ -1575,7 +1609,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         protected void onChunkUploadFailed(Context context, final BasePiwigoUploadService.PiwigoUploadFileChunkFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
-            File fileForUpload = response.getFileForUpload();
+            Uri fileForUpload = response.getFileForUpload();
             String errorMessage = null;
 
             if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
@@ -1584,13 +1618,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if ("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(msg)) {
                     msg = err.getResponse();
                 }
-                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload.getName(), err.getStatusCode(), msg);
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload, err.getStatusCode(), msg);
             } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
                 PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse err = (PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error;
-                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), fileForUpload.getName(), err.getRawResponse());
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), fileForUpload, err.getRawResponse());
             } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
                 PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
-                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), fileForUpload.getName(), err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), fileForUpload, err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
             }
             if (errorMessage != null) {
                 notifyUser(context, R.string.alert_error, errorMessage);
@@ -1614,7 +1648,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         protected void onAddUploadedFileToAlbumFailure(Context context, final BasePiwigoUploadService.PiwigoUploadFileAddToAlbumFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
-            File fileForUpload = response.getFileForUpload();
+            Uri fileForUploadUri = response.getFileForUpload();
+            DocumentFile fileForUpload = DocumentFile.fromSingleUri(context, fileForUploadUri);
             String errorMessage = null;
 
             if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
@@ -1628,7 +1663,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if ("file already exists".equals(err.getPiwigoErrorMessage())) {
                     if (isAdded()) {
                         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
-                        adapter.remove(fileForUpload);
+                        adapter.remove(fileForUploadUri);
                     }
                     errorMessage = String.format(context.getString(R.string.alert_error_upload_file_already_on_server_message_pattern), fileForUpload.getName());
                 } else {

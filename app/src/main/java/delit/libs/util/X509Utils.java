@@ -1,6 +1,7 @@
 package delit.libs.util;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -14,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -356,24 +358,25 @@ public class X509Utils {
         return aliases;
     }
 
+    public static Collection<X509Certificate> loadCertificatesFromUri(Uri uri) {
+        try {
+            return loadCertificatesFromFile(IOUtils.getFile(uri));
+        } catch (IOException e) {
+            throw new CertificateLoadException(null, "Error closing certificate file stream", e);
+        }
+    }
+
     public static Collection<X509Certificate> loadCertificatesFromFile(File f) {
         BufferedInputStream bis = null;
         try {
             bis = new BufferedInputStream(new FileInputStream(f));
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            return (Collection<X509Certificate>) cf.generateCertificates(bis);
+            return loadCertificatesFromStream(bis, f);
         } catch (FileNotFoundException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
-            throw new CertificateLoadException(f, "Error reading certificate file stream", e);
-        } catch (CertificateException e) {
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading certificate file stream", e);
-            }
-            throw new CertificateLoadException(f, "Error reading certificate file stream", e);
+            throw new CertificateLoadException(f.getAbsolutePath(), "Error reading certificate file stream", e);
         } finally {
             if (bis != null) {
                 try {
@@ -383,9 +386,22 @@ public class X509Utils {
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error closing certificate file stream", e);
                     }
-                    throw new CertificateLoadException(f, "Error closing certificate file stream", e);
+                    throw new CertificateLoadException(f.getAbsolutePath(), "Error closing certificate file stream", e);
                 }
             }
+        }
+    }
+
+    public static Collection<X509Certificate> loadCertificatesFromStream(InputStream is, File certificateSource) {
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            return (Collection<X509Certificate>) cf.generateCertificates(is);
+        } catch (CertificateException e) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error reading certificate file stream", e);
+            }
+            throw new CertificateLoadException(certificateSource.getAbsolutePath(), "Error reading certificate file stream", e);
         }
     }
 
@@ -399,43 +415,44 @@ public class X509Utils {
 
     public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation loadOperation, String keystoreType) {
         KeystoreLoadOperationResult result = new KeystoreLoadOperationResult(loadOperation);
+        File keystoreFile = new File(loadOperation.getFile().getUri().getPath());
         try {
             KeyStore keystore = KeyStore.getInstance(keystoreType);
-            keystore.load(new FileInputStream(loadOperation.getFile()), loadOperation.getKeystorePass());
-            loadCertificatesAndPrivateKeysFromKeystore(keystore, loadOperation.getAliasesToLoad(), loadOperation.getAliasPassMapp(), result);
+            keystore.load(new FileInputStream(keystoreFile), loadOperation.getKeystorePass());
+            loadCertificatesAndPrivateKeysFromKeystore(keystoreFile.getAbsolutePath(), keystore, loadOperation.getAliasesToLoad(), loadOperation.getAliasPassMapp(), result);
             for (SecurityOperationException ex : result.getExceptionList()) {
-                ex.setFile(loadOperation.getFile());
+                ex.setDataSource(keystoreFile.getAbsolutePath());
             }
         } catch (FileNotFoundException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
         } catch (IOException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
         } catch (CertificateException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
         } catch (NoSuchAlgorithmException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
         } catch (KeyStoreException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
         }
         return result;
     }
@@ -447,7 +464,7 @@ public class X509Utils {
      * @param result
      * @return
      */
-    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystore(KeyStore keystore, List<String> aliasesToLoad, Map<String, char[]> aliasPasswordMap, KeystoreLoadOperationResult result) {
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystore(String keystoreName, KeyStore keystore, List<String> aliasesToLoad, Map<String, char[]> aliasPasswordMap, KeystoreLoadOperationResult result) {
 
         String alias = null;
         try {
@@ -482,19 +499,19 @@ public class X509Utils {
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
                     }
-                    result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
+                    result.addException(new KeyStoreContentException(keystoreName, alias, "Error reading " + keystore.getType() + " file stream", e));
                 } catch (NoSuchAlgorithmException e) {
                     Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
                     }
-                    result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
+                    result.addException(new KeyStoreContentException(keystoreName, alias, "Error reading " + keystore.getType() + " file stream", e));
                 } catch (KeyStoreException e) {
                     Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
                     }
-                    result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
+                    result.addException(new KeyStoreContentException(keystoreName, alias, "Error reading " + keystore.getType() + " file stream", e));
                 }
             }
         } catch (KeyStoreException e) {
@@ -502,7 +519,7 @@ public class X509Utils {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
             }
-            result.addException(new KeyStoreContentException(null, "Error reading " + keystore.getType() + " file stream", e));
+            result.addException(new KeyStoreContentException(keystoreName, null, "Error reading " + keystore.getType() + " file stream", e));
         }
         return result;
     }

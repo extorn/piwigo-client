@@ -81,7 +81,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             getViewPrefs().readonly();
         }
 
-        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
+        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(requireContext(), groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
             @Override
             public void onItemLongClick(BaseRecyclerViewAdapter adapter, Group item) {
                 EventBus.getDefault().post(new ViewGroupEvent(item));

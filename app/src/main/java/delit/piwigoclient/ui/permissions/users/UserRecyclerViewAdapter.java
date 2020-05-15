@@ -26,7 +26,7 @@ public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRec
     private final List<String> userTypeValues;
 
     public UserRecyclerViewAdapter(final Context context, final PiwigoUsers users, MultiSelectStatusListener<User> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(null, users, multiSelectStatusListener, prefs);
+        super(context, null, users, multiSelectStatusListener, prefs);
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));
         userTypeValues = Arrays.asList(context.getResources().getStringArray(R.array.user_types_values_array));
     }

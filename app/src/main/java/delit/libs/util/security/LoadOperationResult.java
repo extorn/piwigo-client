@@ -226,9 +226,9 @@ public class LoadOperationResult implements Serializable {
         return recoverableErrors;
     }
 
-    private KeystoreLoadOperationResult findKeystoreLoadOperationResult(File f) {
+    private KeystoreLoadOperationResult findKeystoreLoadOperationResult(String f) {
         for (KeystoreLoadOperationResult result : keystoreLoadResults) {
-            if (result.getLoadOperation().getFile().equals(f)) {
+            if (result.getLoadOperation().getFile().getUri().getPath().equals(f)) {
                 return result;
             }
         }
@@ -237,13 +237,13 @@ public class LoadOperationResult implements Serializable {
 
     public void addPasswordForRerun(SecurityOperationException recoverableError, char[] pass) {
         if (recoverableError instanceof KeyStoreOperationException) {
-            File f = recoverableError.getFile();
+            String f = recoverableError.getDataSource();
             KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
             result.getLoadOperation().setKeystorePass(pass);
             result.getExceptionList().remove(recoverableError);
         } else if (recoverableError instanceof KeyStoreContentException) {
             KeyStoreContentException err = (KeyStoreContentException) recoverableError;
-            File f = err.getFile();
+            String f = err.getDataSource();
             KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
             result.getLoadOperation().getAliasPassMapp().put(err.getAlias(), pass);
             result.getLoadOperation().addAliasToLoad(err.getAlias());

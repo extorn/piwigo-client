@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -23,7 +24,7 @@ public class RoundableImageView extends androidx.appcompat.widget.AppCompatImage
         super(context, attrs);
     }
 
-    public RoundableImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RoundableImageView(Context context, AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

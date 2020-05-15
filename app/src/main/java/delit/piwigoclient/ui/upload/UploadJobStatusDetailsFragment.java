@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.upload;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,12 +75,12 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
             return;
         }
 
-        ArrayList<File> filesAwaitingUpload = uploadJob.getFilesAwaitingUpload();
-        HashSet<File> filesMidTransfer = uploadJob.getFilesWithStatus(UploadJob.UPLOADING);
-        HashSet<File> filesAwaitingVerification = uploadJob.getFilesWithStatus(UploadJob.UPLOADED);
-        HashSet<File> filesAwaitingConfiguration = uploadJob.getFilesWithStatus(UploadJob.VERIFIED);
-        HashSet<File> filesFinishedWith = uploadJob.getFilesWithStatus(UploadJob.CONFIGURED);
-        HashSet<File> filesNeedDeletingFromServer = uploadJob.getFilesWithStatus(UploadJob.REQUIRES_DELETE);
+        ArrayList<Uri> filesAwaitingUpload = uploadJob.getFilesAwaitingUpload();
+        HashSet<Uri> filesMidTransfer = uploadJob.getFilesWithStatus(UploadJob.UPLOADING);
+        HashSet<Uri> filesAwaitingVerification = uploadJob.getFilesWithStatus(UploadJob.UPLOADED);
+        HashSet<Uri> filesAwaitingConfiguration = uploadJob.getFilesWithStatus(UploadJob.VERIFIED);
+        HashSet<Uri> filesFinishedWith = uploadJob.getFilesWithStatus(UploadJob.CONFIGURED);
+        HashSet<Uri> filesNeedDeletingFromServer = uploadJob.getFilesWithStatus(UploadJob.REQUIRES_DELETE);
         boolean tempAlbumNeedsDelete = uploadJob.getTemporaryUploadAlbum() > 0;
 
         TextView textView = view.findViewById(R.id.files_awaiting_transfer);

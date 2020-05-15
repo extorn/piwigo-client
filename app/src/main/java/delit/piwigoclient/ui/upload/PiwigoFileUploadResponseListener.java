@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.upload;
 
 import android.content.Context;
+import android.net.Uri;
 
 import java.io.File;
 
@@ -53,7 +54,7 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
 
     protected abstract void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response);
 
-    protected abstract void onRequestedFileUploadCancelComplete(Context context, File cancelledFile);
+    protected abstract void onRequestedFileUploadCancelComplete(Context context, Uri cancelledFile);
 
     protected abstract void onAddUploadedFileToAlbumFailure(Context context, BasePiwigoUploadService.PiwigoUploadFileAddToAlbumFailedResponse response);
 

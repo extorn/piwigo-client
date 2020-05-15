@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -27,6 +28,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
+import com.google.android.exoplayer2.util.MimeTypes;
 
 import net.ypresto.qtfaststart.QtFastStart;
 
@@ -36,7 +38,9 @@ import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
+import io.fabric.sdk.android.services.common.Crash;
 
 import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 
@@ -47,12 +51,14 @@ public class ExoPlayerCompression {
     private static final String TAG = "ExoPlayerCompression";
     private static final boolean VERBOSE = false;
     private ArrayList<ExoPlayerCompressionThread> activeCompressionThreads = new ArrayList<>(1);
+    private Context context;
 
 
     public ExoPlayerCompression() {
     }
 
-    public void invokeFileCompression(final Context context, final File inputFile, final File outputFile, final CompressionListener listener, final CompressionParameters compressionSettings) {
+    public void invokeFileCompression(final Context context, final Uri inputFile, final Uri outputFile, final CompressionListener listener, final CompressionParameters compressionSettings) {
+        this.context = context;
         ExoPlayerCompressionThread thread = new ExoPlayerCompressionThread(context, inputFile, outputFile, listener, compressionSettings);
         synchronized (activeCompressionThreads) {
             activeCompressionThreads.add(thread);
@@ -111,19 +117,26 @@ public class ExoPlayerCompression {
         }
     }
 
-    private void makeTranscodedFileStreamable(File input) {
+    private void makeTranscodedFileStreamable(Uri fileUri) {
         if (VERBOSE) {
             Log.d(TAG, "Enabling streaming for transcoded MP4");
         }
-        File tmpFile = new File(input.getParentFile(), input.getName() + ".streaming.mp4");
+
         try {
-            boolean wroteFastStartFile = QtFastStart.fastStart(input, tmpFile);
+            String filePath = fileUri.getPath();
+            if(filePath == null) {
+                throw new IOException("Uri to make streamable does not represent a local file : " + fileUri);
+            }
+            File fileAsFile = new File(filePath);
+            File tmpFile = new File(fileAsFile.getParentFile(), fileAsFile.getName() + ".streaming.mp4");
+
+            boolean wroteFastStartFile = QtFastStart.fastStart(fileAsFile, tmpFile);
             if (wroteFastStartFile) {
-                boolean deletedOriginal = input.delete();
+                boolean deletedOriginal = fileAsFile.delete();
                 if (!deletedOriginal) {
                     Crashlytics.log(Log.ERROR, TAG, "Error deleting streaming input file");
                 }
-                boolean renamed = tmpFile.renameTo(new File(tmpFile.getParentFile(), input.getName()));
+                boolean renamed = tmpFile.renameTo(new File(tmpFile.getParentFile(), fileAsFile.getName()));
                 if (!renamed) {
                     Crashlytics.log(Log.ERROR, TAG, "Error renaming streaming output file");
                 }
@@ -352,18 +365,18 @@ public class ExoPlayerCompression {
         }
 
         public String getOutputFileMimeType() {
-            return "video/mp4";
+            return MimeTypes.VIDEO_MP4;
         }
     }
 
 
     private class InternalCompressionListener extends CompressionListenerWrapper {
 
-        private final File inputFile;
-        private final File outputFile;
+        private final Uri inputFile;
+        private final Uri outputFile;
         private long mediaDurationMs;
 
-        public InternalCompressionListener(CompressionListener wrapped, File inputFile, File outputFile) {
+        public InternalCompressionListener(CompressionListener wrapped, Uri inputFile, Uri outputFile) {
             super(wrapped);
             this.inputFile = inputFile;
             this.outputFile = outputFile;
@@ -377,7 +390,14 @@ public class ExoPlayerCompression {
 
         @Override
         public void onCompressionComplete() {
-            outputFile.setLastModified(inputFile.lastModified());
+            DocumentFile inputDocFile = DocumentFile.fromSingleUri(context, inputFile);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if(inputDocFile != null) {
+                    if(!IOUtils.setLastModified(context, outputFile, inputDocFile.lastModified())) {
+                        Crashlytics.log(Log.WARN, TAG, "Unable to set last modified date on compressed video " + outputFile);
+                    }
+                }
+            }
             makeTranscodedFileStreamable(outputFile);
             super.onCompressionProgress(100d, mediaDurationMs);
             super.onCompressionComplete();
@@ -393,13 +413,13 @@ public class ExoPlayerCompression {
 
         private final CompressionParameters compressionSettings;
         private final CompressionListener listener;
-        private final File outputFile;
-        private final File inputFile;
+        private final Uri outputFile;
+        private final Uri inputFile;
         private final WeakReference<Context> contextRef;
         private SimpleExoPlayer player;
         private boolean cancelled;
 
-        public ExoPlayerCompressionThread(Context context, File inputFile, File outputFile, CompressionListener listener, CompressionParameters compressionSettings) {
+        public ExoPlayerCompressionThread(Context context, Uri inputFile, Uri outputFile, CompressionListener listener, CompressionParameters compressionSettings) {
             super("mainFileCompressorThread");
             this.contextRef = new WeakReference<>(context);
             this.inputFile = inputFile;
@@ -444,7 +464,7 @@ public class ExoPlayerCompression {
             CompressionListener listenerWrapper = new InternalCompressionListener(listener, inputFile, outputFile);
 
             MediaMuxerControl mediaMuxerControl;
-            mediaMuxerControl = new MediaMuxerControl(inputFile, outputFile, listenerWrapper);
+            mediaMuxerControl = new MediaMuxerControl(contextRef.get(), inputFile, outputFile, listenerWrapper);
 
             CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(contextRef.get(), mediaMuxerControl, compressionSettings);
             player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
@@ -454,8 +474,7 @@ public class ExoPlayerCompression {
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             factory.setExtractorsFactory(extractorsFactory);
             listenerWrapper.onCompressionStarted();
-            Uri videoUri = Uri.fromFile(inputFile);
-            ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
+            ExtractorMediaSource videoSource = factory.createMediaSource(inputFile);
             player.prepare(videoSource);
             PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
             player.setPlaybackParameters(playbackParams);
@@ -464,7 +483,8 @@ public class ExoPlayerCompression {
             Handler progressHandler = new Handler(getLooper());
             progressHandler.postDelayed(new CompressionProgressListener(progressHandler, player, mediaMuxerControl, listenerWrapper), 1000);
             if (cancelled) {
-                if (outputFile.exists() && !outputFile.delete()) {
+                DocumentFile outputDocFile = DocumentFile.fromSingleUri(contextRef.get(), outputFile);
+                if (outputDocFile.exists() && !outputDocFile.delete()) {
                     Crashlytics.log(Log.ERROR, TAG, "Unable to delete output file after compression cancelled");
                 }
             }

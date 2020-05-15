@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="delit.piwigoclient"
-    android:installLocation="internalOnly">
+    package="delit.piwigoclient">
 
     <!-- Only supports API >= 18 -->
     <uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />
@@ -35,7 +34,6 @@
     <!-- This attribute is "false" by default on apps targeting
        Android 10 or higher. -->
     <application
-        android:requestLegacyExternalStorage="true"
         android:name="delit.piwigoclient.ui.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_new"

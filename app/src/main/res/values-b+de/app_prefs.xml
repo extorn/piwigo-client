@@ -263,6 +263,9 @@
 
     <!-- prefs -->
 
+    <string name="preference_data_upload_delete_uploaded_title">Standardmäßig automatisch löschen</string>
+    <string name="preference_data_upload_delete_uploaded_summary">Erfolgreich hochgeladene Dateien löschen</string>
+
     <string name="preference_data_upload_default_privacy_level_title">Standard-Datenschutzstufe</string>
     <string name="preference_data_upload_default_privacy_level_summary">Hochgeladene Dateien sichtbar für %1$s</string>
 

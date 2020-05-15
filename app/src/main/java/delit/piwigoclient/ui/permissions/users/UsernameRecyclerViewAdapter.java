@@ -28,8 +28,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
 
 
     public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames usernames, HashSet<Long> indirectlySelectedItems, MultiSelectStatusListener<Username> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(null, usernames, multiSelectStatusListener, prefs);
-        setContext(context);
+        super(context, null, usernames, multiSelectStatusListener, prefs);
         this.indirectlySelectedItems = indirectlySelectedItems;
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));
         userTypeValues = Arrays.asList(context.getResources().getStringArray(R.array.user_types_values_array));

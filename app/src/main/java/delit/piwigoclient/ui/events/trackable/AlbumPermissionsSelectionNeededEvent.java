@@ -1,8 +1,11 @@
 package delit.piwigoclient.ui.events.trackable;
 
+import android.os.Parcel;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 
 /**
@@ -27,6 +30,14 @@ public class AlbumPermissionsSelectionNeededEvent extends TrackableRequestEvent 
         this.indirectAlbumPermissions = indirectAlbumPermissions;
     }
 
+    public AlbumPermissionsSelectionNeededEvent(Parcel in) {
+        super(in);
+        allowEdit = ParcelUtils.readBool(in);
+        availableAlbums = ParcelUtils.readArrayList(in, CategoryItemStub.class.getClassLoader());
+        directAlbumPermissions = ParcelUtils.readLongSet(in);
+        indirectAlbumPermissions = ParcelUtils.readLongSet(in);
+    }
+
     public boolean isAllowEdit() {
         return allowEdit;
     }
@@ -41,5 +52,26 @@ public class AlbumPermissionsSelectionNeededEvent extends TrackableRequestEvent 
 
     public HashSet<Long> getIndirectAlbumPermissions() {
         return indirectAlbumPermissions;
+    }
+
+    public static final Creator<AlbumPermissionsSelectionNeededEvent> CREATOR = new Creator<AlbumPermissionsSelectionNeededEvent>() {
+        @Override
+        public AlbumPermissionsSelectionNeededEvent createFromParcel(Parcel in) {
+            return new AlbumPermissionsSelectionNeededEvent(in);
+        }
+
+        @Override
+        public AlbumPermissionsSelectionNeededEvent[] newArray(int size) {
+            return new AlbumPermissionsSelectionNeededEvent[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        ParcelUtils.writeBool(dest, allowEdit);
+        ParcelUtils.writeArrayList(dest, availableAlbums);
+        ParcelUtils.writeLongSet(dest, directAlbumPermissions);
+        ParcelUtils.writeLongSet(dest, indirectAlbumPermissions);
     }
 }

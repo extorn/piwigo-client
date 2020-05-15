@@ -410,7 +410,7 @@
     <string name="rating_score_pattern">%1$.2f (tasas de%2$d)</string>
     <string name="connection_reset_warning_pattern">El servidor ha cerrado la conexión%1$d veces en los últimos%2$d minutos. Esto podría indicar un problema con la configuración de su servidor.</string>
     <string name="content_description_icon">icono</string>
-    <string name="files_already_set_for_upload_skipped_pattern">Los archivos%1$d ya se seleccionaron para cargar y se han ignorado para evitar la duplicación.</string>
+    <string name="duplicates_ignored_pattern">Se han ignorado los duplicados de %1$d.</string>
     <string name="progress_loading_session_details">Cargando detalles de la sesión</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor, y se ha utilizado el respaldo%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor. Deshabilitar la funcionalidad afectada en la aplicación. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
@@ -499,5 +499,14 @@
     <string name="open_files">Abrir archivos en la aplicación</string>
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no pudieron procesarse. Estos %1$d archivos han sido ignorados. Para compartir un archivo de video, primero debe almacenarse en caché local.</string>
     <string name="alert_all_user_hints_will_be_shown_again">"Todos los consejos de usuario únicos se mostrarán nuevamente"</string>
+    <string name="delete_uploaded_files_title">Eliminar archivos cargados</string>
+    <string name="release_permissions_for_uri_pattern">¿Desea liberar los permisos de esta aplicación para el antiguo Uri (%1$s) seleccionado?</string>
+    <string name="system_file_selector_label">selección de archivos del sistema</string>
+    <string name="uri_still_needed_pattern">Lo sentimos, no puedes eliminar el permiso para que la aplicación use este URI. La aplicación aún necesita permiso para acceder a este URI para:\n\n%1$s</string>
+    <string name="no_suitable_activity_found">No se encontró actividad adecuada</string>
+    <string name="preference_uri_consumer_description_pattern">Preferencia: %1$s</string>
+    <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, se eliminaron los permisos de archivo requeridos por las siguientes partes de la aplicación\n\n%1$s\n\n Seleccione nuevos permisos para esta configuración para que todo funcione como se espera."</string>
+    <string name="folder_selection_title">Seleccione la carpeta</string>
+    <string name="files_selection_title">Seleccione archivos</string>
 
 </resources>

@@ -441,10 +441,14 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
         boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
         boolean testForExposingProxiedServer = activeConnectionPreferences.isWarnInternalUriExposed(sharedPrefs, context);
-        String uri = UriUtils.sanityCheckFixAndReportUri(dataSpec.uri.toString(), sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
+        String uri = dataSpec.uri.toString();
+        if(sessionDetails != null) {
+            uri = UriUtils.sanityCheckFixAndReportUri(uri, sessionDetails.getServerUrl(), forceHttps, testForExposingProxiedServer, activeConnectionPreferences);
+        }
         if (performUriPathSegmentEncoding) {
             uri = UriUtils.encodeUriSegments(Uri.parse(uri));
         }
+
         client.get(context, uri, headers.toArray(new Header[0]), null, responseHandler);
     }
 

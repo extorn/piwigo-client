@@ -182,6 +182,15 @@
                     android:layout_marginBottom="9dp" />
 
                 <CheckBox
+                    android:id="@+id/delete_files_after_upload_checkbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="9dp"
+                    android:text="@string/delete_uploaded_files_title" />
+
+                <CheckBox
                     android:id="@+id/compress_images_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

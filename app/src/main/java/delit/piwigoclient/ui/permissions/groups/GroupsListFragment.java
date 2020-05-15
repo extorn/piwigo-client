@@ -164,11 +164,11 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
 
-        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfGroups(getPrefs(), getActivity()));
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfGroups(getPrefs(), requireActivity()));
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
+        viewAdapter = new GroupRecyclerViewAdapter(requireContext(), groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
 
             @Override
             public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Group item) {

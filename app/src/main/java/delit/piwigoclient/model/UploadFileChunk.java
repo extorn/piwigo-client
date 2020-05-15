@@ -1,5 +1,9 @@
 package delit.piwigoclient.model;
 
+import android.net.Uri;
+
+import androidx.documentfile.provider.DocumentFile;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -10,7 +14,7 @@ import java.io.InputStream;
 public class UploadFileChunk {
 
     private final long jobId;
-    private final File originalFile;
+    private final Uri originalFile;
     private final String mimeType;
     private final long chunkId;
     private final long chunkCount;
@@ -19,7 +23,7 @@ public class UploadFileChunk {
     private final String filenameOnServer;
     private int uploadAttempts;
 
-    public UploadFileChunk(long jobId, File originalFile, String filenameOnServer, long uploadToAlbumId, InputStream chunkData, long chunkId, long chunkCount, String mimeType) {
+    public UploadFileChunk(long jobId, Uri originalFile, String filenameOnServer, long uploadToAlbumId, InputStream chunkData, long chunkId, long chunkCount, String mimeType) {
         this.originalFile = originalFile;
         this.filenameOnServer = filenameOnServer;
         this.chunkData = chunkData;
@@ -50,7 +54,7 @@ public class UploadFileChunk {
         return uploadToAlbumId;
     }
 
-    public File getOriginalFile() {
+    public Uri getOriginalFile() {
         return originalFile;
     }
 

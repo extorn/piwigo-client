@@ -2,13 +2,17 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.FileUtils;
 
+import androidx.annotation.NonNull;
 import androidx.core.os.ConfigurationCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 
 public class AppPreferences {
@@ -16,19 +20,16 @@ public class AppPreferences {
         return prefs.getBoolean(context.getString(R.string.preference_app_always_show_nav_buttons_key), context.getResources().getBoolean(R.bool.preference_app_always_show_nav_buttons_default));
     }
 
-    public static File getAppDownloadFolder(SharedPreferences prefs, Context context) {
+    public static DocumentFile getAppDownloadFolder(SharedPreferences prefs, Context context) {
         File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         String folder = prefs.getString(context.getString(R.string.preference_app_default_download_folder_key), null);
         if(folder != null) {
-            File f = new File(folder);
-            if(!f.exists()) {
-                if(!f.mkdirs()) {
-                    f = downloadsFolder;
-                }
+            DocumentFile docFile = DocumentFile.fromTreeUri(context, Uri.parse(folder));
+            if(docFile.exists()) {
+                return docFile;
             }
-            downloadsFolder = f;
         }
-        return downloadsFolder;
+        return DocumentFile.fromTreeUri(context, Uri.fromFile(downloadsFolder));
     }
 
     public static boolean isAlwaysShowStatusBar(SharedPreferences prefs, Context context) {
@@ -67,5 +68,26 @@ public class AppPreferences {
 
     public static int getVideoCacheSizeMb(SharedPreferences prefs, Context context) {
         return prefs.getInt(context.getString(R.string.preference_video_cache_maxsize_mb_key), context.getResources().getInteger(R.integer.preference_video_cache_maxsize_mb_default));
+    }
+
+    public static class UriPermissionUseCheckResult {
+        Uri uri;
+        String uses;
+
+        public UriPermissionUseCheckResult(@NonNull Uri uri) {
+            this.uri = uri;
+        }
+
+        public void addUse(@NonNull String use) {
+            uses = use;
+        }
+
+        public String getUses() {
+            return uses;
+        }
+
+        public boolean isUsed() {
+            return uses != null;
+        }
     }
 }

@@ -2,6 +2,9 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
@@ -12,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.R;
 
@@ -50,7 +54,7 @@ public class ConnectionPreferences {
 
     public static ProfilePreferences getActiveProfile() {
         if (activeProfile == null) {
-            activeProfile = new ProfilePreferences(null);
+            activeProfile = new ProfilePreferences((String)null);
         }
         return activeProfile;
     }
@@ -84,12 +88,29 @@ public class ConnectionPreferences {
         return actor;
     }
 
-    public static class ProfilePreferences implements Serializable, Comparable<ProfilePreferences> {
+    public static class ProfilePreferences implements Serializable, Parcelable, Comparable<ProfilePreferences> {
 
         private static final long serialVersionUID = -839430660180276975L;
         private final String prefix;
         private transient PreferenceActor prefActor;
         private boolean asGuest;
+
+        protected ProfilePreferences(Parcel in) {
+            prefix = in.readString();
+            asGuest = ParcelUtils.readBool(in);
+        }
+
+        public static final Creator<ProfilePreferences> CREATOR = new Creator<ProfilePreferences>() {
+            @Override
+            public ProfilePreferences createFromParcel(Parcel in) {
+                return new ProfilePreferences(in);
+            }
+
+            @Override
+            public ProfilePreferences[] newArray(int size) {
+                return new ProfilePreferences[size];
+            }
+        };
 
         public PreferenceActor getPrefActor() {
             if(prefActor == null) {
@@ -253,7 +274,18 @@ public class ConnectionPreferences {
         public void setForceHttps(SharedPreferences prefs, Context context, boolean newValue) {
             getPrefActor().with(R.string.preference_server_connection_force_https_key).writeBoolean(prefs, context, newValue);
         }
-        
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(prefix);
+            ParcelUtils.writeBool(dest, asGuest);
+        }
+
         public static class PreferenceActor {
             int prefKey;
             String profileId;

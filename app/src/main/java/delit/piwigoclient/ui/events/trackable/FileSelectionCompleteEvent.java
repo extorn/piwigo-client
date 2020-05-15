@@ -1,7 +1,14 @@
 package delit.piwigoclient.ui.events.trackable;
 
-import java.io.File;
+import android.content.Context;
+import android.net.Uri;
+
+import androidx.documentfile.provider.DocumentFile;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
@@ -13,26 +20,22 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
 
     private long actionTimeMillis;
     private final ArrayList<FolderItemRecyclerViewAdapter.FolderItem> selectedFolderItems;
-    private boolean contentUrisPresent;
 
     public FileSelectionCompleteEvent(int actionId, long actionTimeMillis) {
         super(actionId);
         this.selectedFolderItems = new ArrayList<>();
         this.actionTimeMillis = actionTimeMillis;
-        this.contentUrisPresent = false;
     }
 
-    public FileSelectionCompleteEvent withFiles(ArrayList<File> selectedFiles) {
-        for (File f : selectedFiles) {
-            selectedFolderItems.add(new FolderItemRecyclerViewAdapter.FolderItem(f));
+    public FileSelectionCompleteEvent withFiles(Collection<Uri> uris) {
+        for (Uri uri : uris) {
+            selectedFolderItems.add(new FolderItemRecyclerViewAdapter.FolderItem(uri));
         }
-        contentUrisPresent = false;
         return this;
     }
 
     public FileSelectionCompleteEvent withFolderItems(ArrayList<FolderItemRecyclerViewAdapter.FolderItem> selectedFolderItems) {
         this.selectedFolderItems.addAll(selectedFolderItems);
-        this.contentUrisPresent = true;
         return this;
     }
 
@@ -44,15 +47,11 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
         return selectedFolderItems;
     }
 
-    public ArrayList<File> getSelectedFolderItemsAsFiles() {
-        ArrayList<File> selectedFiles = new ArrayList<>(selectedFolderItems.size());
+    public ArrayList<DocumentFile> getSelectedFolderItemsAsFiles(Context context) {
+        ArrayList<DocumentFile> selectedFiles = new ArrayList<>(selectedFolderItems.size());
         for (FolderItemRecyclerViewAdapter.FolderItem item : selectedFolderItems) {
-            selectedFiles.add(item.getFile());
+            selectedFiles.add(item.getDocumentFile(context));
         }
         return selectedFiles;
-    }
-
-    public boolean isContentUrisPresent() {
-        return contentUrisPresent;
     }
 }

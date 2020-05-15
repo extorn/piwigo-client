@@ -11,11 +11,7 @@ import java.io.File;
  */
 
 public class SecurityOperationException extends RuntimeException {
-    private File file;
-
-    public SecurityOperationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    private String dataSource;
 
     public SecurityOperationException(Throwable cause) {
         super(cause);
@@ -26,27 +22,23 @@ public class SecurityOperationException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public SecurityOperationException(File file, String message, Throwable cause) {
+    public SecurityOperationException(String dataSource, String message, Throwable cause) {
         super(message, cause);
-        this.file = file;
+        this.dataSource = dataSource;
     }
 
-    public SecurityOperationException(File file, Throwable cause) {
-        super(cause);
-        this.file = file;
-    }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    public SecurityOperationException(File file, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public SecurityOperationException(String dataSource, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
-        this.file = file;
+        this.dataSource = dataSource;
     }
 
-    public File getFile() {
-        return file;
+    public String getDataSource() {
+        return dataSource;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
     }
 }

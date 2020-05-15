@@ -20,6 +20,8 @@ public class CustomViewPager extends ViewPager {
         super(context, attrs);
     }
 
+
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);

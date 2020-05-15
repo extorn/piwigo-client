@@ -414,7 +414,7 @@
     <string name="rating_score_pattern">%1$.2f（%2$d费率）</string>
     <string name="connection_reset_warning_pattern">服务器已在过去的%2$d分钟内关闭连接%1$d次。这可能表示您的服务器配置存在问题。</string>
     <string name="content_description_icon">图标</string>
-    <string name="files_already_set_for_upload_skipped_pattern">已选择%1$d个文件进行上传，但已被忽略以避免重复。</string>
+    <string name="duplicates_ignored_pattern">已忽略%1$d个重复项。</string>
     <string name="progress_loading_session_details">加载会话详情</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">此服务器上不再提供Piwigo WS方法%1$s，并且已使用回退%2$s。您刚刚停用或删除了服务器插件吗？</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">该服务器上不再提供Piwigo WS方法%1$s。禁用应用中受影响的功能。您刚刚停用或删除了服务器插件吗？</string>
@@ -503,5 +503,14 @@
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。 这些 %1$d 文件已被忽略。 要共享视频文件，必须先将其完全本地缓存。</string>
     <string name="alert_all_user_hints_will_be_shown_again">"所有一次性用户提示将再次显示"</string>
+    <string name="delete_uploaded_files_title">删除上传的文件</string>
+    <string name="release_permissions_for_uri_pattern">您是否要为旧的选定Uri (%1$s)释放此应用程序持有的权限？</string>
+    <string name="system_file_selector_label">系统文件选择</string>
+    <string name="uri_still_needed_pattern">抱歉，您无法删除该应用使用此URI的权限。 该应用仍然需要以下权限才能访问此URI：\n\n%1$s</string>
+    <string name="no_suitable_activity_found">找不到合适的活动</string>
+    <string name="preference_uri_consumer_description_pattern">偏爱：%1$s</string>
+    <string name="missing_permissions_warning_message_pattern">"自上次打开此应用以来，该应用以下部分所需的文件权限已被删除\n\n%1$s\n\n请为这些设置选择新的权限，以确保一切正常。"</string>
+    <string name="folder_selection_title">选择文件夹</string>
+    <string name="files_selection_title">选择文件</string>
 
 </resources>

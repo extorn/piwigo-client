@@ -2,7 +2,6 @@ package delit.piwigoclient.piwigoApi;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.preference.DialogPreference;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +9,11 @@ import android.view.ViewGroup;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.preference.DialogPreference;
 
 import com.crashlytics.android.Crashlytics;
-
-import java.net.URI;
 
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.ui.util.DisplayUtils;
@@ -265,8 +264,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             } else {
                 retVal = ((ViewGroup) parent).isShown();
             }
-        } else if (parent instanceof DialogPreference) {
-            retVal = ((DialogPreference) parent).getDialog() != null;
+        } else if (parent instanceof DialogFragment) {
+            retVal = ((DialogFragment) parent).getDialog() != null;
         } else if (parent == null) {
             // this listener has become detached from the UI.
             retVal = false;

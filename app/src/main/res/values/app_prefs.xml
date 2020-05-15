@@ -323,6 +323,11 @@
 
     <!-- prefs -->
 
+    <bool name="preference_data_upload_delete_uploaded_default">false</bool>
+    <string name="preference_data_upload_delete_uploaded_key" translatable="false">preference_data_upload_delete_uploaded</string>
+    <string name="preference_data_upload_delete_uploaded_summary">Delete successfully uploaded files</string>
+    <string name="preference_data_upload_delete_uploaded_title">Default Auto delete</string>
+
     <string name="preference_data_upload_default_local_folder_key" translatable="false">preference_data_upload_default_local_folder</string>
 
     <integer name="preference_data_upload_default_privacy_level_default">8</integer>
@@ -438,7 +443,6 @@
     <string name="preference_functions_missing_app_version_warned_key" translatable="false">preference_functions_missing_app_version_warned</string>
 
     <bool name="preference_app_always_show_nav_buttons_default">false</bool>
-    <bool name="preference_app_always_show_status_bar_default">false</bool>
     <string name="preference_app_always_show_nav_buttons_key" translatable="false">preference_app_always_show_nav_buttons</string>
     <string name="preference_app_always_show_nav_buttons_title">Always show navigation buttons</string>
     <string name="preference_app_always_show_nav_buttons_summary">Enable to prevent auto-hide of the navigation buttons</string>
@@ -447,7 +451,7 @@
     <string name="preference_app_default_download_folder_title">Download to folder</string>
     <string name="preference_app_default_download_folder_summary">%1$s</string>
 
-
+    <bool name="preference_app_always_show_status_bar_default">false</bool>
     <string name="preference_app_always_show_status_bar_key" translatable="false">preference_app_always_show_status_bar</string>
     <string name="preference_app_always_show_status_bar_title">Always show the status bar</string>
     <string name="preference_app_always_show_status_bar_summary">Enable to prevent auto-hide of the status bar</string>

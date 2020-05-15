@@ -157,7 +157,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                                     if(localCache != null) {
                                         String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
                                         String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
-                                        evt.addFileDetail(item.getName(), remoteUri, downloadFilename, localCache);
+                                        evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
                                     }
                                 } else {
                                     String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
@@ -195,6 +195,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Override
     protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems, List<String> filesAvailableToDownload) {
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }
 
     private boolean showBulkTagAction(Basket basket) {

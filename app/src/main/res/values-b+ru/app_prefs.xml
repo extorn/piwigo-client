@@ -196,6 +196,10 @@
 
     <string name="preference_upload_category_pre_data_upload_compression">Сжатие перед загрузкой</string>
     <string name="preference_upload_category_advanced">продвинутый</string>
+
+    <string name="preference_data_upload_delete_uploaded_title">Авто удаление по умолчанию</string>
+    <string name="preference_data_upload_delete_uploaded_summary">Удалить успешно загруженные файлы</string>
+
     <string name="preference_data_upload_default_privacy_level_summary">Загруженные файлы видны%1$s</string>
 
     <string name="preference_data_upload_default_privacy_level_title">Уровень конфиденциальности по умолчанию</string>

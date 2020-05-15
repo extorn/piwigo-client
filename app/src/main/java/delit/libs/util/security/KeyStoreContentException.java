@@ -11,15 +11,11 @@ import androidx.annotation.RequiresApi;
 public class KeyStoreContentException extends SecurityOperationException {
     private final String alias;
 
-    public KeyStoreContentException(String alias, String message, Throwable cause) {
-        super(message, cause);
+    public KeyStoreContentException(String dataSource, String alias, String message, Throwable cause) {
+        super(dataSource, message, cause);
         this.alias = alias;
     }
 
-    public KeyStoreContentException(String alias, Throwable cause) {
-        super(cause);
-        this.alias = alias;
-    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     public KeyStoreContentException(String alias, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

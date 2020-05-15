@@ -183,34 +183,23 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
         toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllSelectionButton.setVisibility(viewPrefs.isMultiSelectionEnabled() ? View.VISIBLE : View.GONE);
-        toggleAllSelectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onToggleAllSelection();
-            }
-        });
+        toggleAllSelectionButton.setOnClickListener(v -> onToggleAllSelection());
         setToggleSelectionButtonText();
 
         saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
-        saveChangesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveChanges();
-            }
-        });
+        saveChangesButton.setOnClickListener(v -> onSaveChanges());
 
         reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
-        reloadListButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        if(reloadListButton != null) {
+            reloadListButton.setOnTouchListener((v, event) -> {
                 if (event.getActionMasked() == MotionEvent.ACTION_UP) {
                     reloadListButton.hide();
                     rerunRetrievalForFailedPages();
                 }
                 return true;
-            }
-        });
+            });
+        }
 
         return view;
     }
@@ -223,10 +212,17 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected abstract void setPageHeading(TextView headingField);
 
+    /**
+     * Implement this but don't call it - use {@link #selectAllItems} instead which keeps toggle button in sync
+     */
     protected abstract void selectAllListItems();
-
+    /**
+     * Implement this but don't call it - use {@link #deselectAllItems} instead which keeps toggle button in sync
+     */
     protected abstract void selectNoneListItems();
-
+    /**
+     * Implement this but don't call it - use {@link #deselectAllItems} instead which keeps toggle button in sync
+     */
     protected abstract void selectOnlyListItems(Set<Long> selectionIds);
 
     private void setToggleSelectionButtonText() {
@@ -238,6 +234,29 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             }
         } else {
             toggleAllSelectionButton.setText(getString(R.string.button_all));
+        }
+    }
+
+    /**
+     * keeps toggle button in sync
+     */
+    public void deselectAllItems() {
+        if(selectToggle) {
+            onToggleAllSelection();
+        } else {
+            onToggleAllSelection();
+            onToggleAllSelection();
+        }
+    }
+
+    /**
+     * keeps toggle button in sync
+     */
+    public void selectAllItems() {
+        if(!selectToggle) {
+            onToggleAllSelection();
+        } else {
+            selectAllListItems();
         }
     }
 
@@ -332,7 +351,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         if (listAdapter != null) {
             listAdapter.setEnabled(enabled);
         }
-        addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
+        if(addListItemButton != null) {
+            addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
+        }
         setToggleSelectionButtonText();
     }
 

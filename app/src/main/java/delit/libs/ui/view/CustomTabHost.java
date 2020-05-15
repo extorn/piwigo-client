@@ -1,6 +1,7 @@
 package delit.libs.ui.view;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.TabHost;
 
@@ -19,12 +20,12 @@ public class CustomTabHost extends TabHost {
         super(context, attrs);
     }
 
-    @RequiresApi(21)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public CustomTabHost(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    @RequiresApi(21)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public CustomTabHost(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }

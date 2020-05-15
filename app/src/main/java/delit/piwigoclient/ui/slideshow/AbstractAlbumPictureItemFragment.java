@@ -334,6 +334,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     protected void onDownloadItem(final PictureResourceItem model) {
         super.onDownloadItem(model);
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
 
     }
 
@@ -384,7 +385,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                             if(localCache != null) {
                                 String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
                                 String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
-                                evt.addFileDetail(item.getName(), remoteUri, downloadFilename, localCache);
+                                evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
                             }
                         } else {
                             String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));

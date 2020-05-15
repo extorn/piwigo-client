@@ -385,7 +385,7 @@ public class EditableListPreference extends DialogPreference {
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
-            entries = ParcelUtils.readStringSet(source, new TreeSet<String>());
+            entries = ParcelUtils.readStringSet(source, new TreeSet<>());
             entriesAltered = ParcelUtils.readValue(source,null, boolean.class);
         }
 

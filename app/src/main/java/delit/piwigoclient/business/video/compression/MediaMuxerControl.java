@@ -1,20 +1,26 @@
 package delit.piwigoclient.business.video.compression;
 
+import android.content.Context;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.MimeTypeFilter;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -30,7 +36,7 @@ import delit.libs.util.IOUtils;
 public class MediaMuxerControl /*implements MetadataOutput*/ {
     private static final String TAG = "MediaMuxerControl";
     private static final boolean VERBOSE = false;
-    private final File inputFile;
+    private final Uri inputFile;
     private final ExoPlayerCompression.CompressionListener listener;
     private final Handler eventHandler;
     private Map<String, MediaFormat> trackFormats;
@@ -39,7 +45,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     private boolean audioConfigured;
     private boolean videoConfigured;
     private boolean mediaMuxerStarted;
-    private File outputFile;
+    private Uri outputFile;
     private boolean hasAudio;
     private boolean hasVideo;
     private long lastWrittenDataTimeUs;
@@ -51,8 +57,10 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     private boolean sourceDataRead;
     private TreeSet<Sample> queuedData = new TreeSet<>();
     private boolean safeShutdownInProgress;
+    private Context context;
 
-    public MediaMuxerControl(File inputFile, File outputFile, ExoPlayerCompression.CompressionListener listener) throws IOException {
+    public MediaMuxerControl(Context context, Uri inputFile, Uri outputFile, ExoPlayerCompression.CompressionListener listener) throws IOException {
+        this.context = context;
         this.inputFile = inputFile;
         this.outputFile = outputFile;
         extractLocationData(inputFile);
@@ -68,14 +76,14 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         this.eventHandler = new Handler(looper);
     }
 
-    private void extractInputVideoFormat(File inputFile) throws IOException {
+    private void extractInputVideoFormat(Uri inputFile) throws IOException {
         MediaExtractor mExtractor = new MediaExtractor();
-        mExtractor.setDataSource(inputFile.getPath());
+        mExtractor.setDataSource(context, inputFile,null);
         int tracks = mExtractor.getTrackCount();
         for (int i = 0; i < tracks; i++) {
             inputVideoFormat = mExtractor.getTrackFormat(i);
             String mime = inputVideoFormat.getString(MediaFormat.KEY_MIME);
-            if (mime.startsWith("video/")) {
+            if (MimeTypeFilter.matches(mime, "video/*")) {
                 break;
             }
         }
@@ -157,9 +165,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         return false;
     }
 
-    private void extractLocationData(File inputFile) {
+    private void extractLocationData(Uri inputFile) {
         MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
-        metadataRetriever.setDataSource(inputFile.getPath());
+        metadataRetriever.setDataSource(context, inputFile);
         String location = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
         if (location != null) {
             String mode;
@@ -354,7 +362,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         if (trackStats != null) {
             bytesTranscoded += trackStats.getOriginalBytesTranscoded();
         }
-        double value = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(inputFile.length()), new MathContext(2, RoundingMode.DOWN)).doubleValue();
+
+        DocumentFile docFile = DocumentFile.fromSingleUri(context, inputFile);
+        double value = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(docFile.length()), new MathContext(2, RoundingMode.DOWN)).doubleValue();
         return value;
     }
 
@@ -421,9 +431,10 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         return hasAudio == audioConfigured && hasVideo == videoConfigured;
     }
 
-    private MediaMuxer buildMediaMuxer(File outputFile) throws IOException {
+    private MediaMuxer buildMediaMuxer(Uri outputFile) throws IOException {
         release();
-        MediaMuxer muxer = new MediaMuxer(outputFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        MediaMuxer muxer = new MediaMuxer(IOUtils.getFile(outputFile).getPath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+
         this.mediaMuxer = muxer;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (Float.MAX_VALUE != latitude) {

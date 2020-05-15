@@ -1,7 +1,10 @@
 package delit.piwigoclient.ui.events;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ public class DownloadFileRequestEvent implements Parcelable {
         return null;
     }
 
-    public void markDownloaded(String url, File downloadedFile) {
+    public void markDownloaded(String url, Uri downloadedFile) {
         for(FileDetails detail : details) {
             if(detail.getRemoteUri().equals(url)) {
                 detail.setDownloadedFile(downloadedFile);
@@ -39,10 +42,10 @@ public class DownloadFileRequestEvent implements Parcelable {
         private final String resourceName;
         private final String remoteUri;
         private final String outputFilename;
-        private final File localFileToCopy;
-        private File downloadedFile;
+        private final Uri localFileToCopy;
+        private Uri downloadedFile;
 
-        public File getLocalFileToCopy() {
+        public Uri getLocalFileToCopy() {
             return localFileToCopy;
         }
 
@@ -58,11 +61,11 @@ public class DownloadFileRequestEvent implements Parcelable {
             return outputFilename;
         }
 
-        public void setDownloadedFile(File downloadedFile) {
+        public void setDownloadedFile(Uri downloadedFile) {
             this.downloadedFile = downloadedFile;
         }
 
-        public File getDownloadedFile() {
+        public Uri getDownloadedFile() {
             return downloadedFile;
         }
 
@@ -83,7 +86,7 @@ public class DownloadFileRequestEvent implements Parcelable {
 
         };
 
-        public FileDetails(String resourceName, String remoteUri, String outputFilename, File localFileToCopy) {
+        public FileDetails(String resourceName, String remoteUri, String outputFilename, Uri localFileToCopy) {
             this.resourceName = resourceName;
             this.remoteUri = remoteUri;
             this.outputFilename = outputFilename;
@@ -94,8 +97,8 @@ public class DownloadFileRequestEvent implements Parcelable {
             resourceName = ParcelUtils.readString(in);
             remoteUri = ParcelUtils.readString(in);
             outputFilename = ParcelUtils.readString(in);
-            localFileToCopy = ParcelUtils.readFile(in);
-            downloadedFile = ParcelUtils.readFile(in);
+            localFileToCopy = ParcelUtils.readParcelable(in, Uri.class);
+            downloadedFile = ParcelUtils.readParcelable(in, Uri.class);
         }
 
         @Override
@@ -103,8 +106,8 @@ public class DownloadFileRequestEvent implements Parcelable {
             dest.writeValue(resourceName);
             dest.writeValue(remoteUri);
             dest.writeValue(outputFilename);
-            ParcelUtils.writeFile(dest, localFileToCopy);
-            ParcelUtils.writeFile(dest, downloadedFile);
+            ParcelUtils.writeParcelable(dest, localFileToCopy);
+            ParcelUtils.writeParcelable(dest, downloadedFile);
         }
 
         @Override
@@ -130,7 +133,7 @@ public class DownloadFileRequestEvent implements Parcelable {
         details.add(new FileDetails(resourceName, remoteUri, outputFilename, null));
     }
 
-    public void addFileDetail(String resourceName, String remoteUri, String outputFilename, File preDownloadedFile) {
+    public void addFileDetail(String resourceName, String remoteUri, String outputFilename, Uri preDownloadedFile) {
         details.add(new FileDetails(resourceName, remoteUri, outputFilename, preDownloadedFile));
     }
 

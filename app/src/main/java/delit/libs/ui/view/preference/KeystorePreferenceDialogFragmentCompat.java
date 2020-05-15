@@ -2,6 +2,8 @@ package delit.libs.ui.view.preference;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
@@ -200,8 +203,9 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             allowedFileTypes.addAll(getPreference().getAllowedCertificateFileTypes());
         }
         allowedFileTypes.addAll(getPreference().getAllowedKeyFileTypes());
-        fileSelectionEvent.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
+        fileSelectionEvent.withInitialFolder(Uri.fromFile(Environment.getExternalStorageDirectory()));
         fileSelectionEvent.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.ALPHABETICAL);
+//        fileSelectionEvent.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey()); Not currently needed as permissions are transient.
 
         setTrackingRequest(fileSelectionEvent.getActionId());
         EventBus.getDefault().post(fileSelectionEvent);
@@ -243,7 +247,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
 
         EditText filenameEditText = v.findViewById(R.id.keystore_filename_editText);
-        filenameEditText.setText(recoverableError.getFile().getName());
+        String filename = new File(recoverableError.getDataSource()).getName();
+        filenameEditText.setText(filename);
 
         alertDialog = new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.alert_information)
@@ -495,7 +500,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                 String fileSuffix = loadOp.getFile().getName().replaceFirst(".*(\\.[^.]*)", "$1").toLowerCase();
                 if (sourcePref.getPreference().getAllowedCertificateFileTypes().contains(fileSuffix)) {
                     try {
-                        Collection<X509Certificate> certs = X509Utils.loadCertificatesFromFile(loadOp.getFile());
+                        Collection<X509Certificate> certs = X509Utils.loadCertificatesFromUri(loadOp.getFile().getUri());
                         CertificateLoadOperationResult result = new CertificateLoadOperationResult(loadOp);
                         result.getCerts().addAll(certs);
                         loadOperationResult.getCertLoadResults().add(result);
@@ -533,11 +538,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
     }
 
-    public void onCertificatesSelected(ArrayList<File> certificateFiles) {
-
+    public void onCertificatesSelected(ArrayList<DocumentFile> certificateFiles) {
         X509LoadOperation[] params = new X509LoadOperation[certificateFiles.size()];
         int i = 0;
-        for (File f : certificateFiles) {
+        for (DocumentFile f : certificateFiles) {
             params[i++] = new X509LoadOperation(f);
         }
         keystoreLoadOperationResult = null;
@@ -590,7 +594,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             sb.append(getContext().getString(R.string.error_heading_unloadable_certificate_files));
             sb.append('\n');
             for (CertificateLoadException ex : certExceptions) {
-                sb.append(safeGetFilename(ex.getFile()));
+                sb.append(ex.getDataSource());
                 sb.append('\n');
             }
         }
@@ -599,7 +603,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_files));
             sb.append('\n');
             for (KeyStoreOperationException ex : keystoreExceptions) {
-                sb.append(safeGetFilename(ex.getFile()));
+                sb.append(ex.getDataSource());
                 sb.append('\n');
             }
         }
@@ -607,17 +611,17 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             // add keystore content exceptions list
             sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_aliases));
             sb.append('\n');
-            Map<File, List<KeyStoreContentException>> aliasErrors = new HashMap<>();
+            Map<String, List<KeyStoreContentException>> aliasErrors = new HashMap<>();
             for (KeyStoreContentException ex : keystoreContentExceptions) {
-                List<KeyStoreContentException> fileErrs = aliasErrors.get(ex.getFile());
+                List<KeyStoreContentException> fileErrs = aliasErrors.get(ex.getDataSource());
                 if (fileErrs == null) {
                     fileErrs = new ArrayList<>();
-                    aliasErrors.put(ex.getFile(), fileErrs);
+                    aliasErrors.put(ex.getDataSource(), fileErrs);
                 }
                 fileErrs.add(ex);
             }
-            for (Map.Entry<File, List<KeyStoreContentException>> fileExs : aliasErrors.entrySet()) {
-                sb.append(safeGetFilename(fileExs.getKey()));
+            for (Map.Entry<String, List<KeyStoreContentException>> fileExs : aliasErrors.entrySet()) {
+                sb.append(fileExs.getKey());
                 sb.append(": ");
                 for (int i = 0; i < fileExs.getValue().size(); i++) {
                     sb.append(fileExs.getValue().get(i));
@@ -630,23 +634,11 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         return sb.toString();
     }
 
-    protected String safeGetFilename(File file) {
-        try {
-            return file.getCanonicalPath();
-        } catch (IOException e) {
-            Crashlytics.logException(e);
-            return file.getName();
-        } catch (SecurityException e) {
-            Crashlytics.logException(e);
-            return file.getName();
-        }
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent event) {
         if (isTrackingRequest(event.getActionId())) {
             EventBus.getDefault().removeStickyEvent(event);
-            onCertificatesSelected(event.getSelectedFolderItemsAsFiles());
+            onCertificatesSelected(event.getSelectedFolderItemsAsFiles(getContext()));
         }
     }
 

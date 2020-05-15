@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.preferences;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -146,22 +147,26 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
             }
         });
 
-        LocalFoldersListPreference appDownloadFolder = (LocalFoldersListPreference) findPreference(R.string.preference_app_default_download_folder_key);
-        if(!getPrefs().contains(appDownloadFolder.getKey())) {
-            File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            appDownloadFolder.setDefaultValue(downloadsFolder.getAbsolutePath());
-            appDownloadFolder.persistStringValue(downloadsFolder.getAbsolutePath());
-        }
-
     }
 
+
     @Override
-    public void onStart() {
-        super.onStart();
+    protected void onBindPreferences() {
         Preference videoCacheEnabledPref = findPreference(R.string.preference_video_cache_enabled_key);
         videoCacheEnabledPref.setOnPreferenceChangeListener(videoCacheEnabledPrefListener);
         videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey(), R.bool.preference_video_cache_enabled_default));
 
+        LocalFoldersListPreference appDownloadFolder = (LocalFoldersListPreference) findPreference(R.string.preference_app_default_download_folder_key);
+        appDownloadFolder.setOnPreferenceChangeListener(new LocalFoldersListPreference.PersistablePermissionsChangeListener(getUiHelper()));
+
+        if(appDownloadFolder.getValue() == null) {
+            //TODO remove this reference - it should be using Uris
+
+            File downloadsFolder = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+            Uri downloadsFolderUri = Uri.fromFile(downloadsFolder);
+            appDownloadFolder.setDefaultValue(downloadsFolderUri);
+            appDownloadFolder.setValue(downloadsFolderUri.toString());
+        }
     }
 
     @Override

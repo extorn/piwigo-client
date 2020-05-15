@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
 
@@ -37,8 +38,12 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         Intent intent = new Intent(context, ForegroundPiwigoUploadService.class);
         intent.setAction(ACTION_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_JOB_ID, uploadJob.getJobId());
-        enqueueWork(context, ForegroundPiwigoUploadService.class, JOB_ID, intent);
         uploadJob.setSubmitted(true);
+        try {
+            enqueueWork(context, ForegroundPiwigoUploadService.class, JOB_ID, intent);
+        } catch(RuntimeException e) {
+            uploadJob.setSubmitted(false);
+        }
         return uploadJob.getJobId();
     }
 
@@ -84,7 +89,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     }
 
     @Override
-    protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<File, String> uploadedFileChecksums) {
+    protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums) {
         //TODO add the files checksums to a list that can then be used by the file selection for upload fragment perhaps to show those files that have been uploaded subtly.
     }
 

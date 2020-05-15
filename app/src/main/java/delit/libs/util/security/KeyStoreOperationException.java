@@ -12,16 +12,12 @@ import java.io.File;
 
 public class KeyStoreOperationException extends SecurityOperationException {
 
-    public KeyStoreOperationException(File file, String message, Throwable cause) {
-        super(file, message, cause);
-    }
-
-    public KeyStoreOperationException(File file, Throwable cause) {
-        super(file, cause);
+    public KeyStoreOperationException(String dataSource, String message, Throwable cause) {
+        super(dataSource, message, cause);
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    public KeyStoreOperationException(File file, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(file, message, cause, enableSuppression, writableStackTrace);
+    public KeyStoreOperationException(String dataSource, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(dataSource, message, cause, enableSuppression, writableStackTrace);
     }
 }

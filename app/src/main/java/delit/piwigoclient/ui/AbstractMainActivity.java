@@ -15,7 +15,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +33,7 @@ import androidx.core.view.GravityCompat;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -481,8 +481,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
     }
 
-    private File getDestinationFile(String outputFilename) {
-        return new File(AppPreferences.getAppDownloadFolder(getSharedPrefs(), this), outputFilename);
+    private DocumentFile getDestinationFile(@NonNull String mimeType, @NonNull String outputFilename) {
+        return AppPreferences.getAppDownloadFolder(getSharedPrefs(), this).createFile(mimeType, outputFilename);
     }
 
     private void processDownloadEvent(DownloadFileRequestEvent event) {
@@ -491,9 +491,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             if (fileDetail.getLocalFileToCopy() != null) {
                 // copy this local download cache to the destination.
                 try {
-                    File outputFile = getDestinationFile(fileDetail.getOutputFilename());
-                    IOUtils.copy(fileDetail.getLocalFileToCopy(), outputFile);
-                    fileDetail.setDownloadedFile(outputFile);
+                    DocumentFile destFile = getDestinationFile(IOUtils.getMimeType(this, fileDetail.getDownloadedFile()), fileDetail.getOutputFilename());
+                    IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
+                    fileDetail.setDownloadedFile(destFile.getUri());
                     processDownloadEvent(event);
                 } catch (IOException e) {
                     Crashlytics.logException(e);
@@ -501,8 +501,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 }
             } else {
                 // invoke a download of this file
-                File destinationFile = getDestinationFile(fileDetail.getOutputFilename());
-                event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile), new DownloadAction(event)));
+                String mimeType = IOUtils.getMimeType(this, Uri.parse(fileDetail.getRemoteUri()));
+                DocumentFile destinationFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
+                event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction(event)));
             }
         } else {
             // all items downloaded - process them as needed.
@@ -569,10 +570,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         removeActionDownloadEvent(); // we've got the event, so ignore the return
         for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
             // add the file details to the media store :-)
-            MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, fileDetail.getDownloadedFile()));
+            MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, DocumentFile.fromSingleUri(this, fileDetail.getDownloadedFile())));
         }
         if (event.isShareDownloadedWithAppSelector()) {
-            Set<File> destinationFiles = new HashSet<>(event.getFileDetails().size());
+            Set<Uri> destinationFiles = new HashSet<>(event.getFileDetails().size());
             for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
                 destinationFiles.add(fileDetail.getDownloadedFile());
             }
@@ -580,12 +581,12 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
     }
 
-    private void notifyUserFileDownloadComplete(final UIHelper uiHelper, final File downloadedFile) {
+    private void notifyUserFileDownloadComplete(final UIHelper uiHelper, final Uri downloadedFile) {
         uiHelper.showDetailedMsg(R.string.alert_image_download_title, uiHelper.getContext().getString(R.string.alert_image_download_complete_message));
         PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getContext()).load(R.drawable.ic_notifications_black_24dp).into(new DownloadTarget(uiHelper, downloadedFile));
     }
 
-    private void shareFilesWithOtherApps(Context context, final Set<File> filesToShare) {
+    private void shareFilesWithOtherApps(Context context, final Set<Uri> filesToShare) {
 //        File sharedFolder = new File(getContext().getExternalCacheDir(), "shared");
 //        sharedFolder.mkdir();
 //        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
@@ -599,13 +600,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         ArrayList<Uri> urisToShare = new ArrayList<>(filesToShare.size());
         ArrayList<String> mimesOfSharedUris = new ArrayList<>(filesToShare.size());
 
-        for(File fileToShare : filesToShare) {
-            Uri uri = FileProvider.getUriForFile(
-                    context,
-                    BuildConfig.APPLICATION_ID + ".provider", fileToShare);
-            String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(fileToShare).toString());
+        for(Uri fileToShare : filesToShare) {
+            String ext = IOUtils.getFileExt(this, fileToShare);
             String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-            urisToShare.add(uri);
+            urisToShare.add(fileToShare);
             mimesOfSharedUris.add(mimeType);
         }
         if(mimesOfSharedUris.size() == 1) {
@@ -615,11 +613,12 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urisToShare);
-        intent.putStringArrayListExtra(Intent.EXTRA_MIME_TYPES, mimesOfSharedUris);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            intent.putStringArrayListExtra(Intent.EXTRA_MIME_TYPES, mimesOfSharedUris);
+        }
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         }
         context.startActivity(Intent.createChooser(intent, getString(R.string.open_files)));
     }
@@ -695,9 +694,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
 
         private final UIHelper uiHelper;
-        private final File downloadedFile;
+        private final Uri downloadedFile;
 
-        public DownloadTarget(UIHelper uiHelper, File downloadedFile) {
+        public DownloadTarget(UIHelper uiHelper, Uri downloadedFile) {
             this.uiHelper = uiHelper;
             this.downloadedFile = downloadedFile;
         }
@@ -720,18 +719,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //        if(openImageNotFolder) {
             notificationIntent = new Intent(Intent.ACTION_VIEW);
             // Action on click on notification
-            Uri selectedUri = Uri.fromFile(downloadedFile);
             MimeTypeMap map = MimeTypeMap.getSingleton();
-            String ext = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
+            String ext = MimeTypeMap.getFileExtensionFromUrl(downloadedFile.toString());
             String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
             //notificationIntent.setDataAndType(selectedUri, mimeType);
 
-            Uri apkURI = FileProvider.getUriForFile(
-                    context,
-                    BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
-            notificationIntent.setDataAndType(apkURI, mimeType);
-            notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            notificationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            notificationIntent.setDataAndType(downloadedFile, mimeType);
+            notificationIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
             }
@@ -749,7 +743,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), uiHelper.getDefaultNotificationChannelId())
                     .setLargeIcon(bitmap)
                     .setContentTitle(getContext().getString(R.string.notification_download_event))
-                    .setContentText(downloadedFile.getAbsolutePath())
+                    .setContentText(IOUtils.getFilename(getContext(), downloadedFile))
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
 
@@ -963,8 +957,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-            downloadEvent.markDownloaded(response.getUrl(), response.getFile());
-            uiHelper.getParent().notifyUserFileDownloadComplete(uiHelper, response.getFile());
+            downloadEvent.markDownloaded(response.getUrl(), response.getLocalFileUri());
+            uiHelper.getParent().notifyUserFileDownloadComplete(uiHelper, response.getLocalFileUri());
             uiHelper.getParent().processDownloadEvent(downloadEvent);
         }
 

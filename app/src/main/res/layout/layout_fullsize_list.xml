@@ -58,13 +58,14 @@
         android:text="@string/button_all"
         style="?materialButtonOutlinedStyle"/>
 
-    <Button
-        android:id="@+id/list_action_save_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="@string/list_ok_button"/>
+        <Button
+            android:id="@+id/list_action_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/list_ok_button"
+            android:visibility="visible"
+            app:backgroundTint="#FFFFFF" />
 
     </RelativeLayout>
 

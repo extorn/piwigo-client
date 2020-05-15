@@ -20,8 +20,8 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
  */
 public class TagRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Tag, PiwigoTags, TagRecyclerViewAdapter.TagViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<Tag>> {
 
-    public TagRecyclerViewAdapter(Class<? extends ViewModelContainer> modelType, final PiwigoTags tags, MultiSelectStatusListener<Tag> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(modelType, tags, multiSelectStatusListener, prefs);
+    public TagRecyclerViewAdapter(Context context, Class<? extends ViewModelContainer> modelType, final PiwigoTags tags, MultiSelectStatusListener<Tag> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+        super(context, modelType, tags, multiSelectStatusListener, prefs);
     }
 
 

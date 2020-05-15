@@ -383,6 +383,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     protected void onDownloadItem(final VideoResourceItem model) {
         getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_DOWNLOAD);
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -432,7 +433,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                                 if(localCache != null) {
                                     String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
                                     String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
-                                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename, localCache);
+                                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
                                 }
                             } else {
                                 String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
@@ -522,6 +523,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
             logStatus("configuring datasource and player - caching enabled - check permissions first");
             getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_CACHE);
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
+            //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {
             logStatus("configuring datasource and player - no caching enabled - do now!");
             configurePlayer(videoIsPlayingWhenVisible);

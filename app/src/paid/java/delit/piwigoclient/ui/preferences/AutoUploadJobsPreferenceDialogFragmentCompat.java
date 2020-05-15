@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
@@ -217,12 +218,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             return R.layout.upload_jobs_list_item_checkable_layout;
         }
 
-        public String getUploadFromSummary(@NonNull Context context, AutoUploadJobConfig item) {
-            File localFolder = item.getLocalFolderToMonitor(context);
-            if(localFolder == null) {
-                return "???";
-            }
-            return localFolder.getAbsolutePath();
+        public String getUploadFromSummary(@NonNull Context context, @NonNull AutoUploadJobConfig item) {
+            return item.getUploadFromFolderName(context);
         }
 
         public String getUploadToSummary(@NonNull Context context, AutoUploadJobConfig item) {
@@ -231,9 +228,6 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             String serverName = connPrefs.getPiwigoServerAddress(getPreference().getSharedPreferences(), context);
             String username = connPrefs.getPiwigoUsername(getPreference().getSharedPreferences(), context);
             String uploadFolder = item.getUploadToAlbumName(context);
-            if(uploadFolder == null) {
-                uploadFolder = "???";
-            }
 
             String user = Strings.emptyToNull(username);
             if(user == null) {
@@ -252,6 +246,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             });
             TextView nameView = itemView.findViewById(R.id.list_item_name);
             TextView detailView = itemView.findViewById(R.id.list_item_details);
+            AppCompatCheckboxTriState deleteUploadedFiles = itemView.findViewById(R.id.delete_uploaded);
             AppCompatCheckboxTriState jobEnabledView = itemView.findViewById(R.id.enabled);
             CustomImageButton deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -263,6 +258,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
             nameView.setText(getUploadFromSummary(context, item));
             detailView.setText(getUploadToSummary(context, item));
+            deleteUploadedFiles.setChecked(item.isJobEnabled(getContext()) && item.isDeleteFilesAfterUpload(getContext()));
             jobEnabledView.setChecked(item.isJobEnabled(getContext()) && item.isJobValid(getContext()));
         }
 

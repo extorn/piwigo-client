@@ -169,7 +169,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new TagRecyclerViewAdapter(PiwigoTagModel.class, tagsModel, new TagListSelectListener(), viewPrefs);
+        viewAdapter = new TagRecyclerViewAdapter(requireContext(), PiwigoTagModel.class, tagsModel, new TagListSelectListener(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
         recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));

@@ -127,8 +127,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        BundleUtils.putHashSet(outState, STATE_UPDATED_TAGS_SET, updatedTagsSet);
-        BundleUtils.putHashSet(outState, STATE_CHANGED_TAGS_SET, changedTagsEvents);
+        BundleUtils.putSet(outState, STATE_UPDATED_TAGS_SET, updatedTagsSet);
+        BundleUtils.putSet(outState, STATE_CHANGED_TAGS_SET, changedTagsEvents);
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("SlideshowItemFragment", outState);
         }

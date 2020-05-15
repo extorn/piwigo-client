@@ -10,6 +10,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
 
+import androidx.documentfile.provider.DocumentFile;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
@@ -188,31 +190,31 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
 
     public static class MediaScannerImportTask extends MediaScannerScanTask {
 
-        public MediaScannerImportTask(String id, List<File> files) {
+        public MediaScannerImportTask(String id, List<DocumentFile> files) {
             super(id, files);
             setProcessResultsOnBackgroundThread(true);
         }
 
-        public MediaScannerImportTask(String id, File file) {
+        public MediaScannerImportTask(String id, DocumentFile file) {
             this(id, Arrays.asList(file));
         }
 
         @Override
-        public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
+        public void onScanComplete(Map<DocumentFile, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
 
         }
     }
 
     public static abstract class MediaScannerScanTask extends MediaScannerTask {
         private String id;
-        private final List<File> files;
+        private final List<DocumentFile> files;
         private final int resultsBatchSize;
-        private Map<File, Uri> results;
+        private Map<DocumentFile, Uri> results;
         private int resultsAwaited;
         private int firstResultIdx;
         private boolean processResultsOnBackgroundThread;
         private boolean cancelScan;
-        private int processingFileCount;
+        private int processingDocumentFileCount;
         private boolean started;
         private UUID taskUuid = UUID.randomUUID();
 
@@ -221,7 +223,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
          * @param id    some unique id for the task so it can be identified if want to cancel later
          * @param files files to scan details of
          */
-        public MediaScannerScanTask(String id, List<File> files) {
+        public MediaScannerScanTask(String id, List<DocumentFile> files) {
             this(id, files, files.size());
         }
 
@@ -230,7 +232,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
          * @param files            files to scan details of
          * @param resultsBatchSize max number of results to wait for before processing
          */
-        public MediaScannerScanTask(String id, List<File> files, int resultsBatchSize) {
+        public MediaScannerScanTask(String id, List<DocumentFile> files, int resultsBatchSize) {
             this.id = id;
             this.files = new ArrayList<>(files);
             this.resultsBatchSize = resultsBatchSize;
@@ -278,11 +280,11 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
             try {
                 waitForMediaScannerToStart();
                 results = new HashMap<>(resultsBatchSize);
-                for (File f : files) {
+                for (DocumentFile f : files) {
                     if (!f.isDirectory()) {
-                        processingFileCount++;
+                        processingDocumentFileCount++;
                         try {
-//                            mediaScanner.getConnection().scanFile(f.getAbsolutePath(), null);
+//                            mediaScanner.getConnection().scanDocumentFile(f.getAbsolutePath(), null);
                             mediaScanner.lookupsThreadHandler.postAtTime(new LookupTask(f), taskUuid, SystemClock.uptimeMillis());
                         } catch (IllegalStateException e) {
                             // connection has died
@@ -290,7 +292,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                                 Crashlytics.log(Log.ERROR, TAG, "Media scanner unexpectedly disconnected");
                                 mediaScanner.connect();
                                 waitForMediaScannerToStart();
-                                mediaScanner.getConnection().scanFile(f.getAbsolutePath(), null);
+                                mediaScanner.getConnection().scanFile(f.getUri().getPath(), f.getType());
                             } else {
                                 // shutting down deliberately - just exit loop now.
                                 return;
@@ -301,7 +303,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                         resultsAwaited--;
                     }
 
-                    if (processingFileCount > resultsBatchSize * 2) {
+                    if (processingDocumentFileCount > resultsBatchSize * 2) {
                         if (pauseThread()) {
                             return;
                         }
@@ -352,15 +354,15 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                 // don't care about the result any more.
                 return;
             }
-            processingFileCount--;
+            processingDocumentFileCount--;
             resultsAwaited--;
             boolean taskFinished = resultsAwaited == 0;
 
             synchronized (this) {
                 synchronized (results) {
-                    results.put(new File(path), uri);
+                    results.put(DocumentFile.fromFile(new File(path)), uri);
                     if (results.size() == resultsBatchSize || resultsAwaited == 0) {
-                        final Map<File, Uri> batchResults = results;
+                        final Map<DocumentFile, Uri> batchResults = results;
                         final int nextResultIdx = firstResultIdx + batchResults.size();
                         if (processResultsOnBackgroundThread) {
                             onScanComplete(batchResults, firstResultIdx, nextResultIdx - 1, resultsAwaited == 0);
@@ -381,19 +383,19 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
             return id;
         }
 
-        public abstract void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished);
+        public abstract void onScanComplete(Map<DocumentFile, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished);
 
         private class LookupTask implements Runnable {
 
-            private final String filePath;
+            private final DocumentFile f;
 
-            LookupTask(File f) {
-                this.filePath = f.getAbsolutePath();
+            LookupTask(DocumentFile f) {
+                this.f = f;
             }
 
             @Override
             public void run() {
-                mediaScanner.getConnection().scanFile(filePath, null);
+                mediaScanner.getConnection().scanFile(f.getUri().getPath(), f.getType());
             }
         }
 
@@ -401,10 +403,10 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         private class BatchResultProcessor implements Runnable {
             int firstResultIdx;
             int lastResultIdx;
-            Map<File, Uri> batchResults;
+            Map<DocumentFile, Uri> batchResults;
             boolean finalBatch;
 
-            public BatchResultProcessor(int firstResultIdx, int lastResultIdx, Map<File, Uri> batchResults, boolean finalBatch) {
+            public BatchResultProcessor(int firstResultIdx, int lastResultIdx, Map<DocumentFile, Uri> batchResults, boolean finalBatch) {
                 this.firstResultIdx = firstResultIdx;
                 this.lastResultIdx = lastResultIdx;
                 this.batchResults = batchResults;

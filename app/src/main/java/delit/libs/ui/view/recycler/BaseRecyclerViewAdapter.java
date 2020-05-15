@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -31,12 +32,13 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
     private static final String TAG = "BaseRecyclerViewAdapter";
     private final P multiSelectStatusListener;
-    private Context context;
+    private WeakReference<Context> contextRef;
     private V prefs;
     private HashSet<Long> selectedResourceIds = new HashSet<>(0);
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
 
-    public BaseRecyclerViewAdapter(P multiSelectStatusListener, V prefs) {
+    public BaseRecyclerViewAdapter(@NonNull Context context, P multiSelectStatusListener, V prefs) {
+        this.contextRef = new WeakReference<>(context);
         this.setHasStableIds(true);
         this.multiSelectStatusListener = multiSelectStatusListener;
         this.prefs = prefs;
@@ -93,7 +95,6 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     @NonNull
     @Override
     public S onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        setContext(parent.getContext());
         View view = inflateView(parent, viewType);
 
         final S viewHolder = buildViewHolder(view, viewType);
@@ -130,11 +131,11 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     }
 
     protected Context getContext() {
-        return context;
+        return contextRef.get();
     }
 
     protected final void setContext(Context context) {
-        this.context = context;
+        this.contextRef = new WeakReference<>(context);
     }
 
     @Override

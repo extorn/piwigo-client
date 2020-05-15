@@ -1,5 +1,7 @@
 package delit.libs.util.security;
 
+import androidx.documentfile.provider.DocumentFile;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +13,7 @@ public class KeystoreLoadOperation extends X509LoadOperation {
     private List<String> aliasesToLoad;
     private char[] keystorePass;
 
-    public KeystoreLoadOperation(File file) {
+    public KeystoreLoadOperation(DocumentFile file) {
         super(file);
         keystorePass = new char[0];
         aliasPassMapp = new HashMap<>();

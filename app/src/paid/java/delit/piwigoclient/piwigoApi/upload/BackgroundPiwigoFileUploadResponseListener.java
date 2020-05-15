@@ -1,6 +1,7 @@
 package delit.piwigoclient.piwigoApi.upload;
 
 import android.content.Context;
+import android.net.Uri;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -27,7 +28,7 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onRequestedFileUploadCancelComplete(Context context, File cancelledFile) {
+    protected void onRequestedFileUploadCancelComplete(Context context, Uri cancelledFile) {
 
     }
 

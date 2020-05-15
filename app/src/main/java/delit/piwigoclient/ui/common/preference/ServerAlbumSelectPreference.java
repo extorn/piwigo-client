@@ -120,8 +120,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             }
             if(selectedItems.size() > 0) {
                 CategoryItem selectedVal = selectedItems.iterator().next();
-                persistStringValue(new ServerAlbumDetails(selectedVal, event.getAlbumPath(selectedVal)).escapeSemiColons());
-                notifyChanged();
+                setValue(new ServerAlbumDetails(selectedVal, event.getAlbumPath(selectedVal)).escapeSemiColons());
             }
         }
     }

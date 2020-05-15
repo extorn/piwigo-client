@@ -546,7 +546,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="rating_score_pattern">%1$.2f$ (%2$d taux)</string>
     <string name="connection_reset_warning_pattern">Le serveur a fermé la connexion %1$d fois dans le passé %2$d minutes. Cela pourrait indiquer un problème avec votre configuration de serveur.</string>
     <string name="content_description_icon">icône</string>
-    <string name="files_already_set_for_upload_skipped_pattern">%1$d étaient déjà sélectionnés pour le téléchargement et ont été ignorés pour éviter la duplication.</string>
+    <string name="duplicates_ignored_pattern">%1$d doublons ont été ignorés.</string>
     <string name="progress_loading_session_details">Chargement des détails de la session</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">La méthode Piwigo WS %1$s n\'est plus disponible sur ce serveur, et le %2$s de repli a été utilisé. Vous venez de désactiver ou de supprimer un plugin de serveur ?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">La méthode Piwigo WS %1$s n\'est plus disponible sur ce serveur. Désactiver la fonctionnalité affectée dans l\'application. Vous venez de désactiver ou de supprimer un plugin de serveur ?</string>
@@ -635,5 +635,14 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contient des fichiers qui n\'ont pas pu être traités. Ces fichiers %1$d ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
     <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d'utilisation uniques s'afficheront à nouveau"</string>
+    <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>
+    <string name="release_permissions_for_uri_pattern">Souhaitez-vous libérer les autorisations détenues par cette application pour l\'ancien Uri (%1$s) sélectionné?</string>
+    <string name="system_file_selector_label">sélection de fichiers système</string>
+    <string name="uri_still_needed_pattern">Désolé, vous ne pouvez pas supprimer l\'autorisation pour l\'application d\'utiliser cet URI. L\'application a toujours besoin d\'une autorisation pour accéder à cet URI pour: \n\n%1$s</string>
+    <string name="no_suitable_activity_found">Aucune activité appropriée trouvée</string>
+    <string name="preference_uri_consumer_description_pattern">Préférence: %1$s</string>
+    <string name="missing_permissions_warning_message_pattern">"Depuis la dernière ouverture de cette application, les autorisations de fichier requises par les parties suivantes de l'application ont été supprimées\n\n%1$s\n\nVeuillez sélectionner de nouvelles autorisations pour ces paramètres pour que les choses fonctionnent comme prévu."</string>
+    <string name="folder_selection_title">Sélectionner le dossier</string>
+    <string name="files_selection_title">Sélectionnez les fichiers</string>
 
 </resources>

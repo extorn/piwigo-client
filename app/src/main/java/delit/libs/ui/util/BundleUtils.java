@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
@@ -20,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedSet;
 
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.IOUtils;
@@ -92,13 +94,6 @@ public class BundleUtils {
         }
     }
 
-    public static <T extends Parcelable> void putHashSet(Bundle bundle, String key, HashSet<T> data) {
-        if(data != null) {
-            bundle.putParcelableArrayList(key, new ArrayList<T>(data));
-        }
-    }
-
-
     public static HashSet<Long> getLongHashSet(Bundle bundle, String key) {
         try {
             Long[] data = ArrayUtils.wrap(bundle.getLongArray(key));
@@ -160,37 +155,6 @@ public class BundleUtils {
             int[] dataArr2 = ArrayUtils.unwrapInts(data);
             bundle.putIntArray(key, dataArr2);
         }
-    }
-
-    public static ArrayList<File> getFileArrayList(Bundle bundle, String key) {
-        try {
-            ArrayList<String> filenames = bundle.getStringArrayList(key);
-            if (filenames == null) {
-                return null;
-            }
-            ArrayList<File> files = new ArrayList<>(filenames.size());
-            for (String filename : filenames) {
-                files.add(new File(filename));
-            }
-            return files;
-        } catch (RuntimeException e) {
-            Crashlytics.logException(e);
-            return null;
-        }
-    }
-
-    public static void putFileArrayListExtra(Intent intent, String key, ArrayList<File> data) {
-        if(data == null) {
-            return;
-        }
-        intent.putStringArrayListExtra(key, IOUtils.getFileNames(data));
-    }
-
-    public static void putFileArrayList(Bundle bundle, String key, ArrayList<File> data) {
-        if(data == null) {
-            return;
-        }
-        bundle.putStringArrayList(key, IOUtils.getFileNames(data));
     }
 
     public static void putDate(Bundle bundle, String key, Date value) {
@@ -312,7 +276,7 @@ public class BundleUtils {
         return null;
     }
 
-    public static <T extends Parcelable> void readQueue(Bundle in, String key, Queue<T> queue) {
+    public static <T extends Parcelable> Queue<T> readQueue(@NonNull Bundle in, @NonNull String key, @NonNull Queue<T> queue) {
         try {
             Parcelable[] queueData = in.getParcelableArray(key);
             if (queueData != null) {
@@ -323,12 +287,42 @@ public class BundleUtils {
         } catch (RuntimeException e) {
             Crashlytics.logException(e);
         }
+        return queue;
     }
 
-    public static void writeQueue(Bundle dest, String key, Queue<? extends Parcelable> queue) {
+    public static void writeQueue(@NonNull Bundle dest, @NonNull String key, @Nullable Queue<? extends Parcelable> queue) {
         if(queue != null) {
             Parcelable[] queueData = queue.toArray(new Parcelable[0]);
             dest.putParcelableArray(key, queueData);
         }
+    }
+
+    public static <T extends Parcelable> void putSortedSet(@NonNull Bundle dest, @NonNull String key, @Nullable SortedSet<T> set) {
+        putSet(dest, key, set);
+    }
+
+    public static <T extends Parcelable> void putSet(@NonNull Bundle dest, @NonNull String key, @Nullable Set<T> set) {
+        if(set != null) {
+            Parcelable[] queueData = set.toArray(new Parcelable[0]);
+            dest.putParcelableArray(key, queueData);
+        }
+    }
+
+    public static <T extends Parcelable> SortedSet<T> readSortedSet(@NonNull Bundle in, @NonNull String key, @NonNull SortedSet<T> set) {
+        return readSet(in, key, set);
+    }
+
+    public static <T extends Parcelable> SortedSet<T> readSet(@NonNull Bundle in, @NonNull String key, @NonNull SortedSet<T> set) {
+        try {
+            Parcelable[] data = in.getParcelableArray(key);
+            if (data != null) {
+                for (Parcelable p : data) {
+                    set.add((T) p);
+                }
+            }
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+        }
+        return set;
     }
 }

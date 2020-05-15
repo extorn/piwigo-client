@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,6 +10,7 @@ import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 import java.io.Serializable;
@@ -63,10 +65,16 @@ public class AutoUploadJobConfig implements Parcelable {
         return jobPreferences;
     }
 
+    public String getUploadFromFolderName(Context c) {
+        DocumentFile uploadFromFolder = getLocalFolderToMonitor(c);
+        return uploadFromFolder == null ? "???" : uploadFromFolder.getName();
+    }
+
     public String getSummary(SharedPreferences appPrefs, Context c) {
+
         StringBuilder sb = new StringBuilder();
         sb.append("uploadFrom:\n");
-        sb.append(getLocalFolderToMonitor(c) == null ? "???" : getLocalFolderToMonitor(c).getAbsolutePath());
+        sb.append(getUploadFromFolderName(c));
         sb.append('\n');
         sb.append("uploadTo:\n");
         ConnectionPreferences.ProfilePreferences cp = getConnectionPrefs(c, appPrefs);
@@ -146,17 +154,21 @@ public class AutoUploadJobConfig implements Parcelable {
         return ConnectionPreferences.getPreferences(connectionProfileName, overallAppPrefs, c);
     }
 
-    public File getLocalFolderToMonitor(Context c) {
-        String localFolderName = getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key, null);
-        if(localFolderName == null) {
+    public DocumentFile getLocalFolderToMonitor(Context c) {
+        Uri localFolderUri = Uri.parse(getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key, null));
+        if(localFolderUri == null) {
             return null;
         }
-        return new File(localFolderName);
+        return DocumentFile.fromSingleUri(c, localFolderUri);
     }
 
     public String getUploadToAlbumName(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        return ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumName();
+        String uploadFolder = ServerAlbumSelectPreference.ServerAlbumDetails.fromEncodedPersistenceString(remoteAlbumDetails).getAlbumName();
+        if(uploadFolder == null) {
+            uploadFolder = "???";
+        }
+        return uploadFolder;
     }
 
     public long getUploadToAlbumId(Context c) {
@@ -253,19 +265,19 @@ public class AutoUploadJobConfig implements Parcelable {
 
         private static final long serialVersionUID = 4250545241017682232L;
         private int jobId;
-        private final HashMap<File, String> filesToHashMap;
+        private final HashMap<Uri, String> filesToHashMap;
 
         public PriorUploads(int jobId) {
             this.jobId = jobId;
             filesToHashMap = new HashMap<>();
         }
 
-        public PriorUploads(int jobId, HashMap<File, String> map) {
+        public PriorUploads(int jobId, HashMap<Uri, String> map) {
             this.jobId = jobId;
             filesToHashMap = map;
         }
 
-        public HashMap<File, String> getFilesToHashMap() {
+        public HashMap<Uri, String> getFilesToHashMap() {
             return filesToHashMap;
         }
 
@@ -304,12 +316,13 @@ public class AutoUploadJobConfig implements Parcelable {
          *
          * @return
          */
-        public boolean isOutOfSyncWithFileSystem() {
+        public boolean isOutOfSyncWithFileSystem(Context context) {
             boolean outOfSync = false;
             if(filesToHashMap.size() > 0) {
                 Set<File> itemsToRemove = new HashSet<>();
-                for(Map.Entry<File, String> priorUploadEntry : filesToHashMap.entrySet()) {
-                    if(!priorUploadEntry.getKey().exists()) {
+                for(Map.Entry<Uri, String> priorUploadEntry : filesToHashMap.entrySet()) {
+                    DocumentFile docFile = DocumentFile.fromSingleUri(context, priorUploadEntry.getKey());
+                    if(docFile == null || !docFile.exists()) {
                         outOfSync = true;
                     }
                 }
@@ -323,7 +336,7 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public PriorUploads getFilesPreviouslyUploaded(Context c) {
         PriorUploads uploads = PriorUploads.loadFromFile(c, jobId);
-        if(uploads.isOutOfSyncWithFileSystem()) {
+        if(uploads.isOutOfSyncWithFileSystem(c)) {
             uploads.saveToFile(c);
         }
         return uploads;

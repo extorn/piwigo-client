@@ -1,15 +1,24 @@
 package delit.piwigoclient.piwigoApi.upload;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
+import android.os.FileUtils;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.core.content.MimeTypeFilter;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,14 +29,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.ui.upload.FilesToUploadRecyclerViewAdapter;
 
-public class UploadJob implements Serializable {
+public class UploadJob implements Parcelable {
 
     private static final String TAG = "UploadJob";
     public static final Integer COMPRESSED = 8; // file has been compressed successfully.
@@ -41,33 +52,37 @@ public class UploadJob implements Serializable {
     public static final Integer REQUIRES_DELETE = 5; // user cancels upload after file partially uploaded
     public static final Integer DELETED = 6; // file has been deleted from the server
     public static final Integer CORRUPT = 7; // (moves to this state if verification fails)
-    private static final long serialVersionUID = -7205508148334729307L;
+
     private final long jobId;
     private final long responseHandlerId;
-    private final ArrayList<File> filesForUpload;
-    private HashMap<File, File> compressedFilesMap;
-    private final HashMap<File, Integer> fileUploadStatus;
-    private final HashMap<File, PartialUploadData> filePartialUploadProgress;
+    private final ArrayList<Uri> filesForUpload;
+    private HashMap<Uri, Uri> compressedFilesMap;
+    private final HashMap<Uri, Integer> fileUploadStatus;
+    private final HashMap<Uri, PartialUploadData> filePartialUploadProgress;
     private final ArrayList<Long> uploadToCategoryParentage;
     private final long uploadToCategory;
     private final byte privacyLevelWanted;
     private int jobConfigId = -1;
     private boolean runInBackground;
     private ConnectionPreferences.ProfilePreferences connectionPrefs;
-    private HashMap<File, String> fileChecksums;
+    private HashMap<Uri, String> fileChecksums;
     private boolean finished;
     private long temporaryUploadAlbum = -1;
-    private volatile transient boolean submitted = false;
-    private volatile transient boolean runningNow = false;
-    private volatile transient boolean cancelUploadAsap;
-    private transient File loadedFromFile;
     private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
-    private transient boolean wasLastRunCancelled;
     private VideoCompressionParams videoCompressionParams;
     private ImageCompressionParams imageCompressionParams;
     private boolean allowUploadOfRawVideosIfIncompressible;
+    private boolean isDeleteFilesAfterUpload;
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, List<File> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel) {
+    private volatile transient boolean submitted = false;
+    private volatile transient boolean runningNow = false;
+    private volatile transient boolean cancelUploadAsap;
+    private transient DocumentFile loadedFromFile;
+    private transient boolean wasLastRunCancelled;
+    private transient WeakReference<Context> contextRef;
+
+
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, List<Uri> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
@@ -78,13 +93,53 @@ public class UploadJob implements Serializable {
         this.fileUploadStatus = new HashMap<>(filesForUpload.size());
         this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
         this.compressedFilesMap = new HashMap<>();
+        this.isDeleteFilesAfterUpload = isDeleteFilesAfterUpload;
+    }
+
+    protected UploadJob(Parcel in) {
+        jobId = in.readLong();
+        responseHandlerId = in.readLong();
+        filesForUpload = ParcelUtils.readArrayList(in, Uri.class.getClassLoader());
+        compressedFilesMap = ParcelUtils.readMap(in, Uri.class.getClassLoader());
+        fileUploadStatus = ParcelUtils.readMap(in, Uri.class.getClassLoader());
+        filePartialUploadProgress = ParcelUtils.readMap(in, UploadJob.PartialUploadData.class.getClassLoader());
+        uploadToCategoryParentage = ParcelUtils.readLongArrayList(in);
+        uploadToCategory = in.readLong();
+        privacyLevelWanted = in.readByte();
+        jobConfigId = in.readInt();
+        runInBackground = ParcelUtils.readBool(in);
+        connectionPrefs = ParcelUtils.readParcelable(in, ConnectionPreferences.ProfilePreferences.class);
+        fileChecksums = ParcelUtils.readMap(in, Uri.class.getClassLoader());
+        finished = ParcelUtils.readBool(in);
+        temporaryUploadAlbum = in.readLong();
+        errors = ParcelUtils.readMap(in, errors, Date.class.getClassLoader());
+        videoCompressionParams = ParcelUtils.readParcelable(in, UploadJob.VideoCompressionParams.class);
+        imageCompressionParams = ParcelUtils.readParcelable(in, UploadJob.ImageCompressionParams.class);
+        allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
+        isDeleteFilesAfterUpload = ParcelUtils.readBool(in);
+    }
+
+    public static final Creator<UploadJob> CREATOR = new Creator<UploadJob>() {
+        @Override
+        public UploadJob createFromParcel(Parcel in) {
+            return new UploadJob(in);
+        }
+
+        @Override
+        public UploadJob[] newArray(int size) {
+            return new UploadJob[size];
+        }
+    };
+
+    public void withContext(Context context) {
+        contextRef = new WeakReference<>(context);
     }
 
     public int getUploadProgress() {
         int filesCount = filesForUpload.size();
         long totalProgress = filesCount * 100;
         long jobProgress = 0;
-        for (File f : filesForUpload) {
+        for (Uri f : filesForUpload) {
             if (CANCELLED.equals(fileUploadStatus.get(f))) {
                 totalProgress -= 100;
                 continue;
@@ -111,35 +166,35 @@ public class UploadJob implements Serializable {
         this.cancelUploadAsap = true;
     }
 
-    public synchronized void markFileAsUploading(File fileForUpload) {
+    public synchronized void markFileAsUploading(Uri fileForUpload) {
         fileUploadStatus.put(fileForUpload, UPLOADING);
     }
 
-    public synchronized void markFileAsVerified(File fileForUpload) {
+    public synchronized void markFileAsVerified(Uri fileForUpload) {
         fileUploadStatus.put(fileForUpload, VERIFIED);
     }
 
-    public synchronized void markFileAsCorrupt(File fileForUpload) {
+    public synchronized void markFileAsCorrupt(Uri fileForUpload) {
         fileUploadStatus.put(fileForUpload, CORRUPT);
     }
 
-    public synchronized void markFileAsCompressed(File fileForUpload) {
+    public synchronized void markFileAsCompressed(Uri fileForUpload) {
         fileUploadStatus.put(fileForUpload, COMPRESSED);
     }
 
-    public synchronized void markFileAsConfigured(File fileForUpload) {
+    public synchronized void markFileAsConfigured(Uri fileForUpload) {
         fileUploadStatus.put(fileForUpload, CONFIGURED);
     }
 
-    public synchronized void markFileAsNeedsDelete(File fileForUpload) {
+    public synchronized void markFileAsNeedsDelete(Uri fileForUpload) {
         fileUploadStatus.put(fileForUpload, REQUIRES_DELETE);
     }
 
-    public synchronized void markFileAsDeleted(File fileForUpload) {
+    public synchronized void markFileAsDeleted(Uri fileForUpload) {
         fileUploadStatus.put(fileForUpload, DELETED);
     }
 
-    public synchronized boolean needsUpload(File fileForUpload) {
+    public synchronized boolean needsUpload(Uri fileForUpload) {
         Integer status = fileUploadStatus.get(fileForUpload);
         return status == null || COMPRESSED.equals(status) || UPLOADING.equals(status);
     }
@@ -152,30 +207,30 @@ public class UploadJob implements Serializable {
         this.jobConfigId = jobConfigId;
     }
 
-    public ArrayList<File> getFilesAwaitingUpload() {
-        Set<File> filesProcessedToSomeDegree = fileUploadStatus.keySet();
-        ArrayList<File> filesAwaitingUpload = new ArrayList<File>(filesForUpload);
+    public ArrayList<Uri> getFilesAwaitingUpload() {
+        Set<Uri> filesProcessedToSomeDegree = fileUploadStatus.keySet();
+        ArrayList<Uri> filesAwaitingUpload = new ArrayList<>(filesForUpload);
         filesAwaitingUpload.removeAll(filesProcessedToSomeDegree);
         return filesAwaitingUpload;
     }
 
     //
-//    public synchronized boolean isUploadOfFileInProgress(File fileForUpload) {
+//    public synchronized boolean isUploadOfFileInProgress(Uri fileForUpload) {
 //        Integer status = fileUploadStatus.get(fileForUpload);
 //        return status != null && status != CONFIGURED && status != DELETED && status != CANCELLED;
 //    }
 
-    public HashSet<File> getFilesProcessedToEnd() {
+    public HashSet<Uri> getFilesProcessedToEnd() {
         return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED, DELETED, CANCELLED);
     }
 
-    public HashSet<File> getFilesSuccessfullyUploaded() {
+    public HashSet<Uri> getFilesSuccessfullyUploaded() {
         return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED);
     }
 
-    public HashSet<File> getFilesWithStatus(Integer... statuses) {
-        HashSet<File> filesWithStatus = new HashSet<>();
-        for (Map.Entry<File, Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
+    public HashSet<Uri> getFilesWithStatus(Integer... statuses) {
+        HashSet<Uri> filesWithStatus = new HashSet<>();
+        for (Map.Entry<Uri, Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
             Integer status = fileStatusEntry.getValue();
             for (Integer i : statuses) {
                 if (status.equals(i)) {
@@ -186,52 +241,52 @@ public class UploadJob implements Serializable {
         return filesWithStatus;
     }
 
-    public HashSet<File> getFilesPendingApproval() {
+    public HashSet<Uri> getFilesPendingApproval() {
         return getFilesWithStatus(PENDING_APPROVAL);
     }
 
-    public synchronized boolean isUploadProcessNotYetStarted(File fileForUpload) {
+    public synchronized boolean isUploadProcessNotYetStarted(Uri fileForUpload) {
         return null == fileUploadStatus.get(fileForUpload);
     }
 
-    public synchronized boolean needsVerification(File fileForUpload) {
+    public synchronized boolean needsVerification(Uri fileForUpload) {
         return UPLOADED.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public boolean isUploadVerified(File fileForUpload) {
+    public boolean isUploadVerified(Uri fileForUpload) {
         return VERIFIED.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public boolean isUploadingData(File fileForUpload) {
+    public boolean isUploadingData(Uri fileForUpload) {
         return UPLOADING.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public boolean isFileCompressed(File fileForUpload) {
+    public boolean isFileCompressed(Uri fileForUpload) {
         return COMPRESSED.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public boolean isUploadedFileVerified(File fileForUpload) {
+    public boolean isUploadedFileVerified(Uri fileForUpload) {
         return VERIFIED.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public synchronized boolean needsConfiguration(File fileForUpload) {
+    public synchronized boolean needsConfiguration(Uri fileForUpload) {
         return VERIFIED.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public synchronized boolean needsDelete(File fileForUpload) {
+    public synchronized boolean needsDelete(Uri fileForUpload) {
         return REQUIRES_DELETE.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public synchronized boolean needsDeleteAndThenReUpload(File fileForUpload) {
+    public synchronized boolean needsDeleteAndThenReUpload(Uri fileForUpload) {
         return CORRUPT.equals(fileUploadStatus.get(fileForUpload));
     }
 
-    public synchronized boolean isFileUploadComplete(File fileForUpload) {
+    public synchronized boolean isFileUploadComplete(Uri fileForUpload) {
         Integer status = fileUploadStatus.get(fileForUpload);
         return PENDING_APPROVAL.equals(status) || CONFIGURED.equals(status);
     }
 
-    public synchronized boolean uploadItemRequiresAction(File file) {
+    public synchronized boolean uploadItemRequiresAction(Uri file) {
         Integer uploadStatus = fileUploadStatus.get(file);
         return !(uploadStatus == null || PENDING_APPROVAL.equals(uploadStatus) || CONFIGURED.equals(uploadStatus) || CANCELLED.equals(uploadStatus) || DELETED.equals(uploadStatus));
     }
@@ -244,7 +299,7 @@ public class UploadJob implements Serializable {
      * @param f file to cancel upload of
      * @return true if was possible to immediately cancel, false if there might be a little delay.
      */
-    public synchronized boolean cancelFileUpload(File f) {
+    public synchronized boolean cancelFileUpload(Uri f) {
         Integer status = fileUploadStatus.get(f);
         fileUploadStatus.put(f, CANCELLED);
         return status == null;
@@ -254,7 +309,7 @@ public class UploadJob implements Serializable {
         return jobId;
     }
 
-    public synchronized ArrayList<File> getFilesForUpload() {
+    public synchronized ArrayList<Uri> getFilesForUpload() {
         return filesForUpload;
     }
 
@@ -266,7 +321,7 @@ public class UploadJob implements Serializable {
         return cancelUploadAsap;
     }
 
-    public synchronized boolean isFileUploadStillWanted(File file) {
+    public synchronized boolean isFileUploadStillWanted(Uri file) {
         Integer status = fileUploadStatus.get(file);
         return !CANCELLED.equals(status);
     }
@@ -279,12 +334,12 @@ public class UploadJob implements Serializable {
         return uploadToCategory;
     }
 
-    public synchronized void clearUploadProgress(File f) {
+    public synchronized void clearUploadProgress(Uri f) {
         fileUploadStatus.remove(f);
         filePartialUploadProgress.remove(f);
     }
 
-    public synchronized int getCompressionProgress(File uploadJobKey) {
+    public synchronized int getCompressionProgress(Uri uploadJobKey) {
         Integer status = fileUploadStatus.get(uploadJobKey);
         if (COMPRESSED.equals(status)) {
             return 100;
@@ -296,7 +351,7 @@ public class UploadJob implements Serializable {
         return 0;
     }
 
-    public synchronized int getUploadProgress(File uploadJobKey) {
+    public synchronized int getUploadProgress(Uri uploadJobKey) {
 
 //        private static final Integer CANCELLED = -1;
 //        private static final Integer UPLOADING = 0;
@@ -332,20 +387,20 @@ public class UploadJob implements Serializable {
         return progress;
     }
 
-    public synchronized Map<File, Md5SumUtils.Md5SumException> calculateChecksums() {
-        Map<File, Md5SumUtils.Md5SumException> failures = new HashMap<>(0);
-        ArrayList<File> filesNotFinished = getFilesNotYetUploaded();
+    public synchronized Map<Uri, Md5SumUtils.Md5SumException> calculateChecksums() {
+        Map<Uri, Md5SumUtils.Md5SumException> failures = new HashMap<>(0);
+        ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded();
         boolean newJob = false;
         if (fileChecksums == null) {
             fileChecksums = new HashMap<>(filesForUpload.size());
             newJob = true;
         }
-        for (File f : filesNotFinished) {
-            if(!f.exists()) {
+        for (Uri f : filesNotFinished) {
+            if(!IOUtils.exists(getContext(), f)) {
                 // Remove file from upload list
                 cancelFileUpload(f);
             } else if (needsUpload(f) || needsVerification(f)) {
-                File fileForChecksumCalc = null;
+                Uri fileForChecksumCalc = null;
                 if (!((isPhoto(f) && isCompressPhotosBeforeUpload())
                         || canCompressVideoFile(f) && isCompressVideosBeforeUpload())) {
                     fileForChecksumCalc = f;
@@ -358,7 +413,7 @@ public class UploadJob implements Serializable {
                     // recalculate checksums for all files not yet uploaded
                     String checksum = null;
                     try {
-                        checksum = Md5SumUtils.calculateMD5(fileForChecksumCalc);
+                        checksum = Md5SumUtils.calculateMD5(getContext().getContentResolver(), fileForChecksumCalc);
                     } catch (Md5SumUtils.Md5SumException e) {
                         failures.put(f, e);
                         Crashlytics.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
@@ -376,16 +431,16 @@ public class UploadJob implements Serializable {
         return failures;
     }
 
-    public synchronized Map<File, String> getFileChecksums() {
+    public synchronized Map<Uri, String> getFileChecksums() {
         return fileChecksums;
     }
 
-    public synchronized String getFileChecksum(File fileForUpload) {
+    public synchronized String getFileChecksum(Uri fileForUpload) {
         return fileChecksums.get(fileForUpload);
     }
 
-    public synchronized void addFileChecksum(File uploadJobKey, File fileForUpload) throws Md5SumUtils.Md5SumException {
-        String checksum = Md5SumUtils.calculateMD5(fileForUpload);
+    public synchronized void addFileChecksum(Uri uploadJobKey, Uri fileForUpload) throws Md5SumUtils.Md5SumException {
+        String checksum = Md5SumUtils.calculateMD5(getContext().getContentResolver(), fileForUpload);
         fileChecksums.put(uploadJobKey, checksum);
     }
 
@@ -397,7 +452,7 @@ public class UploadJob implements Serializable {
         finished = true;
     }
 
-    public synchronized void addFileUploaded(File fileForUpload, ResourceItem itemOnServer) {
+    public synchronized void addFileUploaded(Uri fileForUpload, ResourceItem itemOnServer) {
         PartialUploadData uploadData = filePartialUploadProgress.get(fileForUpload);
         if (uploadData == null) {
             filePartialUploadProgress.put(fileForUpload, new PartialUploadData(itemOnServer));
@@ -412,7 +467,7 @@ public class UploadJob implements Serializable {
         }
     }
 
-    public synchronized ResourceItem getUploadedFileResource(File fileUploaded) {
+    public synchronized ResourceItem getUploadedFileResource(Uri fileUploaded) {
         PartialUploadData partialUploadData = filePartialUploadProgress.get(fileUploaded);
         if (partialUploadData == null) {
             // this file has been uploaded before by a different job.
@@ -425,13 +480,22 @@ public class UploadJob implements Serializable {
         return getFilesNotYetUploaded().size() == 0 && getTemporaryUploadAlbum() < 0;
     }
 
-    public synchronized ArrayList<File> getFilesNotYetUploaded() {
-        ArrayList<File> filesToUpload = new ArrayList<>(filesForUpload);
+    private @NonNull Context getContext() {
+        Context context = contextRef.get();
+        if(context == null) {
+            throw new IllegalStateException("Context is null");
+        }
+        return context;
+    }
+
+    public synchronized ArrayList<Uri> getFilesNotYetUploaded() {
+        ArrayList<Uri> filesToUpload = new ArrayList<>(filesForUpload);
         filesToUpload.removeAll(getFilesProcessedToEnd());
-        Iterator<File> filesToUploadIter = filesToUpload.iterator();
+        Iterator<Uri> filesToUploadIter = filesToUpload.iterator();
         while(filesToUploadIter.hasNext()) {
-            File f = filesToUploadIter.next();
-            if(f.isDirectory()) {
+            Uri f = filesToUploadIter.next();
+            DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), f);
+            if(docFile != null && docFile.isDirectory()) {
                 filesToUploadIter.remove();
             }
         }
@@ -442,7 +506,7 @@ public class UploadJob implements Serializable {
         return uploadToCategoryParentage;
     }
 
-    public void markFileAsPartiallyUploaded(File uploadJobKey, String uploadName, String fileChecksum, long totalBytesToUpload, long bytesUploaded, long countChunksUploadedOkay) {
+    public void markFileAsPartiallyUploaded(Uri uploadJobKey, String uploadName, String fileChecksum, long totalBytesToUpload, long bytesUploaded, long countChunksUploadedOkay) {
         PartialUploadData data = filePartialUploadProgress.get(uploadJobKey);
         if (data == null) {
             filePartialUploadProgress.put(uploadJobKey, new PartialUploadData(uploadName, fileChecksum, totalBytesToUpload, bytesUploaded, countChunksUploadedOkay));
@@ -451,19 +515,19 @@ public class UploadJob implements Serializable {
         }
     }
 
-    public Set<File> getFilesPartiallyUploaded() {
+    public Set<Uri> getFilesPartiallyUploaded() {
         return filePartialUploadProgress.keySet();
     }
 
-    public PartialUploadData getChunksAlreadyUploadedData(File fileForUpload) {
+    public PartialUploadData getChunksAlreadyUploadedData(Uri fileForUpload) {
         return filePartialUploadProgress.get(fileForUpload);
     }
 
-    public void deleteChunksAlreadyUploadedData(File fileForUpload) {
+    public void deleteChunksAlreadyUploadedData(Uri fileForUpload) {
         filePartialUploadProgress.remove(fileForUpload);
     }
 
-    public boolean isFilePartiallyUploaded(File cancelledFile) {
+    public boolean isFilePartiallyUploaded(Uri cancelledFile) {
         PartialUploadData data = filePartialUploadProgress.get(cancelledFile);
         return !(data == null || data.getBytesUploaded() == 0);
     }
@@ -492,17 +556,17 @@ public class UploadJob implements Serializable {
         this.submitted = submitted;
     }
 
-    public Map<File, String> getFileToFilenamesMap() {
-        Map<File, String> filenamesMap = new HashMap<>(filesForUpload.size());
-        for (File f : filesForUpload) {
-            filenamesMap.put(f, f.getName());
+    public Map<Uri, String> getFileToFilenamesMap(Context context) {
+        Map<Uri, String> filenamesMap = new HashMap<>(filesForUpload.size());
+        for (Uri f : filesForUpload) {
+            filenamesMap.put(f, DocumentFile.fromSingleUri(context, f).getName());
         }
         return filenamesMap;
     }
 
-    public void filterPreviouslyUploadedFiles(HashMap<File, String> fileUploadedHashMap) {
-        for (HashMap.Entry<File, String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
-            File potentialDuplicateUpload = fileUploadedEntry.getKey();
+    public void filterPreviouslyUploadedFiles(HashMap<Uri, String> fileUploadedHashMap) {
+        for (HashMap.Entry<Uri, String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
+            Uri potentialDuplicateUpload = fileUploadedEntry.getKey();
             if (filesForUpload.contains(potentialDuplicateUpload)) {
                 // a file at this absolute path has been uploaded previously to this end point
                 String checksum = fileChecksums.get(potentialDuplicateUpload);
@@ -525,11 +589,11 @@ public class UploadJob implements Serializable {
         return loadedFromFile != null || filePartialUploadProgress.size() > 0 || fileUploadStatus.size() > 0;
     }
 
-    public File getLoadedFromFile() {
+    public DocumentFile getLoadedFromFile() {
         return loadedFromFile;
     }
 
-    public void setLoadedFromFile(File loadedFromFile) {
+    public void setLoadedFromFile(DocumentFile loadedFromFile) {
         this.loadedFromFile = loadedFromFile;
     }
 
@@ -545,29 +609,38 @@ public class UploadJob implements Serializable {
         return errors;
     }
 
-    public boolean isVideo(File file) {
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()).toLowerCase());
-        return mimeType != null && mimeType.startsWith("video/");
+    public boolean isVideo(@NonNull Uri file) {
+        DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), file);
+        if(docFile != null) {
+            String mimeType = docFile.getType();
+            if(mimeType != null) {
+                mimeType = mimeType.toLowerCase();
+                return MimeTypeFilter.matches(mimeType,"video/*");
+            }
+        }
+        return false;
     }
 
-    public boolean isPhoto(File file) {
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()).toLowerCase());
-        return mimeType != null && mimeType.startsWith("image/");
+    public boolean isPhoto(Uri file) {
+        DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), file);
+        if(docFile != null) {
+            String mimeType = docFile.getType();
+            if(mimeType != null) {
+                mimeType = mimeType.toLowerCase();
+                return MimeTypeFilter.matches(mimeType,"image/*");
+            }
+        }
+        return false;
     }
 
-    public ArrayList<File> getVideosForUpload() {
-        ArrayList<File> allFiles = getFilesForUpload();
+    public ArrayList<Uri> getVideosForUpload(Context context) {
+        ArrayList<Uri> allFiles = getFilesForUpload();
         if (allFiles == null || allFiles.isEmpty()) {
             return new ArrayList<>();
         }
 
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-
-
-        ArrayList<File> videoFilesToCompress = new ArrayList<>(allFiles.size());
-        for (File f : allFiles) {
+        ArrayList<Uri> videoFilesToCompress = new ArrayList<>(allFiles.size());
+        for (Uri f : allFiles) {
             if (isVideo(f)) {
                 videoFilesToCompress.add(f);
             }
@@ -575,34 +648,35 @@ public class UploadJob implements Serializable {
         return videoFilesToCompress;
     }
 
-    public File addCompressedFile(Context c, File rawFileForUpload, String compressedMimeType) {
-        File compressedFile = new File(getCompressedFilesFolder(c), rawFileForUpload.getName());
-        compressedFile = IOUtils.changeFileExt(compressedFile, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressedMimeType));
+    public DocumentFile addCompressedFile(Context c, Uri rawFileForUpload, String compressedMimeType) {
+        String rawUploadFilename = IOUtils.getFilename(c, rawFileForUpload);
+        String updatedFilename = IOUtils.changeFileExt(new File(rawUploadFilename), MimeTypeMap.getSingleton().getExtensionFromMimeType(compressedMimeType)).getName();
+        DocumentFile compressedFile = getCompressedFilesFolder(c).createFile(compressedMimeType, updatedFilename);
         if (compressedFilesMap == null) {
             compressedFilesMap = new HashMap<>();
         }
-        compressedFilesMap.put(rawFileForUpload, compressedFile);
+        compressedFilesMap.put(rawFileForUpload, compressedFile.getUri());
         return compressedFile;
     }
 
-    public File getCompressedFile(File rawFileForUpload) {
+    public Uri getCompressedFile(Uri rawFileForUpload) {
         if (compressedFilesMap == null) {
             return null;
         }
         return compressedFilesMap.get(rawFileForUpload);
     }
 
-    private File getCompressedFilesFolder(Context c) {
+    private DocumentFile getCompressedFilesFolder(Context c) {
         File f = new File(c.getExternalCacheDir(), "compressed_vids_for_upload");
         if (!f.exists()) {
             if (!f.mkdirs()) {
                 Crashlytics.log(Log.ERROR, TAG, "Unable to create folder for comrepessed files to be placed");
             }
         }
-        return f;
+        return DocumentFile.fromFile(f);
     }
 
-    public boolean canCompressVideoFile(File rawVideo) {
+    public boolean canCompressVideoFile(Uri rawVideo) {
         return isVideo(rawVideo);
     }
 
@@ -651,7 +725,7 @@ public class UploadJob implements Serializable {
 
     public Set<Long> getIdsOfResourcesForFilesSuccessfullyUploaded() {
         Set<Long> resourceIds = new HashSet<>();
-        for (File f : getFilesSuccessfullyUploaded()) {
+        for (Uri f : getFilesSuccessfullyUploaded()) {
             ResourceItem r = getUploadedFileResource(f);
             if (r != null) {
                 resourceIds.add(r.getId());
@@ -660,15 +734,51 @@ public class UploadJob implements Serializable {
         return resourceIds;
     }
 
-    public HashMap<File, String> getUploadedFilesLocalFileChecksums() {
-        HashSet<File> filesUploaded = getFilesSuccessfullyUploaded();
-        HashMap<File, String> uploadedFileChecksums = new HashMap<>(filesUploaded.size());
-        for (File f : filesUploaded) {
-            if (f.exists()) {
+    public HashMap<Uri, String> getUploadedFilesLocalFileChecksums() {
+        HashSet<Uri> filesUploaded = getFilesSuccessfullyUploaded();
+        HashMap<Uri, String> uploadedFileChecksums = new HashMap<>(filesUploaded.size());
+        for (Uri f : filesUploaded) {
+            DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), f);
+            if (docFile != null && docFile.exists()) {
                 uploadedFileChecksums.put(f, getFileChecksum(f));
             }
         }
         return uploadedFileChecksums;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(jobId);
+        dest.writeLong(responseHandlerId);
+        ParcelUtils.writeArrayList(dest, filesForUpload);
+        ParcelUtils.writeMap(dest, compressedFilesMap);
+        ParcelUtils.writeMap(dest, fileUploadStatus);
+        ParcelUtils.writeMap(dest, filePartialUploadProgress);
+        ParcelUtils.writeLongArrayList(dest, uploadToCategoryParentage);
+        dest.writeLong(uploadToCategory);
+        dest.writeByte(privacyLevelWanted);
+        dest.writeInt(jobConfigId);
+        ParcelUtils.writeBool(dest, runInBackground);
+        ParcelUtils.writeParcelable(dest, connectionPrefs);
+        ParcelUtils.writeMap(dest, fileChecksums);
+        ParcelUtils.writeBool(dest, finished);
+        dest.writeLong(temporaryUploadAlbum);
+        ParcelUtils.writeMap(dest, errors);
+        ParcelUtils.writeParcelable(dest, videoCompressionParams);
+        ParcelUtils.writeParcelable(dest, imageCompressionParams);
+        ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
+        ParcelUtils.writeBool(dest, isDeleteFilesAfterUpload);
+    }
+
+    public boolean isDeleteFilesAfterUpload() {
+        return isDeleteFilesAfterUpload;
     }
 
     protected static class PartialUploadData implements Serializable {
@@ -728,7 +838,7 @@ public class UploadJob implements Serializable {
         }
     }
 
-    public static class ImageCompressionParams implements Serializable {
+    public static class ImageCompressionParams implements Serializable, Parcelable {
         private static final long serialVersionUID = -646493907951140373L;
         private String outputFormat;
         private @IntRange(from = 0, to = 100)
@@ -738,6 +848,25 @@ public class UploadJob implements Serializable {
 
         public ImageCompressionParams() {
         }
+
+        protected ImageCompressionParams(Parcel in) {
+            outputFormat = in.readString();
+            quality = in.readInt();
+            maxWidth = in.readInt();
+            maxHeight = in.readInt();
+        }
+
+        public static final Creator<ImageCompressionParams> CREATOR = new Creator<ImageCompressionParams>() {
+            @Override
+            public ImageCompressionParams createFromParcel(Parcel in) {
+                return new ImageCompressionParams(in);
+            }
+
+            @Override
+            public ImageCompressionParams[] newArray(int size) {
+                return new ImageCompressionParams[size];
+            }
+        };
 
         public int getQuality() {
             return quality;
@@ -770,9 +899,22 @@ public class UploadJob implements Serializable {
         public void setMaxWidth(int maxWidth) {
             this.maxWidth = maxWidth;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(outputFormat);
+            dest.writeInt(quality);
+            dest.writeInt(maxWidth);
+            dest.writeInt(maxHeight);
+        }
     }
 
-    public static class VideoCompressionParams implements Serializable {
+    public static class VideoCompressionParams implements Serializable, Parcelable {
         private static final long serialVersionUID = -2089863017299368689L;
         private double quality = -1;
         private int audioBitrate = -1;
@@ -780,6 +922,23 @@ public class UploadJob implements Serializable {
         public VideoCompressionParams() {
 
         }
+
+        protected VideoCompressionParams(Parcel in) {
+            quality = in.readDouble();
+            audioBitrate = in.readInt();
+        }
+
+        public static final Creator<VideoCompressionParams> CREATOR = new Creator<VideoCompressionParams>() {
+            @Override
+            public VideoCompressionParams createFromParcel(Parcel in) {
+                return new VideoCompressionParams(in);
+            }
+
+            @Override
+            public VideoCompressionParams[] newArray(int size) {
+                return new VideoCompressionParams[size];
+            }
+        };
 
         public double getQuality() {
             return quality;
@@ -796,6 +955,17 @@ public class UploadJob implements Serializable {
 
         public void setAudioBitrate(int audioBitrate) {
             this.audioBitrate = audioBitrate;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeDouble(quality);
+            dest.writeInt(audioBitrate);
         }
     }
 }

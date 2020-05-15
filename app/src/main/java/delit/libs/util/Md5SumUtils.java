@@ -1,11 +1,16 @@
 package delit.libs.util;
 
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.util.Log;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,7 +27,7 @@ public class Md5SumUtils {
 
     private static final String TAG = "Md5Sum";
 
-    public static String calculateMD5(File updateFile) throws RuntimeException, Md5SumException {
+    public static String calculateMD5(ContentResolver contentResolver, Uri uri) throws RuntimeException, Md5SumException {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("MD5");
@@ -32,9 +37,10 @@ public class Md5SumUtils {
             throw new Md5SumException("Exception while getting digest", e);
         }
 
-        InputStream is;
+        BufferedInputStream is;
         try {
-            is = new BufferedInputStream(new FileInputStream(updateFile));
+            //TODO will this be quicker to read? FileChannels? contentResolver.openFileDescriptor(uri, "r").getFileDescriptor();
+            is = new BufferedInputStream(contentResolver.openInputStream(uri));
 
             byte[] buffer = new byte[8192];
             int read;

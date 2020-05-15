@@ -138,9 +138,8 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         };
 
         CustomImageButton newItemButton = getAddListItemButton();
-        newItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if(newItemButton != null) {
+            newItemButton.setOnClickListener(v1 -> {
                 CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
                 if (listAdapter == null) {
                     Crashlytics.log(Log.ERROR, TAG, "List adapter is null - weird");
@@ -154,8 +153,8 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                         getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.please_select_a_parent_album);
                     }
                 }
-            }
-        });
+            });
+        }
 
         if(rootAlbum == null) {
             loadData();
@@ -227,7 +226,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if(getListAdapter() == null) {
 
-            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter<CategoryItem>(), getViewPrefs());
+            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(requireContext(), rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter<CategoryItem>(), getViewPrefs());
             if (activeCategory != null) {
                 viewAdapter.setActiveItem(activeCategory);
             } else {

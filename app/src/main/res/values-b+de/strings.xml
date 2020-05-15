@@ -541,7 +541,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="rating_score_pattern">%1$.2f (%2$d raten)</string>
     <string name="connection_reset_warning_pattern">Der Server hat die Verbindung %1$d in den letzten %2$d Minuten mal geschlossen. Dies könnte auf ein Problem mit Ihrer Serverkonfiguration hinweisen.</string>
     <string name="content_description_icon">icon</string>
-    <string name="files_already_set_for_upload_skipped_pattern">%1$d Dateien wurden bereits für den Upload ausgewählt und ignoriert, um Doppelarbeit zu vermeiden.</string>
+    <string name="duplicates_ignored_pattern">%1$d Duplikate wurden ignoriert.</string>
     <string name="progress_loading_session_details">Laden von Benutzerberechtigungen</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar, und der Fallback %2$s wurde verwendet. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionen in der App. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
@@ -630,6 +630,15 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="open_files">Öffnen Sie Dateien in der App</string>
     <string name="files_unavailable_to_download_removed_pattern">Ihre Auswahl enthielt Dateien, die nicht verarbeitet werden konnten. Diese %1$d Dateien wurden ignoriert. Um eine Videodatei freizugeben, muss sie zuerst vollständig lokal zwischengespeichert werden.</string>
     <string name="alert_all_user_hints_will_be_shown_again">"Alle einmaligen Benutzertipps werden erneut angezeigt"</string>
+    <string name="delete_uploaded_files_title">Hochgeladene Dateien löschen</string>
+    <string name="release_permissions_for_uri_pattern">Möchten Sie die von dieser App gehaltenen Berechtigungen für den alten ausgewählten Uri (%1$s) freigeben?</string>
+    <string name="system_file_selector_label">Auswahl der Systemdatei</string>
+    <string name="uri_still_needed_pattern">Leider können Sie die Berechtigung der App zur Verwendung dieses URI nicht entfernen. Die App benötigt weiterhin die Berechtigung, auf diesen URI zuzugreifen für: \n\n%1$s</string>
+    <string name="no_suitable_activity_found">Keine geeignete Aktivität gefunden</string>
+    <string name="preference_uri_consumer_description_pattern">Präferenz: %1$s</string>
+    <string name="missing_permissions_warning_message_pattern">"Seit dem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt.\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
+    <string name="folder_selection_title">Ordner auswählen</string>
+    <string name="files_selection_title">Dateien auswählen</string>
 
 </resources>
 

@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.MimeTypeFilter;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -54,6 +56,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
@@ -98,7 +101,7 @@ public class UploadActivity extends MyActivity {
     private boolean startedWithPermissions;
     private Toolbar toolbar;
     private AppBarLayout appBar;
-    private String MEDIA_SCANNER_TASK_ID_SHARED_FILES = "id_sharedFiles";
+
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
         Intent intent = new Intent("delit.piwigoclient.MANUAL_UPLOAD", null, context.getApplicationContext(), UploadActivity.class);
@@ -110,7 +113,7 @@ public class UploadActivity extends MyActivity {
     public void onStart() {
         super.onStart();
         startedWithPermissions = false;
-        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
 //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
     }
 
@@ -333,7 +336,7 @@ public class UploadActivity extends MyActivity {
         getSupportFragmentManager().popBackStackImmediate();
     }
 
-    private ArrayList<File> handleSentFiles() {
+    private ArrayList<Uri> handleSentFiles() {
         // Get intent, action and MIME type
         Intent intent = getIntent();
         String action = intent.getAction();
@@ -349,7 +352,7 @@ public class UploadActivity extends MyActivity {
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
                 // type is */* if it contains a mixture of file types
-                if (type.equals("*/*") || type.startsWith("image/") || type.startsWith("video/") || type.startsWith("application/pdf") || type.startsWith("application/zip")) {
+                if (type.equals("*/*") || null != MimeTypeFilter.matches(type, new String[]{"image/*","video/*","application/pdf","application/zip"})) {
                     return handleSendMultipleImages(intent); // Handle multiple images being sent
                 } else {
                     getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
@@ -385,9 +388,9 @@ public class UploadActivity extends MyActivity {
         }
     }
 
-    private ArrayList<File> handleSendMultipleImages(Intent intent) {
+    private ArrayList<Uri> handleSendMultipleImages(Intent intent) {
 
-        ArrayList<File> filesToUpload;
+        ArrayList<Uri> filesToUpload;
 
         ClipData clipData = intent.getClipData();
         if(clipData != null && clipData.getItemCount() > 0) {
@@ -442,131 +445,39 @@ public class UploadActivity extends MyActivity {
         return filesToUpload;
     }
 
-    private void handleSentImage(Uri imageUri, String mimeType, ArrayList<File> filesToUpload) {
-        String fileExt = (mimeType != null) ? MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) : null;
-
-        File sharedFile = getLocallySharedFile(imageUri, fileExt);
-        if (sharedFile == null) {
-            if (mimeType.startsWith("video/")) {
-                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.unable_to_handle_shared_uri_missing_content_description_information);
-//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//                    try {
-//                        MediaExtractor mExtractor = new MediaExtractor();
-//                        mExtractor.setDataSource(sharedFile.getAbsolutePath());
-//                        PersistableBundle mediaMetrics = mExtractor.getMetrics();
-//                        String containerFomat = mediaMetrics.getString(MediaExtractor.MetricsConstants.FORMAT);
-////                        String containerMimeType = mediaMetrics.getString(MediaExtractor.MetricsConstants.MIME_TYPE);
-//                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + "." + containerFomat);
-//                        sharedFile.renameTo(renamedTo);
-//                        sharedFile = renamedTo;
+    private void handleSentImage(Uri sharedUri, String mimeType, ArrayList<Uri> filesToUpload) {
+//        DocumentFile documentFile = DocumentFile.fromSingleUri(this, imageUri);
+//        //TODO check stuff manually here. Maybe need to do something sensible - perhaps don't need local copy now!
+//        Uri sharedFile = IOUtils.saveUriToDevice(this, imageUri, mimeType, BasePiwigoUploadService.getTmpUploadFolder(this));
 //
-//                    } catch (IOException e) {
-//                        Crashlytics.log(Log.ERROR, TAG, "Error retrieving correct file extension for shared media file!");
-//                    }
-//                } else {
-//                    if(mimeType.equals("video/mpeg")) {
-//                        // guess
-//                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + ".mp4");
-//                        sharedFile.renameTo(renamedTo);
-//                        sharedFile = renamedTo;
-//                    }
-//                }
-            } else {
-                sharedFile = getDownloadedFileFromSharedUri(imageUri, fileExt);
-            }
-        }
-        filesToUpload.add(sharedFile);
-    }
-
-    private File getDownloadedFileFromSharedUri(Uri sharedUri, String fileExt) {
-        try {
-            // download a local copy of the file.
-            File tmp_upload_folder = getTmpUploadFolder();
-            File localTmpFile = File.createTempFile("tmp-piwigo-client-dnlded-file-for-upload", '.' + fileExt, tmp_upload_folder);
-            //TODO if this is an image - try and extract a nicer filename based on exif info from the image itself!
-
-            //TODO the file should be deleted after the upload is complete and not before!!!! BUG!!!!
-            localTmpFile.deleteOnExit(); // ensure this definitely doesn't hang about!
-            AssetFileDescriptor fileDescriptor = getContentResolver().openAssetFileDescriptor(sharedUri, "r"); // only need read only access
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            }
-            IOUtils.write(fileDescriptor.createInputStream(), localTmpFile);
-            List<File> files = new ArrayList<>();
-            files.add(localTmpFile);
-            MediaScanner.instance(getApplicationContext()).invokeScan(new MediaScanner.MediaScannerScanTask(MEDIA_SCANNER_TASK_ID_SHARED_FILES, files) {
-                @Override
-                public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
-                }
-            });
-            return localTmpFile;
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to write shared data to a temporary file");
-        }
-    }
-
-    private File getTmpUploadFolder() {
-        File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
-        tmp_upload_folder.mkdir();
-        return tmp_upload_folder;
-    }
-
-    private File getLocallySharedFile(@NonNull Uri imageUri, String fileExt) {
-        File sharedFile = new File(imageUri.getPath());
-        if (!sharedFile.exists()) {
-            try {
-                String localMediaStorePath = getRealPathFromURI(imageUri);
-                if (localMediaStorePath == null) {
-                    return null;
-                } else {
-                    sharedFile = new File(localMediaStorePath);
-                }
-
-            } catch (IllegalArgumentException e) {
-                // thrown when the URI is not a place in data. (lets just create a tmp file)
-                try {
-                    File tmp_upload_folder = getTmpUploadFolder();
-                    String filename = imageUri.getLastPathSegment();
-                    if(fileExt != null && !filename.endsWith("." + fileExt)) {
-                        filename += '.' + fileExt;
-                    }
-                    sharedFile = new File(tmp_upload_folder, filename);
-                    int i = 0;
-                    while (sharedFile.exists()) {
-                        i++;
-                        int insertAt = imageUri.getLastPathSegment().lastIndexOf('.');
-                        filename = imageUri.getLastPathSegment().substring(0, insertAt);
-                        String ext = imageUri.getLastPathSegment().substring(insertAt);
-                        sharedFile = new File(tmp_upload_folder, filename + '_' + i + ext);
-                    }
-                    sharedFile.deleteOnExit();
-                    IOUtils.write(getContentResolver().openInputStream(imageUri), sharedFile);
-                } catch(FileNotFoundException e1) {
-                    throw new RuntimeException("Unable to write shared data to a temporary file");
-                } catch(IOException e1) {
-                    throw new RuntimeException("Unable to write shared data to a temporary file");
-                }
-            }
-        }
-        if (sharedFile.exists() && sharedFile.isFile()) {
-            return sharedFile;
-        } else {
-            if (!sharedFile.isDirectory()) {
-                errors.put(imageUri.toString(), "File does not exist");
-            }
-        }
-        return null;
-    }
-
-    public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(contentUri, proj,
-                null, null, null);
-
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String path = cursor.getString(column_index);
-        cursor.close();
-        return path;
+//        if (sharedFile == null) {
+//            if (MimeTypeFilter.matches(mimeType,"video/*")) {
+//                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.unable_to_handle_shared_uri_missing_content_description_information);
+////                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+////                    try {
+////                        MediaExtractor mExtractor = new MediaExtractor();
+////                        mExtractor.setDataSource(sharedFile.getAbsolutePath());
+////                        PersistableBundle mediaMetrics = mExtractor.getMetrics();
+////                        String containerFomat = mediaMetrics.getString(MediaExtractor.MetricsConstants.FORMAT);
+//////                        String containerMimeType = mediaMetrics.getString(MediaExtractor.MetricsConstants.MIME_TYPE);
+////                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + "." + containerFomat);
+////                        sharedFile.renameTo(renamedTo);
+////                        sharedFile = renamedTo;
+////
+////                    } catch (IOException e) {
+////                        Crashlytics.log(Log.ERROR, TAG, "Error retrieving correct file extension for shared media file!");
+////                    }
+////                } else {
+////                    if(mimeType.equals("video/mpeg")) {
+////                        // guess
+////                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + ".mp4");
+////                        sharedFile.renameTo(renamedTo);
+////                        sharedFile = renamedTo;
+////                    }
+////                }
+//            }
+//        }
+        filesToUpload.add(sharedUri);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -666,7 +577,7 @@ public class UploadActivity extends MyActivity {
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
-                ArrayList<File> sentFiles = handleSentFiles();
+                ArrayList<Uri> sentFiles = handleSentFiles();
                 if(sentFiles != null) {
                     // this activity was invoked from another application
                     FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, -1).withFiles(sentFiles);

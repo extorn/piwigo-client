@@ -178,7 +178,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        BundleUtils.putHashSet(outState, CURRENT_GROUP_MEMBERSHIPS, currentGroupMembership);
+        BundleUtils.putSet(outState, CURRENT_GROUP_MEMBERSHIPS, currentGroupMembership);
         BundleUtils.putLongHashSet(outState, CURRENT_DIRECT_ALBUM_PERMISSIONS, currentDirectAlbumPermissions);
         BundleUtils.putLongHashSet(outState, CURRENT_INDIRECT_ALBUM_PERMISSIONS, currentIndirectAlbumPermissions);
         BundleUtils.putLongHashSet(outState, NEW_DIRECT_ALBUM_PERMISSIONS, newDirectAlbumPermissions);
@@ -187,7 +187,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         outState.putParcelable(ARG_USER, user);
         outState.putParcelable(NEW_USER, newUser);
         outState.putBoolean(STATE_FIELDS_EDITABLE, fieldsEditable);
-        BundleUtils.putHashSet(outState, STATE_NEW_GROUP_MEMBERSHIP, newGroupMembership);
+        BundleUtils.putSet(outState, STATE_NEW_GROUP_MEMBERSHIP, newGroupMembership);
         BundleUtils.putLongHashSet(outState, IN_FLIGHT_SAVE_ACTION_IDS, saveActionIds);
         outState.putInt(STATE_SELECT_GROUPS_ACTION_ID, selectGroupsActionId);
 

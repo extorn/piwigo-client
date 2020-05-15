@@ -222,6 +222,8 @@
 
     <!-- prefs -->
 
+    <string name="preference_data_upload_delete_uploaded_title">Eliminación automática predeterminada</string>
+    <string name="preference_data_upload_delete_uploaded_summary">Eliminar archivos cargados correctamente</string>
 
     <string name="preference_data_upload_default_privacy_level_summary">Archivos cargados visibles para%1$s</string>
     <string name="preference_data_upload_default_privacy_level_title">Nivel de privacidad predeterminado</string>

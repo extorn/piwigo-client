@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.UriPermission;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -13,10 +15,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.os.ConfigurationCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -27,13 +36,20 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
+import delit.piwigoclient.database.AppSettingsViewModel;
+import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
@@ -144,6 +160,44 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         uiHelper.registerToActiveServiceCalls();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    protected void checkAllUriPermissionsStillPresent() {
+        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(this);
+        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(this);
+        AppSettingsViewModel appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        LiveData<List<UriPermissionUse>> uriPermissionsData = appSettingsViewModel.getAll();
+        uriPermissionsData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
+            @Override
+            public void onChanged(List<UriPermissionUse> permissionsHeld) {
+                uriPermissionsData.removeObserver(this);
+                Set<Uri> heldPerms = new HashSet<>();
+                for(UriPermission actualHeldPerm : getContentResolver().getPersistedUriPermissions()) {
+                    heldPerms.add(actualHeldPerm.getUri());
+                }
+                HashSet<UriPermissionUse> missingPermissions = new HashSet<UriPermissionUse>();
+                for(UriPermissionUse permWeNeed : permissionsHeld) {
+                    if(!heldPerms.contains(Uri.parse(permWeNeed.uri))) {
+                        missingPermissions.add(permWeNeed);
+                        appSettingsViewModel.delete(permWeNeed);
+                    }
+                }
+                if(!missingPermissions.isEmpty()) {
+                    StringBuilder missingPermissionsCsvListSb = new StringBuilder();
+                    for (Iterator<UriPermissionUse> iterator = missingPermissions.iterator(); iterator.hasNext(); ) {
+                        UriPermissionUse perm = iterator.next();
+                        missingPermissionsCsvListSb.append(perm.localizedConsumerName);
+                        missingPermissionsCsvListSb.append(" : ");
+                        missingPermissionsCsvListSb.append(IOUtils.getFilename(getApplicationContext(), Uri.parse(perm.uri)));
+                        if(iterator.hasNext()) {
+                            missingPermissionsCsvListSb.append('\n');
+                        }
+                    }
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.missing_permissions_warning_message_pattern, missingPermissionsCsvListSb), R.string.button_ok);
+                }
+            }
+        });
+    }
+
     protected void onAppPaused() {
         if (rewardsCountdownAction != null) {
             rewardsCountdownAction.stop();
@@ -187,6 +241,10 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         }
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            checkAllUriPermissionsStillPresent();
+        }
     }
 
     protected abstract String getDesiredLanguage(Context context);

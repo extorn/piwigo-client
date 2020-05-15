@@ -264,6 +264,9 @@
 
     <!-- prefs -->
 
+    <string name="preference_data_upload_delete_uploaded_title">默认自动删除</string>
+    <string name="preference_data_upload_delete_uploaded_summary">删除成功上传的文件</string>
+
     <string name="preference_data_upload_default_privacy_level_title">默认隐私级别</string>
     <string name="preference_data_upload_default_privacy_level_summary">上传的文件对%1$s可见</string>
 

@@ -2,8 +2,10 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
@@ -40,6 +43,7 @@ import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.preference.LocalFoldersListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
@@ -90,7 +94,10 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             }
         });
 
-        ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);
+        LocalFoldersListPreference uploadFromFolder = (LocalFoldersListPreference) findPreference(R.string.preference_data_upload_automatic_job_local_folder_key);
+        uploadFromFolder.setOnPreferenceChangeListener(new LocalFoldersListPreference.PersistablePermissionsChangeListener(getUiHelper()));
+
+        //ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);
 
         MultiSelectListPreference fileExtPref = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
         fileExtPref.setOnPreferenceClickListener(new FileExtPreferenceClickListener());
@@ -117,7 +124,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(profilePrefs);
         if (sessionDetails != null) {
-            updateAvailableFileTypes(sessionDetails.getAllowedFileTypes());
+            DisplayUtils.postOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateAvailableFileTypes(sessionDetails.getAllowedFileTypes());
+                }
+            });
         } else {
             String serverUri = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
             LoginResponseHandler loginHandler = new LoginResponseHandler();

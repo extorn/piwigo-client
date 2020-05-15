@@ -1,8 +1,11 @@
 package delit.libs.ui.view.list;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ListView;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * Created by gareth on 02/04/18.
@@ -19,6 +22,11 @@ public class StaticListView extends ListView {
 
     public StaticListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public StaticListView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

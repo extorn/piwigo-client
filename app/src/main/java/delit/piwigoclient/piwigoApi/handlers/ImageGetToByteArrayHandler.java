@@ -3,6 +3,8 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.core.content.MimeTypeFilter;
+
 import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -44,7 +46,7 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     @Override
     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
         Header contentTypeHeader = HttpUtils.getContentTypeHeader(headers);
-        if(contentTypeHeader != null && !contentTypeHeader.getValue().startsWith("image/")) {
+        if(contentTypeHeader != null && !MimeTypeFilter.matches(contentTypeHeader.getValue(),"image/*")) {
             boolean newLoginAcquired = false;
             if(!isTriedLoggingInAgain()) {
                 // this was redirected to an http page - login failed most probable - try to force a login and retry!
