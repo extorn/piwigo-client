@@ -9,11 +9,14 @@
 
     <TextView
         android:id="@+id/title"
-        tools:text="Editing item"
+        android:labelFor="@id/edit_field"
+        android:text="@string/title_editing_item"
         style="?editableFieldLabel"/>
 
     <EditText
         android:id="@+id/edit_field"
         tools:text="some text being edited"
+        android:inputType="text"
+        android:importantForAutofill="no"
         style="?editableFieldText"/>
 </LinearLayout>
