@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.list.MultiSourceListAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
@@ -71,12 +71,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
 
     @Override
     protected View onCreateDialogView(Context context) {
-        return buildDialogView();
-    }
-
-    private View buildDialogView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_list, null, false);
-
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_list, null, false);
         AdView adView = view.findViewById(R.id.list_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
@@ -107,17 +102,6 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
     }
 
-//    @Override
-//    public void onDialogClosed(boolean positiveResult) {
-//        EditableListPreference pref = getPreference();
-//        if (positiveResult && userSelectedItem != null && pref.getEntryValues() != null) {
-//            String value = userSelectedItem;
-//            if (pref.callChangeListener(value)) {
-//                pref.setValue(value);
-//            }
-//        }
-//    }
-
     @Override
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
@@ -134,7 +118,6 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     private void loadListValues(ListView listView, String currentSelection) {
 
         ArrayList<ServerConnectionsListPreference.ServerConnection> serverConnections = loadServerConnections(getAppSharedPreferences());
-//        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(getSharedPreferences(), getContext());
         HashSet<Long> selectedIdx = new HashSet<>(1);
         int idxToSelect = 0;
         for (ServerConnectionsListPreference.ServerConnection c : serverConnections) {
@@ -148,7 +131,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
 
         BaseRecyclerViewAdapterPreferences viewPrefs = new BaseRecyclerViewAdapterPreferences();
         viewPrefs.selectable(false, false);
-        ServerConnectionProfilesListAdapter adapter = new ServerConnectionProfilesListAdapter(getContext(), serverConnections, viewPrefs);
+        ServerConnectionProfilesListAdapter adapter = new ServerConnectionProfilesListAdapter(serverConnections, viewPrefs);
         adapter.linkToListView(listView, selectedIdx, selectedIdx);
     }
 
@@ -190,8 +173,8 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
 
     private class ServerConnectionProfilesListAdapter extends MultiSourceListAdapter<ServerConnectionsListPreference.ServerConnection, BaseRecyclerViewAdapterPreferences> {
 
-        public ServerConnectionProfilesListAdapter(Context context, ArrayList<ServerConnectionsListPreference.ServerConnection> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
-            super(context, availableItems, adapterPrefs);
+        public ServerConnectionProfilesListAdapter(ArrayList<ServerConnectionsListPreference.ServerConnection> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
+            super(availableItems, adapterPrefs);
         }
 
         @Override
@@ -201,7 +184,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
 
         @Override
         protected int getItemViewLayoutRes() {
-            return R.layout.layout_simple_list_item_checkable;
+            return R.layout.layout_list_item_simple_checkable;
         }
 
         @Override
@@ -214,7 +197,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         }
 
         @Override
-        protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
+        protected MaterialCheckboxTriState getAppCompatCheckboxTriState(View view) {
             return view.findViewById(R.id.list_item_checked);
         }
 

@@ -5,14 +5,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants">
 
-    <TextView
-        android:id="@+id/list_item_details"
-        android:layout_marginStart="5dp"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_marginBottom="25dp"
         android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"/>
+        android:layout_marginBottom="15dp">
+
+        <TextView
+            android:id="@+id/list_item_details"
+            android:layout_marginStart="5dp"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="25dp"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:textAppearance="?textAppearanceBody1"
+            tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"/>
+
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

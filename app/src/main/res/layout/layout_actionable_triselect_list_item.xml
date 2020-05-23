@@ -6,40 +6,45 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/list_item_checked"
-        android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
         android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:background="@color/colorAlbumItemBackground">
+        android:layout_toStartOf="@+id/list_item_delete_button"
+        android:layout_toEndOf="@id/list_item_checked">
 
-        <TextView
-            android:id="@+id/list_item_name"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:padding="5dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="dummy text"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
-        <TextView
-            android:id="@+id/list_item_details"
-            android:layout_marginTop="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-            android:padding="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
-            android:textAppearance="?textAppearanceBody1"/>
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/list_item_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="5dp"
+                android:textAppearance="?textAppearanceBody2"
+                tools:text="dummy text" />
 
-    <delit.libs.ui.view.button.AppCompatCheckboxTriState
+            <TextView
+                android:id="@+id/list_item_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="8dp"
+                android:padding="5dp"
+                android:textAppearance="?textAppearanceBody1"
+                tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <delit.libs.ui.view.button.MaterialCheckboxTriState
         android:id="@+id/list_item_checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,13 +53,15 @@
         android:clickable="false"
         android:focusable="false" />
 
-    <delit.libs.ui.view.button.CustomImageButton
+    <Button
+        app:icon="@drawable/ic_delete_black_24px"
         android:id="@+id/list_item_delete_button"
         android:layout_alignParentEnd="true"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:layout_marginEnd="3dp"
         android:layout_centerVertical="true"
         android:focusable="false"
-        app:srcCompat="@drawable/ic_delete_black_24px" />
+        style="?materialButtonIconStyle"/>
 </RelativeLayout>

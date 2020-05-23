@@ -84,7 +84,7 @@
     <string name="createGallery_parentGalleryTitle">Eltern-Album</string>
     <string name="createGallery_galleryNameTitle">Albumname</string>
     <string name="createGallery_galleryDescriptionTitle">Beschreibung</string>
-    <string name="createGallery_galleryCommentsAllowed">Benutzerkommentare zulassen</string>
+    <string name="createGallery_galleryCommentsAllowed">Benutzern erlauben, Kommentare hinzuzufügen</string>
     <string name="createGallery_galleryIsPrivate">Album ist privat?</string>
     <string name="createGallery_permissions_allowedGroupsTitle">Erlaubte Gruppen</string>
     <string name="createGallery_permissions_allowedUsersTitle">Erlaubte Benutzer</string>
@@ -257,7 +257,7 @@ Im Moment bietet es eine grundlegende Funktionsebene, um die Navigation durch ei
 
 Bitte kann ich Sie fragen, ob Sie, wenn Sie die App deinstallieren, den Link im App-Menü verwenden, um mir eine E-Mail zu schicken, in der Sie mir mitteilen, warum die App nicht Ihren Bedürfnissen entsprach, damit ich dies beheben kann.
 
-Die Version des PIWIGO-Servers, mit dem ich teste, ist derzeit 2.9.4.
+Die Version des PIWIGO-Servers, mit dem ich teste, ist derzeit 2.10.2.
 
 Meine Testgalerie enthält nur .jpg und.mp4 Dateien. Wenn deines andere enthält, kann es durchaus zu Problemen kommen - wenn ja, sag es mir bitte und ich werde die Arbeit an diesen Dateitypen priorisieren.
 
@@ -341,7 +341,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="groups_heading">Gruppen</string>
     <string name="users_heading">Benutzer</string>
     <string name="albums_heading">Alben</string>
-    <string name="user_high_definition_title">High Definition aktiviert</string>
+    <string name="user_high_definition_title">High Definition</string>
     <string name="user_email_title">E-Mail-Adresse</string>
     <string name="none_value">Keine</string>
     <string name="access_rights_heading">Zugriffsrechte</string>
@@ -639,6 +639,10 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="missing_permissions_warning_message_pattern">"Seit dem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt.\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
     <string name="folder_selection_title">Ordner auswählen</string>
     <string name="files_selection_title">Dateien auswählen</string>
+    <string name="all">Alle</string>
+    <string name="user_high_definition_field">Ermöglichen Sie den Zugriff auf Originaldateien</string>
+    <string name="group_is_default_field">Weisen Sie dieser Gruppe neue Benutzer zu</string>
+    <string name="createGallery_galleryCommentsAllowed_title">Benutzerkommentare</string>
 
 </resources>
 

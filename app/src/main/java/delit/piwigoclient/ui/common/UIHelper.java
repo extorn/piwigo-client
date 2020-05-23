@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -351,11 +352,19 @@ public abstract class UIHelper<T> {
     }
 
     private void loadProgressIndicatorIfPossible() {
-        try {
-            progressIndicator = ActivityCompat.requireViewById((Activity) context, R.id.progressIndicator);
-        } catch (IllegalArgumentException e) {
-            if(BuildConfig.DEBUG) {
-                Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + ((Activity) context).getLocalClassName());
+        Context contextBase = context;
+        if(contextBase instanceof ContextWrapper && !(contextBase instanceof Activity)) {
+            contextBase = ((ContextWrapper)context).getBaseContext();
+        }
+        if(contextBase instanceof Activity) {
+            Activity activity = (Activity) contextBase;
+            try {
+
+                progressIndicator = ActivityCompat.requireViewById(activity, R.id.progressIndicator);
+            } catch (IllegalArgumentException e) {
+                if (BuildConfig.DEBUG) {
+                    Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + activity.getLocalClassName());
+                }
             }
         }
     }

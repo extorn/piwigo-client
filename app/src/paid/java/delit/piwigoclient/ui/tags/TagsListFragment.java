@@ -16,13 +16,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -30,6 +31,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -43,12 +48,7 @@ import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
-import delit.libs.ui.view.recycler.RecyclerViewMargin;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
@@ -63,10 +63,10 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     private static final String TAG = "TagsListFrag";
     private static final String TAGS_MODEL = "tagsModel";
     private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
-    private FloatingActionButton retryActionButton;
+    private ExtendedFloatingActionButton retryActionButton;
     private PiwigoTags tagsModel;
     private TagRecyclerViewAdapter viewAdapter;
-    private CustomImageButton addListItemButton;
+    private ExtendedFloatingActionButton addListItemButton;
     private AlertDialog addNewTagDialog;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
     private RecyclerView recyclerView;
@@ -75,6 +75,16 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         TagsListFragment fragment = new TagsListFragment();
         fragment.setArguments(viewPrefs.storeToBundle(new Bundle()));
         return fragment;
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
+        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
+            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_EditPages));
+        }
+        return inflator;
     }
 
     @Override
@@ -249,7 +259,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     }
 
     private void addNewTag() {
-        final View v = LayoutInflater.from(getContext()).inflate(R.layout.create_tag ,null);
+        final View v = getLayoutInflater().inflate(R.layout.create_tag ,null);
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {

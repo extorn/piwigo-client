@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
@@ -24,7 +23,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
@@ -87,7 +89,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     }
 
     private View buildEditableListView(Context context) {
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_recycler_list, null);
+        View view = getLayoutInflater().inflate(R.layout.layout_fullsize_recycler_list, null);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -122,7 +124,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         listRecyclerView.setAdapter(adapter);
         listRecyclerView.addItemDecoration(new RecyclerViewMargin(context, RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
 
-        CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
+        ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,42 +149,38 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     private void showEditBox(Context context, final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
         MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext());
+        View view = getLayoutInflater().inflate(R.layout.layout_dialog_item_edit, null);
+        b.setView(view);
+        MaterialTextView titleView = view.findViewById(R.id.title);
         if (editingExistingValue) {
-            b.setMessage(R.string.title_editing_item);
+            titleView.setText(R.string.title_editing_item);
         } else {
-            b.setMessage(R.string.title_adding_item);
+            titleView.setText(R.string.title_adding_item);
         }
-        // Set up the input
-        final EditText input = new EditText(context);
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        EditText editField = view.findViewById(R.id.edit_field);
         if (initialValue != null) {
-            input.setText(initialValue);
+            editField.setText(initialValue);
         }
-        b.setView(input);
         // Set up the buttons
-        b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    String userInputValue = input.getText().toString();
-                    String filteredValue = getPreference().filterUserInput(userInputValue);
+        b.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+            try {
+                String userInputValue = editField.getText().toString();
+                String filteredValue = getPreference().filterUserInput(userInputValue);
 
-                    dialog.dismiss();
-                    if (editingExistingValue) {
-                        if (!filteredValue.equals(userInputValue)) {
-                            userInputValue = filteredValue;
-                            input.setText(userInputValue);
-                        }
-                        if (!userInputValue.equals(initialValue)) {
-                            onChangeItem(initialValue, userInputValue);
-                        }
-                    } else {
-                        onAddNewItemToList(filteredValue);
+                dialog.dismiss();
+                if (editingExistingValue) {
+                    if (!filteredValue.equals(userInputValue)) {
+                        userInputValue = filteredValue;
+                        editField.setText(userInputValue);
                     }
-                } catch (IllegalArgumentException e) {
-                    // user input was invalid
+                    if (!userInputValue.equals(initialValue)) {
+                        onChangeItem(initialValue, userInputValue);
+                    }
+                } else {
+                    onAddNewItemToList(filteredValue);
                 }
+            } catch (IllegalArgumentException e) {
+                // user input was invalid
             }
         });
         b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -304,7 +302,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
      *
      */
     public DefaultListContentsAdapter buildNewRecyclerViewAdapter(Context context, List<String> entries, List<String> entryValues, Set<String> currentValues) {
-        return new DefaultListContentsAdapter(context, entries, entryValues, currentValues);
+        return new DefaultListContentsAdapter(entries, entryValues, currentValues);
     }
 
     public static class ListAction implements Serializable, Parcelable {
@@ -425,7 +423,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         private final List<String> entriesList;
         private final List<String> entryValues;
 
-        public DefaultListContentsAdapter(@NonNull Context context, @NonNull List<String> entriesList, @NonNull List<String> entryValues, Set<String> currentSelectedValues) {
+        public DefaultListContentsAdapter(@NonNull List<String> entriesList, @NonNull List<String> entryValues, Set<String> currentSelectedValues) {
             this.entriesList = entriesList;
             this.entryValues = entryValues;
             this.currentSelectedValues = currentSelectedValues;
@@ -465,7 +463,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             boolean isSelectedValue = currentSelectedValues.contains(thisValue);
 
             viewHolder.itemName.setText(thisValue);
-            viewHolder.itemName.setEnabled(false);
             viewHolder.itemName.setActivated(isSelectedValue);
             viewHolder.selected.setChecked(isSelectedValue);
             viewHolder.itemDescription.setVisibility(View.GONE);
@@ -495,8 +492,8 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
         protected class ActionableListItemViewHolder extends RecyclerView.ViewHolder {
 
-            protected final CustomImageButton deleteButton;
-            protected final AppCompatCheckBox selected;
+            protected final MaterialButton deleteButton;
+            protected final MaterialCheckboxTriState selected;
             protected final TextView itemDescription;
             protected final TextView itemName;
 

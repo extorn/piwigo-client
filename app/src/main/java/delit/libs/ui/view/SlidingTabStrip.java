@@ -62,6 +62,10 @@ class SlidingTabStrip extends LinearLayoutCompat {
     SlidingTabStrip(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
+//
+//    SlidingTabStrip(Context context, AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
+//        super(context, attrs, defStyleAttr);
+//    }
 
     SlidingTabStrip(Context context, AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -77,7 +81,7 @@ class SlidingTabStrip extends LinearLayoutCompat {
                 DEFAULT_BOTTOM_BORDER_COLOR_ALPHA);
 
         mDefaultTabColorizer = new SimpleTabColorizer();
-        mDefaultTabColorizer.setIndicatorColors(ContextCompat.getColor(context, R.color.accent));
+        mDefaultTabColorizer.setIndicatorColors(ContextCompat.getColor(context, R.color.app_secondary));
         mDefaultTabColorizer.setDividerColors(setColorAlpha(themeForegroundColor,
                 DEFAULT_DIVIDER_COLOR_ALPHA));
 

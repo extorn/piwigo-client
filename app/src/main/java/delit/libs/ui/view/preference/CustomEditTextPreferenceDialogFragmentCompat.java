@@ -3,6 +3,7 @@ package delit.libs.ui.view.preference;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -11,7 +12,7 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.PasswordInputToggle;
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.piwigoclient.R;
 
 public class CustomEditTextPreferenceDialogFragmentCompat<T extends CustomEditTextPreference> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
@@ -115,7 +116,7 @@ public class CustomEditTextPreferenceDialogFragmentCompat<T extends CustomEditTe
         boolean isNumberPassword = PasswordInputToggle.isNumberPassword(getEditText());
         boolean isWebPassword = PasswordInputToggle.isWebPassword(getEditText());
 
-        AppCompatCheckboxTriState viewUnencryptedToggle = view.findViewById(R.id.toggle_visibility);
+        CheckBox viewUnencryptedToggle = view.findViewById(R.id.toggle_visibility);
         if (viewUnencryptedToggle != null) {
             if(isTextPassword || isNumberPassword || isWebPassword) {
                 viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(getEditText()));

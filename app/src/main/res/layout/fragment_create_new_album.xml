@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:padding="20dp"
+    android:theme="@style/ThemeOverlay.EditPages">
 
     <ScrollView
     android:layout_above="@+id/createGallery_adView"
@@ -17,77 +19,63 @@
 
         <TextView
             android:id="@+id/createGallery_parentGalleryTitle"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/createGallery_parentGalleryTitle" />
+            android:text="@string/createGallery_parentGalleryTitle"
+            style="?editableFieldLabel"/>
 
-        <TextView
+        <EditText
             android:id="@+id/createGallery_parentGallery"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="some gallery name"/>
+            tools:text="some gallery name"
+            style="?editableFieldText"/>
 
         <TextView
             android:id="@+id/createGallery_galleryNameTitle"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:labelFor="@id/createGallery_galleryName"
-            android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/createGallery_galleryNameTitle" />
+            android:text="@string/createGallery_galleryNameTitle"
+            style="?editableFieldLabel"/>
 
         <EditText
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:id="@+id/createGallery_galleryName"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:inputType="text"
             android:maxLines="1"
             android:importantForAutofill="no"
-            android:text="" />
+            tools:text="Some album name"
+            style="?editableFieldText"/>
 
         <TextView
             android:id="@+id/createGallery_galleryDescriptionTitle"
             android:labelFor="@id/createGallery_galleryDescription"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/createGallery_galleryDescriptionTitle" />
+            android:text="@string/createGallery_galleryDescriptionTitle"
+            style="?editableFieldLabel"/>
 
         <EditText
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:id="@+id/createGallery_galleryDescription"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:importantForAutofill="no"
-            android:text="" />
+            tools:text="Some album description"
+            style="?editableFieldText"/>
 
-        <Switch
+        <TextView
+            android:id="@+id/gallery_details_comments_allowed_label"
+            android:labelFor="@id/createGallery_galleryCommentsAllowed"
+            android:text="@string/createGallery_galleryCommentsAllowed_title"
+            style="?editableFieldLabel" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/createGallery_galleryCommentsAllowed"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/createGallery_galleryCommentsAllowed" />
+            android:text="@string/createGallery_galleryCommentsAllowed"
+            style="?editableFieldSwitch"/>
 
-        <Switch
+        <TextView
+            android:id="@+id/gallery_details_status_label"
+            android:labelFor="@id/gallery_details_status"
+            android:text="@string/gallery_details_status_title"
+            style="?editableFieldLabel" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/createGallery_galleryIsPrivate"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/createGallery_galleryIsPrivate" />
+            android:text="@string/gallery_details_status"
+            style="?editableFieldSwitch"/>
 
         <LinearLayout
             android:id="@+id/createGallery_privatePermissions"
@@ -99,46 +87,28 @@
 
             <TextView
                 android:id="@+id/createGallery_permissions_allowedGroupsTitle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@id/createGallery_permissions_allowedGroups"
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/createGallery_permissions_allowedGroupsTitle" />
+                android:text="@string/createGallery_permissions_allowedGroupsTitle"
+                style="?editableFieldLabel"/>
             <TextView
                 android:id="@+id/createGallery_permissions_allowedGroups"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine|textNoSuggestions"
                 android:gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
                 android:text="@string/none_selected"
-                android:maxLines="2"
+                android:lines="2"
                 android:ellipsize="end"
-                style="?clickableTextViewStyleBody1Field"/>
+                style="?editableFieldTextClickable"/>
             <TextView
                 android:id="@+id/createGallery_permissions_allowedUsersTitle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@id/createGallery_permissions_allowedUsers"
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/createGallery_permissions_allowedUsersTitle" />
+                android:text="@string/createGallery_permissions_allowedUsersTitle"
+                style="?editableFieldLabel"/>
             <TextView
                 android:id="@+id/createGallery_permissions_allowedUsers"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine|textNoSuggestions"
                 android:gravity="center_vertical"
                 android:text="@string/none_selected"
                 android:maxLines="2"
                 android:ellipsize="end"
-                style="?clickableTextViewStyleBody1Field"/>
+                style="?editableFieldTextClickable"/>
         </LinearLayout>
 
         <Button
@@ -146,7 +116,10 @@
             android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/createGallery_createGalleryButtonTitle" />
+            android:text="@string/createGallery_createGalleryButtonTitle"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="20dp"/>
 
     </LinearLayout>
 

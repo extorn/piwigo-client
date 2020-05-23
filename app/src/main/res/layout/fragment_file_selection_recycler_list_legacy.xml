@@ -23,7 +23,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="7dp"
         android:text="@string/files_selection_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textAppearance="?textAppearanceHeadline5"
         android:visibility="visible" />
 
     <RelativeLayout
@@ -44,7 +44,7 @@
             android:layout_marginBottom="3dp"
             android:layout_marginTop="7dp"
             android:text="@string/folder_root_label"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textAppearance="?textAppearanceCaption"
             android:visibility="visible" />
 
         <Spinner
@@ -58,21 +58,23 @@
             android:gravity="fill_horizontal"
             android:spinnerMode="dropdown"/>
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <Button
             android:id="@+id/remove_root"
             android:layout_toStartOf="@+id/add_root"
             android:layout_below="@+id/folder_root_label"
             android:layout_alignWithParentIfMissing="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_delete_black_24px"/>
-        <delit.libs.ui.view.button.CustomImageButton
+            app:icon="@drawable/ic_delete_black_24px"
+            style="?materialButtonIconStyle"/>
+        <Button
             android:id="@+id/add_root"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/folder_root_label"
             android:layout_alignParentEnd="true"
-            app:srcCompat="@drawable/ic_add_circle_black_24px"/>
+            app:icon="@drawable/ic_add_circle_black_24px"
+            style="?materialButtonIconStyle"/>
 
         <delit.libs.ui.view.FileBreadcrumbsView
             android:id="@+id/folder_path"
@@ -85,7 +87,7 @@
             android:layout_margin="5dp" />
 
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <Button
             android:id="@+id/folder_refresh_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -94,7 +96,8 @@
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:focusable="false"
-            app:srcCompat="@drawable/ic_refresh_black_24dp" />
+            app:icon="@drawable/ic_refresh_black_24dp"
+            style="?materialButtonIconStyle"/>
 
         <delit.piwigoclient.ui.file.FilterControl
             android:id="@+id/file_ext_filters"

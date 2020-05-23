@@ -31,6 +31,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -49,7 +50,6 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
 import delit.libs.ui.view.ProgressIndicator;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
@@ -167,7 +167,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         fileExtFilters = v.findViewById(R.id.file_ext_filters);
 
-        CustomImageButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
+        MaterialButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
         folderViewRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,14 +175,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             }
         });
 
-        CustomImageButton addRootButton = v.findViewById(R.id.add_root);
+        MaterialButton addRootButton = v.findViewById(R.id.add_root);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             addRootButton.setOnClickListener(v1 -> retrievePermissionsForUri(null));
         } else {
             addRootButton.setVisibility(GONE);
         }
 
-        CustomImageButton removeRootButton = v.findViewById(R.id.remove_root);
+        MaterialButton removeRootButton = v.findViewById(R.id.remove_root);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             removeRootButton.setOnClickListener(view -> {
                 onRemoveRoot();

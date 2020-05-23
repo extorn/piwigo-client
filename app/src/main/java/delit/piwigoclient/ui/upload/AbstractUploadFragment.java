@@ -39,6 +39,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,7 +60,6 @@ import java.util.TimeZone;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.list.BiArrayAdapter;
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.CollectionUtils;
@@ -127,7 +127,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private TextView selectedGalleryTextView;
     private Spinner privacyLevelSpinner;
     private CheckBox deleteFilesAfterUploadCheckbox;
-    private CustomImageButton fileSelectButton;
+    private MaterialButton fileSelectButton;
     private FilesToUploadRecyclerViewAdapter filesToUploadAdapter;
     private Button uploadJobStatusButton;
     private TextView uploadableFilesView;
@@ -557,7 +557,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return false;
     }
 
-    private CustomImageButton getFileSelectButton() {
+    private MaterialButton getFileSelectButton() {
         return fileSelectButton;
     }
 

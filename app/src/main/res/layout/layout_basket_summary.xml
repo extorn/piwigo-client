@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="15"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"/>
+        android:textColor="?colorPrimary"/>
 
     <ImageView
         android:id="@+id/basket_action_indicator"

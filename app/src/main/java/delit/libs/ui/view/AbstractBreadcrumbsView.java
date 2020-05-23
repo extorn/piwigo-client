@@ -10,12 +10,12 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StyleRes;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.widget.TextViewCompat;
 
 import com.drew.lang.annotations.Nullable;
+import com.google.android.material.chip.Chip;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import delit.libs.ui.util.DisplayUtils;
@@ -88,12 +88,13 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
     }
 
     private TextView buildPathItem(final T pathItemFile, int horizontalPaddingPx, int verticalPaddingPx) {
-        TextView pathItem = new TextView(getContext());
+
+        Chip pathItem = new Chip(new ContextThemeWrapper(getContext(), R.style.Widget_MaterialComponents_Chip_Action));
         pathItem.setId(View.generateViewId());
-        TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
+//        TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_MaterialComponents_Body2_Clickable);
         pathItem.setPaddingRelative(horizontalPaddingPx, verticalPaddingPx, horizontalPaddingPx, verticalPaddingPx);
         pathItem.setText(getItemName(pathItemFile));
-        pathItem.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
+//        pathItem.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.app_primary));
         pathItem.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

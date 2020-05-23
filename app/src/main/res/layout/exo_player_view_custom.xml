@@ -44,19 +44,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:orientation="vertical"
-            android:background="@color/black_overlay">
+            android:background="?scrimHeavy">
 
             <TextView
             	android:id="@+id/exo_downloaded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+                android:textAppearance="?textAppearanceBody2"/>
 
             <TextView
             	android:id="@+id/exo_cached_summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+                android:textAppearance="?textAppearanceBody2"/>
         </LinearLayout>
 
         <ProgressBar android:id="@id/exo_buffering"
@@ -73,7 +73,7 @@
             android:gravity="center"
             android:background="@color/exo_error_message_background_color"
             android:padding="16dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+            android:textAppearance="?textAppearanceBody2"/>
 
     </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 

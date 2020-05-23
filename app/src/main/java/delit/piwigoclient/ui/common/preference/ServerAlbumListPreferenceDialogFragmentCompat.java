@@ -69,7 +69,8 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     }
 
     private View buildDialogView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_list, null, false);
+        View view = getLayoutInflater().inflate(R.layout.layout_fullsize_list, null, false);
+
 
         AdView adView = view.findViewById(R.id.list_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {

@@ -8,11 +8,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="?textAppearanceBody2"/>
 
     <TextView
         android:id="@+id/tag_heading"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textAppearance="?textAppearanceHeadline5"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
     <TextView
         android:id="@+id/tag_label"
         android:labelFor="@id/tag_tagname"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textAppearance="?textAppearanceBody2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -33,7 +33,7 @@
         android:text="@string/tag_tagname_title" />
 
     <EditText
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="?textAppearanceBody1"
         android:id="@+id/tag_tagname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

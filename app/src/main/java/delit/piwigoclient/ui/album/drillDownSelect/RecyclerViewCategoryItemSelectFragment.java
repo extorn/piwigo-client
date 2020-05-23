@@ -16,6 +16,7 @@ import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,7 +32,6 @@ import java.util.Map;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.FlowLayout;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -122,22 +122,18 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         categoryPathView = v.findViewById(R.id.category_path);
 
-        navListener = new CategoryItemRecyclerViewAdapter.NavigationListener() {
+        navListener = (oldCategory, newCategory) -> {
 
-            @Override
-            public void onCategoryOpened(CategoryItem oldCategory, CategoryItem newCategory) {
-
-                if(oldCategory != null) {
-                    listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
-                }
-                getList().scrollToPosition(0);
-
-                buildBreadcrumbs(newCategory);
-
+            if(oldCategory != null) {
+                listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
             }
+            getList().scrollToPosition(0);
+
+            buildBreadcrumbs(newCategory);
+
         };
 
-        CustomImageButton newItemButton = getAddListItemButton();
+        ExtendedFloatingActionButton newItemButton = getAddListItemButton();
         if(newItemButton != null) {
             newItemButton.setOnClickListener(v1 -> {
                 CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
@@ -179,7 +175,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             }
             pathItem = new TextView(getContext());
             pathItem.setId(View.generateViewId());
-            TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
+            TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_MaterialComponents_Body2_Clickable);
             pathItem.setText(pathItemCategory.getName());
             categoryPathView.addView(pathItem);
 

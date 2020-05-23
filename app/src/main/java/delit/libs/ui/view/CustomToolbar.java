@@ -8,11 +8,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 
-public class CustomToolbar extends Toolbar {
+public class CustomToolbar extends MaterialToolbar {
     private TextView titleView;
 
     public CustomToolbar(Context context) {

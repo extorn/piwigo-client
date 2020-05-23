@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:theme="@style/ThemeOverlay.EditPages">
 
     <ProgressBar
         android:id="@+id/overall_upload_progress_bar"
@@ -15,27 +16,23 @@
         tools:progress="50"
         tools:visibility="visible" />
 
-    <delit.libs.ui.view.SlidingTabLayout
-        android:id="@+id/sliding_views_tab_headings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@id/overall_upload_progress_bar"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        app:viewPager="@+id/sliding_views_tab_content"
-        tools:initialTabIdx="1" />
-
-    <androidx.viewpager.widget.ViewPager
+    <delit.libs.ui.view.CustomViewPager
         android:id="@+id/sliding_views_tab_content"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@id/overall_upload_progress_bar"
         android:layout_above="@+id/upload_files_controls"
-        android:layout_below="@id/sliding_views_tab_headings"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         android:paddingBottom="5dp">
+
+        <delit.libs.ui.view.CustomMaterialTabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            tools:initialTabIdx="1"
+            style="?tabLayout"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -72,7 +69,7 @@
                     android:paddingEnd="5dp"
                     android:paddingBottom="5dp"
                     android:text="@string/files_for_upload_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                    android:textAppearance="?textAppearanceCaption" />
 
                 <TextView
                     android:id="@+id/files_uploadable_label"
@@ -81,24 +78,25 @@
                     android:layout_margin="5dp"
                     android:gravity="bottom"
                     android:padding="5dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                    android:textAppearance="?textAppearanceCaption"
                     tools:text="(jpg,mpg,avi)" />
             </LinearLayout>
 
-            <delit.libs.ui.view.button.CustomImageButton
+            <Button
                 android:id="@+id/select_files_for_upload_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                app:srcCompat="@drawable/ic_add_circle_black_24px" />
+                app:icon="@drawable/ic_add_circle_black_24px"
+                style="?materialButtonIconStyle"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/selected_files_for_upload"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/files_for_upload_labels_layout"
-                android:layout_alignParentBottom="true" />
+                android:layout_alignParentBottom="true"/>
 
         </RelativeLayout>
 
@@ -123,82 +121,46 @@
 
                 <TextView
                     android:id="@+id/upload_username_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:labelFor="@id/upload_username"
-                    android:padding="5dp"
                     android:text="@string/upload_username_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                    style="?editableFieldLabel"/>
 
                 <TextView
                     android:id="@+id/upload_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="9dp"
-                    android:padding="5dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    tools:text="username" />
+                    tools:text="username"
+                    style="?editableFieldText"/>
 
                 <TextView
                     android:id="@+id/upload_to_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:labelFor="@id/selected_gallery"
-                    android:padding="5dp"
                     android:text="@string/gallery_to_alter_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                    style="?editableFieldLabel" />
 
                 <TextView
                     android:id="@+id/selected_gallery"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="9dp"
-                    android:padding="5dp"
                     tools:text="some album"
-                    style="?clickableTextViewStyleBody1Field"/>
+                    style="?editableFieldTextClickable"/>
 
                 <TextView
                     android:id="@+id/privacy_level_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
                     android:labelFor="@id/privacy_level"
-                    android:padding="5dp"
                     android:text="@string/upload_file_privacy_level_title"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                    style="?editableFieldLabel" />
 
                 <Spinner
                     android:id="@+id/privacy_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="9dp" />
+                    style="?editableFieldSpinner"/>
 
                 <CheckBox
                     android:id="@+id/delete_files_after_upload_checkbox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="9dp"
-                    android:text="@string/delete_uploaded_files_title" />
+                    android:text="@string/delete_uploaded_files_title"
+                    style="?editableFieldCheckBox"/>
 
                 <CheckBox
                     android:id="@+id/compress_images_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="9dp"
                     android:enabled="false"
-                    android:text="@string/compress_images" />
+                    android:text="@string/compress_images"
+                    style="?editableFieldCheckBox"/>
 
                 <LinearLayout
                     android:id="@+id/image_compression_options"
@@ -216,7 +178,7 @@
                         android:labelFor="@id/compress_images_output_format"
                         android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_output_format_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <Spinner
                         android:id="@+id/compress_images_output_format"
@@ -226,7 +188,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="9dp"
                         android:duplicateParentState="true"
-                        android:entries="@array/preference_data_upload_compress_images_output_format_items" />
+                        android:entries="@array/preference_data_upload_compress_images_output_format_items"/>
 
                     <TextView
                         android:id="@+id/compress_images_quality_label"
@@ -236,7 +198,7 @@
                         android:labelFor="@id/compress_images_quality"
                         android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_quality_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <NumberPicker
                         android:id="@+id/compress_images_quality"
@@ -255,7 +217,7 @@
                         android:labelFor="@id/compress_images_max_width"
                         android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_max_width_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <NumberPicker
                         android:id="@+id/compress_images_max_width"
@@ -284,7 +246,7 @@
                         android:labelFor="@id/compress_images_max_height"
                         android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_max_height_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <NumberPicker
                         android:id="@+id/compress_images_max_height"
@@ -310,13 +272,9 @@
 
                 <CheckBox
                     android:id="@+id/compress_videos_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="9dp"
                     android:enabled="false"
-                    android:text="@string/compress_videos" />
+                    android:text="@string/compress_videos"
+                    style="?editableFieldCheckBox"/>
 
                 <LinearLayout
                     android:id="@+id/video_compression_options"
@@ -343,7 +301,7 @@
                         android:labelFor="@id/compress_videos_quality"
                         android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_videos_quality_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <Spinner
                         android:id="@+id/compress_videos_quality"
@@ -352,7 +310,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true" />
+                        android:duplicateParentState="true"/>
 
                     <TextView
                         android:id="@+id/compress_videos_audio_bitrate_label"
@@ -362,7 +320,7 @@
                         android:labelFor="@id/compress_videos_audio_bitrate"
                         android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_videos_audio_bitrate_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <Spinner
                         android:id="@+id/compress_videos_audio_bitrate"
@@ -371,7 +329,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true" />
+                        android:duplicateParentState="true"/>
 
 
                 </LinearLayout>
@@ -381,7 +339,7 @@
 
         </ScrollView>
 
-    </androidx.viewpager.widget.ViewPager>
+    </delit.libs.ui.view.CustomViewPager>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upload_files_controls"

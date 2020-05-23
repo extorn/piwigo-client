@@ -43,6 +43,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     private long[] groups;
     private long permissionLoadedAt;
     private String thumbnailUrl;
+    private boolean isUserCommentsAllowed;
 
     public CategoryItem(CategoryItemStub stub) {
         super(stub.getId(), stub.getName(), null, null, null);
@@ -504,5 +505,13 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
 
     public boolean isParentRoot() {
         return getParentId() != null && getParentId() == CategoryItem.ROOT_ALBUM.getId();
+    }
+
+    public boolean isUserCommentsAllowed() {
+        return isUserCommentsAllowed;
+    }
+
+    public void setUserCommentsAllowed(boolean isUserCommentsAllowed) {
+        this.isUserCommentsAllowed = isUserCommentsAllowed;
     }
 }

@@ -211,7 +211,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
         @Override
         public void onClick(View v) {
-            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
+            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getViewHolder().getItem().getChildAlbumCount() > 0) {
                 updateActiveContent(getViewHolder().getItem(), false);
             } else if (getAdapterPrefs().isAllowItemSelection()) {
                 super.onClick(v);
@@ -297,7 +297,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             if (!getAdapterPrefs().isEnabled()) {
                 colorList = ColorStateList.valueOf(Color.GRAY);
             } else {
-                colorList = ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.primary_text_default));
+                colorList = ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.app_primary));
             }
             ImageViewCompat.setImageTintList(getIconView(), colorList);
 

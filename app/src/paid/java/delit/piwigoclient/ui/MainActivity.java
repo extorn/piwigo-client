@@ -76,6 +76,10 @@ public class MainActivity extends AbstractMainActivity {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences();
         prefs.setEnabled(true);
         prefs.setAllowItemAddition(true);
+        //TODO tags deletion is not working (unsupported in piwigo server at the moment)
+//        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+//            prefs.deletable();
+//        }
         TagsListFragment fragment = TagsListFragment.newInstance(prefs);
         showFragmentNow(fragment);
     }

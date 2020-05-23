@@ -21,10 +21,10 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/licences_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            android:textAppearance="?textAppearanceBody1"/>
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.gms.ads.AdView

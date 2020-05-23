@@ -324,13 +324,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        getOverlaysVisibilityControl().addBottomSheetTransparency(getBottomSheet());
-    }
-
-    @Override
     protected void onDownloadItem(final PictureResourceItem model) {
         super.onDownloadItem(model);
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));

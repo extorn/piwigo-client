@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/slideshow_item_content_layout"
@@ -21,10 +22,10 @@
 
         <RelativeLayout
             android:id="@+id/item_overlay_details_panel"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
 
             <ImageView
                 android:id="@+id/image_load_error"
@@ -32,7 +33,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@+id/slideshow_image_average_ratingBar"
-                android:layout_marginTop="16dp"
+                android:layout_alignTop="@+id/slideshow_image_favorite"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_toStartOf="@+id/slideshow_image_favorite"
                 android:visibility="gone"
@@ -44,6 +46,7 @@
                 style="?ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@+id/slideshow_resource_item_x_of_y_text"
                 android:layout_alignParentEnd="true"
                 android:isIndicator="true"
@@ -80,7 +83,7 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:text="@string/upload_file_rating"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+                android:textAppearance="?textAppearanceBody2" />
 
 
             <TextView
@@ -93,27 +96,23 @@
                 android:paddingStart="0dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
-                android:shadowColor="@color/primary"
+                android:shadowColor="?colorPrimary"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="6"
                 android:textAlignment="viewEnd"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textAppearance="?textAppearanceBody2"
                 tools:text="x/y" />
 
-            <ImageView
+            <Button
                 android:id="@+id/show_information_action_button"
-                app:srcCompat="@drawable/ic_info_black_24dp"
-                android:tint="@color/accent"
-                android:layout_below="@id/slideshow_image_ratingBar"
-                android:layout_alignParentEnd="true"
+                style="?materialButtonIconAccentedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/slideshow_image_ratingBar"
+                android:layout_alignParentEnd="true"
                 android:layout_margin="10dp"
-                android:clickable="true"
-                android:visibility="visible"
-                app:fabSize="mini"
-                android:focusable="true" />
+                app:icon="@drawable/ic_info_black_24dp" />
 
             <TextView
                 android:id="@+id/slideshow_resource_item_title"
@@ -125,11 +124,11 @@
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
-                android:shadowColor="@color/primary"
+                android:shadowColor="?colorPrimary"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="6"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Headline"
+                android:textAppearance="?textAppearanceHeadline5"
                 tools:text="Image 20121.jpg" />
 
             <TextView
@@ -141,33 +140,34 @@
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
-                android:shadowColor="@color/primary"
+                android:shadowColor="@color/app_primary"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="6"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="?textAppearanceBody2"
                 tools:text="The image here is a really dull image showing lots of squares on circles of nothing particular" />
 
 
-            <delit.libs.ui.view.button.AppCompatCheckboxTriState
+            <CheckBox
                 android:id="@+id/slideshow_image_favorite"
+                style="?checkboxFavoriteAccentedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/slideshow_image_average_ratingBar"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="10dp"
-                android:button="@drawable/favorite_checkbox"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
-            <delit.libs.ui.view.button.CustomImageButton
+            <Button
                 android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
+                style="?materialButtonIconStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                app:srcCompat="@drawable/ic_wallpaper_black_24dp" />
+                app:icon="@drawable/ic_wallpaper_black_24dp" />
         </RelativeLayout>
 
         <!--<com.ortiz.touchview.TouchImageView
@@ -180,100 +180,112 @@
 
     </RelativeLayout>
 
-    <com.wunderlist.slidinglayer.CustomSlidingLayer
+    <delit.libs.ui.view.slidingsheet.SlidingBottomSheet
         android:id="@+id/slideshow_image_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:changeStateOnTap="true"
-        app:offsetDistance="30dp"
-        app:shadowDrawable="@drawable/sidebar_shadow"
-        app:shadowSize="30dp"
-        app:csl_stickTo="bottom">
+        android:layout_height="match_parent"
+        app:appBarViewId="@id/appbar"
+        android:theme="@style/ThemeOverlay.EditPages"
+        tools:stateExpanded="true">
 
         <RelativeLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="0dp"
-            android:background="@color/colorAlbumBottomSheet"
-            android:padding="5dp"
-            tools:layout_marginTop="-480dp">
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:paddingBottom="20dp">
 
-            <delit.libs.ui.view.button.CustomImageButton
-                android:id="@+id/slideshow_resource_action_edit_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
-
-            <delit.libs.ui.view.button.CustomImageButton
-                android:id="@+id/slideshow_resource_action_save_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/slideshow_resource_action_edit_button"
-                android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
-                app:srcCompat="@drawable/ic_save_black_24dp" />
-
-            <delit.libs.ui.view.button.CustomImageButton
-                android:id="@+id/slideshow_resource_action_discard_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/slideshow_resource_action_save_button"
-                android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
-                app:srcCompat="@drawable/ic_undo_black_24dp" />
-
-            <delit.libs.ui.view.button.CustomImageButton
-                android:id="@+id/slideshow_resource_action_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="20dp"
-                android:tooltipText="@string/slideshow_resource_action_delete"
-                app:srcCompat="@drawable/ic_delete_black_24px" />
-
-            <delit.libs.ui.view.button.CustomImageButton
-                android:id="@+id/slideshow_resource_action_download"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/slideshow_resource_action_delete"
-                android:layout_toStartOf="@+id/slideshow_resource_action_delete"
-                android:tooltipText="@string/slideshow_resource_action_download"
-                app:srcCompat="@drawable/ic_file_download_black_24px" />
-
-            <delit.libs.ui.view.button.CustomImageButton
-                android:id="@+id/slideshow_resource_action_move"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/slideshow_resource_action_download"
-                android:layout_toStartOf="@+id/slideshow_resource_action_download"
-                android:tooltipText="@string/slideshow_resource_action_move"
-                app:srcCompat="@drawable/ic_content_cut_black_24px" />
-
-            <delit.libs.ui.view.button.CustomImageButton
-                android:id="@+id/slideshow_resource_action_copy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/slideshow_resource_action_move"
-                android:layout_toStartOf="@+id/slideshow_resource_action_move"
-                android:tooltipText="@string/slideshow_resource_action_copy"
-                app:srcCompat="@drawable/ic_content_copy_black_24px" />
-
-            <delit.libs.ui.view.SlidingTabLayout
-                android:id="@+id/slideshow_resource_details_tabs_headings"
+            <RelativeLayout
+                android:id="@+id/action_buttons_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/slideshow_resource_action_download"
-                app:initialTabIdx="0"
-                app:viewPager="@+id/slideshow_resource_details_tabs_content" />
+                android:paddingTop="14dp">
 
-            <androidx.viewpager.widget.ViewPager
+                <Button
+                    android:id="@+id/slideshow_resource_action_edit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    app:icon="@drawable/ic_mode_edit_black_24dp"
+                    style="?materialButtonIconStyle"/>
+
+                <Button
+                    android:id="@+id/slideshow_resource_action_save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/slideshow_resource_action_edit_button"
+                    android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
+                    app:icon="@drawable/ic_save_black_24dp"
+                    style="?materialButtonIconStyle"/>
+
+                <Button
+                    android:id="@+id/slideshow_resource_action_discard_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/slideshow_resource_action_save_button"
+                    android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
+                    app:icon="@drawable/ic_undo_black_24dp"
+                    style="?materialButtonIconStyle"/>
+
+                <Button
+                    android:id="@+id/slideshow_resource_action_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="20dp"
+                    android:tooltipText="@string/slideshow_resource_action_delete"
+                    app:icon="@drawable/ic_delete_black_24px"
+                    style="?materialButtonIconStyle"/>
+
+                <Button
+                    android:id="@+id/slideshow_resource_action_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/slideshow_resource_action_delete"
+                    android:layout_toStartOf="@+id/slideshow_resource_action_delete"
+                    android:tooltipText="@string/slideshow_resource_action_download"
+                    app:icon="@drawable/ic_file_download_black_24px"
+                    style="?materialButtonIconStyle"/>
+
+                <Button
+                    android:id="@+id/slideshow_resource_action_move"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/slideshow_resource_action_download"
+                    android:layout_toStartOf="@+id/slideshow_resource_action_download"
+                    android:tooltipText="@string/slideshow_resource_action_move"
+                    app:icon="@drawable/ic_content_cut_black_24px"
+                    style="?materialButtonIconStyle"/>
+
+                <Button
+                    android:id="@+id/slideshow_resource_action_copy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/slideshow_resource_action_move"
+                    android:layout_toStartOf="@+id/slideshow_resource_action_move"
+                    android:tooltipText="@string/slideshow_resource_action_copy"
+                    app:icon="@drawable/ic_content_copy_black_24px"
+                    style="?materialButtonIconStyle"/>
+
+            </RelativeLayout>
+
+            <delit.libs.ui.view.CustomViewPager
                 android:id="@+id/slideshow_resource_details_tabs_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/slideshow_resource_details_tabs_headings">
+                android:layout_below="@+id/action_buttons_bar"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true">
+
+                <delit.libs.ui.view.CustomMaterialTabLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    app:initialTabIdx="1"
+                    style="?tabLayout"/>
 
                 <TextView
                     android:id="@+id/pageTitle1"
@@ -284,7 +296,7 @@
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/pageContent1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                     <LinearLayout
@@ -292,126 +304,88 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingBottom="10dp"
-                        android:paddingTop="10dp">
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp">
 
                         <TextView
                             android:id="@+id/slideshow_image_details_description_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:labelFor="@+id/slideshow_image_details_description"
                             android:text="@string/slideshow_image_details_description_title"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                            style="?editableFieldLabel"/>
 
                         <EditText
                             android:id="@+id/slideshow_image_details_description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="3dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="2dp"
                             android:inputType="textMultiLine|textNoSuggestions"
                             android:maxLines="10"
                             android:importantForAutofill="no"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                            tools:text="Some description text"
+                            tools:enabled="false"
+                            style="?editableFieldText"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_name_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:labelFor="@+id/slideshow_image_details_name"
                             android:text="@string/slideshow_image_details_name_title"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                            style="?editableFieldLabel"/>
 
                         <EditText
                             android:id="@+id/slideshow_image_details_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="3dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="2dp"
                             android:inputType="textMultiLine|textNoSuggestions"
                             android:maxLines="3"
                             android:importantForAutofill="no"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                            tools:text="Some resource name"
+                            style="?editableFieldText"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_linked_albums_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:labelFor="@+id/slideshow_image_details_linked_albums"
                             android:text="@string/slideshow_image_details_linked_albums_title"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                            style="?editableFieldLabel"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_linked_albums"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="3dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="2dp"
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/click_to_view"
-                            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
+                            style="?editableFieldTextClickable"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_tags_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:labelFor="@+id/slideshow_image_details_tags"
                             android:text="@string/slideshow_image_details_tags_title"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                            style="?editableFieldLabel"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_tags"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="3dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="2dp"
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/click_to_view"
-                            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
+                            style="?editableFieldTextClickable"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_rating_score_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:labelFor="@+id/slideshow_image_details_rating_score"
                             android:text="@string/slideshow_image_details_rating_score_title"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                            style="?editableFieldLabel"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_rating_score"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="3dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="2dp"
                             android:text="@string/rating_score_pattern"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            tools:text="1.2 (5 rates)"/>
+                            android:textAppearance="?textAppearanceBody1"
+                            tools:text="1.2 (5 rates)"
+                            style="?editableFieldText"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_privacy_level"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:labelFor="@+id/privacy_level"
                             android:text="@string/upload_file_privacy_level_title"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                            style="?editableFieldLabel"/>
 
                         <Spinner
                             android:id="@+id/privacy_level"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="3dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="2dp" />
+                            style="?editableFieldSpinner"/>
 
                     </LinearLayout>
-
                 </androidx.core.widget.NestedScrollView>
 
                 <TextView
@@ -423,22 +397,23 @@
                 <FrameLayout
                     android:id="@+id/pageContent2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
                     <delit.libs.ui.view.list.CustomExpandableListView
                         android:id="@+id/exifDataList"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
-                        android:focusable="true"/>
+                        android:focusable="true"
+                        tools:layout_height="200dp"/>
 
                 </FrameLayout>
 
-            </androidx.viewpager.widget.ViewPager>
+            </delit.libs.ui.view.CustomViewPager>
 
         </RelativeLayout>
 
-    </com.wunderlist.slidinglayer.CustomSlidingLayer>
+    </delit.libs.ui.view.slidingsheet.SlidingBottomSheet>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

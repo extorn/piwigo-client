@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -66,7 +66,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
     private Button toggleAllSelectionButton;
     private ExpandableAlbumsListAdapter listAdapter;
     private ExpandableListView expandableListView;
-    private FloatingActionButton reloadListButton;
+    private ExtendedFloatingActionButton reloadListButton;
 
     public static AlbumSelectExpandableFragment newInstance(ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         AlbumSelectExpandableFragment fragment = new AlbumSelectExpandableFragment();

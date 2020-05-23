@@ -3,22 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/ThemeOverlay.EditPages">
 
     <RelativeLayout
         android:id="@+id/breadcrumbsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <delit.libs.ui.view.button.CustomImageButton
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/list_action_add_item_button"
             android:visibility="gone"
             tools:visibility="visible"
             android:layout_alignParentEnd="true"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            app:srcCompat="@drawable/ic_add_circle_black_24px" />
+            app:icon="@drawable/ic_add_circle_black_24px"
+            app:iconTint="?colorOnBackground"/>
 
         <delit.libs.ui.view.FlowLayout
             android:id="@+id/category_path"
@@ -45,9 +47,8 @@
         android:layout_marginBottom="5dp"
         android:layout_alignWithParentIfMissing="true"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/list_retryAction_actionButton"
-        app:srcCompat="@drawable/ic_refresh_black_24dp"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,7 +57,9 @@
         android:focusable="true"
         android:visibility="gone"
         tools:visibility="visible"
-        app:fabSize="mini" />
+        app:fabSize="mini"
+        app:icon="@drawable/ic_refresh_black_24dp"
+        app:iconTint="?colorOnBackground"/>
 
     <Button
         android:id="@+id/list_action_cancel_button"

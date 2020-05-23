@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
 
     <TextView
         android:id="@+id/lblListItemHeader"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
         android:paddingEnd="0dp"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable" />
+        style="?clickableTextViewStyleBody2" />
 <!--
     <TextView
         android:id="@+id/descListItemHeader"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable" />-->
+        android:textAppearance="@style/Custom.TextAppearance.MaterialComponents.Body2.Clickable" />-->
 
 </LinearLayout>

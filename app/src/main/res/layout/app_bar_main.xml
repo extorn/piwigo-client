@@ -20,7 +20,6 @@
         <!--app:layout_scrollFlags="scroll|enterAlways"-->
 
         <delit.libs.ui.view.ProgressIndicator
-            android:background="@color/primary_dark"
             android:id="@+id/progressIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -459,7 +459,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         @Override
         public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
-            getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.accent), PorterDuff.Mode.SRC_IN);
+            getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.app_secondary), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             getIconViewLoader().load();
         }

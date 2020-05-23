@@ -211,8 +211,8 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         Preference button = findPreference(R.string.preference_test_server_connection_key);
-        Drawable icon = AppCompatResources.getDrawable(getContext(), R.drawable.ic_sync_black_24dp);
-        DrawableCompat.setTint(icon, ContextCompat.getColor(getContext(), R.color.accent));
+        Drawable icon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_sync_black_24dp);
+        DrawableCompat.setTint(icon, ContextCompat.getColor(requireContext(), R.color.app_secondary));
         button.setIcon(icon);
 
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

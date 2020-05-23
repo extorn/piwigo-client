@@ -64,7 +64,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private SlidingTabStrip mTabStrip;
     private int mTitleOffset;
 
-    private int mTabViewLayoutId;
+    private int mTabTitleViewLayoutId;
     private int mTabViewTextViewId;
 
     private ViewPager mViewPager;
@@ -79,7 +79,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     public SlidingTabLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context, attrs, 0, 0);
     }
 
     public SlidingTabLayout(Context context, AttributeSet attrs, @AttrRes int defStyleAttr) {
@@ -94,13 +95,19 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    private void init(Context context, AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
         final TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.SlidingTabLayout, defStyleAttr, defStyleRes);
 
         viewPagerId = a.getResourceId(R.styleable.SlidingTabLayout_viewPager, View.NO_ID);
 
         initialTabIdx = a.getInt(R.styleable.SlidingTabLayout_initialTabIdx, 0);
+
+        mTabTitleViewLayoutId = a.getResourceId(R.styleable.SlidingTabLayout_tabTitleViewLayoutId, 0);
+        mTabViewTextViewId = a.getResourceId(R.styleable.SlidingTabLayout_tabTitleTextViewId, 0);
+        if((mTabTitleViewLayoutId == 0 || mTabViewTextViewId == 0) && mTabTitleViewLayoutId != mTabViewTextViewId) {
+            throw new IllegalArgumentException("Either use the default tab title layout or set BOTH mTabTitleViewLayoutId and mTabViewTextViewId");
+        }
 
         a.recycle();
 
@@ -160,7 +167,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
      * @param textViewId  id of the {@link TextView} in the inflated view
      */
     public void setCustomTabView(int layoutResId, int textViewId) {
-        mTabViewLayoutId = layoutResId;
+        mTabTitleViewLayoutId = layoutResId;
         mTabViewTextViewId = textViewId;
     }
 
@@ -184,7 +191,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
      */
     protected TextView createDefaultTabView(Context context) {
         TextView textView = new TextView(context);
-        textView.setTextColor(ContextCompat.getColor(context, R.color.primary_text_default));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.app_primary));
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
@@ -230,9 +237,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
             View tabView = null;
             TextView tabTitleView = null;
 
-            if (mTabViewLayoutId != 0) {
+            if (mTabTitleViewLayoutId != 0) {
                 // If there is a custom tab view layout id set, try and inflate it
-                tabView = inflater.inflate(mTabViewLayoutId, mTabStrip, false);
+                tabView = inflater.inflate(mTabTitleViewLayoutId, mTabStrip, false);
                 tabTitleView = tabView.findViewById(mTabViewTextViewId);
             }
 

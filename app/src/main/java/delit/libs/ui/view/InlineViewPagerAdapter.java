@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +21,21 @@ public class InlineViewPagerAdapter extends PagerAdapter {
     private List<View> pagesContent;
 
     public InlineViewPagerAdapter(ViewPager viewPager) {
-        if(viewPager.getChildCount() % 2 != 0) {
+        int childCount = viewPager.getChildCount();
+        int offset = 0;
+        if(childCount == 0) {
+            throw new IllegalStateException("No children views found in ViewPager to make tabs and tab contents from");
+        }
+        if(childCount > 0 && viewPager.getChildAt(0) instanceof TabLayout) {
+            offset = 1;
+        }
+        if((childCount - offset) % 2 != 0) {
             throw new RuntimeException("There must be an even number of child components to the view pager - title, content, title, content, etc.\nThe titles must be text views (from which text is extracted)");
         }
-        int pages = viewPager.getChildCount() / 2;
+        int pages = (childCount - 1) / 2;
         pagesTitle = new ArrayList<>(pages);
         pagesContent = new ArrayList<>(pages);
-        for(int i = 0; i < viewPager.getChildCount(); i+=2) {
+        for(int i = offset; i < viewPager.getChildCount(); i+=2) {
             pagesTitle.add(((TextView)viewPager.getChildAt(i)).getText());
             pagesContent.add(viewPager.getChildAt(i+1));
         }

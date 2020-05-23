@@ -32,9 +32,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_below="@+id/slideshow_image_average_ratingBar"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_toStartOf="@+id/slideshow_image_favorite"
+                android:layout_alignTop="@+id/slideshow_image_favorite"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_file_gray_24dp"
                 tools:visibility="visible" />
@@ -80,7 +81,8 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:text="@string/upload_file_rating"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+                android:textAppearance="?textAppearanceBody2" />
+
 
 
             <TextView
@@ -93,28 +95,24 @@
                 android:paddingStart="0dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
-                android:shadowColor="@color/primary"
+                android:shadowColor="?colorPrimary"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="6"
                 android:textAlignment="viewEnd"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textAppearance="?textAppearanceBody2"
                 android:visibility="visible"
-                tools:text="x/y" />
+                tools:text="x/y"/>
 
-            <ImageView
+            <Button
                 android:id="@+id/show_information_action_button"
-                app:srcCompat="@drawable/ic_info_black_24dp"
-                android:tint="@color/accent"
+                app:icon="@drawable/ic_info_black_24dp"
                 android:layout_below="@id/slideshow_image_ratingBar"
                 android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:clickable="true"
-                android:visibility="visible"
-                app:fabSize="mini"
-                android:focusable="true" />
+                style="?materialButtonIconAccentedStyle"/>
 
             <TextView
                 android:id="@+id/slideshow_resource_item_title"
@@ -126,7 +124,7 @@
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
-                android:shadowColor="@color/primary"
+                android:shadowColor="?colorPrimary"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="6"
@@ -143,15 +141,15 @@
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
-                android:shadowColor="@color/primary"
+                android:shadowColor="?colorPrimary"
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="6"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="?textAppearanceBody2"
                 android:visibility="visible"
                 tools:text="The image here is a really dull image showing lots of squares on circles of nothing particular" />
 
-            <delit.libs.ui.view.button.AppCompatCheckboxTriState
+            <CheckBox
                 android:id="@+id/slideshow_image_favorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -159,31 +157,30 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="10dp"
-                android:button="@drawable/favorite_checkbox"
                 android:visibility="gone"
-                tools:visibility="visible" />
+                tools:visibility="visible"
+                style="?checkboxFavoriteAccentedStyle"/>
 
-            <delit.libs.ui.view.button.CustomImageButton
+            <Button
                 android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_wallpaper_black_24dp" />
+                app:icon="@drawable/ic_wallpaper_black_24dp"
+                style="?materialButtonIconStyle"/>
         </RelativeLayout>
 
     </RelativeLayout>
 
-    <com.wunderlist.slidinglayer.CustomSlidingLayer
+    <delit.libs.ui.view.slidingsheet.SlidingBottomSheet
         android:id="@+id/slideshow_image_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:changeStateOnTap="true"
-        app:offsetDistance="30dp"
-        app:shadowDrawable="@drawable/sidebar_shadow"
-        app:shadowSize="30dp"
-        app:csl_stickTo="bottom">
+        android:layout_height="match_parent"
+        app:appBarViewId="@id/appbar"
+        android:theme="@style/ThemeOverlay.EditPages"
+        tools:stateExpanded="true">
 
         <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
@@ -193,7 +190,6 @@
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="0dp"
-            android:background="@color/colorAlbumBottomSheet"
             android:orientation="vertical"
             android:padding="5dp"
             tools:layout_marginTop="-400dp">
@@ -203,64 +199,71 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp">
 
-                <delit.libs.ui.view.button.CustomImageButton
+                <Button
                     android:id="@+id/slideshow_resource_action_edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    app:srcCompat="@drawable/ic_mode_edit_black_24dp"/>
+                    app:icon="@drawable/ic_mode_edit_black_24dp"
+                    style="?materialButtonIconStyle"/>
 
-                <delit.libs.ui.view.button.CustomImageButton
+                <Button
                     android:id="@+id/slideshow_resource_action_save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_edit_button"
                     android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
-                    app:srcCompat="@drawable/ic_save_black_24dp"/>
+                    app:icon="@drawable/ic_save_black_24dp"
+                    style="?materialButtonIconStyle"/>
 
-                <delit.libs.ui.view.button.CustomImageButton
+                <Button
                     android:id="@+id/slideshow_resource_action_discard_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_save_button"
                     android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
-                    app:srcCompat="@drawable/ic_undo_black_24dp"/>
+                    app:icon="@drawable/ic_undo_black_24dp"
+                    style="?materialButtonIconStyle"/>
 
-                <delit.libs.ui.view.button.CustomImageButton
+                <Button
                     android:id="@+id/slideshow_resource_action_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="20dp"
                     android:tooltipText="@string/slideshow_resource_action_delete"
-                    app:srcCompat="@drawable/ic_delete_black_24px" />
+                    app:icon="@drawable/ic_delete_black_24px"
+                    style="?materialButtonIconStyle"/>
 
-                <delit.libs.ui.view.button.CustomImageButton
+                <Button
                     android:id="@+id/slideshow_resource_action_download"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_delete"
                     android:layout_toStartOf="@+id/slideshow_resource_action_delete"
                     android:tooltipText="@string/slideshow_resource_action_download"
-                    app:srcCompat="@drawable/ic_file_download_black_24px" />
+                    app:icon="@drawable/ic_file_download_black_24px"
+                    style="?materialButtonIconStyle"/>
 
-                <delit.libs.ui.view.button.CustomImageButton
+                <Button
                     android:id="@+id/slideshow_resource_action_move"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_download"
                     android:layout_toStartOf="@+id/slideshow_resource_action_download"
                     android:tooltipText="@string/slideshow_resource_action_move"
-                    app:srcCompat="@drawable/ic_content_cut_black_24px"/>
+                    app:icon="@drawable/ic_content_cut_black_24px"
+                    style="?materialButtonIconStyle"/>
 
-                <delit.libs.ui.view.button.CustomImageButton
+                <Button
                     android:id="@+id/slideshow_resource_action_copy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_move"
                     android:layout_toStartOf="@+id/slideshow_resource_action_move"
                     android:tooltipText="@string/slideshow_resource_action_copy"
-                    app:srcCompat="@drawable/ic_content_copy_black_24px"/>
+                    app:icon="@drawable/ic_content_copy_black_24px"
+                    style="?materialButtonIconStyle"/>
 
 
 
@@ -277,7 +280,7 @@
                         android:layout_height="wrap_content"
                         android:labelFor="@+id/slideshow_image_details_description"
                         android:text="@string/slideshow_image_details_description_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <EditText
                         android:id="@+id/slideshow_image_details_description"
@@ -285,7 +288,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="10"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textAppearance="?textAppearanceBody1"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="2dp"
                         android:layout_marginBottom="3dp"
@@ -297,7 +300,7 @@
                         android:layout_height="wrap_content"
                         android:labelFor="@+id/slideshow_image_details_name"
                         android:text="@string/slideshow_image_details_name_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <EditText
                         android:id="@+id/slideshow_image_details_name"
@@ -305,7 +308,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="3"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textAppearance="?textAppearanceBody1"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="2dp"
                         android:layout_marginBottom="3dp"
@@ -317,7 +320,7 @@
                         android:layout_height="wrap_content"
                         android:labelFor="@+id/slideshow_image_details_linked_albums"
                         android:text="@string/slideshow_image_details_linked_albums_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <TextView
                         android:id="@+id/slideshow_image_details_linked_albums"
@@ -337,7 +340,7 @@
                         android:layout_height="wrap_content"
                         android:labelFor="@+id/slideshow_image_details_tags"
                         android:text="@string/slideshow_image_details_tags_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <TextView
                         android:id="@+id/slideshow_image_details_tags"
@@ -357,7 +360,7 @@
                         android:layout_height="wrap_content"
                         android:labelFor="@+id/slideshow_image_details_rating_score"
                         android:text="@string/slideshow_image_details_rating_score_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <TextView
                         android:id="@+id/slideshow_image_details_rating_score"
@@ -367,7 +370,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="2dp"
                         android:text="@string/rating_score_pattern"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textAppearance="?textAppearanceBody1"
                         tools:text="1.2 (5 rates)" />
 
                     <TextView
@@ -376,15 +379,11 @@
                         android:layout_height="wrap_content"
                         android:labelFor="@+id/privacy_level"
                         android:text="@string/upload_file_privacy_level_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        android:textAppearance="?textAppearanceCaption" />
 
                     <Spinner
                         android:id="@+id/privacy_level"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="3dp"/>
+                        style="?editableFieldSpinner"/>
 
                 </LinearLayout>
 
@@ -393,7 +392,7 @@
 
         </LinearLayout>
 
-    </com.wunderlist.slidinglayer.CustomSlidingLayer>
+    </delit.libs.ui.view.slidingsheet.SlidingBottomSheet>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

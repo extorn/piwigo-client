@@ -13,6 +13,7 @@ import org.greenrobot.eventbus.EventBus;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
@@ -25,7 +26,7 @@ public class PreferencesActivity extends MyActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_preferences);
+        setContentView(R.layout.activity_preferences);
         EventBus.getDefault().register(this);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).commit();
     }

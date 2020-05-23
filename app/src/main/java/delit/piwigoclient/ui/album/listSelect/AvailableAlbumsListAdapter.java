@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
@@ -15,7 +16,6 @@ import androidx.annotation.NonNull;
 import com.crashlytics.android.Crashlytics;
 
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.list.CustomSelectListAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.BuildConfig;
@@ -104,7 +104,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
                 CompoundButton checkboxTriState = aView.findViewById(R.id.actionable_list_item_checked);
                 checkboxTriState.setEnabled(getPrefs().isEnabled());
 
-                CustomImageButton button = aView.findViewById(R.id.actionable_list_item_delete_button);
+                Button button = aView.findViewById(R.id.actionable_list_item_delete_button);
                 button.setVisibility(getPrefs().isAllowItemDeletion() ? View.VISIBLE : GONE);
             }
         } catch (ClassCastException e) {

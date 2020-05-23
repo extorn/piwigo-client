@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
+import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -44,7 +45,6 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.FileBreadcrumbsView;
 import delit.libs.ui.view.FlowLayout;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.list.MappedArrayAdapter;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
@@ -161,7 +161,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
         fileExtFilters = v.findViewById(R.id.file_ext_filters);
 
-        CustomImageButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
+        MaterialButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
         folderViewRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

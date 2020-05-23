@@ -6,27 +6,27 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.util.Strings;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
-import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.list.MultiSourceListAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
@@ -120,7 +120,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
     @Override
     protected View onCreateDialogView(Context context) {
-        return buildListView();
+        return buildListView(context);
     }
 
     @Override
@@ -129,8 +129,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         loadListValues(uploadJobIds);
     }
 
-    private View buildListView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_list, null, false);
+    private View buildListView(Context context) {
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
@@ -149,7 +149,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
         itemListView = view.findViewById(R.id.list);
 
-        View addListItemButton = view.findViewById(R.id.list_action_add_item_button);
+        ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,7 +195,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         }
 
         BaseRecyclerViewAdapterPreferences viewPrefs = new BaseRecyclerViewAdapterPreferences();
-        adapter = new AutoUploadJobsListAdapter(getContext(), uploadJobConfigs, viewPrefs);
+        adapter = new AutoUploadJobsListAdapter(uploadJobConfigs, viewPrefs);
 
         if(itemListView != null) {
             adapter.linkToListView(itemListView, null, null);
@@ -204,8 +204,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
     private class AutoUploadJobsListAdapter extends MultiSourceListAdapter<AutoUploadJobConfig, BaseRecyclerViewAdapterPreferences> {
 
-        public AutoUploadJobsListAdapter(Context context, ArrayList<AutoUploadJobConfig> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
-            super(context, availableItems, adapterPrefs);
+        public AutoUploadJobsListAdapter(ArrayList<AutoUploadJobConfig> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
+            super(availableItems, adapterPrefs);
         }
 
         @Override
@@ -246,9 +246,9 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             });
             TextView nameView = itemView.findViewById(R.id.list_item_name);
             TextView detailView = itemView.findViewById(R.id.list_item_details);
-            AppCompatCheckboxTriState deleteUploadedFiles = itemView.findViewById(R.id.delete_uploaded);
-            AppCompatCheckboxTriState jobEnabledView = itemView.findViewById(R.id.enabled);
-            CustomImageButton deleteButton = itemView.findViewById(R.id.list_item_delete_button);
+            CheckBox deleteUploadedFiles = itemView.findViewById(R.id.delete_uploaded);
+            CheckBox jobEnabledView = itemView.findViewById(R.id.enabled);
+            MaterialButton deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -263,7 +263,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         }
 
         @Override
-        protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
+        protected MaterialCheckboxTriState getAppCompatCheckboxTriState(View view) {
             return view.findViewById(R.id.list_item_checked);
         }
     }

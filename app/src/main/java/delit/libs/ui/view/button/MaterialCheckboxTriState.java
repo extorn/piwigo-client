@@ -5,8 +5,9 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
-import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.core.view.ViewCompat;
+
+import com.google.android.material.checkbox.MaterialCheckBox;
 
 import delit.piwigoclient.R;
 
@@ -14,35 +15,35 @@ import delit.piwigoclient.R;
  * Created by gareth on 02/10/17.
  */
 
-public class AppCompatCheckboxTriState extends AppCompatCheckBox {
+public class MaterialCheckboxTriState extends MaterialCheckBox {
 
     private static final int[] STATE_ALWAYS_CHECKED = {R.attr.state_always_checked};
 
     private boolean alwaysChecked;
     private boolean checkboxAtEnd;
 
-    public AppCompatCheckboxTriState(Context context) {
+    public MaterialCheckboxTriState(Context context) {
         this(context, null);
     }
 
-    public AppCompatCheckboxTriState(Context context, AttributeSet attrs) {
+    public MaterialCheckboxTriState(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.checkboxStyle);
     }
 
-    public AppCompatCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MaterialCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr);
 
         final TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.AppCompatCheckboxTriState, defStyleAttr, defStyleRes);
+                attrs, R.styleable.MaterialCheckboxTriState, defStyleAttr, defStyleRes);
 
-        checkboxAtEnd = a.getBoolean(R.styleable.AppCompatCheckboxTriState_checkbox_at_end, false);
+        checkboxAtEnd = a.getBoolean(R.styleable.MaterialCheckboxTriState_checkbox_at_end, false);
 
         a.recycle();
 
         updateComponentLayout();
     }
 
-    public AppCompatCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MaterialCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
 
     }

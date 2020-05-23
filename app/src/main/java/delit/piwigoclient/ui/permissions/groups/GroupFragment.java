@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,7 +32,6 @@ import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
@@ -68,6 +68,9 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 /**
  * Created by gareth on 21/06/17.
  */
@@ -91,10 +94,10 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     private TextView groupNameField;
     private TextView membersField;
     private ListView albumAccessRightsField;
-    private CustomImageButton editButton;
-    private CustomImageButton discardButton;
-    private CustomImageButton saveButton;
-    private CustomImageButton deleteButton;
+    private MaterialButton editButton;
+    private MaterialButton discardButton;
+    private MaterialButton saveButton;
+    private MaterialButton deleteButton;
     // stuff stored in state.
     private Group currentGroup;
     private ArrayList<Username> currentGroupMembers;
@@ -444,9 +447,12 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         groupNameField.setEnabled(editable);
         isDefaultField.setEnabled(editable);
 
-        editButton.setEnabled(!editable);
-        discardButton.setEnabled(editable);
-        saveButton.setEnabled(editable);
+        //        editButton.setEnabled(!editable);
+        editButton.setVisibility(!editable ? VISIBLE : GONE);
+//        discardButton.setEnabled(editable);
+        discardButton.setVisibility(editable ? VISIBLE : GONE);
+//        saveButton.setEnabled(editable);
+        saveButton.setVisibility(editable ? VISIBLE : GONE);
 
 
     }
@@ -670,7 +676,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
             BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
             adapterPreferences.selectable(true, false);
             adapterPreferences.readonly();
-            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, adapterPreferences);
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, adapterPreferences);
             availableItemsAdapter.linkToListView(albumAccessRightsField, getLatestAlbumPermissions(), getLatestAlbumPermissions());
         } else {
             adapter.setSelectedItems(getLatestAlbumPermissions());

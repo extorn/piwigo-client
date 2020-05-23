@@ -1,192 +1,326 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Material theme (dark version).
-        <p>If you want to ensure that your
-        app consistently uses the Material theme at all times, you must explicitly declare it in your
-        manifest. For example, {@code &lt;application android:theme="@style/Theme.Material"&gt;}.
-        <p>Styles used by the Material theme are named using the convention Type.Material.Etc
-        (for example, {@code Widget.Material.Button} and {@code
-        TextAppearance.Material.Widget.PopupMenu.Large}).
-        Specific resources used by Material are named using the convention @type/foo_bar_baz_material
-        with trailing _dark or _light specifiers if they are not shared between both light and
-        dark versions of the theme. -->
+    <!-- this defines the color of things laid out -->
+    <style name="Theme.App" parent="Theme.App.Base">
+        <!-- see files: themes_material.xml styles_material.xml - raw materials theme -->
 
-    <style name="Custom.Theme" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorOnPrimary">@color/foreground</item>
-        <item name="colorSecondary">@color/accent</item>
-        <item name="colorOnSecondary">@color/primary</item>
+        <!-- Material components colours explanation.... (from website, might be wrong)
+        colorPrimary: The primary brand color of your app, used most predominantly in theming
+colorPrimaryVariant: A lighter/darker variant of your primary brand color, used sparingly in theming
+colorOnPrimary: The color used for elements displayed on top of your primary colors (eg. Text and icons, often white or semi-transparent black depending on accessibility)
+colorSecondary: The secondary brand color of your app, used mostly as an accent for certain widgets that need to stand out
+colorSecondaryVariant: A lighter/darker variant of your secondary brand color, used sparingly in theming
+colorOnSecondary: The color used for elements displayed on top of your secondary colors
+colorError: The color used for errors (often a shade of red)
+colorOnError: The color used for elements displayed on top of your error color
+colorSurface: The color used for surfaces (i.e. Material “sheets”)
+colorOnSurface: The color used for elements displayed on top of your surface color
+android:colorBackground: The color behind all other screen content
+colorOnBackground: The color used for elements displayed on top of your background color
+-->
 
-        <!-- used for the navigation menu for example -->
-        <item name="clickableTextViewStyleBody1">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Body1</item>
-        <item name="clickableTextViewStyleBody1Field">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Body1.Field</item>
-        <item name="clickableTextViewStyleBody2">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Body2</item>
-        <item name="clickableTextViewStyleTitle">@style/Custom.Widget.MaterialComponents.TextView.Clickable.Title</item>
-        <item name="android:textAppearanceMedium">@style/Custom.TextAppearance.AppCompat.Medium</item>
-        <item name="ratingBarStyleIndicator">@style/Widget.AppCompat.RatingBar.Indicator</item>
-        <item name="ratingBarStyleSmall">@style/Widget.AppCompat.RatingBar.Small</item>
-        <item name="textAppearanceBody2">@style/Custom.TextAppearance.AppCompat.Body2</item>
-        <item name="textAppearanceBody1">@style/Custom.TextAppearance.AppCompat.Body1</item>
-        <item name="android:progressBarStyleHorizontal">@style/Custom.Widget.AppCompat.ProgressBar.Horizontal</item>
-        <item name="materialAlertDialogTheme">@style/AlertDialogMaterialTheme</item>
-        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
-        <item name="android:dialogTheme">@style/AlertDialogTheme</item>
-        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
-        <!--<item name="dialogTheme">@style/AlertDialogMaterialTheme</item>-->
-        <item name="materialButtonStyle">@style/Custom.Widget.MaterialComponents.Button</item>
-        <item name="materialButtonOutlinedStyle">@style/Custom.Widget.MaterialComponents.Button.OutlinedButton</item>
+        <item name="colorPrimaryDisabled">@color/app_primary_disabled</item> <!-- so disabled field text is strong enough to read -->
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
+        <item name="colorOnPrimary">@color/app_color_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
+        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <item name="colorError">@color/app_color_error</item>
+        <item name="colorOnError">@color/app_color_on_error</item>
+        <item name="colorSurface">@color/app_color_surface</item>
+        <item name="colorOnSurface">@color/app_color_on_surface</item>
+        <item name="android:colorBackground">@color/app_color_background</item>
+        <item name="colorOnBackground">@color/app_color_on_background</item>
+        <item name="scrimBackground">@color/app_color_scrim_color</item>  <!-- what uses this? its material -->
+        <item name="scrimHeavy">@color/black_overlay</item>
+        <item name="scrimUltraHeavy">@color/dark_black_overlay</item>
+        <item name="scrimLight">@color/app_color_scrim_color</item>
 
-        <!-- used for the navigation menu for example -->
-        <item name="android:checkboxStyle">@style/Custom.Widget.AppCompat.CompoundButton.CheckBox</item>
-        <item name="checkboxStyle">@style/Custom.Widget.AppCompat.CompoundButton.CheckBox</item>
-        <item name="radioButtonStyle">@style/Custom.Widget.AppCompat.CompoundButton.RadioButton</item>
-        <item name="switchStyle">@style/Custom.Widget.AppCompat.CompoundButton.Switch</item>
+    </style>
+
+    <!-- this defines how things are laid out -->
+    <style name="Theme.App.Base" parent="Theme.MaterialComponents.NoActionBar">
+
+        <item name="materialCardViewStyle">@style/App.Widget.MaterialComponents.CardView</item>
+        <item name="editableFieldSpinner">@style/App.Widget.AppCompat.Spinner.Underlined.Field</item>
+        <item name="editableFieldSwitch">@style/App.Widget.MaterialComponents.CompoundButton.Switch.Field</item>
+        <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
+        <item name="spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
+        <item name="android:spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
+        <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
+
+        <!-- change the app bar at screen top to not use default background color -->
+        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.Toolbar.Primary</item>
+
+        <item name="android:checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
+        <item name="checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
+
+        <!-- If I want a custom font across the app - use it here -->
+        <!--<item name="fontFamily">@font/roboto_mono</item>
+        <item name="android:fontFamily">@font/roboto_mono</item>-->
+
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <!--<item name="android:alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>-->
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="radioButtonStyle">@style/App.Widget.CompoundButton.RadioButton</item>
+        <!-- prob do not need these ones -->
+        <!--
+
+        <item name="switchStyle">@style/App.Widget.AppCompat.CompoundButton.Switch</item>
         <item name="android:editTextColor">@color/edit_text_color_selector</item>
         <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat</item>
-        <item name="android:spinnerStyle">@style/Custom.Widget.AppCompat.Spinner.Underlined</item>
-        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
-        <item name="android:dropDownListViewStyle">@style/Custom.Widget.AppCompat.DropDownItem.Spinner</item>
-        <item name="preferenceTheme">@style/Custom.PreferenceThemeOverlay.v14.Material</item>
-        <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>
+
+
+        <item name="android:dropDownListViewStyle">@style/App.Widget.AppCompat.DropDownItem.Spinner</item>
+
+        <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>-->
+        <item name="preferenceTheme">@style/ThemeOverlay.App.Preferences</item>
+        <item name="editableFieldLabel">@style/App.Widget.Material.TextView.FieldLabel</item>
+        <item name="editableFieldText">@style/App.Widget.EditText.FieldEntry</item>
+        <item name="editableFieldTextClickable">@style/App.Widget.EditText.FieldEntry.Clickable</item>
+
+        <item name="clickableTextViewStyleBody1">@style/App.Widget.MaterialComponents.TextView.Clickable.Body1</item>
+        <item name="clickableTextViewStyleBody1Field">@style/App.Widget.MaterialComponents.TextView.Clickable.Body1.Field</item>
+        <item name="clickableTextViewStyleBody2">@style/App.Widget.MaterialComponents.TextView.Clickable.Body2</item>
+        <item name="materialButtonIconStyle">@style/Widget.Button.OutlinedButton.IconOnly</item>
+        <item name="materialButtonIconAccentedStyle">@style/Widget.Button.OutlinedButton.IconOnly.Accented</item>
+        <item name="checkboxFavoriteAccentedStyle">@style/Widget.CompoundButton.CheckBox.Favorite.Accented</item>
+        <item name="visibilityToggleStyle">@style/Widget.CompoundButton.CheckBox.Visibility</item>
+        <item name="editableFieldCheckBox">@style/Widget.MaterialComponents.CompoundButton.CheckBox.EditField</item>
+        <!--New material inputs (not used yet) <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Custom</item>-->
+        <!-- edit text fields throughout the app -->
+        <item name="editTextStyle">@style/App.Widget.EditText</item>
+        <!--<item name="android:editTextColor">@color/edit_text_color_selector</item>-->
+        <item name="tabLayout">@style/Widget.MaterialComponents.TabLayout.Custom</item>
+
+        <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
     </style>
 
-    <style name="AlertDialogMaterialTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
-        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Alert.Button.Negative</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+    <!-- used at activity level -->
+    <style name="Theme.EditPages" parent="Theme.App.Base">
+        <item name="android:theme">@style/ThemeOverlay.EditPages</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.EditPages</item>
+
 
     </style>
-    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="buttonBarButtonStyle">@style/Widget.MaterialComponents.Button.TextButton</item>
-        <item name="buttonBarPositiveButtonStyle">@style/Alert.Button.Positive</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Alert.Button.Negative</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Alert.Button.Neutral</item>
+
+    <style name="ThemeOverlay.EditPages" parent="ThemeOverlay.MaterialComponents.Light">
+        <!-- overrides for the light bits-->
+        <item name="android:background">#ffffffff</item>
+        <item name="colorPrimaryDisabled">@color/app_primary_disabled</item> <!-- so disabled field text is strong enough to read -->
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
+        <item name="colorOnPrimary">@color/app_color_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
+        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <item name="scrimBackground">@color/app_color_scrim_color</item>  <!-- what uses this? its material -->
+        <item name="scrimHeavy">@color/black_overlay</item>
+        <item name="scrimUltraHeavy">@color/dark_black_overlay</item>
+        <item name="scrimLight">@color/app_color_scrim_color</item>
     </style>
 
-    <style name="Alert.Button.Positive" parent="Custom.Widget.MaterialComponents.Button">
-        <item name="android:layout_marginStart">8dp</item>
-        <item name="android:layout_marginLeft">8dp</item>
+    <style name="App.Widget.EditText.FieldEntry.Clickable" parent="App.Widget.EditText.FieldEntry">
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
+        <item name="android:inputType">none</item>
+        <item name="android:textIsSelectable">false</item>
     </style>
 
-    <style name="Alert.Button.Negative" parent="Custom.Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="App.Widget.EditText.FieldEntry" parent="App.Widget.EditText">
+        <item name="android:textColor">?colorPrimaryVariant</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">0dp</item>
     </style>
 
-    <style name="Alert.Button.Neutral" parent="Custom.Widget.MaterialComponents.Button.OutlinedButton">
-    </style>
-
-
-    <style name="Custom.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">
-    </style>
-
-    <style name="Custom.TextAppearance.AppCompat" parent="TextAppearance.AppCompat">
+    <!-- this ensure the text in edit text boxes is still visible when they are disabled -->
+    <style name="App.Widget.EditText" parent="Widget.AppCompat.EditText">
         <item name="android:textColor">@color/edit_text_color_selector</item>
     </style>
 
-    <!-- used on the album view - headings for listed albums -->
-    <style name="Custom.TextAppearance.AppCompat.Medium" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <style name="App.Widget.Material.TextView" parent="Widget.MaterialComponents.TextView">
         <item name="android:textColor">@color/edit_text_color_selector</item>
     </style>
 
-    <style name="Custom.Widget.MaterialComponents.Button" parent="Widget.MaterialComponents.Button">
-        <item name="backgroundTint">@color/accent</item>
-        <item name="android:textColor">@color/primary</item>
+    <style name="App.Widget.Material.TextView.FieldLabel" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">?textAppearanceCaption</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginTop">13dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="Custom.Widget.MaterialComponents.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-
-        <item name="android:textColor">@color/accent</item>
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="textColorAlertDialogListItem">?colorPrimary</item>
+    </style>
+    <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="textColorAlertDialogListItem">?colorPrimary</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body2" parent="TextAppearance.MaterialComponents.Body2">
+
+    <!-- this has the checkbox pushed to the end of the field -->
+    <style name="Widget.MaterialComponents.CompoundButton.CheckBox.EditField" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/none</item> <!-- just a null drawable - never shown -->
+        <item name="android:drawableEnd">@drawable/checkbox</item>
+        <item name="drawableTint">?colorPrimary</item> <!-- need to pull back into the material colors as drawable isn't tinted like the button -->
         <item name="android:textColor">@color/edit_text_color_selector</item>
-    </style>
-    <style name="Custom.TextAppearance.AppCompat.Body1" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/edit_text_color_selector</item>
+        <item name="android:textAppearance">?android:textAppearanceMediumInverse</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginTop">0dp</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body1.Clickable" parent="TextAppearance.MaterialComponents.Body1">
+    <!-- password field visibility toggle button style -->
+    <style name="Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@drawable/none</item> <!-- just a null drawable - never shown -->
+        <item name="android:drawableEnd">@drawable/visibility_checkbox</item>
+    </style>
+
+    <!-- Accented Favorite (heart) icon style button -->
+    <style name="Widget.CompoundButton.CheckBox.Favorite.Accented" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/favorite_checkbox</item> <!-- heart style icon -->
+        <item name="buttonTint">?colorSecondary</item> <!-- color the button icon -->
+    </style>
+
+    <!-- icon only style button tinted in the accent color -->
+    <style name="Widget.Button.OutlinedButton.IconOnly.Accented" parent="Widget.Button.OutlinedButton.IconOnly">
+        <item name="iconTint">?colorSecondary</item>
+    </style>
+
+    <!-- icon only style button -->
+    <style name="Widget.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:height">48dp</item>
+        <item name="android:width">48dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:maxWidth">48dp</item>
+        <item name="iconTint">?editTextColor</item> <!-- shows grayed if disabled -->
+        <item name="android:layout_margin">5dp</item>
+    </style>
+
+    <style name="Custom.TextAppearance.MaterialComponents.Body1.Clickable" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
-    <style name="Custom.TextAppearance.AppCompat.Body2.Clickable" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">@color/clickable_text_color_selector</item>
-    </style>
-
-    <style name="Custom.TextAppearance.AppCompat.Title.Clickable" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="android:textColor">@color/clickable_text_color_selector</item>
-    </style>
-
-    <style name="Custom.TextAppearance.AppCompat.Headline" parent="TextAppearance.MaterialComponents.Headline5">
-        <!-- this is used for items that are clickable but invisibly so -->
-    </style>
-
-    <style name="Custom.TextAppearance.AppCompat.Headline.Clickable" parent="TextAppearance.MaterialComponents.Headline5">
+    <style name="Custom.TextAppearance.MaterialComponents.Body2.Clickable" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
 
-    <style name="Custom.Widget.AppCompat.CompoundButton.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+    <!-- TODO think about whether I want to use this to tint all checkboxes in accent color -->
+    <style name="App.Widget.CompoundButton.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="buttonTint">@color/checkbox_color_tint</item>
     </style>
-    <style name="Custom.CheckBox.TextAppearance" parent="TextAppearance.AppCompat.Widget.Button">
-    </style>
-    <style name="Custom.Widget.AppCompat.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+
+    <!-- TODO probably not needed - check download dialog -->
+    <style name="App.Widget.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="buttonTint">@color/checkbox_color_tint</item>
-    </style>
-    <style name="Custom.Widget.AppCompat.CompoundButton.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
-        <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="buttonTint">@color/checkbox_color_tint</item>
+        <!--<item name="buttonTint">@color/checkbox_color_tint</item>-->
     </style>
 
-    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body1" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Body1.Clickable</item>
+    <!-- TODO this is v specific - maybe just create a specific style for the item -->
+    <style name="App.Widget.MaterialComponents.TextView.Clickable.Body1" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.MaterialComponents.Body1.Clickable</item>
     </style>
 
-    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body1.Field">
+    <!-- TODO - Remove this and replace with the new edit field style I wrote -->
+    <style name="App.Widget.MaterialComponents.TextView.Clickable.Body1.Field">
         <item name="android:background">?attr/editTextBackground</item>
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/enabled_disabled_tint</item> <!-- TODO WARNING this tint needs inverting in light mode -->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
     </style>
 
-    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body2" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Body2.Clickable</item>
+    <!-- TODO this is v specific - maybe just create a specific style for the item -->
+    <style name="App.Widget.MaterialComponents.TextView.Clickable.Body2" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.MaterialComponents.Body2.Clickable</item>
     </style>
 
-    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Title" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Title.Clickable</item>
-    </style>
-
-    <style name="Custom.Widget.MaterialComponents.TextView.Clickable.Body2.Field">
-        <item name="android:background">?attr/editTextBackground</item>
-    </style>
-
-    <style name="Custom.Widget.AppCompat.Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
-        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+    <!-- style point for spinners across the app -->
+    <style name="App.Widget.AppCompat.Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
+        <!--<item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
         <item name="android:paddingBottom">9dp</item>
-        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingTop">0dp</item>-->
+    </style>
+
+    <!-- spinners used on a page full of a list of input fields -->
+    <style name="App.Widget.AppCompat.Spinner.Underlined.Field" parent="Widget.AppCompat.Spinner.Underlined">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+
+        <!--
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginTop">7dp</item>-->
     </style>
 
     <!-- spinner / drop down lists - what is displayed when not expanded -->
-    <style name="Custom.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    <style name="App.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textAppearance">?textAppearanceBody1</item>
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="android:paddingBottom">7dp</item>
     </style>
     <!-- items in the dropdown 'popup' when a spinner is clicked on -->
-    <style name="Custom.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
-        <item name="android:background">@color/background_floating</item>
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    <!--<style name="App.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
+        &lt;!&ndash;<item name="android:background">@color/background_floating</item>
+        <item name="android:textAppearance">?textAppearanceBody1</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
-        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+        <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>&ndash;&gt;
+    </style>-->
+
+    <style name="App.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <!--<item name="android:minHeight">9dp</item>
+        <item name="android:maxHeight">9dp</item>-->
+        <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
     </style>
 
-    <style name="Custom.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:minHeight">9dp</item>
-        <item name="android:maxHeight">9dp</item>
-        <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
+    <!-- Allow change of the tab colors in the future perhaps -->
+    <style name="Widget.MaterialComponents.TabLayout.Custom" parent="Widget.MaterialComponents.TabLayout">
+
+    </style>
+
+    <style name="App.Widget.MaterialComponents.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">?scrimLight</item> <!-- used in lists when in standard theme (not sure why) -->
+        <item name="cardForegroundColor">?scrimLight</item> <!-- used in selectable lists (background color essentially) -->
+    </style>
+
+    <style name="App.Widget.Snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <!-- need this to be transparent to prevent corners showing with the theme background color -->
+        <item name="android:background">@color/transparent</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Preferences" parent="PreferenceThemeOverlay.v14.Material"></style>
+
+    <style name="App.Widget.MaterialComponents.CompoundButton.Switch.Field" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="android:textColor">?colorPrimaryVariant</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">0dp</item>
     </style>
 
 </resources>

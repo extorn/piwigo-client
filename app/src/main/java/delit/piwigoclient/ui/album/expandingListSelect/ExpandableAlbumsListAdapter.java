@@ -15,7 +15,7 @@ import androidx.annotation.LayoutRes;
 import java.util.HashSet;
 import java.util.Set;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -106,7 +106,7 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
     private void bindDataToGroupView(View v, CategoryItem item, boolean isExpanded) {
 
         if(prefs.isMultiSelectionEnabled()) {
-            AppCompatCheckboxTriState checkbox = v.findViewById(R.id.actionable_list_item_checked);
+            MaterialCheckboxTriState checkbox = v.findViewById(R.id.actionable_list_item_checked);
             checkbox.setChecked(isChecked(item));
             checkbox.setOnClickListener(new ItemClickListener(item));
             checkbox.setCheckboxAtEnd(true);

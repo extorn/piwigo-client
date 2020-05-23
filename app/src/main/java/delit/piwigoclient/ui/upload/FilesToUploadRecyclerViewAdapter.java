@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +20,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.button.MaterialButton;
 
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -35,7 +34,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
@@ -191,12 +189,12 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (viewType == VIEW_TYPE_LIST) {
-            view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.layout_upload_list_item_list_format, parent, false);
-
+            throw new RuntimeException("List style not supported any more");
+//            view = LayoutInflater.from(parent.getContext())
+//                    .inflate(R.layout.layout_upload_list_item_list_format, parent, false);
         } else if (viewType == VIEW_TYPE_GRID) {
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.layout_upload_list_item_grid_format, parent, false);
+                    .inflate(R.layout.layout_list_item_upload_grid_format, parent, false);
         } else {
             throw new IllegalStateException("viewType not supported" + viewType);
         }
@@ -589,7 +587,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         private final TextView progressBarDescription;
         private final TextView fileNameField;
         private final TextView itemHeading;
-        private final ImageButton deleteButton;
+        private final MaterialButton deleteButton;
         private final AppCompatImageView fileForUploadImageView;
         private final ResizingPicassoLoader imageLoader;
         // data!

@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="16dp"
-    android:layout_marginEnd="16dp">
+    android:layout_marginEnd="16dp"
+    tools:layout_width="200dp">
 
 
     <ImageView
@@ -16,10 +17,11 @@
         android:layout_height="wrap_content"
         android:contentDescription="TODO" android:minHeight="120dp"
         android:minWidth="120dp"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+        tools:srcCompat="@drawable/ic_file_black_24dp"/>
 
 
-    <delit.libs.ui.view.button.AppCompatCheckboxTriState
+    <delit.libs.ui.view.button.MaterialCheckboxTriState
         android:id="@+id/list_item_checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,14 +31,15 @@
         android:clickable="false"
         android:focusable="false"/>
 
-    <delit.libs.ui.view.button.CustomImageButton
+    <Button
         android:id="@+id/list_item_delete_button"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:focusable="false"
-        app:srcCompat="@drawable/ic_delete_black_24px" />
+        app:icon="@drawable/ic_delete_black_24px"
+        style="?materialButtonIconStyle"/>
 
     <TextView
         android:id="@+id/list_item_heading"
@@ -54,8 +57,8 @@
         android:layout_height="wrap_content"
         tools:text="Heading"
         android:textAlignment="center"
-        android:background="@color/black_overlay"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:background="?scrimHeavy"
+        android:textAppearance="?textAppearanceBody2"/>
 
     <TextView
         android:id="@+id/list_item_name"
@@ -70,7 +73,7 @@
         android:layout_height="wrap_content"
         tools:text="File name"
         android:textAlignment="center"
-        android:background="@color/black_overlay"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:background="?scrimHeavy"
+        android:textAppearance="?textAppearanceBody2"/>
 
 </RelativeLayout>

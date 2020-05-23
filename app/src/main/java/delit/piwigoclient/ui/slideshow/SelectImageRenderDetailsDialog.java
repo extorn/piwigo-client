@@ -7,11 +7,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Switch;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.Serializable;
 
@@ -27,12 +28,12 @@ class SelectImageRenderDetailsDialog {
     private final Context context;
     private int[] rotationValues;
     private Spinner imageRotation;
-    private Switch maxZoomPicker;
+    private SwitchMaterial maxZoomPicker;
     private DownloadItemsListAdapter adapter;
     private ListView fileSelectList;
 
     public SelectImageRenderDetailsDialog(Context context) {
-        this.context = context;
+        this.context = new ContextThemeWrapper(context, R.style.ThemeOverlay_EditPages);
     }
 
     public AlertDialog buildDialog(String currentImageUrlDisplayed, final PictureResourceItem model, final RenderDetailSelectListener listener) {

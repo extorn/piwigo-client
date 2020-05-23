@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -93,9 +93,9 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     private static final String TAG = "ViewTagFrag";
 
     private AlbumItemRecyclerViewAdapter viewAdapter;
-    private FloatingActionButton retryActionButton;
+    private ExtendedFloatingActionButton retryActionButton;
     private RelativeLayout bulkActionsContainer;
-    private FloatingActionButton bulkActionButtonDelete;
+    private ExtendedFloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
     private Tag tag;
     private PiwigoTag tagModel;

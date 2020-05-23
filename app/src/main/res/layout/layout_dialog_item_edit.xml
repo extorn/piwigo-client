@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:theme="@style/ThemeOverlay.EditPages"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/title"
+        tools:text="Editing item"
+        style="?editableFieldLabel"/>
+
+    <EditText
+        android:id="@+id/edit_field"
+        tools:text="some text being edited"
+        style="?editableFieldText"/>
+</LinearLayout>

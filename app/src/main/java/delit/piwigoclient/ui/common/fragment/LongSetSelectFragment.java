@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,7 +26,6 @@ import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.Enableable;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.list.SelectableItemsAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.BuildConfig;
@@ -51,14 +50,14 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private Y list;
     private X listAdapter;
     private Button saveChangesButton;
-    private FloatingActionButton reloadListButton;
+    private ExtendedFloatingActionButton reloadListButton;
     // Maintained state
     private int actionId;
     private HashSet<Long> currentSelection;
     private HashSet<Long> initialSelection;
     private Button toggleAllSelectionButton;
     private boolean selectToggle;
-    private CustomImageButton addListItemButton;
+    private ExtendedFloatingActionButton addListItemButton;
     private Z viewPrefs;
 
     public static Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
@@ -93,7 +92,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         return actionId;
     }
 
-    public CustomImageButton getAddListItemButton() {
+    public ExtendedFloatingActionButton getAddListItemButton() {
         return addListItemButton;
     }
 

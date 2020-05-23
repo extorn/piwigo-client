@@ -1,14 +1,36 @@
 <resources>
 
+    <!-- my custom style attribs -->
+    <attr format="reference" name="materialButtonIconStyle"/>
+    <attr format="reference" name="materialButtonIconAccentedStyle"/>
+    <attr format="reference" name="checkboxFavoriteAccentedStyle"/>
+    <attr format="reference" name="visibilityToggleStyle"/>
+    <attr format="reference" name="editableFieldCheckBox"/>
+    <attr format="reference" name="clickableTextViewStyleBody1"/>
+    <attr format="reference" name="clickableTextViewStyleBody1Field"/>
+    <attr format="reference" name="clickableTextViewStyleBody2"/>
+    <attr format="reference" name="clickableTextViewStyleTitle"/>
+    <attr format="reference" name="tabLayout"/>
+    <attr format="reference" name="editableFieldLabel"/>
+    <attr format="reference" name="editableFieldText"/>
+    <attr format="reference" name="editableFieldSpinner"/>
+    <attr format="reference" name="editableFieldSwitch"/>
+    <attr format="reference" name="editableFieldTextClickable"/>
+    <attr format="reference|color" name="scrimUltraHeavy"/>
+    <attr format="reference|color" name="scrimHeavy"/>
+    <attr format="reference|color" name="scrimLight"/>
+
+    <attr format="color" name="colorPrimaryDisabled"/>
+    <attr format="color" name="colorAlbumItemBackground"/>
+
+
+
     <!-- Declare custom theme attributes that allow changing which styles are
          used for button bars depending on the API privacyLevel.
          ?android:attr/buttonBarStyle is pkg as of API 11 so this is
          necessary to support previous API levels. -->
 
-    <attr format="reference" name="clickableTextViewStyleBody1"/>
-    <attr format="reference" name="clickableTextViewStyleBody1Field"/>
-    <attr format="reference" name="clickableTextViewStyleBody2"/>
-    <attr format="reference" name="clickableTextViewStyleTitle"/>
+
 
     <declare-styleable name="ButtonBarContainerTheme">
         <attr name="metaButtonBarStyle" format="reference" />
@@ -24,9 +46,17 @@
         <attr name="layout_horizontalSpacing" format="dimension" />
     </declare-styleable>
 
+    <attr name="initialTabIdx" format="integer" />
+
+    <declare-styleable name="CustomMaterialTabLayout">
+        <attr name="initialTabIdx"/>
+    </declare-styleable>
+
     <declare-styleable name="SlidingTabLayout">
         <attr name="viewPager" format="reference" />
-        <attr name="initialTabIdx" format="integer" />
+        <attr name="initialTabIdx"/>
+        <attr name="tabTitleViewLayoutId" format="reference"/>
+        <attr name="tabTitleTextViewId" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="CustomExoPlayerTimeBar">
@@ -51,7 +81,7 @@
     <declare-styleable name="ClientCertificatePreference">
     </declare-styleable>
 
-    <declare-styleable name="AppCompatCheckboxTriState">
+    <declare-styleable name="MaterialCheckboxTriState">
         <attr name="state_always_checked" format="boolean"/>
         <attr name="checkbox_at_end" format="boolean"/>
     </declare-styleable>
@@ -77,18 +107,9 @@
 
     <attr name="connectionProfileNameKey" format="string"/>
 
-    <declare-styleable name="CustomSlidingLayer">
-        <attr format="boolean" name="shadowDrawable"/>
-        <attr format="dimension" name="shadowSize"/>
-        <attr format="boolean" name="changeStateOnTap"/>
-        <attr format="dimension" name="offsetDistance"/>
-        <attr format="dimension" name="previewOffsetDistance"/>
-        <attr format="enum" name="csl_stickTo">
-            <enum name="right" value="-1"/>
-            <enum name="left" value="-2"/>
-            <enum name="top" value="-3"/>
-            <enum name="bottom" value="-4"/>
-        </attr>
+    <declare-styleable name="SlidingBottomSheet">
+        <attr name="appBarViewId" format="reference"/>
+        <attr name="stateExpanded" format="boolean"/>
     </declare-styleable>
 
 </resources>

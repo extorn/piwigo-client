@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,10 +16,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -25,9 +26,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -35,8 +36,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.wunderlist.slidinglayer.CustomSlidingLayer;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,7 +59,7 @@ import java.util.Set;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.util.CollectionUtils;
@@ -165,29 +167,29 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     AlbumItemRecyclerViewAdapter viewAdapter;
-    FloatingActionButton bulkActionButtonTag;
-    private FloatingActionButton retryActionButton;
+    ExtendedFloatingActionButton bulkActionButtonTag;
+    private ExtendedFloatingActionButton retryActionButton;
     private TextView galleryNameHeader;
     private TextView galleryDescriptionHeader;
-    private ImageButton descriptionDropdownButton;
     private EditText galleryNameView;
     private EditText galleryDescriptionView;
-    private CustomImageButton saveButton;
-    private CustomImageButton discardButton;
-    private CustomImageButton editButton;
-    private CustomImageButton pasteButton;
-    private CustomImageButton cutButton;
-    private CustomImageButton deleteButton;
-    private AppCompatCheckBox galleryPrivacyStatusField;
+    private MaterialButton saveButton;
+    private MaterialButton discardButton;
+    private MaterialButton editButton;
+    private MaterialButton pasteButton;
+    private MaterialButton cutButton;
+    private MaterialButton deleteButton;
+    private SwitchMaterial galleryUserCommentsPermittedField;
+    private SwitchMaterial galleryPrivacyStatusField;
     private TextView allowedGroupsField;
     private TextView allowedUsersField;
     private RelativeLayout bulkActionsContainer;
-    private FloatingActionButton bulkActionButtonPermissions;
-    private FloatingActionButton bulkActionButtonDelete;
-    private FloatingActionButton bulkActionButtonDownload;
-    private FloatingActionButton bulkActionButtonCopy;
-    private FloatingActionButton bulkActionButtonCut;
-    private FloatingActionButton bulkActionButtonPaste;
+    private ExtendedFloatingActionButton bulkActionButtonPermissions;
+    private ExtendedFloatingActionButton bulkActionButtonDelete;
+    private ExtendedFloatingActionButton bulkActionButtonDownload;
+    private ExtendedFloatingActionButton bulkActionButtonCopy;
+    private ExtendedFloatingActionButton bulkActionButtonCut;
+    private ExtendedFloatingActionButton bulkActionButtonPaste;
     private View basketView;
     private TextView emptyGalleryLabel;
     private TextView allowedGroupsFieldLabel;
@@ -205,7 +207,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private HashSet<Long> userIdsInSelectedGroups;
     private int updateAlbumDetailsProgress = UPDATE_NOT_RUNNING;
     private boolean usernameSelectionWantedNext;
-    private CustomImageButton addNewAlbumButton;
+    private MaterialButton addNewAlbumButton;
     private BulkResourceActionData bulkResourceActionData;
     private long userGuid;
     private transient List<CategoryItem> adminCategories;
@@ -213,11 +215,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private RecyclerView galleryListView;
     private AlbumViewAdapterListener viewAdapterListener;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
-    private CustomSlidingLayer bottomSheet;
+    private SlidingBottomSheet bottomSheet;
     private EndlessRecyclerViewScrollListener galleryListViewScrollListener;
     private CategoryItem albumDetails;
     private boolean reopening;
     private String currentResourceSortOrder;
+    private View albumHeaderBar;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -468,7 +471,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         if (!reopening) {
             populateViewFromModelEtc(view, savedInstanceState);
         } else {
-            descriptionDropdownButton.setVisibility(GONE);
             Basket basket = getBasket();
             initialiseBasketView(view);
             setupBottomSheet(bottomSheet);
@@ -664,16 +666,27 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
 
+        albumHeaderBar = view.findViewById(R.id.album_header_bar);
         galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
-        galleryNameHeader.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheet.openLayer(true);
+        galleryNameHeader.setOnClickListener(v -> {
+            if(galleryDescriptionHeader.getText().length() > 0) {
+                if (galleryDescriptionHeader.getVisibility() == GONE) {
+                    galleryDescriptionHeader.setVisibility(View.VISIBLE);
+                } else {
+                    galleryDescriptionHeader.setVisibility(GONE);
+                }
+            }
+        });
+        Button showInformationButton = view.findViewById(R.id.show_information_action_button);
+        showInformationButton.setOnClickListener(v -> {
+            if(bottomSheet.isOpen()) {
+                bottomSheet.close();
+            } else {
+                bottomSheet.open();
             }
         });
 
         galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
-        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
 
         // Set the adapter
         galleryListView = view.findViewById(R.id.gallery_list);
@@ -1215,6 +1228,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         });
 
+        galleryUserCommentsPermittedField = editFields.findViewById(R.id.gallery_details_comments_allowed);
+
         galleryPrivacyStatusField = editFields.findViewById(R.id.gallery_details_status);
         privacyStatusFieldListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -1223,10 +1238,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     // when reopening, this will be called once the gallery model has been loaded.
                     loadAlbumPermissionsIfNeeded();
                 }
-                allowedGroupsFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
-                allowedGroupsField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
-                allowedUsersFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
-                allowedUsersField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
+                allowedGroupsFieldLabel.setEnabled(isChecked);
+                allowedGroupsField.setEnabled(isChecked);
+                allowedUsersFieldLabel.setEnabled(isChecked);
+                allowedUsersField.setEnabled(isChecked);
+                fillGroupsAndUserPrivacyFields();
             }
         };
         galleryPrivacyStatusField.setOnCheckedChangeListener(privacyStatusFieldListener);
@@ -1465,32 +1481,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private void setupBottomSheet(final CustomSlidingLayer bottomSheet) {
-        bottomSheet.setOnInteractListener(new CustomSlidingLayer.OnInteractListener() {
-            @Override
-            public void onOpen() {
-
-            }
-
-            @Override
-            public void onShowPreview() {
-
-            }
-
-            @Override
-            public void onClose() {
-
-            }
+    private void setupBottomSheet(final SlidingBottomSheet bottomSheet) {
+        bottomSheet.setOnInteractListener(new SlidingBottomSheet.OnInteractListener() {
 
             @Override
             public void onOpened() {
                 informationShowing = !informationShowing;
                 updateInformationShowingStatus();
-            }
-
-            @Override
-            public void onPreviewShowed() {
-
             }
 
             @Override
@@ -1531,6 +1528,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             public void onClick(View v) {
                 galleryModel.getContainerDetails().setName(galleryNameView.getText().toString());
                 galleryModel.getContainerDetails().setDescription(galleryDescriptionView.getText().toString());
+                galleryModel.getContainerDetails().setUserCommentsAllowed(galleryUserCommentsPermittedField.isChecked());
                 galleryModel.getContainerDetails().setPrivate(galleryPrivacyStatusField.isChecked());
                 updateAlbumDetails();
             }
@@ -1690,17 +1688,33 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         } else {
             galleryDescriptionView.setText("");
         }
-        allowedGroupsField.setText(R.string.click_to_view);
-        allowedUsersField.setText(R.string.click_to_view);
+        fillGroupsAndUserPrivacyFields();
+
         galleryPrivacyStatusField.setChecked(galleryModel.getContainerDetails().isPrivate());
-        if (currentUsers != null) {
-            allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
-        }
-        if (currentGroups != null) {
-            allowedGroupsField.setText(getString(R.string.click_to_view_pattern, currentGroups.length));
-        }
+        galleryUserCommentsPermittedField.setChecked(galleryModel.getContainerDetails().isUserCommentsAllowed());
+
+
         displayControlsBasedOnSessionState();
         setEditItemDetailsControlsStatus();
+    }
+
+    private void fillGroupsAndUserPrivacyFields() {
+        if(allowedGroupsField.isEnabled()) {
+            allowedGroupsField.setText(R.string.click_to_view);
+            if (currentGroups != null) {
+                allowedGroupsField.setText(getString(R.string.click_to_view_pattern, currentGroups.length));
+            }
+        } else {
+            allowedGroupsField.setText(R.string.all);
+        }
+        if(allowedUsersField.isEnabled()) {
+            allowedUsersField.setText(R.string.click_to_view);
+            if (currentUsers != null) {
+                allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
+            }
+        } else {
+            allowedUsersField.setText(R.string.all);
+        }
     }
 
     private void setEditItemDetailsControlsStatus() {
@@ -1708,15 +1722,22 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return; // if reopening page (will be set once data loaded)
         }
         boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || !galleryModel.getContainerDetails().isRoot();
-        bottomSheet.setVisibility(visibleBottomSheet ? View.VISIBLE : View.GONE);
+        bottomSheet.setVisibility(visibleBottomSheet ? VISIBLE : GONE);
 
         addNewAlbumButton.setEnabled(!editingItemDetails);
 
         galleryNameView.setEnabled(editingItemDetails);
         galleryDescriptionView.setEnabled(editingItemDetails);
         galleryPrivacyStatusField.setEnabled(editingItemDetails);
+        galleryUserCommentsPermittedField.setEnabled(editingItemDetails);
         allowedUsersField.setEnabled(true); // Always enabled (but is read only when not editing)
         allowedGroupsField.setEnabled(true); // Always enabled (but is read only when not editing)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // this tint mirrors what would occur if the field could be disabled.
+            ColorStateList tint = ColorStateList.valueOf(editingItemDetails ? ContextCompat.getColor(requireContext(), R.color.darken_90) : ContextCompat.getColor(requireContext(), R.color.darken_40));
+            allowedGroupsField.setBackgroundTintList(tint);
+            allowedUsersField.setBackgroundTintList(tint);
+        }
 
         editButton.setVisibility(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode() && !editingItemDetails && galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM ? VISIBLE : GONE);
 
@@ -1729,10 +1750,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private void displayControlsBasedOnSessionState() {
         if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode()) {
             boolean showPersistenceControls = galleryModel != null && !galleryModel.getContainerDetails().isRoot();
-            saveButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
-            discardButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
-            editButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
-            deleteButton.setVisibility(showPersistenceControls ? VISIBLE : INVISIBLE);
+            saveButton.setVisibility(editingItemDetails && showPersistenceControls ? VISIBLE : GONE);
+            discardButton.setVisibility(editingItemDetails && showPersistenceControls ? VISIBLE : GONE);
+            editButton.setVisibility((!editingItemDetails) && showPersistenceControls ? VISIBLE : GONE);
+            deleteButton.setVisibility(showPersistenceControls ? VISIBLE : GONE);
             addNewAlbumButton.setVisibility(VISIBLE);
             //TODO make visible once functionality written.
             cutButton.setVisibility(GONE);
@@ -1759,12 +1780,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         if(galleryModel == null) {
             return;
         }
+
         CategoryItem currentAlbum = galleryModel.getContainerDetails();
+
         if (currentAlbum != null && currentAlbum.getName() != null && !currentAlbum.getName().isEmpty() && !currentAlbum.isRoot()) {
             galleryNameHeader.setText(galleryModel.getContainerDetails().getName());
             galleryNameHeader.setVisibility(View.VISIBLE);
+            albumHeaderBar.setVisibility(VISIBLE);
         } else {
-            galleryNameHeader.setVisibility(GONE);
+            galleryNameHeader.setVisibility(INVISIBLE);
         }
 
 
@@ -1773,21 +1797,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
 
         if (galleryModel.getContainerDetails().getDescription() != null && !galleryModel.getContainerDetails().getDescription().isEmpty()) {
+            albumHeaderBar.setVisibility(VISIBLE);
             galleryDescriptionHeader.setVisibility(VISIBLE);
-            descriptionDropdownButton.setVisibility(View.VISIBLE);
-            descriptionDropdownButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (galleryDescriptionHeader.getVisibility() == GONE) {
-                        galleryDescriptionHeader.setVisibility(View.VISIBLE);
-                    } else {
-                        galleryDescriptionHeader.setVisibility(GONE);
-                    }
-                }
-            });
         } else {
             galleryDescriptionHeader.setVisibility(GONE);
-            descriptionDropdownButton.setVisibility(GONE);
         }
     }
 

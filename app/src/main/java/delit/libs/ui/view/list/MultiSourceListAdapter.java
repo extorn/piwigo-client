@@ -20,7 +20,7 @@ import java.util.HashSet;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.Enableable;
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -31,7 +31,6 @@ import delit.piwigoclient.R;
 
 public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapterPreferences> extends BaseAdapter implements Enableable, SelectableItemsAdapter<T> {
 
-    private final Context context;
     private final S adapterPrefs;
     private final ArrayList<T> availableItems;
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
@@ -40,12 +39,11 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
     private LongSparseArray<Integer> idPositionMap;
     private ListView parentList;
 
-    public MultiSourceListAdapter(Context context, ArrayList<T> availableItems, S adapterPrefs) {
-        this(context, availableItems, null, adapterPrefs);
+    public MultiSourceListAdapter(ArrayList<T> availableItems, S adapterPrefs) {
+        this(availableItems, null, adapterPrefs);
     }
 
-    public MultiSourceListAdapter(Context context, ArrayList<T> availableItems, HashSet<Long> indirectlySelectedItems, S adapterPrefs) {
-        this.context = context;
+    public MultiSourceListAdapter(ArrayList<T> availableItems, HashSet<Long> indirectlySelectedItems, S adapterPrefs) {
         this.adapterPrefs = adapterPrefs;
         this.availableItems = availableItems;
         this.indirectlySelectedItems = indirectlySelectedItems;
@@ -135,7 +133,7 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         setViewContentForItemDisplay(parent.getContext(), view, item, levelInTreeOfItem);
 
 
-        final AppCompatCheckboxTriState imageView = getAppCompatCheckboxTriState(view);
+        final MaterialCheckboxTriState imageView = getAppCompatCheckboxTriState(view);
 
         imageView.setVisibility(showItemSelectedMarker(imageView) ? View.VISIBLE : View.GONE);
 
@@ -158,21 +156,21 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         return view;
     }
 
-    protected boolean showItemSelectedMarker(AppCompatCheckboxTriState imageView) {
+    protected boolean showItemSelectedMarker(MaterialCheckboxTriState imageView) {
         return adapterPrefs.isAllowItemSelection();
     }
 
-    protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
+    protected MaterialCheckboxTriState getAppCompatCheckboxTriState(View view) {
         return view.findViewById(R.id.permission_status_icon);
     }
 
     protected View buildNewItemView(ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(getItemViewLayoutRes(), parent, false);
+        return LayoutInflater.from(parent.getContext()).inflate(getItemViewLayoutRes(), parent, false);
     }
 
     protected @LayoutRes
     int getItemViewLayoutRes() {
-        return R.layout.layout_permission_list_item;
+        return R.layout.layout_list_item_permission;
     }
 
     /**

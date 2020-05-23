@@ -107,7 +107,7 @@
     <string name="createGallery_parentGalleryTitle">Parent Album</string>
     <string name="createGallery_galleryNameTitle">Album Name</string>
     <string name="createGallery_galleryDescriptionTitle">Description</string>
-    <string name="createGallery_galleryCommentsAllowed">Allow user comments</string>
+    <string name="createGallery_galleryCommentsAllowed">Allow users to add comments</string>
     <string name="createGallery_galleryIsPrivate">Album is private?</string>
     <string name="createGallery_permissions_allowedGroupsTitle">Allowed Groups</string>
     <string name="createGallery_permissions_allowedUsersTitle">Allowed Users</string>
@@ -284,7 +284,7 @@ At the moment, it provides a basic level of functionality to allow navigation ar
 
 Please can I ask that if you uninstall the app, you use the link on the app menu to email me telling me why the app did not meet your needs so I can address this.
 
-The version of the PIWIGO server I test against is currently 2.9.4.
+The version of the PIWIGO server I test against is currently 2.10.2.
 
 My test gallery contains .jpg and .mp4 files only. If yours contains others, you may well encounter problems - if so, please tell me and I'll prioritise work on those file types.
 
@@ -670,7 +670,7 @@ SOFTWARE.
     <string name="gallery_details_status_title">Privacy Status</string>
     <string name="gallery_details_status_galleryIsPrivate">Yes</string>
     <string name="gallery_details_status_galleryIsPublic">No</string>
-    <string name="gallery_details_status">Album is Private?</string>
+    <string name="gallery_details_status">Restrict access to this folder</string>
     <string name="gallery_details_allowed_groups_title">Allowed Groups</string>
     <string name="gallery_details_allowed_users_title">Allowed Users</string>
     <string name="click_to_view">Click to view</string>
@@ -722,7 +722,7 @@ SOFTWARE.
     <string name="groups_heading">Groups</string>
     <string name="users_heading">Users</string>
     <string name="albums_heading">Albums</string>
-    <string name="user_high_definition_title">High Definition Enabled</string>
+    <string name="user_high_definition_title">High Definition</string>
     <string name="user_email_title">Email Address</string>
     <string name="none_value">None</string>
     <string name="access_rights_heading">Access Rights</string>
@@ -1023,5 +1023,9 @@ SOFTWARE.
     <string name="missing_permissions_warning_message_pattern">"Since the last time this app was opened, file permissions required by the following parts of the app have been removed\n\n%1$s\n\nPlease select new permissions for these settings to keep things working as expected."</string>
     <string name="folder_selection_title">Select Folder</string>
     <string name="files_selection_title">Select Files</string>
+    <string name="all">All</string>
+    <string name="user_high_definition_field">Allow access to original (full size) files</string>
+    <string name="group_is_default_field">Assign new users to this group</string>
+    <string name="createGallery_galleryCommentsAllowed_title">User Comments</string>
 
 </resources>

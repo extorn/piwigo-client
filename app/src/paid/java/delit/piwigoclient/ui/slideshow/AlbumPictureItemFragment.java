@@ -10,6 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.Metadata;
+import com.google.android.material.tabs.TabLayout;
 import com.ortiz.touchview.TouchImageView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -17,6 +18,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.CustomViewPager;
 import delit.libs.ui.view.InlineViewPagerAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
@@ -51,10 +53,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         resourceDetailsViewPager.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
-                InlineViewPagerAdapter viewPagerAdapter = ((InlineViewPagerAdapter)((ViewPager)v).getAdapter());
-                if(viewPagerAdapter != null) {
-                    v.getLayoutParams().height = viewPagerAdapter.getLargestDesiredChildHeight();
-                }
+                v.getLayoutParams().height = ((CustomViewPager)v).getMinimumDesiredHeight();
             }
 
             @Override
@@ -115,7 +114,11 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         InlineViewPagerAdapter viewPagerAdapter = ((InlineViewPagerAdapter)viewPager.getAdapter());
         if(viewPagerAdapter != null) {
             viewPager.getLayoutParams().height = viewPagerAdapter.getLargestDesiredChildHeight();
-            viewPager.getLayoutParams().height = Math.min(viewPager.getLayoutParams().height, viewPager.getRootView().getHeight() / 3 * 2);
+            View v = viewPager.getChildAt(0);
+            if(v instanceof TabLayout) {
+                viewPager.getLayoutParams().height += v.getHeight();
+            }
+         //   viewPager.getLayoutParams().height = Math.min(viewPager.getLayoutParams().height, viewPager.getRootView().getHeight() / 3 * 2);
         }
 
 

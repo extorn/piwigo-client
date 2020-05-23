@@ -35,8 +35,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.wunderlist.slidinglayer.CustomSlidingLayer;
-import com.wunderlist.slidinglayer.OnInteractAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,6 +45,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -303,10 +302,10 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     private static class CustomVidePlayerControlsVisibilityListener implements PlayerControlView.VisibilityListener {
 
         private final View playerControlsView;
-        private final CustomSlidingLayer videoMetadataContainerView;
+        private final SlidingBottomSheet videoMetadataContainerView;
         private int naturalHeightPx = -1;
 
-        private CustomVidePlayerControlsVisibilityListener(View playerControlsView, CustomSlidingLayer videoMetadataContainerView) {
+        private CustomVidePlayerControlsVisibilityListener(View playerControlsView, SlidingBottomSheet videoMetadataContainerView) {
             this.playerControlsView = playerControlsView;
             this.videoMetadataContainerView = videoMetadataContainerView;
         }

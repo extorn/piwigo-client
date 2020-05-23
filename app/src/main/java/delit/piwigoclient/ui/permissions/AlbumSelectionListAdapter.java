@@ -15,12 +15,12 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 
 public class AlbumSelectionListAdapter extends MultiSourceListAdapter<CategoryItemStub, BaseRecyclerViewAdapterPreferences> {
 
-    public AlbumSelectionListAdapter(Context context, ArrayList<CategoryItemStub> availableItems, BaseRecyclerViewAdapterPreferences adapterPreferences) {
-        super(context, availableItems, adapterPreferences);
+    public AlbumSelectionListAdapter(ArrayList<CategoryItemStub> availableItems, BaseRecyclerViewAdapterPreferences adapterPreferences) {
+        super(availableItems, adapterPreferences);
     }
 
-    public AlbumSelectionListAdapter(Context context, ArrayList<CategoryItemStub> availableItems, HashSet<Long> indirectlySelectedItems, BaseRecyclerViewAdapterPreferences adapterPreferences) {
-        super(context, availableItems, indirectlySelectedItems, adapterPreferences);
+    public AlbumSelectionListAdapter(ArrayList<CategoryItemStub> availableItems, HashSet<Long> indirectlySelectedItems, BaseRecyclerViewAdapterPreferences adapterPreferences) {
+        super(availableItems, indirectlySelectedItems, adapterPreferences);
     }
 
     @Override

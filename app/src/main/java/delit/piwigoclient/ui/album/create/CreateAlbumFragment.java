@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -66,8 +67,8 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
     private CategoryItemStub parentGallery;
     private TextView galleryNameEditField;
     private TextView galleryDescriptionEditField;
-    private Switch galleryCommentsAllowedSwitchField;
-    private Switch galleryIsPrivateSwitchField;
+    private SwitchMaterial galleryCommentsAllowedSwitchField;
+    private SwitchMaterial galleryIsPrivateSwitchField;
     private ArrayList<Group> selectedGroups;
     private ArrayList<Username> selectedUsernames;
     private TextView allowedGroupsTextView;

@@ -982,7 +982,7 @@ public class IOUtils {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
             return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
         } else {
-            if(!uri.getScheme().equals("file")) {
+            if(!"file".equals(uri.getScheme())) {
                 List<String> pathSegments = uri.getPathSegments();
 
                 int toIdx = pathSegments.size() - 1;
@@ -1003,10 +1003,10 @@ public class IOUtils {
     }
 
     public static boolean hasUriPermissions(Context context, Uri uri, int permissions) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+        if (uri == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             return true;
         }
-        if(uri.getScheme().equals("file")) {
+        if("file".equals(uri.getScheme())) {
             return Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q;
         }
         List<UriPermission> uriPerms = context.getContentResolver().getPersistedUriPermissions();

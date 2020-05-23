@@ -6,8 +6,8 @@
         android:drawable="@drawable/ic_check_box_checked_24dp" />
     <item android:state_checked="true"
         android:drawable="@drawable/ic_check_box_checked_24dp" /> <!-- checked -->
-    <item android:drawable="@drawable/ic_check_box_checked_24dp" android:state_checked="false" app:state_always_checked="true" /> <!-- unchecked but essentially still checked! -->
+    <item app:state_always_checked="true"
+        android:drawable="@drawable/ic_check_box_checked_24dp"/> <!-- unchecked but essentially still checked! -->
     <item android:state_checked="false"
         android:drawable="@drawable/ic_check_box_unchecked_24dp" /> <!-- unchecked -->
-
 </selector>

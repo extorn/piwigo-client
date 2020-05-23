@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -49,6 +50,16 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         args.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableAlbums);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
+        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
+            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_EditPages));
+        }
+        return inflator;
     }
 
     @Override
@@ -126,7 +137,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
             //TODO FEATURE: Support albums list paging (load page size from settings)
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         } else if (getListAdapter() == null) {
-            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, getViewPrefs());
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();
             availableItemsAdapter.linkToListView(listView, getInitialSelection(), getCurrentSelection());
             setListAdapter(availableItemsAdapter);

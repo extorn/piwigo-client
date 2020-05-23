@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.navigation.NavigationView;
@@ -29,7 +29,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.SecurePrefsUtil;
 import delit.libs.ui.view.PasswordInputToggle;
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -276,7 +276,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         public void onShow(AlertDialog alertDialog) {
             super.onShow(alertDialog);
 
-            AppCompatCheckboxTriState viewUnencryptedToggle = alertDialog.findViewById(R.id.toggle_visibility);
+            MaterialCheckboxTriState viewUnencryptedToggle = alertDialog.findViewById(R.id.toggle_visibility);
             if (viewUnencryptedToggle != null) {
                 EditText passwordField = alertDialog.findViewById(R.id.password);
                 viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));

@@ -22,6 +22,7 @@ import androidx.core.widget.NestedScrollView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -42,8 +43,6 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.PasswordInputToggle;
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
@@ -110,10 +109,10 @@ public class UserFragment extends MyFragment<UserFragment> {
     private EditText emailField;
     private CheckBox highDefinitionEnabled;
     private TextView lastVisitedField;
-    private CustomImageButton editButton;
-    private CustomImageButton discardButton;
-    private CustomImageButton saveButton;
-    private CustomImageButton deleteButton;
+    private MaterialButton editButton;
+    private MaterialButton discardButton;
+    private MaterialButton saveButton;
+    private MaterialButton deleteButton;
     private Spinner userPrivacyLevelField;
     private TextView userGroupsField;
     private EditText passwordField;
@@ -248,9 +247,12 @@ public class UserFragment extends MyFragment<UserFragment> {
 
         emailField.setEnabled(editable);
         highDefinitionEnabled.setEnabled(editable);
-        editButton.setEnabled(!editable);
-        discardButton.setEnabled(editable);
-        saveButton.setEnabled(editable);
+//        editButton.setEnabled(!editable);
+        editButton.setVisibility(!editable ? VISIBLE : GONE);
+//        discardButton.setEnabled(editable);
+        discardButton.setVisibility(editable ? VISIBLE : GONE);
+//        saveButton.setEnabled(editable);
+        saveButton.setVisibility(editable ? VISIBLE : GONE);
 
     }
 
@@ -350,7 +352,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         TextView passwordFieldLabel = v.findViewById(R.id.user_password_label);
         passwordField = v.findViewById(R.id.user_password_field);
 
-        AppCompatCheckboxTriState viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
+        CheckBox viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
         if (viewUnencryptedToggle != null) {
             viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
         }
@@ -818,7 +820,7 @@ public class UserFragment extends MyFragment<UserFragment> {
             BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
             adapterPreferences.selectable(true, false);
             adapterPreferences.readonly();
-            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, indirectAlbumPermissions, adapterPreferences);
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
         } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)) {
             adapter.setSelectedItems(initialSelection);

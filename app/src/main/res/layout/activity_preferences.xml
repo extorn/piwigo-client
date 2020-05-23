@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/app_prefs_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:orientation="vertical">
-
-    <delit.libs.ui.view.SlidingTabLayout
-        android:id="@+id/sliding_tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    android:orientation="vertical"
+    tools:theme="@style/ThemeOverlay.EditPages">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
-        android:layout_below="@id/sliding_tabs"
         android:layout_above="@+id/prefs_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
-        android:layout_height="0px"/>
+        android:layout_height="wrap_content">
+
+        <delit.libs.ui.view.CustomMaterialTabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            app:tabIndicatorFullWidth="true"
+            app:initialTabIdx="0"
+            app:tabMode="scrollable"
+            style="?tabLayout"/>
+
+    </androidx.viewpager.widget.ViewPager>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

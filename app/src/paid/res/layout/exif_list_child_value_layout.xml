@@ -5,5 +5,5 @@
         android:layout_gravity="fill"
         android:layout_columnWeight="1"
         android:padding="5dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:textAppearance="?textAppearanceBody1"/>
 <!--android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"-->

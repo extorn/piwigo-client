@@ -4,14 +4,14 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.piwigoclient.R;
 
 public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreferences, A> extends CustomViewHolder<P, A> {
     private TextView txtTitle;
     private TextView detailsTitle;
     private View deleteButton;
-    private AppCompatCheckboxTriState checkBox;
+    private MaterialCheckboxTriState checkBox;
 
     public BaseViewHolder(View view) {
         super(view);
@@ -25,7 +25,7 @@ public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreference
         return detailsTitle;
     }
 
-    public AppCompatCheckboxTriState getCheckBox() {
+    public MaterialCheckboxTriState getCheckBox() {
         return checkBox;
     }
 

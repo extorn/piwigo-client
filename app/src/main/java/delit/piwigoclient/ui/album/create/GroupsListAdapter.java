@@ -16,7 +16,7 @@ import delit.piwigoclient.model.piwigo.Group;
 public class GroupsListAdapter extends ArrayAdapter<Group> {
 
     public GroupsListAdapter(Context context, List<Group> groups) {
-        super(context, R.layout.layout_checkable_list_text, R.id.txt, groups);
+        super(context, R.layout.layout_list_item_checkable_text, R.id.txt, groups);
     }
 
     public boolean hasStableIds() {
@@ -36,7 +36,7 @@ public class GroupsListAdapter extends ArrayAdapter<Group> {
         View v;
         if (convertView == null) {
             LayoutInflater inflator = LayoutInflater.from(getContext());
-            v = inflator.inflate(R.layout.layout_checkable_list_text, parent, false);
+            v = inflator.inflate(R.layout.layout_list_item_checkable_text, parent, false);
         } else {
             v = convertView;
         }

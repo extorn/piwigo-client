@@ -11,12 +11,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,7 +25,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
@@ -56,7 +56,7 @@ import delit.piwigoclient.ui.model.PiwigoUsersModel;
 public class UsersListFragment extends MyFragment<UsersListFragment> {
 
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
-    private FloatingActionButton retryActionButton;
+    private ExtendedFloatingActionButton retryActionButton;
     private PiwigoUsers usersModel;
     private UserRecyclerViewAdapter viewAdapter;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
@@ -108,6 +108,16 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         return getString(R.string.users_heading);
     }
 
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
+        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
+            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_EditPages));
+        }
+        return inflator;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -142,7 +152,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         Button saveButton = view.findViewById(R.id.list_action_save_button);
         saveButton.setVisibility(View.GONE);
 
-        CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
+        ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -7,8 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_marginEnd="16dp"
     android:layout_marginTop="16dp"
-    android:background="@color/colorAlbumItemBackground"
-    tools:layout_height="400dp">
+    android:background="?colorAlbumItemBackground"
+    tools:layout_height="395dp">
 
     <delit.libs.ui.view.SquareLinearLayout
         android:id="@+id/image_container"
@@ -22,7 +22,7 @@
             android:layout_margin="0dp"
             android:contentDescription="TODO"
             android:scaleType="fitCenter"
-            tools:src="@drawable/ic_broken_image_black_240dp" />
+            tools:src="@drawable/ic_broken_image_black_240dp"/>
 
     </delit.libs.ui.view.SquareLinearLayout>
 
@@ -45,24 +45,25 @@
         android:contentDescription="TODO" android:padding="2dp"
         android:visibility="visible" />
 
-    <delit.libs.ui.view.button.AppCompatCheckboxTriState
+    <delit.libs.ui.view.button.MaterialCheckboxTriState
         android:id="@+id/list_item_checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="2dp" />
 
     <TextView
+        android:layout_margin="0dp"
         android:id="@+id/resource_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignBaseline="@id/image_container"
-        android:background="@color/black_overlay"
+        android:background="?scrimUltraHeavy"
         android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textAppearance="?textAppearanceBody2"
         tools:text="img_28231.jpg" />
 
 </RelativeLayout>

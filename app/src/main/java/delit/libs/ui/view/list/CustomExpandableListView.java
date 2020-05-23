@@ -10,6 +10,8 @@ import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 
+import delit.libs.ui.util.DisplayUtils;
+
 public class CustomExpandableListView extends ExpandableListView {
 
     private ArrayList<Integer> expandedGroupsForDrawing;
@@ -46,7 +48,7 @@ public class CustomExpandableListView extends ExpandableListView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if(getMinimumHeight() <= 0 && getExpandableListAdapter() != null) {
+        if(getMinimumHeight() <= 0 && getExpandableListAdapter() != null && !getExpandableListAdapter().isEmpty()) {
             //FIXME track expansion of groups in real time!
             expandedGroupsForDrawing.clear();
             for(int i = 0; i < getExpandableListAdapter().getGroupCount(); i++) {
@@ -57,14 +59,18 @@ public class CustomExpandableListView extends ExpandableListView {
             for(int i : expandedGroupsForDrawing) {
                 collapseGroup(i);
             }
-            int heightMeasureSpecOverride = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE / 2, MeasureSpec.AT_MOST);
+//            int desiredHeightMeasureMode = MeasureSpec.getMode(heightMeasureSpec);
+//            String modeText = DisplayUtils.getMeasureModeText(desiredHeightMeasureMode);
+
+            int heightMeasureSpecOverride = MeasureSpec.makeMeasureSpec((1 << 30) - 1, MeasureSpec.AT_MOST);
             super.onMeasure(widthMeasureSpec, heightMeasureSpecOverride);
             int measuredHeight = getMeasuredHeight();
             setMinimumHeight(measuredHeight);
             for(int i : expandedGroupsForDrawing) {
                 expandGroup(i, false);
             }
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 }

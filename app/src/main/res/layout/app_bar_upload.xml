@@ -13,13 +13,12 @@
         android:layout_gravity="top"
         app:layout_behavior="delit.piwigoclient.ui.CustomAppBarLayoutBehaviour">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
         <delit.libs.ui.view.ProgressIndicator
-            android:background="@color/primary_dark"
             android:id="@+id/progressIndicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

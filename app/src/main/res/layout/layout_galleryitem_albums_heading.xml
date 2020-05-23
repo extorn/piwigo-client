@@ -12,10 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+        android:textAppearance="?textAppearanceHeadline5"/>
     <ImageView
         android:layout_width="match_parent" android:contentDescription="TODO" 
         android:layout_height="4dp"
         android:layout_marginTop="7dp"
-        android:background="@color/colorAlbumItemBackground"/>
+        android:background="?colorAlbumItemBackground"/>
 </LinearLayout>

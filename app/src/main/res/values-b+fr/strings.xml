@@ -87,7 +87,7 @@
     <string name="createGallery_parentGalleryTitle">Album des parents</string>
     <string name="createGallery_galleryNameTitle">Nom de l\'album</string>
     <string name="createGallery_galleryDescriptionTitle">Description</string>
-    <string name="createGallery_galleryCommentsAllowed">Autoriser les commentaires des utilisateurs</string>
+    <string name="createGallery_galleryCommentsAllowed">Autoriser les utilisateurs à ajouter des commentaires</string>
     <string name="createGallery_galleryIsPrivate">L\'album est privé ?</string>
     <string name="createGallery_permissions_allowedGroupsTitle">Groupes autorisés</string>
     <string name="createGallery_permissions_allowedUsersTitle">Utilisateurs autorisés</string>
@@ -263,7 +263,7 @@ Pour l'instant, il fournit un niveau de fonctionnalité de base pour permettre l
 
 Puis-je demander que si vous désinstallez l'application, vous utilisiez le lien dans le menu de l'application pour m'envoyer un courriel me disant pourquoi l'application ne répond pas à vos besoins afin que je puisse y répondre.
 
-La version du serveur PIWIGO que je teste actuellement est la 2.9.4.
+La version du serveur PIWIGO que je teste actuellement est la 2.10.2.
 
 Ma galerie de test contient uniquement des fichiers.jpg et.mp4. Si le vôtre en contient d'autres, il se peut que vous rencontriez des problèmes - si c'est le cas, dites-le moi et je donnerai la priorité au travail sur ces types de fichiers.
 
@@ -348,7 +348,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="groups_heading">Groupes</string>
     <string name="users_heading">Utilisateurs</string>
     <string name="albums_heading">Albums</string>
-    <string name="user_high_definition_title">Haute définition activée</string>
+    <string name="user_high_definition_title">Haute définition</string>
     <string name="user_email_title">Adresse électronique</string>
     <string name="none_value">Aucun</string>
     <string name="access_rights_heading">Droits d\'accès</string>
@@ -644,5 +644,9 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="missing_permissions_warning_message_pattern">"Depuis la dernière ouverture de cette application, les autorisations de fichier requises par les parties suivantes de l'application ont été supprimées\n\n%1$s\n\nVeuillez sélectionner de nouvelles autorisations pour ces paramètres pour que les choses fonctionnent comme prévu."</string>
     <string name="folder_selection_title">Sélectionner le dossier</string>
     <string name="files_selection_title">Sélectionnez les fichiers</string>
+    <string name="all">Toute</string>
+    <string name="user_high_definition_field">Autoriser l\'accès aux fichiers en taille réelle</string>
+    <string name="group_is_default_field">Attribuer de nouveaux utilisateurs à ce groupe</string>
+    <string name="createGallery_galleryCommentsAllowed_title">Commentaires des utilisateurs</string>
 
 </resources>

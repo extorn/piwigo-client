@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
@@ -37,7 +38,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import delit.libs.ui.view.SlidingTabLayout;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.libs.ui.view.recycler.SimpleFragmentPagerAdapter;
@@ -49,9 +49,6 @@ import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
 /**
- * A basic sample which shows how to use {@link  SlidingTabLayout}
- * to display a custom {@link ViewPager} title strip which gives continuous feedback to the user
- * when scrolling.
  */
 public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragment> {
 
@@ -92,19 +89,17 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         /*
-      A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
+      A {@link ViewPager} which will be used in conjunction with the {@link CustomMaterialTabLayout} above.
      */
         ViewPager mViewPager = view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(buildPagerAdapter(getChildFragmentManager()));
 
-        // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
+        // Give the CustomMaterialTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
         /*
       A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
       above, but is designed to give continuous feedback to the user when scrolling.
      */
-        SlidingTabLayout mSlidingTabLayout = view.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setViewPager(mViewPager);
         return view;
     }
 

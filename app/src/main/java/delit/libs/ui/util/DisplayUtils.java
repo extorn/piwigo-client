@@ -31,6 +31,7 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -39,6 +40,8 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -75,7 +78,44 @@ public class DisplayUtils {
         while (currentItem != null && !type.isAssignableFrom(currentItem.getClass())) {
             currentItem = currentItem.getParent();
         }
-        return (T) currentItem;
+        return type.cast(currentItem);
+    }
+
+    public static String getResourceName(Context context, int resourceId) {
+        return context.getResources().getResourceName(resourceId);
+    }
+
+    /**
+     * Use this for debug - to work out which theme is being used.
+     * @param context
+     * @return
+     */
+    public static String getThemeName(Context context) {
+        int themeResId = 0;
+        try {
+            if(context instanceof ContextThemeWrapper) {
+                Class<?> clazz = ContextThemeWrapper.class;
+                Method method = clazz.getMethod("getThemeResId");
+                method.setAccessible(true);
+                themeResId = (Integer) method.invoke(context);
+                return getResourceName(context, themeResId);
+            } else if(context instanceof ContextWrapper) {
+                Class<?> clazz = ContextWrapper.class;
+                Method method = clazz.getMethod("getThemeResId");
+                method.setAccessible(true);
+                themeResId = (Integer) method.invoke(context);
+                return getResourceName(context, themeResId);
+            }
+        } catch (NoSuchMethodException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        } catch (InvocationTargetException e) {
+            Log.e(TAG, "Failed to get theme resource ID", e);
+        }
+        return "Unknown";
     }
 
     public static int getCurrentScreenOrientation(Context context) {
@@ -379,6 +419,19 @@ public class DisplayUtils {
                 listener.onItemSelected(spinner, null, newPos, itemId);
             }
         }
+    }
+
+    public static String getMeasureModeText(int desiredHeightMeasureMode) {
+        String measureMode = null;
+        switch(desiredHeightMeasureMode) {
+            case View.MeasureSpec.AT_MOST: measureMode = "At most";
+                break;
+            case View.MeasureSpec.EXACTLY: measureMode = "Exactly";
+                break;
+            case View.MeasureSpec.UNSPECIFIED: measureMode = "Unspecified";
+                break;
+        }
+        return measureMode;
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {

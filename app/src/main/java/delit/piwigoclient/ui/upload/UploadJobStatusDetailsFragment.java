@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
@@ -103,7 +102,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
 
         filesAwaitingUpload.removeAll(filesMidTransfer);
 
-        AppCompatCheckboxTriState checkBox = view.findViewById(R.id.temporary_album_needs_deleting);
+        MaterialCheckboxTriState checkBox = view.findViewById(R.id.temporary_album_needs_deleting);
         checkBox.setChecked(tempAlbumNeedsDelete);
 
         textView = view.findViewById(R.id.errors_encountered_list_label);
@@ -158,7 +157,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
 
             View v = convertView;
             if(v == null) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_list_item, null);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_item_simple, null);
             }
             TextView view = v.findViewById(R.id.list_item_name);
             view.setText(piwigoDateFormat.format(thisDataItem.getKey()));

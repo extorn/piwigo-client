@@ -3,15 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:theme="@style/ThemeOverlay.EditPages"
+    android:padding="20dp">
 
     <TextView
-        android:layout_margin="5dp"
         android:id="@+id/alertMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        tools:text="Download File"/>
+        tools:text="Download File"
+        style="?editableFieldLabel"/>
 
     <ListView
         android:layout_margin="5dp"
@@ -27,14 +26,15 @@
         android:spinnerMode="dialog"
         -->
     <TextView
-        android:layout_margin="5dp"
         android:id="@+id/action"
         android:text="@string/action"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        style="?editableFieldLabel"/>
 
-    <RadioGroup
+    <Spinner
+        android:id="@+id/download_option"
+        style="?editableFieldSpinner"/>
+
+    <!--<RadioGroup
         android:layout_margin="5dp"
         android:layoutDirection="rtl"
         android:id="@+id/download_option"
@@ -55,6 +55,6 @@
             android:text="@string/share_with_an_app"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </RadioGroup>
+    </RadioGroup>-->
 
 </LinearLayout>

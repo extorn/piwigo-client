@@ -228,7 +228,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         /*
         Floating action button (all screens!) - if wanted
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        ExtendedFloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(pkg View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -425,10 +425,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     private void showPreferences() {
-//        Intent i = new Intent(this, PreferencesActivity.class);
-//        startActivity(i);
-        PreferencesFragment fragment = new PreferencesFragment();
-        showFragmentNow(fragment);
+        Intent i = new Intent(this, PreferencesActivity.class);
+        startActivity(i);
+//        PreferencesFragment fragment = new PreferencesFragment();
+//        showFragmentNow(fragment);
     }
 
     private void showEula() {

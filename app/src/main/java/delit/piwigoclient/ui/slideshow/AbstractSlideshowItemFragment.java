@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -30,9 +29,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.wunderlist.slidinglayer.CustomSlidingLayer;
-import com.wunderlist.slidinglayer.OnInteractAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,11 +45,10 @@ import java.util.Locale;
 import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -123,7 +120,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private transient boolean doOnPageSelectedAndAddedRun; // reset to false with every object re-use and never tracked.
 
-    private ImageButton editButton;
+    private MaterialButton editButton;
     private TextView tagsField;
     private RatingBar averageRatingsBar;
     private ProgressBar progressIndicator;
@@ -131,16 +128,16 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private AppCompatSpinner privacyLevelSpinner;
     private EditText resourceDescriptionView;
     private EditText resourceNameView;
-    private ImageButton saveButton;
-    private ImageButton discardButton;
-    private ImageButton deleteButton;
-    private ImageButton copyButton;
-    private ImageButton moveButton;
-    private ImageButton downloadButton;
-    private CustomImageButton setAsAlbumThumbnail;
+    private MaterialButton saveButton;
+    private MaterialButton discardButton;
+    private MaterialButton deleteButton;
+    private MaterialButton copyButton;
+    private MaterialButton moveButton;
+    private MaterialButton downloadButton;
+    private MaterialButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
     private TextView itemPositionTextView;
-    private CustomSlidingLayer bottomSheet;
+    private SlidingBottomSheet bottomSheet;
     private View itemContent;
     private TextView resourceRatingScoreField;
     private ViewVisibleControl overlaysVisibilityControl;
@@ -355,23 +352,20 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         View v = inflater.inflate(getLayoutId(), container, false);
 
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
-        bottomSheet.setOnInteractListener(new OnInteractAdapter() {
+        bottomSheet.setOnInteractListener(new SlidingBottomSheet.OnInteractListener() {
             @Override
             public void onOpened() {
-                super.onOpened();
                 getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_item_view_1);
+            }
+            @Override
+            public void onClosed() {
             }
         });
 
         itemPositionTextView = v.findViewById(R.id.slideshow_resource_item_x_of_y_text);
         progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);
         setAsAlbumThumbnail = v.findViewById(R.id.slideshow_resource_action_use_for_album_thumbnail);
-        setAsAlbumThumbnail.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return onUseAsAlbumThumbnailSelectAlbum();
-            }
-        });
+        setAsAlbumThumbnail.setOnLongClickListener(v13 -> onUseAsAlbumThumbnailSelectAlbum());
 
         resourceTitleView = v.findViewById(R.id.slideshow_resource_item_title);
         resourceDescTitleView = v.findViewById(R.id.slideshow_resource_item_desc_title);
@@ -400,11 +394,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             itemContentLayout.addView(itemContent, 0);
         }
 
-        if (AlbumViewPreferences.isSlideshowExtraInfoShadowTransparent(getPrefs(), requireContext())) {
-            bottomSheet.setShadowDrawable(null);
-        }
-
-
         return v;
     }
 
@@ -413,7 +402,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             bottomSheet.setEnabled(true);
             bottomSheet.setVisibility(VISIBLE);
         }
-        bottomSheet.openLayer(true);
+        bottomSheet.open();
     }
 
     protected void addViewVisibleControl(View v) {
@@ -475,15 +464,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    protected CustomSlidingLayer getBottomSheet() {
+    protected SlidingBottomSheet getBottomSheet() {
         return bottomSheet;
     }
 
     private void updateInformationShowingStatus() {
         if (informationShowing) {
-            bottomSheet.openLayer(false);
+            bottomSheet.open();
         } else {
-            bottomSheet.closeLayer(false);
+            bottomSheet.close();
         }
     }
 
@@ -768,7 +757,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
     }
 
-    protected ImageButton getEditButton() {
+    protected MaterialButton getEditButton() {
         return editButton;
     }
 
@@ -836,8 +825,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         private List<View> views;
         private int visibilityOnRun = View.INVISIBLE;
         private long timerStarted;
-        private CustomSlidingLayer bottomSheet;
-        private Drawable shadowDrawable;
 
         public ViewVisibleControl(View... views) {
             this.views = new ArrayList<>(Arrays.asList(views));
@@ -854,14 +841,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         private void setVisibility(int visibility) {
             for (View v : views) {
                 v.setVisibility(visibility);
-            }
-            if (bottomSheet != null) {
-                Drawable currentDrawable = bottomSheet.getShadowDrawable();
-                if (currentDrawable != null) {
-                    shadowDrawable = currentDrawable;
-                }
-                bottomSheet.setShadowDrawable(visibility == View.VISIBLE ? shadowDrawable : null);
-
             }
         }
 
@@ -887,9 +866,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             v.setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
         }
 
-        public void addBottomSheetTransparency(CustomSlidingLayer bottomSheet) {
-            this.bottomSheet = bottomSheet;
-        }
     }
 
     private void setTitleBar() {
@@ -930,7 +906,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         resourceRatingScoreField.setText(getString(R.string.rating_score_pattern, model.getScore(), model.getRatingsGiven()));
 
         myRatingForThisResourceBar.setRating(resource.getMyRating());
-        DrawableCompat.setTint(myRatingForThisResourceBar.getProgressDrawable(), ContextCompat.getColor(requireContext(), R.color.accent));
+        DrawableCompat.setTint(myRatingForThisResourceBar.getProgressDrawable(), ContextCompat.getColor(requireContext(), R.color.app_secondary));
     }
 
     protected void onImageDeleted(HashSet<Long> deletedItemIds) {

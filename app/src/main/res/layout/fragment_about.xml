@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -16,47 +17,71 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="3dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:id="@+id/about_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_heading"
+                android:textAppearance="?textAppearanceHeadline5"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="7dp"/>
 
             <TextView
                 android:id="@+id/about_text"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:autoLink="web"
                 android:text="@string/about_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:autoLink="web"/>
+                android:textAppearance="?textAppearanceBody1" />
 
             <TextView
                 android:id="@+id/about_planned_releases_header"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/planned_releases"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="?textAppearanceHeadline5"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="7dp"/>
 
             <delit.libs.ui.view.list.StaticListView
                 android:id="@+id/about_planned_releases"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:layout_height="100dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
-                android:clickable="false" />
+                android:clickable="false"
+                tools:background="@color/black_overlay"/>
 
             <TextView
                 android:id="@+id/about_release_history_header"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/release_history"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="?textAppearanceHeadline5"
+                android:layout_marginTop="13dp"
+                android:layout_marginBottom="7dp"/>
 
             <delit.libs.ui.view.list.StaticListView
                 android:id="@+id/about_release_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:layout_height="100dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
-                android:clickable="false" />
+                android:clickable="false"
+                tools:background="@color/black_overlay"/>
 
         </LinearLayout>
 

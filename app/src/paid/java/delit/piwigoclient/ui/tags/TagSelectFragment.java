@@ -200,7 +200,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void addNewTag() {
-        final View v = LayoutInflater.from(getContext()).inflate(R.layout.create_tag ,null);
+        final View v = getLayoutInflater().inflate(R.layout.create_tag ,null);
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
 

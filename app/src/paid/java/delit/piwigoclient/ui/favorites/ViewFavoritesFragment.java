@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -86,9 +86,9 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     private static final String STATE_FAVORITES_DIRTY = "favoritesIsDirty";
 
     private AlbumItemRecyclerViewAdapter viewAdapter;
-    private FloatingActionButton retryActionButton;
+    private ExtendedFloatingActionButton retryActionButton;
     private RelativeLayout bulkActionsContainer;
-    private FloatingActionButton bulkActionButtonDelete;
+    private ExtendedFloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
     private PiwigoFavorites favoritesModel;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);

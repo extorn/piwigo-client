@@ -4,21 +4,23 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <delit.libs.ui.view.button.AppCompatCheckboxTriState
+    <delit.libs.ui.view.button.MaterialCheckboxTriState
         android:id="@+id/permission_status_icon"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+
     <TextView
         android:id="@+id/permission_text"
         tools:text="some text"
+        android:layout_toEndOf="@id/permission_status_icon"
         android:layout_marginStart="8dp"
         android:layout_width="wrap_content"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
-        android:layout_toEndOf="@id/permission_status_icon"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        style="?textAppearanceBody2"/>
+
 </RelativeLayout>

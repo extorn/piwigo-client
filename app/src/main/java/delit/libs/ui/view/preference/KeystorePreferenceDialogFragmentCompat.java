@@ -2,7 +2,6 @@ package delit.libs.ui.view.preference;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,14 +26,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -62,8 +63,6 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.ProgressIndicator;
-import delit.libs.ui.view.button.AppCompatCheckboxTriState;
-import delit.libs.ui.view.button.CustomImageButton;
 import delit.libs.util.X509Utils;
 import delit.libs.util.security.CertificateLoadException;
 import delit.libs.util.security.CertificateLoadOperationResult;
@@ -93,7 +92,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     // non state persistent items
     private RecyclerView certificateList;
     private AlertDialog alertDialog;
-    private CustomImageButton addListItemButton;
+    private ExtendedFloatingActionButton addListItemButton;
     private KeyStore keystore;
     private ProgressIndicator progressIndicator;
 
@@ -136,7 +135,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     }
 
     private View buildCertificateListView(Context context, KeyStore keystore) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_recycler_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -190,7 +189,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                     public void onClick(DialogInterface dialog, int which) {
                         alertDialog.dismiss();
                         keystoreLoadOperationResult.removeUnrecoverableErrors();
-                        processRecoverableErrors();
+                        processRecoverableErrors(((AlertDialog)dialog).getContext());
                     }
                 })
                 .show();
@@ -211,7 +210,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         EventBus.getDefault().post(fileSelectionEvent);
     }
 
-    private void processRecoverableErrors() {
+    private void processRecoverableErrors(Context context) {
 
         final SecurityOperationException recoverableError = keystoreLoadOperationResult.getNextRecoverableError();
 
@@ -225,14 +224,13 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             return;
         }
 
-        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         View v = null;
         if (recoverableError instanceof KeyStoreOperationException) {
             // request keystore password
-            v = layoutInflater.inflate(R.layout.layout_keystore_password_entry, null);
+            v = LayoutInflater.from(context).inflate(R.layout.layout_keystore_password_entry, null);
         } else if (recoverableError instanceof KeyStoreContentException) {
             // request keystore alias key password
-            v = layoutInflater.inflate(R.layout.layout_keystore_key_password_entry, null);
+            v = LayoutInflater.from(context).inflate(R.layout.layout_keystore_key_password_entry, null);
 
             KeyStoreContentException e = (KeyStoreContentException) recoverableError;
 
@@ -240,7 +238,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             keystoreAliasEditText.setText(e.getAlias());
         }
 
-        AppCompatCheckboxTriState viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
+        CheckBox viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
         if (viewUnencryptedToggle != null) {
             EditText passwordField = v.findViewById(R.id.keystore_password_editText);
             viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
@@ -250,7 +248,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         String filename = new File(recoverableError.getDataSource()).getName();
         filenameEditText.setText(filename);
 
-        alertDialog = new MaterialAlertDialogBuilder(getContext())
+        alertDialog = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.alert_information)
                 .setView(v)
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
@@ -261,7 +259,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                         passwordEditText.getText().getChars(0, passwordEditText.getText().length(), pass, 0);
                         alertDialog.dismiss();
                         keystoreLoadOperationResult.addPasswordForRerun(recoverableError, pass);
-                        processRecoverableErrors();
+                        processRecoverableErrors(((AlertDialog)dialog).getContext());
                     }
                 })
                 .show();
@@ -276,16 +274,18 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         return fragment;
     }
 
-    private class KeyStoreContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static class KeyStoreContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private static final int VIEW_TYPE_PRIVATE_KEY = 1;
         private static final int VIEW_TYPE_CERTIFICATE = 2;
         private final SimpleDateFormat sdf;
+        private final WeakReference<Context> contextRef;
         private KeyStore backingObjectStore;
         private ArrayList<String> aliasesList;
 
         public KeyStoreContentsAdapter(@NonNull Context context, @NonNull KeyStore ks) {
             setData(ks);
+            contextRef = new WeakReference<>(context);
             sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         }
 
@@ -311,10 +311,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
             if (viewType == VIEW_TYPE_PRIVATE_KEY) {
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_x509key_actionable_list_item, parent, false);
+                view = LayoutInflater.from(contextRef.get()).inflate(R.layout.layout_x509key_actionable_list_item, parent, false);
                 return new KeyStorePrivateKeyItemViewHolder(view);
             } else if (viewType == VIEW_TYPE_CERTIFICATE) {
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_x509cert_actionable_list_item, parent, false);
+                view = LayoutInflater.from(contextRef.get()).inflate(R.layout.layout_x509cert_actionable_list_item, parent, false);
                 return new KeyStoreCertificateItemViewHolder(view);
             } else {
                 throw new RuntimeException("Unsupported view type : " + viewType);
@@ -381,8 +381,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         private void populatePrivateKeyDetails(KeyStorePrivateKeyItemViewHolder viewHolder, final int position, KeyStore.PrivateKeyEntry item) {
 
             PrivateKey privateKey = item.getPrivateKey();
-            viewHolder.keyTypeField.setText(getContext().getString(R.string.x509_key_type_field_pattern, privateKey.getAlgorithm()));
-            viewHolder.keyStrengthField.setText(getContext().getString(R.string.x509_key_strength_field_pattern, ((RSAPrivateKey) privateKey).getModulus().bitLength()));
+            viewHolder.keyTypeField.setText(contextRef.get().getString(R.string.x509_key_type_field_pattern, privateKey.getAlgorithm()));
+            viewHolder.keyStrengthField.setText(contextRef.get().getString(R.string.x509_key_strength_field_pattern, ((RSAPrivateKey) privateKey).getModulus().bitLength()));
 
             X509Certificate cert = (X509Certificate) item.getCertificate();
             fillCertificateFields(cert, viewHolder);
@@ -407,10 +407,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         private void fillCertificateFields(X509Certificate cert, KeyStoreCertificateItemViewHolder viewHolder) {
             String certSubject = getIsolatedCnFieldIfPossible(cert.getSubjectX500Principal());
             String issuerSubject = getIsolatedCnFieldIfPossible(cert.getIssuerX500Principal());
-            viewHolder.certNameField.setText(getContext().getString(R.string.x509_cert_name_field_pattern, certSubject));
-            viewHolder.certVerifiedByField.setText(getContext().getString(R.string.x509_cert_verified_by_field_pattern, issuerSubject));
-            viewHolder.certValidFromField.setText(getContext().getString(R.string.x509_cert_valid_from_field_pattern, sdf.format(cert.getNotBefore())));
-            viewHolder.certValidToField.setText(getContext().getString(R.string.x509_cert_valid_to_field_pattern, sdf.format(cert.getNotAfter())));
+            viewHolder.certNameField.setText(contextRef.get().getString(R.string.x509_cert_name_field_pattern, certSubject));
+            viewHolder.certVerifiedByField.setText(contextRef.get().getString(R.string.x509_cert_verified_by_field_pattern, issuerSubject));
+            viewHolder.certValidFromField.setText(contextRef.get().getString(R.string.x509_cert_valid_from_field_pattern, sdf.format(cert.getNotBefore())));
+            viewHolder.certValidToField.setText(contextRef.get().getString(R.string.x509_cert_valid_to_field_pattern, sdf.format(cert.getNotAfter())));
         }
 
         private void populateCertificateDetails(KeyStoreCertificateItemViewHolder viewHolder, final int position, KeyStore.TrustedCertificateEntry item) {
@@ -449,13 +449,13 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
     }
 
-    private class KeyStoreCertificateItemViewHolder extends RecyclerView.ViewHolder {
+    private static class KeyStoreCertificateItemViewHolder extends RecyclerView.ViewHolder {
 
         protected final TextView certNameField;
         protected final TextView certVerifiedByField;
         protected final TextView certValidFromField;
         protected final TextView certValidToField;
-        protected final ImageButton deleteButton;
+        protected final MaterialButton deleteButton;
 
         public KeyStoreCertificateItemViewHolder(View itemView) {
             super(itemView);
@@ -467,7 +467,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
     }
 
-    private class KeyStorePrivateKeyItemViewHolder extends KeyStoreCertificateItemViewHolder {
+    private static class KeyStorePrivateKeyItemViewHolder extends KeyStoreCertificateItemViewHolder {
 
         protected final TextView keyTypeField;
         protected final TextView keyStrengthField;
@@ -570,7 +570,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             String errorMessage = buildErrorMessage(unrecoverableErrors);
             buildAndShowAlertErrorLoadingFilesDialog(errorMessage);
         } else {
-            processRecoverableErrors();
+            processRecoverableErrors(getContext());
         }
     }
 
