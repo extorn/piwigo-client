@@ -103,6 +103,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     private CustomCacheListener cacheListener;
     private DefaultTrackSelector trackSelector;
     private boolean showingOutsideSlideshow;
+    private View customExoPlayerInfoPanel;
 
     public AbstractAlbumVideoItemFragment() {
     }
@@ -260,8 +261,9 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         View itemContentView = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
         PlayerView simpleExoPlayerView = itemContentView.findViewById(R.id.slideshow_video_player);
 
-        downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
-        cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
+        customExoPlayerInfoPanel = simpleExoPlayerView.findViewById(R.id.custom_exo_info_panel);
+        downloadedByteCountView = customExoPlayerInfoPanel.findViewById(R.id.exo_downloaded);
+        cachedByteCountView = customExoPlayerInfoPanel.findViewById(R.id.exo_cached_summary);
 
         simpleExoPlayerView.getVideoSurfaceView().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -618,20 +620,18 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
 
         @Override
         public void onFullyCached(final CachedContent cacheFileContent) {
+            customExoPlayerInfoPanel.postDelayed(() -> customExoPlayerInfoPanel.setVisibility(View.INVISIBLE), 5000);
             timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
             setAllowDownload(true);
             cachedVideoFile = cacheFileContent.getCachedDataFile();
             originalVideoFilename = cacheFileContent.getOriginalUri().replace(".*/", "").replace("\\?.*", "");
 
             if (isVisible()) {
-                getView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (getContext() != null) {
-                            displayItemDetailsControlsBasedOnSessionState();
-                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) ,IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
-                            timebar.invalidate();
-                        }
+                getView().post(() -> {
+                    if (getContext() != null) {
+                        displayItemDetailsControlsBasedOnSessionState();
+                        cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) ,IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
+                        timebar.invalidate();
                     }
                 });
             }
@@ -639,20 +639,19 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
 
         @Override
         public void onRangeAdded(final CachedContent cacheFileContent, long fromVideoPosition, long toVideoPosition, long bytesAddedToRange) {
+
             bytesDownloaded += bytesAddedToRange;
 
             if (timebar.getParent() != null) {
                 timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
             }
             if (isVisible()) {
-                getView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (getContext() != null) {
-                            downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
-                            timebar.invalidate();
-                        }
+                getView().post(() -> {
+                    if (getContext() != null) {
+                        customExoPlayerInfoPanel.setVisibility(View.VISIBLE);
+                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
+                        timebar.invalidate();
                     }
                 });
             }
@@ -664,14 +663,15 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
             }
             if (isVisible()) {
-                getView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (getContext() != null) {
-                            downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
-                            timebar.invalidate();
+                getView().post(() -> {
+                    if (getContext() != null) {
+                        if(cacheFileContent.isComplete()) {
+                            customExoPlayerInfoPanel.postDelayed(() -> customExoPlayerInfoPanel.setVisibility(View.INVISIBLE), 5000);
                         }
+                        customExoPlayerInfoPanel.setVisibility(View.VISIBLE);
+                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
+                        timebar.invalidate();
                     }
                 });
             }
