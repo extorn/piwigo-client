@@ -109,6 +109,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
         return getString(R.string.groups_heading);
     }
 
+
     @NonNull
     @Override
     public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {

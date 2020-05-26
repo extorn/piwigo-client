@@ -192,7 +192,8 @@
             android:layout_marginTop="0dp"
             android:orientation="vertical"
             android:padding="5dp"
-            tools:layout_marginTop="-400dp">
+            tools:layout_marginTop="-400dp"
+            android:background="?colorSurface">
 
             <RelativeLayout
                 android:layout_width="match_parent"

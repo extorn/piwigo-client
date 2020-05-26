@@ -29,15 +29,16 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="colorOnSecondary">@color/app_color_on_secondary</item>
         <item name="colorError">@color/app_color_error</item>
         <item name="colorOnError">@color/app_color_on_error</item>
+        <!-- surfaces are the sliding layers -->
         <item name="colorSurface">@color/app_color_surface</item>
         <item name="colorOnSurface">@color/app_color_on_surface</item>
-        <item name="android:colorBackground">@color/app_color_background</item>
+        <item name="android:windowBackground">@color/app_color_background</item>
         <item name="colorOnBackground">@color/app_color_on_background</item>
         <item name="scrimBackground">@color/app_color_scrim_color</item>  <!-- what uses this? its material -->
         <item name="scrimHeavy">@color/black_overlay</item>
         <item name="scrimUltraHeavy">@color/dark_black_overlay</item>
         <item name="scrimLight">@color/app_color_scrim_color</item>
-
+        <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
     </style>
 
     <!-- this defines how things are laid out -->
@@ -46,13 +47,12 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="materialCardViewStyle">@style/App.Widget.MaterialComponents.CardView</item>
         <item name="editableFieldSpinner">@style/App.Widget.AppCompat.Spinner.Underlined.Field</item>
         <item name="editableFieldSwitch">@style/App.Widget.MaterialComponents.CompoundButton.Switch.Field</item>
-        <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
         <item name="spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
         <item name="android:spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
         <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
 
         <!-- change the app bar at screen top to not use default background color -->
-        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.Toolbar.Primary</item>
+        <item name="toolbarStyle">@style/App.Widget.MaterialComponents.Toolbar</item>
 
         <item name="android:checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
         <item name="checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
@@ -77,9 +77,10 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="android:dropDownListViewStyle">@style/App.Widget.AppCompat.DropDownItem.Spinner</item>
 
         <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>-->
-        <item name="preferenceTheme">@style/ThemeOverlay.App.Preferences</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
         <item name="editableFieldLabel">@style/App.Widget.Material.TextView.FieldLabel</item>
         <item name="editableFieldText">@style/App.Widget.EditText.FieldEntry</item>
+        <item name="editableFieldNumberPicker">@style/App.Widget.NumberPicker.FieldEntry</item>
         <item name="editableFieldTextClickable">@style/App.Widget.EditText.FieldEntry.Clickable</item>
 
         <item name="clickableTextViewStyleBody1">@style/App.Widget.MaterialComponents.TextView.Clickable.Body1</item>
@@ -95,21 +96,17 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="editTextStyle">@style/App.Widget.EditText</item>
         <!--<item name="android:editTextColor">@color/edit_text_color_selector</item>-->
         <item name="tabLayout">@style/Widget.MaterialComponents.TabLayout.Custom</item>
-
         <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
     </style>
 
     <!-- used at activity level -->
     <style name="Theme.EditPages" parent="Theme.App.Base">
+        <item name="android:windowBackground">#fffafafa</item>
         <item name="android:theme">@style/ThemeOverlay.EditPages</item>
-        <item name="materialThemeOverlay">@style/ThemeOverlay.EditPages</item>
-
-
     </style>
 
     <style name="ThemeOverlay.EditPages" parent="ThemeOverlay.MaterialComponents.Light">
-        <!-- overrides for the light bits-->
-        <item name="android:background">#ffffffff</item>
+        <!-- These override the standard light colors -->
         <item name="colorPrimaryDisabled">@color/app_primary_disabled</item> <!-- so disabled field text is strong enough to read -->
         <item name="colorPrimary">@color/app_primary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
@@ -117,6 +114,9 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="colorSecondary">@color/app_secondary</item>
         <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
         <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <!-- surfaces are the sliding layers -->
+        <item name="colorSurface">#fffafafa</item>
+        <item name="colorOnSurface">@color/app_primary</item>
         <item name="scrimBackground">@color/app_color_scrim_color</item>  <!-- what uses this? its material -->
         <item name="scrimHeavy">@color/black_overlay</item>
         <item name="scrimUltraHeavy">@color/dark_black_overlay</item>
@@ -136,6 +136,15 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="android:layout_marginStart">5dp</item>
         <item name="android:layout_marginEnd">5dp</item>
         <item name="android:layout_marginTop">0dp</item>
+    </style>
+
+    <style name="App.Widget.NumberPicker.FieldEntry" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">9dp</item>
     </style>
 
     <!-- this ensure the text in edit text boxes is still visible when they are disabled -->
@@ -290,12 +299,6 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>&ndash;&gt;
     </style>-->
 
-    <style name="App.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <!--<item name="android:minHeight">9dp</item>
-        <item name="android:maxHeight">9dp</item>-->
-        <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
-    </style>
-
     <!-- Allow change of the tab colors in the future perhaps -->
     <style name="Widget.MaterialComponents.TabLayout.Custom" parent="Widget.MaterialComponents.TabLayout">
 
@@ -312,8 +315,6 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="strokeWidth">0dp</item>
     </style>
 
-    <style name="ThemeOverlay.App.Preferences" parent="PreferenceThemeOverlay.v14.Material"></style>
-
     <style name="App.Widget.MaterialComponents.CompoundButton.Switch.Field" parent="Widget.MaterialComponents.CompoundButton.Switch">
         <item name="android:textColor">?colorPrimaryVariant</item>
         <item name="android:layout_width">match_parent</item>
@@ -321,6 +322,11 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="android:layout_marginStart">5dp</item>
         <item name="android:layout_marginEnd">5dp</item>
         <item name="android:layout_marginTop">0dp</item>
+    </style>
+
+    <style name="App.Widget.MaterialComponents.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" >
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="titleTextColor">?attr/colorOnPrimary</item>
     </style>
 
 </resources>

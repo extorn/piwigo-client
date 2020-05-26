@@ -159,7 +159,6 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         List<String> pathSegments = uri.getPathSegments();
         Uri.Builder builder = uri.buildUpon().encodedPath(null);
         Set<String> queryParamIds = new HashSet<>(uri.getQueryParameterNames());
-        queryParamIds.remove(EXIF_WANTED_URI_PARAM);
 
         boolean pathSegmentsPossiblyAlreadyEncoded = false;
         for (int i = 0; i < pathSegments.size(); i++) {
@@ -168,26 +167,26 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
         if (queryParamIds.contains(EXIF_WANTED_URI_PARAM)) {
             builder.clearQuery();
+            queryParamIds.remove(EXIF_WANTED_URI_PARAM);
+
             boolean piwigoFragmentAdded = false;
             boolean paramAdded = false;
             for (String param : queryParamIds) {
-                if (!EXIF_WANTED_URI_PARAM.equalsIgnoreCase(param)) {
-                    List<String> paramVals = uri.getQueryParameters(param);
-                    if (paramVals.size() > 0) {
-                        for (String paramVal : paramVals) {
-                            builder.appendQueryParameter(param, paramVal);
-                            paramAdded = true;
-                        }
-                    } else if (!piwigoFragmentAdded) {
-                        if (paramAdded) {
-                            Bundle b = new Bundle();
-                            b.putString("uri", uri.toString());
-                            FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
-                            Crashlytics.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
-                        }
-                        builder.encodedQuery(param);
-                        piwigoFragmentAdded = true;
+                List<String> paramVals = uri.getQueryParameters(param);
+                if (paramVals.size() > 0) {
+                    for (String paramVal : paramVals) {
+                        builder.appendQueryParameter(param, paramVal);
+                        paramAdded = true;
                     }
+                } else if (!piwigoFragmentAdded) {
+                    if (paramAdded) {
+                        Bundle b = new Bundle();
+                        b.putString("uri", uri.toString());
+                        FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
+                        Crashlytics.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
+                    }
+                    builder.encodedQuery(param);
+                    piwigoFragmentAdded = true;
                 }
             }
 

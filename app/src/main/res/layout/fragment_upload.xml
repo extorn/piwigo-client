@@ -109,10 +109,10 @@
             android:id="@+id/upload_settings_scollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="15dp"
-            android:paddingTop="15dp"
-            android:paddingEnd="15dp"
-            android:paddingBottom="5dp">
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -151,16 +151,16 @@
                     android:id="@+id/privacy_level"
                     style="?editableFieldSpinner"/>
 
-                <CheckBox
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/delete_files_after_upload_checkbox"
                     android:text="@string/delete_uploaded_files_title"
-                    style="?editableFieldCheckBox"/>
+                    style="?editableFieldSwitch"/>
 
-                <CheckBox
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/compress_images_button"
                     android:enabled="false"
                     android:text="@string/compress_images"
-                    style="?editableFieldCheckBox"/>
+                    style="?editableFieldSwitch"/>
 
                 <LinearLayout
                     android:id="@+id/image_compression_options"
@@ -172,61 +172,37 @@
 
                     <TextView
                         android:id="@+id/compress_images_output_format_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
                         android:labelFor="@id/compress_images_output_format"
-                        android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_output_format_title"
-                        android:textAppearance="?textAppearanceCaption" />
+                        style="?editableFieldLabel"/>
 
                     <Spinner
                         android:id="@+id/compress_images_output_format"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
                         android:duplicateParentState="true"
-                        android:entries="@array/preference_data_upload_compress_images_output_format_items"/>
+                        android:entries="@array/preference_data_upload_compress_images_output_format_items"
+                        style="?editableFieldSpinner"/>
 
                     <TextView
                         android:id="@+id/compress_images_quality_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
                         android:labelFor="@id/compress_images_quality"
-                        android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_quality_title"
-                        android:textAppearance="?textAppearanceCaption" />
+                        style="?editableFieldLabel" />
 
                     <NumberPicker
                         android:id="@+id/compress_images_quality"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true" />
+                        android:duplicateParentState="true"
+                        style="?editableFieldNumberPicker"/>
 
                     <TextView
                         android:id="@+id/compress_images_max_width_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
                         android:labelFor="@id/compress_images_max_width"
-                        android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_max_width_title"
-                        android:textAppearance="?textAppearanceCaption" />
+                        style="?editableFieldLabel"/>
 
                     <NumberPicker
                         android:id="@+id/compress_images_max_width"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true" />
+                        android:duplicateParentState="true"
+                        style="?editableFieldNumberPicker"/>
                     <!--<EditText
                         android:id="@+id/compress_images_max_width"
                         android:layout_width="match_parent"
@@ -240,22 +216,14 @@
 
                     <TextView
                         android:id="@+id/compress_images_max_height_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
                         android:labelFor="@id/compress_images_max_height"
-                        android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_images_max_height_title"
-                        android:textAppearance="?textAppearanceCaption" />
+                        style="?editableFieldLabel"/>
 
                     <NumberPicker
                         android:id="@+id/compress_images_max_height"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true" />
+                        android:duplicateParentState="true"
+                        style="?editableFieldNumberPicker"/>
 
                     <!--<EditText
                         android:id="@+id/compress_images_max_height"
@@ -270,11 +238,11 @@
 
                 </LinearLayout>
 
-                <CheckBox
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/compress_videos_button"
                     android:enabled="false"
                     android:text="@string/compress_videos"
-                    style="?editableFieldCheckBox"/>
+                    style="?editableFieldSwitch"/>
 
                 <LinearLayout
                     android:id="@+id/video_compression_options"
@@ -284,52 +252,32 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp">
 
-                    <CheckBox
+                    <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/allow_upload_of_incompressible_videos_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:text="@string/allow_upload_of_incompressible_videos" />
+                        android:text="@string/allow_upload_of_incompressible_videos"
+                        style="?editableFieldSwitch"/>
 
                     <TextView
                         android:id="@+id/compress_videos_quality_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
                         android:labelFor="@id/compress_videos_quality"
-                        android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_videos_quality_title"
-                        android:textAppearance="?textAppearanceCaption" />
+                        style="?editableFieldLabel" />
 
                     <Spinner
                         android:id="@+id/compress_videos_quality"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true"/>
+                        android:duplicateParentState="true"
+                        style="?editableFieldSpinner"/>
 
                     <TextView
                         android:id="@+id/compress_videos_audio_bitrate_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
                         android:labelFor="@id/compress_videos_audio_bitrate"
-                        android:padding="5dp"
                         android:text="@string/preference_data_upload_compress_videos_audio_bitrate_title"
-                        android:textAppearance="?textAppearanceCaption" />
+                        style="?editableFieldLabel"/>
 
                     <Spinner
                         android:id="@+id/compress_videos_audio_bitrate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp"
-                        android:duplicateParentState="true"/>
+                        android:duplicateParentState="true"
+                        style="?editableFieldSpinner"/>
 
 
                 </LinearLayout>

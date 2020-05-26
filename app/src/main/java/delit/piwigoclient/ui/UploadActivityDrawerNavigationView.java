@@ -55,25 +55,24 @@ import delit.piwigoclient.ui.events.UnlockAppEvent;
  * Created by gareth on 08/06/17.
  */
 
-public class CustomNavigationView extends NavigationView implements NavigationView.OnNavigationItemSelectedListener {
+public class UploadActivityDrawerNavigationView extends NavigationView implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "NavView";
     private SharedPreferences prefs;
-    private ViewGroupUIHelper<CustomNavigationView> uiHelper;
-    private ViewGroup headerView;
+    private ViewGroupUIHelper uiHelper;
     private boolean refreshSessionInProgress;
     private TextView currentUsernameField;
     private TextView currentServerField;
 
-    public CustomNavigationView(Context context) {
+    public UploadActivityDrawerNavigationView(Context context) {
         this(context, null);
     }
 
-    public CustomNavigationView(Context context, AttributeSet attrs) {
+    public UploadActivityDrawerNavigationView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CustomNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public UploadActivityDrawerNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         super.setNavigationItemSelectedListener(this);
     }
@@ -81,7 +80,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     @Override
     public View inflateHeaderView(@LayoutRes int res) {
 
-        headerView = (ViewGroup) super.inflateHeaderView(res);
+        ViewGroup headerView = (ViewGroup) super.inflateHeaderView(res);
 
         String appVersion;
         if (isInEditMode()) {
@@ -91,14 +90,11 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
 
         ImageView appIcon = headerView.findViewById(R.id.app_icon);
-        appIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                synchronized (v) {
-                    if (!refreshSessionInProgress) {
-                        refreshSessionInProgress = true;
-                        refreshPiwigoSession();
-                    }
+        appIcon.setOnClickListener(v -> {
+            synchronized (v) {
+                if (!refreshSessionInProgress) {
+                    refreshSessionInProgress = true;
+                    refreshPiwigoSession();
                 }
             }
         });
@@ -112,12 +108,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
         final TextView email = headerView.findViewById(R.id.admin_email);
 
-        email.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendEmail(((TextView) v).getText().toString());
-            }
-        });
+        email.setOnClickListener(v -> sendEmail(((TextView) v).getText().toString()));
 
         currentUsernameField = headerView.findViewById(R.id.current_user_name);
         currentServerField = headerView.findViewById(R.id.current_server);
@@ -145,45 +136,8 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         cleanup.start();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(RewardUpdateEvent event) {
-        MenuItem item = getMenu().findItem(R.id.nav_buy_time);
-        long millis = event.getRewardTimeRemaining();
-        if (millis > 0) {
-            long mins = millis / (60000);
-            long secs = (millis - (mins * 60000)) / 1000;
-            item.setTitle(getContext().getString(R.string.bought_time_menu_title_pattern, mins, secs));
-            if (mins > 30) {
-                item.setEnabled(false);
-            }
-        } else {
-            item.setEnabled(true);
-            item.setTitle(getContext().getString(R.string.buy_time_menu_title));
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(final UnlockAppEvent event) {
-        String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
-        if (savedPassword.equals(event.getPassword())) {
-            lockAppInReadOnlyMode(false);
-            uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
-            EventBus.getDefault().post(new AppUnlockedEvent());
-        } else {
-            // attempt login to PIWIGO server using this password.
-            uiHelper.addActiveServiceCall(R.string.progress_checking_with_server, new LoginResponseHandler(event.getPassword()));
-        }
-    }
-
     private void markRefreshSessionComplete() {
         refreshSessionInProgress = false;
-    }
-
-    private void onLoginAfterAppUnlockEvent(PiwigoSessionDetails oldCredentials) {
-        lockAppInReadOnlyMode(false);
-        uiHelper.closeAllDialogs();
-        uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
-        EventBus.getDefault().post(new AppUnlockedEvent());
     }
 
     private void sendEmail(String email) {
@@ -209,8 +163,8 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         if (uiHelper == null) {
             if (!isInEditMode()) {
                 // don't do this if showing in the IDE.
-                uiHelper = new ViewGroupUIHelper(this, prefs, getContext());
-                CustomPiwigoListener listener = new CustomPiwigoListener();
+                uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
+                BasicPiwigoResponseListener listener = new BasicPiwigoResponseListener();
                 listener.withUiHelper(this, uiHelper);
                 uiHelper.setPiwigoResponseListener(listener);
             }
@@ -231,71 +185,10 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_lock:
-                showLockDialog();
-                break;
-            case R.id.nav_unlock:
-                showUnlockDialog();
-                break;
-            case R.id.nav_online_mode:
-                configureNetworkAccess(true);
-                break;
-            case R.id.nav_offline_mode:
-                configureNetworkAccess(false);
-                break;
             default:
             EventBus.getDefault().post(new NavigationItemSelectEvent(item.getItemId()));
         }
         return true;
-    }
-
-    private void showUnlockDialog() {
-
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-        String username;
-        if (sessionDetails != null) {
-            username = sessionDetails.getUsername();
-        } else {
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
-            username = connectionPrefs.getPiwigoUsername(prefs, getContext());
-        }
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new OnUnlockAction(uiHelper));
-    }
-
-    public void onDrawerOpened() {
-        uiHelper.showUserHint(TAG, 1, R.string.hint_navigation_panel_1);
-    }
-
-    private static class OnUnlockAction extends UIHelper.QuestionResultAdapter {
-        public OnUnlockAction(UIHelper uiHelper) {
-            super(uiHelper);
-        }
-
-        @Override
-        public void onShow(AlertDialog alertDialog) {
-            super.onShow(alertDialog);
-
-            MaterialCheckboxTriState viewUnencryptedToggle = alertDialog.findViewById(R.id.toggle_visibility);
-            if (viewUnencryptedToggle != null) {
-                EditText passwordField = alertDialog.findViewById(R.id.password);
-                viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
-            }
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                DisplayUtils.hideKeyboardFrom(getContext(), dialog);
-                EditText passwordEdit = dialog.findViewById(R.id.password);
-                if(passwordEdit != null) {
-                    String password = passwordEdit.getText().toString();
-                    EventBus.getDefault().post(new UnlockAppEvent(password));
-                } else {
-                    Crashlytics.log("unable to find password field on dialog");
-                }
-            }
-        }
     }
 
     @Override
@@ -335,27 +228,11 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private void showLockDialog() {
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_lock, getContext().getString(R.string.alert_message_lock), R.string.button_cancel, R.string.button_lock, new OnAppLockAction(uiHelper));
-    }
 
-    private static class OnAppLockAction extends UIHelper.QuestionResultAdapter {
-        public OnAppLockAction(UIHelper uiHelper) {
-            super(uiHelper);
-        }
+    private static class OnLogoutAction extends UIHelper.Action<UIHelper<UploadActivityDrawerNavigationView>, UploadActivityDrawerNavigationView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
 
         @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                EventBus.getDefault().post(new LockAppEvent());
-            }
-        }
-    }
-
-    private static class OnLogoutAction extends UIHelper.Action<UIHelper<CustomNavigationView>, CustomNavigationView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
-
-        @Override
-        public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
+        public boolean onSuccess(UIHelper<UploadActivityDrawerNavigationView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             uiHelper.getParent().runHttpClientCleanup(connectionPrefs);
             uiHelper.getParent().updateServerConnectionDetails();
@@ -363,7 +240,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
 
         @Override
-        public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(UIHelper<UploadActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
             onSuccess(uiHelper, null);
@@ -371,16 +248,16 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<UIHelper<CustomNavigationView>, CustomNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction extends UIHelper.Action<UIHelper<UploadActivityDrawerNavigationView>, UploadActivityDrawerNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
 
         @Override
-        public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(UIHelper<UploadActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().markRefreshSessionComplete();
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(UIHelper<UploadActivityDrawerNavigationView> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             uiHelper.getParent().markRefreshSessionComplete();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
@@ -398,16 +275,16 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<UIHelper<CustomNavigationView>, CustomNavigationView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+    private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<UIHelper<UploadActivityDrawerNavigationView>, UploadActivityDrawerNavigationView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
 
         @Override
-        public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(UIHelper<UploadActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().markRefreshSessionComplete();
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+        public boolean onSuccess(UIHelper<UploadActivityDrawerNavigationView> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getContext());
             if ((serverUri == null || serverUri.trim().isEmpty())) {
@@ -448,14 +325,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             m.findItem(R.id.nav_users).setVisible(isAdminUser && !isReadOnly);
 
             m.findItem(R.id.nav_settings).setVisible(!isReadOnly);
-            // only allow locking of the app if we've got an active login to PIWIGO.
-            m.findItem(R.id.nav_lock).setVisible(!isReadOnly && sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isGuest());
-            m.findItem(R.id.nav_unlock).setVisible(isReadOnly);
-
-            m.findItem(R.id.nav_buy_time).setVisible(!BuildConfig.PAID_VERSION);
-
-            m.findItem(R.id.nav_offline_mode).setVisible(sessionDetails == null || !sessionDetails.isCached());
-            m.findItem(R.id.nav_online_mode).setVisible(sessionDetails != null && sessionDetails.isCached());
         }
     }
 
@@ -466,11 +335,11 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         setMenuVisibilityToMatchSessionState(lockApp);
     }
 
-    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<CustomNavigationView>> {
+    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<UploadActivityDrawerNavigationView>> {
 
         private final boolean networkAccessDesired;
 
-        public ConfigureNetworkAccessQuestionResult(ViewGroupUIHelper<CustomNavigationView> uiHelper, boolean networkAccessDesired) {
+        public ConfigureNetworkAccessQuestionResult(ViewGroupUIHelper<UploadActivityDrawerNavigationView> uiHelper, boolean networkAccessDesired) {
             super(uiHelper);
             this.networkAccessDesired = networkAccessDesired;
         }
@@ -492,22 +361,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
                 } else if (!networkAccessDesired) {
                     String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getContext());
                     getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction());
-                }
-            }
-        }
-    }
-
-    public void updateTheme() {
-    }
-
-    class CustomPiwigoListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onBeforeHandlePiwigoResponseInListener(PiwigoResponseBufferingHandler.Response response) {
-            // invokeAndWait the chained call before hiding the progress dialog to avoid flicker.
-            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
-                if (PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
-                    onLoginAfterAppUnlockEvent(rsp.getOldCredentials());
                 }
             }
         }

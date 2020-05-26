@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,6 +15,7 @@ import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -107,7 +107,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     private HashSet<Long> newAccessibleAlbumIds;
     private ArrayList<CategoryItemStub> availableGalleries;
     private boolean fieldsEditable;
-    private CheckBox isDefaultField;
+    private SwitchMaterial isDefaultField;
     private int selectUsersActionId;
 
     public static GroupFragment newInstance(Group group) {

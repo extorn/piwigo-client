@@ -151,7 +151,6 @@
 
             <TextView
                 android:id="@+id/user_lastvisit"
-                android:inputType="text|textNoSuggestions"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
                 tools:text="some text"
@@ -163,10 +162,10 @@
                 android:text="@string/user_high_definition_title"
                 style="?editableFieldLabel"/>
 
-            <CheckBox
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/user_high_definition_field"
                 android:text="@string/user_high_definition_field"
-                style="?editableFieldCheckBox"/>
+                style="?editableFieldSwitch"/>
 
             <TextView
                 android:id="@+id/user_groups_label"

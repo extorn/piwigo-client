@@ -13,7 +13,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
     	android:id="@id/exo_content_frame"
@@ -32,7 +33,7 @@
         	android:id="@id/exo_artwork"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="TODO" android:scaleType="fitXY"/>
+            android:scaleType="fitXY"/>
 
         <com.google.android.exoplayer2.ui.SubtitleView
         	android:id="@id/exo_subtitles"
@@ -50,12 +51,14 @@
             	android:id="@+id/exo_downloaded"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                tools:text="8.3MB"
                 android:textAppearance="?textAppearanceBody2"/>
 
             <TextView
             	android:id="@+id/exo_cached_summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                tools:text="2.4MB"
                 android:textAppearance="?textAppearanceBody2"/>
         </LinearLayout>
 

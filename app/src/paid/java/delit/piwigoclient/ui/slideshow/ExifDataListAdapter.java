@@ -4,9 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+
+import androidx.gridlayout.widget.GridLayout;
 
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -46,8 +47,15 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
         } else {
             v = convertView;
         }
-        v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        // Allow reuse of this child view (Nb would have to clear the tag to stop it being recycled in this way).
+//        long thisId = getChildId(groupPosition, childPosition);
+//        if(Long.valueOf(thisId).equals(v.getTag())) {
+//            return v;
+//        }
+//        v.setTag(thisId);
+
+//        v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//        parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         List<? extends Map<String, ?>> children = childData.get(groupPosition);
         bindChildDataToView(parent.getContext(), v.findViewById(R.id.childGrid), children);
         return v;
@@ -65,14 +73,18 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
     }
 
     private View inflateChildItemView(Context context, int position, ViewGroup parent) {
+        View childView;
         switch(position % 2) {
             case 0:
-                return LayoutInflater.from(context).inflate(R.layout.exif_list_child_heading_layout, parent, false);
+                childView = LayoutInflater.from(context).inflate(R.layout.exif_list_child_heading_layout, parent, false);
+                break;
             case 1:
-                return LayoutInflater.from(context).inflate(R.layout.exif_list_child_value_layout, parent, false);
+                childView = LayoutInflater.from(context).inflate(R.layout.exif_list_child_value_layout, parent, false);
+                break;
             default:
                 throw new RuntimeException("Will never occur");
         }
+        return childView;
     }
 
     private String[] flatten(List<? extends Map<String, ?>> childItems) {

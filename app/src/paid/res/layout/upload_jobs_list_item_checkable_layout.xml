@@ -21,7 +21,7 @@
             android:layout_toEndOf="@id/list_item_checked"
             android:layout_alignWithParentIfMissing="true"
             tools:text="dummy text"
-            android:textAppearance="?textAppearanceBody2"/>
+            android:textAppearance="?textAppearanceBody1"/>
         <TextView
             android:id="@+id/list_item_details"
             android:layout_marginStart="5dp"
@@ -43,33 +43,26 @@
             android:clickable="false"
             android:focusable="false" />
 
-        <CheckBox
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/delete_uploaded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_below="@id/list_item_details"
             android:layout_toStartOf="@+id/list_item_delete_button"
             android:layout_toEndOf="@id/list_item_checked"
             android:layout_alignWithParentIfMissing="true"
             android:text="@string/delete_uploaded_files_title"
-            android:clickable="false"
-            android:focusable="false"
             android:enabled="false"
-            android:textAppearance="?textAppearanceBody2"/>
+            style="?editableFieldSwitch"/>
 
-        <CheckBox
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/enabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_below="@id/delete_uploaded"
             android:layout_toStartOf="@+id/list_item_delete_button"
             android:layout_toEndOf="@id/list_item_checked"
             android:layout_alignWithParentIfMissing="true"
             android:text="@string/upload_job_is_enabled_label"
-            android:clickable="false"
-            android:focusable="false"
             android:enabled="false"
-            android:textAppearance="?textAppearanceBody2"/>
+            tools:checked="true"
+            style="?editableFieldSwitch"/>
 
         <Button
             android:id="@+id/list_item_delete_button"

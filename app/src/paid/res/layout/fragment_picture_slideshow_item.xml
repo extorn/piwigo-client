@@ -188,14 +188,15 @@
         android:theme="@style/ThemeOverlay.EditPages"
         tools:stateExpanded="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:paddingEnd="5dp"
             android:paddingStart="5dp"
-            android:paddingBottom="20dp">
+            android:paddingBottom="20dp"
+            android:orientation="vertical"
+            android:nestedScrollingEnabled="true">
 
             <RelativeLayout
                 android:id="@+id/action_buttons_bar"
@@ -272,20 +273,19 @@
             </RelativeLayout>
 
             <delit.libs.ui.view.CustomViewPager
+                android:nestedScrollingEnabled="true"
                 android:id="@+id/slideshow_resource_details_tabs_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/action_buttons_bar"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp"
-                android:layout_alignParentBottom="true">
+                android:layout_marginBottom="20dp">
 
                 <delit.libs.ui.view.CustomMaterialTabLayout
+                    style="?tabLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
-                    app:initialTabIdx="1"
-                    style="?tabLayout"/>
+                    app:initialTabIdx="1" />
 
                 <TextView
                     android:id="@+id/pageTitle1"
@@ -301,89 +301,90 @@
 
                     <LinearLayout
                         android:id="@+id/picture_resource_basic_fields"
+                        android:nestedScrollingEnabled="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/slideshow_image_details_description_label"
+                            style="?editableFieldLabel"
                             android:labelFor="@+id/slideshow_image_details_description"
-                            android:text="@string/slideshow_image_details_description_title"
-                            style="?editableFieldLabel"/>
+                            android:text="@string/slideshow_image_details_description_title" />
 
                         <EditText
                             android:id="@+id/slideshow_image_details_description"
+                            style="?editableFieldText"
+                            android:importantForAutofill="no"
                             android:inputType="textMultiLine|textNoSuggestions"
                             android:maxLines="10"
-                            android:importantForAutofill="no"
-                            tools:text="Some description text"
                             tools:enabled="false"
-                            style="?editableFieldText"/>
+                            tools:text="Some description text" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_name_label"
+                            style="?editableFieldLabel"
                             android:labelFor="@+id/slideshow_image_details_name"
-                            android:text="@string/slideshow_image_details_name_title"
-                            style="?editableFieldLabel"/>
+                            android:text="@string/slideshow_image_details_name_title" />
 
                         <EditText
                             android:id="@+id/slideshow_image_details_name"
+                            style="?editableFieldText"
+                            android:importantForAutofill="no"
                             android:inputType="textMultiLine|textNoSuggestions"
                             android:maxLines="3"
-                            android:importantForAutofill="no"
-                            tools:text="Some resource name"
-                            style="?editableFieldText"/>
+                            tools:text="Some resource name" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_linked_albums_label"
+                            style="?editableFieldLabel"
                             android:labelFor="@+id/slideshow_image_details_linked_albums"
-                            android:text="@string/slideshow_image_details_linked_albums_title"
-                            style="?editableFieldLabel"/>
+                            android:text="@string/slideshow_image_details_linked_albums_title" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_linked_albums"
+                            style="?editableFieldTextClickable"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="@string/click_to_view"
-                            style="?editableFieldTextClickable"/>
+                            android:text="@string/click_to_view" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_tags_label"
+                            style="?editableFieldLabel"
                             android:labelFor="@+id/slideshow_image_details_tags"
-                            android:text="@string/slideshow_image_details_tags_title"
-                            style="?editableFieldLabel"/>
+                            android:text="@string/slideshow_image_details_tags_title" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_tags"
+                            style="?editableFieldTextClickable"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="@string/click_to_view"
-                            style="?editableFieldTextClickable"/>
+                            android:text="@string/click_to_view" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_rating_score_label"
+                            style="?editableFieldLabel"
                             android:labelFor="@+id/slideshow_image_details_rating_score"
-                            android:text="@string/slideshow_image_details_rating_score_title"
-                            style="?editableFieldLabel"/>
+                            android:text="@string/slideshow_image_details_rating_score_title" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_rating_score"
+                            style="?editableFieldText"
                             android:text="@string/rating_score_pattern"
                             android:textAppearance="?textAppearanceBody1"
-                            tools:text="1.2 (5 rates)"
-                            style="?editableFieldText"/>
+                            tools:text="1.2 (5 rates)" />
 
                         <TextView
                             android:id="@+id/slideshow_image_details_privacy_level"
+                            style="?editableFieldLabel"
                             android:labelFor="@+id/privacy_level"
-                            android:text="@string/upload_file_privacy_level_title"
-                            style="?editableFieldLabel"/>
+                            android:text="@string/upload_file_privacy_level_title" />
 
                         <Spinner
                             android:id="@+id/privacy_level"
-                            style="?editableFieldSpinner"/>
+                            style="?editableFieldSpinner" />
 
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>
@@ -394,24 +395,24 @@
                     android:layout_height="wrap_content"
                     android:text="@string/slideshow_image_tab_exif_data" />
 
-                <FrameLayout
+
+                <androidx.core.widget.NestedScrollView
                     android:id="@+id/pageContent2"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:padding="10dp">
                     <delit.libs.ui.view.list.CustomExpandableListView
                         android:id="@+id/exifDataList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        tools:layout_height="200dp"/>
-
-                </FrameLayout>
+                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:nestedScrollingEnabled="true"
+                        />
+                </androidx.core.widget.NestedScrollView>
 
             </delit.libs.ui.view.CustomViewPager>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </delit.libs.ui.view.slidingsheet.SlidingBottomSheet>
 

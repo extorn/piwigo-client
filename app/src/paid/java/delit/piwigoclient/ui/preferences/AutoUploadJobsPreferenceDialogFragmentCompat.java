@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -246,8 +246,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             });
             TextView nameView = itemView.findViewById(R.id.list_item_name);
             TextView detailView = itemView.findViewById(R.id.list_item_details);
-            CheckBox deleteUploadedFiles = itemView.findViewById(R.id.delete_uploaded);
-            CheckBox jobEnabledView = itemView.findViewById(R.id.enabled);
+            SwitchMaterial deleteUploadedFiles = itemView.findViewById(R.id.delete_uploaded);
+            SwitchMaterial jobEnabledView = itemView.findViewById(R.id.enabled);
             MaterialButton deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override

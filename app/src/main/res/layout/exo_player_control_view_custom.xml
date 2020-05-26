@@ -16,11 +16,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/exo_player_controls_container"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="bottom"
     android:layoutDirection="ltr"
-    android:background="#CC000000"
+    android:background="?colorPrimary"
     android:orientation="vertical">
 
     <LinearLayout
@@ -32,35 +33,35 @@
 
         <ImageButton
         	android:id="@id/exo_prev"
-            style="@style/ExoMediaButton.Previous" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Previous"/>
 
         <ImageButton
         	android:id="@id/exo_rew"
-            style="@style/ExoMediaButton.Rewind" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Rewind" />
 
         <ImageButton
         	android:id="@id/exo_shuffle"
-            style="@style/ExoMediaButton.Shuffle" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Shuffle" />
 
         <ImageButton
         	android:id="@id/exo_repeat_toggle"
-            style="@style/ExoMediaButton" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton" />
 
         <ImageButton
         	android:id="@id/exo_play"
-            style="@style/ExoMediaButton.Play" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Play" />
 
         <ImageButton
         	android:id="@id/exo_pause"
-            style="@style/ExoMediaButton.Pause" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Pause" />
 
         <ImageButton
         	android:id="@id/exo_ffwd"
-            style="@style/ExoMediaButton.FastForward" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.FastForward" />
 
         <ImageButton
         	android:id="@id/exo_next"
-            style="@style/ExoMediaButton.Next" android:contentDescription="TODO"/>
+            style="@style/ExoMediaButton.Next" />
 
     </LinearLayout>
 
@@ -79,8 +80,8 @@
             android:textStyle="bold"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            tools:text="450/00000"
+            android:includeFontPadding="false"/>
 
         <delit.piwigoclient.business.video.CustomExoPlayerTimeBar
             android:id="@id/exo_progress"
@@ -100,7 +101,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            tools:text="1:23"/>
 
     </LinearLayout>
 

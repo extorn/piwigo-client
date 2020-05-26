@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -54,6 +55,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.business.video.CachedContent;
 import delit.piwigoclient.business.video.CustomExoPlayerTimeBar;
+import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.PausableLoadControl;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.business.video.RemoteDirectHttpClientBasedHttpDataSource;
@@ -552,9 +554,20 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
             logStatus("resuming buffering - in case paused");
             loadControl.resumeBuffering();
             player.prepare(videoSource, false, false);
-        } else {
-            logStatus("configuring player with old datasource - resuming buffering if paused");
-            loadControl.resumeBuffering();
+            player.addListener(new ExoPlayerEventAdapter() {
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    if(playbackState == Player.STATE_ENDED) {
+                        // need to create a new extractor media source as exoplayer does not expect them to be reused after STATE_ENDED
+                        player.seekTo(0);
+                        player.setPlayWhenReady(false);
+                        Uri videoUri = Uri.parse(getModel().getFileUrl(getModel().getFullSizeFile().getName()));
+                        ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
+                        player.prepare(videoSource, false, false);
+                        loadControl.resumeBuffering();
+                    }
+                }
+            });
         }
         player.setPlayWhenReady(startPlaybackImmediatelyIfVisibleToUser && isPrimarySlideshowItem());
     }

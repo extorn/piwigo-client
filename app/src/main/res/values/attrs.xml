@@ -19,6 +19,10 @@
     <attr format="reference|color" name="scrimUltraHeavy"/>
     <attr format="reference|color" name="scrimHeavy"/>
     <attr format="reference|color" name="scrimLight"/>
+    <attr format="reference" name="appNumberPickerStyle"/>
+    <attr format="reference" name="editableFieldNumberPicker"/>
+
+
 
     <attr format="color" name="colorPrimaryDisabled"/>
     <attr format="color" name="colorAlbumItemBackground"/>

@@ -270,7 +270,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                ((CustomNavigationView) drawerView).onDrawerOpened();
+                ((MainActivityDrawerNavigationView) drawerView).onDrawerOpened();
             }
         };
         drawer.addDrawerListener(toggle);
@@ -1251,7 +1251,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ThemeAlteredEvent event) {
-        CustomNavigationView navigationView = findViewById(R.id.nav_view);
+        MainActivityDrawerNavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.updateTheme();
     }
 
@@ -1262,7 +1262,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         Crashlytics.setString("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
 
 
-        CustomNavigationView navigationView = findViewById(R.id.nav_view);
+        MainActivityDrawerNavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setMenuVisibilityToMatchSessionState();
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.

@@ -80,10 +80,10 @@
                 android:text="@string/group_is_default_title"
                 style="?editableFieldLabel"/>
 
-            <CheckBox
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/group_is_default"
                 android:text="@string/group_is_default_field"
-                style="?editableFieldCheckBox"/>
+                style="?editableFieldSwitch"/>
 
             <TextView
                 android:id="@+id/group_members_label"

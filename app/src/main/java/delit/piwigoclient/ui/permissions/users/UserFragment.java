@@ -23,6 +23,7 @@ import androidx.core.widget.NestedScrollView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -107,7 +108,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     private EditText usernameField;
     private Spinner usertypeField;
     private EditText emailField;
-    private CheckBox highDefinitionEnabled;
+    private SwitchMaterial highDefinitionEnabled;
     private TextView lastVisitedField;
     private MaterialButton editButton;
     private MaterialButton discardButton;

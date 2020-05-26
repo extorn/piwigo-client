@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,6 +60,16 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(GROUPS_MODEL, groupsModel);
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
+        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
+            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_EditPages));
+        }
+        return inflator;
     }
 
     @Nullable

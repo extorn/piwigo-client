@@ -27,8 +27,8 @@
     <color name="app_color_on_secondary">#FFFFFF</color>
     <color name="app_color_error">#F44336</color>
     <color name="app_color_on_error">#FFFFFF</color>
-    <color name="app_color_surface">#FFFFFF</color>
-    <color name="app_color_on_surface">#212121</color>
+    <color name="app_color_surface">#606060</color>
+    <color name="app_color_on_surface">#FFFFFF</color>
     <color name="app_color_on_background">#212121</color>
     <color name="app_color_scrim_color">#11000000</color>
 
@@ -44,7 +44,7 @@
 
 
     <!-- these are used in the exo-player layout -->
-    <color name="video_timebar_locally_cached">@color/primary_progress</color>
+    <color name="video_timebar_locally_cached">@color/app_secondary</color>
     <color name="video_timebar_unplayed">#FF555555</color>
     <color name="video_timebar_buffered">#FFFFFF</color>
     <!-- end used -->

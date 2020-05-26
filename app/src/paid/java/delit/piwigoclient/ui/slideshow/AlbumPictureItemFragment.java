@@ -110,17 +110,12 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         prefs.readonly();
         ExifDataListAdapter exifDataListAdapter = ExifDataListAdapter.newAdapter(getContext(), metadata);
         exifDataList.setAdapter(exifDataListAdapter);
+        exifDataList.setOnGroupCollapseListener(groupPosition -> exifDataList.getParent().requestLayout());
+        exifDataList.setOnGroupExpandListener(groupPosition -> exifDataList.getParent().requestLayout());
 
         InlineViewPagerAdapter viewPagerAdapter = ((InlineViewPagerAdapter)viewPager.getAdapter());
-        if(viewPagerAdapter != null) {
-            viewPager.getLayoutParams().height = viewPagerAdapter.getLargestDesiredChildHeight();
-            View v = viewPager.getChildAt(0);
-            if(v instanceof TabLayout) {
-                viewPager.getLayoutParams().height += v.getHeight();
-            }
-         //   viewPager.getLayoutParams().height = Math.min(viewPager.getLayoutParams().height, viewPager.getRootView().getHeight() / 3 * 2);
-        }
-
-
+//        if(metadata != null && metadata.getDirectoryCount() > 0 && viewPagerAdapter != null) {
+//            viewPagerAdapter.notifyDataSetChanged();
+//        }
     }
 }

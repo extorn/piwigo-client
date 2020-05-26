@@ -16,11 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InlineViewPagerAdapter extends PagerAdapter {
-
-    private List<CharSequence> pagesTitle;
+    private List<CharSequence> pagesTitles;
     private List<View> pagesContent;
+    private int currentMaxChildHeight = 0;
 
     public InlineViewPagerAdapter(ViewPager viewPager) {
+        initialiseFromView(viewPager);
+        // force re-draw to get the child added.
+        viewPager.invalidate();
+    }
+
+    private void initialiseFromView(ViewPager viewPager) {
         int childCount = viewPager.getChildCount();
         int offset = 0;
         if(childCount == 0) {
@@ -33,11 +39,15 @@ public class InlineViewPagerAdapter extends PagerAdapter {
             throw new RuntimeException("There must be an even number of child components to the view pager - title, content, title, content, etc.\nThe titles must be text views (from which text is extracted)");
         }
         int pages = (childCount - 1) / 2;
-        pagesTitle = new ArrayList<>(pages);
+        pagesTitles = new ArrayList<>(pages);
         pagesContent = new ArrayList<>(pages);
-        for(int i = offset; i < viewPager.getChildCount(); i+=2) {
-            pagesTitle.add(((TextView)viewPager.getChildAt(i)).getText());
-            pagesContent.add(viewPager.getChildAt(i+1));
+        for(int i = offset; i < viewPager.getChildCount(); i++) {
+            View child = viewPager.getChildAt(i);
+            pagesTitles.add(((TextView)child).getText());
+            viewPager.removeView(child);
+            child = viewPager.getChildAt(i);
+            child.setVisibility(View.GONE);
+            pagesContent.add(child);
         }
     }
 
@@ -54,7 +64,7 @@ public class InlineViewPagerAdapter extends PagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return pagesTitle.get(position);
+        return pagesTitles.get(position);
     }
 
     @Override
@@ -65,14 +75,14 @@ public class InlineViewPagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        return pagesContent.get(position);
+        View child = pagesContent.get(position);
+        child.setVisibility(View.VISIBLE);
+        return child;
     }
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        container.removeView(pagesContent.get(position));
-        pagesContent.remove(position);
-        pagesTitle.remove(position);
+        pagesContent.get(position).setVisibility(View.GONE);
     }
 
     @Nullable
@@ -91,12 +101,23 @@ public class InlineViewPagerAdapter extends PagerAdapter {
         return null;
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        currentMaxChildHeight = 0;
+        super.notifyDataSetChanged();
+    }
+
     public int getLargestDesiredChildHeight() {
-        int maxHeight = 0;
-        for(View v : pagesContent) {
-            v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            maxHeight = Math.max(maxHeight, v.getMeasuredHeight());
+        if(currentMaxChildHeight == 0) {
+            int maxHeight = 0;
+            for(View v : pagesContent) {
+                if(v.getLayoutParams().height != ViewGroup.LayoutParams.MATCH_PARENT) {
+                    v.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                    maxHeight = Math.max(maxHeight, v.getMeasuredHeight());
+                }
+            }
+            currentMaxChildHeight = maxHeight;
         }
-        return maxHeight;
+        return currentMaxChildHeight;
     }
 }

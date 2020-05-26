@@ -514,20 +514,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         resourceRatingScoreField = v.findViewById(R.id.slideshow_image_details_rating_score);
 
         linkedAlbumsField = v.findViewById(R.id.slideshow_image_details_linked_albums);
-        linkedAlbumsField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashSet<Long> currentSelection = PiwigoUtils.toSetOfIds(updatedLinkedAlbumSet);
-                if (currentSelection == null) {
-                    currentSelection = new HashSet<>(model.getLinkedAlbums());
-                }
-
-                boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
-
-                AlbumSelectionNeededEvent albumSelectEvent = new AlbumSelectionNeededEvent(true, allowFullEdit && editingItemDetails, currentSelection);
-                getUiHelper().setTrackingRequest(albumSelectEvent.getActionId());
-                EventBus.getDefault().post(albumSelectEvent);
-            }
+        linkedAlbumsField.setOnClickListener(v1 -> {
+            showLinkedAlbumsView();
         });
 
         tagsField = v.findViewById(R.id.slideshow_image_details_tags);
@@ -594,6 +582,19 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 onCopyItem(model);
             }
         });
+    }
+
+    private void showLinkedAlbumsView() {
+        HashSet<Long> currentSelection = PiwigoUtils.toSetOfIds(updatedLinkedAlbumSet);
+        if (currentSelection == null) {
+            currentSelection = new HashSet<>(model.getLinkedAlbums());
+        }
+
+        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
+
+        AlbumSelectionNeededEvent albumSelectEvent = new AlbumSelectionNeededEvent(true, allowFullEdit && editingItemDetails, currentSelection);
+        getUiHelper().setTrackingRequest(albumSelectEvent.getActionId());
+        EventBus.getDefault().post(albumSelectEvent);
     }
 
     protected void onSaveChangesButtonClicked() {

@@ -1,14 +1,18 @@
 package delit.libs.ui.view.slidingsheet;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
@@ -26,7 +30,6 @@ import delit.piwigoclient.R;
 public class SlidingBottomSheet extends CoordinatorLayout {
     private AppBarAwareBottomSheetBehaviour appBarAwareBottomSheetBehavior;
     private OnInteractListener onInteractListener;
-    private RelativeLayout bottomSheetContent;
 
     public SlidingBottomSheet(Context context) {
         super(context);
@@ -62,11 +65,12 @@ public class SlidingBottomSheet extends CoordinatorLayout {
 
     @Override
     protected void onFinishInflate() {
-        super.onFinishInflate();
-
         if(getChildCount() > 0) {
             configureContents();
         }
+        super.onFinishInflate();
+
+
     }
 
     @Override
@@ -81,8 +85,10 @@ public class SlidingBottomSheet extends CoordinatorLayout {
         appBarAwareBottomSheetBehavior.startListeningToAppBar(this);
     }
 
-    private void addShadow(RelativeLayout bottomSheet, Context context) {
+    private void addShadow(ViewGroup bottomSheet, Context context) {
         View shadowView = new View(context);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, DisplayUtils.dpToPx(context, 30));
+        shadowView.setLayoutParams(params);
         shadowView.setBackground(ContextCompat.getDrawable(context, R.drawable.shadow_top));
         shadowView.setOnClickListener(v -> {
             close();
@@ -90,12 +96,7 @@ public class SlidingBottomSheet extends CoordinatorLayout {
         bottomSheet.setOnClickListener(v -> {
             close();
         });
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, DisplayUtils.dpToPx(context, 30));
-//        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        int viewContentId = bottomSheet.getChildAt(0).getId();
-        params.addRule(RelativeLayout.ABOVE, viewContentId);
 
-        shadowView.setLayoutParams(params);
         bottomSheet.addView(shadowView);
     }
 
@@ -104,10 +105,8 @@ public class SlidingBottomSheet extends CoordinatorLayout {
     }
 
     public void open() {
-        appBarAwareBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        appBarAwareBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
     }
-
-
 
     private void configureBottomSheetBehaviour() {
         appBarAwareBottomSheetBehavior.setPeekHeight(0);
@@ -115,42 +114,50 @@ public class SlidingBottomSheet extends CoordinatorLayout {
 
             @Override
             public void onExpanded(View bottomSheet) {
-                onInteractListener.onOpened();
+                if(onInteractListener != null) {
+                    onInteractListener.onOpened();
+                }
             }
 
             @Override
             public void onCollapsed(View bottomSheet) {
-                onInteractListener.onClosed();
+                if(onInteractListener != null) {
+                    onInteractListener.onClosed();
+                }
             }});
     }
 
     public void configureContents() {
 
-        View bottomSheetContent = getChildAt(0);
-        removeView(bottomSheetContent);
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        bottomSheetContent.setLayoutParams(params);
-
-        CoordinatorLayout.LayoutParams thisParams = (LayoutParams) getLayoutParams();
-        if(thisParams == null) {
-            thisParams = new CoordinatorLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            setLayoutParams(thisParams);
+        View bottomSheetUserContent = getChildAt(0);
+        removeView(bottomSheetUserContent);
+        if(bottomSheetUserContent.getBackground() == null) {
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = getContext().getTheme();
+            theme.resolveAttribute(R.attr.colorSurface, typedValue, true);
+            @ColorInt int color = typedValue.data;
+            bottomSheetUserContent.setBackgroundColor(color);
         }
+
+//        CoordinatorLayout.LayoutParams thisParams = (LayoutParams) getLayoutParams();
+//        if(thisParams == null) {
+//            thisParams = new CoordinatorLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+//            setLayoutParams(thisParams);
+//        }
         CoordinatorLayout.LayoutParams bottomSheetParams = new CoordinatorLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         bottomSheetParams.setBehavior(appBarAwareBottomSheetBehavior);
 
 
-        this.bottomSheetContent = new RelativeLayout(getContext());
-        this.bottomSheetContent.setLayoutParams(bottomSheetParams);
-        this.bottomSheetContent.setBackgroundColor(Color.TRANSPARENT);
-        addView(this.bottomSheetContent);
+        LinearLayout bottomSheetContainer = new LinearLayout(getContext());
+        bottomSheetContainer.setOrientation(LinearLayout.VERTICAL);
+        bottomSheetContainer.setLayoutParams(bottomSheetParams);
+        //bottomSheetContainer.setBackgroundColor(Color.TRANSPARENT);
+        addView(bottomSheetContainer);
 
-        // add the original xml child as content
-        this.bottomSheetContent.addView(bottomSheetContent);
         // add a shadow to the top of the child content
-        addShadow(this.bottomSheetContent, getContext());
+        addShadow(bottomSheetContainer, getContext());
+        // add the original xml child as content
+        bottomSheetContainer.addView(bottomSheetUserContent);
 
         configureBottomSheetBehaviour();
         appBarAwareBottomSheetBehavior.refreshState();

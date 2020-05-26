@@ -203,9 +203,9 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
             v = convertView;
         }
         v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        //parent.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         bindChildrenDataToChildrenListView(parent.getContext(), v.findViewById(R.id.expandingListView), getGroup(groupPosition), childPosition);
-        parent.invalidate();
+//        parent.invalidate();
         return v;
     }
 
