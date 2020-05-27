@@ -167,14 +167,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         fileExtFilters = v.findViewById(R.id.file_ext_filters);
 
-        MaterialButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
-        folderViewRefreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshCurrentFolderView();
-            }
-        });
-
         MaterialButton addRootButton = v.findViewById(R.id.add_root);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             addRootButton.setOnClickListener(v1 -> retrievePermissionsForUri(null));
@@ -706,22 +698,26 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private class DocumentFileNavigationListener implements AbstractBreadcrumbsView.NavigationListener<DocumentFile> {
         @Override
         public void onBreadcrumbClicked(DocumentFile pathItemFile) {
-            getListAdapter().changeFolderViewed(pathItemFile);
-            if (listViewStates != null) {
-                Iterator<Map.Entry<Uri, Parcelable>> iter = listViewStates.entrySet().iterator();
-                Map.Entry<Uri, Parcelable> item;
-                while (iter.hasNext()) {
-                    item = iter.next();
-                    if (item.getKey().equals(pathItemFile.getUri())) {
-                        if (getList().getLayoutManager() != null) {
-                            getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                        } else {
-                            Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
-                        }
-                        iter.remove();
-                        while (iter.hasNext()) {
-                            iter.next();
+            if(getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
+                getListAdapter().rebuildContentView();
+            } else {
+                getListAdapter().changeFolderViewed(pathItemFile);
+                if (listViewStates != null) {
+                    Iterator<Map.Entry<Uri, Parcelable>> iter = listViewStates.entrySet().iterator();
+                    Map.Entry<Uri, Parcelable> item;
+                    while (iter.hasNext()) {
+                        item = iter.next();
+                        if (item.getKey().equals(pathItemFile.getUri())) {
+                            if (getList().getLayoutManager() != null) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                            } else {
+                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                            }
                             iter.remove();
+                            while (iter.hasNext()) {
+                                iter.next();
+                                iter.remove();
+                            }
                         }
                     }
                 }

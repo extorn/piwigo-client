@@ -132,42 +132,8 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         folderRootFolderSpinner.setOnItemSelectedListener(new RootFolderSelectionListener());
 
         folderPathView = v.findViewById(R.id.folder_path);
-        folderPathView.setNavigationListener((FileBreadcrumbsView.NavigationListener<File>) pathItemFile -> {
-            File activeFolder = getListAdapter().getActiveFolder();
-            if (!pathItemFile.equals(activeFolder)) {
-                getListAdapter().cancelAnyActiveFolderMediaScan();
-            }
-            getListAdapter().changeFolderViewed(pathItemFile);
-            if (listViewStates != null) {
-                Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
-                Map.Entry<String, Parcelable> item;
-                while (iter.hasNext()) {
-                    item = iter.next();
-                    if (item.getKey().equals(pathItemFile.getAbsolutePath())) {
-                        if (getList().getLayoutManager() != null) {
-                            getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                        } else {
-                            Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
-                        }
-                        iter.remove();
-                        while (iter.hasNext()) {
-                            iter.next();
-                            iter.remove();
-                        }
-                    }
-                }
-            }
-        });
-
+        folderPathView.setNavigationListener(new FileNavigationListener());
         fileExtFilters = v.findViewById(R.id.file_ext_filters);
-
-        MaterialButton folderViewRefreshButton = v.findViewById(R.id.folder_refresh_button);
-        folderViewRefreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                refreshCurrentFolderView();
-            }
-        });
 
         navListener = new FolderItemNavigationListener();
 
@@ -600,6 +566,41 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+        }
+    }
+
+    class FileNavigationListener implements FileBreadcrumbsView.NavigationListener<File> {
+
+        @Override
+        public void onBreadcrumbClicked(File pathItemFile) {
+            File activeFolder = getListAdapter().getActiveFolder();
+            if (!pathItemFile.equals(activeFolder)) {
+                getListAdapter().cancelAnyActiveFolderMediaScan();
+            }
+            if(pathItemFile.equals(getListAdapter().getActiveFolder())) {
+                getListAdapter().rebuildContentView();
+            } else {
+                getListAdapter().changeFolderViewed(pathItemFile);
+                if (listViewStates != null) {
+                    Iterator<Map.Entry<String, Parcelable>> iterator = listViewStates.entrySet().iterator();
+                    Map.Entry<String, Parcelable> item;
+                    while (iterator.hasNext()) {
+                        item = iterator.next();
+                        if (item.getKey().equals(pathItemFile.getAbsolutePath())) {
+                            if (getList().getLayoutManager() != null) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                            } else {
+                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                            }
+                            iterator.remove();
+                            while (iterator.hasNext()) {
+                                iterator.next();
+                                iterator.remove();
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -163,8 +163,6 @@
 
             <Button
                 android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:visibility="visible"
@@ -202,16 +200,12 @@
 
                 <Button
                     android:id="@+id/slideshow_resource_action_edit_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     app:icon="@drawable/ic_mode_edit_black_24dp"
                     style="?materialButtonIconStyle"/>
 
                 <Button
                     android:id="@+id/slideshow_resource_action_save_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_edit_button"
                     android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
                     app:icon="@drawable/ic_save_black_24dp"
@@ -219,8 +213,6 @@
 
                 <Button
                     android:id="@+id/slideshow_resource_action_discard_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_save_button"
                     android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
                     app:icon="@drawable/ic_undo_black_24dp"
@@ -228,8 +220,6 @@
 
                 <Button
                     android:id="@+id/slideshow_resource_action_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="20dp"
                     android:tooltipText="@string/slideshow_resource_action_delete"
@@ -238,8 +228,6 @@
 
                 <Button
                     android:id="@+id/slideshow_resource_action_download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_delete"
                     android:layout_toStartOf="@+id/slideshow_resource_action_delete"
                     android:tooltipText="@string/slideshow_resource_action_download"
@@ -248,8 +236,6 @@
 
                 <Button
                     android:id="@+id/slideshow_resource_action_move"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_download"
                     android:layout_toStartOf="@+id/slideshow_resource_action_download"
                     android:tooltipText="@string/slideshow_resource_action_move"
@@ -258,8 +244,6 @@
 
                 <Button
                     android:id="@+id/slideshow_resource_action_copy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_move"
                     android:layout_toStartOf="@+id/slideshow_resource_action_move"
                     android:tooltipText="@string/slideshow_resource_action_copy"

@@ -101,6 +101,12 @@
         <attr name="entryValues" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="AbstractBreadcrumbsView">
+        <attr name="breadcrumbLayout" format="reference"/>
+        <attr name="breadcrumbDivisionLayout" format="reference"/>
+        <attr name="breadcrumbTextViewId" format="reference"/>
+    </declare-styleable>
+
     <declare-styleable name="ServerAlbumListPreference">
         <attr name="connectionProfileNameKey"/>
     </declare-styleable>

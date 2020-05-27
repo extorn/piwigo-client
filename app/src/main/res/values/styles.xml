@@ -215,8 +215,8 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
 
     <!-- icon only style button -->
     <style name="Widget.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:height">48dp</item>
-        <item name="android:width">48dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:paddingLeft">12dp</item>

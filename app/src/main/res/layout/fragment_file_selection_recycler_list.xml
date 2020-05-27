@@ -9,6 +9,8 @@
         android:id="@+id/progress_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
         android:visibility="gone"
         tools:visibility="visible"/>
 
@@ -63,14 +65,10 @@
             android:layout_toStartOf="@+id/add_root"
             android:layout_below="@+id/folder_root_label"
             android:layout_alignWithParentIfMissing="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             app:icon="@drawable/ic_delete_black_24px"
             style="?materialButtonIconStyle"/>
         <Button
             android:id="@+id/add_root"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_below="@+id/folder_root_label"
             android:layout_alignParentEnd="true"
             app:icon="@drawable/ic_add_circle_black_24px"
@@ -79,26 +77,13 @@
         <delit.libs.ui.view.DocumentFileBreadcrumbsView
             android:id="@+id/folder_path"
             android:layout_below="@+id/add_root"
-            android:layout_toStartOf="@id/folder_refresh_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:layout_margin="5dp"/>
-
-
-        <Button
-            android:id="@+id/folder_refresh_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignTop="@+id/folder_path"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
-            android:focusable="false"
-            android:padding="0dp"
-            app:icon="@drawable/ic_refresh_black_24dp"
-            style="?materialButtonIconStyle"/>
+            android:layout_margin="5dp"
+            app:breadcrumbLayout="@layout/layout_breadcrumb_item"
+            app:breadcrumbDivisionLayout="@layout/layout_breadcrumb_item_separator"/>
 
         <delit.piwigoclient.ui.file.FilterControl
             android:id="@+id/file_ext_filters"
@@ -128,6 +113,8 @@
         android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_above="@+id/list_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentStart="true"
@@ -150,6 +137,8 @@
         android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_above="@+id/list_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentEnd="true"

@@ -13,8 +13,6 @@
 
         <Button
             android:id="@+id/group_action_edit_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             app:icon="@drawable/ic_mode_edit_black_24dp"
             style="?materialButtonIconStyle"/>
@@ -23,15 +21,11 @@
             android:id="@+id/group_action_save_button"
             android:layout_toEndOf="@id/group_action_edit_button"
             android:layout_marginStart="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             app:icon="@drawable/ic_save_black_24dp"
             style="?materialButtonIconStyle"/>
 
         <Button
             android:id="@+id/group_action_discard_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_toEndOf="@id/group_action_save_button"
             android:layout_marginStart="10dp"
             app:icon="@drawable/ic_undo_black_24dp"
@@ -40,8 +34,6 @@
         <Button
             android:id="@+id/group_action_delete_button"
             android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             app:icon="@drawable/ic_delete_black_24px"
             style="?materialButtonIconStyle"/>
     </RelativeLayout>
