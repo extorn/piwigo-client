@@ -101,12 +101,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
         if (!multiSelect || alwaysSelectAll) {
             Button selectAllButton = view.findViewById(R.id.list_action_toggle_all_button);
-            selectAllButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onToggleAll();
-                }
-            });
+            selectAllButton.setOnClickListener(v -> onToggleAll());
             selectAllButton.setVisibility(View.GONE);
         }
         TextView heading = view.findViewById(R.id.heading);
@@ -126,12 +121,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
         ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
-        addListItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewItemToList(v.getContext());
-            }
-        });
+        addListItemButton.setOnClickListener(v -> addNewItemToList(v.getContext()));
 
         Button saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.GONE);

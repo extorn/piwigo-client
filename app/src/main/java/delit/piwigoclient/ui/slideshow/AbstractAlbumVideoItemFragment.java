@@ -554,8 +554,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 player.seekTo(videoPlaybackPosition);
             }
             logStatus("resuming buffering - in case paused");
-            loadControl.resumeBuffering();
             player.prepare(videoSource, false, false);
+            loadControl.resumeBuffering();
             player.addListener(new ExoPlayerEventAdapter() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -570,6 +570,9 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                     }
                 }
             });
+        } else {
+            logStatus("configuring player with old datasource - resuming buffering if paused");
+            loadControl.resumeBuffering();
         }
         player.setPlayWhenReady(startPlaybackImmediatelyIfVisibleToUser && isPrimarySlideshowItem());
     }

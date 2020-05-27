@@ -142,7 +142,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
-    private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final String MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE = "id_downloadedFile";
     // these fields are persisted.
@@ -908,14 +907,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, null, this, FileSelectActivity.class);
-        intent.putExtra(FileSelectActivity.INTENT_DATA, event);
-        setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
-        startActivityForResult(intent, event.getActionId());
-    }
-
     private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
         private final DownloadFileRequestEvent downloadEvent;
 
@@ -983,22 +974,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             public void onClick(View v) {
                 EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
             }
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            if (resultCode == RESULT_OK && data.getExtras() != null) {
-//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
-                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
-                EventBus.getDefault().postSticky(event);
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

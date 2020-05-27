@@ -499,31 +499,6 @@ public class UploadActivity extends MyActivity {
         showFragmentNow(f);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(this, FileSelectActivity.class);
-        intent.putExtra(FileSelectActivity.INTENT_DATA, event);
-        setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
-        startActivityForResult(intent, event.getActionId());
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            if (resultCode == RESULT_OK && data.getExtras() != null) {
-//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
-                long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
-                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
-                // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
-                EventBus.getDefault().postSticky(event);
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final ViewJobStatusDetailsEvent event) {
         UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());

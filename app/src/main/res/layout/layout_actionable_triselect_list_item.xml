@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:descendantFocusability="blocksDescendants">
+    android:descendantFocusability="blocksDescendants"
+    tools:theme="@style/ThemeOverlay.App.MaterialAlertDialog">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"

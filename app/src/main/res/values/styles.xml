@@ -62,7 +62,9 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="android:fontFamily">@font/roboto_mono</item>-->
 
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
-        <!--<item name="android:alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="android:alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <!--
         <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>-->
         <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
         <item name="radioButtonStyle">@style/App.Widget.CompoundButton.RadioButton</item>
@@ -77,7 +79,7 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="android:dropDownListViewStyle">@style/App.Widget.AppCompat.DropDownItem.Spinner</item>
 
         <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>-->
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/App.Theme.PreferenceThemeOverlay.v14.Material</item>
         <item name="editableFieldLabel">@style/App.Widget.Material.TextView.FieldLabel</item>
         <item name="editableFieldText">@style/App.Widget.EditText.FieldEntry</item>
         <item name="editableFieldNumberPicker">@style/App.Widget.NumberPicker.FieldEntry</item>
@@ -167,11 +169,13 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="textColorAlertDialogListItem">?colorPrimary</item>
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <!-- Use the edit color scheme (to force it on other themed pages) -->
+        <item name="android:theme">@style/ThemeOverlay.EditPages</item>
     </style>
-    <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <item name="textColorAlertDialogListItem">?colorPrimary</item>
+    <style name="ThemeOverlay.App.AlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <!-- Use the edit color scheme (to force it on other themed pages) -->
+        <item name="android:theme">@style/ThemeOverlay.EditPages</item>
     </style>
 
 
@@ -305,8 +309,6 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
     </style>
 
     <style name="App.Widget.MaterialComponents.CardView" parent="Widget.MaterialComponents.CardView">
-        <item name="cardBackgroundColor">?scrimLight</item> <!-- used in lists when in standard theme (not sure why) -->
-        <item name="cardForegroundColor">?scrimLight</item> <!-- used in selectable lists (background color essentially) -->
     </style>
 
     <style name="App.Widget.Snackbar" parent="Widget.MaterialComponents.Snackbar">
@@ -327,6 +329,10 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
     <style name="App.Widget.MaterialComponents.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" >
         <item name="android:background">?attr/colorPrimary</item>
         <item name="titleTextColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="App.Theme.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">
+
     </style>
 
 </resources>

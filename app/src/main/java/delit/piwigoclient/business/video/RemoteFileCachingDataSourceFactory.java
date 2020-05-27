@@ -130,6 +130,9 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
         @Override
         public void onPause() {
+            if(dataSource == null) {
+                throw new IllegalStateException("Unable to resume datasource caching as datasource not yet set");
+            }
             if (dataSource instanceof RemoteAsyncFileCachingDataSource) {
                 ((RemoteAsyncFileCachingDataSource) dataSource).pauseBackgroundLoad();
             }
@@ -137,6 +140,9 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
         @Override
         public void onResume() {
+            if(dataSource == null) {
+                throw new IllegalStateException("Unable to resume datasource caching as datasource not yet set");
+            }
             if (dataSource instanceof RemoteAsyncFileCachingDataSource) {
                 ((RemoteAsyncFileCachingDataSource) dataSource).resumeBackgroundLoad();
             }

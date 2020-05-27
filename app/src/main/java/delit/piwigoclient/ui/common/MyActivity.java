@@ -35,6 +35,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,11 +53,15 @@ import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.FileSelectActivity;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 import delit.piwigoclient.ui.events.ShowMessageEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
+import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 /**
  * Created by gareth on 26/05/17.
@@ -64,6 +69,7 @@ import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActivity {
 
+    private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String TAG = "MyActivity";
     protected static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
     private static final String STATE_TRACKED_ACTION_TO_INTENTS_MAP = "trackedActionIntentsMap";
@@ -100,6 +106,31 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
 
     protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
         return new BasicPiwigoResponseListener();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(FileSelectionNeededEvent event) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, null, this, FileSelectActivity.class);
+        intent.putExtra(FileSelectActivity.INTENT_DATA, event);
+        setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
+        startActivityForResult(intent, event.getActionId());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
+            if (resultCode == RESULT_OK && data.getExtras() != null) {
+//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
+                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
+                // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
+                EventBus.getDefault().postSticky(event);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Nullable

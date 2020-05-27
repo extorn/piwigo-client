@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.view.View;
 import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
@@ -17,6 +20,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 
 public class PreferencesActivity extends MyActivity {
