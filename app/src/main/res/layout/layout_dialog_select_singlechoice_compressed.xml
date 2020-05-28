@@ -25,8 +25,7 @@
     android:layout_margin="3dp"
     android:checkMark="?android:attr/listChoiceIndicatorSingle"
     android:ellipsize="marquee"
-    tools:text="Some test text"
-    tools:theme="@style/ThemeOverlay.EditPages"/>
+    tools:text="Some test text"/>
 <!--
 android:minHeight="?android:attr/listPreferredItemHeight"
 -->

@@ -8,5 +8,4 @@
     tools:text="Test Chip"
     app:chipCornerRadius="4dp"
     app:chipSurfaceColor="?scrimLight"
-    android:textColor="@color/app_secondary"
-    tools:theme="@style/Theme.EditPages"/>
+    android:textColor="@color/app_secondary"/>

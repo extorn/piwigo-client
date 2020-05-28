@@ -221,6 +221,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private boolean reopening;
     private String currentResourceSortOrder;
     private View albumHeaderBar;
+    private View showInformationButton;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -591,6 +592,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         setGalleryHeadings();
 
+        showInformationButton.setVisibility(VISIBLE);
+
 
         setupBottomSheet(bottomSheet);
 
@@ -677,7 +680,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 }
             }
         });
-        Button showInformationButton = view.findViewById(R.id.show_information_action_button);
+        showInformationButton = view.findViewById(R.id.show_information_action_button);
         showInformationButton.setOnClickListener(v -> {
             if(bottomSheet.isOpen()) {
                 bottomSheet.close();

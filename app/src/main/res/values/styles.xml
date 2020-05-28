@@ -108,6 +108,7 @@ colorOnBackground: The color used for elements displayed on top of your backgrou
     </style>
 
     <style name="ThemeOverlay.EditPages" parent="ThemeOverlay.MaterialComponents.Light">
+        <!-- NOTE: Don't use tools:theme to show in this theme, switch the theme on the preview window (else you don't get the background etc) -->
         <!-- These override the standard light colors -->
         <item name="colorPrimaryDisabled">@color/app_primary_disabled</item> <!-- so disabled field text is strong enough to read -->
         <item name="colorPrimary">@color/app_primary</item>
