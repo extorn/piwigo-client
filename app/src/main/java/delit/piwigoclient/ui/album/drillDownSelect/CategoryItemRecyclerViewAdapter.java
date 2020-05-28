@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -297,7 +299,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             if (!getAdapterPrefs().isEnabled()) {
                 colorList = ColorStateList.valueOf(Color.GRAY);
             } else {
-                colorList = ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.app_primary));
+                colorList = ColorStateList.valueOf(DisplayUtils.getColor(getContext(), R.attr.colorPrimary));
             }
             ImageViewCompat.setImageTintList(getIconView(), colorList);
 

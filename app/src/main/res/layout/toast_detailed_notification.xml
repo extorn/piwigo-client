@@ -25,7 +25,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:layout_height="80dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/toast_background">
+    android:background="@drawable/toast_background"
+    android:theme="@style/Theme.App">
 
     <ImageView
         android:id="@+id/toast_icon"
@@ -59,7 +60,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="10dp"
         android:textAppearance="?textAppearanceBody1"
-        android:textColor="@color/app_primary_variant"
+        android:textColor="?colorPrimaryVariant"
         tools:text="message goes here"/>
 
 </RelativeLayout>

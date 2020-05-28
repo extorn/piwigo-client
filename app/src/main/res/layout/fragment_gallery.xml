@@ -321,12 +321,14 @@
                         android:text="@string/gallery_details_allowed_groups_title"
                         style="?editableFieldLabel" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/gallery_details_allowed_groups"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        style="?editableFieldTextClickable"/>
+                        style="?editableFieldTextClickable"
+                        tools:backgroundTint="?scrimLight"
+                        tools:backgroundTintMode="src_in"/>
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_users_label"
@@ -334,12 +336,14 @@
                         android:text="@string/gallery_details_allowed_users_title"
                         style="?editableFieldLabel" />
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/gallery_details_allowed_users"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        style="?editableFieldTextClickable"/>
+                        style="?editableFieldTextClickable"
+                        tools:backgroundTint="?scrimHeavy"
+                        tools:backgroundTintMode="src_in"/>
 
                 </LinearLayout>
 

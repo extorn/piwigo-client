@@ -8,6 +8,7 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.os.LocaleList;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -29,9 +31,14 @@ import android.widget.AbsSpinner;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.TypedArrayUtils;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -432,6 +439,26 @@ public class DisplayUtils {
                 break;
         }
         return measureMode;
+    }
+
+    /**
+     * retrieve a Color int (NOT a color ref Id) which is referenced by a theme attribute
+     * @param context
+     * @param attrResId
+     * @return
+     */
+    public static @ColorInt int getColor(@NonNull Context context, @AttrRes int attrResId) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(attrResId, typedValue, true);
+        @ColorInt int color;
+        if(typedValue.type >= TypedValue.TYPE_FIRST_COLOR_INT && typedValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+            color = typedValue.data;
+        } else {
+            color = ContextCompat.getColor(context, typedValue.resourceId);
+        }
+
+        return color;
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {

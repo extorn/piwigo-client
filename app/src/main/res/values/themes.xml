@@ -29,6 +29,7 @@
         <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
 
         <!-- change the app bar at screen top to not use default background color -->
+        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.AppBarLayout.Primary</item>
         <item name="toolbarStyle">@style/App.Widget.MaterialComponents.Toolbar</item>
 
         <item name="android:checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
@@ -82,6 +83,7 @@
         <item name="android:colorForeground">@color/app_color_on_primary</item>
 
         <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryDark">@color/app_primary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
         <item name="colorOnPrimary">@color/app_color_on_primary</item>
         <item name="colorSecondary">@color/app_secondary</item>
@@ -102,14 +104,15 @@
         <!-- NOTE: Don't use tools:theme to show in this theme, switch the theme on the preview window (else you don't get the background etc) -->
         <!-- These override the standard light colors -->
         <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryDark">@color/app_primary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
         <item name="colorOnPrimary">@color/app_color_on_primary</item>
         <item name="colorSecondary">@color/app_secondary</item>
         <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
         <item name="colorOnSecondary">@color/app_color_on_secondary</item>
         <!-- surfaces are the sliding layers -->
-        <item name="colorSurface">#fffafafa</item>
-        <item name="colorOnSurface">@color/app_primary</item>
+        <item name="colorSurface">@color/app_color_on_surface</item>
+        <item name="colorOnSurface">@color/app_color_surface</item>
         <item name="appScrimColor">?colorPrimary</item> <!-- goes under text -->
     </style>
 

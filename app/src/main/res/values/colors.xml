@@ -8,15 +8,10 @@
 
     <!-- raw colors used -->
     <color name="transparent">#00000000</color>
-    <color name="darken_40">#40000000</color>
-    <color name="darken_90">#90000000</color>
-    <color name="black_overlay">#66000000</color>
-    <color name="dark_black_overlay">#AA000000</color>
 
 
     <!-- my custom colors that tie into the MaterialComponents theme -->
     <color name="app_primary">#212121</color>
-    <color name="app_primary_shadow">@color/black_overlay</color>
 
     <color name="app_primary_variant">#000000</color>
     <color name="app_color_background">#606060</color>
@@ -33,13 +28,9 @@
 
     <!--used-->
     <color name="rating_indicator">#FFFFFF00</color>
-    <color name="toastFrameBackground">@color/app_color_surface</color>
 
-
-    <color name="primary_progress">@color/app_secondary</color>
-    <color name="secondary_progress">@color/app_secondary_variant</color>
     <!-- just make these two transparent for now - let the standard colors filter through -->
-    <color name="color_album_item_background">@color/black_overlay</color>
+    <color name="color_album_item_background">#66000000</color>
 
 
     <!-- these are used in the exo-player layout -->

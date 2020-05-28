@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.album.view;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -23,12 +24,14 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -39,6 +42,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textview.MaterialTextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -181,8 +185,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private MaterialButton deleteButton;
     private SwitchMaterial galleryUserCommentsPermittedField;
     private SwitchMaterial galleryPrivacyStatusField;
-    private TextView allowedGroupsField;
-    private TextView allowedUsersField;
+    private MaterialTextView allowedGroupsField;
+    private MaterialTextView allowedUsersField;
     private RelativeLayout bulkActionsContainer;
     private ExtendedFloatingActionButton bulkActionButtonPermissions;
     private ExtendedFloatingActionButton bulkActionButtonDelete;
@@ -1735,12 +1739,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         galleryUserCommentsPermittedField.setEnabled(editingItemDetails);
         allowedUsersField.setEnabled(true); // Always enabled (but is read only when not editing)
         allowedGroupsField.setEnabled(true); // Always enabled (but is read only when not editing)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // this tint mirrors what would occur if the field could be disabled.
-            ColorStateList tint = ColorStateList.valueOf(editingItemDetails ? ContextCompat.getColor(requireContext(), R.color.darken_90) : ContextCompat.getColor(requireContext(), R.color.darken_40));
-            allowedGroupsField.setBackgroundTintList(tint);
-            allowedUsersField.setBackgroundTintList(tint);
+        // this tint mirrors what would occur if the field could be disabled.
+        ColorStateList tintA = null;
+        ColorStateList tintB = null;
+        if(!editingItemDetails) {
+            tintA = ColorStateList.valueOf(DisplayUtils.getColor(allowedGroupsField.getContext(), R.attr.scrimLight));
+            tintB = ColorStateList.valueOf(DisplayUtils.getColor(allowedUsersField.getContext(), R.attr.scrimLight));
+        } else {
+            tintA = ColorStateList.valueOf(DisplayUtils.getColor(allowedGroupsField.getContext(), R.attr.scrimHeavy));
+            tintB = ColorStateList.valueOf(DisplayUtils.getColor(allowedUsersField.getContext(), R.attr.scrimHeavy));
         }
+        ViewCompat.setBackgroundTintList(allowedGroupsField, tintA);
+        ViewCompat.setBackgroundTintList(allowedUsersField, tintA);
+        ViewCompat.setBackgroundTintMode(allowedGroupsField, PorterDuff.Mode.SRC_IN);
+        ViewCompat.setBackgroundTintMode(allowedUsersField, PorterDuff.Mode.SRC_IN);
 
         editButton.setVisibility(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode() && !editingItemDetails && galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM ? VISIBLE : GONE);
 

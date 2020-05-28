@@ -18,8 +18,11 @@ colorOnSurface: The color used for elements displayed on top of your surface col
 android:colorBackground: The color behind all other screen content
 colorOnBackground: The color used for elements displayed on top of your background color
 -->
+        <!-- used for text -->
+        <item name="android:colorForeground">@color/app_color_on_primary</item>
 
         <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryDark">@color/app_primary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
         <item name="colorOnPrimary">@color/app_color_on_primary</item>
         <item name="colorSecondary">@color/app_secondary</item>

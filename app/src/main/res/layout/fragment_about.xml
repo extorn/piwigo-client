@@ -61,7 +61,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:clickable="false"
-                tools:background="@color/black_overlay"/>
+                tools:background="@drawable/drawable_scrim_heavy"/>
 
             <TextView
                 android:id="@+id/about_release_history_header"
@@ -81,7 +81,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
                 android:clickable="false"
-                tools:background="@color/black_overlay"/>
+                tools:background="@drawable/drawable_scrim_heavy"/>
 
         </LinearLayout>
 
