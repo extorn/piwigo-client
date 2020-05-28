@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/ThemeOverlay.EditPages">
+    android:theme="@style/Theme.App.EditPages">
 
     <RelativeLayout
         android:id="@+id/breadcrumbsContainer"

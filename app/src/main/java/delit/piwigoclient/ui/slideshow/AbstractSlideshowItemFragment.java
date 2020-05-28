@@ -902,7 +902,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             averageRatingsBar.setRating(resource.getAverageRating());
             averageRatingsBar.setVisibility(VISIBLE);
         } else {
-            averageRatingsBar.setVisibility(GONE);
+            averageRatingsBar.setVisibility(View.INVISIBLE);
         }
         resourceRatingScoreField.setText(getString(R.string.rating_score_pattern, model.getScore(), model.getRatingsGiven()));
 

@@ -60,7 +60,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
         LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
         if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
-            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_EditPages));
+            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_App_EditPages));
         }
         return inflator;
     }

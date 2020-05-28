@@ -33,7 +33,7 @@ class SelectImageRenderDetailsDialog {
     private ListView fileSelectList;
 
     public SelectImageRenderDetailsDialog(Context context) {
-        this.context = new ContextThemeWrapper(context, R.style.ThemeOverlay_EditPages);
+        this.context = new ContextThemeWrapper(context, R.style.ThemeOverlay_App_EditPages);
     }
 
     public AlertDialog buildDialog(String currentImageUrlDisplayed, final PictureResourceItem model, final RenderDetailSelectListener listener) {

@@ -22,7 +22,7 @@
             app:tabIndicatorFullWidth="true"
             app:initialTabIdx="0"
             app:tabMode="scrollable"
-            style="?tabLayout"/>
+            style="?appTabLayout"/>
 
     </androidx.viewpager.widget.ViewPager>
 

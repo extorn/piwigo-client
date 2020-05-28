@@ -101,7 +101,7 @@
         android:paddingEnd="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="?scrimHeavy"
+        android:background="@drawable/drawable_scrim_heavy"
         android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"

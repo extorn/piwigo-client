@@ -53,7 +53,7 @@
                 android:numStars="5"
                 android:progressTint="@color/rating_indicator"
                 android:stepSize="0.1"
-                android:visibility="gone"
+                android:visibility="invisible"
                 tools:progress="50"
                 tools:targetApi="lollipop"
                 tools:visibility="visible" />
@@ -77,7 +77,7 @@
                 android:id="@+id/slideshow_image_details_rating_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/slideshow_image_favorite"
+                android:layout_below="@id/slideshow_resource_action_use_for_album_thumbnail"
                 android:layout_alignParentStart="true"
                 android:labelFor="@+id/slideshow_image_ratingBar"
                 android:paddingStart="10dp"
@@ -157,7 +157,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="10dp"
-                android:visibility="gone"
+                android:visibility="invisible"
                 tools:visibility="visible" />
 
             <Button
@@ -185,8 +185,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:appBarViewId="@id/appbar"
-        android:theme="@style/ThemeOverlay.EditPages"
-        tools:stateExpanded="true">
+        android:theme="@style/Theme.App.EditPages"
+        tools:stateExpanded="false">
 
         <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
@@ -281,7 +281,7 @@
                 android:layout_marginBottom="20dp">
 
                 <delit.libs.ui.view.CustomMaterialTabLayout
-                    style="?tabLayout"
+                    style="?appTabLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"

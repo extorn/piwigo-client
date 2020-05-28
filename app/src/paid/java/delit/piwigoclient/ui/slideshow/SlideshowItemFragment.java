@@ -117,7 +117,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             }
             favoriteButton.setVisibility(View.VISIBLE);
         } else {
-            favoriteButton.setVisibility(View.GONE);
+            favoriteButton.setVisibility(View.INVISIBLE);
         }
 
 
@@ -195,7 +195,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.onResume();
         boolean favoritesSupported = getModel().hasFavoriteInfo();
         //PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
-        favoriteButton.setVisibility(favoritesSupported?View.VISIBLE:View.GONE);
+        favoriteButton.setVisibility(favoritesSupported?View.VISIBLE:View.INVISIBLE);
     }
 
     @Override

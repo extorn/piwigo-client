@@ -73,7 +73,7 @@
             android:launchMode="singleTask"
             android:name=".ui.PreferencesActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.EditPages"
+            android:theme="@style/Theme.App.EditPages"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name=".Preferences" />
@@ -84,7 +84,7 @@
             android:launchMode="singleTask"
             android:name=".ui.UploadActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.EditPages"
+            android:theme="@style/Theme.App.EditPages"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
@@ -109,7 +109,7 @@
             android:launchMode="singleTop"
             android:name=".ui.FileSelectActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.EditPages"
+            android:theme="@style/Theme.App.EditPages"
             android:configChanges="layoutDirection"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>

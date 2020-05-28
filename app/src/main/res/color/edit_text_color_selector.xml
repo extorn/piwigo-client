@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="true" android:color="?colorPrimary"/> <!-- default -->
-    <item android:state_active="true" android:color="?colorPrimary"/>
-    <item android:state_activated="true" android:color="?colorPrimary"/>
-    <item android:color="?colorPrimaryDisabled"/>  <!-- default -->
+    <item android:state_enabled="true" android:color="?android:colorForeground"/>  <!-- default is android:textColor -->
+    <item android:state_active="true" android:color="?android:colorForeground"/>  <!-- default is android:textColor -->
+    <item android:state_activated="true" android:color="?android:colorForeground"/>  <!-- default is android:textColor -->
+    <item android:alpha="0.8" android:color="?android:colorForeground"/>  <!-- default -->
 </selector>

@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignBaseline="@id/image_container"
-        android:background="?scrimUltraHeavy"
+        android:background="@drawable/drawable_scrim_ultra_heavy"
         android:ellipsize="end"
         android:maxLines="1"
         android:minLines="1"

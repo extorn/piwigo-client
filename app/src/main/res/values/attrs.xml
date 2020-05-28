@@ -7,24 +7,20 @@
     <attr format="reference" name="visibilityToggleStyle"/>
     <attr format="reference" name="editableFieldCheckBox"/>
     <attr format="reference" name="clickableTextViewStyleBody1"/>
-    <attr format="reference" name="clickableTextViewStyleBody1Field"/>
     <attr format="reference" name="clickableTextViewStyleBody2"/>
     <attr format="reference" name="clickableTextViewStyleTitle"/>
-    <attr format="reference" name="tabLayout"/>
+    <attr format="reference" name="appTabLayout"/>
     <attr format="reference" name="editableFieldLabel"/>
     <attr format="reference" name="editableFieldText"/>
     <attr format="reference" name="editableFieldSpinner"/>
     <attr format="reference" name="editableFieldSwitch"/>
     <attr format="reference" name="editableFieldTextClickable"/>
-    <attr format="reference|color" name="scrimUltraHeavy"/>
-    <attr format="reference|color" name="scrimHeavy"/>
-    <attr format="reference|color" name="scrimLight"/>
+    <attr format="reference" name="scrimUltraHeavy"/>
+    <attr format="reference" name="scrimHeavy"/>
+    <attr format="reference" name="scrimLight"/>
     <attr format="reference" name="appNumberPickerStyle"/>
     <attr format="reference" name="editableFieldNumberPicker"/>
-
-
-
-    <attr format="color" name="colorPrimaryDisabled"/>
+    <attr format="color" name="appScrimColor"/>
     <attr format="color" name="colorAlbumItemBackground"/>
 
 

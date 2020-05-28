@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:orientation="vertical"
-            android:background="?scrimHeavy">
+            android:background="@drawable/drawable_scrim_heavy">
 
             <ImageView
                 android:id="@+id/download_progress_icon"

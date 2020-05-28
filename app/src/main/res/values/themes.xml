@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- used at activity level -->
+    <style name="Theme.App" parent="Theme.App.Base">
+        <item name="android:windowBackground">@color/app_color_background</item>
+        <item name="android:theme">@style/ThemeOverlay.App.Dark</item>
+    </style>
+
+    <!-- used at activity level -->
+    <style name="Theme.App.EditPages" parent="Theme.App.Base">
+        <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
+    </style>
+
+
+    <!-- this defines how things are laid out -->
+    <style name="Theme.App.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="scrimBackground">@color/color_scrim_light</item>  <!-- what uses this? its material -->
+        <item name="scrimHeavy">@color/color_scrim_heavy</item>
+        <item name="scrimUltraHeavy">@color/color_scrim_ultra_heavy</item>
+        <item name="scrimLight">@color/color_scrim_light</item>
+
+        <item name="materialCardViewStyle">@style/App.Widget.MaterialComponents.CardView</item>
+        <item name="editableFieldSpinner">@style/App.Widget.AppCompat.Spinner.Underlined.Field</item>
+        <item name="editableFieldSwitch">@style/App.Widget.MaterialComponents.CompoundButton.Switch.Field</item>
+        <item name="spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
+        <item name="android:spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
+        <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
+
+        <!-- change the app bar at screen top to not use default background color -->
+        <item name="toolbarStyle">@style/App.Widget.MaterialComponents.Toolbar</item>
+
+        <item name="android:checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
+        <item name="checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
+
+        <!-- If I want a custom font across the app - use it here -->
+        <!--<item name="fontFamily">@font/roboto_mono</item>
+        <item name="android:fontFamily">@font/roboto_mono</item>-->
+
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <item name="android:alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <!--
+        <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>-->
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="radioButtonStyle">@style/App.Widget.CompoundButton.RadioButton</item>
+        <!-- prob do not need these ones -->
+        <!--
+
+        <item name="switchStyle">@style/App.Widget.AppCompat.CompoundButton.Switch</item>
+        <item name="android:editTextColor">@color/edit_text_color_selector</item>
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat</item>
+
+
+        <item name="android:dropDownListViewStyle">@style/App.Widget.AppCompat.DropDownItem.Spinner</item>
+
+        <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>-->
+        <item name="preferenceTheme">@style/App.Theme.PreferenceThemeOverlay.v14.Material</item>
+        <item name="editableFieldLabel">@style/App.Widget.Material.TextView.FieldLabel</item>
+        <item name="editableFieldText">@style/App.Widget.EditText.FieldEntry</item>
+        <item name="editableFieldNumberPicker">@style/App.Widget.NumberPicker.FieldEntry</item>
+        <item name="editableFieldTextClickable">@style/App.Widget.EditText.FieldEntry.Clickable</item>
+        <item name="clickableTextViewStyleBody1">@style/App.Widget.MaterialComponents.TextView.Clickable.Body1</item>
+        <item name="clickableTextViewStyleBody2">@style/App.Widget.MaterialComponents.TextView.Clickable.Body2</item>
+        <item name="materialButtonIconStyle">@style/Widget.Button.OutlinedButton.IconOnly</item>
+        <item name="materialButtonIconAccentedStyle">@style/Widget.Button.OutlinedButton.IconOnly.Accented</item>
+        <item name="checkboxFavoriteAccentedStyle">@style/Widget.CompoundButton.CheckBox.Favorite.Accented</item>
+        <item name="visibilityToggleStyle">@style/Widget.CompoundButton.CheckBox.Visibility</item>
+        <item name="editableFieldCheckBox">@style/Widget.MaterialComponents.CompoundButton.CheckBox.EditField</item>
+        <!--New material inputs (not used yet) <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Custom</item>-->
+        <!-- edit text fields throughout the app -->
+        <item name="editTextStyle">@style/App.Widget.EditText</item>
+        <!--<item name="android:editTextColor">@color/edit_text_color_selector</item>-->
+        <item name="appTabLayout">@style/App.Widget.MaterialComponents.TabLayout</item>
+        <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
+    </style>
+
+    <!-- dark color theme -->
+    <style name="ThemeOverlay.App.Dark" parent="ThemeOverlay.MaterialComponents">
+        <!-- used for text -->
+        <item name="android:colorForeground">@color/app_color_on_primary</item>
+
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
+        <item name="colorOnPrimary">@color/app_color_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
+        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <item name="colorError">@color/app_color_error</item>
+        <item name="colorOnError">@color/app_color_on_error</item>
+        <!-- surfaces are the sliding layers -->
+        <item name="colorSurface">@color/app_color_surface</item>
+        <item name="colorOnSurface">@color/app_color_on_surface</item>
+        <item name="colorOnBackground">@color/app_color_on_background</item>
+        <item name="appScrimColor">@color/app_primary</item>
+        <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
+    </style>
+
+    <!-- lighter color theme -->
+    <style name="ThemeOverlay.App.EditPages" parent="ThemeOverlay.MaterialComponents.Light">
+        <!-- NOTE: Don't use tools:theme to show in this theme, switch the theme on the preview window (else you don't get the background etc) -->
+        <!-- These override the standard light colors -->
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
+        <item name="colorOnPrimary">@color/app_color_on_primary</item>
+        <item name="colorSecondary">@color/app_secondary</item>
+        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
+        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
+        <!-- surfaces are the sliding layers -->
+        <item name="colorSurface">#fffafafa</item>
+        <item name="colorOnSurface">@color/app_primary</item>
+        <item name="appScrimColor">?colorPrimary</item> <!-- goes under text -->
+    </style>
+
+</resources>

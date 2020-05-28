@@ -46,7 +46,7 @@ public class DownloadSelectionMultiItemDialog {
     private MappedArrayAdapter<String, Integer> downloadOptionsAdapter;
 
     public DownloadSelectionMultiItemDialog(Context context) {
-        this.context = new ContextThemeWrapper(context, R.style.ThemeOverlay_EditPages);
+        this.context = new ContextThemeWrapper(context, R.style.ThemeOverlay_App_EditPages);
     }
 
     public AlertDialog buildDialog(String defaultSelectedFilesizeName, final ResourceItem item, final DownloadSelectionMultiItemListener downloadSelectionListener) {

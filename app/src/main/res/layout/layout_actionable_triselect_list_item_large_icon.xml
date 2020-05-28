@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         tools:text="Heading"
         android:textAlignment="center"
-        android:background="?scrimHeavy"
+        android:background="@drawable/drawable_scrim_heavy"
         android:textAppearance="?textAppearanceBody2"/>
 
     <TextView
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         tools:text="File name"
         android:textAlignment="center"
-        android:background="?scrimHeavy"
+        android:background="@drawable/drawable_scrim_heavy"
         android:textAppearance="?textAppearanceBody2"/>
 
 </RelativeLayout>
