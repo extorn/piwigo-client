@@ -179,6 +179,7 @@
 
     <style name="App.Widget.Snackbar" parent="Widget.MaterialComponents.Snackbar">
         <!-- need this to be transparent to prevent corners showing with the theme background color -->
+        <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
         <item name="android:background">@color/transparent</item>
         <item name="strokeWidth">0dp</item>
     </style>
@@ -193,12 +194,18 @@
     </style>
 
     <style name="App.Widget.MaterialComponents.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" >
-        <!--<item name="android:background">?attr/colorPrimary</item>
-        <item name="titleTextColor">?attr/colorOnPrimary</item>-->
+    </style>
+
+    <style name="ThemeOverlay.MaterialComponents.Toolbar.Primary" parent="">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+        <item name="actionMenuTextColor">?attr/colorOnPrimary</item>
     </style>
 
     <style name="App.Theme.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">
-
     </style>
+
+    <style name="App.Widget.MaterialComponents.AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.PrimarySurface">
+    </style>
+
 
 </resources>

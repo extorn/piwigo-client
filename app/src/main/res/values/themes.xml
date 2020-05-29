@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- used at activity level -->
     <style name="Theme.App" parent="Theme.App.Base">
@@ -15,11 +15,19 @@
 
     <!-- this defines how things are laid out -->
     <style name="Theme.App.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- needed for older versions (pre lollipop - don't know why - it's inferring that the Light theme is in use) -->
+        <item name="android:textColorPrimary">?colorOnPrimary</item>
 
         <item name="scrimBackground">@color/color_scrim_light</item>  <!-- what uses this? its material -->
         <item name="scrimHeavy">@color/color_scrim_heavy</item>
         <item name="scrimUltraHeavy">@color/color_scrim_ultra_heavy</item>
         <item name="scrimLight">@color/color_scrim_light</item>
+
+        <item name="android:statusBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?android:attr/colorBackground</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">?attr/colorControlHighlight</item>
 
         <item name="materialCardViewStyle">@style/App.Widget.MaterialComponents.CardView</item>
         <item name="editableFieldSpinner">@style/App.Widget.AppCompat.Spinner.Underlined.Field</item>
@@ -29,8 +37,11 @@
         <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
 
         <!-- change the app bar at screen top to not use default background color -->
-        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.AppBarLayout.Primary</item>
+        <!--<item name="actionBarStyle">@style/Theme.MaterialComponents.DayNight.DarkActionBar</item>-->
+        <item name="appBarLayoutStyle">@style/App.Widget.MaterialComponents.AppBarLayout</item>
+        <!-- the style isn't applied correctly when set here. Make sure to set it direct on the toolbar! -->
         <item name="toolbarStyle">@style/App.Widget.MaterialComponents.Toolbar</item>
+        <!--<item name="toolbarNavigationButtonStyle">@style/App.Widget.AppCompat.Toolbar.Button.Navigation</item>-->
 
         <item name="android:checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
         <item name="checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
@@ -47,6 +58,20 @@
         <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
         <item name="radioButtonStyle">@style/App.Widget.CompoundButton.RadioButton</item>
         <!-- prob do not need these ones -->
+        <!--Material type attributes-->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.MyTheme.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.MyTheme.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.MyTheme.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.MyTheme.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.MyTheme.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.MyTheme.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.MyTheme.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.MyTheme.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.MyTheme.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.MyTheme.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.MyTheme.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.MyTheme.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.MyTheme.Overline</item>
         <!--
 
         <item name="switchStyle">@style/App.Widget.AppCompat.CompoundButton.Switch</item>
@@ -84,6 +109,7 @@
 
         <item name="colorPrimary">@color/app_primary</item>
         <item name="colorPrimaryDark">@color/app_primary</item>
+        <item name="colorPrimarySurface">@color/app_primary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
         <item name="colorOnPrimary">@color/app_color_on_primary</item>
         <item name="colorSecondary">@color/app_secondary</item>
@@ -94,7 +120,7 @@
         <!-- surfaces are the sliding layers -->
         <item name="colorSurface">@color/app_color_surface</item>
         <item name="colorOnSurface">@color/app_color_on_surface</item>
-        <item name="colorOnBackground">@color/app_color_on_background</item>
+        <item name="colorOnBackground">?colorOnSurface</item>
         <item name="appScrimColor">@color/app_primary</item>
         <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
     </style>
@@ -104,7 +130,8 @@
         <!-- NOTE: Don't use tools:theme to show in this theme, switch the theme on the preview window (else you don't get the background etc) -->
         <!-- These override the standard light colors -->
         <item name="colorPrimary">@color/app_primary</item>
-        <item name="colorPrimaryDark">@color/app_primary</item>
+        <item name="colorPrimaryDark">?colorPrimary</item>
+        <item name="colorPrimarySurface">?colorPrimary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
         <item name="colorOnPrimary">@color/app_color_on_primary</item>
         <item name="colorSecondary">@color/app_secondary</item>
@@ -112,6 +139,7 @@
         <item name="colorOnSecondary">@color/app_color_on_secondary</item>
         <!-- surfaces are the sliding layers -->
         <item name="colorSurface">@color/app_color_on_surface</item>
+        <item name="colorOnBackground">?colorOnSurface</item>
         <item name="colorOnSurface">@color/app_color_surface</item>
         <item name="appScrimColor">?colorPrimary</item> <!-- goes under text -->
     </style>

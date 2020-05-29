@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
 
@@ -13,6 +14,7 @@
         android:paddingBottom="5dp"
         android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
         android:paddingEnd="0dp"
+        tools:text="test header value"
         style="?clickableTextViewStyleBody2" />
 <!--
     <TextView

@@ -186,7 +186,7 @@
         android:layout_height="match_parent"
         app:appBarViewId="@id/appbar"
         android:theme="@style/Theme.App.EditPages"
-        tools:stateExpanded="false">
+        tools:stateExpanded="true">
 
         <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"

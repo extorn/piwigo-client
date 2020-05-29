@@ -108,7 +108,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         ExpandableListView exifDataList = viewPager.findViewById(R.id.exifDataList);
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences();
         prefs.readonly();
-        ExifDataListAdapter exifDataListAdapter = ExifDataListAdapter.newAdapter(getContext(), metadata);
+        ExifDataListAdapter exifDataListAdapter = ExifDataListAdapter.newAdapter(viewPager.getContext(), metadata);
         exifDataList.setAdapter(exifDataListAdapter);
         exifDataList.setOnGroupCollapseListener(groupPosition -> exifDataList.getParent().requestLayout());
         exifDataList.setOnGroupExpandListener(groupPosition -> exifDataList.getParent().requestLayout());

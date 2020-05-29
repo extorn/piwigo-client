@@ -98,7 +98,7 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
         return flatList.toArray(new String[0]);
     }
 
-    public static ExifDataListAdapter newAdapter(Context c, Metadata metadata) {
+    public static ExifDataListAdapter newAdapter(Context context, Metadata metadata) {
 
         final String NAME = "NAME";
         final String VALUE = "VALUE";
@@ -136,7 +136,7 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
         } else {
             Map<String, String> curChildMap = new HashMap();
             curChildMap.put(NAME, "Exif Data");
-            curChildMap.put(VALUE, c.getString(R.string.picture_resource_exif_data_unavailable));
+            curChildMap.put(VALUE, context.getString(R.string.picture_resource_exif_data_unavailable));
 
             List<Map<String, String>> children = new ArrayList<>();
             children.add(curChildMap);
@@ -150,6 +150,6 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
         int[] childTo = {-1, -1};
 
         // Set up the adapter
-        return new ExifDataListAdapter(c, groupData, groupFrom, groupTo, childData, childFrom, childTo);
+        return new ExifDataListAdapter(context, groupData, groupFrom, groupTo, childData, childFrom, childTo);
     }
 }

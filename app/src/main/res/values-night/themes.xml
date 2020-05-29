@@ -1,43 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.App" parent="Theme.App.Base">
-        <!-- see files: themes_material.xml styles_material.xml - raw materials theme -->
-
-        <!-- Material components colours explanation.... (from website, might be wrong)
-        colorPrimary: The primary brand color of your app, used most predominantly in theming
-colorPrimaryVariant: A lighter/darker variant of your primary brand color, used sparingly in theming
-colorOnPrimary: The color used for elements displayed on top of your primary colors (eg. Text and icons, often white or semi-transparent black depending on accessibility)
-colorSecondary: The secondary brand color of your app, used mostly as an accent for certain widgets that need to stand out
-colorSecondaryVariant: A lighter/darker variant of your secondary brand color, used sparingly in theming
-colorOnSecondary: The color used for elements displayed on top of your secondary colors
-colorError: The color used for errors (often a shade of red)
-colorOnError: The color used for elements displayed on top of your error color
-colorSurface: The color used for surfaces (i.e. Material “sheets”)
-colorOnSurface: The color used for elements displayed on top of your surface color
-android:colorBackground: The color behind all other screen content
-colorOnBackground: The color used for elements displayed on top of your background color
--->
-        <!-- used for text -->
-        <item name="android:colorForeground">@color/app_color_on_primary</item>
-
-        <item name="colorPrimary">@color/app_primary</item>
-        <item name="colorPrimaryDark">@color/app_primary</item>
-        <item name="colorPrimaryVariant">@color/app_primary_variant</item>
-        <item name="colorOnPrimary">@color/app_color_on_primary</item>
-        <item name="colorSecondary">@color/app_secondary</item>
-        <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
-        <item name="colorOnSecondary">@color/app_color_on_secondary</item>
-        <item name="colorError">@color/app_color_error</item>
-        <item name="colorOnError">@color/app_color_on_error</item>
-        <!-- surfaces are the sliding layers -->
-        <item name="colorSurface">@color/app_color_surface</item>
-        <item name="colorOnSurface">@color/app_color_on_surface</item>
-        <item name="android:windowBackground">@color/app_color_background</item>
-        <item name="colorOnBackground">@color/app_color_on_background</item>
-        <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
-    </style>
-
+    
     <!-- used at activity level -->
     <style name="Theme.App.EditPages" parent="Theme.App">
     </style>

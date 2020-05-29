@@ -16,7 +16,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            style="?toolbarStyle"/>
         <!--app:layout_scrollFlags="scroll|enterAlways"-->
 
         <delit.libs.ui.view.ProgressIndicator
@@ -24,7 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="visible"/>
+            tools:visibility="visible"
+            android:theme="@style/Theme.App"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
