@@ -944,7 +944,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         while (!listener.isCompressionComplete() && null == listener.getCompressionError()) {
             try {
                 synchronized (this) {
-                    listener.wait(1000);
+                    wait(1000);
                     if (uploadJob.isCancelUploadAsap() || !uploadJob.isFileUploadStillWanted(rawVideo)) {
                         compressor.cancel();
                         return null;

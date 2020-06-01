@@ -113,12 +113,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 AbstractViewAlbumFragment.BulkResourceActionData bulkActionData = getBulkResourceActionData();
 
                 if (!bulkActionData.getSelectedItems().isEmpty()) {
-                    // examine data for each resource and find common file sizes available to download.
-                    // Note that videos will always be downloaded in original size.
-                    List<String> filesAvailableToDownload = getFileSizesAvailableForAllResources(bulkActionData);
                     HashSet<ResourceItem> selectedItems = bulkActionData.getSelectedItems();
                     DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
-                    AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, filesAvailableToDownload, new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
+                    AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
                         @Override
                         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
@@ -193,8 +190,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     @Override
-    protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems, List<String> filesAvailableToDownload) {
+    protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems) {
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        //TODO check permissions needed for android 11+ (R)
         //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }
 

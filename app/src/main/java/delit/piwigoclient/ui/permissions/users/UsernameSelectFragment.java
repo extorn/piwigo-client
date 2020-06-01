@@ -45,6 +45,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
     public static UsernameSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         UsernameSelectFragment fragment = new UsernameSelectFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
             BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
@@ -53,16 +54,6 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @NonNull
-    @Override
-    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
-        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
-        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
-            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_App_EditPages));
-        }
-        return inflator;
     }
 
     @Override

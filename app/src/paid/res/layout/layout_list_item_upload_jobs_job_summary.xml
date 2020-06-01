@@ -44,7 +44,7 @@
             android:clickable="false"
             android:focusable="false" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
+        <delit.libs.ui.view.button.MaterialCheckboxTriState
             android:id="@+id/delete_uploaded"
             android:layout_below="@id/list_item_details"
             android:layout_toStartOf="@+id/list_item_delete_button"
@@ -52,9 +52,11 @@
             android:layout_alignWithParentIfMissing="true"
             android:text="@string/delete_uploaded_files_title"
             android:enabled="false"
-            style="?editableFieldSwitch"/>
+            android:clickable="false"
+            android:focusable="false"
+            style="?editableFieldCheckBox"/>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
+        <delit.libs.ui.view.button.MaterialCheckboxTriState
             android:id="@+id/enabled"
             android:layout_below="@id/delete_uploaded"
             android:layout_toStartOf="@+id/list_item_delete_button"
@@ -63,7 +65,9 @@
             android:text="@string/upload_job_is_enabled_label"
             android:enabled="false"
             tools:checked="true"
-            style="?editableFieldSwitch"/>
+            android:clickable="false"
+            android:focusable="false"
+            style="?editableFieldCheckBox"/>
 
         <Button
             android:id="@+id/list_item_delete_button"

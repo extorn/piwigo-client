@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.album.view;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,14 +46,14 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
     }
 
     @Override
-    public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {
+    public <T> void redisplayOldValues(T newItem, boolean allowItemDeletion) {
         if (!imageLoader.isImageLoading() && !imageLoader.isImageLoaded()) {
             imageLoader.load();
         }
     }
 
     @Override
-    public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
+    public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
         setItem(newItem);
         getItemActionListener().onFillValues();
     }

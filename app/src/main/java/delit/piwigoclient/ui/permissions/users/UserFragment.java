@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.widget.NestedScrollView;
 
 import com.crashlytics.android.Crashlytics;
@@ -134,9 +135,11 @@ public class UserFragment extends MyFragment<UserFragment> {
     private HashSet<Group> currentGroupMembership;
     private HashSet<Group> newGroupMembership;
     private int selectGroupsActionId;
+    private long userGetPermissionsCallId;
 
     public static UserFragment newInstance(User user) {
         UserFragment fragment = new UserFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
         args.putParcelable(ARG_USER, user);
         fragment.setArguments(args);
@@ -168,7 +171,8 @@ public class UserFragment extends MyFragment<UserFragment> {
         super.onViewStateRestored(savedInstanceState);
 
         // This has to be done here because the albumPermissionsField maintains a checked state internally (ignorant of any other alterations to that field).
-        if (availableGalleries != null && !getUiHelper().isServiceCallInProgress()) {
+        if (availableGalleries != null && !getUiHelper().isServiceCallInProgress(userGetPermissionsCallId)) {
+            userGetPermissionsCallId = 0;
             HashSet<Long> directAlbumPermissions = getLatestDirectAlbumPermissions();
             HashSet<Long> indirectAlbumPermissions = getLatestIndirectAlbumPermissions();
             populateAlbumPermissionsList(directAlbumPermissions, indirectAlbumPermissions);
@@ -246,6 +250,14 @@ public class UserFragment extends MyFragment<UserFragment> {
         userPrivacyLevelField.setEnabled(editable);
         lastVisitedField.setEnabled(editable);
 
+        //TODO this doesn't work as the adapter prefs are marked readonly and still set as disabled after setenabled on the adapter
+        // the idea was to make the icons green (secondary color) when in editable mode.
+//        AlbumSelectionListAdapter adapter = ((AlbumSelectionListAdapter) albumPermissionsField.getAdapter());
+//        if(adapter != null) {
+//            adapter.setEnabled(editable);
+//            adapter.notifyDataSetChanged();
+//        }
+
         emailField.setEnabled(editable);
         highDefinitionEnabled.setEnabled(editable);
 //        editButton.setEnabled(!editable);
@@ -295,52 +307,34 @@ public class UserFragment extends MyFragment<UserFragment> {
         RelativeLayout userEditControls = v.findViewById(R.id.user_edit_controls);
 
         editButton = v.findViewById(R.id.user_action_edit_button);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setFieldsEditable(true);
-            }
-        });
+        editButton.setOnClickListener(v14 -> setFieldsEditable(true));
         discardButton = v.findViewById(R.id.user_action_discard_button);
-        discardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newGroupMembership = null;
-                newDirectAlbumPermissions = null;
-                newIndirectAlbumPermissions = null;
-                setFieldsFromModel(user);
-                populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
-                setFieldsEditable(user.getId() < 0);
-            }
+        discardButton.setOnClickListener(v13 -> {
+            newGroupMembership = null;
+            newDirectAlbumPermissions = null;
+            newIndirectAlbumPermissions = null;
+            setFieldsFromModel(user);
+            populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
+            setFieldsEditable(user.getId() < 0);
         });
         saveButton = v.findViewById(R.id.user_action_save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveUserChanges();
-            }
-        });
+        saveButton.setOnClickListener(v12 -> saveUserChanges());
         deleteButton = v.findViewById(R.id.user_action_delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteUser(user);
-            }
-        });
+        deleteButton.setOnClickListener(v1 -> deleteUser(user));
 
         usernameField = v.findViewById(R.id.user_username);
 
         usertypeField = v.findViewById(R.id.user_usertype);
         userTypeValues = Arrays.asList(getResources().getStringArray(R.array.user_types_array));
         List<String> userTypes = Arrays.asList(getResources().getStringArray(R.array.user_types_array));
-        ArrayAdapter<String> userTypesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, userTypes);
+        ArrayAdapter<String> userTypesAdapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_spinner_item, userTypes);
         userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         usertypeField.setAdapter(userTypesAdapter);
 
         userPrivacyLevelField = v.findViewById(R.id.user_privacy_level);
         userPrivacyLevelValues = getResources().getIntArray(R.array.privacy_levels_values_array);
         List<String> userPrivacyLevels = Arrays.asList(getResources().getStringArray(R.array.privacy_levels_array));
-        ArrayAdapter<String> userPrivacyLevelsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, userPrivacyLevels);
+        ArrayAdapter<String> userPrivacyLevelsAdapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_spinner_item, userPrivacyLevels);
         userPrivacyLevelsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userPrivacyLevelField.setAdapter(userPrivacyLevelsAdapter);
 
@@ -408,7 +402,7 @@ public class UserFragment extends MyFragment<UserFragment> {
             }
             fillGroupMembershipField();
             if (currentDirectAlbumPermissions == null) {
-                addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()));
+                userGetPermissionsCallId = addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()));
             }
         }
 
@@ -823,7 +817,8 @@ public class UserFragment extends MyFragment<UserFragment> {
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
-        } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)) {
+        } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)
+        || !CollectionUtils.equals(adapter.getIndirectlySelectedItems(), indirectAlbumPermissions)) {
             adapter.setSelectedItems(initialSelection);
             adapter.setIndirectlySelectedItems(indirectAlbumPermissions);
         }

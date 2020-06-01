@@ -2,12 +2,15 @@ package delit.libs.ui.view.button;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.core.view.ViewCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.color.MaterialColors;
 
 import delit.piwigoclient.R;
 
@@ -17,35 +20,43 @@ import delit.piwigoclient.R;
 
 public class MaterialCheckboxTriState extends MaterialCheckBox {
 
-    private static final int[] STATE_ALWAYS_CHECKED = {R.attr.state_always_checked};
+    private static final int[] STATE_ALWAYS_CHECKED_ARRAY = {R.attr.state_always_checked};
+    private int defaultLayoutDirection;
 
     private boolean alwaysChecked;
     private boolean checkboxAtEnd;
 
-    public MaterialCheckboxTriState(Context context) {
-        this(context, null);
-    }
-
     public MaterialCheckboxTriState(Context context, AttributeSet attrs) {
-        this(context, attrs, android.R.attr.checkboxStyle);
-    }
-
-    public MaterialCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr);
-
-        final TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.MaterialCheckboxTriState, defStyleAttr, defStyleRes);
-
-        checkboxAtEnd = a.getBoolean(R.styleable.MaterialCheckboxTriState_checkbox_at_end, false);
-
-        a.recycle();
-
-        updateComponentLayout();
+        super(context, attrs);
+        initAttrs(context,attrs, 0, 0);
     }
 
     public MaterialCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
+    }
 
+
+    public MaterialCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr);
+        initAttrs(context,attrs, defStyleAttr, defStyleRes);
+    }
+
+    private void initAttrs(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+
+        final TypedArray a = context.obtainStyledAttributes(
+                attrs, R.styleable.MaterialCheckboxTriState, defStyleAttr, defStyleRes);
+
+        defaultLayoutDirection = getLayoutDirection();
+
+        setCheckboxAtEnd(a.getBoolean(R.styleable.MaterialCheckboxTriState_checkbox_at_end, false));
+
+        setButtonDrawable(ContextCompat.getDrawable(context,R.drawable.checkbox));
+        // we set the drawable alpha here so need to do this after we've set the drawable
+        setAlwaysChecked(a.getBoolean(R.styleable.MaterialCheckboxTriState_state_always_checked, false));
+
+        a.recycle();
+
+        refreshDrawableState();
     }
 
     @Override
@@ -54,55 +65,42 @@ public class MaterialCheckboxTriState extends MaterialCheckBox {
         if (activated != isChecked()) {
             setChecked(activated);
         }
-        updateDrawable();
     }
 
     public void setAlwaysChecked(boolean alwaysChecked) {
         if (this.alwaysChecked != alwaysChecked) {
             this.alwaysChecked = alwaysChecked;
-            updateDrawable();
+            refreshDrawableState();
         }
     }
 
-    public void setCheckboxAtEnd(boolean checkboxAtEnd) {
-        if (this.checkboxAtEnd != checkboxAtEnd) {
-            this.checkboxAtEnd = checkboxAtEnd;
+    @Override
+    public void setChecked(boolean checked) {
+        super.setChecked(checked);
+//        updateAlwaysChecked(); // clear the alpha tint if now checked
+    }
 
-            updateComponentLayout();
+
+    public void setCheckboxAtEnd(boolean checkboxAtEnd) {
+        if(this.checkboxAtEnd != checkboxAtEnd) {
+            this.checkboxAtEnd = checkboxAtEnd;
+            if (defaultLayoutDirection == View.LAYOUT_DIRECTION_LTR) {
+                setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            } else {
+                setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+            }
+//            refreshDrawableState();
         }
     }
 
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params) {
         if(checkboxAtEnd) {
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        }
-        super.setLayoutParams(params);
-    }
-
-    private void updateComponentLayout() {
-        if(checkboxAtEnd) {
-            if (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR) {
-                ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_RTL);
-            } else {
-                ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR);
+            if(params.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             }
         }
-    }
-
-    private void updateDrawable() {
-        if (alwaysChecked && !(isChecked() || isActivated())) {
-            setAlpha(0.5f);
-        } else {
-            setAlpha(1f);
-        }
-        refreshDrawableState();
-    }
-
-    @Override
-    public void setChecked(boolean checked) {
-        super.setChecked(checked);
-        updateDrawable();
+        super.setLayoutParams(params);
     }
 
     // Constructors, view loading etc...
@@ -110,14 +108,11 @@ public class MaterialCheckboxTriState extends MaterialCheckBox {
     protected int[] onCreateDrawableState(int extraSpace) {
         // If the message is unread then we merge our custom message unread state into
         // the existing drawable state before returning it.
-        if (alwaysChecked) {
-            // We are going to add 1 extra state.
-            int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-            mergeDrawableStates(drawableState, STATE_ALWAYS_CHECKED);
-            return drawableState;
-        } else {
-            return super.onCreateDrawableState(extraSpace);
+        int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
+        if(alwaysChecked) {
+            mergeDrawableStates(drawableState, STATE_ALWAYS_CHECKED_ARRAY);
         }
+        return drawableState;
     }
 
 }

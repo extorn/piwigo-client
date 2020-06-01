@@ -58,7 +58,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
     private SortedSet<String> currentVisibleFileExts;
 
     public LegacyFolderItemRecyclerViewAdapter(Context context, NavigationListener navigationListener, MediaScanner mediaScanner, MultiSelectStatusListener<LegacyFolderItem> multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
-        super(context, multiSelectStatusListener, folderViewPrefs);
+        super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
         this.mediaScanner = mediaScanner;
     }
@@ -86,7 +86,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         setSelectedItems(initialSelectionIds);
     }
 
-    protected void updateContent(File newContent, boolean force) {
+    protected void updateContent(Context context, File newContent, boolean force) {
         boolean refreshingExistingFolder = false;
         if (ObjectUtils.areEqual(activeFolder, newContent)) {
             if (!force && currentDisplayContent != null) {
@@ -106,7 +106,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
         File[] folderContent = activeFolder.listFiles(new LegacyFileFilter(getAdapterPrefs().isShowFolderContent(), getAdapterPrefs().getVisibleFileTypes()));
         if(folderContent == null) {
-            FirebaseAnalytics.getInstance(getContext()).logEvent("no_folder_access", null);
+            FirebaseAnalytics.getInstance(context).logEvent("no_folder_access", null);
         }
 
         currentDisplayContent = buildDisplayContent(folderContent);
@@ -136,12 +136,12 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         }
     }
 
-    public void rebuildContentView() {
-        updateContent(activeFolder, true);
+    public void rebuildContentView(Context context) {
+        updateContent(context, activeFolder, true);
     }
 
-    public void changeFolderViewed(File newContent) {
-        updateContent(newContent, false);
+    public void changeFolderViewed(Context context, File newContent) {
+        updateContent(context, newContent, false);
     }
 
     private List<File> getDisplayedFiles() {
@@ -341,8 +341,8 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         return isDirtyItemViewHolder(holder, newItem);
     }
 
-    public void cancelAnyActiveFolderMediaScan() {
-        MediaScanner.instance(getContext()).cancelActiveScan(getActiveFolder().getAbsolutePath());
+    public void cancelAnyActiveFolderMediaScan(Context context) {
+        MediaScanner.instance(context).cancelActiveScan(getActiveFolder().getAbsolutePath());
     }
 
     public static class LegacyFolderItem implements Parcelable {
@@ -422,7 +422,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         @Override
         public void onClick(View v) {
             if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
-                changeFolderViewed(getViewHolder().getItem().getFile());
+                changeFolderViewed(v.getContext(), getViewHolder().getItem().getFile());
             } else if (getAdapterPrefs().isAllowFileSelection()) {
                 super.onClick(v);
             }
@@ -444,7 +444,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         }
 
         @Override
-        public void fillValues(Context context, LegacyFolderItem newItem, boolean allowItemDeletion) {
+        public void fillValues(LegacyFolderItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getFile().getName());
@@ -459,7 +459,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         @Override
         public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
-            getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.app_secondary), PorterDuff.Mode.SRC_IN);
+            getIconView().setColorFilter(ContextCompat.getColor(itemView.getContext(),R.color.app_secondary), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             getIconViewLoader().load();
         }
@@ -474,7 +474,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         }
 
         @Override
-        public void fillValues(Context context, LegacyFolderItem newItem, boolean allowItemDeletion) {
+        public void fillValues(LegacyFolderItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
 
             long bytes = newItem.getFile().length();
@@ -555,7 +555,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
             return iconViewLoader;
         }
 
-        public abstract void fillValues(Context context, LegacyFolderItem newItem, boolean allowItemDeletion);
+        public abstract void fillValues(LegacyFolderItem newItem, boolean allowItemDeletion);
 
         @Override
         public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {

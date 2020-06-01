@@ -32,7 +32,7 @@
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/favorites_retryAction_actionButton"
             android:layout_alignTop="@+id/favorites_list"
-            android:layout_alignParentEnd="true"
+            android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -63,7 +63,6 @@
             tools:context=".ui.album.view.ViewTagFragment"/>
 
         <RelativeLayout
-
             android:id="@+id/favorites_actions_bulk_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

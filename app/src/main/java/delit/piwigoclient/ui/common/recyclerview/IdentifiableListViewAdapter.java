@@ -25,7 +25,7 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
 
 
     public IdentifiableListViewAdapter(Context context, final Class<? extends ViewModelContainer> modelType, final V itemStore, R multiSelectStatusListener, P prefs) {
-        super(context, multiSelectStatusListener, prefs);
+        super(multiSelectStatusListener, prefs);
         this.itemStore = itemStore;
         this.modelType = modelType;
     }

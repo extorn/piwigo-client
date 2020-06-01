@@ -38,10 +38,10 @@ public class TagRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecy
             super(view);
         }
 
-        public void fillValues(Context context, Tag newItem, boolean allowItemDeletion) {
+        public void fillValues(Tag newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getTxtTitle().setText(newItem.getName());
-            getDetailsTitle().setText(String.format(context.getString(R.string.tag_usage_count_pattern), newItem.getUsageCount()));
+            getDetailsTitle().setText(String.format(itemView.getContext().getString(R.string.tag_usage_count_pattern), newItem.getUsageCount()));
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }

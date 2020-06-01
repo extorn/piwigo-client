@@ -301,6 +301,10 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         private final int width;
         private final int height;
 
+        public static ResourceFile getGenericOriginalFile() {
+            return new ResourceFile(ORIGINAL, null, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        }
+
         public ResourceFile(String name, String url, int width, int height) {
             this.id = getId(name);
             this.url = url;
@@ -404,7 +408,11 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
 
         @Override
         public String toString() {
-            return getName(id) + " (" + width + " * " + height + ')';
+            if(width < Integer.MAX_VALUE && height < Integer.MAX_VALUE) {
+                return getName(id) + " (" + width + " * " + height + ')';
+            } else {
+                return getName(id);
+            }
         }
 
         @Override

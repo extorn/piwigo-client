@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
+import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -137,20 +138,19 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         imageView.setVisibility(showItemSelectedMarker(imageView) ? View.VISIBLE : View.GONE);
 
-        if (getAdapterPrefs().isMultiSelectionEnabled()) {
-            imageView.setButtonDrawable(R.drawable.checkbox);
-        } else {
-            imageView.setButtonDrawable(R.drawable.radio_button);
+        if (!getAdapterPrefs().isMultiSelectionEnabled()) {
+            imageView.setButtonDrawable(ContextCompat.getDrawable(parent.getContext(),R.drawable.radio_button));
         }
 
-        imageView.setEnabled(adapterPrefs.isEnabled());
+
         boolean alwaysChecked = indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId);
         imageView.setAlwaysChecked(alwaysChecked);
+        imageView.setEnabled(adapterPrefs.isEnabled());
         imageView.setOnCheckedChangeListener(new ItemSelectionListener(position));
-
-        imageView.setClickable(false);
-        imageView.setFocusable(false);
-        imageView.setFocusableInTouchMode(false);
+//
+//        imageView.setClickable(false);
+//        imageView.setFocusable(false);
+//        imageView.setFocusableInTouchMode(false);
 
         // return the view, populated with data, for display
         return view;

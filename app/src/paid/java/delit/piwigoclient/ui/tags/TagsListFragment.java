@@ -73,18 +73,9 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
 
     public static TagsListFragment newInstance(BaseRecyclerViewAdapterPreferences viewPrefs) {
         TagsListFragment fragment = new TagsListFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(viewPrefs.storeToBundle(new Bundle()));
         return fragment;
-    }
-
-    @NonNull
-    @Override
-    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
-        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
-        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
-            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_App_EditPages));
-        }
-        return inflator;
     }
 
     @Override

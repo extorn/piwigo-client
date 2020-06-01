@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
@@ -38,14 +37,14 @@ public class AlbumHeadingViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
+    public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
         M album = getParentAdapter().getItemStore();
         setSubAlbumCount(album.getSubAlbumCount());
         showAlbumCount = album.isHideAlbums();
         switch(viewType) {
             case GalleryItem.ALBUM_HEADING_TYPE:
                 if (showAlbumCount) {
-                    headingView.setText(context.getString(R.string.album_section_heading_albums_pattern, subAlbumCount));
+                    headingView.setText(itemView.getContext().getString(R.string.album_section_heading_albums_pattern, subAlbumCount));
                 } else {
                     headingView.setText(R.string.album_section_heading_albums);
                 }

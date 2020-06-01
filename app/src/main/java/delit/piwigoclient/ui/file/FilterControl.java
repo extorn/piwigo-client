@@ -52,10 +52,10 @@ public class FilterControl extends FlowLayout {
         } else {
             selectedVisibleFileExts = new HashSet<>();
         }
-        buildFileExtFilterControls();
+        buildFileExtFilterControls(false);
     }
 
-    public void buildFileExtFilterControls() {
+    public void buildFileExtFilterControls(boolean notifyOnFiltersChanged) {
 
         // initialise local cached set of selected items
         if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
@@ -82,7 +82,7 @@ public class FilterControl extends FlowLayout {
                 }
                 fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
             }
-            if (filterShown || filterHidden) {
+            if (notifyOnFiltersChanged && (filterShown || filterHidden)) {
                 listener.onFiltersChanged(filterHidden, filterShown);
             }
         }
@@ -131,7 +131,7 @@ public class FilterControl extends FlowLayout {
 
     public void showAll() {
         currentlyVisibleFileExts = null;
-        buildFileExtFilterControls();
+        buildFileExtFilterControls(true);
     }
 
     public Set<String> getAllPossibleFilters() {

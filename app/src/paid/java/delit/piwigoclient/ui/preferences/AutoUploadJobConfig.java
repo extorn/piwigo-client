@@ -155,11 +155,15 @@ public class AutoUploadJobConfig implements Parcelable {
     }
 
     public DocumentFile getLocalFolderToMonitor(Context c) {
-        Uri localFolderUri = Uri.parse(getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key, null));
+        String uriStr = getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key, null);
+        if(uriStr == null) {
+            return null;
+        }
+        Uri localFolderUri = Uri.parse(uriStr);
         if(localFolderUri == null) {
             return null;
         }
-        return DocumentFile.fromSingleUri(c, localFolderUri);
+        return DocumentFile.fromTreeUri(c, localFolderUri);
     }
 
     public String getUploadToAlbumName(Context c) {

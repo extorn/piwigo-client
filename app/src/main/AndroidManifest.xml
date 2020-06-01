@@ -4,7 +4,7 @@
     package="delit.piwigoclient">
 
     <!-- Only supports API >= 18 -->
-    <uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />
+    <!--<uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />-->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

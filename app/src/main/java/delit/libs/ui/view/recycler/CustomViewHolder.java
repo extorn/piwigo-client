@@ -1,6 +1,5 @@
 package delit.libs.ui.view.recycler;
 
-import android.content.Context;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +13,7 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
         super(view);
     }
 
-    public abstract void fillValues(Context context, T item, boolean allowItemDeletion);
+    public abstract void fillValues(T item, boolean allowItemDeletion);
 
     public abstract void cacheViewFieldsAndConfigure(V adapterPrefs);
 
@@ -39,6 +38,6 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
         return itemActionListener;
     }
 
-    public <S> void redisplayOldValues(Context context, S newItem, boolean allowItemDeletion) {
+    public <S> void redisplayOldValues(S newItem, boolean allowItemDeletion) {
     }
 }

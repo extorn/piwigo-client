@@ -69,6 +69,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         GroupsListFragment fragment = new GroupsListFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(args);
         return fragment;
     }
@@ -107,17 +108,6 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
     @Override
     protected String buildPageHeading() {
         return getString(R.string.groups_heading);
-    }
-
-
-    @NonNull
-    @Override
-    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
-        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
-        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
-            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_App_EditPages));
-        }
-        return inflator;
     }
 
     @Nullable
@@ -252,8 +242,12 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
     }
 
     private void onDeleteGroup(final Group thisItem) {
-        String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), thisItem));
+        if(thisItem.getMemberCount() > 0) {
+            String message = getString(R.string.alert_confirm_really_delete_group);
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), thisItem));
+        } else {
+            deleteGroupNow(thisItem);
+        }
     }
 
     private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupsListFragment>> {

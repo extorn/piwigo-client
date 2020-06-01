@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
-import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -140,8 +139,8 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         return v;
     }
 
-    private void refreshCurrentFolderView() {
-        getListAdapter().rebuildContentView();
+    private void refreshCurrentFolderView(Context context) {
+        getListAdapter().rebuildContentView(context);
     }
 
     private View createFileExtFilterControl(String fileExt, boolean checked) {
@@ -196,7 +195,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         super.onDestroyView();
     }
 
-    private void buildFileExtFilterControls(File currentFolder) {
+    private void buildFileExtFilterControls(Context context, File currentFolder) {
 
         // initialise local cached set of selected items
         if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
@@ -225,7 +224,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
                 fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
             }
             if (updateViewRequired) {
-                listAdapter.rebuildContentView();
+                listAdapter.rebuildContentView(context);
             }
         }
     }
@@ -263,7 +262,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
         @Override
         public void onPostFolderOpened(File oldFolder, File newFolder) {
-            buildFileExtFilterControls(newFolder);
+            buildFileExtFilterControls(getContext(), newFolder);
             // get a list of all those files previously uploaded to this server and update the
             String serverProfileId = ConnectionPreferences.getActiveProfile().getProfileId(prefs, getContext());
 
@@ -294,12 +293,12 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
     @Override
     public boolean onBackButton() {
-        getListAdapter().cancelAnyActiveFolderMediaScan();
+        getListAdapter().cancelAnyActiveFolderMediaScan(getContext());
         File parent = getListAdapter().getActiveFolder().getParentFile();
         if (parent.getName().isEmpty()) {
             return false;
         } else {
-            getListAdapter().changeFolderViewed(parent);
+            getListAdapter().changeFolderViewed(getContext(), parent);
             return true;
         }
     }
@@ -341,7 +340,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
             if(newFolder == null) {
                 newFolder = getViewPrefInitialFolderAsFile();
             }
-            viewAdapter.changeFolderViewed(newFolder);
+            viewAdapter.changeFolderViewed(getContext(), newFolder);
 
             // select the items to view.
             viewAdapter.setInitiallySelectedItems();
@@ -440,7 +439,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
 
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFiles(selectedUris));
-        listAdapter.cancelAnyActiveFolderMediaScan();
+        listAdapter.cancelAnyActiveFolderMediaScan(getContext());
         // now pop this screen off the stack.
         if (isVisible()) {
             getParentFragmentManager().popBackStackImmediate();
@@ -512,7 +511,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
                 // current folder view
                 visibleFileTypes.remove(fileExt);
             }
-            adapter.rebuildContentView();
+            adapter.rebuildContentView(buttonView.getContext());
         }
     }
 
@@ -520,7 +519,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
     public void onCancelChanges() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis));
-        getListAdapter().cancelAnyActiveFolderMediaScan();
+        getListAdapter().cancelAnyActiveFolderMediaScan(getContext());
         super.onCancelChanges();
     }
 
@@ -560,7 +559,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
             if (id > 0) {
                 MappedArrayAdapter<String, File> adapter = (MappedArrayAdapter) parent.getAdapter();
                 File newRoot = adapter.getItemValue(position);
-                getListAdapter().changeFolderViewed(newRoot);
+                getListAdapter().changeFolderViewed(getContext(), newRoot);
             }
         }
 
@@ -575,12 +574,12 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         public void onBreadcrumbClicked(File pathItemFile) {
             File activeFolder = getListAdapter().getActiveFolder();
             if (!pathItemFile.equals(activeFolder)) {
-                getListAdapter().cancelAnyActiveFolderMediaScan();
+                getListAdapter().cancelAnyActiveFolderMediaScan(getContext());
             }
             if(pathItemFile.equals(getListAdapter().getActiveFolder())) {
-                getListAdapter().rebuildContentView();
+                getListAdapter().rebuildContentView(getContext());
             } else {
-                getListAdapter().changeFolderViewed(pathItemFile);
+                getListAdapter().changeFolderViewed(getContext(), pathItemFile);
                 if (listViewStates != null) {
                     Iterator<Map.Entry<String, Parcelable>> iterator = listViewStates.entrySet().iterator();
                     Map.Entry<String, Parcelable> item;

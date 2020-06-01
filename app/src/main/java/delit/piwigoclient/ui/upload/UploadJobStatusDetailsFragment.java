@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.upload;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
 
     public static UploadJobStatusDetailsFragment newInstance(UploadJob job) {
         UploadJobStatusDetailsFragment fragment = new UploadJobStatusDetailsFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgs(job));
         return fragment;
     }

@@ -13,18 +13,20 @@ public class FileBreadcrumbsView extends AbstractBreadcrumbsView<File> {
 
     public FileBreadcrumbsView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setPathNavigator(new FilePathNavigator());
     }
 
     public FileBreadcrumbsView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setPathNavigator(new FilePathNavigator());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public FileBreadcrumbsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        setPathNavigator(new FilePathNavigator());
+    }
+
+    @Override
+    protected PathNavigator<File> buildPathNavigator() {
+        return new FilePathNavigator();
     }
 
     private class FilePathNavigator implements PathNavigator<File> {

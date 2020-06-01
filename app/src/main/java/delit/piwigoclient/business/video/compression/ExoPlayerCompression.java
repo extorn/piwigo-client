@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.android.exoplayer2.util.MimeTypes;
 
@@ -470,7 +471,7 @@ public class ExoPlayerCompression {
             player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
             PlayerMonitor playerMonitor = new PlayerMonitor(player, mediaMuxerControl, listenerWrapper, Looper.myLooper());
             player.addListener(playerMonitor); // watch for errors and report them
-            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new FileDataSourceFactory());
+            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(contextRef.get(), "PiwigoCompression"));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             factory.setExtractorsFactory(extractorsFactory);
             listenerWrapper.onCompressionStarted();

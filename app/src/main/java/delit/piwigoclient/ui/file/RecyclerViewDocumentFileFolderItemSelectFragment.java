@@ -256,10 +256,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         @Override
         public void onPreFolderOpened(DocumentFile oldFolder, DocumentFile[] newFolderContent) {
             // need to do this before the folder is opened
-            progressIndicator.showProgressIndicator(-1);
-            updateListOfFileExtensionsForAllVisibleFiles(newFolderContent);
-            filterListOfVisibleFilesInListToMatchAcceptableFileExtensions();
-
+            DisplayUtils.postOnUiThread(() -> progressIndicator.showProgressIndicator(-1));
             recordTheCurrentListOfVisibleItemsInState(oldFolder);
         }
 
@@ -268,6 +265,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             // scroll to the first item in the list.
             getList().scrollToPosition(0);
             buildBreadcrumbs(newFolder);
+            getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
+            updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
             fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
             fileExtFilters.selectAll();
 
@@ -285,11 +284,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private void filterListOfVisibleFilesInListToMatchAcceptableFileExtensions() {
-        getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
-    }
-
-    private void updateListOfFileExtensionsForAllVisibleFiles(DocumentFile[] newFolderContent) {
+    private void updateListOfFileExtensionsForAllVisibleFiles(Map<String,String> folderContentFileExtToMimeMap) {
         if (getViewPrefs().getVisibleFileTypes() != null) {
             if(fileExtFilters.getAllPossibleFilters() == null) {
                 fileExtFilters.setAllPossibleFilters(new HashSet<>(getViewPrefs().getVisibleFileTypes()));
@@ -297,7 +292,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
         if (fileExtFilters.getAllPossibleFilters() != null) {
 
-            SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(IOUtils.getUniqueExtAndMimeTypes(newFolderContent));
+            SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(folderContentFileExtToMimeMap);
             if (fileExtsInFolderMatchingMimeTypesWanted != null) {
                 // add any extra that have come from mime types now visible in this folder.
                 fileExtFilters.getAllPossibleFilters().addAll(fileExtsInFolderMatchingMimeTypesWanted);
@@ -415,7 +410,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     final int takeFlags = resultData.getFlags()
                             & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
-                    itemsShared.add(new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile));
+                    itemsShared.add(new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true));
                 } else {
                     itemsShared = processOpenDocuments(resultData);
                 }
@@ -519,7 +514,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             selectedItems = new HashSet<>(1);
             if(listAdapter.getActiveFolder() != null) {
-                selectedItems.add(new FolderItemRecyclerViewAdapter.FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder()));
+                selectedItems.add(new FolderItemRecyclerViewAdapter.FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder(), true, true));
             }
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
@@ -623,7 +618,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
                         getListAdapter().resetRoot(newRoot);
                         deselectAllItems();
-                        getListAdapter().setInitiallySelectedItems(); // adapter needs to be populated for this to work.
                         if(listViewStates != null) {
                             listViewStates.clear();
                         }
@@ -701,8 +695,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             if(getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
                 getListAdapter().rebuildContentView();
             } else {
-                getListAdapter().changeFolderViewed(pathItemFile);
-                if (listViewStates != null) {
+                boolean folderChanged = getListAdapter().changeFolderViewed(pathItemFile);
+                if(folderChanged && listViewStates != null) {
                     Iterator<Map.Entry<Uri, Parcelable>> iter = listViewStates.entrySet().iterator();
                     Map.Entry<Uri, Parcelable> item;
                     while (iter.hasNext()) {

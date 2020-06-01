@@ -35,8 +35,8 @@ public class StaticListView extends ListView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int overrideMeasureSpec = heightMeasureSpec;
         if(MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
-            int desiredSize = MeasureSpec.getSize(heightMeasureSpec);
-            String desiredMode = DisplayUtils.getMeasureModeText(MeasureSpec.getMode(heightMeasureSpec));
+//            int desiredSize = MeasureSpec.getSize(heightMeasureSpec);
+//            String desiredMode = DisplayUtils.getMeasureModeText(MeasureSpec.getMode(heightMeasureSpec));
             overrideMeasureSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 4, MeasureSpec.AT_MOST);
         }
         super.onMeasure(widthMeasureSpec, overrideMeasureSpec);

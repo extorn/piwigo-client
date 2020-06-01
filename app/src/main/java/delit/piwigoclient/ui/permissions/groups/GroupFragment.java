@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.widget.NestedScrollView;
 
 import com.google.android.gms.ads.AdView;
@@ -112,6 +113,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
 
     public static GroupFragment newInstance(Group group) {
         GroupFragment fragment = new GroupFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
         args.putParcelable(CURRENT_GROUP, group);
         fragment.setArguments(args);

@@ -1,6 +1,5 @@
 package delit.libs.ui.view.recycler;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
@@ -38,7 +37,7 @@ public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreference
         return super.toString() + " '" + txtTitle.getText() + "'";
     }
 
-    public abstract void fillValues(Context context, A newItem, boolean allowItemDeletion);
+    public abstract void fillValues(A newItem, boolean allowItemDeletion);
 
     @Override
     public void setChecked(boolean checked) {

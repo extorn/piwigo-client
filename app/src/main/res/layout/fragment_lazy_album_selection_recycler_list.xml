@@ -4,25 +4,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/Theme.App.EditPages">
+    android:theme="@style/ThemeOverlay.App.EditPages">
 
     <RelativeLayout
         android:id="@+id/breadcrumbsContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="5dp">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/list_action_add_item_button"
             android:visibility="gone"
             tools:visibility="visible"
+            app:fabSize="mini"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             app:icon="@drawable/ic_add_circle_black_24px"
             app:iconTint="?colorOnBackground"/>
 
-        <delit.libs.ui.view.FlowLayout
+        <delit.piwigoclient.ui.album.CategoryBreadcrumbsView
             android:id="@+id/category_path"
             app:horizontalSpacing="7dp"
             app:verticalSpacing="7dp"
@@ -30,7 +33,9 @@
             android:layout_toStartOf="@+id/list_action_add_item_button"
             android:layout_alignWithParentIfMissing="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:breadcrumbLayout="@layout/layout_breadcrumb_item"
+            app:breadcrumbDivisionLayout="@layout/layout_breadcrumb_item_separator"/>
 
     </RelativeLayout>
 
@@ -52,7 +57,7 @@
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_alignTop="@id/list"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
@@ -70,6 +75,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentStart="true"
         android:text="@string/button_cancel"
+        android:layout_marginStart="5dp"
         style="?materialButtonOutlinedStyle"/>
 
     <Button
@@ -91,6 +97,7 @@
         android:layout_above="@+id/list_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
         android:text="@string/list_ok_button"/>
 
     <com.google.android.gms.ads.AdView

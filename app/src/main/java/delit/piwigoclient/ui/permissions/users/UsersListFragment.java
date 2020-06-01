@@ -68,6 +68,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         UsersListFragment fragment = new UsersListFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(args);
         return fragment;
     }
@@ -106,16 +107,6 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
     @Override
     protected String buildPageHeading() {
         return getString(R.string.users_heading);
-    }
-
-    @NonNull
-    @Override
-    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
-        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
-        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
-            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_App_EditPages));
-        }
-        return inflator;
     }
 
     @Nullable
@@ -162,22 +153,18 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         });
 
         retryActionButton = view.findViewById(R.id.list_retryAction_actionButton);
-        retryActionButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                retryActionButton.hide();
-                loadUsersPage(usersModel.getNextPageToReload());
-            }
+        retryActionButton.setOnClickListener(v -> {
+            retryActionButton.hide();
+            loadUsersPage(usersModel.getNextPageToReload());
         });
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
 
-        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(recyclerView.getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusAdapter<User>() {
+        viewAdapter = new UserRecyclerViewAdapter(recyclerView.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusAdapter<User>() {
 
             @Override
             public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, User u) {

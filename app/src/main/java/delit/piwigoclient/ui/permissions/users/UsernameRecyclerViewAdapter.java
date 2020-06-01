@@ -46,7 +46,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
             super(view);
         }
 
-        public void fillValues(Context context, Username newItem, boolean allowItemDeletion) {
+        public void fillValues(Username newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getTxtTitle().setText(newItem.getUsername());
 

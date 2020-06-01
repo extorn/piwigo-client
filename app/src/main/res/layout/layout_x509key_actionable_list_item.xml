@@ -14,7 +14,7 @@
         android:id="@+id/x509_key_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="TODO" app:srcCompat="@drawable/ic_vpn_key_black_24dp"/>
+        app:srcCompat="@drawable/ic_vpn_key_black_24dp"/>
     <TextView
         android:id="@+id/x509_key_type"
         android:layout_marginStart="5dp"

@@ -2,7 +2,12 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.StyleRes;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +53,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     private String piwigoSessionToken;
     private String piwigoServerConnected;
     private boolean onInitialCreate;
+    private @StyleRes int theme = Resources.ID_NULL;
 
     protected long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
         return addActiveServiceCall(getString(titleStringId), worker);
@@ -73,6 +79,32 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         onInitialCreate = true;
         super.onCreate(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public Context getContext() {
+        Context context = super.getContext();
+        if(theme == Resources.ID_NULL) {
+            return context;
+        }
+        if(context == null) {
+            return context;
+        }
+        return new ContextThemeWrapper(context, theme);
+    }
+
+    @NonNull
+    @Override
+    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
+        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
+        if(theme == Resources.ID_NULL) {
+            return inflator;
+        }
+        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
+            inflator = inflator.cloneInContext(getContext());
+        }
+        return inflator;
     }
 
     @Override
@@ -202,6 +234,10 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
      */
     protected void doInOnCreateView() {
         uiHelper.registerToActiveServiceCalls();
+    }
+
+    protected void setTheme(@StyleRes int theme) {
+        this.theme = theme;
     }
 
     private static class AdLoadErrorDialogListener<T extends MyFragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>> {

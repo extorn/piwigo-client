@@ -2,8 +2,8 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.net.Uri;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,20 +18,26 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import delit.libs.ui.view.list.MappedArrayAdapter;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
+import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 
 /**
  * Created by gareth on 29/10/17.
@@ -43,33 +49,24 @@ public class DownloadSelectionMultiItemDialog {
     private DownloadSelectionMultiItemListener downloadSelectionListener;
     private AlertDialog dialog;
     private FilterItemsRequestedForDownload filterItemsRequestedForDownload;
-    private MappedArrayAdapter<String, Integer> downloadOptionsAdapter;
+    private MappedArrayAdapter<String, Integer> downloadActionsOptionsAdapter;
 
     public DownloadSelectionMultiItemDialog(Context context) {
-        this.context = new ContextThemeWrapper(context, R.style.ThemeOverlay_App_EditPages);
+        this.context = new ContextThemeWrapper(context, R.style.Theme_App_EditPages);
     }
 
     public AlertDialog buildDialog(String defaultSelectedFilesizeName, final ResourceItem item, final DownloadSelectionMultiItemListener downloadSelectionListener) {
         HashSet<ResourceItem> items = new HashSet<>(1);
         items.add(item);
-        List<String> availableFiles = new ArrayList<>(item.getAvailableFiles().size());
-        for(AbstractBaseResourceItem.ResourceFile fileSize : item.getAvailableFiles()) {
-            availableFiles.add(fileSize.getName());
-        }
-        return buildDialog(defaultSelectedFilesizeName, items, availableFiles, downloadSelectionListener);
+        return buildDialog(defaultSelectedFilesizeName, items, downloadSelectionListener);
     }
 
     public Context getContext() {
         return context;
     }
 
-    public AlertDialog buildDialog(String defaultSelectedFilesizeName, Set<ResourceItem> itemsSelectedForDownload, final List<String> fileSizes, final DownloadSelectionMultiItemListener downloadSelectionListener) {
+    public AlertDialog buildDialog(String defaultSelectedFilesizeName, Set<ResourceItem> itemsSelectedForDownload, final DownloadSelectionMultiItemListener downloadSelectionListener) {
         this.downloadSelectionListener = downloadSelectionListener;
-
-        filterItemsRequestedForDownload = new FilterItemsRequestedForDownload(itemsSelectedForDownload).invoke();
-        Set<ResourceItem> itemsToDownload = filterItemsRequestedForDownload.getItemsToDownload();
-        Set<ResourceItem> vidsUnableToDownload = filterItemsRequestedForDownload.getVidsUnableToDownload();
-        downloadOptionsAdapter = buildDownloadOptionsAdapter(getContext(), itemsToDownload, vidsUnableToDownload);
 
         final MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(getContext());
         builder1.setTitle(R.string.alert_image_download_title);
@@ -80,9 +77,15 @@ public class DownloadSelectionMultiItemDialog {
         dialog = builder1.create();
         dialog.setOnShowListener(dialog -> {
             AlertDialog view = (AlertDialog)dialog;
-            addDataToViewFields(view, fileSizes, defaultSelectedFilesizeName);
+            addDataToViewFields(view, itemsSelectedForDownload, defaultSelectedFilesizeName);
             view.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
         });
+
+        filterItemsRequestedForDownload = new FilterItemsRequestedForDownload(itemsSelectedForDownload).invoke();
+        Set<ResourceItem> itemsToDownload = filterItemsRequestedForDownload.getItemsToDownload();
+        Set<ResourceItem> vidsUnableToDownload = filterItemsRequestedForDownload.getVidsUnableToDownload();
+        downloadActionsOptionsAdapter = buildDownloadOptionsAdapter(dialog.getContext(), itemsToDownload, vidsUnableToDownload);
+
         return dialog;
     }
 
@@ -92,18 +95,75 @@ public class DownloadSelectionMultiItemDialog {
         if(pos < 0) {
             throw new IllegalStateException("OK button pressed without a valid file size selected");
         }
-        String selectedFilesizeName = downloadOptionsAdapter.getItem(pos);
+        String selectedFilesizeName = downloadActionsOptionsAdapter.getItem(pos);
 
         String selectedItem = (String) downloadOptionGroup.getSelectedItem();
         int selectedAction = -1;
         if(selectedItem != null) {
-            selectedAction = downloadOptionsAdapter.getItemValueByItem(selectedItem);
+            selectedAction = downloadActionsOptionsAdapter.getItemValueByItem(selectedItem);
         }
         onDownloadOptionsSelected(filterItemsRequestedForDownload, selectedFilesizeName, selectedAction);
     }
 
-    private void addDataToViewFields(AlertDialog view, List<String> fileSizes, String defaultSelectedFilesizeName) {
-        final ArrayAdapter adapter = new ArrayAdapter<>(view.getContext(), R.layout.layout_dialog_select_singlechoice_compressed, fileSizes);
+    /**
+     * Examine data for each resource and find common file sizes available to download.
+     * Note that videos will always be downloaded in original size.
+     *
+     * @param resourcesToDownload
+     * @return
+     */
+    protected List<String> getFileSizesAvailableForAllResources(Set<ResourceItem> resourcesToDownload) {
+        List<String> filesAvailableToDownload = null;
+        for(ResourceItem item : resourcesToDownload) {
+            if(!(item instanceof VideoResourceItem)) {
+                List<String> availableSizesForResource = new ArrayList<>();
+                for (ResourceItem.ResourceFile f : item.getAvailableFiles()) {
+                    availableSizesForResource.add(f.getName());
+                }
+                if (filesAvailableToDownload == null) {
+                    filesAvailableToDownload = new ArrayList<>(availableSizesForResource);
+                } else {
+                    CollectionUtils.removeItemsNotInRhsCollection(filesAvailableToDownload, availableSizesForResource);
+                }
+            }
+        }
+
+        if(filesAvailableToDownload == null) {
+            // all items are video resources (download original for all)
+            filesAvailableToDownload = new ArrayList<>(1);
+            filesAvailableToDownload.add(resourcesToDownload.iterator().next().getFullSizeFile().getName());
+        }
+        return filesAvailableToDownload;
+    }
+
+    private void addDataToViewFields(AlertDialog view, Set<ResourceItem> resourcesToDownload, String defaultSelectedFilesizeName) {
+        SortedMap<AbstractBaseResourceItem.ResourceFile,String> downloadFileSizeOptionsValues = new TreeMap<>(Collections.reverseOrder());
+        List<String> sharedFileSizesAvailable = getFileSizesAvailableForAllResources(resourcesToDownload);
+        for(ResourceItem item : resourcesToDownload) {
+            ArrayList<AbstractBaseResourceItem.ResourceFile> resourceFiles = item.getAvailableFiles();
+            for(AbstractBaseResourceItem.ResourceFile f : resourceFiles) {
+                if(sharedFileSizesAvailable.contains(f.getName())) {
+                    if (!downloadFileSizeOptionsValues.containsValue(f.getName())) {
+                        downloadFileSizeOptionsValues.put(f, f.getName());
+                    }
+                }
+            }
+        }
+        if(resourcesToDownload.size() > 1) {
+            // swap the chosen original file (which has a specific size) for a generic size-less one.
+            ResourceItem.ResourceFile key = null;
+            for(Map.Entry<ResourceItem.ResourceFile, String> entry : downloadFileSizeOptionsValues.entrySet()) {
+                if(ResourceItem.ResourceFile.ORIGINAL.equals(entry.getValue())) {
+                    key = entry.getKey();
+                    break;
+                }
+            }
+            if(key != null) {
+                downloadFileSizeOptionsValues.remove(key);
+                downloadFileSizeOptionsValues.put(ResourceItem.ResourceFile.getGenericOriginalFile(), ResourceItem.ResourceFile.ORIGINAL);
+            }
+        }
+        MappedArrayAdapter<AbstractBaseResourceItem.ResourceFile, String> downloadFileSizeOptionsAdapter = new MappedArrayAdapter<>(view.getContext(), R.layout.layout_dialog_select_singlechoice_compressed, downloadFileSizeOptionsValues);
 
         ((TextView) view.findViewById(R.id.alertMessage)).setText(R.string.alert_image_download_message);
         downloadOptionGroup = view.findViewById(R.id.download_option);
@@ -118,15 +178,15 @@ public class DownloadSelectionMultiItemDialog {
         });
         final ListView fileSelectList = view.findViewById(R.id.fileSelectList);
 
-        downloadOptionGroup.setAdapter(downloadOptionsAdapter);
+        downloadOptionGroup.setAdapter(downloadActionsOptionsAdapter);
 
-        fileSelectList.setAdapter(adapter);
+        fileSelectList.setAdapter(downloadFileSizeOptionsAdapter);
 
-        int defaultFileSelectionPos = adapter.getPosition(defaultSelectedFilesizeName);
+        int defaultFileSelectionPos = downloadFileSizeOptionsAdapter.getPositionByValue(defaultSelectedFilesizeName);
         if(defaultFileSelectionPos >= 0) {
             fileSelectList.setItemChecked(defaultFileSelectionPos, true);
         } else {
-            fileSelectList.setItemChecked(adapter.getCount() - 1, true);
+            fileSelectList.setItemChecked(downloadFileSizeOptionsAdapter.getCount() - 1, true);
         }
     }
 
@@ -162,14 +222,6 @@ public class DownloadSelectionMultiItemDialog {
                 // no selection (do nothing) - this is impossible
                 throw new IllegalStateException("No valid download files action selected: " + selectedAction);
         }
-    }
-
-    private Map<String, AbstractBaseResourceItem.ResourceFile> getFileLinks(Set<PictureResourceItem> items, String selectedFilesizeName) {
-        Map<String, AbstractBaseResourceItem.ResourceFile> downloadLinks = new HashMap<>(items.size());
-        for(PictureResourceItem item : items) {
-            downloadLinks.put(item.getName(), item.getFile(selectedFilesizeName));
-        }
-        return downloadLinks;
     }
 
     private void onShareFile(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {

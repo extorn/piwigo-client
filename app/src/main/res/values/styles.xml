@@ -56,19 +56,20 @@
 
 
     <!-- this has the checkbox pushed to the end of the field -->
+    <!-- NOTE THAT I'm NOT USING THIS AS A TRUE FIELD - Hence the text is small not medium - Don't change without creating new style -->
     <style name="Widget.MaterialComponents.CompoundButton.CheckBox.EditField" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/none</item> <!-- just a null drawable - never shown -->
-        <item name="android:drawableEnd">@drawable/checkbox</item>
-        <item name="drawableTint">?colorPrimary</item> <!-- need to pull back into the material colors as drawable isn't tinted like the button -->
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="android:textAppearance">?android:textAppearanceMediumInverse</item>
+        <item name="android:textAppearance">?android:textAppearanceSmall</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">5dp</item>
         <item name="android:layout_marginEnd">5dp</item>
         <item name="android:layout_marginBottom">3dp</item>
         <item name="android:layout_marginTop">0dp</item>
+        <item name="checkbox_at_end">true</item>
+        <item name="useMaterialThemeColors">false</item>
     </style>
+
 
     <!-- password field visibility toggle button style -->
     <style name="Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
@@ -175,6 +176,8 @@
     </style>
 
     <style name="App.Widget.MaterialComponents.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">?cardBackgroundColor</item>
+        <item name="cardForegroundColor">@color/card_foreground</item>
     </style>
 
     <style name="App.Widget.Snackbar" parent="Widget.MaterialComponents.Snackbar">
@@ -206,6 +209,8 @@
 
     <style name="App.Widget.MaterialComponents.AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.PrimarySurface">
     </style>
+
+
 
 
 </resources>

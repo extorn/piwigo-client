@@ -36,10 +36,10 @@ public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRe
             super(view);
         }
 
-        public void fillValues(Context context, Group newItem, boolean allowItemDeletion) {
+        public void fillValues(Group newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getTxtTitle().setText(newItem.getName());
-            getDetailsTitle().setText(String.format(context.getString(R.string.group_members_pattern), newItem.getMemberCount()));
+            getDetailsTitle().setText(String.format(itemView.getContext().getString(R.string.group_members_pattern), newItem.getMemberCount()));
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }

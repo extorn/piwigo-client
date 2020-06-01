@@ -89,12 +89,6 @@ public class MainActivity extends AbstractMainActivity {
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(final ViewJobStatusDetailsEvent event) {
-        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
-        showFragmentNow(fragment);
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TagSelectionNeededEvent event) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
@@ -108,6 +102,12 @@ public class MainActivity extends AbstractMainActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ViewTagEvent event) {
         ViewTagFragment fragment = ViewTagFragment.newInstance(event.getTag());
+        showFragmentNow(fragment);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final ViewJobStatusDetailsEvent event) {
+        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
         showFragmentNow(fragment);
     }
 

@@ -42,7 +42,7 @@
         android:layout_alignBottom="@id/image_container"
         android:layout_alignEnd="@id/image_container"
         android:alpha="0.9"
-        android:contentDescription="TODO" android:padding="2dp"
+        android:padding="2dp"
         android:visibility="visible" />
 
     <delit.libs.ui.view.button.MaterialCheckboxTriState

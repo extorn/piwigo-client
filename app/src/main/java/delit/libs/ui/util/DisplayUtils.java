@@ -34,9 +34,11 @@ import android.widget.Spinner;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.content.res.TypedArrayUtils;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.os.LocaleListCompat;
@@ -459,6 +461,14 @@ public class DisplayUtils {
         }
 
         return color;
+    }
+
+    public static @StyleRes int getStyle(@NonNull Context context, @AttrRes int attrResId) {
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(attrResId, typedValue, true);
+        @StyleRes int style = typedValue.data;
+        return style;
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {

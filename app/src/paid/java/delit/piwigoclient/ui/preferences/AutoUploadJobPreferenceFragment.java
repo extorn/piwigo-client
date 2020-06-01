@@ -12,14 +12,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -29,6 +33,7 @@ import java.util.Set;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -162,7 +167,21 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         // check local folder
         if(allPreferencesValid) {
             String localFolder = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_local_folder_key);
-            allPreferencesValid = localFolder != null && new File(localFolder).exists();
+            allPreferencesValid = localFolder != null;
+            if(allPreferencesValid) {
+                Uri uri = Uri.parse(localFolder);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    try {
+                        File file = IOUtils.getFile(uri);
+                        allPreferencesValid = file != null && file.exists();
+                    } catch (IOException e) {
+                        Crashlytics.logException(e);
+                    }
+                } else {
+                    DocumentFile docFile = DocumentFile.fromTreeUri(requireContext(), uri);
+                    allPreferencesValid = docFile != null && docFile.exists() && docFile.isDirectory();
+                }
+            }
         }
         // check remote privacy level
         if(allPreferencesValid) {

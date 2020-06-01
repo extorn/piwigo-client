@@ -38,6 +38,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
 
     public static AlbumSelectFragment newInstance(AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
     }
@@ -52,16 +53,6 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         super.onSaveInstanceState(outState);
         getViewPrefs().storeToBundle(outState);
         outState.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableAlbums);
-    }
-
-    @NonNull
-    @Override
-    public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
-        LayoutInflater inflator = super.onGetLayoutInflater(savedInstanceState);
-        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
-            inflator = LayoutInflater.from(new ContextThemeWrapper(inflator.getContext(), R.style.ThemeOverlay_App_EditPages));
-        }
-        return inflator;
     }
 
     @Nullable

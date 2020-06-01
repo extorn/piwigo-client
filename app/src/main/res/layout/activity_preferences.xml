@@ -8,23 +8,14 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_above="@+id/prefs_adView"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <delit.libs.ui.view.CustomMaterialTabLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            app:tabIndicatorFullWidth="true"
-            app:initialTabIdx="0"
-            app:tabMode="scrollable"
-            style="?appTabLayout"/>
-
-    </androidx.viewpager.widget.ViewPager>
+        android:id="@+id/main_view"
+        layout="@layout/fragment_preferences"/>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

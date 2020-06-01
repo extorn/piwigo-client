@@ -12,10 +12,13 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.TextViewCompat;
 
 import java.util.ArrayList;
 
 import delit.libs.ui.util.DisplayUtils;
+import delit.piwigoclient.R;
 
 public class CustomExpandableListView extends ExpandableListView {
 
@@ -164,6 +167,8 @@ public class CustomExpandableListView extends ExpandableListView {
             TextView v =  new TextView(getContext());
             v.setText("Example Group " + groupPosition);
             v.setPaddingRelative(20, 20, 20, 20);
+            v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            TextViewCompat.setTextAppearance(v, DisplayUtils.getStyle(getContext(), R.attr.textAppearanceSubtitle2));
             return v;
         }
 
@@ -172,6 +177,8 @@ public class CustomExpandableListView extends ExpandableListView {
             TextView v =  new TextView(getContext());
             v.setText("Example Child " + groupPosition + ":" + childPosition);
             v.setPaddingRelative(40, 20, 20, 20);
+            v.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            TextViewCompat.setTextAppearance(v, DisplayUtils.getStyle(getContext(), R.attr.textAppearanceBody1));
             return v;
         }
 

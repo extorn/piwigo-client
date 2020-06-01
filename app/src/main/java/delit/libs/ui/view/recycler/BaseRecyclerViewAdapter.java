@@ -1,6 +1,5 @@
 package delit.libs.ui.view.recycler;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,13 +31,11 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
     private static final String TAG = "BaseRecyclerViewAdapter";
     private final P multiSelectStatusListener;
-    private WeakReference<Context> contextRef;
     private V prefs;
     private HashSet<Long> selectedResourceIds = new HashSet<>(0);
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
 
-    public BaseRecyclerViewAdapter(@NonNull Context context, P multiSelectStatusListener, V prefs) {
-        this.contextRef = new WeakReference<>(context);
+    public BaseRecyclerViewAdapter(P multiSelectStatusListener, V prefs) {
         this.setHasStableIds(true);
         this.multiSelectStatusListener = multiSelectStatusListener;
         this.prefs = prefs;
@@ -119,23 +116,15 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         T newItem = getItemByPosition(position);
         if (isHolderOutOfSync(holder, newItem)) {
             // store the item in this recyclable holder.
-            holder.fillValues(getContext(), newItem, prefs.isAllowItemDeletion());
+            holder.fillValues(newItem, prefs.isAllowItemDeletion());
         } else {
-            holder.redisplayOldValues(getContext(), newItem, prefs.isAllowItemDeletion());
+            holder.redisplayOldValues(newItem, prefs.isAllowItemDeletion());
         }
         try {
             holder.setChecked(isItemSelected(getItemId(position)));
         } catch (UnsupportedOperationException e) {
             // this is fine. Clearly selection is not wished for.
         }
-    }
-
-    protected Context getContext() {
-        return contextRef.get();
-    }
-
-    protected final void setContext(Context context) {
-        this.contextRef = new WeakReference<>(context);
     }
 
     @Override

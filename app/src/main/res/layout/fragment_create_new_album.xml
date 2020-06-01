@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    android:theme="@style/Theme.App.EditPages">
+    android:background="?colorSurface">
 
     <androidx.core.widget.NestedScrollView
     android:layout_above="@+id/createGallery_adView"
@@ -19,12 +19,14 @@
 
         <TextView
             android:id="@+id/createGallery_parentGalleryTitle"
+            android:labelFor="@id/createGallery_parentGallery"
             android:text="@string/createGallery_parentGalleryTitle"
             style="?editableFieldLabel"/>
 
         <EditText
             android:id="@+id/createGallery_parentGallery"
             tools:text="some gallery name"
+            android:importantForAutofill="no"
             style="?editableFieldText"/>
 
         <TextView

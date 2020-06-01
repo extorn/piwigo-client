@@ -136,12 +136,14 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         private String albumName;
         private long albumId = -1;
 
-        public ServerAlbumDetails(long albumId, @NonNull String albumName, List<Long> parentage, String albumPath) {
+        public ServerAlbumDetails(long albumId, String albumName, List<Long> parentage, String albumPath) {
             this.albumId = albumId;
             this.albumName = albumName;
             this.parentage = parentage;
             if (!CategoryItem.isRoot(albumId)) {
-                if (albumPath == null) {
+                if(albumId < 0) {
+                    this.albumPath = "???";
+                } else if (albumPath == null) {
                     this.albumPath = "??? / " + albumName;
                 } else {
                     this.albumPath = albumPath;
@@ -162,7 +164,11 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
                     albumPath = albumName;
                     parentage = new ArrayList<>(0);
                 } else {
-                    albumPath = "??? / " + albumName;
+                    if(albumId < 0) {
+                        albumPath = "???";
+                    } else {
+                        albumPath = "??? / " + albumName;
+                    }
                     if (pieces.length == 4) {
                         if (!"null".equals(pieces[2])) { // ignore this - this is only needed for preferences already corrupted.
                             try {

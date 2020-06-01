@@ -87,7 +87,10 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
         pathItemTextViewResId = a.getResourceId(R.styleable.AbstractBreadcrumbsView_breadcrumbTextViewId, View.NO_ID);
 
         a.recycle();
+        setPathNavigator(buildPathNavigator());
     }
+
+    protected abstract PathNavigator<T> buildPathNavigator();
 
     public void setNavigationListener(NavigationListener navigationListener) {
         this.navigationListener = navigationListener;
@@ -174,7 +177,7 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
     }
 
     public interface NavigationListener<T> {
-        void onBreadcrumbClicked(T pathItemFile);
+        void onBreadcrumbClicked(T pathItem);
     }
 
     public interface PathNavigator<T> {

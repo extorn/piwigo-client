@@ -536,9 +536,9 @@ public abstract class UIHelper<T> {
         this.piwigoResponseListener = piwigoResponseListener;
     }
 
-    public boolean isServiceCallInProgress() {
+    public boolean isServiceCallInProgress(Long serviceCallId) {
         synchronized (activeServiceCalls) {
-            return activeServiceCalls.size() > 0;
+            return activeServiceCalls.containsKey(serviceCallId);
         }
     }
 

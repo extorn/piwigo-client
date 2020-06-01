@@ -915,45 +915,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
 
         if (!downloadActionData.getSelectedItems().isEmpty()) {
-            // examine data for each resource and find common file sizes available to download.
-            // Note that videos will always be downloaded in original size.
-            List<String> filesAvailableToDownload = getFileSizesAvailableForAllResources(downloadActionData);
-            showDownloadResourcesDialog(downloadActionData.getSelectedItems(), filesAvailableToDownload);
+            showDownloadResourcesDialog(downloadActionData.getSelectedItems());
         }
     }
 
-    protected abstract void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems, List<String> filesAvailableToDownload);
+    protected abstract void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems);
 
-    /**
-     * Examine data for each resource and find common file sizes available to download.
-     * Note that videos will always be downloaded in original size.
-     *
-     * @param downloadActionData
-     * @return
-     */
-    protected List<String> getFileSizesAvailableForAllResources(BulkResourceActionData downloadActionData) {
-        List<String> filesAvailableToDownload = null;
-        for(ResourceItem item : downloadActionData.getSelectedItems()) {
-            if(!(item instanceof VideoResourceItem)) {
-                List<String> availableSizesForResource = new ArrayList<>();
-                for (ResourceItem.ResourceFile f : item.getAvailableFiles()) {
-                    availableSizesForResource.add(f.getName());
-                }
-                if (filesAvailableToDownload == null) {
-                    filesAvailableToDownload = new ArrayList<>(availableSizesForResource);
-                } else {
-                    CollectionUtils.removeItemsNotInRhsCollection(filesAvailableToDownload, availableSizesForResource);
-                }
-            }
-        }
-
-        if(filesAvailableToDownload == null) {
-            // all items are video resources (download original for all)
-            filesAvailableToDownload = new ArrayList<>(1);
-            filesAvailableToDownload.add(downloadActionData.getSelectedItems().iterator().next().getFullSizeFile().getName());
-        }
-        return filesAvailableToDownload;
-    }
 
     private void onDeleteResources(final BulkResourceActionData deleteActionData) {
         final HashSet<ResourceItem> sharedResources = new HashSet<>();

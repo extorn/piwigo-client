@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.FlowLayout;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -45,12 +46,14 @@ import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.ui.album.CategoryBreadcrumbsView;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
+import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
 
 import static android.view.View.NO_ID;
 
@@ -60,7 +63,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewCategoryItemSelectFragment.actionStartTime";
     private CategoryItem rootAlbum;
-    private FlowLayout categoryPathView;
+    private CategoryBreadcrumbsView categoryPathView;
     private long startedActionAtTime;
     private CategoryItemRecyclerViewAdapter.NavigationListener navListener;
     private LinkedHashMap<Long, Parcelable> listViewStates = new LinkedHashMap<>(5); // one state for each level within the list (created and deleted on demand)
@@ -93,6 +96,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         return isAppInReadOnlyMode(); // Non admin users can alter this since this may be for another profile entirely.
     }
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -121,6 +125,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         startedActionAtTime = System.currentTimeMillis();
 
         categoryPathView = v.findViewById(R.id.category_path);
+        categoryPathView.setNavigationListener(new CategoryNavigationListener());
 
         navListener = (oldCategory, newCategory) -> {
 
@@ -162,58 +167,13 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     private void buildBreadcrumbs(CategoryItem newCategory) {
-        categoryPathView.removeAllViews();
+        categoryPathView.populate(newCategory);
 
-        List<CategoryItem> pathItems = rootAlbum.getFullPath(newCategory);
-        TextView pathItem = null;
-        int idx = 0;
-        for(final CategoryItem pathItemCategory : pathItems) {
-            idx++;
-            int lastId = NO_ID;
-            if(pathItem != null) {
-                lastId = pathItem.getId();
-            }
-            pathItem = new TextView(getContext());
-            pathItem.setId(View.generateViewId());
-            TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_MaterialComponents_Body2_Clickable);
-            pathItem.setText(pathItemCategory.getName());
-            categoryPathView.addView(pathItem);
-
-            pathItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView tv = (TextView) v;
-                    getListAdapter().setActiveItem(pathItemCategory);
-                    if (!listViewStates.isEmpty()) {
-                        Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
-                        Map.Entry<Long, Parcelable> item;
-                        while (iter.hasNext()) {
-                            item = iter.next();
-                            if (item.getKey() == pathItemCategory.getId()) {
-                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                                iter.remove();
-                                while (iter.hasNext()) {
-                                    iter.next();
-                                    iter.remove();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            if(idx < pathItems.size()) {
-                TextView pathItemSeperator = new TextView(getContext());
-                TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
-                pathItemSeperator.setText("/");
-                pathItemSeperator.setId(View.generateViewId());
-                categoryPathView.addView(pathItemSeperator);
-                pathItem = pathItemSeperator;
-            }
-        }
     }
 
     private void bindDataToView(Bundle savedInstanceState) {
+
+        categoryPathView.setRoot(rootAlbum);
 
         CategoryItem activeCategory = null;
         if (savedInstanceState != null) {
@@ -387,6 +347,43 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                 ArrayList<CategoryItemStub> albumNames = ((CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) response).getAlbumNames();
                 ArrayList<CategoryItem> albums = CategoryItem.newListFromStubs(albumNames);
                 onAlbumsLoaded(albums, false);
+            }
+        }
+    }
+
+    public class CategoryNavigationListener implements AbstractBreadcrumbsView.NavigationListener<CategoryItem> {
+        @Override
+        public void onBreadcrumbClicked(CategoryItem pathItem) {
+            CategoryItem currentItem = getListAdapter().getActiveItem();
+            if(currentItem != null) {
+                listViewStates.put(currentItem.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
+            }
+            getList().scrollToPosition(0);
+
+            if(getListAdapter().getActiveItem().equals(pathItem)) {
+                //getListAdapter().rebuildContentView();
+                // DO nothing
+            } else {
+                boolean folderChanged = getListAdapter().setActiveItem(pathItem);
+                if(folderChanged && listViewStates != null) {
+                    Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
+                    Map.Entry<Long, Parcelable> item;
+                    while (iter.hasNext()) {
+                        item = iter.next();
+                        if (item.getKey().equals(pathItem.getId())) {
+                            if (getList().getLayoutManager() != null) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                            } else {
+                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                            }
+                            iter.remove();
+                            while (iter.hasNext()) {
+                                iter.next();
+                                iter.remove();
+                            }
+                        }
+                    }
+                }
             }
         }
     }

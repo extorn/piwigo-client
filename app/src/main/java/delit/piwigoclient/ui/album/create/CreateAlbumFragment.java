@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.ContextThemeWrapper;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -91,6 +92,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
      */
     public static CreateAlbumFragment newInstance(int actionId, CategoryItemStub uploadToGallery) {
         CreateAlbumFragment fragment = new CreateAlbumFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = new Bundle();
         args.putParcelable(STATE_UPLOAD_TO_GALLERY, uploadToGallery);
         args.putInt(STATE_ACTION_ID, actionId);

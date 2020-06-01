@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -40,7 +38,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     private NavigationListener navigationListener;
 
     public CategoryItemRecyclerViewAdapter(@NonNull Context context, CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener<CategoryItem> multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
-        super(context, multiSelectStatusListener, viewPrefs);
+        super(multiSelectStatusListener, viewPrefs);
         this.navigationListener = navigationListener;
         overallRoot = root;
         long initialRootId = viewPrefs.getInitialRoot().getId();
@@ -92,8 +90,14 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         return activeItem;
     }
 
-    public void setActiveItem(CategoryItem activeItem) {
+    /**
+     *
+     * @param activeItem
+     * @return true if the active item could be changed at this time
+     */
+    public boolean setActiveItem(CategoryItem activeItem) {
         updateActiveContent(activeItem, true);
+        return true;
     }
 
     @Override
@@ -262,13 +266,13 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
 
         @Override
-        public void fillValues(Context context, CategoryItem newItem, boolean allowItemDeletion) {
+        public void fillValues(CategoryItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
 //            getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
             getDetailsTitle().setVisibility(View.GONE);
             if(newItem.getChildAlbumCount() > 0) {
-                getDetailsTitle().setText(context.getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
+                getDetailsTitle().setText(itemView.getContext().getString(R.string.subalbum_detail_txt_pattern, newItem.getChildAlbumCount()));
                 getDetailsTitle().setVisibility(View.VISIBLE);
             }
 
@@ -283,7 +287,6 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
                 ImageViewCompat.setImageTintMode(getIconView(), null);
                 geticonViewLoader().setUriToLoad(newItem.getThumbnailUrl());
             } else {
-                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_IN);
                 geticonViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             }
         }
@@ -299,9 +302,10 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             if (!getAdapterPrefs().isEnabled()) {
                 colorList = ColorStateList.valueOf(Color.GRAY);
             } else {
-                colorList = ColorStateList.valueOf(DisplayUtils.getColor(getContext(), R.attr.colorPrimary));
+                colorList = ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.app_primary));//ColorStateList.valueOf(DisplayUtils.getColor(getContext(), R.attr.colorPrimary));
             }
             ImageViewCompat.setImageTintList(getIconView(), colorList);
+            ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_IN);
 
 
             getIconView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -334,7 +338,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             return iconViewLoader;
         }
 
-        public abstract void fillValues(Context context, CategoryItem newItem, boolean allowItemDeletion);
+        public abstract void fillValues(CategoryItem newItem, boolean allowItemDeletion);
 
         @Override
         public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {

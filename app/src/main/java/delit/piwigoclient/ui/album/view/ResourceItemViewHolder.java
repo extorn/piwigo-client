@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.album.view;
 
-import android.content.Context;
 import android.view.View;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -24,8 +23,8 @@ public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
-        super.fillValues(context, newItem, allowItemDeletion);
+    public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
+        super.fillValues(newItem, allowItemDeletion);
         updateCheckableStatus();
         checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener(this));
         updateRecentlyViewedMarker(newItem);

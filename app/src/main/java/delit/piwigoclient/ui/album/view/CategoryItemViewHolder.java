@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.album.view;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -30,8 +29,8 @@ public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
-        super.fillValues(context, newItem, allowItemDeletion);
+    public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
+        super.fillValues(newItem, allowItemDeletion);
         updateRecentlyViewedMarker(newItem);
 
         if (CategoryItem.BLANK.equals(newItem)) {
