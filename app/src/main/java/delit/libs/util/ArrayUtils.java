@@ -2,6 +2,9 @@ package delit.libs.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ArrayUtils {
     public static long[] getLongArray(String[] values) {
@@ -92,5 +95,32 @@ public class ArrayUtils {
             arr[i++] = val;
         }
         return arr;
+    }
+
+    public static Map<String, String> toMap(String[] stringArray) {
+        if(stringArray.length % 2 != 0) {
+            throw new IllegalArgumentException("The array provided does not divide into the sizes of group requested");
+        }
+        Map<String, String> groups = new LinkedHashMap<>();
+        for(int i = 0; i < stringArray.length;) {
+            groups.put(stringArray[i++], stringArray[i++]);
+        }
+        return groups;
+    }
+
+    public static Map<String, List<String>> toMap(String[] stringArray, int childrenPerGroup) {
+        if(stringArray.length % (1 + childrenPerGroup) != 0) {
+            throw new IllegalArgumentException("The array provided does not divide into the sizes of group requested");
+        }
+        Map<String, List<String>> groups = new LinkedHashMap<>();
+        for(int i = 0; i < stringArray.length;) {
+            String group = stringArray[i++];
+            List<String> children = new ArrayList<>(childrenPerGroup);
+            for(int j = 0; j < childrenPerGroup; j++) {
+                children.add(stringArray[i++]);
+            }
+            groups.put(group, children);
+        }
+        return groups;
     }
 }

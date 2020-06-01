@@ -3,34 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?colorSurface">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+
+    <delit.libs.ui.view.CustomViewPager
+        android:nestedScrollingEnabled="true"
+        android:id="@+id/slideshow_resource_details_tabs_content"
         android:layout_above="@id/about_adView"
         android:layout_alignWithParentIfMissing="true"
-        android:fillViewport="true"
-        android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp">
 
-        <LinearLayout
+        <delit.libs.ui.view.CustomMaterialTabLayout
+            style="?appTabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="3dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp">
+            android:layout_gravity="top"
+            tools:initialTabIdx="1" />
 
-            <TextView
-                android:id="@+id/about_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/about_heading"
-                android:textAppearance="?textAppearanceHeadline5"
-                android:layout_marginTop="13dp"
-                android:layout_marginBottom="7dp"/>
+        <TextView
+            android:id="@+id/about_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/about_heading"/>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/pageContent1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/about_text"
@@ -41,54 +46,57 @@
                 android:layout_marginBottom="5dp"
                 android:autoLink="web"
                 android:text="@string/about_content"
-                android:textAppearance="?textAppearanceBody1" />
+                android:textAppearance="?textAppearanceBody1"
+                android:nestedScrollingEnabled="true"/>
 
-            <TextView
-                android:id="@+id/about_planned_releases_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/planned_releases"
-                android:textAppearance="?textAppearanceHeadline5"
-                android:layout_marginTop="13dp"
-                android:layout_marginBottom="7dp"/>
+        </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/about_planned_releases_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/planned_releases"/>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <delit.libs.ui.view.list.StaticListView
                 android:id="@+id/about_planned_releases"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layout_height="100dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_marginStart="5dp"
-                android:clickable="false"
-                tools:background="@drawable/drawable_scrim_heavy"/>
+                android:clickable="false"/>
+        </androidx.core.widget.NestedScrollView>
 
-            <TextView
-                android:id="@+id/about_release_history_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/release_history"
-                android:textAppearance="?textAppearanceHeadline5"
-                android:layout_marginTop="13dp"
-                android:layout_marginBottom="7dp"/>
+        <TextView
+            android:id="@+id/about_release_history_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/release_history"/>
 
-            <delit.libs.ui.view.list.StaticListView
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <delit.libs.ui.view.list.CustomExpandableListView
                 android:id="@+id/about_release_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layout_height="100dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:clickable="false"
-                tools:background="@drawable/drawable_scrim_heavy"/>
+                android:layout_marginStart="5dp"/>
+        </androidx.core.widget.NestedScrollView>
 
-        </LinearLayout>
-
-
-    </androidx.core.widget.NestedScrollView>
-
-
+    </delit.libs.ui.view.CustomViewPager>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

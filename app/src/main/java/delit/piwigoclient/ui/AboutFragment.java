@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,7 +15,12 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
 
+import java.util.Map;
+
 import delit.libs.ui.view.list.PairedArrayAdapter;
+import delit.libs.ui.view.list.StringMapExpandableListAdapterBuilder;
+import delit.libs.util.ArrayUtils;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
@@ -23,7 +30,9 @@ import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 public class AboutFragment extends MyFragment<AboutFragment> {
     public static AboutFragment newInstance() {
-        return new AboutFragment();
+        AboutFragment fragment = new AboutFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
+        return fragment;
     }
 
     @Nullable
@@ -42,10 +51,14 @@ public class AboutFragment extends MyFragment<AboutFragment> {
         }
 
         ListView plannedReleases = view.findViewById(R.id.about_planned_releases);
-        plannedReleases.setAdapter(new ReleaseListAdapter(getContext(), R.layout.layout_list_item_simple, R.array.planned_releases));
+        plannedReleases.setAdapter(new ReleaseListAdapter(view.getContext(), R.layout.layout_list_item_simple, R.array.planned_releases));
 
-        ListView releaseHistory = view.findViewById(R.id.about_release_history);
-        releaseHistory.setAdapter(new ReleaseListAdapter(getContext(), R.layout.layout_list_item_simple, R.array.release_history));
+        ExpandableListView exifDataList = view.findViewById(R.id.about_release_history);
+        Map<String,String> data = ArrayUtils.toMap(view.getContext().getResources().getStringArray(R.array.release_history));
+        SimpleExpandableListAdapter expandingListAdapter = new StringMapExpandableListAdapterBuilder().build(view.getContext(), data);
+        exifDataList.setAdapter(expandingListAdapter);
+        exifDataList.setOnGroupCollapseListener(groupPosition -> exifDataList.getParent().requestLayout());
+        exifDataList.setOnGroupExpandListener(groupPosition -> exifDataList.getParent().requestLayout());
 
         return view;
     }
