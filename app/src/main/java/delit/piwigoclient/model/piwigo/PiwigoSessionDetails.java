@@ -371,4 +371,8 @@ public class PiwigoSessionDetails {
     public boolean isCommunityApiAvailable() {
         return isMethodAvailable("community.categories.getList");
     }
+
+    public Username getUser() {
+        return new Username(getUserId(), getUsername(), getUserType());
+    }
 }

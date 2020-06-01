@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +49,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTag;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
@@ -233,7 +235,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
             viewPrefs.loadFromBundle(savedInstanceState);
             tag = savedInstanceState.getParcelable(ARG_TAG);
-            tagModel = ViewModelProviders.of(getActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
+            tagModel = new ViewModelProvider(getActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
@@ -260,7 +262,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(tagModel == null) {
             tagIsDirty = true;
-            tagModel = ViewModelProviders.of(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
+            tagModel = new ViewModelProvider(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -363,7 +365,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     }
 
     private void reloadTagModel(Tag tag) {
-        tagModel = ViewModelProviders.of(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).updatePiwigoTag(tag).getValue();
+        tagModel = new ViewModelProvider(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).updatePiwigoTag(tag).getValue();
     }
 
     private PiwigoTag getTagModel() {
@@ -505,12 +507,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 selectedItemIds.remove(deletedResourceId);
                 itemsUpdated.remove(deletedResourceId);
             }
-            for (Iterator<ResourceItem> it = selectedItems.iterator(); it.hasNext(); ) {
-                ResourceItem r = it.next();
-                if (deletedItemIds.contains(r.getId())) {
-                    it.remove();
-                }
-            }
+            PiwigoUtils.removeAll(selectedItems, deletedItemIds);
             return selectedItemIds.size() == 0;
         }
 

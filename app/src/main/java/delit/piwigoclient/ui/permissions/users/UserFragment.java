@@ -361,12 +361,9 @@ public class UserFragment extends MyFragment<UserFragment> {
         highDefinitionEnabled = v.findViewById(R.id.user_high_definition_field);
 
         userGroupsField = v.findViewById(R.id.user_groups);
-        userGroupsField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectGroupMembership();
-            }
-        });
+        userGroupsField.setOnClickListener(v15 -> selectGroupMembership());
+        // can't just use a std click listener as it first focuses the field :-(
+        CustomClickTouchListener.callClickOnTouch(userGroupsField);
 
         albumPermissionsField = v.findViewById(R.id.user_access_rights);
         albumPermissionsField.setOnTouchListener(new CustomClickTouchListener(albumPermissionsField) {
@@ -548,11 +545,7 @@ public class UserFragment extends MyFragment<UserFragment> {
 
     private void selectGroupMembership() {
         HashSet<Group> currentSelection = getLatestGroupMembership();
-        HashSet<Long> preselectedGroups = new HashSet<>(currentSelection.size());
-
-        for (Group g : currentSelection) {
-            preselectedGroups.add(g.getId());
-        }
+        HashSet<Long> preselectedGroups = PiwigoUtils.toSetOfIds(currentSelection);
         GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, fieldsEditable, preselectedGroups);
         selectGroupsActionId = groupSelectionNeededEvent.getActionId();
         EventBus.getDefault().post(groupSelectionNeededEvent);
@@ -712,12 +705,7 @@ public class UserFragment extends MyFragment<UserFragment> {
                 sb.append(getString(R.string.none_value));
             } else {
                 ArrayList<Group> sortedList = new ArrayList<>(groupMembership);
-                Collections.sort(sortedList, new Comparator<Group>() {
-                    @Override
-                    public int compare(Group o1, Group o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
+                Collections.sort(sortedList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
                 Iterator<Group> iter = sortedList.iterator();
                 while (iter.hasNext()) {
                     sb.append(iter.next().getName());

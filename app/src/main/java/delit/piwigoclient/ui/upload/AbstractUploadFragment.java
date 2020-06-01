@@ -60,6 +60,7 @@ import java.util.TimeZone;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.list.BiArrayAdapter;
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.CollectionUtils;
@@ -262,20 +263,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         viewPrefs.withShowHierachy();
 
         selectedGalleryTextView = view.findViewById(R.id.selected_gallery);
-        selectedGalleryTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSelectedGalleryTextViewClick();
-            }
-        });
+        selectedGalleryTextView.setOnClickListener(v -> onSelectedGalleryTextViewClick());
+        // can't just use a std click listener as it first focuses the field :-(
+        CustomClickTouchListener.callClickOnTouch(selectedGalleryTextView);
 
         fileSelectButton = view.findViewById(R.id.select_files_for_upload_button);
-        fileSelectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onFileSelectionWantedClick();
-            }
-        });
+        fileSelectButton.setOnClickListener(v -> onFileSelectionWantedClick());
 
         uploadableFilesView = view.findViewById(R.id.files_uploadable_label);
 

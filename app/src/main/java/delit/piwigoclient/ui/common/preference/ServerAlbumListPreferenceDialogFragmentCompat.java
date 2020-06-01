@@ -270,7 +270,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
             String selectedAlbumAsStr = ServerAlbumListPreference.ServerAlbumPreference.toValue(selectedAlbum);
 
             ServerAlbumListPreference pref = getPreference();
-            Long selectedAlbumId = selectedAlbum == null ? null : selectedAlbum.getId();
+            Long selectedAlbumId = selectedAlbum.getId();
             if (pref.callChangeListener(selectedAlbumId)) {
                 pref.persistStringValue(selectedAlbumAsStr);
             }

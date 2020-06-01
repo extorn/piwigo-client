@@ -26,6 +26,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
@@ -257,7 +258,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
         Class<? extends ViewModelContainer> galleryModelClass = (Class<? extends ViewModelContainer>) b.getSerializable(ARG_GALLERY_TYPE);
         long galleryModelId = b.getLong(ARG_GALLERY_ID);
-        ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
+        ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
         ResourceContainer<?, T> modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
         if (modelStore == null) {
             Bundle errBundle = new Bundle();
@@ -279,12 +280,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             errBundle.putLong("modelId", galleryModelId);
             errBundle.putLong("itemCount", modelStore.getItemCount());
             errBundle.putLong("indexOfItem", modelStore.getItemIdx(modelStore.getItemById(galleryItemId)));
+
             for (int i = 0; i < modelStore.getItemCount(); i++) {
                 GalleryItem item = modelStore.getItemById(i);
                 if (item.getId() == galleryItemId) {
                     errBundle.putInt("correctIndexOfItem", i);
                 }
             }
+
             errBundle.putInt("sortOrder", modelStore.isRetrieveItemsInReverseOrder() ? 1 : 0);
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", null);
             String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)\n%3$s", galleryModelClass.getName(), galleryModelId, errBundle.toString());
@@ -910,7 +913,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         DrawableCompat.setTint(myRatingForThisResourceBar.getProgressDrawable(), ContextCompat.getColor(requireContext(), R.color.app_secondary));
     }
 
-    protected void onImageDeleted(HashSet<Long> deletedItemIds) {
+    protected void onImageDeleted(HashSet<? extends ResourceItem> deletedItems) {
         List<Long> resourceItemParentChain = model.getParentageChain();
         EventBus.getDefault().post(new AlbumItemDeletedEvent(model, albumItemIdx, albumLoadedItemCount));
         for (int i = 0; i < resourceItemParentChain.size() - 1; i++) {
@@ -1113,7 +1116,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             if (response instanceof ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) {
                 processModelRatings(((ImageAlterRatingResponseHandler.PiwigoRatingAlteredResponse) response).getPiwigoResource());
             } else if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
-                onImageDeleted(((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItemIds());
+                onImageDeleted(((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItems());
             } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
                 onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<T>) response);
             } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {

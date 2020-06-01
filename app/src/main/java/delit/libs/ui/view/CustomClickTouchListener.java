@@ -4,6 +4,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.core.view.GestureDetectorCompat;
 
@@ -66,6 +67,19 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
         detector = new GestureDetectorCompat(linkedView.getContext(), listener);
     }
 
+    public static void callClickOnTouch(View field) {
+        field.setOnTouchListener(new CustomClickTouchListener(field) {
+            @Override
+            public boolean onClick() {
+                field.performClick();
+                return true;
+            }
+        });
+    }
+
+    /**
+     * @return true if the event was consumed
+     */
     public boolean onClick() {
         return false;
     }

@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -48,6 +49,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoFavorites;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -229,7 +231,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
             }
         }
 
-        favoritesModel = ViewModelProviders.of(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites().getValue();
+        favoritesModel = new ViewModelProvider(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites().getValue();
 
         FavoritesUpdatedEvent favoritesUpdatedEvent = EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class);
         if(favoritesUpdatedEvent != null) {
@@ -243,7 +245,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(favoritesModel == null) {
             favoritesIsDirty = true;
-            favoritesModel = ViewModelProviders.of(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
+            favoritesModel = new ViewModelProvider(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -346,7 +348,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     }
 
     private void reloadFavoritesModel() {
-        favoritesModel = ViewModelProviders.of(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
+        favoritesModel = new ViewModelProvider(requireActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         loadAlbumResourcesPage(0);
     }
 
@@ -466,12 +468,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
                 selectedItemIds.remove(deletedResourceId);
                 itemsUpdated.remove(deletedResourceId);
             }
-            for (Iterator<ResourceItem> it = selectedItems.iterator(); it.hasNext(); ) {
-                ResourceItem r = it.next();
-                if (deletedItemIds.contains(r.getId())) {
-                    it.remove();
-                }
-            }
+            PiwigoUtils.removeAll(selectedItems, deletedItemIds);
             return selectedItemIds.size() == 0;
         }
 

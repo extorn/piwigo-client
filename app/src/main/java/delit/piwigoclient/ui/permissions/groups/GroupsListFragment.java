@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -115,7 +116,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-        groupsModel = ViewModelProviders.of(this).get(PiwigoGroupsModel.class).getPiwigoGroups().getValue();
+        groupsModel = new ViewModelProvider(this).get(PiwigoGroupsModel.class).getPiwigoGroups().getValue();
 
         if (isSessionDetailsChanged()) {
             groupsModel.clear();

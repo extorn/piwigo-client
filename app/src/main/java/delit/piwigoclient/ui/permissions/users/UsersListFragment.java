@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -114,7 +115,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
-        usersModel = ViewModelProviders.of(this).get(PiwigoUsersModel.class).getPiwigoUsers().getValue();
+        usersModel = new ViewModelProvider(this).get(PiwigoUsersModel.class).getPiwigoUsers().getValue();
 
         if (isSessionDetailsChanged()) {
             usersModel.clear();

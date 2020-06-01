@@ -20,7 +20,6 @@ import androidx.appcompat.app.AlertDialog;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -43,7 +42,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
@@ -324,11 +322,6 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 videoMetadataContainerView.setVisibility(View.VISIBLE);
             }
         }
-    }
-
-    @Override
-    public void onImageDeleted(HashSet<Long> deletedItemIds) {
-        super.onImageDeleted(deletedItemIds);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

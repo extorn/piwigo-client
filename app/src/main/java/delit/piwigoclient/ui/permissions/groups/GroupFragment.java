@@ -198,18 +198,15 @@ public class GroupFragment extends MyFragment<GroupFragment> {
             CollectionUtils.addToCollectionNullSafe(memberSaveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_MEMBER_SAVE_ACTION_IDS));
 
             permissionsSaveActionIds.clear();
-            permissionsSaveActionIds.addAll(BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS));
+            CollectionUtils.addToCollectionNullSafe(permissionsSaveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS));
             selectUsersActionId = savedInstanceState.getInt(STATE_SELECT_USERS_ACTION_ID);
         }
 
         groupNameField = v.findViewById(R.id.group_name);
         membersField = v.findViewById(R.id.group_members);
-        membersField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectGroupMembers();
-            }
-        });
+        membersField.setOnClickListener(v1 -> selectGroupMembers());
+        // can't just use a std click listener as it first focuses the field :-(
+        CustomClickTouchListener.callClickOnTouch(membersField);
         isDefaultField = v.findViewById(R.id.group_is_default);
 
         albumAccessRightsField = v.findViewById(R.id.group_access_rights);
@@ -424,7 +421,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupFragment>> {
         private final Group group;
 
-        public OnDeleteGroupAction(FragmentUIHelper<GroupFragment> uiHelper, Group group) {
+        OnDeleteGroupAction(FragmentUIHelper<GroupFragment> uiHelper, Group group) {
             super(uiHelper);
             this.group = group;
         }
@@ -517,22 +514,14 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         publishGroupAddedOrAlteredEventIfFinished();
     }
 
-    private Set<Long> getUserIds(Collection<Username> usernameList) {
-        Set<Long> userIds = new HashSet<>();
-        for (Username username : usernameList) {
-            userIds.add(username.getId());
-        }
-        return userIds;
-    }
-
     private void saveGroupMembershipChangesIfRequired() {
         if (newGroupMembers == null) {
             //nothing to do.
             return;
         }
 
-        Set<Long> allWantedMembers = getUserIds(newGroupMembers);
-        Set<Long> oldGroupMembersSet = getUserIds(currentGroupMembers);
+        Set<Long> allWantedMembers = PiwigoUtils.toSetOfIds(newGroupMembers);
+        Set<Long> oldGroupMembersSet = PiwigoUtils.toSetOfIds(currentGroupMembers);
         Set<Long> newGroupMembersSet = new HashSet<>(allWantedMembers);
 
         newGroupMembersSet.removeAll(oldGroupMembersSet);
@@ -638,12 +627,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
             if (groupMembers.size() == 0) {
                 sb.append(getString(R.string.none_value));
             } else {
-                Collections.sort(groupMembers, new Comparator<Username>() {
-                    @Override
-                    public int compare(Username o1, Username o2) {
-                        return o1.getUsername().compareTo(o2.getUsername());
-                    }
-                });
+                Collections.sort(groupMembers);
                 Iterator<Username> iter = groupMembers.iterator();
                 while (iter.hasNext()) {
                     sb.append(iter.next().getUsername());
@@ -657,7 +641,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onAlbumPermissionsSelectedEvent(AlbumPermissionsSelectionCompleteEvent event) {
+    private void onAlbumPermissionsSelectedEvent(AlbumPermissionsSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             newAccessibleAlbumIds = event.getSelectedAlbumIds();
             populateAlbumPermissionsList();

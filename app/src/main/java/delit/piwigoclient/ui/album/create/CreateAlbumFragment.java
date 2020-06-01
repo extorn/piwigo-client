@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -243,14 +244,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
             @Override
             public void onClick(View v) {
 
-                HashSet<Long> preselectedGroups = null;
-                if (selectedGroups != null) {
-                    preselectedGroups = new HashSet<>(selectedGroups.size());
-                    int i = 0;
-                    for (Group g : selectedGroups) {
-                        preselectedGroups.add(g.getId());
-                    }
-                }
+                HashSet<Long> preselectedGroups = PiwigoUtils.toSetOfIds(selectedGroups);
                 GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, true, preselectedGroups);
                 getUiHelper().setTrackingRequest(groupSelectionNeededEvent.getActionId());
                 EventBus.getDefault().post(groupSelectionNeededEvent);
@@ -273,10 +267,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
                     EventBus.getDefault().post(usernameSelectionNeededEvent);
 
                 } else {
-                    ArrayList<Long> selectedGroupIds = new ArrayList<>(selectedGroups.size());
-                    for (Group g : selectedGroups) {
-                        selectedGroupIds.add(g.getId());
-                    }
+                    Set<Long> selectedGroupIds = PiwigoUtils.toSetOfIds(selectedGroups);
                     addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
                 }
             }

@@ -33,6 +33,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,6 +67,7 @@ import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.util.ArrayUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
@@ -294,7 +296,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             throw new IllegalStateException("album details are null for some reason");
         }
         albumDetails.forcePermissionsReload();
-        galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+        galleryModel = new ViewModelProvider(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
 
         galleryModel.setContainerDetails(albumDetails);
         galleryIsDirty = true;
@@ -314,14 +316,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 if (albumParentId != null) {
                     CategoryItem catItem = rootAlbum.findChild(albumParentId);
                     catItem.removeChildAlbum(thisAlbum);
-                    ViewModelProviders.of(requireActivity()).get("" + catItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(catItem);
+                    new ViewModelProvider(requireActivity()).get("" + catItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(catItem);
                     thisAlbum = catItem;
                 } else {
                     Crashlytics.log(Log.WARN, TAG, "Attempt to get parent album for album with id " + album.getId());
                 }
             } while (!thisAlbum.isRoot());
             // now add the album to the ViewModelProvider and then get the current value
-            galleryModel = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+            galleryModel = new ViewModelProvider(requireActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
             if (galleryModel == null) {
                 Crashlytics.log(Log.ERROR, TAG, "Gallery model is unexpectedly null on reopening model with album " + album);
             }
@@ -1933,21 +1935,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final GroupSelectionCompleteEvent groupSelectionCompleteEvent) {
         if (getUiHelper().isTrackingRequest(groupSelectionCompleteEvent.getActionId())) {
-            long[] selectedGroupsArr = new long[groupSelectionCompleteEvent.getCurrentSelection().size()];
-            int i = 0;
-            for (Group group : groupSelectionCompleteEvent.getSelectedItems()) {
-                selectedGroupsArr[i++] = group.getId();
-            }
-            currentGroups = selectedGroupsArr;
+            HashSet<Long> selectedGroupIds = PiwigoUtils.toSetOfIds(groupSelectionCompleteEvent.getSelectedItems());
+            currentGroups = ArrayUtils.unwrapLongs(selectedGroupIds);
             userIdsInSelectedGroups = null;
             fillGroupsField(allowedGroupsField, groupSelectionCompleteEvent.getSelectedItems());
 
-
-            ArrayList<Long> selectedGroupIds = new ArrayList<>(currentGroups.length);
-            for (long groupId : currentGroups) {
-                selectedGroupIds.add(groupId);
-            }
-            if (selectedGroupIds.size() == 0) {
+            if (selectedGroupIds.isEmpty()) {
                 userIdsInSelectedGroups = new HashSet<>(0);
             } else {
                 addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
@@ -1956,12 +1949,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private void onResourcesDeleted(ImageDeleteResponseHandler.PiwigoDeleteImageResponse response) {
-        Crashlytics.log(String.format(Locale.getDefault(), "deleting %1$d album items from the UI display", response.getDeletedItemIds().size()));
+        Crashlytics.log(String.format(Locale.getDefault(), "deleting %1$d album items from the UI display", response.getDeletedItems().size()));
         // clear the selection
         viewAdapter.clearSelectedItemIds();
         viewAdapter.toggleItemSelection();
         // now update this album view to reflect the server content
-        if (bulkResourceActionData != null && bulkResourceActionData.removeProcessedResources(response.getDeletedItemIds())) {
+        if (bulkResourceActionData != null && bulkResourceActionData.removeProcessedResources(response.getDeletedItems())) {
             bulkResourceActionData = null;
         }
         // Now ensure any parents are also updated when next shown
@@ -2173,27 +2166,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
         if (getUiHelper().isTrackingRequest(usernameSelectionCompleteEvent.getActionId())) {
-            long[] selectedUsersArr = new long[usernameSelectionCompleteEvent.getCurrentSelection().size()];
-            int i = 0;
-            long currentLoggedInUserId = sessionDetails.getUserId();
-            boolean currentUserExplicitlyPresent = false;
-            for (Username user : usernameSelectionCompleteEvent.getSelectedItems()) {
-                selectedUsersArr[i++] = user.getId();
-                if (currentLoggedInUserId == user.getId()) {
-                    currentUserExplicitlyPresent = true;
-                }
-            }
-            currentUsers = selectedUsersArr;
+            HashSet<Long> selectedItemIds = PiwigoUtils.toSetOfIds(usernameSelectionCompleteEvent.getSelectedItems());
+            Username currentLoggedInUser = sessionDetails.getUser();
+            boolean currentUserExplicitlyPresent = selectedItemIds.contains(currentLoggedInUser.getId());
+
             HashSet<Long> wantedAlbumGroups = SetUtils.asSet(currentGroups);
             HashSet<Long> currentUsersGroupMemberships = sessionDetails.getGroupMemberships();
             Set<Long> thisUsersGroupsWithoutAccess = SetUtils.difference(currentUsersGroupMemberships, wantedAlbumGroups);
             boolean noGroupAccess = thisUsersGroupsWithoutAccess.size() == currentUsersGroupMemberships.size();
-            if (currentLoggedInUserId >= 0 && noGroupAccess && !currentUserExplicitlyPresent && !sessionDetails.isAdminUser()) {
+            if (currentLoggedInUser.getId() >= 0 && noGroupAccess && !currentUserExplicitlyPresent && !sessionDetails.isAdminUser()) {
                 //You've attempted to remove your own permission to access this album. Adding it back in.
-                currentUsers = Arrays.copyOf(currentUsers, currentUsers.length + 1);
-                currentUsers[currentUsers.length - 1] = currentLoggedInUserId;
+                selectedItemIds.add(currentLoggedInUser.getId());
                 getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_information_own_user_readded_to_permissions_list));
             }
+            currentUsers = ArrayUtils.unwrapLongs(selectedItemIds);
             fillUsernamesField(allowedUsersField, usernameSelectionCompleteEvent.getSelectedItems());
         }
     }
@@ -2213,7 +2199,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             Crashlytics.log(Log.WARN, TAG, "Attempt to reopen parent but is null");
             return null;
         }
-        PiwigoAlbum nextPiwigoAlbum = ViewModelProviders.of(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        PiwigoAlbum nextPiwigoAlbum = new ViewModelProvider(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
         if (nextPiwigoAlbum == null) {
             Crashlytics.log(Log.WARN, TAG, "Attempt to reopen parent but parent is not available. Returning null");
             return null;
@@ -2233,7 +2219,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     if (albumId.equals(CategoryItem.ROOT_ALBUM.getId())) {
                         continue;
                     }
-                    ViewModelProviders.of(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
+                    new ViewModelProvider(activity).get("" + currentItem.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(currentItem).getValue();
                     try {
                         currentItem = currentItem.getChild(albumId);
                     } catch (IllegalStateException e) {
@@ -2771,17 +2757,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return selectedItemIds.size() == 0;
         }
 
-        public boolean removeProcessedResources(HashSet<Long> deletedItemIds) {
-            for (Long deletedResourceId : deletedItemIds) {
-                selectedItemIds.remove(deletedResourceId);
-                itemsUpdated.remove(deletedResourceId);
-            }
-            for (Iterator<ResourceItem> it = selectedItems.iterator(); it.hasNext(); ) {
-                ResourceItem r = it.next();
-                if (deletedItemIds.contains(r.getId())) {
-                    it.remove();
-                }
-            }
+        public boolean removeProcessedResources(HashSet<? extends ResourceItem> deletedItems) {
+            HashSet<Long> deletedItemIds = PiwigoUtils.toSetOfIds(deletedItems);
+            selectedItemIds.removeAll(deletedItemIds);
+            itemsUpdated.removeAll(deletedItemIds);
+            PiwigoUtils.removeAll(selectedItems, deletedItemIds);
             return selectedItemIds.size() == 0;
         }
 

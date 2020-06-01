@@ -67,6 +67,7 @@ import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -532,12 +533,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             if (thisUploadJob.getTemporaryUploadAlbum() > 0) {
                 // check it still exists (ensure one is created again if not) - could have been deleted by a user manually.
-                boolean tempAlbumExists = false;
-                for (CategoryItemStub cat : availableAlbumsOnServer) {
-                    if (cat.getId() == thisUploadJob.getTemporaryUploadAlbum()) {
-                        tempAlbumExists = true;
-                    }
-                }
+                boolean tempAlbumExists = PiwigoUtils.containsItemWithId(availableAlbumsOnServer, thisUploadJob.getTemporaryUploadAlbum());
                 if (!tempAlbumExists) {
                     // allow a new one to be created and tracked
                     thisUploadJob.setTemporaryUploadAlbum(-1);
@@ -1078,13 +1074,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         long jobId = thisUploadJob.getJobId();
         byte[] chunkBuffer = buildSensibleBuffer();
 
-        Set<Long> allServerAlbumIds = null;
-        if (availableAlbumsOnServer != null) {
-            allServerAlbumIds = new HashSet<>(availableAlbumsOnServer.size());
-            for (CategoryItemStub cat : availableAlbumsOnServer) {
-                allServerAlbumIds.add(cat.getId());
-            }
-        }
+        Set<Long> allServerAlbumIds = PiwigoUtils.toSetOfIds(availableAlbumsOnServer);
 
         for (Uri fileForUploadUri : thisUploadJob.getFilesForUpload()) {
 

@@ -3,7 +3,11 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Username implements Identifiable, Parcelable {
+import androidx.annotation.Nullable;
+
+import delit.libs.util.ObjectUtils;
+
+public class Username implements Identifiable, Parcelable, Comparable<Username> {
     private final long id;
     private final String username;
     private final String userType; //guest,    generic,    normal,    admin,    webmaster
@@ -54,4 +58,23 @@ public class Username implements Identifiable, Parcelable {
             return new Username[size];
         }
     };
+
+    @Override
+    public int compareTo(Username o) {
+        return ObjectUtils.compare(username, o.username); // null safe natural compare
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(!(obj instanceof Username)) {
+            return false;
+        }
+        Username other = (Username) obj;
+        return id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int)id;
+    }
 }

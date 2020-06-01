@@ -5,6 +5,8 @@
         <item name="android:textColor">@color/clickable_text_color_selector</item>
         <item name="android:inputType">none</item>
         <item name="android:textIsSelectable">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
 
     <style name="App.Widget.EditText.FieldEntry" parent="App.Widget.EditText">
