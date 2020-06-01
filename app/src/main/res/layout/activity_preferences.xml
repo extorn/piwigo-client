@@ -15,7 +15,7 @@
         android:layout_above="@+id/prefs_adView"
         android:layout_alignWithParentIfMissing="true"
         android:id="@+id/main_view"
-        layout="@layout/fragment_preferences"/>
+        layout="@layout/fragment_preferences_view_all"/>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

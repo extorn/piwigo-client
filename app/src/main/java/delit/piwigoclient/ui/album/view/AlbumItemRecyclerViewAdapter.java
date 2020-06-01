@@ -56,23 +56,23 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
 
     private View inflateAlbumsHeadingView(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_galleryitem_albums_heading, parent, false);
+                .inflate(R.layout.layout_list_item_heading_album, parent, false);
     }
 
     private View inflateResourcesHeadingView(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_galleryitem_resources_heading, parent, false);
+                .inflate(R.layout.layout_list_item_heading_resources, parent, false);
     }
 
     private View inflateNonMasonryResourceItemView(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_galleryitem_resource, parent, false);
+                .inflate(R.layout.layout_list_item_album_resource, parent, false);
     }
 
     private View inflateNonMasonryAlbumView(ViewGroup parent) {
         View view;
         view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_galleryitem_album_list, parent, false);
+                .inflate(R.layout.layout_list_item_album, parent, false);
         return view;
     }
 

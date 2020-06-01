@@ -64,14 +64,13 @@
             android:scrollbars="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <delit.libs.ui.view.list.StaticListView
+            <delit.libs.ui.view.list.CustomExpandableListView
                 android:id="@+id/about_planned_releases"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:clickable="false"/>
+                android:layout_marginStart="5dp"/>
         </androidx.core.widget.NestedScrollView>
 
         <TextView

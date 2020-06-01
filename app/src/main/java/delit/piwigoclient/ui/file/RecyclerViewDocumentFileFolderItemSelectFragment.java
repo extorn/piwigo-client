@@ -93,7 +93,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     @Override
     @LayoutRes
     protected int getViewId() {
-        return R.layout.fragment_file_selection_recycler_list;
+        return R.layout.fragment_file_selection;
     }
 
     @Override

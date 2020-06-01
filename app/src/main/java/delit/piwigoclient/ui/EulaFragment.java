@@ -31,7 +31,9 @@ import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
 
 public class EulaFragment extends MyFragment<EulaFragment> {
     public static EulaFragment newInstance() {
-        return new EulaFragment();
+        EulaFragment fragment = new EulaFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
+        return fragment;
     }
 
     @Nullable
@@ -40,7 +42,7 @@ public class EulaFragment extends MyFragment<EulaFragment> {
         // ensure the dialog boxes are setup
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_eula, container, false);
+        View view = inflater.inflate(R.layout.fragment_eula_view, container, false);
 
         AdView adView = view.findViewById(R.id.eula_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {

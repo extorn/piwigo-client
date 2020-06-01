@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.ContextThemeWrapper;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -218,7 +216,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
         // ensure the dialog boxes are setup
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_new_album, container, false);
+        View view = inflater.inflate(R.layout.fragment_album_create, container, false);
 
         AdView adView = view.findViewById(R.id.createGallery_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {

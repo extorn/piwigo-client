@@ -22,7 +22,9 @@ import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 public class LicencesFragment extends MyFragment<LicencesFragment> {
     public static LicencesFragment newInstance() {
-        return new LicencesFragment();
+        LicencesFragment fragment = new LicencesFragment();
+        fragment.setTheme(R.style.Theme_App_EditPages);
+        return fragment;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class LicencesFragment extends MyFragment<LicencesFragment> {
         // ensure the dialog boxes are setup
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_licences, container, false);
+        View view = inflater.inflate(R.layout.fragment_licences_view, container, false);
 
         Button button = view.findViewById(R.id.other_oss_licences_button);
         button.setOnClickListener(new View.OnClickListener() {

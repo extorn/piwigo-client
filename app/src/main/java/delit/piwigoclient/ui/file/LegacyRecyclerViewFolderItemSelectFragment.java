@@ -84,7 +84,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
     @Override
     @LayoutRes
     protected int getViewId() {
-        return R.layout.fragment_file_selection_recycler_list_legacy;
+        return R.layout.fragment_file_selection_legacy;
     }
 
     @Override
