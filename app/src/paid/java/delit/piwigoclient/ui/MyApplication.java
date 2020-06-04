@@ -17,7 +17,7 @@ public class MyApplication extends AbstractMyApplication {
     @Override
     protected void onAppCreate() {
         if(new AutoUploadJobsConfig(getPrefs()).isBackgroundUploadEnabled(getApplicationContext())) {
-            if (!BackgroundPiwigoUploadService.isStarted()) {
+            if (!BackgroundPiwigoUploadService.isStarted(this)) {
                 BackgroundPiwigoUploadService.startService(getApplicationContext());
             }
         }

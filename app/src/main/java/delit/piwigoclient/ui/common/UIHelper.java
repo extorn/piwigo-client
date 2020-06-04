@@ -162,8 +162,8 @@ public abstract class UIHelper<T> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String name = context.getString(R.string.app_name);
             NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
-            if (channel == null) {
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_LOW; // no noise for low.
+            if (channel == null || channel.getImportance() != importance) {
                 channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
                 notificationManager.createNotificationChannel(channel);
             }

@@ -1,5 +1,9 @@
 package delit.libs.util.security;
 
+import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,8 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class LoadOperationResult implements Serializable {
-    private static final long serialVersionUID = -2017370395340153712L;
+public class LoadOperationResult implements Parcelable {
     private final List<KeystoreLoadOperationResult> keystoreLoadResults;
     private final List<CertificateLoadOperationResult> certLoadResults;
 
@@ -22,6 +25,34 @@ public class LoadOperationResult implements Serializable {
         keystoreLoadResults = new ArrayList<>();
         certLoadResults = new ArrayList<>();
     }
+
+    protected LoadOperationResult(Parcel in) {
+        keystoreLoadResults = in.createTypedArrayList(KeystoreLoadOperationResult.CREATOR);
+        certLoadResults = in.createTypedArrayList(CertificateLoadOperationResult.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(keystoreLoadResults);
+        dest.writeTypedList(certLoadResults);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<LoadOperationResult> CREATOR = new Creator<LoadOperationResult>() {
+        @Override
+        public LoadOperationResult createFromParcel(Parcel in) {
+            return new LoadOperationResult(in);
+        }
+
+        @Override
+        public LoadOperationResult[] newArray(int size) {
+            return new LoadOperationResult[size];
+        }
+    };
 
     public List<CertificateLoadOperationResult> getCertLoadResults() {
         return certLoadResults;
@@ -228,7 +259,7 @@ public class LoadOperationResult implements Serializable {
 
     private KeystoreLoadOperationResult findKeystoreLoadOperationResult(String f) {
         for (KeystoreLoadOperationResult result : keystoreLoadResults) {
-            if (result.getLoadOperation().getFile().getUri().getPath().equals(f)) {
+            if (result.getLoadOperation().getFileUri().getPath().equals(f)) {
                 return result;
             }
         }

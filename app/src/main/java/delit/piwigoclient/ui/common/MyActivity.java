@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.os.ConfigurationCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
@@ -302,9 +301,9 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
         BundleUtils.writeMap(outState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, trackedActionIntentsMap);
-        super.onSaveInstanceState(outState);
     }
 
     protected void setTrackedIntent(long trackedAction, int intentType) {

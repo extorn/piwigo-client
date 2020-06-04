@@ -1,19 +1,52 @@
 package delit.libs.util.security;
 
+import android.content.Context;
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 import java.io.Serializable;
 
-public class X509LoadOperation implements Serializable {
-    private static final long serialVersionUID = 6303313796725599161L;
-    private final DocumentFile file;
+import delit.libs.ui.util.ParcelUtils;
 
-    public X509LoadOperation(DocumentFile file) {
-        this.file = file;
+public class X509LoadOperation implements Parcelable {
+    private final Uri fileUri;
+
+    public X509LoadOperation(@NonNull Uri fileUri) {
+        this.fileUri = fileUri;
     }
 
-    public DocumentFile getFile() {
-        return file;
+    protected X509LoadOperation(Parcel in) {
+        fileUri = ParcelUtils.readParcelable(in, Uri.class);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(fileUri);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<X509LoadOperation> CREATOR = new Creator<X509LoadOperation>() {
+        @Override
+        public X509LoadOperation createFromParcel(Parcel in) {
+            return new X509LoadOperation(in);
+        }
+
+        @Override
+        public X509LoadOperation[] newArray(int size) {
+            return new X509LoadOperation[size];
+        }
+    };
+
+    public @NonNull Uri getFileUri() {
+        return fileUri;
     }
 }

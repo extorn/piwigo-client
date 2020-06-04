@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
@@ -88,7 +88,7 @@ public class CacheUtils {
     }
 
     public static CachedContent loadCachedContent(File f) {
-        CachedContent cachedContent = IOUtils.readObjectFromFile(f);
+        CachedContent cachedContent = LegacyIOUtils.readObjectFromFile(f);
         if (cachedContent != null) {
             cachedContent.setPersistTo(f);
         } else {

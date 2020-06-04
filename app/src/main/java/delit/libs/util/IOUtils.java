@@ -27,6 +27,7 @@ import com.crashlytics.android.Crashlytics;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -44,7 +45,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,6 +52,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
@@ -94,36 +95,6 @@ public class IOUtils {
         outStream.close();
     }
 
-    public static void copy(File src, File dst) throws IOException {
-        FileInputStream inStream = new FileInputStream(src);
-        //TODO check what happens if file exists
-        FileOutputStream outStream = new FileOutputStream(dst);
-        FileChannel inChannel = inStream.getChannel();
-        FileChannel outChannel = outStream.getChannel();
-        inChannel.transferTo(0, inChannel.size(), outChannel);
-        inStream.close();
-        outStream.close();
-    }
-
-    public static long getFolderSize(File directory, boolean recursive) {
-        long length = 0;
-        File[] fileList = directory.listFiles();
-        if (fileList != null) {
-            for (File file : fileList) {
-                if (file.isFile()) {
-                    boolean isSymLink = false;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        isSymLink = Files.isSymbolicLink(file.toPath());
-                    }
-                    length += isSymLink ? 0 : file.length();
-                } else if (recursive) {
-                    length += getFolderSize(file, recursive);
-                }
-            }
-        }
-        return length;
-    }
-
     public static long getFolderSize(DocumentFile directory, boolean recursive) {
         long length = 0;
         DocumentFile[] fileList = directory.listFiles();
@@ -135,67 +106,6 @@ public class IOUtils {
             }
         }
         return length;
-    }
-
-    public static <T extends Serializable> T readObjectFromFile(File sourceFile) {
-        boolean deleteFileNow = false;
-        ObjectInputStream ois = null;
-        try {
-
-            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(sourceFile)));
-            Object o = ois.readObject();
-            return (T) o;
-
-        } catch (FileNotFoundException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading object from disk", e);
-            }
-        } catch (InvalidClassException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading object from disk (class blueprint has altered since saved)", e);
-            }
-            deleteFileNow = true;
-        } catch (ObjectStreamException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading object from disk", e);
-            }
-            deleteFileNow = true;
-        } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading object from disk", e);
-            }
-        } catch (ClassNotFoundException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading object from disk", e);
-            }
-            deleteFileNow = true;
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException e) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
-                    Crashlytics.logException(e);
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Error closing stream when reading object from disk", e);
-                    }
-                }
-            }
-            if (deleteFileNow) {
-                sourceFile.delete();
-            }
-        }
-        return null;
     }
 
     public static <T extends Parcelable> T readParcelableFromDocumentFile(ContentResolver contentResolver, DocumentFile sourceFile, Class<T> parcelableClass) {
@@ -235,6 +145,13 @@ public class IOUtils {
             }
             deleteFileNow = true;
         } catch (IOException e) {
+            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getUri());
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error reading object from disk", e);
+            }
+            deleteFileNow = true;
+        } catch (OutOfMemoryError e) {
             Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getUri());
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
@@ -335,69 +252,6 @@ public class IOUtils {
         return null;
     }
 
-    public static boolean saveObjectToFile(File destinationFile, Serializable o) {
-        boolean canContinue = true;
-        if (destinationFile.isDirectory()) {
-            throw new RuntimeException("Not designed to work with a folder as a destination!");
-        }
-        File tmpFile = new File(destinationFile.getParentFile(), destinationFile.getName() + ".tmp");
-        if (tmpFile.exists()) {
-            if (!tmpFile.delete()) {
-                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to delete previous temporary file : " + destinationFile.getAbsolutePath());
-                canContinue = false;
-            }
-        }
-        if(canContinue && !destinationFile.getParentFile().isDirectory()) {
-            if (!destinationFile.getParentFile().mkdir()) {
-                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create parent folder : " + destinationFile.getParentFile().getAbsolutePath());
-                canContinue = false;
-            }
-        }
-        try {
-            if (canContinue && !tmpFile.createNewFile()) {
-                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create new temporary file : " + destinationFile.getAbsolutePath());
-                canContinue = false;
-            }
-        } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk (creating new file) : " + destinationFile.getAbsolutePath());
-            Crashlytics.logException(e);
-        }
-
-        if (!canContinue) {
-            return false;
-        }
-
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));
-            oos.writeObject(o);
-            oos.flush();
-        } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk : " + tmpFile.getAbsolutePath());
-            Crashlytics.logException(e);
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException e) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error closing stream when writing Object to disk : " + tmpFile.getAbsolutePath());
-                    Crashlytics.logException(e);
-                }
-            }
-        }
-        boolean canWrite = true;
-        if (destinationFile.exists()) {
-            if (!destinationFile.delete()) {
-                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to delete previous file to allow replace : " + destinationFile.getAbsolutePath());
-                canWrite = false;
-            }
-        }
-        if (canWrite) {
-            return tmpFile.renameTo(destinationFile);
-        }
-        return false;
-    }
-
     public static boolean saveParcelableToDocumentFile(@NonNull Context context, @NonNull DocumentFile destinationFile, Parcelable parcelable) {
 
         if (destinationFile.isDirectory()) {
@@ -414,11 +268,15 @@ public class IOUtils {
             mimeType = "application/octet-stream";
         }
 
-        if(folder != null) {
-            tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
-        } else {
-            tmpFile = IOUtils.getTmpFile(context, filename, "tmp", mimeType, true);
+        if(folder == null) {
+            if (Build.VERSION.SDK_INT >= KITKAT) {
+                folder = BasePiwigoUploadService.getTmpUploadFolder(context);
+            } else {
+                folder = DocumentFile.fromFile(BasePiwigoUploadService.getTmpUploadFolderAsFile(context));
+            }
         }
+        tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
+
         if (tmpFile == null) {
             Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create new temporary file : " + destinationFile.getName() + ".tmp");
             return false;
@@ -469,6 +327,7 @@ public class IOUtils {
         return false;
     }
 
+    @RequiresApi(api = KITKAT)
     public static boolean saveObjectToDocumentFile(@NonNull Context context, @NonNull DocumentFile destinationFile, Serializable o) {
         if (destinationFile.isDirectory()) {
             throw new RuntimeException("Not designed to work with a folder as a destination!");
@@ -487,7 +346,12 @@ public class IOUtils {
         if(folder != null) {
             tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
         } else {
-            tmpFile = IOUtils.getTmpFile(context, filename, "tmp", mimeType, true);
+            File extCacheFolder = context.getExternalCacheDir();
+            if(extCacheFolder == null) {
+                throw new RuntimeException("Unable to get destination folder for tmp file");
+            }
+            folder = DocumentFile.fromFile(extCacheFolder);
+            tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
         }
         if (tmpFile == null) {
             Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create new temporary file : " + destinationFile.getName() + ".tmp");
@@ -532,65 +396,6 @@ public class IOUtils {
             return tmpFile.renameTo(getFilename(destinationFile));
         }
         return false;
-    }
-
-    /**
-     * returns a list of all available sd cards paths, or null if not found.
-     *
-     * @param includePrimaryExternalStorage set to true if you wish to also include the path of the primary external storage
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static List<String> getSdCardPaths(final Context context, final boolean includePrimaryExternalStorage)
-    {
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            StorageManager sm = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
-//            StorageVolume volume = sm.getPrimaryStorageVolume();
-//        }
-
-
-        final File[] externalCacheDirs= ContextCompat.getExternalCacheDirs(context);
-        if (externalCacheDirs.length == 0)
-            return null;
-        if(externalCacheDirs.length==1)
-        {
-            if(externalCacheDirs[0]==null)
-                return null;
-            final String storageState= EnvironmentCompat.getStorageState(externalCacheDirs[0]);
-            if(!Environment.MEDIA_MOUNTED.equals(storageState))
-                return null;
-            if(!includePrimaryExternalStorage && Environment.isExternalStorageEmulated())
-                return null;
-        }
-        final List<String> result=new ArrayList<>();
-        if(includePrimaryExternalStorage||externalCacheDirs.length==1)
-            result.add(getRootOfInnerSdCardFolder(externalCacheDirs[0]));
-        for(int i=1;i<externalCacheDirs.length;++i)
-        {
-            final File file=externalCacheDirs[i];
-            if(file==null)
-                continue;
-            final String storageState=EnvironmentCompat.getStorageState(file);
-            if(Environment.MEDIA_MOUNTED.equals(storageState))
-                result.add(getRootOfInnerSdCardFolder(externalCacheDirs[i]));
-        }
-        if(result.isEmpty())
-            return null;
-        return result;
-    }
-
-    /** Given any file/folder inside an sd card, this will return the path of the sd card */
-    private static String getRootOfInnerSdCardFolder(File file)
-    {
-        if(file==null)
-            return null;
-        final long totalSpace=file.getTotalSpace();
-        while(true)
-        {
-            final File parentFile=file.getParentFile();
-            if(parentFile==null||parentFile.getTotalSpace()!=totalSpace)
-                return file.getAbsolutePath();
-            file=parentFile;
-        }
     }
 
     public static String getFileNameWithoutExt(String filename) {
@@ -724,10 +529,6 @@ public class IOUtils {
         return exts;
     }
 
-    public static File changeFileExt(File file, String fileExt) {
-        return new File(file.getParent(), getFileNameWithoutExt(file.getName()) + '.' + fileExt);
-    }
-
     public static Charset getUtf8Charset() {
         if (Build.VERSION.SDK_INT >= KITKAT) {
             return StandardCharsets.UTF_8;
@@ -790,22 +591,19 @@ public class IOUtils {
     }
 
     @RequiresApi(api = KITKAT)
-    public static boolean setLastModified(Context context, Uri uri, long lastModified) {
+    public static boolean setLastModified(Context context, @NonNull Uri uri, long lastModified) {
+        if("file".equals(uri.getScheme())) {
+            File f = new File(Objects.requireNonNull(uri.getPath()));
+            if(f.exists()) {
+                return f.setLastModified(lastModified);
+            } else {
+                return false;
+            }
+        }
         ContentValues updateValues = new ContentValues();
         updateValues.put(DocumentsContract.Document.COLUMN_LAST_MODIFIED, lastModified);
         int updated = context.getContentResolver().update(uri, updateValues, null, null);
         return updated == 1;
-    }
-
-    public static @Nullable File getFile(@Nullable Uri fileUri) throws IOException {
-        if(fileUri == null) {
-            return null;
-        }
-        String filePath = fileUri.getPath();
-        if(filePath == null) {
-            throw new IOException("Uri does not represent a local file " + fileUri);
-        }
-        return new File(filePath);
     }
 
     public static @Nullable Uri getLocalFileUri(@Nullable String value) {
@@ -882,11 +680,6 @@ public class IOUtils {
         }
 
         return thisFile;
-    }
-
-    public static DocumentFile getTmpFile(@NonNull Context context, @NonNull String baseFilename, @NonNull String fileExt, @NonNull String mimeType, boolean deleteIfExists) {
-        DocumentFile tmpFolder = BasePiwigoUploadService.getTmpUploadFolder(context);
-        return getTmpFile(tmpFolder, baseFilename, fileExt, mimeType, deleteIfExists);
     }
 
     public static DocumentFile getTmpFile(@NonNull DocumentFile outputFolder, @NonNull String baseFilename, @NonNull String fileExt, @NonNull String mimeType) {
@@ -968,7 +761,7 @@ public class IOUtils {
             return DocumentFile.fromSingleUri(context, uri).isDirectory();
         } else {
             try {
-                File f = getFile(uri);
+                File f = LegacyIOUtils.getFile(uri);
                 return f.isDirectory();
             } catch (IOException e) {
                throw new IllegalArgumentException("Uri provided was not for a local file : " + uri);
@@ -1111,18 +904,15 @@ public class IOUtils {
         return map;
     }
 
-    public static Map<String,String> getUniqueExtAndMimeTypes(File[] files) {
-        Map<String, String> map = new HashMap<>();
-        if(files == null) {
-            return map;
+    public static void copyFile(Context context, File tmpFile, Uri toUri) throws FileNotFoundException {
+        FileDescriptor fdOut = context.getContentResolver().openFileDescriptor(toUri,"rwt").getFileDescriptor();
+        try(FileChannel fcOut = new FileInputStream(fdOut).getChannel();
+            FileChannel fcIn = new FileInputStream(tmpFile).getChannel();) {
+            fcOut.transferFrom(fcIn, 0, fcIn.size());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        for(File f : files) {
-            String ext = getFileExt(f.getName());
-            if(ext != null) {
-                map.put(ext.toLowerCase(), mimeTypeMap.getMimeTypeFromExtension(ext));
-            }
-        }
-        return map;
     }
 }

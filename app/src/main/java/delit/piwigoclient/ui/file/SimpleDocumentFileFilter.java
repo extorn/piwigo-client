@@ -16,7 +16,7 @@ public class SimpleDocumentFileFilter implements DocumentFileFilter {
         return this;
     }
 
-    public SimpleDocumentFileFilter withMaxSize(long maxSize) {
+    public SimpleDocumentFileFilter withMaxSizeBytes(long maxSize) {
         this.maxSize = maxSize;
         return this;
     }

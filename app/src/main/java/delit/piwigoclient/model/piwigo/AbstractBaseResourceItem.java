@@ -22,6 +22,7 @@ import delit.libs.ui.util.ParcelUtils;
  */
 public abstract class AbstractBaseResourceItem extends GalleryItem {
     private static final String TAG = "AbstractBaseResItem";
+    private static final long serialVersionUID = -1612104465750824315L;
     private float myRating = 0;
     private float averageRating = 0;
     private int ratingsGiven = 0;

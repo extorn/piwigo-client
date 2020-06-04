@@ -13,7 +13,6 @@ import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -351,7 +350,7 @@ public class EditableListPreference extends DialogPreference {
         return listener.filterNewUserSelection(userSelectedItems);
     }
 
-    public interface EditableListPreferenceChangeListener extends Serializable {
+    public interface EditableListPreferenceChangeListener {
         void onItemAdded(String newItem);
 
         void onItemRemoved(String newItem);

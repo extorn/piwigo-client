@@ -9,11 +9,6 @@
             android:title="@string/gallery_menu_title" />
 
         <item
-            android:id="@+id/nav_upload"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/upload_menu_title" />
-
-        <item
             android:id="@+id/nav_users"
             android:icon="@drawable/ic_person_black_24dp"
             android:title="@string/users_menu_title" />
@@ -22,16 +17,6 @@
             android:id="@+id/nav_groups"
             android:icon="@drawable/ic_group_black_24dp"
             android:title="@string/groups_menu_title" />
-
-        <item
-            android:id="@+id/nav_tags"
-            android:icon="@drawable/ic_tag_black_24dp"
-            android:title="@string/tags_menu_title" />
-
-        <item
-            android:id="@+id/nav_favorites"
-            android:icon="@drawable/ic_favorite_black_24px"
-            android:title="@string/favorites_menu_title" />
 
         <item
             android:id="@+id/nav_settings"

@@ -67,6 +67,7 @@ import delit.libs.ui.view.CustomToolbar;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -117,11 +118,8 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
-import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -181,15 +179,17 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+
+//        if(BuildConfig.DEBUG) {
+//            getSupportFragmentManager().enableDebugLogging(true);
+//        }
+        super.onSaveInstanceState(outState);
         LoaderManager.getInstance(this).getLoader(0);
         outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putParcelable(STATE_BASKET, basket);
         outState.putParcelableArrayList(STATE_ACTIVE_DOWNLOADS, activeDownloads);
         outState.putParcelableArrayList(STATE_QUEUED_DOWNLOADS, queuedDownloads);
-//        if(BuildConfig.DEBUG) {
-//            getSupportFragmentManager().enableDebugLogging(true);
-//        }
-        super.onSaveInstanceState(outState);
+
         if(BuildConfig.DEBUG) {
 //            getSupportFragmentManager().enableDebugLogging(false);
             BundleUtils.logSizeVerbose("Current Main Activity", outState);
@@ -281,7 +281,24 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
 
-        if (savedInstanceState == null) {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        boolean actionHandled = false;
+        if(action != null) {
+            if(action.equals("delit.piwigoclient.VIEW_TOP_TIPS")) {
+                showTopTips();
+                actionHandled = true;
+            } else if(action.equals("delit.piwigoclient.VIEW_USERS")) {
+                showUsers();
+                actionHandled = true;
+            } else if(action.equals("delit.piwigoclient.VIEW_GROUPS")) {
+                showGroups();
+                actionHandled = true;
+            }
+            intent.setAction(null);
+        }
+
+        if (!actionHandled && savedInstanceState == null) {
             if (!hasAgreedToEula()) {
                 showEula();
             } else if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
@@ -423,9 +440,39 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         return super.onOptionsItemSelected(item);
     }
 
+    public static Intent buildShowGalleryIntent(Context context) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//            intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
+        return intent;
+    }
+
+    public static Intent buildShowGroupsIntent(UploadActivity context) {
+        Intent intent = new Intent("delit.piwigoclient.VIEW_GROUPS", null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        return intent;
+    }
+
+    public static Intent buildShowUsersIntent(UploadActivity context) {
+        Intent intent = new Intent("delit.piwigoclient.VIEW_USERS", null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        return intent;
+    }
+
+    public static Intent buildShowTopTipsIntent(UploadActivity context) {
+        Intent intent = new Intent("delit.piwigoclient.VIEW_TOP_TIPS", null, context.getApplicationContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        return intent;
+    }
+
     private void showPreferences() {
-        Intent i = new Intent(this, PreferencesActivity.class);
-        startActivity(i);
+        try {
+            Intent intent = PreferencesActivity.buildIntent(this);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+        } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
+        }
 //        PreferencesFragment fragment = new PreferencesFragment();
 //        showFragmentNow(fragment);
     }
@@ -570,7 +617,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             // add the file details to the media store :-)
             try {
                 //TODO confirm this isn't needed for the new DocumentFile route too.
-                File f = IOUtils.getFile(fileDetail.getDownloadedFile());
+                File f = LegacyIOUtils.getFile(fileDetail.getDownloadedFile());
                 MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, f));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -760,8 +807,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 mBuilder.setCategory(Notification.CATEGORY_EVENT);
             }
 
-            uiHelper.clearNotification(TAG, 1);
-            uiHelper.showNotification(TAG, 1, mBuilder.build());
+//            uiHelper.clearNotification(TAG, 2);
+            uiHelper.showNotification(TAG, 2, mBuilder.build());
         }
 
         @Override

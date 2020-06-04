@@ -4,11 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-
-import androidx.annotation.IdRes;
-import androidx.annotation.StyleRes;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +12,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -117,11 +115,11 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
         Crashlytics.log("onSaveInstanceState : " + getClass().getName());
         uiHelper.onSaveInstanceState(outState);
         outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
         outState.putString(STATE_ACTIVE_SERVER_CONNECTION, piwigoServerConnected);
-        super.onSaveInstanceState(outState);
     }
 
     @Override

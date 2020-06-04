@@ -48,6 +48,7 @@ import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
 import cz.msebera.android.httpclient.impl.client.cache.FileResource;
 import cz.msebera.android.httpclient.util.Args;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.BuildConfig;
 
 /**
@@ -175,7 +176,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
                     if (sourceFile.length() > MAX_EXPECTED_CACHE_SIZE) {
                         Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.toNormalizedText(sourceFile.length())));
                     }
-                    entries = IOUtils.readObjectFromFile(sourceFile);
+                    entries = LegacyIOUtils.readObjectFromFile(sourceFile);
 
                 }
             }
@@ -214,7 +215,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
         }
         synchronized (this) {
             File destination = new File(cacheFolder, cacheFilename);
-            boolean savedOkay = IOUtils.saveObjectToFile(destination, entries);
+            boolean savedOkay = LegacyIOUtils.saveObjectToFile(destination, entries);
             if (savedOkay) {
                 lastSavedAtMillis = System.currentTimeMillis();
                 unsavedUpdates = 0;

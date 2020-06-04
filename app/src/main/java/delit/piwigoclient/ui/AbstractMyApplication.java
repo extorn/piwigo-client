@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -18,6 +19,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +28,7 @@ import java.util.Locale;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -154,8 +157,17 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     }
 
     private void sanityCheckTheTempUploadFolder() {
-        DocumentFile tmpUploadFolder = BasePiwigoUploadService.getTmpUploadFolder(this);
-        long folderSizeBytes = IOUtils.getFolderSize(tmpUploadFolder, true);
+        long folderSizeBytes = 0;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            File tmpUploadFolder = BasePiwigoUploadService.getTmpUploadFolderAsFile(this);
+            if(tmpUploadFolder != null) {
+                folderSizeBytes = LegacyIOUtils.getFolderSize(tmpUploadFolder, true);
+            }
+        } else {
+            DocumentFile tmpUploadFolder = BasePiwigoUploadService.getTmpUploadFolder(this);
+            folderSizeBytes = IOUtils.getFolderSize(tmpUploadFolder, true);
+        }
+
         long folderMaxSizeBytes = 25 * 1024 * 1024;
         if (folderSizeBytes > folderMaxSizeBytes) {
             Bundle b = new Bundle();

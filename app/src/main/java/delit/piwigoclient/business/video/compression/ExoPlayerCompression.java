@@ -28,10 +28,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.android.exoplayer2.util.MimeTypes;
-
-import net.ypresto.qtfaststart.QtFastStart;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +38,6 @@ import java.util.ArrayList;
 
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
-import io.fabric.sdk.android.services.common.Crash;
 
 import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 
@@ -131,7 +127,13 @@ public class ExoPlayerCompression {
             File fileAsFile = new File(filePath);
             File tmpFile = new File(fileAsFile.getParentFile(), fileAsFile.getName() + ".streaming.mp4");
 
-            boolean wroteFastStartFile = QtFastStart.fastStart(fileAsFile, tmpFile);
+            // TODO use the exoplayer functions to move the MOOV atom to the front.
+//            DefaultDataSourceFactory factory = new DefaultDataSourceFactory();
+//            factory.createDataSource()
+//            new Mp4Extractor();
+//            new DataSpec(fileUri)
+
+            boolean wroteFastStartFile = MyFastStart.fastStart(context, fileUri);
             if (wroteFastStartFile) {
                 boolean deletedOriginal = fileAsFile.delete();
                 if (!deletedOriginal) {
@@ -333,6 +335,7 @@ public class ExoPlayerCompression {
         private boolean addAudioTrack;
         private boolean addVideoTrack;
         private VideoCompressionParameters videoCompressionParameters;
+        private boolean isEnableFastStart = true;
 
         public CompressionParameters() {
             setAddVideoTrack(true);
@@ -357,6 +360,10 @@ public class ExoPlayerCompression {
             this.addAudioTrack = addAudioTrack;
         }
 
+        public void disableFastStart() {
+            isEnableFastStart = false;
+        }
+
         public VideoCompressionParameters getVideoCompressionParameters() {
             return videoCompressionParameters;
         }
@@ -368,6 +375,10 @@ public class ExoPlayerCompression {
         public String getOutputFileMimeType() {
             return MimeTypes.VIDEO_MP4;
         }
+
+        public boolean isEnableFastStart() {
+            return isEnableFastStart;
+        }
     }
 
 
@@ -376,8 +387,9 @@ public class ExoPlayerCompression {
         private final Uri inputFile;
         private final Uri outputFile;
         private long mediaDurationMs;
+        private boolean enableFastStart;
 
-        public InternalCompressionListener(CompressionListener wrapped, Uri inputFile, Uri outputFile) {
+        public InternalCompressionListener(CompressionListener wrapped, Uri inputFile, Uri outputFile, boolean enableFastStart) {
             super(wrapped);
             this.inputFile = inputFile;
             this.outputFile = outputFile;
@@ -399,7 +411,9 @@ public class ExoPlayerCompression {
                     }
                 }
             }
-            makeTranscodedFileStreamable(outputFile);
+            if (enableFastStart) {
+                makeTranscodedFileStreamable(outputFile);
+            }
             super.onCompressionProgress(100d, mediaDurationMs);
             super.onCompressionComplete();
         }
@@ -453,6 +467,7 @@ public class ExoPlayerCompression {
             } catch(Exception e) {
                 Crashlytics.log(Log.ERROR, TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.");
                 Crashlytics.logException(e);
+                Log.e(TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.", e);
                 cancel();
             }
         }
@@ -462,7 +477,7 @@ public class ExoPlayerCompression {
             LoadControl loadControl = new DefaultLoadControl();
             TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
-            CompressionListener listenerWrapper = new InternalCompressionListener(listener, inputFile, outputFile);
+            CompressionListener listenerWrapper = new InternalCompressionListener(listener, inputFile, outputFile, compressionSettings.isEnableFastStart());
 
             MediaMuxerControl mediaMuxerControl;
             mediaMuxerControl = new MediaMuxerControl(contextRef.get(), inputFile, outputFile, listenerWrapper);

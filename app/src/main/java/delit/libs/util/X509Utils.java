@@ -1,5 +1,6 @@
 package delit.libs.util;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -37,6 +38,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.util.security.CertificateLoadException;
@@ -140,7 +142,9 @@ public class X509Utils {
 
         File appDataDir = context.getFilesDir();
         if (!appDataDir.exists()) {
-            appDataDir.mkdir();
+            if(!appDataDir.mkdir()) {
+                Crashlytics.log(Log.ERROR, TAG, "Error saving keystore (folder couldn't be created) : " + keystoreFilename);
+            }
         }
         try {
             BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(appDataDir, keystoreFilename)));
@@ -289,7 +293,8 @@ public class X509Utils {
     public static KeyStore loadKeystore(Context context, String keystoreFilename, char[] keystorePassword) {
         File appDataDir = context.getFilesDir();
         if (!appDataDir.exists()) {
-            appDataDir.mkdir();
+            Crashlytics.log(Log.ERROR, TAG, "Error loading keystore (source folder doesn't exist) : " + keystoreFilename);
+            return null;
         }
         File keystoreFile = new File(appDataDir, keystoreFilename);
         if(keystoreFile.exists()) {
@@ -358,25 +363,17 @@ public class X509Utils {
         return aliases;
     }
 
-    public static Collection<X509Certificate> loadCertificatesFromUri(Uri uri) {
-        try {
-            return loadCertificatesFromFile(IOUtils.getFile(uri));
-        } catch (IOException e) {
-            throw new CertificateLoadException(null, "Error closing certificate file stream", e);
-        }
-    }
-
-    public static Collection<X509Certificate> loadCertificatesFromFile(File f) {
+    public static Collection<X509Certificate> loadCertificatesFromUri(Context context, Uri uri) {
         BufferedInputStream bis = null;
         try {
-            bis = new BufferedInputStream(new FileInputStream(f));
-            return loadCertificatesFromStream(bis, f);
+            bis = new BufferedInputStream(context.getContentResolver().openInputStream(uri));
+            return loadCertificatesFromStream(bis, uri);
         } catch (FileNotFoundException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
-            throw new CertificateLoadException(f.getAbsolutePath(), "Error reading certificate file stream", e);
+            throw new CertificateLoadException(uri.getPath(), "Error reading certificate file stream", e);
         } finally {
             if (bis != null) {
                 try {
@@ -386,13 +383,14 @@ public class X509Utils {
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error closing certificate file stream", e);
                     }
-                    throw new CertificateLoadException(f.getAbsolutePath(), "Error closing certificate file stream", e);
+                    throw new CertificateLoadException(uri.getPath(), "Error closing certificate file stream", e);
                 }
             }
         }
     }
 
-    public static Collection<X509Certificate> loadCertificatesFromStream(InputStream is, File certificateSource) {
+
+    public static Collection<X509Certificate> loadCertificatesFromStream(InputStream is, Uri certificateSource) {
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             return (Collection<X509Certificate>) cf.generateCertificates(is);
@@ -401,58 +399,60 @@ public class X509Utils {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
-            throw new CertificateLoadException(certificateSource.getAbsolutePath(), "Error reading certificate file stream", e);
+            throw new CertificateLoadException(certificateSource.getPath(), "Error reading certificate file stream", e);
         }
     }
 
-    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromDefaultFormatKeystoreFile(KeystoreLoadOperation loadOperation) {
-        return loadCertificatesAndPrivateKeysFromKeystoreFile(loadOperation, KeyStore.getDefaultType());
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromDefaultFormatKeystoreFile(Context  context, KeystoreLoadOperation loadOperation) {
+        return loadCertificatesAndPrivateKeysFromKeystoreFile(loadOperation, KeyStore.getDefaultType(), context);
     }
 
-    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(KeystoreLoadOperation loadOperation) {
-        return loadCertificatesAndPrivateKeysFromKeystoreFile(loadOperation, "pkcs12");
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(Context context, KeystoreLoadOperation loadOperation) {
+        return loadCertificatesAndPrivateKeysFromKeystoreFile(loadOperation, "pkcs12", context);
     }
 
-    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation loadOperation, String keystoreType) {
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation loadOperation, String keystoreType, Context context) {
         KeystoreLoadOperationResult result = new KeystoreLoadOperationResult(loadOperation);
-        File keystoreFile = new File(loadOperation.getFile().getUri().getPath());
+
         try {
+            ContentResolver contentResolver = context.getContentResolver();
+            InputStream inputStream = new BufferedInputStream(Objects.requireNonNull(contentResolver.openInputStream(loadOperation.getFileUri())));
             KeyStore keystore = KeyStore.getInstance(keystoreType);
-            keystore.load(new FileInputStream(keystoreFile), loadOperation.getKeystorePass());
-            loadCertificatesAndPrivateKeysFromKeystore(keystoreFile.getAbsolutePath(), keystore, loadOperation.getAliasesToLoad(), loadOperation.getAliasPassMapp(), result);
+            keystore.load(inputStream, loadOperation.getKeystorePass());
+            loadCertificatesAndPrivateKeysFromKeystore(loadOperation.getFileUri().getPath(), keystore, loadOperation.getAliasesToLoad(), loadOperation.getAliasPassMapp(), result);
             for (SecurityOperationException ex : result.getExceptionList()) {
-                ex.setDataSource(keystoreFile.getAbsolutePath());
+                ex.setDataSource(loadOperation.getFileUri().getPath());
             }
         } catch (FileNotFoundException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(loadOperation.getFileUri().getPath(), "Error reading " + keystoreType + " file stream", e));
         } catch (IOException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(loadOperation.getFileUri().getPath(), "Error reading " + keystoreType + " file stream", e));
         } catch (CertificateException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(loadOperation.getFileUri().getPath(), "Error reading " + keystoreType + " file stream", e));
         } catch (NoSuchAlgorithmException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(loadOperation.getFileUri().getPath(), "Error reading " + keystoreType + " file stream", e));
         } catch (KeyStoreException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            result.addException(new KeyStoreOperationException(keystoreFile.getAbsolutePath(), "Error reading " + keystoreType + " file stream", e));
+            result.addException(new KeyStoreOperationException(loadOperation.getFileUri().getPath(), "Error reading " + keystoreType + " file stream", e));
         }
         return result;
     }

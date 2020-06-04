@@ -1,9 +1,7 @@
 package delit.piwigoclient.piwigoApi.upload;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
-import android.os.FileUtils;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -31,12 +29,12 @@ import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.ui.upload.FilesToUploadRecyclerViewAdapter;
 
 public class UploadJob implements Parcelable {
 
@@ -564,7 +562,7 @@ public class UploadJob implements Parcelable {
         return filenamesMap;
     }
 
-    public void filterPreviouslyUploadedFiles(HashMap<Uri, String> fileUploadedHashMap) {
+    public void filterPreviouslyUploadedFiles(Map<Uri, String> fileUploadedHashMap) {
         for (HashMap.Entry<Uri, String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
             Uri potentialDuplicateUpload = fileUploadedEntry.getKey();
             if (filesForUpload.contains(potentialDuplicateUpload)) {
@@ -650,7 +648,7 @@ public class UploadJob implements Parcelable {
 
     public DocumentFile addCompressedFile(Context c, Uri rawFileForUpload, String compressedMimeType) {
         String rawUploadFilename = IOUtils.getFilename(c, rawFileForUpload);
-        String updatedFilename = IOUtils.changeFileExt(new File(rawUploadFilename), MimeTypeMap.getSingleton().getExtensionFromMimeType(compressedMimeType)).getName();
+        String updatedFilename = LegacyIOUtils.changeFileExt(new File(rawUploadFilename), MimeTypeMap.getSingleton().getExtensionFromMimeType(compressedMimeType)).getName();
         DocumentFile compressedFile = getCompressedFilesFolder(c).createFile(compressedMimeType, updatedFilename);
         if (compressedFilesMap == null) {
             compressedFilesMap = new HashMap<>();
@@ -781,8 +779,8 @@ public class UploadJob implements Parcelable {
         return isDeleteFilesAfterUpload;
     }
 
-    protected static class PartialUploadData implements Serializable {
-        private static final long serialVersionUID = -8796546283675576745L;
+    protected static class PartialUploadData implements Parcelable {
+
         private final String uploadName;
         private long totalBytesToUpload;
         private long bytesUploaded;
@@ -802,6 +800,27 @@ public class UploadJob implements Parcelable {
             this.countChunksUploaded = countChunksUploaded;
             this.totalBytesToUpload = totalBytesToUpload;
         }
+
+        protected PartialUploadData(Parcel in) {
+            uploadName = in.readString();
+            totalBytesToUpload = in.readLong();
+            bytesUploaded = in.readLong();
+            countChunksUploaded = in.readLong();
+            fileChecksum = in.readString();
+            uploadedItem = in.readParcelable(ResourceItem.class.getClassLoader());
+        }
+
+        public static final Creator<PartialUploadData> CREATOR = new Creator<PartialUploadData>() {
+            @Override
+            public PartialUploadData createFromParcel(Parcel in) {
+                return new PartialUploadData(in);
+            }
+
+            @Override
+            public PartialUploadData[] newArray(int size) {
+                return new PartialUploadData[size];
+            }
+        };
 
         public long getTotalBytesToUpload() {
             return totalBytesToUpload;
@@ -835,6 +854,21 @@ public class UploadJob implements Parcelable {
             this.fileChecksum = fileChecksum;
             this.bytesUploaded = bytesUploaded;
             this.countChunksUploaded = countChunksUploaded;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(uploadName);
+            dest.writeLong(totalBytesToUpload);
+            dest.writeLong(bytesUploaded);
+            dest.writeLong(countChunksUploaded);
+            dest.writeString(fileChecksum);
+            dest.writeParcelable(uploadedItem, flags);
         }
     }
 

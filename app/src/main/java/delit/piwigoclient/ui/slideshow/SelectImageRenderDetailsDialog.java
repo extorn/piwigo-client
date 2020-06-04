@@ -14,8 +14,6 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import java.io.Serializable;
-
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -82,7 +80,7 @@ class SelectImageRenderDetailsDialog {
         return adapter.getItem(fileSelectList.getCheckedItemPosition());
     }
 
-    public interface RenderDetailSelectListener extends Serializable {
+    public interface RenderDetailSelectListener {
         void onSelection(String selectedUrl, float rotateDegrees, float maxZoom);
     }
 }

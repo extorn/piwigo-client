@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload;
 
+import android.app.ActivityManager;
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,13 +8,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -28,11 +34,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import delit.libs.util.CustomFileFilter;
 import delit.libs.util.IOUtils;
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -55,25 +60,56 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     private static final String TAG =  "PwgCli:BgUpldSvc";
     private static final String ACTION_BACKGROUND_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_BACKGROUND_UPLOAD_FILES";
+    private static final String ACTION_WAKE = "delit.piwigoclient.backgroundUpload.action.ACTION_WAKE";
+    private static final String ACTION_PAUSE =  "delit.piwigoclient.backgroundUpload.action.ACTION_PAUSE";
+    private static final String ACTION_STOP = "delit.piwigoclient.backgroundUpload.action.ACTION_STOP";
     private static final int JOB_ID = 10;
-    private CustomFileFilter fileFilter = new CustomFileFilter();
+
     private static volatile boolean terminateUploadServiceThreadAsap = false;
     private BroadcastEventsListener networkStatusChangeListener;
-    private static BackgroundPiwigoUploadService instance;
+    private ActionsBroadcastReceiver actionsBroadcastReceiver;
     private static boolean starting;
-    private static UploadJob runningUploadJob = null;
     private long pauseThreadUntilSysTime;
     private static final int BACKGROUND_UPLOAD_NOTIFICATION_ID = 2;
+    private boolean hasInternetAccess;
+    private boolean isOnUnmeteredNetwork;
 
     public BackgroundPiwigoUploadService() {
         super(TAG);
-        instance = this;
         starting = false;
     }
 
+    private static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : Objects.requireNonNull(manager).getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void actionKillService() {
+        terminateUploadServiceThreadAsap = true;
+        super.actionKillService();
+        wakeIfPaused();
+    }
+
+    public static void sendActionKillService(Context context) {
+        Intent intent = new Intent();
+        intent.setAction(ACTION_STOP);
+        context.sendBroadcast(intent);
+    }
+
+    @Override
+    protected ActionsBroadcastReceiver buildActionBroadcastReceiver() {
+        // adds a few extra commands (pause resume - used for WIFI / non wifi)
+        return new BackgroundActionsBroadcastReceiver();
+    }
+
     public synchronized static void startService(Context context) {
-        if(starting || instance != null) {
-            // don't start if already started or starting.
+        if(starting || isStarted(context)) {
             return;
         }
         terminateUploadServiceThreadAsap = false;
@@ -83,30 +119,20 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         enqueueWork(context, BackgroundPiwigoUploadService.class, JOB_ID, intent);
     }
 
-    public static boolean isStarted() {
-        return instance != null;
+    public static void sendActionWakeServiceIfSleeping(Context context) {
+        Intent intent = new Intent();
+        intent.setAction(ACTION_WAKE);
+        context.sendBroadcast(intent);
     }
 
-    public synchronized static void wakeServiceIfSleeping() {
-        if(instance != null) {
-            instance.wakeIfWaiting();
-        }
+    private static void pauseAnyRunningUpload(Context context) {
+        Intent intent = new Intent();
+        intent.setAction(ACTION_PAUSE);
+        context.sendBroadcast(intent);
     }
 
-    public synchronized static void killService() {
-        if(instance != null) {
-            terminateUploadServiceThreadAsap = true;
-            if(runningUploadJob != null) {
-                runningUploadJob.cancelUploadAsap();
-            }
-            instance.wakeIfWaiting();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        instance = null;
+    public static boolean isStarted(Context context) {
+        return isMyServiceRunning(context, BackgroundPiwigoUploadService.class);
     }
 
     @Override
@@ -137,101 +163,33 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     @Override
     protected void doWork(Intent intent) {
+
         Context context = getApplicationContext();
+
+        isOnUnmeteredNetwork = isConnectedToWireless(context);
+        hasInternetAccess = hasNetworkConnection(context);
 
         EventBus.getDefault().post(new BackgroundUploadThreadStartedEvent());
 
         AutoUploadJobsConfig jobs = new AutoUploadJobsConfig(context);
 
-        registerBroadcastReceiver(jobs, context);
+        registerBroadcastReceiver(context, jobs);
 
         Map<Uri, CustomContentObserver> runningObservers = new HashMap<>();
 
         try {
 
-            long pollDurationMillis = 1000 * 60 * 60 * 3; // check once every 3 hours at latest (poll file system for changes though).
-
             BackgroundPiwigoFileUploadResponseListener jobListener = new BackgroundPiwigoFileUploadResponseListener(context);
-
 
             while (!terminateUploadServiceThreadAsap) {
 
                 EventBus.getDefault().post(new BackgroundUploadThreadCheckingForTasksEvent());
 
-                boolean canUpload;
-                if (jobs.isUploadOnWirelessOnly(context)) {
-                    canUpload = isConnectedToWireless(context);
-                } else {
-                    canUpload = hasNetworkConnection(context);
-                }
-
+                boolean canUpload = hasInternetAccess && (!jobs.isUploadOnWirelessOnly(context) || isOnUnmeteredNetwork);
                 if(canUpload) {
-                    updateNotificationText(getString(R.string.notification_text_background_upload_polling), false);
-                    UploadJob unfinishedJob;
-                    do {
-                        // if there's an old incomplete job, try and finish that first.
-                        unfinishedJob = getActiveBackgroundJob(context);
-                        if (unfinishedJob != null) {
-                            ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
-                            boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
-                            if(!jobIsValid) {
-                                new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(this, false);
-                            }
-                            if (!unfinishedJob.isFinished() && jobIsValid) {
-                                AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
-                                runJob(unfinishedJob, this, true);
-                                if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
-                                    removeJob(unfinishedJob);
-                                }
-                            } else {
-                                // no longer valid (connection doesn't exist any longer).
-                                deleteStateFromDisk(getApplicationContext(), unfinishedJob, true);
-                                removeJob(unfinishedJob);
-                            }
-                        }
-                    } while (unfinishedJob != null && !terminateUploadServiceThreadAsap);
-
-                    if (!terminateUploadServiceThreadAsap && (unfinishedJob == null || !unfinishedJob.isCancelUploadAsap())) {
-
-                        if (jobs.hasUploadJobs(context)) {
-                            // remove all existing watchers (in case user has altered the monitored folders)
-                            List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
-                            removeAllContentObservers(runningObservers);
-                            for (AutoUploadJobConfig jobConfig : jobConfigList) {
-                                DocumentFile monitoringFolder = jobConfig.getLocalFolderToMonitor(context);
-
-                                if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder)) {
-                                    // TODO get rid of the event processor thread and use the handler instead to minimise potential thread generation!
-                                    CustomContentObserver observer = new CustomContentObserver(null, this, monitoringFolder.getUri());
-                                    runningObservers.put(observer.getWatchedUri(), observer);
-                                    observer.startWatching();
-                                }
-                                if (!terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
-                                    UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
-                                    if (uploadJob != null) {
-                                        runJob(uploadJob, this, false);
-                                        if (!uploadJob.isCancelUploadAsap()) {
-                                            // stop running jobs if we had a cancel request.
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(context, jobs, runningObservers, jobListener);
                 }
-                synchronized (this) {
-                    pauseThreadUntilSysTime = System.currentTimeMillis() + pollDurationMillis;
-                    Date wakeAt = new Date(pauseThreadUntilSysTime);
-                    while (System.currentTimeMillis() < pauseThreadUntilSysTime && !terminateUploadServiceThreadAsap) {
-                        try {
-                            updateNotificationText(getString(R.string.notification_text_background_upload_sleeping, wakeAt), false);
-                            wait(pollDurationMillis);
-                        } catch (InterruptedException e) {
-                            Log.d(TAG, "Ignoring interrupt");
-                        }
-                    }
-                }
+                sendServiceToSleep();
             }
         } finally {
             // unable to remove from keyset iterator hence the temporary list.
@@ -239,6 +197,77 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
             unregisterBroadcastReceiver(context);
             EventBus.getDefault().post(new BackgroundUploadThreadTerminatedEvent());
+        }
+    }
+
+    private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, CustomContentObserver> runningObservers, BackgroundPiwigoFileUploadResponseListener jobListener) {
+        updateNotificationText(getString(R.string.notification_text_background_upload_polling), false);
+        UploadJob unfinishedJob;
+        do {
+            // if there's an old incomplete job, try and finish that first.
+            unfinishedJob = getActiveBackgroundJob(context);
+            if (unfinishedJob != null) {
+                ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
+                boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
+                if(!jobIsValid) {
+                    new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(this, false);
+                }
+                if (!unfinishedJob.isFinished() && jobIsValid) {
+                    runJob(unfinishedJob, this, true);
+                    if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
+                        removeJob(unfinishedJob);
+                    }
+                } else {
+                    // no longer valid (connection doesn't exist any longer).
+                    deleteStateFromDisk(getApplicationContext(), unfinishedJob, true);
+                    removeJob(unfinishedJob);
+                }
+            }
+        } while (unfinishedJob != null && !terminateUploadServiceThreadAsap);
+
+        if (!terminateUploadServiceThreadAsap && (unfinishedJob == null || !unfinishedJob.isCancelUploadAsap())) {
+
+            if (jobs.hasUploadJobs(context)) {
+                // remove all existing watchers (in case user has altered the monitored folders)
+                List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
+                removeAllContentObservers(runningObservers);
+                for (AutoUploadJobConfig jobConfig : jobConfigList) {
+                    DocumentFile monitoringFolder = jobConfig.getLocalFolderToMonitor(context);
+
+                    if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder)) {
+                        // TODO get rid of the event processor thread and use the handler instead to minimise potential thread generation!
+                        CustomContentObserver observer = new CustomContentObserver(null, this, monitoringFolder.getUri());
+                        runningObservers.put(observer.getWatchedUri(), observer);
+                        observer.startWatching();
+                    }
+                    if (!terminateUploadServiceThreadAsap && jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
+                        UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
+                        if (uploadJob != null) {
+                            runJob(uploadJob, this, false);
+                            if (!uploadJob.isCancelUploadAsap()) {
+                                // stop running jobs if we had a cancel request.
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void sendServiceToSleep() {
+        long pollDurationMillis = 1000 * 60 * 60 * 3; // check once every 3 hours at latest (poll file system for changes though).
+        synchronized (this) {
+            pauseThreadUntilSysTime = System.currentTimeMillis() + pollDurationMillis;
+            Date wakeAt = new Date(pauseThreadUntilSysTime);
+            while (System.currentTimeMillis() < pauseThreadUntilSysTime && !terminateUploadServiceThreadAsap) {
+                try {
+                    updateNotificationText(getString(R.string.notification_text_background_upload_sleeping, wakeAt), false);
+                    wait(pollDurationMillis);
+                } catch (InterruptedException e) {
+                    Log.d(TAG, "Ignoring interrupt");
+                }
+            }
         }
     }
 
@@ -255,10 +284,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     @Override
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
         try {
-            synchronized (BackgroundPiwigoUploadService.class) {
-                runningUploadJob = thisUploadJob;
-            }
-            updateNotificationText(getString(R.string.notification_text_background_upload_running), runningUploadJob.getUploadProgress());
+            updateNotificationText(getString(R.string.notification_text_background_upload_running), thisUploadJob.getUploadProgress());
             boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
                 super.runJob(thisUploadJob, listener, deleteJobConfigFileOnSuccess);
@@ -268,9 +294,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 config.setJobValid(this, false);
             }
         } finally {
-            synchronized (BackgroundPiwigoUploadService.class) {
-                runningUploadJob = null;
-            }
             EventBus.getDefault().post(new BackgroundUploadStoppedEvent(thisUploadJob));
         }
     }
@@ -279,7 +302,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     protected void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums) {
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(uploadJob.getJobConfigId());
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(getApplicationContext());
-        priorUploads.getFilesToHashMap().putAll(uploadedFileChecksums);
+        priorUploads.putAll(uploadedFileChecksums);
         jobConfig.saveFilesPreviouslyUploaded(getApplicationContext(), priorUploads);
     }
 
@@ -289,10 +312,15 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private void registerBroadcastReceiver(AutoUploadJobsConfig jobs, Context context) {
+    private void registerBroadcastReceiver(Context context, AutoUploadJobsConfig autoUploadJobsConfig) {
 
-        networkStatusChangeListener = new BroadcastEventsListener(jobs, this);
-        context.registerReceiver(networkStatusChangeListener, networkStatusChangeListener.getIntentFilter());
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            cm.registerDefaultNetworkCallback(new MyNetworkCallback(new MyNetworkListener(context, autoUploadJobsConfig)));
+        } else {
+            networkStatusChangeListener = new BroadcastEventsListener(new MyNetworkListener(context, autoUploadJobsConfig));
+            context.registerReceiver(networkStatusChangeListener, networkStatusChangeListener.getIntentFilter());
+        }
     }
 
     @Override
@@ -308,50 +336,55 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     private static class BroadcastEventsListener extends BroadcastReceiver {
 
-        private final AutoUploadJobsConfig jobs;
-        private BackgroundPiwigoUploadService service;
+        private final MyBroadcastEventListener listener;
 
-        public BroadcastEventsListener(AutoUploadJobsConfig jobs, BackgroundPiwigoUploadService service) {
-            this.service = service;
-            this.jobs = jobs;
+        public BroadcastEventsListener(MyBroadcastEventListener listener) {
+            this.listener = listener;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if("android.intent.action.USER_PRESENT".equals(intent.getAction())) {
+            if(Intent.ACTION_USER_PRESENT.equals(intent.getAction())) {
                 handleDeviceUnlocked(context);
-            } else if("android.net.conn.CONNECTIVITY_CHANGE".equals(intent.getAction())) {
-                handleNetworkStatusChanged(context);
+            } else if(ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+                handleNetworkStatusChanged(intent);
+            } else if(WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
+                handleWifiEvent(context, intent);
             }
+        }
+
+        private void handleWifiEvent(Context context, Intent intent) {
+            boolean hasWifi = false;
+            boolean hasInternet = false;
+            NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if(networkInfo != null && networkInfo.isConnected()) {
+                // Wifi is connected
+                hasWifi = true;
+            }
+            final ConnectivityManager connMgr = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            if(connMgr != null) {
+                networkInfo = connMgr.getActiveNetworkInfo();
+                hasInternet = networkInfo != null && networkInfo.isConnected();
+            }
+
+            listener.onNetworkChange(hasInternet, hasWifi);
         }
 
         private void handleDeviceUnlocked(Context context) {
-            wakeServiceIfSleeping();
+            listener.onDeviceUnlocked();
         }
 
-        private void handleNetworkStatusChanged(Context context) {
-            final ConnectivityManager connMgr = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            android.net.NetworkInfo network = null;
-            if(connMgr != null) {
-                if (jobs.isUploadOnWirelessOnly(context)) {
-                    network = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                    if (BuildConfig.DEBUG) {
-                        // just allow testing in the emulator.
-                        network = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-                    }
-                } else {
-                    network = connMgr.getActiveNetworkInfo();
-                }
+        private void handleNetworkStatusChanged(Intent intent) {
+            boolean hasWifi = false;
+            boolean hasInternet;
+            NetworkInfo networkInfo =
+                    intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if(networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                hasWifi = networkInfo.isConnected();
             }
-
-            if (network != null && network.isAvailable() && network.isConnected()) {
-                // wake immediately.
-                service.wakeIfWaiting();
-            } else {
-                service.pauseAnyRunningUpload();
-            }
+            hasInternet = networkInfo != null && networkInfo.isConnected();
+            listener.onNetworkChange(hasInternet, hasWifi);
         }
 
         public IntentFilter getIntentFilter() {
@@ -362,12 +395,14 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private void wakeIfWaiting() {
+    private void wakeIfPaused() {
         synchronized(this) {
             pauseThreadUntilSysTime = System.currentTimeMillis() - 1;
             notifyAll();
         }
     }
+
+
 
     private void pauseAnyRunningUpload() {
         UploadJob uploadJob = getActiveBackgroundJob(getApplicationContext());
@@ -379,24 +414,30 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     private boolean hasNetworkConnection(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-        return isConnected;
+        NetworkInfo networkInfo;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Network activeNetwork = Objects.requireNonNull(cm).getActiveNetwork();
+            networkInfo = cm.getNetworkInfo(activeNetwork);
+        } else {
+            networkInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
+        }
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     private boolean isConnectedToWireless(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isWiFi = activeNetwork != null && activeNetwork.isConnected() && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
-//        if(BuildConfig.DEBUG) {
-//            // just allow testing in the emulator.
-//            isWiFi = activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE;
-//        }
-        return isWiFi;
+        NetworkInfo networkInfo;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Network activeNetwork = Objects.requireNonNull(cm).getActiveNetwork();
+            networkInfo = cm.getNetworkInfo(activeNetwork);
+        } else {
+            networkInfo = Objects.requireNonNull(cm).getActiveNetworkInfo();
+        }
+        if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+            return networkInfo.isConnected();
+        }
+        return false;
     }
 
     private UploadJob getUploadJob(Context context, AutoUploadJobConfig jobConfig, BackgroundPiwigoFileUploadResponseListener jobListener) {
@@ -420,7 +461,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             protected boolean nonAcceptOverride(DocumentFile f) {
                 return compressVideos && MimeTypeFilter.matches(f.getType(), "video/*");
             }
-        }.withFileExtIn(fileExtsToUpload).withMaxSize(maxFileSizeMb);
+        }.withFileExtIn(fileExtsToUpload).withMaxSizeBytes(maxFileSizeMb * 1024 * 1024);
         List<DocumentFile> matchingFiles = IOUtils.filterDocumentFiles(localFolderToMonitor.listFiles(), filter);
         if (matchingFiles.isEmpty()) {
             return null;
@@ -460,20 +501,18 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
     private static class CustomContentObserver extends ContentObserver {
 
-        private final BackgroundPiwigoUploadService uploadService;
         private final Uri watchedUri;
+        private final Context context;
         private EventProcessor eventProcessor;
 
         /**
          * Creates a content observer.
          *
          * @param handler The handler to run {@link #onChange} on, or null if none.
-         * @param uploadService
-         * @param watchedUri
          */
-        public CustomContentObserver(Handler handler, BackgroundPiwigoUploadService uploadService, Uri watchedUri) {
+        public CustomContentObserver(Handler handler, Context context, Uri watchedUri) {
             super(handler);
-            this.uploadService = uploadService;
+            this.context = context;
             this.watchedUri = watchedUri;
         }
 
@@ -487,15 +526,15 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             if(eventProcessor == null) {
                 eventProcessor = new EventProcessor();
             }
-            eventProcessor.execute(uploadService, watchedUri, uri);
+            eventProcessor.execute(context, watchedUri, uri);
         }
 
         public void startWatching() {
-            uploadService.getContentResolver().registerContentObserver(watchedUri, false, this);
+            context.getContentResolver().registerContentObserver(watchedUri, false, this);
         }
 
         public void stopWatching() {
-            uploadService.getContentResolver().unregisterContentObserver(this);
+            context.getContentResolver().unregisterContentObserver(this);
         }
 
         public Uri getWatchedUri() {
@@ -511,8 +550,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
             @Override
             public void run() {
-                while (!processEvent(watchedUri, eventSourceUri, lastEventId)) {
-                } // do until processed.
+                boolean processed;
+                do {
+                    processed = processEvent(watchedUri, eventSourceUri, lastEventId);
+                } while(!processed); // do until processed.
                 lastEventId = 0;
             }
 
@@ -545,11 +586,89 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     e.printStackTrace();
                 }
                 if (eventId == lastEventId && len == file.length() && lastMod == file.lastModified()) {
-                    uploadService.wakeIfWaiting();
+                    BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
                     return true;
                 }
                 return false;
             }
+        }
+    }
+
+    private interface MyBroadcastEventListener {
+        void onNetworkChange(boolean internetAccess, boolean unmeteredNet);
+
+        void onDeviceUnlocked();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private static class MyNetworkCallback extends ConnectivityManager.NetworkCallback {
+
+        private MyBroadcastEventListener listener;
+
+        public MyNetworkCallback(MyBroadcastEventListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities networkCapabilities) {
+            super.onCapabilitiesChanged(network, networkCapabilities);
+            boolean unmeteredNet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
+            boolean internetAccess = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+            listener.onNetworkChange(internetAccess, unmeteredNet);
+        }
+    }
+
+    private class BackgroundActionsBroadcastReceiver extends ActionsBroadcastReceiver {
+        public BackgroundActionsBroadcastReceiver() {
+            super(ACTION_STOP);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (ACTION_WAKE.equals(intent.getAction())) {
+                wakeIfPaused();
+            } else if (ACTION_PAUSE.equals(intent.getAction())) {
+                pauseAnyRunningUpload();
+            } else {
+                super.onReceive(context, intent);
+            }
+        }
+
+        @Override
+        public IntentFilter getFilter() {
+            IntentFilter filter = super.getFilter();
+            filter.addAction(ACTION_WAKE);
+            filter.addAction(ACTION_PAUSE);
+            return filter;
+        }
+    }
+
+    private class MyNetworkListener implements MyBroadcastEventListener {
+        private final Context context;
+        private final AutoUploadJobsConfig autoUploadJobsConfig;
+
+        public MyNetworkListener(Context context, AutoUploadJobsConfig autoUploadJobsConfig) {
+            this.context = context;
+            this.autoUploadJobsConfig = autoUploadJobsConfig;
+        }
+
+        @Override
+        public void onNetworkChange(boolean internetAccess, boolean unmeteredNet) {
+            hasInternetAccess = internetAccess;
+            isOnUnmeteredNetwork = unmeteredNet;
+            if (hasInternetAccess && (!autoUploadJobsConfig.isUploadOnWirelessOnly(context) || isOnUnmeteredNetwork)) {
+//                BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
+                wakeIfPaused();
+            } else {
+//                BackgroundPiwigoUploadService.sendActionPauseAnyRunningUpload(context);
+                pauseAnyRunningUpload();
+            }
+        }
+
+        @Override
+        public void onDeviceUnlocked() {
+//            BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
+            wakeIfPaused();
         }
     }
 }

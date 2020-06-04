@@ -55,6 +55,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -65,6 +66,7 @@ import delit.libs.ui.view.list.BiArrayAdapter;
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -421,24 +423,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         });
 
-        if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON) {
-            Button compressVideosButton = new Button(getContext());
-            compressVideosButton.setText("Compress");
-            compressVideosButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.setEnabled(false);
-                    compressVideos(v);
-                }
-            });
-            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
-            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
-        }
-
         if (filesToUploadAdapter == null) {
-            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new ArrayList<DocumentFile>(), getContext(), this);
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new ArrayList<>(), getContext(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
 
             filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -481,6 +467,27 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesToUploadAdapter);
 
+        if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON) {
+
+            Button compressVideosButton = new Button(getContext());
+            compressVideosButton.setText("Compress");
+            compressVideosButton.setOnClickListener(v -> {
+                v.setEnabled(false);
+                compressVideos(v);
+            });
+            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
+            layoutParams.bottomToTop = R.id.upload_files_button;
+            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
+
+            Objects.requireNonNull(filesForUploadView.getAdapter()).registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onChanged() {
+                    compressVideosButton.setEnabled(filesForUploadView.getAdapter().getItemCount() > 0);
+                }
+            });
+        }
+
         return view;
     }
 
@@ -502,6 +509,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 compressionSettings.setAddAudioTrack(audioBitrate != 0);
                 compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
                 compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
+//                compressionSettings.disableFastStart();
 
 
                 File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
@@ -513,7 +521,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     String filename = inputDocFile.getName();
                     outputVideo = new File(moviesFolder, "compressed_" + i + filename);
                 } while (outputVideo.exists());
-                Uri outputVideoUri = Uri.fromFile(IOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType())));
+                Uri outputVideoUri = Uri.fromFile(LegacyIOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType())));
                 new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, outputVideoUri, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
             }
         }
@@ -568,7 +576,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             // context could be null because there is a 3 second delay before the screen opens during which the user could close the app.
             FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
             String initialFolder = UploadPreferences.getDefaultLocalUploadFolder(getContext(), getPrefs());
-            event.withInitialFolder(IOUtils.getLocalFileUri(initialFolder));
+            if(initialFolder != null) {
+                event.withInitialFolder(IOUtils.getLocalFileUri(initialFolder));
+            }
             event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
             //        event.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey()); Not currently needed as permissions are transient.
 
@@ -717,7 +727,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     @Override
     public void onStart() {
-        addUploadingAsFieldsIfAppropriate(getView());
+        addUploadingAsFieldsIfAppropriate(requireView());
         super.onStart();
         // need to register here so FileSelectionComplete events always get through after the UI has been built when forked from different process
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -1292,7 +1302,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             String elapsedCompressionTimeStr = strFormat.format(new Date(elapsedTime));
 
             if (mediaDurationMs > 0) {
-                double compressionRate = ((double) mediaDurationMs) / elapsedTime;
+                double timeProcessed = mediaDurationMs * (compressionProgress / 100);
+                double compressionRate = timeProcessed / elapsedTime;
                 uiHelper.showDetailedMsg(R.string.alert_information, String.format(Locale.getDefault(), "Video Compression\nrate: %5$.02fx\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr, compressionRate), Toast.LENGTH_SHORT, 1);
             } else {
                 uiHelper.showDetailedMsg(R.string.alert_information, String.format(Locale.getDefault(), "Video Compression\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr), Toast.LENGTH_SHORT, 1);

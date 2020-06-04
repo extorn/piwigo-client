@@ -2,26 +2,24 @@ package delit.piwigoclient.ui;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.MimeTypeFilter;
-import androidx.documentfile.provider.DocumentFile;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -34,19 +32,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
-import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -56,7 +48,6 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
@@ -65,6 +56,7 @@ import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelec
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
@@ -73,12 +65,10 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
@@ -105,6 +95,7 @@ public class UploadActivity extends MyActivity {
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
         Intent intent = new Intent("delit.piwigoclient.MANUAL_UPLOAD", null, context.getApplicationContext(), UploadActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
         return intent;
     }
@@ -122,19 +113,6 @@ public class UploadActivity extends MyActivity {
         super.onRestart();
         // Need to register here as the call is handled immediately if the permissions are already present.
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (intent.getBooleanExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB, false)) {
-            UploadJob job = ForegroundPiwigoUploadService.getFirstActiveForegroundJob(getApplicationContext());
-            if (job != null && job.isRunningNow()) {
-                job.cancelUploadAsap();
-            }
-            intent.removeExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB);
-        }
-        super.onNewIntent(intent);
-        this.setIntent(intent);
     }
 
     @Override
@@ -229,6 +207,96 @@ public class UploadActivity extends MyActivity {
                 });
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public final void onNavigationItemSelected(NavigationItemSelectEvent event) {
+        // Handle navigation view item clicks here.
+        int id = event.navigationitemSelected;
+
+        switch (id) {
+//            case R.id.nav_upload:
+//                showUpload();
+//                break;
+            case R.id.nav_groups:
+                showGroups();
+                break;
+//            case R.id.nav_tags:
+//                showTags();
+//                break;
+            case R.id.nav_users:
+                showUsers();
+                break;
+            case R.id.nav_top_tips:
+                showTopTips();
+                break;
+            case R.id.nav_gallery:
+                showGallery();
+                break;
+//            case R.id.nav_favorites:
+//                showFavorites();
+//                break;
+//            case R.id.nav_about:
+//                showAboutFragment();
+//                break;
+//            case R.id.nav_oss_licences:
+//                showLicencesFragment();
+//                break;
+            case R.id.nav_settings:
+                showPreferences();
+                break;
+//            case R.id.nav_eula:
+//                showEula();
+//                break;
+            default:
+                onNavigationItemSelected(event, id);
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    private void showGroups() {
+        try {
+            startActivity(MainActivity.buildShowGroupsIntent(this));
+        } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
+        }
+    }
+
+    private void showUsers() {
+        try {
+            startActivity(MainActivity.buildShowUsersIntent(this));
+        } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
+        }
+    }
+
+    private void showTopTips() {
+        try {
+            startActivity(MainActivity.buildShowTopTipsIntent(this));
+        } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
+        }
+    }
+
+    private void showPreferences() {
+        try {
+            startActivity(PreferencesActivity.buildIntent(this));
+        } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
+        }
+    }
+
+    private void showGallery() {
+        try {
+            startActivity(MainActivity.buildShowGalleryIntent(this));
+        } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
+        }
+    }
+
+    protected void onNavigationItemSelected(NavigationItemSelectEvent event, @IdRes int itemId) {
     }
 
     @Override

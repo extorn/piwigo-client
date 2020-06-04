@@ -45,7 +45,7 @@ import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.FileBreadcrumbsView;
 import delit.libs.ui.view.FlowLayout;
 import delit.libs.ui.view.list.MappedArrayAdapter;
-import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
@@ -240,7 +240,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
                 }
             }
             if (allPossiblyVisibleFileExts != null) {
-                SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(IOUtils.getUniqueExtAndMimeTypes(newFolder.listFiles()));
+                SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(LegacyIOUtils.getUniqueExtAndMimeTypes(newFolder.listFiles()));
                 if (fileExtsInFolderMatchingMimeTypesWanted != null) {
                     // add any extra that have come from mime types now visible in this folder.
                     allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
@@ -363,7 +363,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
     private File getViewPrefInitialFolderAsFile() {
         try {
-            return IOUtils.getFile(getViewPrefs().getInitialFolder());
+            return LegacyIOUtils.getFile(getViewPrefs().getInitialFolder());
         } catch (IOException e) {
             throw new IllegalStateException("Non file Uri somehow got given as initial folder");
         }
@@ -373,7 +373,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         List<String> rootLabels = ArrayUtils.toArrayList(new String[]{getString(R.string.folder_root_root), getString(R.string.folder_root_userdata), getString(R.string.folder_extstorage)});
 
         List<File> rootPaths = ArrayUtils.toArrayList(new File[]{Environment.getRootDirectory(), Environment.getDataDirectory(), Environment.getExternalStorageDirectory()});
-        List<String> sdCardPaths = IOUtils.getSdCardPaths(getContext(), true);
+        List<String> sdCardPaths = LegacyIOUtils.getSdCardPaths(getContext(), true);
         if(sdCardPaths != null) {
             int extStorageDeviceId = 1;
             for(String path : sdCardPaths) {

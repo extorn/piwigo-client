@@ -29,7 +29,6 @@ import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
-import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobPreferenceFragment;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
@@ -37,6 +36,11 @@ import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 public class PreferencesActivity extends MyActivity {
 
     private static final String TAG = "PrefAct";
+
+    public static Intent buildIntent(Context context) {
+        Intent i = new Intent(context.getApplicationContext(), PreferencesActivity.class);
+        return i;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

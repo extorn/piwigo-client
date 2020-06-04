@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,17 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.navigation.NavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.SecurePrefsUtil;
-import delit.libs.ui.view.PasswordInputToggle;
-import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -44,12 +38,9 @@ import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
 import delit.piwigoclient.ui.events.AppLockedEvent;
-import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
-import delit.piwigoclient.ui.events.RewardUpdateEvent;
-import delit.piwigoclient.ui.events.UnlockAppEvent;
 
 /**
  * Created by gareth on 08/06/17.
@@ -318,12 +309,8 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
         if (m != null) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
             boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
-            boolean hasCommunityPlugin = sessionDetails != null && sessionDetails.isUseCommunityPlugin();
-//            m.findItem(R.id.nav_gallery).setVisible(PiwigoSessionDetails.isLoggedInAndHaveSessionAndUserDetails());
-            m.findItem(R.id.nav_upload).setVisible((isAdminUser || hasCommunityPlugin) && !isReadOnly);
             m.findItem(R.id.nav_groups).setVisible(isAdminUser && !isReadOnly);
             m.findItem(R.id.nav_users).setVisible(isAdminUser && !isReadOnly);
-
             m.findItem(R.id.nav_settings).setVisible(!isReadOnly);
         }
     }

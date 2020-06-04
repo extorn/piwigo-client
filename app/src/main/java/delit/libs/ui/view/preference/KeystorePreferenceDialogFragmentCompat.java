@@ -59,10 +59,10 @@ import java.util.regex.Pattern;
 
 import javax.security.auth.x500.X500Principal;
 
-import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.ProgressIndicator;
+import delit.libs.util.IOUtils;
 import delit.libs.util.X509Utils;
 import delit.libs.util.security.CertificateLoadException;
 import delit.libs.util.security.CertificateLoadOperationResult;
@@ -497,10 +497,11 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             LoadOperationResult loadOperationResult = new LoadOperationResult();
             int currentFile = 0;
             for (X509LoadOperation loadOp : loadOps) {
-                String fileSuffix = loadOp.getFile().getName().replaceFirst(".*(\\.[^.]*)", "$1").toLowerCase();
-                if (sourcePref.getPreference().getAllowedCertificateFileTypes().contains(fileSuffix)) {
+                String fileExt = '.' + IOUtils.getFileExt(sourcePref.requireContext(), loadOp.getFileUri()).toLowerCase();
+                //TODO fileExt is not . prefixed, but getAllowedCertificateFileTypes is
+                if (sourcePref.getPreference().getAllowedCertificateFileTypes().contains(fileExt)) {
                     try {
-                        Collection<X509Certificate> certs = X509Utils.loadCertificatesFromUri(loadOp.getFile().getUri());
+                        Collection<X509Certificate> certs = X509Utils.loadCertificatesFromUri(sourcePref.requireContext(), loadOp.getFileUri());
                         CertificateLoadOperationResult result = new CertificateLoadOperationResult(loadOp);
                         result.getCerts().addAll(certs);
                         loadOperationResult.getCertLoadResults().add(result);
@@ -510,12 +511,12 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                         result.setException(e);
                         loadOperationResult.getCertLoadResults().add(result);
                     }
-                } else if (sourcePref.getPreference().getAllowedKeyFileTypes().contains(fileSuffix)) {
+                } else if (sourcePref.getPreference().getAllowedKeyFileTypes().contains(fileExt)) {
                     KeystoreLoadOperationResult keystoreLoadOperationResult;
-                    if (KeyStorePreference.BKS_FILE_SUFFIX.equals(fileSuffix)) {
-                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "bks");
+                    if (KeyStorePreference.BKS_FILE_SUFFIX.equals(fileExt)) {
+                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "bks", sourcePref.requireContext());
                     } else {
-                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(KeystoreLoadOperation.from(loadOp));
+                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(sourcePref.requireContext(), KeystoreLoadOperation.from(loadOp));
                     }
                     loadOperationResult.getKeystoreLoadResults().add(keystoreLoadOperationResult);
                 }
@@ -542,7 +543,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         X509LoadOperation[] params = new X509LoadOperation[certificateFiles.size()];
         int i = 0;
         for (DocumentFile f : certificateFiles) {
-            params[i++] = new X509LoadOperation(f);
+            params[i++] = new X509LoadOperation(f.getUri());
         }
         keystoreLoadOperationResult = null;
         keystoreLoadProgress = 0;
@@ -658,7 +659,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_TRACKED_REQUEST, trackedRequest);
-        outState.putSerializable(STATE_LOAD_OP_RESULT, keystoreLoadOperationResult);
+        outState.putParcelable(STATE_LOAD_OP_RESULT, keystoreLoadOperationResult);
         outState.putInt(STATE_LOAD_PROGRESS, keystoreLoadProgress);
         outState.putByteArray(STATE_KEYSTORE, X509Utils.saveKeystore("byteArray", keystore, keystorePass));
     }
@@ -668,7 +669,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null) {
             trackedRequest = savedInstanceState.getInt(STATE_TRACKED_REQUEST, -1);
-            keystoreLoadOperationResult = BundleUtils.getSerializable(savedInstanceState, STATE_LOAD_OP_RESULT, LoadOperationResult.class);
+            keystoreLoadOperationResult = savedInstanceState.getParcelable(STATE_LOAD_OP_RESULT);
             keystoreLoadProgress = savedInstanceState.getInt(STATE_LOAD_PROGRESS);
             keystore = X509Utils.loadKeystore("byteArray", savedInstanceState.getByteArray(STATE_KEYSTORE), keystorePass) ;
         } else {

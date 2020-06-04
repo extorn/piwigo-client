@@ -66,16 +66,16 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
             if(uploadOverWirelessOnly) {
                 getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
             }
-            if(BackgroundPiwigoUploadService.isStarted()) {
+            if(BackgroundPiwigoUploadService.isStarted(requireContext())) {
                 // ensure the service knows the change occurred.
-                BackgroundPiwigoUploadService.wakeServiceIfSleeping();
+                BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(requireContext());
             }
         }
 
         private void onBackgroundServiceEnabled(Boolean backgroundUploadEnabled) {
-            if(BackgroundPiwigoUploadService.isStarted() && !backgroundUploadEnabled) {
-                BackgroundPiwigoUploadService.killService();
-            } else if(!BackgroundPiwigoUploadService.isStarted() && backgroundUploadEnabled) {
+            if(BackgroundPiwigoUploadService.isStarted(requireContext()) && !backgroundUploadEnabled) {
+                BackgroundPiwigoUploadService.sendActionKillService(requireContext());
+            } else if(!BackgroundPiwigoUploadService.isStarted(requireContext()) && backgroundUploadEnabled) {
                 BackgroundPiwigoUploadService.startService(getContext());
             }
         }
@@ -89,9 +89,9 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
             autoUploadsServiceEnabledPreference.setEnabled(true);
             autoUploadsServiceWirelessOnlyPreference.setEnabled(true);
 
-            if (BackgroundPiwigoUploadService.isStarted()) {
+            if (BackgroundPiwigoUploadService.isStarted(requireContext())) {
                 // ensure the service knows the change occurred.
-                BackgroundPiwigoUploadService.wakeServiceIfSleeping();
+                BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(requireContext());
             } else {
                 getUiHelper().showDetailedMsg(R.string.alert_warning, R.string.alert_warning_auto_upload_service_stopped);
             }

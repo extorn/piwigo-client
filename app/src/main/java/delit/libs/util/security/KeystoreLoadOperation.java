@@ -1,5 +1,7 @@
 package delit.libs.util.security;
 
+import android.net.Uri;
+
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
@@ -13,8 +15,8 @@ public class KeystoreLoadOperation extends X509LoadOperation {
     private List<String> aliasesToLoad;
     private char[] keystorePass;
 
-    public KeystoreLoadOperation(DocumentFile file) {
-        super(file);
+    public KeystoreLoadOperation(Uri fileUri) {
+        super(fileUri);
         keystorePass = new char[0];
         aliasPassMapp = new HashMap<>();
         aliasesToLoad = null;
@@ -24,7 +26,7 @@ public class KeystoreLoadOperation extends X509LoadOperation {
         if (loadOp instanceof KeystoreLoadOperation) {
             return (KeystoreLoadOperation) loadOp;
         }
-        return new KeystoreLoadOperation(loadOp.getFile());
+        return new KeystoreLoadOperation(loadOp.getFileUri());
     }
 
     public List<String> getAliasesToLoad() {

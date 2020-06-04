@@ -3,15 +3,21 @@ package delit.piwigoclient.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.webkit.MimeTypeMap;
 
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.MimeTypeFilter;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.MyPicasso;
@@ -19,11 +25,15 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
+import java.io.IOException;
 import java.util.HashMap;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.CustomImageDownloader;
 import delit.piwigoclient.business.PicassoLoader;
+
+import static android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC;
 
 /**
  * Created by gareth on 13/07/17.
@@ -58,7 +68,7 @@ public class PicassoFactory {
                 // request handler would work but it cant because it doesnt get in before the broken one!
                 picasso = new MyPicasso.Builder(context)
                         .addRequestHandler(new ResourceRequestHandler(context))
-                        .addRequestHandler(new VideoRequestHandler())
+                        .addRequestHandler(new VideoRequestHandler(context))
                         .listener(errorHandler).downloader(getDownloader(context)).build();
             }
             return picasso;
@@ -127,24 +137,40 @@ public class PicassoFactory {
 
     class VideoRequestHandler extends RequestHandler {
 
-        public final String SCHEME_VIDEO = "video";
+        private Context context;
+
+        private VideoRequestHandler(Context context) {
+            this.context = context;
+        }
 
         @Override
         public boolean canHandleRequest(Request data) {
             MimeTypeMap map = MimeTypeMap.getSingleton();
             String ext = MimeTypeMap.getFileExtensionFromUrl(data.uri.getPath());
-            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-            String scheme = data.uri.getScheme();
-            boolean mimeTypeMatches = false;
-            if (mimeType != null) {
-                mimeTypeMatches = mimeType.startsWith(SCHEME_VIDEO + '/');
+            if(ext.length() == 0) {
+                ext = IOUtils.getFileExt(context, data.uri);
             }
-            return mimeTypeMatches || (SCHEME_VIDEO.equals(scheme));
+            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
+            return MimeTypeFilter.matches(mimeType, "video/*");
         }
 
         @Override
         public Result load(Request data, int networkPolicy) {
-            Bitmap bm = ThumbnailUtils.createVideoThumbnail(data.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
+            MediaMetadataRetriever mediaRetriever = new MediaMetadataRetriever();
+            Bitmap bm;
+            try {
+                mediaRetriever.setDataSource(context, data.uri);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
+                    bm = mediaRetriever.getScaledFrameAtTime(1000, OPTION_CLOSEST_SYNC, 512, 384);
+                } else {
+                    bm = mediaRetriever.getFrameAtTime(1000);
+                    if (bm != null) {
+                        bm = getResizedBitmap(bm, 512, 384);
+                    }
+                }
+            } finally {
+                mediaRetriever.release();
+            }
             if (bm == null) {
                 Log.e(TAG, "Unable to create a video thumbnail for file : " + data.uri.getPath());
                 return null;
@@ -153,7 +179,26 @@ public class PicassoFactory {
             }
             return new Result(bm, Picasso.LoadedFrom.DISK);
         }
+
+        public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+            int width = bm.getWidth();
+            int height = bm.getHeight();
+            float scaleWidth = ((float) newWidth) / width;
+            float scaleHeight = ((float) newHeight) / height;
+            // CREATE A MATRIX FOR THE MANIPULATION
+            Matrix matrix = new Matrix();
+            // RESIZE THE BIT MAP
+            matrix.postScale(scaleWidth, scaleHeight);
+
+            // "RECREATE" THE NEW BITMAP
+            Bitmap resizedBitmap = Bitmap.createBitmap(
+                    bm, 0, 0, width, height, matrix, false);
+            bm.recycle();
+            return resizedBitmap;
+        }
     }
+
+
 
     class ResourceRequestHandler extends RequestHandler {
         private final Context context;

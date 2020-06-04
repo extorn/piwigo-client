@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ import java.util.Set;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.util.CollectionUtils;
-import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -51,7 +50,6 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.preference.LocalFoldersListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
-import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
@@ -172,7 +170,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                 Uri uri = Uri.parse(localFolder);
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     try {
-                        File file = IOUtils.getFile(uri);
+                        File file = LegacyIOUtils.getFile(uri);
                         allPreferencesValid = file != null && file.exists();
                     } catch (IOException e) {
                         Crashlytics.logException(e);

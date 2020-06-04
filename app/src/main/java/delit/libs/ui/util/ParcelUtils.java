@@ -24,6 +24,7 @@ import java.util.Set;
 
 import delit.libs.util.ClassUtils;
 import delit.piwigoclient.BuildConfig;
+import io.fabric.sdk.android.services.common.Crash;
 
 public class ParcelUtils {
 
@@ -287,22 +288,6 @@ public class ParcelUtils {
         return readValue(in, null, Long.class);
     }
 
-    public static void writeFile(Parcel out, File file) {
-        if (file != null) {
-            out.writeValue(file.getAbsolutePath());
-        } else {
-            out.writeValue(null);
-        }
-    }
-
-    public static File readFile(Parcel in) {
-        String value = readString(in);
-        if (value == null) {
-            return null;
-        }
-        return new File(value);
-    }
-
     public static void writeParcelable(Parcel out, Parcelable p) {
         out.writeValue(p);
     }
@@ -317,8 +302,12 @@ public class ParcelUtils {
 
     public static void writeParcel(ObjectOutputStream os, Parcel p) throws IOException {
         byte[] data = p.marshall();
-        os.write(data.length);
-        os.write(data);
+        if(data.length < 0) {
+            Crashlytics.log(Log.ERROR, TAG, "Parcel size was unexpectedly negative while writing data");
+        } else {
+            os.write(data.length);
+            os.write(data);
+        }
     }
 
     public static Parcel readParcel(byte[] data) {
@@ -329,7 +318,12 @@ public class ParcelUtils {
     }
 
     public static Parcel readParcel(ObjectInputStream in) throws IOException {
-        byte[] data = new byte[in.readInt()];
+        int parcelSize = in.readInt();
+        if(parcelSize < 0) {
+            Crashlytics.log(Log.ERROR, TAG, "Parcel size was unexpectedly negative while reading data from stream");
+            throw new IOException("Parcel size was unexpectedly negative. Parcel could not be read from stream");
+        }
+        byte[] data = new byte[parcelSize];
         in.readFully(data);
         return readParcel(data);
     }

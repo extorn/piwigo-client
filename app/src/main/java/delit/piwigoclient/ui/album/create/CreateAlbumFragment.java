@@ -192,13 +192,13 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_UPLOAD_TO_GALLERY, parentGallery);
         outState.putParcelable(STATE_NEW_GALLERY, newAlbum);
         outState.putLong(STATE_CREATE_GALLERY_CALL_ID, createGalleryMessageId);
         outState.putLong(STATE_SET_GALLERY_PERMISSIONS_CALL_ID, setGalleryPermissionsMessageId);
         outState.putLong(STATE_DELETE_GALLERY_CALL_ID, deleteGalleryMessageId);
         outState.putInt(STATE_ACTION_ID, actionId);
-        super.onSaveInstanceState(outState);
     }
 
     @Nullable

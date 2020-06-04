@@ -31,12 +31,14 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import delit.libs.ui.util.LegacyParcelUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -71,7 +73,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
             for (Uri selectedItem : initialSelectionItems) {
                 int pos = 0;
                 try {
-                    pos = getItemPositionForFile(IOUtils.getFile(selectedItem));
+                    pos = getItemPositionForFile(LegacyIOUtils.getFile(selectedItem));
                 } catch (IOException e) {
                     Crashlytics.log(Log.ERROR,TAG, "Non file Uri got in somehow : " + selectedItem);
                     throw new IllegalStateException("Non file Uri got in somehow");
@@ -364,7 +366,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         }
 
         public LegacyFolderItem(Parcel in) {
-            file = ParcelUtils.readFile(in);
+            file = LegacyParcelUtils.readFile(in);
             contentUri = ParcelUtils.readParcelable(in, Uri.class);
         }
 
@@ -382,7 +384,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            ParcelUtils.writeFile(dest, file);
+            LegacyParcelUtils.writeFile(dest, file);
             ParcelUtils.writeParcelable(dest, contentUri);
         }
 

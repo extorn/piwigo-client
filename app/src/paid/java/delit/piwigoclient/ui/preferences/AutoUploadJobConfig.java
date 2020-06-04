@@ -14,6 +14,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -22,7 +23,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import delit.libs.util.CollectionUtils;
-import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -267,22 +268,16 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public static class PriorUploads implements Serializable {
 
-        private static final long serialVersionUID = 4250545241017682232L;
+        private static final long serialVersionUID = -1292778740052847415L;
         private int jobId;
-        private final HashMap<Uri, String> filesToHashMap;
+        private final HashMap<Uri, String> filesToHashMap = new HashMap<>();
 
         public PriorUploads(int jobId) {
             this.jobId = jobId;
-            filesToHashMap = new HashMap<>();
         }
 
-        public PriorUploads(int jobId, HashMap<Uri, String> map) {
-            this.jobId = jobId;
-            filesToHashMap = map;
-        }
-
-        public HashMap<Uri, String> getFilesToHashMap() {
-            return filesToHashMap;
+        public Map<Uri, String> getFilesToHashMap() {
+            return Collections.unmodifiableMap(filesToHashMap);
         }
 
         public static File getFolder(Context c) {
@@ -297,7 +292,7 @@ public class AutoUploadJobConfig implements Parcelable {
 
         public void saveToFile(Context c) {
             File f = new File(getFolder(c), ""+jobId);
-            IOUtils.saveObjectToFile(f, this);
+            LegacyIOUtils.saveObjectToFile(f, this);
         }
 
         public static PriorUploads loadFromFile(Context c, int jobId) {
@@ -305,7 +300,7 @@ public class AutoUploadJobConfig implements Parcelable {
             if(!f.exists()) {
                 return new PriorUploads(jobId);
             } else {
-                PriorUploads uploadedFiles = IOUtils.readObjectFromFile(f);
+                PriorUploads uploadedFiles = LegacyIOUtils.readObjectFromFile(f);
                 if(uploadedFiles == null) {
                     return new PriorUploads(jobId);
                 } else if(uploadedFiles.jobId != jobId) {
@@ -322,7 +317,7 @@ public class AutoUploadJobConfig implements Parcelable {
          */
         public boolean isOutOfSyncWithFileSystem(Context context) {
             boolean outOfSync = false;
-            if(filesToHashMap.size() > 0) {
+            if(filesToHashMap != null && filesToHashMap.size() > 0) {
                 Set<File> itemsToRemove = new HashSet<>();
                 for(Map.Entry<Uri, String> priorUploadEntry : filesToHashMap.entrySet()) {
                     DocumentFile docFile = DocumentFile.fromSingleUri(context, priorUploadEntry.getKey());
@@ -335,6 +330,10 @@ public class AutoUploadJobConfig implements Parcelable {
                 }
             }
             return outOfSync;
+        }
+
+        public void putAll(HashMap<Uri, String> uploadedFileChecksums) {
+            Collections.checkedMap(new HashMap<>(),Uri.class, String.class).putAll(uploadedFileChecksums);
         }
     }
 

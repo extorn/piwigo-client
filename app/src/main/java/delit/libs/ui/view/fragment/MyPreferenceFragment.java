@@ -128,9 +128,9 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
         outState.putInt(STATE_PAGER_INDEX_POS, pagerIndex);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
