@@ -1295,8 +1295,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private ResourceItem uploadFileInChunks(UploadJob thisUploadJob, byte[] uploadChunkBuffer, Uri uploadJobKey, Uri fileForUpload, String uploadName, int maxChunkUploadAutoRetries) throws IOException {
 
-        DocumentFile documentFile = DocumentFile.fromSingleUri(this, fileForUpload);
-        long totalBytesInFile = documentFile.length();
+        long totalBytesInFile = IOUtils.getFilesize(this, fileForUpload);
         long fileBytesUploaded = 0;
         long chunkId = 0;
         int bytesOfDataInChunk;
@@ -1307,7 +1306,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         String newChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
         if (isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob)) {
-            newChecksum = documentFile.getName();
+            newChecksum = IOUtils.getFilename(this, fileForUpload);
         }
         // pre-set the upload progress through file to where we got to last time.
         UploadJob.PartialUploadData skipChunksData = thisUploadJob.getChunksAlreadyUploadedData(uploadJobKey);
@@ -1369,9 +1368,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                             fileBytesUploaded += bytesOfDataInChunk;
                             String fileChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
                             if (isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob)) {
-                                fileChecksum = documentFile.getName();
+                                fileChecksum = IOUtils.getFilename(this, fileForUpload);
                             }
-                            thisUploadJob.markFileAsPartiallyUploaded(uploadJobKey, uploadToFilename, fileChecksum, documentFile.length(), fileBytesUploaded, chunkId);
+                            thisUploadJob.markFileAsPartiallyUploaded(uploadJobKey, uploadToFilename, fileChecksum, totalBytesInFile, fileBytesUploaded, chunkId);
                             saveStateToDisk(thisUploadJob);
                             recordAndPostNewResponse(thisUploadJob, new PiwigoUploadProgressUpdateResponse(getNextMessageId(), uploadJobKey, thisUploadJob.getUploadProgress(uploadJobKey)));
                         } else {
@@ -1486,7 +1485,6 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             postNewResponse(jobId, new PiwigoStartUploadFileResponse(getNextMessageId(), uploadJobKey));
 
             try {
-                DocumentFile fileForUpload = DocumentFile.fromSingleUri(this, fileForUploadUri);
                 String ext = IOUtils.getFileExt(this, fileForUploadUri);
 
                 if (ext.length() == 0) {
@@ -1504,13 +1502,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     if (uploadedResource != null) {
                         // this should ALWAYS be the case!
 
-                        uploadedResource.setName(fileForUpload.getName());
+                        uploadedResource.setName(IOUtils.getFilename(this, fileForUploadUri));
                         uploadedResource.setParentageChain(thisUploadJob.getUploadToCategoryParentage(), thisUploadJob.getUploadToCategory());
                         uploadedResource.setPrivacyLevel(thisUploadJob.getPrivacyLevelWanted());
                         uploadedResource.setFileChecksum(thisUploadJob.getFileChecksum(uploadJobKey));
 
 
-                        long lastModifiedTime = DocumentFile.fromSingleUri(this, uploadJobKey).lastModified();
+                        long lastModifiedTime = IOUtils.getLastModifiedTime(this, uploadJobKey);
                         if (lastModifiedTime > 0) {
                             Date lastModDate = new Date(lastModifiedTime);
                             uploadedResource.setCreationDate(lastModDate);

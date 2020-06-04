@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -583,7 +584,10 @@ public class IOUtils {
 
     public static boolean exists(Context context, Uri uri) {
         DocumentFile docFile = DocumentFile.fromSingleUri(context, uri);
-        return docFile != null && docFile.exists();
+        if(docFile != null) {
+            return docFile.exists();
+        }
+        return getFilesize(context, uri) > -1;
     }
 
     public static List<DocumentFile> toDocumentFileList(Context context, List<Uri> uris) {
@@ -946,5 +950,21 @@ public class IOUtils {
         } else {
             return docFile.length();
         }
+    }
+
+    public static long getLastModifiedTime(@NonNull Context context, @NonNull Uri uri) {
+        if(uri.getScheme().equals("file")) {
+            File f = new File(uri.getPath());
+            return f.lastModified();
+        }
+        try (Cursor c = context.getContentResolver().query(uri, null, null, null, null)) {
+            if (c != null) {
+                int colDateModified = c.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_LAST_MODIFIED);
+                c.moveToFirst();
+                return c.getLong(colDateModified);
+            }
+        }
+
+        return -1;
     }
 }

@@ -608,42 +608,13 @@ public class UploadJob implements Parcelable {
     }
 
     public boolean isVideo(@NonNull Uri file) {
-        DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), file);
-        if(docFile != null) {
-            String mimeType = docFile.getType();
-            if(mimeType != null) {
-                mimeType = mimeType.toLowerCase();
-                return MimeTypeFilter.matches(mimeType,"video/*");
-            }
-        }
-        return false;
+        String mimeType = getContext().getContentResolver().getType(file);
+        return MimeTypeFilter.matches(mimeType,"video/*");
     }
 
-    public boolean isPhoto(Uri file) {
-        DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), file);
-        if(docFile != null) {
-            String mimeType = docFile.getType();
-            if(mimeType != null) {
-                mimeType = mimeType.toLowerCase();
-                return MimeTypeFilter.matches(mimeType,"image/*");
-            }
-        }
-        return false;
-    }
-
-    public ArrayList<Uri> getVideosForUpload(Context context) {
-        ArrayList<Uri> allFiles = getFilesForUpload();
-        if (allFiles == null || allFiles.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        ArrayList<Uri> videoFilesToCompress = new ArrayList<>(allFiles.size());
-        for (Uri f : allFiles) {
-            if (isVideo(f)) {
-                videoFilesToCompress.add(f);
-            }
-        }
-        return videoFilesToCompress;
+    public boolean isPhoto(@NonNull Uri file) {
+        String mimeType = getContext().getContentResolver().getType(file);
+        return MimeTypeFilter.matches(mimeType,"image/*");
     }
 
     public DocumentFile addCompressedFile(Context c, Uri rawFileForUpload, String compressedMimeType) {
