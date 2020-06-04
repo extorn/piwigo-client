@@ -1148,9 +1148,15 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         for (Uri fileForUploadUri : thisUploadJob.getFilesForUpload()) {
 
             boolean isHaveUploadedCompressedFile = false;
+            boolean canUploadFile;
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                DocumentFile docFile = DocumentFile.fromSingleUri(this, fileForUploadUri);
+                canUploadFile = docFile.exists();
 
-            DocumentFile docFile = DocumentFile.fromSingleUri(this, fileForUploadUri);
-            if (!docFile.exists()) {
+            } else {
+                canUploadFile = 0 < IOUtils.getFilesize(this, fileForUploadUri);
+            }
+            if (!canUploadFile) {
                 thisUploadJob.cancelFileUpload(fileForUploadUri);
             }
 

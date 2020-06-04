@@ -929,8 +929,9 @@ public class IOUtils {
                 if(fd != null) {
                     return fd.getStatSize();
                 }
+                return -1;
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                return -1;
             } finally {
                 if(fd != null) {
                     try {
@@ -941,10 +942,9 @@ public class IOUtils {
                 }
             }
         } else if (!docFile.exists()) {
-            throw new IllegalStateException("file has already been deleted");
+            return -1;
         } else {
             return docFile.length();
         }
-        return -1;
     }
 }

@@ -48,13 +48,16 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
@@ -797,13 +800,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         updateActiveJobActionButtonsStatus();
     }
 
-    private Set<DocumentFile> getFilesExceedingMaxDesiredUploadThreshold(List<DocumentFile> filesForUpload) {
+    private Map<Uri,Double> getFilesExceedingMaxDesiredUploadThreshold(List<Uri> filesForUpload) {
         int maxUploadSizeWantedThresholdMB = UploadPreferences.getMaxUploadFilesizeMb(getContext(), prefs);
-        HashSet<DocumentFile> retVal = new HashSet<>();
-        for (DocumentFile f : filesForUpload) {
-            double fileLengthMB = ((double) f.length()) / 1024 / 1024;
+        HashMap<Uri, Double> retVal = new HashMap<>();
+        for (Uri f : filesForUpload) {
+            Double fileLengthMB = BigDecimal.valueOf(IOUtils.getFilesize(requireContext(), f)).divide(BigDecimal.valueOf(1024* 1024), BigDecimal.ROUND_HALF_EVEN).doubleValue();
             if (fileLengthMB > maxUploadSizeWantedThresholdMB) {
-                retVal.add(f);
+                retVal.put(f, fileLengthMB);
             }
         }
         return retVal;
@@ -842,7 +845,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             if (!filesizesChecked) {
 
-                if (!runAreAllFilesUnderUserChosenMaxUploadThreshold(IOUtils.toDocumentFileList(requireContext(), filesForUpload))) {
+                if (!runAreAllFilesUnderUserChosenMaxUploadThreshold(filesForUpload)) {
                     return; // no, they aren't
                 }
             }
@@ -874,41 +877,33 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         submitUploadJob(activeJob);
     }
 
-    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(List<DocumentFile> filesForUpload) {
+    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(List<Uri> filesForUpload) {
 
-        final Set<DocumentFile> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUpload);
+        final Map<Uri,Double> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUpload);
 
         StringBuilder filenameListStrB = new StringBuilder();
-
-        for (DocumentFile f : filesForReview) {
-            double fileLengthMB = ((double) f.length()) / 1024 / 1024;
+        Set<Uri> keysToRemove = new HashSet<>();
+        for (Map.Entry<Uri,Double> f : filesForReview.entrySet()) {
+            if (compressVideosCheckbox.isChecked() && MimeTypeFilter.matches(IOUtils.getMimeType(requireContext(), f.getKey()), "video/*")) {
+                keysToRemove.add(f.getKey());
+                continue;
+            }
+            if (compressImagesCheckbox.isChecked() && MimeTypeFilter.matches(IOUtils.getMimeType(requireContext(), f.getKey()), "image/*")) {
+                keysToRemove.add(f.getKey());
+                continue;
+            }
+            double fileLengthMB = f.getValue();
             if (filesForReview.size() > 0) {
                 filenameListStrB.append(", ");
             }
-            filenameListStrB.append(f);
+            filenameListStrB.append(f.getKey().getPath());
             filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
         }
-        if (compressVideosCheckbox.isChecked()) {
-            Iterator<DocumentFile> iter = filesForReview.iterator();
-            while (iter.hasNext()) {
-                String mimeType = iter.next().getType();
-                if (mimeType != null && MimeTypeFilter.matches(mimeType, "video/*")) {
-                    iter.remove();
-                }
-            }
-        }
-        if (compressImagesCheckbox.isChecked()) {
-            Iterator<DocumentFile> iter = filesForReview.iterator();
-            while (iter.hasNext()) {
-
-                String mimeType = iter.next().getType();
-                if (mimeType != null && MimeTypeFilter.matches(mimeType,"image/*")) {
-                    iter.remove();
-                }
-            }
+        for(Uri uri : keysToRemove) {
+            filesForReview.remove(uri);
         }
         if (filesForReview.size() > 0) {
-            getUiHelper().showOrQueueCancellableDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
+            getUiHelper().showOrQueueCancellableDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview.keySet()));
             return false;
         }
         return true;
@@ -1345,9 +1340,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-        private Set<DocumentFile> filesToDelete;
+        private Set<Uri> filesToDelete;
 
-        public FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<DocumentFile> filesForReview) {
+        public FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<Uri> filesForReview) {
             super(uiHelper);
             this.filesToDelete = filesForReview;
         }
@@ -1357,8 +1352,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             AbstractUploadFragment fragment = getUiHelper().getParent();
 
             if (Boolean.TRUE == positiveAnswer) {
-                for (DocumentFile file : filesToDelete) {
-                    fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file.getUri(), false);
+                for (Uri file : filesToDelete) {
+                    fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
                 }
             }
             if (positiveAnswer != null) {
