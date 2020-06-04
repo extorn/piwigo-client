@@ -280,8 +280,8 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         }
         String item = folderRootsAdapter.getItemByValue(newFolder);
         if (item == null) {
-            // reset the selection
-            if (folderRootFolderSpinner.getSelectedItemId() >= 0) {
+            // reset the selection (if null - if it isn't null there's no way of telling which root its from)
+            if (newFolder == null && folderRootFolderSpinner.getSelectedItemId() >= 0) {
                 folderRootFolderSpinner.setAdapter(folderRootsAdapter);
             }
         } else {

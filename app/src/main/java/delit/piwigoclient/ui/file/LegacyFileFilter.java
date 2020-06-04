@@ -17,7 +17,7 @@ public class LegacyFileFilter implements FileFilter {
 
     @Override
         public boolean accept(File pathname) {
-            return !showFolderContents || (pathname.isDirectory() || filenameMatches(pathname));
+            return !showFolderContents || (pathname.isDirectory() || (pathname.isFile()  && filenameMatches(pathname)));
         }
 
         private boolean filenameMatches(File pathname) {
@@ -25,6 +25,9 @@ public class LegacyFileFilter implements FileFilter {
                 return true;
             }
             String thisExt = IOUtils.getFileExt(pathname.getName());
+            if(thisExt == null) {
+                return false;
+            }
             return visibleFileTypes.contains(thisExt);
         }
     }
