@@ -19,8 +19,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 
-import java.io.File;
-import java.io.FileDescriptor;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -31,12 +29,15 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
+import io.fabric.sdk.android.services.common.Crash;
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {
     private static final String TAG = "MediaMuxerControl";
     private static final boolean VERBOSE = false;
     private final Uri inputFile;
+    private long inputBytes;
     private final ExoPlayerCompression.CompressionListener listener;
     private final Handler eventHandler;
     private Map<String, MediaFormat> trackFormats;
@@ -58,6 +59,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     private TreeSet<Sample> queuedData = new TreeSet<>();
     private boolean safeShutdownInProgress;
     private Context context;
+    private ParcelFileDescriptor outputFileDescriptor;
 
     public MediaMuxerControl(Context context, Uri inputFile, Uri outputFile, ExoPlayerCompression.CompressionListener listener) throws IOException {
         this.context = context;
@@ -65,7 +67,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         this.outputFile = outputFile;
         extractLocationData(inputFile);
         extractInputVideoFormat(inputFile);
-        mediaMuxer = buildMediaMuxer(outputFile);
+        DocumentFile docFile = DocumentFile.fromSingleUri(context, inputFile);
+        inputBytes = docFile.length();
+        //mediaMuxer = buildMediaMuxer(outputFile);
         trackFormats = new HashMap<>(2);
         trackStatistics = new HashMap<>(2);
         this.listener = listener;
@@ -78,16 +82,19 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     private void extractInputVideoFormat(Uri inputFile) throws IOException {
         MediaExtractor mExtractor = new MediaExtractor();
-        mExtractor.setDataSource(context, inputFile,null);
-        int tracks = mExtractor.getTrackCount();
-        for (int i = 0; i < tracks; i++) {
-            inputVideoFormat = mExtractor.getTrackFormat(i);
-            String mime = inputVideoFormat.getString(MediaFormat.KEY_MIME);
-            if (MimeTypeFilter.matches(mime, "video/*")) {
-                break;
+        try {
+            mExtractor.setDataSource(context, inputFile, null);
+            int tracks = mExtractor.getTrackCount();
+            for (int i = 0; i < tracks; i++) {
+                inputVideoFormat = mExtractor.getTrackFormat(i);
+                String mime = inputVideoFormat.getString(MediaFormat.KEY_MIME);
+                if (MimeTypeFilter.matches(mime, "video/*")) {
+                    break;
+                }
             }
+        } finally {
+            mExtractor.release();
         }
-        mExtractor.release();
     }
 
     public void markAudioConfigured() {
@@ -134,6 +141,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     public boolean startMediaMuxer() {
         if (isConfigured() && !mediaMuxerStarted) {
+            mediaMuxer = buildMediaMuxer();
             try {
                 // the media muxer is ready to start accepting data now from the encoder
                 if (VERBOSE) {
@@ -167,60 +175,63 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     private void extractLocationData(Uri inputFile) {
         MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
-        metadataRetriever.setDataSource(context, inputFile);
-        String location = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
-        if (location != null) {
-            String mode;
-            switch (location.indexOf(".")) {
-                case 3:
-                    //   Latitude and Longitude in Degrees:
-                    //      ±DD.DDDD±DDD.DDDD/         (eg +12.345-098.765/)
-                    mode = "degrees";
-                    break;
-                case 5:
-                    //   Latitude and Longitude in Degrees and Minutes:
-                    //      ±DDMM.MMMM±DDDMM.MMMM/     (eg +1234.56-09854.321/)
-                    mode = "degrees and minutes";
-                    break;
-                case 7:
-                    //   Latitude and Longitude in Degrees, Minutes and Seconds:
-                    //      ±DDMMSS.SSSS±DDDMMSS.SSSS/ (eg +123456.7-0985432.1/)
-                    mode = "degress minutes and seconds";
-                    break;
-                default:
-                    mode = "unidentified";
+        try {
+            metadataRetriever.setDataSource(context, inputFile);
+            String location = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
+            if (location != null) {
+                String mode;
+                switch (location.indexOf(".")) {
+                    case 3:
+                        //   Latitude and Longitude in Degrees:
+                        //      ±DD.DDDD±DDD.DDDD/         (eg +12.345-098.765/)
+                        mode = "degrees";
+                        break;
+                    case 5:
+                        //   Latitude and Longitude in Degrees and Minutes:
+                        //      ±DDMM.MMMM±DDDMM.MMMM/     (eg +1234.56-09854.321/)
+                        mode = "degrees and minutes";
+                        break;
+                    case 7:
+                        //   Latitude and Longitude in Degrees, Minutes and Seconds:
+                        //      ±DDMMSS.SSSS±DDDMMSS.SSSS/ (eg +123456.7-0985432.1/)
+                        mode = "degress minutes and seconds";
+                        break;
+                    default:
+                        mode = "unidentified";
+                }
+                //            Altitude can be added optionally.
+                //                    Latitude, Longitude (in Degrees) and Altitude:
+                //      ±DD.DDDD±DDD.DDDD±AAA.AAA/         (eg +12.345-098.765+15.9/)
+                //            Latitude, Longitude (in Degrees and Minutes) and Altitude:
+                //      ±DDMM.MMMM±DDDMM.MMMM±AAA.AAA/     (eg +1234.56-09854.321+15.9/)
+                //            Latitude, Longitude (in Degrees, Minutes and Seconds) and Altitude:
+                //      ±DDMMSS.SSSS±DDDMMSS.SSSS±AAA.AAA/ (eg +123456.7-0985432.1+15.9/)
+
+                int longStartsAt = Math.max(location.indexOf('-', 1), location.indexOf('+', 1));
+                String latStr = location.substring(0, longStartsAt);
+
+                int altitudeStartAt = Math.max(location.indexOf('-', longStartsAt + 1), location.indexOf('+', longStartsAt + 1));
+
+                int longEndAt = location.length();
+                if (location.lastIndexOf('/') == longEndAt - 1) {
+                    longEndAt--;
+                }
+                if (altitudeStartAt > 0) {
+                    longEndAt = altitudeStartAt;
+                }
+
+                String longStr = location.substring(longStartsAt, longEndAt);
+
+                try {
+                    latitude = Float.valueOf(latStr);
+                    longitude = Float.valueOf(longStr);
+                } catch (NumberFormatException e) {
+                    Crashlytics.log(Log.ERROR, TAG, String.format("Error parsing lat long ISO String %1$s (%2$s), lat : %3$s, long : %4$s", location, mode, latStr, longStr));
+                }
             }
-//            Altitude can be added optionally.
-//                    Latitude, Longitude (in Degrees) and Altitude:
-//      ±DD.DDDD±DDD.DDDD±AAA.AAA/         (eg +12.345-098.765+15.9/)
-//            Latitude, Longitude (in Degrees and Minutes) and Altitude:
-//      ±DDMM.MMMM±DDDMM.MMMM±AAA.AAA/     (eg +1234.56-09854.321+15.9/)
-//            Latitude, Longitude (in Degrees, Minutes and Seconds) and Altitude:
-//      ±DDMMSS.SSSS±DDDMMSS.SSSS±AAA.AAA/ (eg +123456.7-0985432.1+15.9/)
-
-            int longStartsAt = Math.max(location.indexOf('-', 1), location.indexOf('+', 1));
-            String latStr = location.substring(0, longStartsAt);
-
-            int altitudeStartAt = Math.max(location.indexOf('-', longStartsAt + 1), location.indexOf('+', longStartsAt + 1));
-
-            int longEndAt = location.length();
-            if (location.lastIndexOf('/') == longEndAt - 1) {
-                longEndAt--;
-            }
-            if (altitudeStartAt > 0) {
-                longEndAt = altitudeStartAt;
-            }
-
-            String longStr = location.substring(longStartsAt, longEndAt);
-
-            try {
-                latitude = Float.valueOf(latStr);
-                longitude = Float.valueOf(longStr);
-            } catch (NumberFormatException e) {
-                Crashlytics.log(Log.ERROR, TAG, String.format("Error parsing lat long ISO String %1$s (%2$s), lat : %3$s, long : %4$s", location, mode, latStr, longStr));
-            }
+        } finally {
+            metadataRetriever.release();
         }
-        metadataRetriever.release();
     }
 
     public boolean hasAudioDataQueued() {
@@ -255,16 +266,20 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         this.sourceDataRead = sourceDataProcessed;
     }
 
+    public boolean isSourceDataRead() {
+        return sourceDataRead;
+    }
+
     public boolean getAndResetIsSourceDataRead() {
         boolean val = sourceDataRead;
         sourceDataRead = false;
         return val;
     }
 
-    public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Long originalBytes) {
+    public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Integer originalBytes) {
 
         TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
-        thisTrackStats.addOriginalBytesTranscoded(originalBytes);
+        thisTrackStats.addOriginalBytesTranscoded(originalBytes == null ? 0 : originalBytes);
 
         int trackCount = trackFormats.size();
 
@@ -327,6 +342,13 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         if (this.mediaMuxer != null) {
             this.mediaMuxer.release();
         }
+        try {
+            if(outputFileDescriptor != null) {
+                outputFileDescriptor.close();
+            }
+        } catch (IOException e) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to close output file descriptor");
+        }
         mediaMuxerStarted = false;
     }
 
@@ -363,8 +385,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             bytesTranscoded += trackStats.getOriginalBytesTranscoded();
         }
 
-        DocumentFile docFile = DocumentFile.fromSingleUri(context, inputFile);
-        double value = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(docFile.length()), new MathContext(2, RoundingMode.DOWN)).doubleValue();
+        double value = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(inputBytes), new MathContext(2, RoundingMode.DOWN)).doubleValue();
         return value;
     }
 
@@ -394,11 +415,29 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             if (trackFormats.containsKey("audio")) {
                 mediaMuxer.addTrack(trackFormats.get("audio"));
             }
+            configureMediaMuxer(mediaMuxer);
             return mediaMuxer;
         } catch (IOException e) {
-            throw new RuntimeException("Unable to recreat the media muxer", e);
+            throw new RuntimeException("Unable to recreate the media muxer", e);
         }
 
+    }
+
+    private void configureMediaMuxer(MediaMuxer muxer) {
+        //TODO I've moved this from before the add Tracks. Does it solve the problem?!
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Float.MAX_VALUE != latitude) {
+                try {
+                    muxer.setLocation(latitude, longitude);
+                } catch (IllegalArgumentException e) {
+                    Crashlytics.log(Log.ERROR, TAG, "Location data out of range - cannot copy to transcoded file");
+                    Crashlytics.logException(e);
+                }
+            }
+        }
+        if (rotationDegrees > 0) {
+            muxer.setOrientationHint(rotationDegrees);
+        }
     }
 
     public void addAudioTrack(MediaFormat outputFormat) {
@@ -411,7 +450,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         } else {
             trackStatistics.put("audio", new TrackStats());
         }
-        mediaMuxer = buildMediaMuxer();
+//        mediaMuxer = buildMediaMuxer();
     }
 
     public void addVideoTrack(MediaFormat outputFormat) {
@@ -424,7 +463,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         } else {
             trackStatistics.put("video", new TrackStats());
         }
-        mediaMuxer = buildMediaMuxer();
+//        mediaMuxer = buildMediaMuxer();
     }
 
     public boolean isConfigured() {
@@ -433,21 +472,12 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     private MediaMuxer buildMediaMuxer(Uri outputFile) throws IOException {
         release();
-        MediaMuxer muxer = new MediaMuxer(IOUtils.getFile(outputFile).getPath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-
-        this.mediaMuxer = muxer;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (Float.MAX_VALUE != latitude) {
-                try {
-                    mediaMuxer.setLocation(latitude, longitude);
-                } catch (IllegalArgumentException e) {
-                    Crashlytics.log(Log.ERROR, TAG, "Location data out of range - cannot copy to transcoded file");
-                    Crashlytics.logException(e);
-                }
-            }
-        }
-        if (rotationDegrees > 0) {
-            mediaMuxer.setOrientationHint(rotationDegrees);
+        MediaMuxer muxer;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            outputFileDescriptor = context.getContentResolver().openFileDescriptor(outputFile, "rwt");
+            muxer = new MediaMuxer(outputFileDescriptor.getFileDescriptor(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        } else {
+            muxer = new MediaMuxer(LegacyIOUtils.getFile(outputFile).getPath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         }
         return muxer;
     }
@@ -614,11 +644,11 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         long originalBytesTranscoded;
         long transcodedBytesWritten;
 
-        public void addTranscodedBytesWritten(long transcodedBytesWritten) {
+        public void addTranscodedBytesWritten(int transcodedBytesWritten) {
             this.transcodedBytesWritten += transcodedBytesWritten;
         }
 
-        public void addOriginalBytesTranscoded(long originalBytesTranscoded) {
+        public void addOriginalBytesTranscoded(int originalBytesTranscoded) {
             this.originalBytesTranscoded += originalBytesTranscoded;
         }
 

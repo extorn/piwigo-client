@@ -421,7 +421,15 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
                         Log.d(TAG, String.format("writing sample video data (%2$dbytes) for frame at time [%1$d]", info.presentationTimeUs, info.size));
                     }
 
-                    long originalBytes = sampleTimeSizeMap.get(info.presentationTimeUs);
+                    Integer originalBytes = sampleTimeSizeMap.get(info.presentationTimeUs);
+                    if(originalBytes == null) {
+                        int bytes = 0;
+                        while(sampleTimeSizeMap.keyAt(0) <= info.presentationTimeUs) {
+                            bytes += sampleTimeSizeMap.valueAt(0);
+                            sampleTimeSizeMap.removeAt(0);
+                        }
+                        originalBytes = bytes;
+                    }
                     mediaMuxerControl.writeSampleData(mediaMuxerControl.getVideoTrackId(), encodedDataBuffer, info, originalBytes);
                     wroteData = true;
                 } else {

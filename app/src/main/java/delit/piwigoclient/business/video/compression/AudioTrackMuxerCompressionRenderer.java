@@ -78,7 +78,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 
     @Override
     protected void onQueueInputBuffer(DecoderInputBuffer buffer) {
-        sampleTimeSizeMap.put(buffer.timeUs, buffer.data.remaining());
+        sampleTimeSizeMap.put(buffer.timeUs, buffer.data.limit());
         super.onQueueInputBuffer(buffer);
     }
 
@@ -143,14 +143,12 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         int codecMaxInputSize = getCodecMaxInputSize(codecInfo, format, getStreamFormats());
         MediaFormat mediaFormat = getMediaFormat(format, format.sampleMimeType, codecMaxInputSize);
         MediaFormat outputMediaFormat = getOutputMediaFormat(mediaFormat);
-        boolean addTrack = false;
         if (!mediaFormat.equals(currentDecodedMediaFormat)) {
             currentDecodedMediaFormat = mediaFormat;
             currentOutputMediaFormat = outputMediaFormat;
             transcodingTrack = !currentDecodedMediaFormat.equals(currentOutputMediaFormat);
-            addTrack = !transcodingTrack;
         }
-        if (addTrack) { // this is here in case the video contains multiple audio formats.
+        if (!transcodingTrack) { // If we're transcoding then the output format changed flag is called with that new format.
             mediaMuxerControl.addAudioTrack(outputMediaFormat);
             mediaMuxerControl.markAudioConfigured();
             mediaMuxerControl.startMediaMuxer();
@@ -278,15 +276,29 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         }
 
         if (transcodingTrack) {
-            // need to do this here to ensure that there is space to move data to so as the decoder buffers don't get clogged up.
-            processAnyEncoderOutput();
+            if (encoder == null) {
+                if(mediaMuxerControl.isAudioConfigured()) {
+                    try {
+                        initialiseOutputEncoder(currentOutputMediaFormat);
+                    } catch (IOException e) {
+                        throw ExoPlaybackException.createForRenderer(new Exception("Unable to initialise output encoder", e), getIndex());
+                    }
+                }
+                if (VERBOSE) {
+                    Log.d(TAG, "encoder not available to process data");
+                }
+            }
+            if(encoder != null) {
+                // need to do this here to ensure that there is space to move data to so as the decoder buffers don't get clogged up.
+                processAnyEncoderOutput();
+            }
         }
 
 //        this.renderPositionUs = positionUs;
         super.render(positionUs, elapsedRealtimeUs);
         mediaMuxerControl.markDataRead(processedSourceDataDuringRender);
         boolean lastRendererReadDatasource = mediaMuxerControl.getAndResetIsSourceDataRead();
-        if (steppedWithoutActionCount > 300 && mediaMuxerControl.isAudioConfigured()) {
+        if (steppedWithoutActionCount > 50 && !mediaMuxerControl.isAudioConfigured() || steppedWithoutActionCount > 300) {
             if (!lastRendererReadDatasource) {
                 // Compression has crashed. Why?!
                 throw ExoPlaybackException.createForRenderer(new Exception("Compression got stuck for some reason - stopping"), getIndex());
@@ -310,14 +322,13 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
      */
     @Override
     protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec streamDecoderCodec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) throws ExoPlaybackException {
-        steppedWithoutActionCount = 0;
-        if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
+        /*if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
             if (VERBOSE) {
                 Log.e(TAG, "Audio Processor - deferring render until mediamuxer is configured: position " + positionUs + " bufferIdx : " + bufferIndex);
             }
             return false;
-        }
-        if (mediaMuxerControl.getAndResetIsSourceDataRead() && mediaMuxerControl.isHasVideo() && mediaMuxerControl.hasAudioDataQueued()) {
+        }*/
+        if (mediaMuxerControl.isHasVideo() && !mediaMuxerControl.isVideoConfigured() && mediaMuxerControl.isSourceDataRead() && mediaMuxerControl.hasAudioDataQueued()) {
             if (bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
                 if (VERBOSE) {
                     Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs + " bufferIdx : " + bufferIndex);
@@ -330,6 +341,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         try {
             // process the output data from the decoder
             processedSourceDataDuringRender = processDecoderOutputDataBuffer(streamDecoderCodec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
+            steppedWithoutActionCount = 0;
             return processedSourceDataDuringRender;
 
         } catch (RuntimeException e) {
@@ -492,12 +504,6 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     }
 
     private void processAnyEncoderOutput() {
-        if (encoder == null) {
-            if (VERBOSE) {
-                Log.d(TAG, "encoder not available to process data");
-            }
-            return;
-        }
         int outputBufIndex = 0;
         MediaCodec.BufferInfo outBuffInfo = new MediaCodec.BufferInfo();
         while (outputBufIndex != MediaCodec.INFO_TRY_AGAIN_LATER) {
@@ -526,6 +532,16 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
                 mediaMuxerControl.markAudioConfigured();
                 mediaMuxerControl.startMediaMuxer();
 
+            } else if ((outBuffInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
+                if(!mediaMuxerControl.isAudioConfigured()) {
+                    currentOutputMediaFormat = encoder.getOutputFormat();
+                    if (VERBOSE) {
+                        Log.d(TAG, "Output format changed to : " + currentOutputMediaFormat);
+                    }
+                    mediaMuxerControl.addAudioTrack(currentOutputMediaFormat);
+                    mediaMuxerControl.markAudioConfigured();
+                    mediaMuxerControl.startMediaMuxer();
+                }
             } else if (outputBufIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                 Crashlytics.log(Log.ERROR, TAG, "Output buffers changed during encode!");
             } else if (outputBufIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
@@ -578,10 +594,12 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
             Log.d(TAG, String.format("writing sample audio data : [%1$d] - flags : %2$d", audioBufferInfo.presentationTimeUs, bufferFlags));
         }
 
-        Integer bytes = sampleTimeSizeMap.get(bufferPresentationTimeUs);
-        long originalBytes = bytes == null ? 0 : bytes;
-
-        mediaMuxerControl.writeSampleData(mediaMuxerControl.getAudioTrackId(), buffer, audioBufferInfo, originalBytes);
+        int bytes = 0;
+        while(sampleTimeSizeMap.keyAt(0) <= bufferPresentationTimeUs) {
+            bytes += sampleTimeSizeMap.valueAt(0);
+            sampleTimeSizeMap.removeAt(0);
+        }
+        mediaMuxerControl.writeSampleData(mediaMuxerControl.getAudioTrackId(), buffer, audioBufferInfo, bytes);
 
 
         decoderCounters.renderedOutputBufferCount++;
