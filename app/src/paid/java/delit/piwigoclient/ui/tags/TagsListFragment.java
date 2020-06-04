@@ -16,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -250,7 +249,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     }
 
     private void addNewTag() {
-        final View v = getLayoutInflater().inflate(R.layout.create_tag ,null);
+        final View v = getLayoutInflater().inflate(R.layout.dialog_layout_create_tag,null);
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {

@@ -1,9 +1,10 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
+    <!-- attribute references to colors are not supported until lollipop -->
     <gradient
         android:angle="135"
-        android:centerColor="?cardBackgroundColor"
-        android:endColor="?colorOnSurface"
-        android:startColor="?cardBackgroundColor"
+        android:centerColor="@color/app_color_surface"
+        android:endColor="@color/app_color_on_surface"
+        android:startColor="@color/app_color_surface"
         android:type="linear" />
 </shape>

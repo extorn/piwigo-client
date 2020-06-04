@@ -184,15 +184,12 @@ public class UploadActivity extends MyActivity {
         super.onResume();
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        if (result != ConnectionResult.SUCCESS) {
+        if (!BuildConfig.DEBUG && result != ConnectionResult.SUCCESS) {
             if (googleApi.isUserResolvableError(result)) {
                 Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
-                d.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (!BuildConfig.DEBUG) {
-                            finish();
-                        }
+                d.setOnDismissListener(dialog -> {
+                    if (!BuildConfig.DEBUG) {
+                        finish();
                     }
                 });
                 d.show();

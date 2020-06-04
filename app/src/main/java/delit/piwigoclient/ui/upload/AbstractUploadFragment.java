@@ -1290,9 +1290,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 return;
             }
             AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
-            Uri f = fragment.getFilesForUploadViewAdapter().getFiles().get(0);
-            fragment.getFilesForUploadViewAdapter().updateUploadProgress(f, (int) Math.rint(compressionProgress));
-
+            FilesToUploadRecyclerViewAdapter adapter = fragment.getFilesForUploadViewAdapter();
+            if(adapter != null) {
+                Uri f = adapter.getFiles().get(0);
+                adapter.updateUploadProgress(f, (int) Math.rint(compressionProgress));
+            }
             long currentTime = System.currentTimeMillis();
             long elapsedTime = currentTime - startCompressionAt;
             long estimateTotalCompressionTime = Math.round(100 * (elapsedTime / compressionProgress));

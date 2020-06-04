@@ -59,33 +59,50 @@
             android:value="ca-app-pub-1408465472557768~4878187139"/>
 
         <activity
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.App"
-            android:windowSoftInputMode="stateHidden|adjustResize|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:stateNotNeeded="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="delit.piwigoclient.VIEW_TOP_TIPS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="delit.piwigoclient.VIEW_USERS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="delit.piwigoclient.VIEW_GROUPS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
         </activity>
         <activity
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:name=".ui.PreferencesActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.App.EditPages"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
             <intent-filter>
-                <action android:name=".Preferences" />
+                <action android:name="delit.piwigoclient.PREFERENCES" />
                 <category android:name="android.intent.category.PREFERENCE" />
             </intent-filter>
         </activity>
         <activity
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:name=".ui.UploadActivity"
+            android:alwaysRetainTaskState="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.App.EditPages"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -111,7 +128,8 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.App.EditPages"
             android:configChanges="layoutDirection"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:parentActivityName="delit.piwigoclient.ui.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

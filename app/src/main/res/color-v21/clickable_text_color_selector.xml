@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="true" android:color="@color/app_secondary"/>
+    <item android:state_enabled="true" android:color="?colorSecondary"/>
     <!--<item android:color="?android:colorForeground"/>  &lt;!&ndash; default is android:textColor &ndash;&gt;-->
 </selector>

@@ -15,8 +15,8 @@
     <clip>
         <shape>
             <gradient
-                android:startColor="@color/app_secondary_variant"
-                android:endColor="@color/app_secondary_variant"
+                android:startColor="?colorSecondaryVariant"
+                android:endColor="?colorSecondaryVariant"
                 android:angle="270"/>
         </shape>
     </clip>
@@ -25,8 +25,8 @@
     <clip>
         <shape>
             <gradient
-                android:startColor="@color/app_secondary"
-                android:endColor="@color/app_secondary"
+                android:startColor="?colorSecondary"
+                android:endColor="?colorSecondary"
                 android:angle="270" />
         </shape>
     </clip>

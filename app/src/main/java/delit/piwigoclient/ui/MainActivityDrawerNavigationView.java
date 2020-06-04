@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -81,6 +82,7 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
     public View inflateHeaderView(@LayoutRes int res) {
 
         ViewGroup headerView = (ViewGroup) super.inflateHeaderView(res);
+        headerView.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.side_nav_bar));
 
         String appVersion;
         if (isInEditMode()) {

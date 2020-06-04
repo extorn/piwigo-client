@@ -17,8 +17,8 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:alpha="0.08" android:color="@color/app_primary" android:state_checked="true"/>
-    <item android:alpha="0.08" android:color="@color/app_color_on_surface" app:state_dragged="true"/>
-    <item android:alpha="0.08" android:color="@color/app_color_on_surface" android:state_activated="true"/>
+    <item android:alpha="0.08" android:color="?attr/colorPrimary" android:state_checked="true"/>
+    <item android:alpha="0.08" android:color="?attr/colorOnSurface" app:state_dragged="true"/>
+    <item android:alpha="0.08" android:color="?attr/colorOnSurface" android:state_activated="true"/>
     <item android:color="@android:color/transparent" android:state_checked="false" app:state_dragged="false"/>
 </selector>
