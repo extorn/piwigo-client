@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,11 +37,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import io.fabric.sdk.android.services.common.Crash;
 
 import static android.view.View.GONE;
 
@@ -352,11 +357,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 if (uploadProgress != null && uploadProgress.fileBeingUploaded != null) {
                     uri = uploadProgress.fileBeingUploaded;
                 }
-                DocumentFile docFile = DocumentFile.fromSingleUri(context, uri);
-                if (!docFile.exists()) {
-                    throw new IllegalStateException("file has already been deleted");
-                }
-                dataLength = docFile.length();
+                dataLength = IOUtils.getFilesize(context, uri);
             }
             double sizeMb = BigDecimal.valueOf(dataLength).divide(BigDecimal.valueOf(1024 * 1024), 2, BigDecimal.ROUND_HALF_EVEN).doubleValue();
             return String.format(Locale.getDefault(), "%1$.2fMB", sizeMb);
@@ -364,7 +365,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         public String getFilename(Context context) {
             if(filename == null) {
-                filename = DocumentFile.fromSingleUri(context, uri).getName();
+                filename = IOUtils.getFilename(context, uri);
             }
             return filename;
         }

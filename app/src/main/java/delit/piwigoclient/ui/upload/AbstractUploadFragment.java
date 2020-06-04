@@ -756,11 +756,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             for(FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
                 try {
                     DocumentFile documentFile = item.getDocumentFile(requireContext());
-                    DocumentFile folder = documentFile.getParentFile();
-                    if (folder != null) { // will be null for any shared files.
-                        Uri lastOpenedFolder = folder.getUri();
-                        UploadPreferences.setDefaultLocalUploadFolder(requireContext(), getPrefs(), lastOpenedFolder);
-                        break; // don't try again. One folder is fine.
+                    if(documentFile != null) {
+                        DocumentFile folder = documentFile.getParentFile();
+                        if (folder != null) { // will be null for any shared files.
+                            Uri lastOpenedFolder = folder.getUri();
+                            UploadPreferences.setDefaultLocalUploadFolder(requireContext(), getPrefs(), lastOpenedFolder);
+                            break; // don't try again. One folder is fine.
+                        }
                     }
                 } catch (IllegalArgumentException e) {
                     // this will occur for any shared files as they're not DocumentFiles. We can safely ignore it.
@@ -771,11 +773,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         int addedItems = 0;
 
         ArrayList<Uri> rawFilesToBeUploaded = new ArrayList<>(folderItemsToBeUploaded.size());
-        Iterator<FolderItemRecyclerViewAdapter.FolderItem> iter = folderItemsToBeUploaded.iterator();
-        while (iter.hasNext()) {
-            FolderItemRecyclerViewAdapter.FolderItem item = iter.next();
+        for (FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
             if (item.getContentUri() != null) {
-                if (adapter.add(getContext(), item.getContentUri())) {
+                if (adapter.add(requireContext(), item.getContentUri())) {
                     addedItems++;
                 }
             } else {

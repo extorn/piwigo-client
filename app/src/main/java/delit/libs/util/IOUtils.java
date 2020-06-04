@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Parcel;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.util.Log;
@@ -412,7 +413,7 @@ public class IOUtils {
         return fileExt;
     }
 
-    public static @Nullable String getFileExt(String filename) {
+    public static @Nullable String getFileExt(@Nullable String filename) {
         if(filename == null) {
             return null;
         }
@@ -551,6 +552,9 @@ public class IOUtils {
         if ("content".equals(uri.getScheme())) {
             try {
                 DocumentFile rootDocFile = DocumentFile.fromTreeUri(context, uri);
+                if(rootDocFile == null) {
+                    return null;
+                }
                 displayName = getFilename(rootDocFile);
             } catch(IllegalArgumentException e) {
                 // this URI is not a tree document file
@@ -914,5 +918,33 @@ public class IOUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static long getFilesize(Context context, Uri uri) {
+        DocumentFile docFile = DocumentFile.fromSingleUri(context, uri);
+        if(docFile == null) {
+            ParcelFileDescriptor fd = null;
+            try {
+                fd = context.getContentResolver().openFileDescriptor(uri, "r");
+                if(fd != null) {
+                    return fd.getStatSize();
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if(fd != null) {
+                    try {
+                        fd.close();
+                    } catch (IOException e) {
+                        Crashlytics.logException(e);
+                    }
+                }
+            }
+        } else if (!docFile.exists()) {
+            throw new IllegalStateException("file has already been deleted");
+        } else {
+            return docFile.length();
+        }
+        return -1;
     }
 }

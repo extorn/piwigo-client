@@ -19,6 +19,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.drew.lang.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -485,7 +487,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return itemUri;
         }
 
-        public @NonNull DocumentFile getDocumentFile(Context context) {
+        /**
+         *
+         * @param context
+         * @return may be null (pre lollipop always null! :-( )
+         */
+        public @Nullable DocumentFile getDocumentFile(Context context) {
             return cacheDocFileFields(context);
         }
 
@@ -507,7 +514,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return lastModified;
         }
 
-        public DocumentFile cacheDocFileFields(Context context) {
+        public @Nullable DocumentFile cacheDocFileFields(Context context) {
             if(itemDocFile == null) {
                 if(rootUri != null) {
                     // will be the case after loaded from parcel
