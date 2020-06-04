@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
@@ -351,7 +352,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         deleteFilesAfterUploadCheckbox.setChecked(UploadPreferences.isDeleteFilesAfterUploadDefault(getContext(), getPrefs()));
 
         compressVideosCheckbox = view.findViewById(R.id.compress_videos_button);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (!ExoPlayerCompression.isSupported()) {
             compressVideosCheckbox.setVisibility(GONE);
             compressVideosSettings.setVisibility(GONE);
         } else {
@@ -470,63 +471,66 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesToUploadAdapter);
 
-        if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON) {
+        if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON && ExoPlayerCompression.isSupported()) {
 
-            Button compressVideosButton = new Button(getContext());
-            compressVideosButton.setText("Compress");
-            compressVideosButton.setOnClickListener(v -> {
-                v.setEnabled(false);
-                compressVideos(v);
-            });
-            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
-            layoutParams.bottomToTop = R.id.upload_files_button;
-            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
+            injectCompressionControlsIntoView();
 
-            Objects.requireNonNull(filesForUploadView.getAdapter()).registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onChanged() {
-                    compressVideosButton.setEnabled(filesForUploadView.getAdapter().getItemCount() > 0);
-                }
-            });
         }
 
         return view;
     }
 
-
-    private void compressVideos(View linkedView) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            getUiHelper().showDetailedMsg(R.string.alert_error, "Video Compression not supported on this version of android");
-        } else {
-            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-            List<Uri> filesForUpload = fileListAdapter.getFiles();
-            if (filesForUpload.isEmpty()) {
-                return;
+    private void injectCompressionControlsIntoView() {
+        Button compressVideosButton = new Button(getContext());
+        compressVideosButton.setText("Compress");
+        compressVideosButton.setOnClickListener(v -> {
+            v.setEnabled(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                compressVideos(v);
             }
-            for(Uri fileForCompression : filesForUpload) {
-                ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-                long rawVal = compressVideosQualitySpinner.getSelectedItemId();
-                int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
-                double bpps = ((double) rawVal) / 1000;
-                compressionSettings.setAddAudioTrack(audioBitrate != 0);
-                compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
-                compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
+        });
+        ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
+        layoutParams.bottomToTop = R.id.upload_files_button;
+        ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
+
+        Objects.requireNonNull(filesForUploadView.getAdapter()).registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                compressVideosButton.setEnabled(filesForUploadView.getAdapter().getItemCount() > 0);
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void compressVideos(View linkedView) {
+        FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+        List<Uri> filesForUpload = fileListAdapter.getFiles();
+        if (filesForUpload.isEmpty()) {
+            return;
+        }
+        for(Uri fileForCompression : filesForUpload) {
+            ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
+            long rawVal = compressVideosQualitySpinner.getSelectedItemId();
+            int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
+            double bpps = ((double) rawVal) / 1000;
+            compressionSettings.setAddAudioTrack(audioBitrate != 0);
+            compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
+            compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
 //                compressionSettings.disableFastStart();
 
 
-                File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-                File outputVideo;
-                int i = 0;
-                DocumentFile inputDocFile = DocumentFile.fromSingleUri(requireContext(), fileForCompression);
-                do {
-                    i++;
-                    String filename = inputDocFile.getName();
-                    outputVideo = new File(moviesFolder, "compressed_" + i + filename);
-                } while (outputVideo.exists());
-                Uri outputVideoUri = Uri.fromFile(LegacyIOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType())));
-                new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, outputVideoUri, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
-            }
+            File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+            File outputVideo;
+            int i = 0;
+            DocumentFile inputDocFile = DocumentFile.fromSingleUri(requireContext(), fileForCompression);
+            do {
+                i++;
+                String filename = inputDocFile.getName();
+                outputVideo = new File(moviesFolder, "compressed_" + i + filename);
+            } while (outputVideo.exists());
+            Uri outputVideoUri = Uri.fromFile(LegacyIOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType())));
+            new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, outputVideoUri, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
         }
     }
 

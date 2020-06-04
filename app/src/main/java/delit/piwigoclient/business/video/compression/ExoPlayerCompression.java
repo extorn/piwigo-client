@@ -54,6 +54,11 @@ public class ExoPlayerCompression {
     public ExoPlayerCompression() {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.BASE)
+    public static boolean isSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
     public void invokeFileCompression(final Context context, final Uri inputFile, final Uri outputFile, final CompressionListener listener, final CompressionParameters compressionSettings) {
         this.context = context;
         ExoPlayerCompressionThread thread = new ExoPlayerCompressionThread(context, inputFile, outputFile, listener, compressionSettings);
