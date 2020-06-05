@@ -247,12 +247,29 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         super.onDestroyView();
     }
 
+    private class FolderItemTaskListener implements TaskProgressListener {
+
+        @Override
+        public void onTaskProgress(double percentageComplete) {
+            progressIndicator.showProgressIndicator((int) Math.rint(percentageComplete* 100));
+        }
+
+        @Override
+        public void onTaskStarted() {
+            progressIndicator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onTaskFinished() {
+            progressIndicator.setVisibility(View.GONE);
+        }
+    }
+
     private class FolderItemNavigationListener implements FolderItemRecyclerViewAdapter.NavigationListener {
 
         @Override
         public void onPreFolderOpened(DocumentFile oldFolder, DocumentFile[] newFolderContent) {
             // need to do this before the folder is opened
-            DisplayUtils.postOnUiThread(() -> progressIndicator.showProgressIndicator(-1));
             recordTheCurrentListOfVisibleItemsInState(oldFolder);
         }
 
@@ -265,9 +282,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
             fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
             fileExtFilters.selectAll();
-
-            DisplayUtils.postOnUiThread(() -> progressIndicator.hideProgressIndicator());
-
         }
     }
 
@@ -443,6 +457,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
             final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(requireContext(), navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<>(), getViewPrefs());
+            viewAdapter.setTaskListener(new FolderItemTaskListener());
 
             if (!viewAdapter.isItemSelectionAllowed()) {
                 viewAdapter.toggleItemSelection();
@@ -610,7 +625,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     if(newRoot != null) {
                         fileExtFilters.setEnabled(true);
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
+                        DocumentFile currentRoot = getListAdapter().getActiveFolder();
                         getListAdapter().resetRoot(newRoot);
+                        if(currentRoot == null && getViewPrefs().getInitialFolder() != null) {
+                            DocumentFile file = IOUtils.getTreeLinkedDocFile(getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
+                            getListAdapter().updateContent(file, false);
+                        }
                         deselectAllItems();
                         if(listViewStates != null) {
                             listViewStates.clear();

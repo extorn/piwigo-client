@@ -190,12 +190,12 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
 
     public Comparator<? super LegacyFolderItem> getFileComparator() {
         if (fileComparator == null) {
-            fileComparator = buildFileComparator();
+            fileComparator = buildFolderItemComparator();
         }
         return fileComparator;
     }
 
-    protected Comparator<? super LegacyFolderItem> buildFileComparator() {
+    protected Comparator<? super LegacyFolderItem> buildFolderItemComparator() {
         return new Comparator<LegacyFolderItem>() {
 
             @Override
