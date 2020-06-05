@@ -635,11 +635,52 @@ public class IOUtils {
         return ObjectUtils.areEqual(doc1.getUri(), doc2.getUri());
     }
 
-    public static DocumentFile getTreeLinkedDocFile(Context context, Uri rootUri, Uri itemUri) {
-
+    /**
+     * Get a document file for an item Uri where getParent works to the provided root Uri
+     * @param context
+     * @param rootUri a known root Uri
+     * @param itemUri the item Uri
+     * @throws IllegalStateException if it was not possible for any reason.
+     * @return DocumentFile which is chained together all the way from the itemUri to the rootUri allowing traversal
+     */
+    public static DocumentFile getTreeLinkedDocFile(@NonNull Context context, @NonNull Uri rootUri, @NonNull Uri itemUri) {
         if(!(itemUri.getScheme().equals(rootUri.getScheme()) && itemUri.getAuthority().equals(rootUri.getAuthority()))) {
             throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
         }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            return getTreeLinkedDocFileO(context, rootUri, itemUri);
+        } else {
+            return getTreeLinkedDocFilePreO(context, rootUri, itemUri);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static @NonNull DocumentFile getTreeLinkedDocFileO(Context context, Uri rootUri, Uri itemUri) {
+        // this works really well - but its android O and above only. :-(
+        try {
+            DocumentFile rootDocFile = DocumentFile.fromTreeUri(context, rootUri);
+
+            List<String> itemPath = DocumentsContract.findDocumentPath(context.getContentResolver(), itemUri).getPath();
+
+            for (int i = 1; i < itemPath.size() && rootDocFile != null; i++) {
+                List<String> rootDocPath = DocumentsContract.findDocumentPath(context.getContentResolver(), rootDocFile.getUri()).getPath();
+                String parentPath = rootDocPath.get(rootDocPath.size() - 1);
+                String filename = itemPath.get(i).substring(parentPath.length());
+                filename = filename.indexOf('/') == 0 ? filename.substring(1) : filename;
+                rootDocFile = rootDocFile.findFile(filename);
+            }
+            if (rootDocFile == null) {
+                throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+            }
+            return rootDocFile;
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+        }
+    }
+
+    //FIXME This is not likely to be working!
+    public static DocumentFile getTreeLinkedDocFilePreO(Context context, Uri rootUri, Uri itemUri) {
+
         Uri treeUri = getTreeUri(rootUri);
         List<String> treePath = treeUri.getPathSegments();
         List<String> itemPath = itemUri.getPathSegments();
