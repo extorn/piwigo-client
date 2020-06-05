@@ -626,10 +626,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         fileExtFilters.setEnabled(true);
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
                         DocumentFile currentRoot = getListAdapter().getActiveFolder();
-                        getListAdapter().resetRoot(newRoot);
                         if(currentRoot == null && getViewPrefs().getInitialFolder() != null) {
                             DocumentFile file = IOUtils.getTreeLinkedDocFile(getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
-                            getListAdapter().updateContent(file, false);
+                            getListAdapter().updateContentAndRoot(newRoot, file);
+                        } else {
+                            getListAdapter().resetRoot(newRoot);
                         }
                         deselectAllItems();
                         if(listViewStates != null) {

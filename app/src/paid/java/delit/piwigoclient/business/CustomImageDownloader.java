@@ -33,7 +33,7 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
     protected Metadata loadExifMetadata(Uri uri, InputStream imageDataStream) {
         Metadata metadata = super.loadExifMetadata(uri, imageDataStream);
         String exifWantedStr = uri.getQueryParameter(EXIF_WANTED_URI_PARAM);
-        boolean exifEventWanted = Boolean.valueOf(exifWantedStr);
+        boolean exifEventWanted = Boolean.parseBoolean(exifWantedStr);
         if(metadata != null && exifEventWanted) {
             BaseLruExifCache<Metadata> cache = PicassoFactory.getInstance().getPicassoSingleton().getCache();
             String uriStr = uri.toString();

@@ -187,7 +187,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         if (AdsManager.getInstance().shouldShowAdverts()
                 && (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT
                 || largeEnoughScreenSizeForAdvert)) {
-            adView.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+            adView.loadAd(new AdRequest.Builder().build());
             adView.setAdListener(new AdsManager.MyBannerAdListener(adView));
             adView.setVisibility(VISIBLE);
         } else {

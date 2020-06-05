@@ -37,7 +37,6 @@ import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
-import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
@@ -93,11 +92,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     protected void updateContent(DocumentFile newContent, boolean force) {
+        if(isBusy) {
+            activeTask.cancel(true);
+        }
         activeTask = new UpdateFolderContentTask(this, newContent, force).execute();
     }
 
-    protected void updateContentInternal(DocumentFile newContent, boolean force) {
+    protected List<FolderItem> getNewDisplayContentInternal(DocumentFile newContent) {
 
+        List<FolderItem> currentDisplayContent = null;
         activeFolder = newContent;
         getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
         // load all the children.
@@ -114,13 +117,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             // null used to mean no folder to show, but now means items without a folder shown so we leave the content intact.
         }
         if(Thread.currentThread().isInterrupted()) {
-            return;
+            return null;
         }
 
+        boolean initialSetup = currentVisibleDocumentFileExts == null;
         currentVisibleDocumentFileExts = buildListOfFileExtsAndMimesInCurrentFolder(currentDisplayContent);
-        //Set<String> desiredExts = getAdapterPrefs().getVisibleFileTypesForMimes(currentVisibleDocumentFileExts);
-        //getAdapterPrefs().withVisibleContent(desiredExts, getAdapterPrefs().getFileSortOrder());
-
+        if(initialSetup) {
+            Set<String> desiredExts = getAdapterPrefs().getVisibleFileTypesForMimes(currentVisibleDocumentFileExts);
+            getAdapterPrefs().withVisibleContent(desiredExts, getAdapterPrefs().getFileSortOrder());
+        }
         SortedSet<String> visibleFileExts = getAdapterPrefs().getVisibleFileTypes();
         //String[] visibleMimes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
         boolean showFolderContainedFiles = getAdapterPrefs().isAllowFileSelection();
@@ -131,12 +136,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 currentDisplayContent.remove(i);
             }
             if(Thread.currentThread().isInterrupted()) {
-                return;
+                return null;
             }
         }
 
 
         Collections.sort(currentDisplayContent, getFolderItemComparator());
+        return currentDisplayContent;
     }
 
     private static class FolderItemFilter {
@@ -186,6 +192,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
         clear();
         changeFolderViewed(activeRootFile);
+    }
+
+    public void updateContentAndRoot(@NonNull DocumentFile activeRootFile, @NonNull DocumentFile newFolder) {
+        if(isBusy) {
+            activeTask.cancel(true);
+        }
+        this.activeRootUri = IOUtils.getTreeUri(activeRootFile.getUri());
+        clear();
+        changeFolderViewed(newFolder);
     }
 
     public boolean changeFolderViewed(DocumentFile newContent) {
@@ -783,7 +798,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    private static class UpdateFolderContentTask extends AsyncTask<Object,Object,Object> {
+    private static class UpdateFolderContentTask extends AsyncTask<Object,Object,List<FolderItem>> {
 
         private final DocumentFile newContent;
         private final boolean force;
@@ -826,21 +841,24 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         @Override
-        protected Object doInBackground(Object[] objects) {
-            folderItemRecyclerViewAdapter.updateContentInternal(newContent, force);
-            return null;
+        protected List<FolderItem> doInBackground(Object[] objects) {
+            return folderItemRecyclerViewAdapter.getNewDisplayContentInternal(newContent);
         }
 
         @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            folderItemRecyclerViewAdapter.notifyDataSetChanged();
-            if (!refreshingExistingFolder) {
-                folderItemRecyclerViewAdapter.navigationListener.onPostFolderOpened(oldFolder, newContent);
-            }
-            folderItemRecyclerViewAdapter.isBusy = false;
-            if(folderItemRecyclerViewAdapter.taskListener != null) {
-                folderItemRecyclerViewAdapter.taskListener.onTaskFinished();
+        protected void onPostExecute(List<FolderItem> result) {
+            super.onPostExecute(result);
+            if(result != null) {
+                // result only null if the task was cancelled.
+                folderItemRecyclerViewAdapter.currentDisplayContent = result;
+                folderItemRecyclerViewAdapter.notifyDataSetChanged();
+                if (!refreshingExistingFolder) {
+                    folderItemRecyclerViewAdapter.navigationListener.onPostFolderOpened(oldFolder, newContent);
+                }
+                folderItemRecyclerViewAdapter.isBusy = false;
+                if (folderItemRecyclerViewAdapter.taskListener != null) {
+                    folderItemRecyclerViewAdapter.taskListener.onTaskFinished();
+                }
             }
         }
 
