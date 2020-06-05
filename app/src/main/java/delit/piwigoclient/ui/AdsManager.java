@@ -17,6 +17,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.reward.AdMetadataListener;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
@@ -28,8 +31,11 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.BuildConfig;
@@ -48,12 +54,12 @@ public class AdsManager {
     private static final String TAG = "AdMan";
     public static final String BLOCK_MILLIS_PREF = "BLOCK_MILLIS";
     private static AdsManager instance;
-    private transient InterstitialAd selectFileToUploadAd;
-    private transient InterstitialAd albumBrowsingAd;
+    private InterstitialAd selectFileToUploadAd;
+    private InterstitialAd albumBrowsingAd;
     private long lastShowedAdvert;
     private boolean showAds = true;
     private boolean appLicensed = false;
-    private transient SharedPreferences prefs;
+    private SharedPreferences prefs;
     private static int advertLoadFailures = 0;
     private boolean advertsDisabled;
 
@@ -108,22 +114,31 @@ public class AdsManager {
         }
 
         if (!appLicensed && showAds && selectFileToUploadAd == null) {
-            MobileAds.initialize(context, context.getString(R.string.ad_app_id));
-            selectFileToUploadAd = new InterstitialAd(context);
-            selectFileToUploadAd.setAdUnitId(context.getString(R.string.ad_id_uploads_interstitial));
-            selectFileToUploadAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
-            selectFileToUploadAd.setAdListener(new MyAdListener(context, selectFileToUploadAd));
+            MobileAds.initialize(context, initializationStatus -> {
+                if(BuildConfig.DEBUG) {
+                    // Only treat devices as test devices if app is in debug mode
+                    List<String> testDeviceIds = Collections.singletonList("91A207EEC1618AE36FFA9D797319F482");
+                    RequestConfiguration configuration =
+                            new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+                    MobileAds.setRequestConfiguration(configuration);
+                }
+                selectFileToUploadAd = new InterstitialAd(context);
+                selectFileToUploadAd.setAdUnitId(context.getString(R.string.ad_id_uploads_interstitial));
+                selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
+                selectFileToUploadAd.setAdListener(new MyAdListener(context, selectFileToUploadAd));
 
-            albumBrowsingAd = new InterstitialAd(context);
-            albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
-            albumBrowsingAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
-            albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
+                albumBrowsingAd = new InterstitialAd(context);
+                albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
+                albumBrowsingAd.loadAd(new AdRequest.Builder().build());
+                albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
+            });
+
         } else if (showAds) {
             if (!selectFileToUploadAd.isLoading() && !selectFileToUploadAd.isLoaded()) {
-                selectFileToUploadAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+                selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
             }
             if (!albumBrowsingAd.isLoading() && !albumBrowsingAd.isLoaded()) {
-                albumBrowsingAd.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+                albumBrowsingAd.loadAd(new AdRequest.Builder().build());
             }
         }
     }
@@ -152,7 +167,7 @@ public class AdsManager {
                 lastShowedAdvert = currentTime;
                 return true;
             } else if (!ad.isLoaded() && !ad.isLoading()) {
-                ad.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+                ad.loadAd(new AdRequest.Builder().build());
             }
         }
         return false;
@@ -199,7 +214,7 @@ public class AdsManager {
         }
 
         private void loadAdvert() {
-            advertView.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+            advertView.loadAd(new AdRequest.Builder().build());
         }
 
         @Override
@@ -401,7 +416,7 @@ public class AdsManager {
 
                 isLoading = true;
                 rewardedVideoAd.loadAd(advertId,
-                        new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+                        new AdRequest.Builder().build());
             }
         }
     }
@@ -532,7 +547,7 @@ public class AdsManager {
             Runnable myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    ad.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+                    ad.loadAd(new AdRequest.Builder().build());
                 }
             };
             mainHandler.post(myRunnable);
@@ -540,7 +555,7 @@ public class AdsManager {
         }
 
         private void loadAdvert() {
-            ad.loadAd(new AdRequest.Builder().addTestDevice("91A207EEC1618AE36FFA9D797319F482").build());
+            ad.loadAd(new AdRequest.Builder().build());
         }
 
         @Override

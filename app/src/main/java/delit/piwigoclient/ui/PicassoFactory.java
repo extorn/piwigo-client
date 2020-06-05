@@ -26,6 +26,7 @@ import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 import delit.libs.util.IOUtils;
@@ -42,8 +43,9 @@ import static android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC;
 public class PicassoFactory {
     private static final String TAG = "PicassoFactory";
     private static PicassoFactory instance;
-    private transient MyPicasso picasso;
-    private transient PicassoErrorHandler errorHandler;
+    private MyPicasso picasso;
+    private PicassoErrorHandler errorHandler;
+    private WeakReference<Context> appContextRef;
 
     public PicassoFactory() {
     }
@@ -63,21 +65,22 @@ public class PicassoFactory {
 
     public Picasso getPicassoSingleton(Context context) {
         synchronized (MyApplication.class) {
+            Context appContext = context.getApplicationContext();
+            appContextRef = new WeakReference<>(appContext);
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
                 // request handler would work but it cant because it doesnt get in before the broken one!
-                picasso = new MyPicasso.Builder(context)
-                        .addRequestHandler(new ResourceRequestHandler(context))
-                        .addRequestHandler(new VideoRequestHandler(context))
-                        .listener(errorHandler).downloader(getDownloader(context)).build();
+                picasso = new MyPicasso.Builder(appContext)
+                        .addRequestHandler(new ResourceRequestHandler(appContext))
+                        .addRequestHandler(new VideoRequestHandler(appContext))
+                        .listener(errorHandler).downloader(getDownloader()).build();
             }
             return picasso;
         }
     }
 
-    public CustomImageDownloader getDownloader(Context context) {
-        CustomImageDownloader dldr = new CustomImageDownloader(context);
-        return dldr;
+    public CustomImageDownloader getDownloader() {
+        return new CustomImageDownloader(appContextRef.get());
     }
 
     public int getCacheSizeBytes() {

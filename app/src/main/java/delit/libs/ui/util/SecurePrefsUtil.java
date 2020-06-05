@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceDataStore;
 
 import com.crashlytics.android.Crashlytics;
@@ -32,11 +33,9 @@ public class SecurePrefsUtil {
     private final AESObfuscator oldObfuscator;
     private final AESObfuscator newObfuscator;
 
-    private SecurePrefsUtil(Context c) {
+    private SecurePrefsUtil(@NonNull Context c) {
         // Try to use more data here. ANDROID_ID is a single point of attack.
         String deviceId = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
-
-
 
         byte[] salt = new byte[20];
         // generate a salt that is reproducible for this device forever.
@@ -45,7 +44,7 @@ public class SecurePrefsUtil {
         newObfuscator = new AESObfuscator(salt, BuildConfig.APPLICATION_ID, deviceId, false); // enable error recording once everyone has migrated.
     }
 
-    public synchronized static SecurePrefsUtil getInstance(Context c) {
+    public synchronized static SecurePrefsUtil getInstance(@NonNull Context c) {
         if (instance == null) {
             instance = new SecurePrefsUtil(c);
         }
@@ -155,6 +154,7 @@ public class SecurePrefsUtil {
     }
 
     private static final class MigratingEncryptedPreferenceException extends RuntimeException {
+        private static final long serialVersionUID = -8568848604418315926L;
         // Use so we can see when to remove the old style obfuscator.
     }
 }

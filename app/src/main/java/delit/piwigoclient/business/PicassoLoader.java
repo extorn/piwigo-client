@@ -491,7 +491,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             loader = picassoLoaders[0];
             loader.setWaitForErrorMessage(false);
             // load the gif straight into the image manually.
-            CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loader.getLoadInto().getContext());
+            CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader();
             try {
                 Downloader.Response rsp = downloader.load(Uri.parse(loader.getUriToLoad()), 0);
                 if (rsp != null) {

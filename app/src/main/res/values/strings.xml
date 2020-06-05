@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ad_app_id" translatable="false">ca-app-pub-1408465472557768~4878187139</string>
     <string name="checking_license">Checking license…</string>
     <string name="button_quit">Exit</string>
     <string name="button_buy">Buy App</string>
