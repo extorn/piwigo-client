@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import delit.libs.ui.util.LegacyParcelUtils;
@@ -57,7 +59,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
     private File activeFolder;
     private Comparator<? super LegacyFolderItem> fileComparator;
     private NavigationListener navigationListener;
-    private SortedSet<String> currentVisibleFileExts;
+    private TreeMap<String, String> currentVisibleFileExts;
 
     public LegacyFolderItemRecyclerViewAdapter(Context context, NavigationListener navigationListener, MediaScanner mediaScanner, MultiSelectStatusListener<LegacyFolderItem> multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
@@ -106,32 +108,24 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
 
         activeFolder = newContent;
         getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
-        File[] folderContent = activeFolder.listFiles(new LegacyFileFilter(getAdapterPrefs().isShowFolderContent(), getAdapterPrefs().getVisibleFileTypes()));
-        if(folderContent == null) {
-            FirebaseAnalytics.getInstance(context).logEvent("no_folder_access", null);
+        File[] folderContent;
+        if(activeFolder != null) {
+            folderContent = activeFolder.listFiles(new LegacyFileFilter(getAdapterPrefs().isShowFolderContent(), getAdapterPrefs().getVisibleFileTypes()));
+            if(folderContent == null) {
+                FirebaseAnalytics.getInstance(context).logEvent("no_folder_access", null);
+            }
+        } else {
+            folderContent = new File[0];
         }
 
         currentDisplayContent = buildDisplayContent(folderContent);
-        currentVisibleFileExts = getUniqueFileExtsInFolder(currentDisplayContent);
+        currentVisibleFileExts = buildListOfFileExtsAndMimesInCurrentFolder(currentDisplayContent);
         Collections.sort(currentDisplayContent, getFileComparator());
 
         notifyDataSetChanged();
-        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(activeFolder.getAbsolutePath(), getDisplayedFiles(), 15) {
-
-            @Override
-            public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "processing icons from  " + firstResultIdx + " to " + lastResultIdx + "   " + System.currentTimeMillis());
-                }
-                for (Map.Entry<File, Uri> entry : batchResults.entrySet()) {
-                    LegacyFolderItem item = getItemByFile(entry.getKey());
-                    if (item != null) {
-                        item.setContentUri(entry.getValue());
-                    }
-                }
-                notifyItemRangeChanged(firstResultIdx, batchResults.size());
-            }
-        });
+        if(activeFolder != null) {
+            mediaScanner.invokeScan(new MyMediaScannerScanTask());
+        }
 
         if (!refreshingExistingFolder) {
             navigationListener.onPostFolderOpened(oldFolder, newContent);
@@ -333,6 +327,22 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         currentDisplayContent.add(item);
     }
 
+    private TreeMap<String, String> buildListOfFileExtsAndMimesInCurrentFolder(List<LegacyFolderItem> currentDisplayContent) {
+        TreeMap<String, String> currentVisibleDocumentFileExts = new TreeMap<>();
+        for (LegacyFolderItem fi : currentDisplayContent) {
+            if (fi.file.isDirectory()) {
+                continue;
+            }
+            String fileExt = IOUtils.getFileExt(fi.file.getName());
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+            currentVisibleDocumentFileExts.put(fileExt, mimeType);
+            if(Thread.currentThread().isInterrupted()) {
+                return null;
+            }
+        }
+        return currentVisibleDocumentFileExts;
+    }
+
     @Override
     public LegacyFolderItem getItemByPosition(int position) {
         return currentDisplayContent.get(position);
@@ -344,7 +354,9 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
     }
 
     public void cancelAnyActiveFolderMediaScan(Context context) {
-        MediaScanner.instance(context).cancelActiveScan(getActiveFolder().getAbsolutePath());
+        if(getActiveFolder() != null) {
+            MediaScanner.instance(context).cancelActiveScan(getActiveFolder().getAbsolutePath());
+        }
     }
 
     public static class LegacyFolderItem implements Parcelable {
@@ -407,6 +419,10 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
     }
 
     public SortedSet<String> getFileExtsInCurrentFolder() {
+        return new TreeSet<>(currentVisibleFileExts.keySet());
+    }
+
+    public TreeMap<String, String> getFileExtsAndMimesInCurrentFolder() {
         return currentVisibleFileExts;
     }
 
@@ -586,4 +602,24 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
     }
 
 
+    private class MyMediaScannerScanTask extends MediaScanner.MediaScannerScanTask {
+
+        public MyMediaScannerScanTask() {
+            super(LegacyFolderItemRecyclerViewAdapter.this.activeFolder.getAbsolutePath(), LegacyFolderItemRecyclerViewAdapter.this.getDisplayedFiles(), 15);
+        }
+
+        @Override
+        public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "processing icons from  " + firstResultIdx + " to " + lastResultIdx + "   " + System.currentTimeMillis());
+            }
+            for (Map.Entry<File, Uri> entry : batchResults.entrySet()) {
+                LegacyFolderItem item = getItemByFile(entry.getKey());
+                if (item != null) {
+                    item.setContentUri(entry.getValue());
+                }
+            }
+            notifyItemRangeChanged(firstResultIdx, batchResults.size());
+        }
+    }
 }

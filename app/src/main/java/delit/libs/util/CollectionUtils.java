@@ -19,6 +19,10 @@ public class CollectionUtils {
     }
 
     public static String toCsvList(Collection<?> items) {
+        return toCsvList(items, ",");
+    }
+
+    public static String toCsvList(Collection<?> items, String delimiter) {
 
         if (items == null || items.size() == 0) {
             return null;
@@ -30,10 +34,10 @@ public class CollectionUtils {
         for (Object item : items) {
             itemVal = item.toString();
             sb.append(itemVal);
-            if(itemVal.contains(",")) {
-                Crashlytics.log(Log.ERROR, TAG, "generated CSV list is corrupt as value contained a comma: " + itemVal);
+            if(itemVal.contains(delimiter)) {
+                Crashlytics.log(Log.ERROR, TAG, "generated CSV list is corrupt as value contained a delimiter : " + itemVal);
             }
-            sb.append(',');
+            sb.append(delimiter);
         }
         sb.deleteCharAt(sb.length() - 1);
         return sb.toString();

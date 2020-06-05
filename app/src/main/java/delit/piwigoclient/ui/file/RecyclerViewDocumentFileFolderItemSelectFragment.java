@@ -185,8 +185,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         navListener = new FolderItemNavigationListener();
 
-
-
         return v;
     }
 
@@ -249,8 +247,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         super.onDestroyView();
     }
 
-
-
     private class FolderItemNavigationListener implements FolderItemRecyclerViewAdapter.NavigationListener {
 
         @Override
@@ -301,8 +297,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     }
 
     private void buildBreadcrumbs(DocumentFile newFolder) {
-//        item = folderRootsAdapter.getItemByValue(newFolder);
-//        folderRootFolderSpinner.setSelection(folderRootsAdapter.getPosition(item), false);
         folderPathView.populate(newFolder);
     }
 
@@ -519,7 +513,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFolderItems(new ArrayList<>(selectedItems)));
-//        listAdapter.cancelAnyActiveFolderMediaScan();
+
         // now pop this screen off the stack.
         if (isVisible()) {
             getParentFragmentManager().popBackStackImmediate();
@@ -697,20 +691,20 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             } else {
                 boolean folderChanged = getListAdapter().changeFolderViewed(pathItemFile);
                 if(folderChanged && listViewStates != null) {
-                    Iterator<Map.Entry<Uri, Parcelable>> iter = listViewStates.entrySet().iterator();
+                    Iterator<Map.Entry<Uri, Parcelable>> iterator = listViewStates.entrySet().iterator();
                     Map.Entry<Uri, Parcelable> item;
-                    while (iter.hasNext()) {
-                        item = iter.next();
+                    while (iterator.hasNext()) {
+                        item = iterator.next();
                         if (item.getKey().equals(pathItemFile.getUri())) {
                             if (getList().getLayoutManager() != null) {
                                 getList().getLayoutManager().onRestoreInstanceState(item.getValue());
                             } else {
                                 Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
                             }
-                            iter.remove();
-                            while (iter.hasNext()) {
-                                iter.next();
-                                iter.remove();
+                            iterator.remove();
+                            while (iterator.hasNext()) {
+                                iterator.next();
+                                iterator.remove();
                             }
                         }
                     }

@@ -7,12 +7,14 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatCheckBox;
+
+import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,15 +33,36 @@ public class FilterControl extends FlowLayout {
 
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        addDemoData();
     }
 
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        addDemoData();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        addDemoData();
+    }
+
+    private void addDemoData() {
+        if (!isInEditMode()) {
+            return;
+        }
+        allPossiblyVisibleFileExts = new HashSet<>();
+        allPossiblyVisibleFileExts.add("jpg");
+        allPossiblyVisibleFileExts.add("bmp");
+        allPossiblyVisibleFileExts.add("wav");
+        allPossiblyVisibleFileExts.add("raw");
+        allPossiblyVisibleFileExts.add("mp4");
+        currentlyVisibleFileExts = new HashSet<>();
+        currentlyVisibleFileExts.addAll(allPossiblyVisibleFileExts);
+        selectedVisibleFileExts = new HashSet<>();
+        selectedVisibleFileExts.add("mp4");
+        selectedVisibleFileExts.add("jpg");
+        buildFileExtFilterControls(false);
     }
 
     public void setListener(FilterListener listener) {
@@ -75,36 +98,45 @@ public class FilterControl extends FlowLayout {
                 boolean checked = selectedVisibleFileExts.contains(fileExt);
                 if (!checked) {
                     filterShown = true;
-                    listener.onFilterUnchecked(fileExt);
+                    if(listener != null) {
+                        listener.onFilterUnchecked(fileExt);
+                    }
                 } else {
                     filterHidden = true;
-                    listener.onFilterChecked(fileExt);
+                    if(listener != null) {
+                        listener.onFilterChecked(fileExt);
+                    }
                 }
                 fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
             }
             if (notifyOnFiltersChanged && (filterShown || filterHidden)) {
-                listener.onFiltersChanged(filterHidden, filterShown);
+                if(listener != null) {
+                    listener.onFiltersChanged(filterHidden, filterShown);
+                }
             }
         }
     }
 
     private View createFileExtFilterControl(String fileExt, boolean checked) {
-        CheckBox fileExtControl = new CheckBox(getContext());
+        MaterialCheckBox fileExtControl = new MaterialCheckBox(getContext());
         int paddingPx = DisplayUtils.dpToPx(getContext(), 5);
         fileExtControl.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
         fileExtControl.setText(fileExt);
         fileExtControl.setEnabled(isEnabled());
         fileExtControl.setChecked(checked);
-        fileExtControl.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    selectedVisibleFileExts.add(fileExt);
+        fileExtControl.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked) {
+                selectedVisibleFileExts.add(fileExt);
+                if(listener != null) {
                     listener.onFilterChecked(fileExt);
-                } else {
-                    selectedVisibleFileExts.remove(fileExt);
+                }
+            } else {
+                selectedVisibleFileExts.remove(fileExt);
+                if(listener != null) {
                     listener.onFilterUnchecked(fileExt);
                 }
+            }
+            if(listener != null) {
                 listener.onFiltersChanged(!isChecked, isChecked);
             }
         });
@@ -144,6 +176,10 @@ public class FilterControl extends FlowLayout {
 
     public void setVisibleFilters(SortedSet<String> visibleFileExts) {
         this.currentlyVisibleFileExts = visibleFileExts;
+    }
+
+    public void clearAll() {
+        removeAllViews();
     }
 
     static class SavedState extends BaseSavedState {

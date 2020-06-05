@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.file;
 
-import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -21,7 +18,9 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.room.util.StringUtil;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
@@ -31,20 +30,25 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.StringJoiner;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.FileBreadcrumbsView;
-import delit.libs.ui.view.FlowLayout;
 import delit.libs.ui.view.list.MappedArrayAdapter;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -59,17 +63,14 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
     private static final String ACTIVE_FOLDER = "RecyclerViewFolderItemSelectFragment.activeFolder";
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
-    private static final String STATE_ALL_POSS_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.allPossVisFileExts";
-    private static final String STATE_SELECTED_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.selectedVisFileExts";
     private FileBreadcrumbsView folderPathView;
     private Spinner folderRootFolderSpinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
     private long startedActionAtTime;
     private LegacyFolderItemRecyclerViewAdapter.NavigationListener navListener;
     private LinkedHashMap<String, Parcelable> listViewStates; // one state for each level within the list (created and deleted on demand)
-    private Set<String> allPossiblyVisibleFileExts;
-    private Set<String> selectedVisibleFileExts;
-    private FlowLayout fileExtFilters;
+//    private ProgressIndicator progressIndicator;
+    private FilterControl fileExtFilters;
 
     public static LegacyRecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
         LegacyRecyclerViewFolderItemSelectFragment fragment = new LegacyRecyclerViewFolderItemSelectFragment();
@@ -103,8 +104,6 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         BundleUtils.putFile(outState, ACTIVE_FOLDER, getListAdapter().getActiveFolder());
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
         BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
-        BundleUtils.putStringSet(outState, STATE_ALL_POSS_VIS_FILE_EXTS, allPossiblyVisibleFileExts);
-        BundleUtils.putStringSet(outState, STATE_SELECTED_VIS_FILE_EXTS, selectedVisibleFileExts);
     }
 
     @Nullable
@@ -116,16 +115,22 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
+        TextView pageTitle = Objects.requireNonNull(v).findViewById(R.id.page_title);
+        if(getViewPrefs().isAllowFileSelection()) {
+            pageTitle.setText(R.string.files_selection_title);
+        } else if(getViewPrefs().isAllowFolderSelection()) {
+            pageTitle.setText(R.string.folder_selection_title);
+        }
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
             listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<String, Parcelable>(), Parcelable.class.getClassLoader());
-            allPossiblyVisibleFileExts = BundleUtils.getStringHashSet(savedInstanceState, STATE_ALL_POSS_VIS_FILE_EXTS);
-            selectedVisibleFileExts = BundleUtils.getStringHashSet(savedInstanceState, STATE_SELECTED_VIS_FILE_EXTS);
         }
 
         startedActionAtTime = System.currentTimeMillis();
 
+//        progressIndicator = v.findViewById(R.id.progress_indicator);
+//        progressIndicator.setVisibility(View.GONE);
 
         folderRootFolderSpinner = ViewCompat.requireViewById(v, R.id.folder_root_spinner);
         folderRootFolderSpinner.setOnItemSelectedListener(new RootFolderSelectionListener());
@@ -143,50 +148,9 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         getListAdapter().rebuildContentView(context);
     }
 
-    private View createFileExtFilterControl(String fileExt, boolean checked) {
-        CheckBox fileExtControl = new CheckBox(requireContext());
-        int paddingPx = DisplayUtils.dpToPx(requireContext(), 5);
-        fileExtControl.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
-        fileExtControl.setText(fileExt);
-        fileExtControl.setChecked(checked);
-        fileExtControl.setOnCheckedChangeListener(new FileExtControlListener());
-        return fileExtControl;
-    }
-
-    private static final class PreviouslyUploadedFilesFilter extends AsyncTask<Void, Void, Void> {
-
-        private Application context;
-        private String folderPath;
-        private String serverProfileId;
-        private LegacyFolderItemRecyclerViewAdapter adapter;
-
-        public PreviouslyUploadedFilesFilter(Context context, LegacyFolderItemRecyclerViewAdapter listAdapter, String absolutePath, String serverProfileId) {
-            this.context = (Application) context.getApplicationContext();
-            this.adapter = listAdapter;
-            this.folderPath = absolutePath;
-            this.serverProfileId = serverProfileId;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            //TODO enable this for paid app only
-//            // clear those files no longer existing from the database.
-//            PiwigoDatabase.getInstance(context).uploadedFileDao().removeObsolete(folderPath, new File(folderPath).list());
-//
-//            List<String> previouslyUploadedFiles = PiwigoDatabase.getInstance(context).uploadedFileDao().loadAllFilenamesByParentPathForServerId(folderPath, serverProfileId);
-//            // mark up the adapter content.
-//            for (String previousUploadedFile : previouslyUploadedFiles) {
-//                int itemPos = adapter.getItemPositionForFilename(previousUploadedFile);
-//                adapter.removeItemByPosition(itemPos);
-//            }
-            return null;
-        }
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         bindDataToView(savedInstanceState);
     }
 
@@ -195,99 +159,57 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         super.onDestroyView();
     }
 
-    private void buildFileExtFilterControls(Context context, File currentFolder) {
-
-        // initialise local cached set of selected items
-        if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
-            selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
-        }
-        // clear all the existing filters
-        fileExtFilters.removeAllViews();
-
-        LegacyFolderItemRecyclerViewAdapter listAdapter = getListAdapter();
-
-        // get a list of all unique file extensions in the current folder
-        SortedSet<String> visibleFileExts = listAdapter.getFileExtsInCurrentFolder();
-
-        // for each file type visible, show a checkbox and set it according to out local model
-        if (visibleFileExts != null && selectedVisibleFileExts != null) {
-            boolean updateViewRequired = false;
-            for (String fileExt : visibleFileExts) {
-                FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
-                boolean checked = selectedVisibleFileExts.contains(fileExt);
-                if (!checked) {
-                    updateViewRequired = true;
-                    listAdapter.getAdapterPrefs().getVisibleFileTypes().remove(fileExt);
-                } else {
-                    listAdapter.getAdapterPrefs().getVisibleFileTypes().add(fileExt);
-                }
-                fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
-            }
-            if (updateViewRequired) {
-                listAdapter.rebuildContentView(context);
-            }
-        }
-    }
-
     private class FolderItemNavigationListener implements LegacyFolderItemRecyclerViewAdapter.NavigationListener {
 
         @Override
         public void onPreFolderOpened(File oldFolder, File newFolder) {
-
-            if (getViewPrefs().getVisibleFileTypes() != null) {
-                if (allPossiblyVisibleFileExts == null) {
-                    allPossiblyVisibleFileExts = new HashSet<>(getViewPrefs().getVisibleFileTypes());
-                }
-            }
-            if (allPossiblyVisibleFileExts != null) {
-                SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(LegacyIOUtils.getUniqueExtAndMimeTypes(newFolder.listFiles()));
-                if (fileExtsInFolderMatchingMimeTypesWanted != null) {
-                    // add any extra that have come from mime types now visible in this folder.
-                    allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
-                }
-            }
-            // this works because the adapter uses a reference to the same preferences.
-            getViewPrefs().withVisibleContent(allPossiblyVisibleFileExts, getViewPrefs().getFileSortOrder());
-
-            if (oldFolder != null) {
-                if (listViewStates == null) {
-                    listViewStates = new LinkedHashMap<>(5);
-                }
-                listViewStates.put(oldFolder.getAbsolutePath(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
-            }
-            getList().scrollToPosition(0);
-
-            buildBreadcrumbs(newFolder);
+            // need to do this before the folder is opened
+            //DisplayUtils.postOnUiThread(() -> progressIndicator.showProgressIndicator(-1));
+            recordTheCurrentListOfVisibleItemsInState(oldFolder);
         }
 
         @Override
         public void onPostFolderOpened(File oldFolder, File newFolder) {
-            buildFileExtFilterControls(getContext(), newFolder);
-            // get a list of all those files previously uploaded to this server and update the
-            String serverProfileId = ConnectionPreferences.getActiveProfile().getProfileId(prefs, getContext());
+            // scroll to the first item in the list.
+            getList().scrollToPosition(0);
+            buildBreadcrumbs(newFolder);
+            getListAdapter().setInitiallySelectedItems(); // adapter needs to be populated for this to work.
+            updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
+            fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
+            fileExtFilters.selectAll();
 
-            //TODO enable uploaded file tracking database here!
+//            DisplayUtils.postOnUiThread(() -> progressIndicator.hideProgressIndicator());
 
-            //            new PreviouslyUploadedFilesFilter(requireContext(), getListAdapter(), newFolder.getAbsolutePath(), serverProfileId).execute();
 
         }
     }
 
-    private void buildBreadcrumbs(File newFolder) {
-        if (folderRootsAdapter == null) {
-            return;
-            // still building the ui
-        }
-        String item = folderRootsAdapter.getItemByValue(newFolder);
-        if (item == null) {
-            // reset the selection (if null - if it isn't null there's no way of telling which root its from)
-            if (newFolder == null && folderRootFolderSpinner.getSelectedItemId() >= 0) {
-                folderRootFolderSpinner.setAdapter(folderRootsAdapter);
+    private void recordTheCurrentListOfVisibleItemsInState(File folder) {
+        if (folder != null) {
+            if (listViewStates == null) {
+                listViewStates = new LinkedHashMap<>(5);
             }
-        } else {
-            folderRootFolderSpinner.setSelection(folderRootsAdapter.getPosition(item), false);
+            listViewStates.put(folder.getAbsolutePath(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
         }
+    }
 
+    private void updateListOfFileExtensionsForAllVisibleFiles(Map<String,String> folderContentFileExtToMimeMap) {
+        if (getViewPrefs().getVisibleFileTypes() != null) {
+            if(fileExtFilters.getAllPossibleFilters() == null) {
+                fileExtFilters.setAllPossibleFilters(new HashSet<>(getViewPrefs().getVisibleFileTypes()));
+            }
+        }
+        if (fileExtFilters.getAllPossibleFilters() != null) {
+
+            SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(folderContentFileExtToMimeMap);
+            if (fileExtsInFolderMatchingMimeTypesWanted != null) {
+                // add any extra that have come from mime types now visible in this folder.
+                fileExtFilters.getAllPossibleFilters().addAll(fileExtsInFolderMatchingMimeTypesWanted);
+            }
+        }
+    }
+
+    private void buildBreadcrumbs(File newFolder) {
         folderPathView.populate(newFolder);
     }
 
@@ -306,13 +228,9 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
     private void applyNewRootsAdapter(MappedArrayAdapter<String, File> mappedArrayAdapter) {
         folderRootsAdapter = mappedArrayAdapter;
         folderRootFolderSpinner.setAdapter(folderRootsAdapter);
-        buildBreadcrumbs(getListAdapter().getActiveFolder());
     }
 
     private void bindDataToView(Bundle savedInstanceState) {
-
-        new DataBinderTask(this).execute();
-
 
         File activeFolder = null;
         if (savedInstanceState != null) {
@@ -320,7 +238,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         }
 
         if(getListAdapter() == null) {
-
+            applyNewRootsAdapter(buildFolderRootsAdapter());
 
             final LegacyFolderItemRecyclerViewAdapter viewAdapter = new LegacyFolderItemRecyclerViewAdapter(requireContext(), navListener, MediaScanner.instance(getContext()), new LegacyFolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<>(), getViewPrefs());
 
@@ -335,16 +253,28 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
 
+            fileExtFilters.setListener(new FileExtFilterControlListener(getContext(), getListAdapter()));
+
             // update the adapter content
             File newFolder = activeFolder;
             if(newFolder == null) {
                 newFolder = getViewPrefInitialFolderAsFile();
             }
-            viewAdapter.changeFolderViewed(getContext(), newFolder);
+            if(newFolder != null) {
+                File f = newFolder;
+                int rootIdx = -1;
+                while(f != null && rootIdx < 0) {
+                    rootIdx = folderRootsAdapter.getPositionByValue(f);
+                    f = f.getParentFile();
+                }
+                folderRootFolderSpinner.setSelection(rootIdx);
+            }
+//            viewAdapter.changeFolderViewed(getContext(), newFolder);
+            buildBreadcrumbs(getListAdapter().getActiveFolder());
 
             // select the items to view.
-            viewAdapter.setInitiallySelectedItems();
-            viewAdapter.setSelectedItems(currentSelection);
+//            viewAdapter.setInitiallySelectedItems();
+//            viewAdapter.setSelectedItems(currentSelection);
         }
 
         // call this here to ensure page reformats if orientation changes for example.
@@ -383,7 +313,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
                     for (File location : locations) {
                         File[] folderContent = location.listFiles();
                         if (location.isDirectory() && !rootPaths.contains(location) && folderContent != null && folderContent.length > 0) {
-                            rootLabels.add(getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId));
+                            rootLabels.add(getLabelForExtStorage(location, getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId)));
                             rootPaths.add(location);
                             extStorageDeviceId++;
                         }
@@ -418,58 +348,39 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         return adapter;
     }
 
+    private String getLabelForExtStorage(File location, String defaultName) {
+        File f = location;
+        List<String> pathHierarchy = new ArrayList<>();
+        while(f != null && !f.getName().equals("mnt")) {
+            pathHierarchy.add(f.getName());
+            f = f.getParentFile();
+        }
+        Collections.reverse(pathHierarchy);
+        StringBuilder sb = new StringBuilder();
+        return CollectionUtils.toCsvList(pathHierarchy, "/");
+
+    }
+
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         LegacyFolderItemRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<LegacyFolderItemRecyclerViewAdapter.LegacyFolderItem> selectedItems = listAdapter.getSelectedItems();
         Set<Uri> selectedUris = new HashSet<>(selectedItems.size());
         for(LegacyFolderItemRecyclerViewAdapter.LegacyFolderItem selectionItem : selectedItems) {
-            //TODO check if the content uris are better or worse to use.
-//            if(selectionItem.getContentUri() != null) {
-//                selectedUris.add(selectionItem.getContentUri());
-//            } else {
-//                selectedUris.add(Uri.fromFile(selectionItem.getFile()));
-//            }
             selectedUris.add(Uri.fromFile(selectionItem.getFile()));
         }
         if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             selectedItems = new HashSet<>(1);
-            selectedItems.add(new LegacyFolderItemRecyclerViewAdapter.LegacyFolderItem(listAdapter.getActiveFolder()));
+            if(listAdapter.getActiveFolder() != null) {
+                selectedItems.add(new LegacyFolderItemRecyclerViewAdapter.LegacyFolderItem(listAdapter.getActiveFolder()));
+            }
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), actionTimeMillis).withFiles(selectedUris));
         listAdapter.cancelAnyActiveFolderMediaScan(getContext());
         // now pop this screen off the stack.
         if (isVisible()) {
             getParentFragmentManager().popBackStackImmediate();
-        }
-    }
-
-    private static class DataBinderTask extends AsyncTask<Void, Void, MappedArrayAdapter<String, File>> {
-
-        WeakReference<LegacyRecyclerViewFolderItemSelectFragment> parentFragmentRef;
-
-        DataBinderTask(LegacyRecyclerViewFolderItemSelectFragment parentFragment) {
-            this.parentFragmentRef = new WeakReference<>(parentFragment);
-        }
-
-        @Override
-        protected MappedArrayAdapter<String, File> doInBackground(Void... voids) {
-            LegacyRecyclerViewFolderItemSelectFragment parentFragment = parentFragmentRef.get();
-            if (parentFragment != null) {
-                return parentFragment.buildFolderRootsAdapter();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(MappedArrayAdapter<String, File> mappedArrayAdapter) {
-            // building this stuff is slow - lets do it async!
-            LegacyRecyclerViewFolderItemSelectFragment parentFragment = parentFragmentRef.get();
-            if (parentFragment != null && mappedArrayAdapter != null) {
-                parentFragment.applyNewRootsAdapter(mappedArrayAdapter);
-            }
         }
     }
 
@@ -489,29 +400,31 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
     protected void rerunRetrievalForFailedPages() {
     }
 
-    private class FileExtControlListener implements CompoundButton.OnCheckedChangeListener {
+    private static class FileExtFilterControlListener implements FilterControl.FilterListener {
 
-        public FileExtControlListener() {
-            //TODO maybe add the ListAdapter here and use that.
+        private final LegacyFolderItemRecyclerViewAdapter listAdapter;
+        private final WeakReference<Context> contextRef;
+
+        public FileExtFilterControlListener(Context context, LegacyFolderItemRecyclerViewAdapter adapter) {
+            this.listAdapter = adapter;
+            this.contextRef = new WeakReference<>(context);
         }
 
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            String fileExt = buttonView.getText().toString();
-            LegacyFolderItemRecyclerViewAdapter adapter = getListAdapter();
-            SortedSet<String> visibleFileTypes = adapter.getAdapterPrefs().getVisibleFileTypes();
-            if (isChecked) {
-                // local model used when rebuilding each folder view
-                selectedVisibleFileExts.add(fileExt);
-                // current folder view
-                visibleFileTypes.add(fileExt);
-            } else {
-                // local model used when rebuilding each folder view
-                selectedVisibleFileExts.remove(fileExt);
-                // current folder view
-                visibleFileTypes.remove(fileExt);
-            }
-            adapter.rebuildContentView(buttonView.getContext());
+        public void onFilterUnchecked(String fileExt) {
+            SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
+            visibleFileTypes.remove(fileExt);
+        }
+
+        @Override
+        public void onFilterChecked(String fileExt) {
+            SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
+            visibleFileTypes.add(fileExt);
+        }
+
+        @Override
+        public void onFiltersChanged(boolean filterHidden, boolean filterShown) {
+            listAdapter.rebuildContentView(contextRef.get());
         }
     }
 
@@ -557,9 +470,18 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (id > 0) {
+                //progressIndicator.showProgressIndicator(-1);
                 MappedArrayAdapter<String, File> adapter = (MappedArrayAdapter) parent.getAdapter();
                 File newRoot = adapter.getItemValue(position);
                 getListAdapter().changeFolderViewed(getContext(), newRoot);
+                //progressIndicator.hideProgressIndicator();
+            } else {
+                // just show the empty view.
+                if(fileExtFilters.getAllPossibleFilters() != null) {
+                    getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
+                }
+                getListAdapter().changeFolderViewed(getContext(), null);
+                deselectAllItems();
             }
         }
 
