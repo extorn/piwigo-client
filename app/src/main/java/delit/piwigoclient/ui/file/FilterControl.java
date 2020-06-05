@@ -182,6 +182,16 @@ public class FilterControl extends FlowLayout {
         removeAllViews();
     }
 
+    public void setSelectedFilters(SortedSet<String> visibleFileTypes) {
+        if(selectedVisibleFileExts == null) {
+            selectedVisibleFileExts = new HashSet<>(visibleFileTypes);
+        } else {
+            selectedVisibleFileExts.clear();
+            selectedVisibleFileExts.addAll(visibleFileTypes);
+        }
+        buildFileExtFilterControls(false);
+    }
+
     static class SavedState extends BaseSavedState {
         Set<String> allPossiblyVisibleFileExts;
         Set<String> selectedVisibleFileExts;

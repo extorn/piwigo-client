@@ -281,7 +281,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
             fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
-            fileExtFilters.selectAll();
+            fileExtFilters.setSelectedFilters(getListAdapter().getAdapterPrefs().getVisibleFileTypes());
         }
     }
 
