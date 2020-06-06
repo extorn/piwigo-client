@@ -2,16 +2,12 @@ package delit.libs.ui.view;
 
 import android.content.Context;
 import android.os.Build;
-import android.provider.DocumentsContract;
 import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
-import java.io.File;
-
-import delit.libs.util.IOUtils;
 
 public class DocumentFileBreadcrumbsView extends AbstractBreadcrumbsView<DocumentFile> {
 

@@ -1,18 +1,14 @@
 package delit.libs.ui.view;
 
 import android.content.Context;
-import android.icu.util.Measure;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.ViewParent;
 
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-
-import delit.libs.ui.util.DisplayUtils;
 
 /**
  * Created by gareth on 06/06/17.
