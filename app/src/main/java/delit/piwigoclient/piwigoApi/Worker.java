@@ -3,10 +3,10 @@ package delit.piwigoclient.piwigoApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 

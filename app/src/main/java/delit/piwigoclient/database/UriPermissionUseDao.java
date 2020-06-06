@@ -1,7 +1,5 @@
 package delit.piwigoclient.database;
 
-import android.net.Uri;
-
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;

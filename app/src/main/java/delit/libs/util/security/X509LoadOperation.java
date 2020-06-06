@@ -1,15 +1,10 @@
 package delit.libs.util.security;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-import androidx.documentfile.provider.DocumentFile;
-
-import java.io.File;
-import java.io.Serializable;
 
 import delit.libs.ui.util.ParcelUtils;
 
