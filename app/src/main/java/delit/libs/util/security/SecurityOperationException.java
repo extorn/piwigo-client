@@ -4,8 +4,6 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import java.io.File;
-
 /**
  * Created by gareth on 24/02/18.
  */

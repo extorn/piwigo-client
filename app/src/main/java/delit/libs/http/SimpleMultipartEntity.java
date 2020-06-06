@@ -74,7 +74,9 @@ class SimpleMultipartEntity implements HttpEntity {
     }
 
     public void addPartWithCharset(String key, String value, String charset) {
-        if (charset == null) charset = HTTP.UTF_8;
+        if (charset == null) {
+            charset = "UTF-8";
+        }
         addPart(key, value, "text/plain; charset=" + charset);
     }
 

@@ -5,10 +5,11 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.preference.DialogPreference;
-import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+
+import androidx.preference.DialogPreference;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.common.util.Strings;
 

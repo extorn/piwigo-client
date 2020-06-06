@@ -11,9 +11,6 @@ import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.List;
 
-import delit.libs.ui.util.DisplayUtils;
-import delit.piwigoclient.R;
-
 /**
  * Created by gareth on 02/04/18.
  */
@@ -44,7 +41,7 @@ public class StaticListView extends ListView {
         if (!isInEditMode()) {
             return;
         }
-        List<String> items = new ArrayList();
+        List<String> items = new ArrayList<>();
         for(int i = 1; i < 20; i++) {
             items.add("Example list item "+ i);
         }

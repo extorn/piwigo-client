@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 /**

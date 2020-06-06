@@ -25,7 +25,6 @@ import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.AttrRes;
-import androidx.annotation.StyleRes;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.ContextCompat;
 

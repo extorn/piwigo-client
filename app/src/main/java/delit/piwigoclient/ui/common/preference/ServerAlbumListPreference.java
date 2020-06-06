@@ -5,10 +5,11 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+
+import androidx.annotation.NonNull;
+import androidx.preference.DialogPreference;
 
 import java.util.Locale;
 
