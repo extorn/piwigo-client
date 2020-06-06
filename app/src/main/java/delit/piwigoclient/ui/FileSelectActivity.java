@@ -58,7 +58,7 @@ public class FileSelectActivity extends MyActivity {
     @Override
     public void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        if (!isShowUriBasedFileSelection()) {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
         }
     }

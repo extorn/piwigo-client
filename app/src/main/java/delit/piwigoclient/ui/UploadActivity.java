@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -48,8 +47,6 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
-import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
@@ -81,14 +78,11 @@ import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 public class UploadActivity extends MyActivity {
 
     private static final String TAG = "uploadActivity";
-    private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
-    private static final String STATE_STARTED_ALREADY = "startedAlready";
     private static final String INTENT_DATA_CURRENT_ALBUM = "currentAlbum";
     private final HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
-    private boolean startedWithPermissions;
     private Toolbar toolbar;
     private AppBarLayout appBar;
 
@@ -103,9 +97,11 @@ public class UploadActivity extends MyActivity {
     @Override
     public void onStart() {
         super.onStart();
-        startedWithPermissions = false;
-        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
-//        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+
+        if(Intent.ACTION_SEND.equals(getIntent().getAction())
+            || Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+        }
     }
 
     @Override
@@ -124,7 +120,6 @@ public class UploadActivity extends MyActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
         outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
 
         if(BuildConfig.DEBUG) {
@@ -139,7 +134,6 @@ public class UploadActivity extends MyActivity {
 
         if (savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
-            startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
         } else {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
