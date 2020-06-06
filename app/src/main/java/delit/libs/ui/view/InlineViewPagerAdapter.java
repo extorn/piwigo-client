@@ -2,7 +2,6 @@ package delit.libs.ui.view;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;

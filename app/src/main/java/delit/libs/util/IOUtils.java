@@ -1,6 +1,5 @@
 package delit.libs.util;
 
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.content.UriPermission;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
@@ -20,8 +18,6 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
-import androidx.core.os.EnvironmentCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
@@ -694,7 +690,10 @@ public class IOUtils {
         }
 
 //        String start = rootUri.getLastPathSegment();
-        String childPathSegment = itemUri.getLastPathSegment();
+        String childPathSegment = itemPath.get(itemPath.size() -1);
+        if(childPathSegment.startsWith(itemPath.get(1))) {
+            childPathSegment = childPathSegment.substring(itemPath.get(1).length());
+        }
         /*if(childPathSegment == null || start == null || !childPathSegment.startsWith(start)) {
             throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
         }
@@ -718,7 +717,7 @@ public class IOUtils {
                     if (dfName != null && childPathSegment.startsWith(dfName)) {
                         int stripChars = dfName.length();
                         if(stripChars < childPathSegment.length()) {
-                            stripChars++;
+                            stripChars++; // remove the delimiter too
                         }
                         childPathSegment = childPathSegment.substring(stripChars);
                         thisFile = df;
