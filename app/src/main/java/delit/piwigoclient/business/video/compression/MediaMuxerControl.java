@@ -30,7 +30,6 @@ import java.util.TreeSet;
 
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
-import io.fabric.sdk.android.services.common.Crash;
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {

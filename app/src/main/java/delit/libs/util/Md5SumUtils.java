@@ -4,17 +4,11 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.documentfile.provider.DocumentFile;
-
 import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
