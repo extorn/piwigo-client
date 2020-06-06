@@ -1,12 +1,8 @@
 package delit.piwigoclient.database;
 
-import android.content.Context;
-import android.net.Uri;
-import android.os.Build;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 
 @Entity(primaryKeys = {"uri", "consumerId"})
 public class UriPermissionUse {
@@ -14,6 +10,7 @@ public class UriPermissionUse {
 
     public UriPermissionUse() {}
 
+    @Ignore
     public UriPermissionUse(@NonNull String uri, @NonNull String localizedConsumerName, int flags) {
         this.uri = uri;
         this.consumerId = CONSUMER_ID_FILE_SELECT;
@@ -21,6 +18,7 @@ public class UriPermissionUse {
         this.flags = flags;
     }
 
+    @Ignore
     public UriPermissionUse(@NonNull String uri,@NonNull String consumerId, @NonNull String localizedConsumerName, int flags) {
         this(uri, localizedConsumerName, flags);
         this.consumerId = consumerId;

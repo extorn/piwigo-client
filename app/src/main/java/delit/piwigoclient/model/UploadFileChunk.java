@@ -2,9 +2,6 @@ package delit.piwigoclient.model;
 
 import android.net.Uri;
 
-import androidx.documentfile.provider.DocumentFile;
-
-import java.io.File;
 import java.io.InputStream;
 
 /**

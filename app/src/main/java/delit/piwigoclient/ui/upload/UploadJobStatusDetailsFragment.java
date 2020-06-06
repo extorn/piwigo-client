@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.upload;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.ContextThemeWrapper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
