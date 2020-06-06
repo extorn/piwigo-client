@@ -328,7 +328,7 @@
                         android:maxLines="2"
                         android:text="@string/click_to_view"
                         style="?editableFieldTextClickable"
-                        tools:backgroundTint="?scrimLight"
+                        tools:backgroundTint="?attr/scrimLight"
                         tools:backgroundTintMode="src_in"/>
 
                     <TextView
@@ -343,7 +343,7 @@
                         android:maxLines="2"
                         android:text="@string/click_to_view"
                         style="?editableFieldTextClickable"
-                        tools:backgroundTint="?scrimHeavy"
+                        tools:backgroundTint="?attr/scrimHeavy"
                         tools:backgroundTintMode="src_in"/>
 
                 </LinearLayout>

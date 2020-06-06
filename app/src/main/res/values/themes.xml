@@ -140,6 +140,12 @@
         <item name="android:colorBackground">@color/app_color_background_light</item>
         <!-- used for text -->
         <item name="android:colorForeground">@color/app_primary</item>
+
+        <item name="scrimBackground">@color/color_scrim_light_bright</item>  <!-- what uses this? its material -->
+        <item name="scrimHeavy">@color/color_scrim_heavy_bright</item>
+        <item name="scrimUltraHeavy">@color/color_scrim_ultra_heavy_bright</item>
+        <item name="scrimLight">@color/color_scrim_light_bright</item>
+
         <!-- These override the standard light colors -->
         <item name="colorPrimary">@color/app_primary</item>
         <item name="colorPrimaryDark">?attr/colorPrimary</item>

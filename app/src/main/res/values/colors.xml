@@ -25,7 +25,8 @@
     <color name="app_color_surface">#606060</color>
     <color name="app_color_on_surface">#FFFFFF</color>
     <color name="app_color_on_background">#212121</color>
-    <color name="app_color_scrim_color">#11000000</color>
+    <color name="app_color_scrim_color_bright">#EEFFFFFF</color>
+    <color name="app_color_scrim_color_dark">#212121</color>
 
     <!--used-->
     <color name="rating_indicator">#FFFFFF00</color>

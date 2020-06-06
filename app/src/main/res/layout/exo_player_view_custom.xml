@@ -41,40 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <RelativeLayout
-            android:id="@+id/custom_exo_info_panel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:orientation="vertical"
-            android:background="@drawable/drawable_scrim_heavy">
 
-            <ImageView
-                android:id="@+id/download_progress_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_file_download_black_24px"
-                android:tint="?attr/colorControlNormal"
-                android:layout_alignTop="@id/exo_downloaded"
-                android:layout_alignBottom="@id/exo_downloaded"
-                />
-
-            <TextView
-            	android:id="@+id/exo_downloaded"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/download_progress_icon"
-                tools:text="2432 Bytes"
-                android:textAppearance="?textAppearanceBody2"/>
-
-            <TextView
-            	android:id="@+id/exo_cached_summary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/exo_downloaded"
-                tools:text="2.4 MB / 5.6MB"
-                android:textAppearance="?textAppearanceBody2"/>
-        </RelativeLayout>
 
         <ProgressBar android:id="@id/exo_buffering"
             android:layout_width="wrap_content"
