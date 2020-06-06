@@ -7,7 +7,6 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
