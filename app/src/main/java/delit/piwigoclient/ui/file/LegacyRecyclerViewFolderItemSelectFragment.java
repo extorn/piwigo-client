@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.file;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -18,9 +17,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.room.util.StringUtil;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
@@ -40,18 +37,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.StringJoiner;
 
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.FileBreadcrumbsView;
 import delit.libs.ui.view.list.MappedArrayAdapter;
 import delit.libs.util.CollectionUtils;
-import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;

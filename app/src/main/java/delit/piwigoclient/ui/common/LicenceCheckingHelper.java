@@ -65,10 +65,7 @@ public class LicenceCheckingHelper {
 
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction(activity.getUiHelper(), showRetryButton) {
-
-
-        });
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction(activity.getUiHelper(), showRetryButton));
     }
 
     private synchronized void forceCheck() {
@@ -88,6 +85,7 @@ public class LicenceCheckingHelper {
     }
 
     private static class LicenceCheckAction<T extends ActivityUIHelper<MyActivity>> extends UIHelper.QuestionResultAdapter<T> {
+        private static final long serialVersionUID = 9060842177348571227L;
         private final boolean allowRetry;
 
         public LicenceCheckAction(T uiHelper, boolean allowRetry) {
@@ -122,7 +120,10 @@ public class LicenceCheckingHelper {
             if (mLicenseCheckerCallback.isOfflineAccessAllowed()) {
                 final ConnectivityManager connMgr = (ConnectivityManager) activity.getApplicationContext()
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
-                android.net.NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo();
+                android.net.NetworkInfo activeNetworkInfo = null;
+                if(connMgr != null) {
+                    activeNetworkInfo = connMgr.getActiveNetworkInfo();
+                }
                 if (activeNetworkInfo == null || !activeNetworkInfo.isAvailable()) {
                     // allow access for the next 6 hours.
                     mLicenseCheckerCallback.allow(-1);

@@ -1,12 +1,9 @@
 package delit.libs.util.security;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.security.Key;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;

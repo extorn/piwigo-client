@@ -2,12 +2,9 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -18,16 +15,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceViewHolder;
-
-import com.crashlytics.android.Crashlytics;
-import com.google.android.exoplayer2.util.UriUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
