@@ -3,8 +3,6 @@ package delit.piwigoclient.ui.upload;
 import android.content.Context;
 import android.net.Uri;
 
-import java.io.File;
-
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;

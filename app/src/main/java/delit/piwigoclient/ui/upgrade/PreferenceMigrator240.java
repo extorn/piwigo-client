@@ -12,7 +12,6 @@ import java.util.Set;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.AbstractMyApplication;
 
 public class PreferenceMigrator240 extends PreferenceMigrator {
 

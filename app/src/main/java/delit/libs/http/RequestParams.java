@@ -97,7 +97,7 @@ public class RequestParams implements Serializable {
     protected boolean useJsonStreamer;
     protected String elapsedFieldInJsonStreamer = "_elapsed";
     protected boolean autoCloseInputStreams;
-    protected String contentEncoding = HTTP.UTF_8;
+    protected String contentEncoding = "UTF-8";
 
     /**
      * Constructs a new empty {@code RequestParams} instance.

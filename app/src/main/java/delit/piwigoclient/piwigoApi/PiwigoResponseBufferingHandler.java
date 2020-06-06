@@ -9,7 +9,6 @@ import android.util.LongSparseArray;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

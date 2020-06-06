@@ -3,8 +3,9 @@ package delit.piwigoclient.business.video;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import androidx.preference.PreferenceManager;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.C;

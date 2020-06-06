@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -27,12 +26,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
-import delit.libs.ui.view.FlowLayout;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -53,9 +50,6 @@ import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
-import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
-
-import static android.view.View.NO_ID;
 
 public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter, CategoryItemViewAdapterPreferences> implements BackButtonHandler {
     private static final String TAG = "RecViewCatItemSelFr";
