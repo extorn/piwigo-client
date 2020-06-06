@@ -27,7 +27,6 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
@@ -46,8 +45,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;

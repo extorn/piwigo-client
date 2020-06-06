@@ -59,6 +59,7 @@ public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
     }
 
     private static class BlockingUserInteractionQuestionResultAdapter<T extends ActivityUIHelper<?>> extends QuestionResultAdapter<T> {
+        private static final long serialVersionUID = 1572120510497547224L;
         private final BlockingUserInteractionQuestion event;
 
         public BlockingUserInteractionQuestionResultAdapter(T uiHelper, BlockingUserInteractionQuestion event) {

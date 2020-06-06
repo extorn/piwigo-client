@@ -1,6 +1,5 @@
 package delit.piwigoclient.database;
 
-import android.app.Application;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;

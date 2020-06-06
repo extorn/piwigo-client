@@ -1,7 +1,5 @@
 package delit.piwigoclient.ui.permissions;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.FileUtils;
 
 import androidx.annotation.NonNull;
 import androidx.core.os.ConfigurationCompat;
@@ -12,7 +11,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 
-import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 
 public class AppPreferences {
