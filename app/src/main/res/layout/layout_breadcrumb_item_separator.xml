@@ -6,6 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:srcCompat="@drawable/ic_chevron_right_black_24dp"
     android:scaleType="fitXY"
-    app:tint="?colorControlNormal"
+    app:tint="?attr/colorControlNormal"
     tools:layout_height="50dp">
 </androidx.appcompat.widget.AppCompatImageView>

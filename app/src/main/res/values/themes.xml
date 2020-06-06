@@ -23,7 +23,7 @@
     <!-- this defines how things are laid out -->
     <style name="Theme.App.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- needed for older versions (pre lollipop - don't know why - it's inferring that the Light theme is in use) -->
-        <item name="android:textColorPrimary">?colorOnPrimary</item>
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
 
         <item name="scrimBackground">@color/color_scrim_light</item>  <!-- what uses this? its material -->
         <item name="scrimHeavy">@color/color_scrim_heavy</item>
@@ -125,11 +125,11 @@
         <item name="colorOnSecondary">@color/app_color_on_secondary</item>
         <item name="colorError">@color/app_color_error</item>
         <item name="colorOnError">@color/app_color_on_error</item>
-        <item name="cardBackgroundColor">?colorSurface</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
         <!-- surfaces are the sliding layers (and cards by default)  -->
         <item name="colorSurface">@color/app_color_surface</item>
         <item name="colorOnSurface">@color/app_color_on_surface</item>
-        <item name="colorOnBackground">?colorOnSurface</item>
+        <item name="colorOnBackground">?attr/colorOnSurface</item>
         <item name="appScrimColor">@color/app_primary</item>
         <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
     </style>
@@ -142,19 +142,19 @@
         <item name="android:colorForeground">@color/app_primary</item>
         <!-- These override the standard light colors -->
         <item name="colorPrimary">@color/app_primary</item>
-        <item name="colorPrimaryDark">?colorPrimary</item>
-        <item name="colorPrimarySurface">?colorPrimary</item>
+        <item name="colorPrimaryDark">?attr/colorPrimary</item>
+        <item name="colorPrimarySurface">?attr/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
         <item name="colorOnPrimary">@color/app_color_on_primary</item>
         <item name="colorSecondary">@color/app_secondary</item>
         <item name="colorSecondaryVariant">@color/app_secondary_variant</item>
         <item name="colorOnSecondary">@color/app_color_on_secondary</item>
-        <item name="cardBackgroundColor">?colorOnPrimary</item>
+        <item name="cardBackgroundColor">?attr/colorOnPrimary</item>
         <!-- surfaces are the sliding layers (and cards by default) -->
         <item name="colorSurface">@color/app_color_on_surface</item>
-        <item name="colorOnBackground">?colorOnSurface</item>
+        <item name="colorOnBackground">?attr/colorOnSurface</item>
         <item name="colorOnSurface">@color/app_color_surface</item>
-        <item name="appScrimColor">?colorOnPrimary</item> <!-- goes under text -->
+        <item name="appScrimColor">?attr/colorOnPrimary</item> <!-- goes under text -->
     </style>
 
 </resources>

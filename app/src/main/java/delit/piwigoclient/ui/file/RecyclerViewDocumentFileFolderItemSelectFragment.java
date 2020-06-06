@@ -232,10 +232,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private void refreshCurrentFolderView() {
-        getListAdapter().rebuildContentView();
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -281,7 +277,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
             fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
-            fileExtFilters.setSelectedFilters(getListAdapter().getAdapterPrefs().getVisibleFileTypes());
+            //fileExtFilters.setSelectedFilters(getListAdapter().getAdapterPrefs().getVisibleFileTypes());
+            // Ideally we'd select all the filters to allow showing all items but they remain hidden. Need to show them all by default
+            // in the adapter I think, THEN set this.
+            fileExtFilters.selectAll();
+            //fileExtFilters.setSelectedFilters(getListAdapter().getFileExtsInCurrentFolder());
         }
     }
 
@@ -573,7 +573,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         @Override
         public void onFiltersChanged(boolean filterHidden, boolean filterShown) {
-            listAdapter.rebuildContentView();
+            listAdapter.refreshContentView();
         }
     }
 
@@ -626,11 +626,15 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         fileExtFilters.setEnabled(true);
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
                         DocumentFile currentRoot = getListAdapter().getActiveFolder();
-                        if(currentRoot == null && getViewPrefs().getInitialFolder() != null) {
-                            DocumentFile file = IOUtils.getTreeLinkedDocFile(getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
-                            getListAdapter().updateContentAndRoot(newRoot, file);
-                        } else {
-                            getListAdapter().resetRoot(newRoot);
+                        try {
+                            if (currentRoot == null && getViewPrefs().getInitialFolder() != null) {
+                                DocumentFile file = IOUtils.getTreeLinkedDocFile(getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
+                                getListAdapter().updateContentAndRoot(newRoot, file);
+                            } else {
+                                getListAdapter().resetRoot(newRoot);
+                            }
+                        } catch(IllegalStateException e) {
+                            getListAdapter().resetRoot(newRoot); // just use the current root and ignore the initial folder.
                         }
                         deselectAllItems();
                         if(listViewStates != null) {

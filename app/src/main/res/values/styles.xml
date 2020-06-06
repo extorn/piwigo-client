@@ -10,7 +10,7 @@
     </style>
 
     <style name="App.Widget.EditText.FieldEntry" parent="App.Widget.EditText">
-        <!--<item name="android:textColor">?colorPrimaryVariant</item>-->
+        <!--<item name="android:textColor">?attr/colorPrimaryVariant</item>-->
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">5dp</item>
@@ -38,7 +38,7 @@
 
     <style name="App.Widget.Material.TextView.FieldLabel" parent="Widget.MaterialComponents.TextView">
         <item name="android:textAppearance">?textAppearanceCaption</item>
-        <!--<item name="android:textColor">?colorPrimary</item>-->
+        <!--<item name="android:textColor">?attr/colorPrimary</item>-->
         <item name="android:layout_marginStart">5dp</item>
         <item name="android:layout_marginEnd">5dp</item>
         <item name="android:layout_marginBottom">3dp</item>
@@ -84,12 +84,12 @@
     <!-- Accented Favorite (heart) icon style button -->
     <style name="Widget.CompoundButton.CheckBox.Favorite.Accented" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:button">@drawable/favorite_checkbox</item> <!-- heart style icon -->
-        <item name="buttonTint">?colorSecondary</item> <!-- color the button icon -->
+        <item name="buttonTint">?attr/colorSecondary</item> <!-- color the button icon -->
     </style>
 
     <!-- icon only style button tinted in the accent color -->
     <style name="Widget.Button.OutlinedButton.IconOnly.Accented" parent="Widget.Button.OutlinedButton.IconOnly">
-        <item name="iconTint">?colorSecondary</item>
+        <item name="iconTint">?attr/colorSecondary</item>
     </style>
 
     <!-- icon only style button -->
@@ -190,7 +190,7 @@
     </style>
 
     <style name="App.Widget.MaterialComponents.CompoundButton.Switch.Field" parent="Widget.MaterialComponents.CompoundButton.Switch">
-        <!--<item name="android:textColor">?colorPrimaryVariant</item>-->
+        <!--<item name="android:textColor">?attr/colorPrimaryVariant</item>-->
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">5dp</item>

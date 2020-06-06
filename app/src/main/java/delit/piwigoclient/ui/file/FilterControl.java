@@ -70,12 +70,12 @@ public class FilterControl extends FlowLayout {
     }
 
     public void selectAll() {
-        if(currentlyVisibleFileExts != null) {
-            selectedVisibleFileExts = new HashSet<>(currentlyVisibleFileExts);
+        if(allPossiblyVisibleFileExts != null) {
+            selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
         } else {
             selectedVisibleFileExts = new HashSet<>();
         }
-        buildFileExtFilterControls(false);
+        buildFileExtFilterControls(true);
     }
 
     public void buildFileExtFilterControls(boolean notifyOnFiltersChanged) {
@@ -189,7 +189,7 @@ public class FilterControl extends FlowLayout {
             selectedVisibleFileExts.clear();
             selectedVisibleFileExts.addAll(visibleFileTypes);
         }
-        buildFileExtFilterControls(false);
+        buildFileExtFilterControls(true);
     }
 
     static class SavedState extends BaseSavedState {

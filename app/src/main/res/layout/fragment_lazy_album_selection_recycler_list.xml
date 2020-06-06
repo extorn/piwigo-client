@@ -23,7 +23,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             app:icon="@drawable/ic_add_circle_black_24px"
-            app:iconTint="?colorOnBackground"/>
+            app:iconTint="?attr/colorOnBackground"/>
 
         <delit.piwigoclient.ui.album.CategoryBreadcrumbsView
             android:id="@+id/category_path"
@@ -64,7 +64,7 @@
         tools:visibility="visible"
         app:fabSize="mini"
         app:icon="@drawable/ic_refresh_black_24dp"
-        app:iconTint="?colorOnBackground"/>
+        app:iconTint="?attr/colorOnBackground"/>
 
     <Button
         android:id="@+id/list_action_cancel_button"

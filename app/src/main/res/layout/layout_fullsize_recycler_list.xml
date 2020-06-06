@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?colorSurface">
+    android:background="?attr/colorSurface">
 
     <delit.libs.ui.view.ProgressIndicator
         android:id="@+id/list_action_progress_indicator"
@@ -29,7 +29,7 @@
             android:layout_marginEnd="10dp"
             app:fabSize="mini"
             app:icon="@drawable/ic_add_circle_black_24px"
-            app:iconTint="?colorOnBackground"/>
+            app:iconTint="?attr/colorOnBackground"/>
 
         <TextView
             android:id="@+id/heading"
@@ -116,6 +116,6 @@
         app:fabSize="mini"
         android:focusable="true"
         app:icon="@drawable/ic_refresh_black_24dp"
-        app:iconTint="?colorOnBackground"/>
+        app:iconTint="?attr/colorOnBackground"/>
 
 </RelativeLayout>

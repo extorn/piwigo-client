@@ -17,5 +17,5 @@
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_marginTop="7dp"
-        android:background="?colorAlbumItemBackground"/>
+        android:background="?attr/colorAlbumItemBackground"/>
 </LinearLayout>

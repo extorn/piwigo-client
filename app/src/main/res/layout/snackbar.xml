@@ -47,7 +47,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="7dp"
         android:textAppearance="?textAppearanceHeadline6"
-        android:textColor="?colorPrimary"
+        android:textColor="?attr/colorPrimary"
         tools:text="some title"/>
 
     <TextView
@@ -61,7 +61,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="10dp"
         android:textAppearance="?textAppearanceBody1"
-        android:textColor="?colorPrimaryVariant"
+        android:textColor="?attr/colorPrimaryVariant"
         tools:text="message goes here"/>
 
     <Button

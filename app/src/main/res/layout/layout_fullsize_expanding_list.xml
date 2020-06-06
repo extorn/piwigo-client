@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             app:icon="@drawable/ic_add_circle_black_24px"
-            app:iconTint="?colorOnBackground"
+            app:iconTint="?attr/colorOnBackground"
             app:fabSize="mini"/>
 
         <TextView
@@ -107,6 +107,6 @@
         app:fabSize="mini"
         android:focusable="true"
         app:icon="@drawable/ic_refresh_black_24dp"
-        app:iconTint="?colorOnBackground"/>
+        app:iconTint="?attr/colorOnBackground"/>
 
 </RelativeLayout>

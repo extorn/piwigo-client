@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    android:background="?colorSurface">
+    android:background="?attr/colorSurface">
 
     <delit.libs.ui.view.CustomViewPager
         android:id="@+id/sliding_views_tab_content"

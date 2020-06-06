@@ -51,6 +51,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
+    private transient List<FolderItem> currentFullContent;
     private transient List<FolderItem> currentDisplayContent;
     private DocumentFile activeFolder;
     private Comparator<? super FolderItem> fileComparator;
@@ -111,9 +112,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             Collections.addAll(folderContent, activeFolder.listFiles());
             currentDisplayContent = buildDisplayContent(folderContent);
         } else {
-            if(currentDisplayContent == null) {
-                currentDisplayContent = new ArrayList<>();
-            }
+            currentDisplayContent = new ArrayList<>();
             // null used to mean no folder to show, but now means items without a folder shown so we leave the content intact.
         }
         if(Thread.currentThread().isInterrupted()) {
@@ -126,23 +125,28 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             Set<String> desiredExts = getAdapterPrefs().getVisibleFileTypesForMimes(currentVisibleDocumentFileExts);
             getAdapterPrefs().withVisibleContent(desiredExts, getAdapterPrefs().getFileSortOrder());
         }
+
+        Collections.sort(currentDisplayContent, getFolderItemComparator());
+
+        return currentDisplayContent;
+    }
+
+    private List<FolderItem> getFilteredListOfContent(List<FolderItem> currentDisplayContent) {
+        List<FolderItem> filteredContent = new ArrayList<>(currentDisplayContent.size());
         SortedSet<String> visibleFileExts = getAdapterPrefs().getVisibleFileTypes();
         //String[] visibleMimes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
         boolean showFolderContainedFiles = getAdapterPrefs().isAllowFileSelection();
         FolderItemFilter filter = new FolderItemFilter(showFolderContainedFiles, visibleFileExts, null);
         for(int i = currentDisplayContent.size() - 1; i >= 0; i--) {
             FolderItem folderItem = currentDisplayContent.get(i);
-            if(!filter.accept(folderItem)) {
-                currentDisplayContent.remove(i);
+            if(filter.accept(folderItem)) {
+                filteredContent.add(folderItem);
             }
             if(Thread.currentThread().isInterrupted()) {
                 return null;
             }
         }
-
-
-        Collections.sort(currentDisplayContent, getFolderItemComparator());
-        return currentDisplayContent;
+        return filteredContent;
     }
 
     private static class FolderItemFilter {
@@ -158,23 +162,30 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         public boolean accept(FolderItem pathname) {
-            return !showFolderContents || (pathname.isFolder() || filenameMatches(pathname)/*mimeTypeMatches(pathname)*/);
+            return !showFolderContents || (pathname.isFolder() || (pathname.isFile() && filenameMatches(pathname))/*mimeTypeMatches(pathname)*/);
         }
 
         private boolean filenameMatches(FolderItem item) {
             if (visibleFileTypes == null) {
                 return true;
             }
+            if(visibleFileTypes.isEmpty()) {
+                return false;
+            }
             return visibleFileTypes.contains(item.getExt());
         }
 
-        private boolean mimeTypeMatches(DocumentFile pathname) {
+        private boolean mimeTypeMatches(FolderItem pathname) {
             if (visibleMimeTypes == null) {
                 return true;
             }
-            String mimeType = pathname.getType();
+            String mimeType = pathname.getMime();
             return null != MimeTypeFilter.matches(mimeType, visibleMimeTypes);
         }
+    }
+
+    public void refreshContentView() {
+        updateContent(activeFolder, false);
     }
 
     public void rebuildContentView() {
@@ -381,10 +392,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     private TreeMap<String, String> buildListOfFileExtsAndMimesInCurrentFolder(List<FolderItem> currentDisplayContent) {
         TreeMap<String, String> currentVisibleDocumentFileExts = new TreeMap<>();
         for (FolderItem f : currentDisplayContent) {
-            if (f.isFolder()) {
+            if (f.isFolder() || !f.isFile()) {
                 continue;
             }
-            currentVisibleDocumentFileExts.put(f.getExt(), f.getMime());
+
+            if(f.getExt() != null && f.getMime() != null) {
+                currentVisibleDocumentFileExts.put(f.getExt(), f.getMime());
+            }
             if(Thread.currentThread().isInterrupted()) {
                 return null;
             }
@@ -460,11 +474,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             }
         };
 
-
         private Uri rootUri;
         private Uri itemUri;
         private DocumentFile itemDocFile;
         private boolean isFolder;
+        private boolean isFile; // items are not files or folders if they are special system files
         private long lastModified;
         private String name;
         private String ext;
@@ -478,6 +492,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return isFolder;
         }
 
+        public boolean isFile() {
+            return isFile;
+        }
+
         public FolderItem(Uri rootUri, DocumentFile itemDocFile, boolean preCacheName, boolean preCacheLastModified) {
             this.itemDocFile = itemDocFile;
             this.rootUri = rootUri;
@@ -488,14 +506,18 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             if(preCacheName) {
                 this.name = IOUtils.getFilename(itemDocFile);
             }
-            this.mime = itemDocFile.getType();
-            this.isFolder = this.mime == null && itemDocFile.isDirectory();
-            this.ext = isFolder?null:IOUtils.getFileExt(this.name, mime);
+            this.isFolder = itemDocFile.isDirectory();
+            this.isFile = itemDocFile.isFile();
+            this.mime = (isFolder||!isFile)?null:itemDocFile.getType();
+            //Note: We're kind of stuck - if we use filename or docFile, we need to retrieve the filename first....
+            // best to guess from the uri path
+            this.ext = (isFolder||!isFile)?null:IOUtils.getFileExt(this.name != null ? this.name : this.itemUri.getPath(), mime);
         }
 
         public FolderItem(Parcel in) {
             rootUri = ParcelUtils.readParcelable(in, Uri.class);
             itemUri = ParcelUtils.readParcelable(in, Uri.class);
+            //TODO do the other fields definitely get initialised before use?
         }
 
         public String getMime() {
@@ -798,7 +820,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    private static class UpdateFolderContentTask extends AsyncTask<Object,Object,List<FolderItem>> {
+    private static class UpdateFolderContentTask extends AsyncTask<Object,Object,List<FolderItem>[]> {
 
         private final DocumentFile newContent;
         private final boolean force;
@@ -826,11 +848,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             Uri activeUri = folderItemRecyclerViewAdapter.activeFolder != null ? folderItemRecyclerViewAdapter.activeFolder.getUri() : null;
             Uri newUri = newContent != null ? newContent.getUri() : null;
             if (ObjectUtils.areEqual(activeUri, newUri)) {
-                if (!force && folderItemRecyclerViewAdapter.currentDisplayContent != null && folderItemRecyclerViewAdapter.activeFolder != null) {
+                /*if (!force && folderItemRecyclerViewAdapter.currentDisplayContent != null && folderItemRecyclerViewAdapter.activeFolder != null) {
                     return;
                 } else {
                     refreshingExistingFolder = true;
-                }
+                }*/
+                refreshingExistingFolder = true;
             }
 
             oldFolder = folderItemRecyclerViewAdapter.activeFolder;
@@ -841,16 +864,25 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         @Override
-        protected List<FolderItem> doInBackground(Object[] objects) {
-            return folderItemRecyclerViewAdapter.getNewDisplayContentInternal(newContent);
+        protected List<FolderItem>[] doInBackground(Object[] objects) {
+            List<FolderItem> fullContent = folderItemRecyclerViewAdapter.currentFullContent;
+            if(!refreshingExistingFolder || force) {
+                fullContent = folderItemRecyclerViewAdapter.getNewDisplayContentInternal(newContent);
+            }
+            List<FolderItem> filteredContent = fullContent;
+            if(fullContent != null) {
+                filteredContent = folderItemRecyclerViewAdapter.getFilteredListOfContent(fullContent);
+            }
+            return new List[]{fullContent, filteredContent};
         }
 
         @Override
-        protected void onPostExecute(List<FolderItem> result) {
+        protected void onPostExecute(List<FolderItem>[] result) {
             super.onPostExecute(result);
             if(result != null) {
                 // result only null if the task was cancelled.
-                folderItemRecyclerViewAdapter.currentDisplayContent = result;
+                folderItemRecyclerViewAdapter.currentFullContent = result[0];
+                folderItemRecyclerViewAdapter.currentDisplayContent = result[1];
                 folderItemRecyclerViewAdapter.notifyDataSetChanged();
                 if (!refreshingExistingFolder) {
                     folderItemRecyclerViewAdapter.navigationListener.onPostFolderOpened(oldFolder, newContent);

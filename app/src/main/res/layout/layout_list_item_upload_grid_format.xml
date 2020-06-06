@@ -90,7 +90,7 @@
         android:text="@string/uploading_progress_bar_message"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="?colorOnSecondary"
+        android:textColor="?attr/colorOnSecondary"
         android:visibility="invisible"
         app:autoSizeMaxTextSize="100sp"
         app:autoSizeMinTextSize="1sp"
