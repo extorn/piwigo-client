@@ -5,10 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.preference.PreferenceManager;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.preference.PreferenceManager;
 
 import java.io.Serializable;
 import java.util.Collections;

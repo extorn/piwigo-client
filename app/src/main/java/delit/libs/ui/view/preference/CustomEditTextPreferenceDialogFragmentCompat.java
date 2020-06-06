@@ -12,7 +12,6 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.PasswordInputToggle;
-import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.piwigoclient.R;
 
 public class CustomEditTextPreferenceDialogFragmentCompat<T extends CustomEditTextPreference> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
