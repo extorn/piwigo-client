@@ -1,16 +1,13 @@
 package delit.libs.ui.util;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -24,7 +21,6 @@ import java.util.Set;
 
 import delit.libs.util.ClassUtils;
 import delit.piwigoclient.BuildConfig;
-import io.fabric.sdk.android.services.common.Crash;
 
 public class ParcelUtils {
 

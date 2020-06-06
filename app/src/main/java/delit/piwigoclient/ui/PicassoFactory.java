@@ -4,28 +4,25 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.util.Size;
 import android.webkit.MimeTypeMap;
 
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.MimeTypeFilter;
-import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.MyPicasso;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
@@ -140,6 +137,8 @@ public class PicassoFactory {
 
     class VideoRequestHandler extends RequestHandler {
 
+        public static final int DEFAULT_WIDTH = 512;
+        public static final int DEFAULT_HEIGHT = 384;
         private Context context;
 
         private VideoRequestHandler(Context context) {
@@ -159,16 +158,32 @@ public class PicassoFactory {
 
         @Override
         public Result load(Request data, int networkPolicy) {
+            Bitmap bm = null;
+            /*if(NetworkPolicy.shouldReadFromDiskCache(networkPolicy)) {
+                bm = getPicassoSingleton().getCache().get(data.stableKey);
+            }*/
+            if(bm == null) {
+                bm = buildBitmapForVideo(data);
+                if(NetworkPolicy.shouldWriteToDiskCache(networkPolicy)) {
+//                    getPicassoSingleton().getCache().set(data.stableKey, bm);
+                }
+            }
+            return new Result(bm, Picasso.LoadedFrom.DISK);
+        }
+
+        private Bitmap buildBitmapForVideo(Request data) {
             MediaMetadataRetriever mediaRetriever = new MediaMetadataRetriever();
             Bitmap bm;
             try {
                 mediaRetriever.setDataSource(context, data.uri);
+                int scaleToHeight = data.targetHeight;
+                int scaleToWidth = data.targetWidth;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
-                    bm = mediaRetriever.getScaledFrameAtTime(1000, OPTION_CLOSEST_SYNC, 512, 384);
+                    bm = mediaRetriever.getScaledFrameAtTime(1000, OPTION_CLOSEST_SYNC, scaleToWidth, scaleToHeight);
                 } else {
                     bm = mediaRetriever.getFrameAtTime(1000);
                     if (bm != null) {
-                        bm = getResizedBitmap(bm, 512, 384);
+                        bm = getResizedCenterFittedBitmap(bm, scaleToWidth, scaleToHeight);
                     }
                 }
             } finally {
@@ -180,18 +195,20 @@ public class PicassoFactory {
             } else {
                 Log.d(TAG, "Created a video thumbnail for file : " + data.uri.getPath());
             }
-            return new Result(bm, Picasso.LoadedFrom.DISK);
+            return bm;
         }
 
-        public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        public Bitmap getResizedCenterFittedBitmap(Bitmap bm, int newWidth, int newHeight) {
             int width = bm.getWidth();
             int height = bm.getHeight();
-            float scaleWidth = ((float) newWidth) / width;
-            float scaleHeight = ((float) newHeight) / height;
+
             // CREATE A MATRIX FOR THE MANIPULATION
             Matrix matrix = new Matrix();
-            // RESIZE THE BIT MAP
-            matrix.postScale(scaleWidth, scaleHeight);
+            RectF from = new RectF();
+            from.set(new Rect(0,0,width, height));
+            RectF to = new RectF();
+            to.set(new Rect(0,0,newWidth, newHeight));
+            matrix.setRectToRect(from, to, Matrix.ScaleToFit.CENTER);
 
             // "RECREATE" THE NEW BITMAP
             Bitmap resizedBitmap = Bitmap.createBitmap(

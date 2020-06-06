@@ -3,12 +3,9 @@ package delit.piwigoclient.ui.preferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
-import androidx.preference.Preference;
-
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 
 /**
