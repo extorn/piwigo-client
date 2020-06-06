@@ -4,8 +4,9 @@ import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.documentfile.provider.DocumentFile;
+
 
 import java.io.File;
 
@@ -31,12 +32,12 @@ public class FileBreadcrumbsView extends AbstractBreadcrumbsView<File> {
 
     private class FilePathNavigator implements PathNavigator<File> {
         @Override
-        public String getItemName(File item) {
+        public String getItemName(@NonNull File item) {
             return item.getName();
         }
 
         @Override
-        public File getParent(File item) {
+        public File getParent(@NonNull File item) {
             return item.getParentFile();
         }
     }

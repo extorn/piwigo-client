@@ -7,8 +7,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 

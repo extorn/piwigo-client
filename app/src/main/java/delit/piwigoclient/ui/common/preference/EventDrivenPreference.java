@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
+
+import androidx.preference.Preference;
 
 import org.greenrobot.eventbus.EventBus;
 
-import androidx.preference.Preference;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableResponseEvent;
 
