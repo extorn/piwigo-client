@@ -51,10 +51,10 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
                 preNotifiedCerts.add(thumbprint);
             }
         } else if (arg instanceof Set) {
-            Set<String> trustedCertificateThumbprints = (Set) arg;
+            Set<String> trustedCertificateThumbprints = (Set<String>) arg;
             certThumbprints.addAll(trustedCertificateThumbprints);
         } else if (arg instanceof ArrayList) {
-            ArrayList<String> untrustedCertificateThumbprints = (ArrayList) arg;
+            ArrayList<String> untrustedCertificateThumbprints = (ArrayList<String>) arg;
             certThumbprints.removeAll(untrustedCertificateThumbprints);
         }
     }

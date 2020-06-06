@@ -4,13 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.BaseAdapter;
-import android.widget.Filterable;
-import android.widget.ListAdapter;
 
 import androidx.annotation.AttrRes;
-
-import delit.libs.ui.view.list.NonFilteringAdapterWrapper;
 
 public class TextViewDrillDown extends androidx.appcompat.widget.AppCompatAutoCompleteTextView {
     public TextViewDrillDown(Context context) {

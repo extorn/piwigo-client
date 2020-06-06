@@ -3,7 +3,6 @@ package delit.piwigoclient.ui.events.trackable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
