@@ -9,7 +9,6 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import java.io.File;
 import java.util.HashMap;
 
 import delit.piwigoclient.BuildConfig;
