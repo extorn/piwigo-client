@@ -3,12 +3,9 @@ package delit.libs.util.security;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
-import delit.libs.ui.util.ParcelUtils;
 
 public class CertificateLoadOperationResult implements Parcelable {
     private final X509LoadOperation loadOperation;

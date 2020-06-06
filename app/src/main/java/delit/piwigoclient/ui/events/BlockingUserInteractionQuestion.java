@@ -4,7 +4,10 @@ import androidx.annotation.StringRes;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class BlockingUserInteractionQuestion {
+import java.io.Serializable;
+
+public class BlockingUserInteractionQuestion implements Serializable {
+    private static final long serialVersionUID = -7244312957666580899L;
     public final @StringRes
     int questionStringId;
     private Boolean userResponse;

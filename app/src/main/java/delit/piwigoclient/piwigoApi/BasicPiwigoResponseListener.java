@@ -104,6 +104,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     }
 
     private static class ErrorRetryQuestionResultHandler extends UIHelper.QuestionResultAdapter {
+        private static final long serialVersionUID = 8909950575242139703L;
         private final transient AbstractPiwigoDirectResponseHandler handler;
         private final transient PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse;
         private final long handlerId;

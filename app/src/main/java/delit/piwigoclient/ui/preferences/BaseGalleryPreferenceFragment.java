@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.MenuItem;
 
 import androidx.preference.Preference;
 

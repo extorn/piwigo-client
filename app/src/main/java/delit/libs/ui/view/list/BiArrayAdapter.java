@@ -25,7 +25,7 @@ public class BiArrayAdapter<T> extends ArrayAdapter<T> {
 
     public BiArrayAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull T[] objects, @NonNull long[] objectIds) {
         super(context, resource, textViewResourceId, com.google.android.gms.common.util.ArrayUtils.toArrayList(objects));
-        this.objectIds = new ArrayList(objectIds.length);
+        this.objectIds = new ArrayList<>(objectIds.length);
         this.objectIds.addAll(ArrayUtils.toList(objectIds));
     }
 

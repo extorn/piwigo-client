@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 
-import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Iterator;
 

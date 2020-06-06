@@ -6,30 +6,20 @@ import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
-import com.crashlytics.android.Crashlytics;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.SetUtils;
 
 public class AppSettingsViewModel extends AndroidViewModel {
 
