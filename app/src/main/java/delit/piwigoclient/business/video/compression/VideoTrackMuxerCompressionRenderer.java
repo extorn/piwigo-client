@@ -12,7 +12,6 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.collection.LongSparseArray;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -31,7 +30,10 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 //import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
@@ -49,7 +51,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     private final String TAG = "CompressionVidRenderer";
     private final ExoPlayerCompression.VideoCompressionParameters compressionSettings;
     private int pendingRotationDegrees;
-    private LongSparseArray<Integer> sampleTimeSizeMap = new LongSparseArray<>(100);
+    private LinkedHashMap<Long,Integer> sampleTimeSizeMap = new LinkedHashMap<>(100);
     private OutputSurface decoderOutputSurface;
     private MediaCodec encoder;
     private boolean encoderInputEndedSignalled;
@@ -421,14 +423,15 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
                         Log.d(TAG, String.format("writing sample video data (%2$dbytes) for frame at time [%1$d]", info.presentationTimeUs, info.size));
                     }
 
-                    Integer originalBytes = sampleTimeSizeMap.get(info.presentationTimeUs);
-                    if(originalBytes == null) {
-                        int bytes = 0;
-                        while(sampleTimeSizeMap.keyAt(0) <= info.presentationTimeUs) {
-                            bytes += sampleTimeSizeMap.valueAt(0);
-                            sampleTimeSizeMap.removeAt(0);
+                    Iterator<Map.Entry<Long,Integer>> iterator = sampleTimeSizeMap.entrySet().iterator();
+                    long originalBytes = 0;
+                    while(iterator.hasNext()) {
+                        Map.Entry<Long, Integer> entry = iterator.next();
+                        if(entry.getKey() > info.presentationTimeUs) {
+                            break;
                         }
-                        originalBytes = bytes;
+                        originalBytes += entry.getValue();
+                        iterator.remove();
                     }
                     mediaMuxerControl.writeSampleData(mediaMuxerControl.getVideoTrackId(), encodedDataBuffer, info, originalBytes);
                     wroteData = true;

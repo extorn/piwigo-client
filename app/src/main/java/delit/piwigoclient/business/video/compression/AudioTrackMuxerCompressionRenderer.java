@@ -8,7 +8,6 @@ import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
-import android.util.LongSparseArray;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -32,6 +31,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM;
@@ -51,7 +53,7 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     private boolean VERBOSE = false;
     private MediaFormat currentDecodedMediaFormat;
     private Set<Long> encodingFrames = new HashSet<>();
-    private LongSparseArray<Integer> sampleTimeSizeMap = new LongSparseArray<>(100);
+    private LinkedHashMap<Long,Integer> sampleTimeSizeMap = new LinkedHashMap<>();
     private MediaCodec.BufferInfo audioBufferInfo = new MediaCodec.BufferInfo(); // shared copy for efficiency.
     private MediaFormat currentOutputMediaFormat;
     private MediaCodec encoder;
@@ -594,10 +596,15 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
             Log.d(TAG, String.format("writing sample audio data : [%1$d] - flags : %2$d", audioBufferInfo.presentationTimeUs, bufferFlags));
         }
 
-        int bytes = 0;
-        while(sampleTimeSizeMap.keyAt(0) <= bufferPresentationTimeUs) {
-            bytes += sampleTimeSizeMap.valueAt(0);
-            sampleTimeSizeMap.removeAt(0);
+        long bytes = 0;
+        Iterator<Map.Entry<Long,Integer>> iterator = sampleTimeSizeMap.entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry<Long, Integer> entry = iterator.next();
+            if(entry.getKey() > bufferPresentationTimeUs) {
+                break;
+            }
+            bytes += entry.getValue();
+            iterator.remove();
         }
         mediaMuxerControl.writeSampleData(mediaMuxerControl.getAudioTrackId(), buffer, audioBufferInfo, bytes);
 

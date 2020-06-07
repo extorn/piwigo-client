@@ -275,7 +275,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         return val;
     }
 
-    public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Integer originalBytes) {
+    public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Long originalBytes) {
 
         TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
         thisTrackStats.addOriginalBytesTranscoded(originalBytes == null ? 0 : originalBytes);
@@ -647,7 +647,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             this.transcodedBytesWritten += transcodedBytesWritten;
         }
 
-        public void addOriginalBytesTranscoded(int originalBytesTranscoded) {
+        public void addOriginalBytesTranscoded(long originalBytesTranscoded) {
             this.originalBytesTranscoded += originalBytesTranscoded;
         }
 
@@ -656,7 +656,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         }
 
         public double getCompression() {
-            return transcodedBytesWritten / originalBytesTranscoded;
+            return ((double)transcodedBytesWritten) / originalBytesTranscoded;
         }
     }
 
