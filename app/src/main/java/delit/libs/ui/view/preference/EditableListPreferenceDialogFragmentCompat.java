@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -183,10 +182,11 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     }
 
     @Override
-    public Preference findPreference(CharSequence key) {
-        return getPreference();
+    public <T extends Preference> T findPreference(CharSequence key) {
+        return (T) getPreference();
     }
 
+    @Override
     public EditableListPreference getPreference() {
         return (EditableListPreference) super.getPreference();
     }

@@ -277,11 +277,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
             fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
-            //fileExtFilters.setSelectedFilters(getListAdapter().getAdapterPrefs().getVisibleFileTypes());
-            // Ideally we'd select all the filters to allow showing all items but they remain hidden. Need to show them all by default
-            // in the adapter I think, THEN set this.
-            fileExtFilters.selectAll();
-            //fileExtFilters.setSelectedFilters(getListAdapter().getFileExtsInCurrentFolder());
+            fileExtFilters.selectAll(false);
         }
     }
 
@@ -391,6 +387,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 //                    itemUri = MediaStore.getDocumentUri(requireContext(), itemUri);
 //                }
                 FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(itemUri);
+                item.cacheDocFileFields(getContext());
                 itemsShared.add(item);
             }
 
@@ -418,13 +415,18 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     final int takeFlags = resultData.getFlags()
                             & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
-                    itemsShared.add(new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true));
+                    FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
+                    folderItem.cacheDocFileFields(requireContext());
+                    itemsShared.add(folderItem);
                 } else {
                     itemsShared = processOpenDocuments(resultData);
                 }
             } catch(IllegalArgumentException e) {
                 // this is most likely because it is not a folder.
-                itemsShared = processOpenDocuments(resultData);
+                DocumentFile docFile = DocumentFile.fromSingleUri(requireContext(), permittedUri);
+                FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
+                folderItem.cacheDocFileFields(requireContext());
+                itemsShared.add(folderItem);
             }
             return itemsShared;
         }
@@ -573,7 +575,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         @Override
         public void onFiltersChanged(boolean filterHidden, boolean filterShown) {
-            listAdapter.refreshContentView();
+            if(filterShown) {
+                listAdapter.refreshContentView();
+            }
         }
     }
 
@@ -673,7 +677,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         @Override
         protected List<FolderItemRecyclerViewAdapter.FolderItem> doInBackground(Intent[] objects) {
             Intent intent = objects[0];
-
             if (intent.getClipData() != null) {
                 return parentRef.get().processOpenDocuments(intent);
             } else {
@@ -685,15 +688,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         protected void onPostExecute(List<FolderItemRecyclerViewAdapter.FolderItem> folderItems) {
             super.onPostExecute(folderItems);
 
-            if(folderItems.size() == 1) {
+            if(folderItems.size() == 1 && folderItems.get(0).isFolder()) {
                 FolderItemRecyclerViewAdapter.FolderItem item = folderItems.get(0);
-                DocumentFile docFile = item.cacheDocFileFields(parentRef.get().requireContext());
-                if(item.isFolder()) {
-                    parentRef.get().addRootFolder(docFile);
-                } else {
-                    parentRef.get().getListAdapter().addItems(folderItems);
-                    parentRef.get().selectAllItems();
-                }
+                parentRef.get().addRootFolder(item.getDocumentFile());
             } else {
                 parentRef.get().getListAdapter().addItems(folderItems);
                 parentRef.get().selectAllItems();

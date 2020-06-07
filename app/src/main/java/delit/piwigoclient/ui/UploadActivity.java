@@ -461,46 +461,60 @@ public class UploadActivity extends MyActivity {
                 Uri sharedUri = sharedItem.getUri();
                 if (sharedUri != null) {
                     String mimeType = getContentResolver().getType(sharedUri);
-                    if (sharedUri != null) {
-                        handleSentImage(sharedUri, mimeType, filesToUpload);
-                    }
+                    handleSentImage(sharedUri, mimeType, filesToUpload);
                 }
             }
             intent.setClipData(null);
         } else {
             // process the extra stream data
-            ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            String[] mimeTypes = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
-            }
-            if (imageUris != null) {
-                filesToUpload = new ArrayList<>(imageUris.size());
-                int i = 0;
-                for (Uri imageUri : imageUris) {
-                    String mimeType;
-                    if(mimeTypes != null && mimeTypes.length >= i) {
-                        mimeType = mimeTypes[i];
-                        i++;
-                    } else {
-                        mimeType = intent.getType();
-                    }
-                    if (imageUri != null) {
-                        handleSentImage(imageUri, mimeType, filesToUpload);
-                    }
+            try {
+                ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                filesToUpload = handleSendMultipleImages(intent, imageUris);
+            } catch(ClassCastException e) {
+                Uri sharedUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                filesToUpload = new ArrayList<>(1);
+                if (sharedUri != null) {
+                    String mimeType = getContentResolver().getType(sharedUri);
+                    handleSentImage(sharedUri, mimeType, filesToUpload);
                 }
-            } else {
-                String mimeType = intent.getType();
-                Uri imageUri = intent.getData();
-                if(imageUri != null) {
-                    filesToUpload = new ArrayList<>(1);
-                    handleSentImage(imageUri, mimeType, filesToUpload);
-                } else {
-                    filesToUpload = new ArrayList<>(0);
-                }
+                intent.removeExtra(Intent.EXTRA_STREAM);
             }
-            intent.removeExtra(Intent.EXTRA_STREAM);
         }
+        return filesToUpload;
+    }
+
+    private ArrayList<Uri> handleSendMultipleImages(Intent intent, ArrayList<Uri> imageUris) {
+        ArrayList<Uri> filesToUpload;
+        String[] mimeTypes = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
+        }
+        if (imageUris != null) {
+            filesToUpload = new ArrayList<>(imageUris.size());
+            int i = 0;
+            for (Uri imageUri : imageUris) {
+                String mimeType;
+                if(mimeTypes != null && mimeTypes.length >= i) {
+                    mimeType = mimeTypes[i];
+                    i++;
+                } else {
+                    mimeType = intent.getType();
+                }
+                if (imageUri != null) {
+                    handleSentImage(imageUri, mimeType, filesToUpload);
+                }
+            }
+        } else {
+            String mimeType = intent.getType();
+            Uri imageUri = intent.getData();
+            if(imageUri != null) {
+                filesToUpload = new ArrayList<>(1);
+                handleSentImage(imageUri, mimeType, filesToUpload);
+            } else {
+                filesToUpload = new ArrayList<>(0);
+            }
+        }
+        intent.removeExtra(Intent.EXTRA_STREAM);
         return filesToUpload;
     }
 

@@ -172,7 +172,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         if (folderSizeBytes > folderMaxSizeBytes) {
             Bundle b = new Bundle();
             int activeUploadJobCount = BasePiwigoUploadService.getUploadJobsCount(this);
-            b.putString("folder_size", IOUtils.toNormalizedText(folderSizeBytes));
+            b.putString("folder_size", IOUtils.bytesToNormalizedText(folderSizeBytes));
             b.putInt("active_uploads", activeUploadJobCount);
             FirebaseAnalytics.getInstance(this).logEvent("tmp_upload_folder_size", b);
         }

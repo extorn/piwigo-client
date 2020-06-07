@@ -308,7 +308,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         protected void onPostExecute(Long cacheBytes) {
             try {
                 if (!isCancelled() && fragment.isVisible()) {
-                    String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
+                    String spaceSuffix = "(" + IOUtils.bytesToNormalizedText(cacheBytes) + ")";
 //                String cacheLevel = ConnectionPreferences.getCacheLevel(fragment.getPrefs(), context);
 //                if("memory".equals(cacheLevel)) {
 //                    spaceSuffix += String.format(" + %1$d", CacheUtils.getItemsInResponseCache(context));

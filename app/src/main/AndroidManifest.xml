@@ -95,7 +95,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:name=".ui.UploadActivity"
             android:alwaysRetainTaskState="true"
             android:label="@string/app_name"

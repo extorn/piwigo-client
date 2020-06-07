@@ -198,7 +198,7 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
     }
 
     private String suffixCacheSize(String basicString, long cacheSizeBytes) {
-        return basicString + '(' + IOUtils.toNormalizedText(cacheSizeBytes) + ')';
+        return basicString + '(' + IOUtils.bytesToNormalizedText(cacheSizeBytes) + ')';
     }
 
     private void setVideoCacheButtonText(Preference videoCacheFlushButton) {

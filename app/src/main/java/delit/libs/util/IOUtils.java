@@ -37,6 +37,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -445,17 +446,17 @@ public class IOUtils {
         return context.getContentResolver().getType(uri);
     }
 
-    public static String toNormalizedText(long cacheBytes) {
+    public static String bytesToNormalizedText(long sizeInBytes) {
         long KB = 1024;
         long MB = KB * 1024;
         String text = " ";
-        if (cacheBytes < KB) {
-            text += String.format(Locale.getDefault(), "%1$d Bytes", cacheBytes);
-        } else if (cacheBytes < MB) {
-            double kb = ((double) cacheBytes) / KB;
+        if (sizeInBytes < KB) {
+            text += String.format(Locale.getDefault(), "%1$d Bytes", sizeInBytes);
+        } else if (sizeInBytes < MB) {
+            double kb = ((double) sizeInBytes) / KB;
             text += String.format(Locale.getDefault(), "%1$.1f KB", kb);
         } else {
-            double mb = ((double) cacheBytes) / MB;
+            double mb = ((double) sizeInBytes) / MB;
             text += String.format(Locale.getDefault(), "%1$.1f MB", mb);
         }
         return text;
@@ -1006,5 +1007,10 @@ public class IOUtils {
         }
 
         return -1;
+    }
+
+
+    public static double bytesToMb(long bytes) {
+        return BigDecimal.valueOf(bytes).divide(BigDecimal.valueOf(1024 * 1024), 2, BigDecimal.ROUND_HALF_EVEN).doubleValue();
     }
 }

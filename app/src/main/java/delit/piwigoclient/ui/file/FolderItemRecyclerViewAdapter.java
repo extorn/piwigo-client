@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.crashlytics.android.Crashlytics;
 import com.drew.lang.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,9 +34,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -85,7 +88,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
         // update the visible selection.
         setInitiallySelectedItems(initialSelectionIds);
-        setSelectedItems(initialSelectionIds);
+        if(initialSelectionIds.size() > 0) {
+            setSelectedItems(initialSelectionIds);
+        }
     }
 
     public void setTaskListener(TaskProgressListener taskListener) {
@@ -293,7 +298,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     @Override
     public int getItemViewType(int position) {
         FolderItem f = getItemByPosition(position);
-        f.cacheDocFileFields(getContext());
         if (f.isFolder()) {
             return VIEW_TYPE_FOLDER;
         }
@@ -302,12 +306,24 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return getItemByPosition(position).uid;
     }
 
     @Override
     protected FolderItem getItemById(Long selectedId) {
-        return getItemByPosition(selectedId.intValue());
+        if(selectedId == null) {
+            return null;
+        }
+        List<FolderItem> content = currentFullContent;
+        if(content == null || content.size() < currentDisplayContent.size()) {
+            content = currentDisplayContent;
+        }
+        for(FolderItem item : content) {
+            if(item.uid == selectedId) {
+                return item;
+            }
+        }
+        return null;
     }
 
     @NonNull
@@ -407,10 +423,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     private void addFolderItemToInternalStore(FolderItem item) {
-        if (!item.getDocumentFile(getContext()).exists()) {
+        DocumentFile docFile = item.getDocumentFile(getContext());
+        if (!docFile.exists()) {
             throw new IllegalStateException("Cannot add DocumentFile to display that does not yet exist");
         }
-        DocumentFile parentFile = item.getDocumentFile(getContext()).getParentFile();
+        DocumentFile parentFile = docFile.getParentFile();
         if (!ObjectUtils.areEqual(parentFile,activeFolder)) { // object equals works as they're referencing same objects
             throw new IllegalArgumentException("DocumentFile is not a child of the currently displayed folder");
         }
@@ -424,6 +441,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     public FolderItem getItemByPosition(int position) {
+        if(currentDisplayContent.size() <= position) {
+            return null;
+        }
         return currentDisplayContent.get(position);
     }
 
@@ -463,37 +483,22 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     public static class FolderItem implements Parcelable {
-        public static final Parcelable.Creator<FolderItem> CREATOR
-                = new Parcelable.Creator<FolderItem>() {
-            public FolderItem createFromParcel(Parcel in) {
-                return new FolderItem(in);
-            }
-
-            public FolderItem[] newArray(int size) {
-                return new FolderItem[size];
-            }
-        };
-
+        private static final AtomicLong uidGen = new AtomicLong();
+        private long uid;
         private Uri rootUri;
         private Uri itemUri;
         private DocumentFile itemDocFile;
-        private boolean isFolder;
-        private boolean isFile; // items are not files or folders if they are special system files
-        private long lastModified;
+        private Boolean isFolder;
+        private Boolean isFile; // items are not files or folders if they are special system files
+        private long lastModified = -1;
         private String name;
         private String ext;
         private String mime;
+        private long fileLength;
 
         public FolderItem(Uri itemUri) {
             this.itemUri = itemUri;
-        }
-
-        public boolean isFolder() {
-            return isFolder;
-        }
-
-        public boolean isFile() {
-            return isFile;
+            uid = uidGen.getAndIncrement();
         }
 
         public FolderItem(Uri rootUri, DocumentFile itemDocFile, boolean preCacheName, boolean preCacheLastModified) {
@@ -512,25 +517,121 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             //Note: We're kind of stuck - if we use filename or docFile, we need to retrieve the filename first....
             // best to guess from the uri path
             this.ext = (isFolder||!isFile)?null:IOUtils.getFileExt(this.name != null ? this.name : this.itemUri.getPath(), mime);
+            uid = uidGen.getAndIncrement();
         }
 
-        public FolderItem(Parcel in) {
-            rootUri = ParcelUtils.readParcelable(in, Uri.class);
-            itemUri = ParcelUtils.readParcelable(in, Uri.class);
-            //TODO do the other fields definitely get initialised before use?
+        protected FolderItem(Parcel in) {
+            uid = in.readLong();
+            rootUri = in.readParcelable(Uri.class.getClassLoader());
+            itemUri = in.readParcelable(Uri.class.getClassLoader());
+            byte tmpIsFolder = in.readByte();
+            isFolder = tmpIsFolder == 0 ? null : tmpIsFolder == 1;
+            byte tmpIsFile = in.readByte();
+            isFile = tmpIsFile == 0 ? null : tmpIsFile == 1;
+            lastModified = in.readLong();
+            name = in.readString();
+            ext = in.readString();
+            mime = in.readString();
+            fileLength = in.readLong();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(uid);
+            dest.writeParcelable(rootUri, flags);
+            dest.writeParcelable(itemUri, flags);
+            dest.writeByte((byte) (isFolder == null ? 0 : isFolder ? 1 : 2));
+            dest.writeByte((byte) (isFile == null ? 0 : isFile ? 1 : 2));
+            dest.writeLong(lastModified);
+            dest.writeString(name);
+            dest.writeString(ext);
+            dest.writeString(mime);
+            dest.writeLong(fileLength);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<FolderItem> CREATOR = new Creator<FolderItem>() {
+            @Override
+            public FolderItem createFromParcel(Parcel in) {
+                return new FolderItem(in);
+            }
+
+            @Override
+            public FolderItem[] newArray(int size) {
+                return new FolderItem[size];
+            }
+        };
+
+        public boolean isFolder() {
+            if(isFolder == null) {
+                if(itemDocFile == null) {
+                    throw new IllegalStateException("document file not available to allow field retrieval");
+                } else {
+                    this.isFolder = itemDocFile.isDirectory();
+                }
+            }
+            return isFolder;
+        }
+
+        public boolean isFile() {
+            if(isFile == null) {
+                if(itemDocFile == null) {
+                    throw new IllegalStateException("document file not available to allow field retrieval");
+                } else {
+                    this.isFile = itemDocFile.isFile();
+                }
+            }
+            return isFile;
+        }
+
+        public long lastModified() {
+            if(lastModified < 0) {
+                if(itemDocFile == null) {
+                    throw new IllegalStateException("document file not available to allow field retrieval");
+                } else {
+                    this.lastModified = itemDocFile.lastModified();
+                }
+            }
+            return lastModified;
         }
 
         public String getMime() {
+            if(mime == null) {
+                if(itemDocFile == null) {
+                    throw new IllegalStateException("document file not available to allow field retrieval");
+                } else {
+                    this.mime = itemDocFile.getType();
+                }
+            }
             return mime;
         }
 
         public String getExt() {
+            if(ext == null) {
+                if(itemDocFile == null) {
+                    throw new IllegalStateException("document file not available to allow field retrieval");
+                } else {
+                    if(isFolder()||!isFile()) {
+                        return ext;
+                    } else {
+                        ext = IOUtils.getFileExt(this.name != null ? this.name : this.itemUri.getPath(), mime);
+                    }
+                }
+            }
             return ext;
         }
 
         public String getName() {
             if(name == null) {
-               name = IOUtils.getFilename(itemDocFile);
+                if(itemDocFile == null) {
+                    throw new IllegalStateException("document file not available to allow field retrieval");
+                } else {
+                    this.name = itemDocFile.getName();
+                }
             }
             return name;
         }
@@ -540,49 +641,51 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         /**
+         * Get's the doc file - may be null if item not initialised.
+         * @return
+         */
+        public DocumentFile getDocumentFile() {
+            return itemDocFile;
+        }
+
+        /**
          *
          * @param context
          * @return may be null (pre lollipop always null! :-( )
          */
         public @Nullable DocumentFile getDocumentFile(Context context) {
-            return cacheDocFileFields(context);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            ParcelUtils.writeParcelable(dest, rootUri);
-            ParcelUtils.writeParcelable(dest, itemUri);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public long lastModified() {
-            if(lastModified < 0) {
-                lastModified = itemDocFile.lastModified();
+            if(itemDocFile != null) {
+                return itemDocFile;
             }
-            return lastModified;
+            if(rootUri != null) {
+                // will be the case after loaded from parcel
+                itemDocFile = IOUtils.getTreeLinkedDocFile(context, rootUri, itemUri);
+            } else {
+                itemDocFile = DocumentFile.fromSingleUri(context, itemUri); // this will occur if the file was shared with us by external app
+            }
+            return itemDocFile;
         }
 
         public @Nullable DocumentFile cacheDocFileFields(Context context) {
-            if(itemDocFile == null) {
-                if(rootUri != null) {
-                    // will be the case after loaded from parcel
-                    itemDocFile = IOUtils.getTreeLinkedDocFile(context, rootUri, itemUri);
-                } else {
-                    itemDocFile = DocumentFile.fromSingleUri(context, itemUri); // this will occur if the file was shared with us by external app
-                }
-                if(itemDocFile != null) {
-                    this.isFolder = itemDocFile.isDirectory();
-                    this.lastModified = itemDocFile.lastModified();
-                    this.name = IOUtils.getFilename(itemDocFile);
-                    this.mime = itemDocFile.getType();
-                    this.ext = IOUtils.getFileExt(this.name, mime);
-                }
+            if(null != getDocumentFile(context)) {
+                isFile();
+                isFolder();
+                lastModified();
+                getMime();
+                getName();
+                getExt();
+                getFileLength();
             }
             return itemDocFile;
+        }
+
+        public long getFileLength() {
+            if(itemDocFile == null) {
+                throw new IllegalStateException("document file not available to allow field retrieval");
+            } else {
+                this.fileLength = itemDocFile.length();
+            }
+            return fileLength;
         }
     }
 
@@ -680,9 +783,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         public void fillValues(FolderItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
 
-            long bytes = newItem.getDocumentFile(itemView.getContext()).length();
-            double sizeMb = ((double)bytes)/1024/1024;
+            long bytes = newItem.getFileLength();
+
+            double sizeMb = IOUtils.bytesToMb(bytes);
             itemHeading.setVisibility(View.VISIBLE);
+            //IOUtils.toNormalizedText(bytes);
             itemHeading.setText(String.format(itemView.getContext().getString(R.string.File_size_pattern), sizeMb));
 
             if (getAdapterPrefs().isShowFilenames()) {
@@ -695,7 +800,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFileSelection() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItems().contains(newItem));
+            getCheckBox().setChecked(getSelectedItemIds().contains(newItem.uid));
             getCheckBox().setEnabled(isEnabled());
             Uri itemUri = newItem.getContentUri();
             if (itemUri != null) {
@@ -781,7 +886,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     private static class UpdateContentListAndSortContentAfterAdd extends AsyncTask<Object,Object,Object> {
-
+        private static final String TAG = "UpdateContentListAndSort";
         private FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter;
 
         public UpdateContentListAndSortContentAfterAdd(FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter) {
@@ -817,11 +922,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         protected void onCancelled() {
             super.onCancelled();
             folderItemRecyclerViewAdapter.isBusy = false;
+            Crashlytics.log(Log.WARN, TAG, "Async Task cancelled");
         }
     }
 
     private static class UpdateFolderContentTask extends AsyncTask<Object,Object,List<FolderItem>[]> {
 
+        private static final String TAG = "UpdateFolderContentTask";
         private final DocumentFile newContent;
         private final boolean force;
         private FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter;
@@ -898,6 +1005,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         protected void onCancelled() {
             super.onCancelled();
             folderItemRecyclerViewAdapter.isBusy = false;
+            Crashlytics.log(Log.WARN, TAG, "Async Task cancelled");
         }
     }
 }

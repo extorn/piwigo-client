@@ -69,7 +69,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     private Fragment mCurrentPrimaryItem;
     private int lastPosition;
     private S container;
-    private CustomPageChangeListener pageListener = new CustomPageChangeListener(this);
+    private CustomPageChangeListener pageListener = new CustomPageChangeListener<MyFragmentRecyclerPagerAdapter<?,?>>(this);
     private boolean blockDestroy;
 
     public MyFragmentRecyclerPagerAdapter(FragmentManager fm) {
@@ -134,13 +134,13 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             // if fragments is not empty then the page was very probably rotated
             for (Fragment f : fragments) {
                 if (f instanceof PagerItemFragment) {
-                    T pif = (T) f; // safe since f is already a fragment.
+                    PagerItemFragment pif = (PagerItemFragment) f; // safe since f is already a fragment.
                     int pagerIndex = pif.getPagerIndex();
                     if (pagerIndex < 0) {
                         Crashlytics.log(Log.WARN, TAG, "Warning pager fragment found in fragment manager with index of " + pagerIndex + " while looking for fragment as position " + position);
                     }
                     if (pagerIndex >= 0) {
-                        Fragment removed = activeFragments.put(pagerIndex, pif);
+                        Fragment removed = activeFragments.put(pagerIndex, (T)pif);
                         if (removed != null) {
                             throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
                         }
@@ -349,7 +349,8 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
         T activeFragment = primaryFragment;
         if (activeFragment == null) {
-            activeFragment = (T) instantiateItem(container, position);
+            throw new RuntimeException("Annotated as non null");
+//            activeFragment = (T) instantiateItem(container, position);
         }
         activeFragment.onPageSelected();
     }

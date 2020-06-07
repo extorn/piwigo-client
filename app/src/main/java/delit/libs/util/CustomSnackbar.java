@@ -137,7 +137,7 @@ public class CustomSnackbar extends BaseTransientBottomBar<CustomSnackbar> {
         return super.addCallback(callback);
     }
 
-    private static class ContentViewCallback implements BaseTransientBottomBar.ContentViewCallback {
+    private static class ContentViewCallback implements com.google.android.material.snackbar.ContentViewCallback {
 
         private View content;
 
@@ -147,13 +147,13 @@ public class CustomSnackbar extends BaseTransientBottomBar<CustomSnackbar> {
 
         @Override
         public void animateContentIn(int delay, int duration) {
-            ViewCompat.setScaleY(content, 0f);
+            content.setScaleY(0f);
             ViewCompat.animate(content).scaleY(1f).setDuration(duration).setStartDelay(delay);
         }
 
         @Override
         public void animateContentOut(int delay, int duration) {
-            ViewCompat.setScaleY(content, 1f);
+            content.setScaleY(1f);
             ViewCompat.animate(content).scaleY(0f).setDuration(duration).setStartDelay(delay);
         }
     }

@@ -592,7 +592,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     private void manageCache() {
         if (AppPreferences.isUseVideoCache(requireContext(), prefs)) {
             long maxCacheSizeBytes = 1024 * 1024 * AppPreferences.getVideoCacheSizeMb(prefs, requireContext());
-            logStatus("managing the disk cache - max size = " + IOUtils.toNormalizedText(maxCacheSizeBytes));
+            logStatus("managing the disk cache - max size = " + IOUtils.bytesToNormalizedText(maxCacheSizeBytes));
             try {
                 CacheUtils.manageVideoCache(getContext(), maxCacheSizeBytes);
             } catch (IOException e) {
@@ -626,7 +626,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 getView().post(() -> {
                     if (getContext() != null) {
                         displayItemDetailsControlsBasedOnSessionState();
-                        cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) ,IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
+                        cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.bytesToNormalizedText(cacheFileContent.getCachedBytes()) ,IOUtils.bytesToNormalizedText(cacheFileContent.getTotalBytes())));
                         timebar.invalidate();
                     }
                 });
@@ -645,8 +645,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 getView().post(() -> {
                     if (getContext() != null) {
                         customExoPlayerInfoPanel.setVisibility(View.VISIBLE);
-                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                        cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
+                        downloadedByteCountView.setText(IOUtils.bytesToNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.bytesToNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.bytesToNormalizedText(cacheFileContent.getTotalBytes())));
                         timebar.invalidate();
                     }
                 });
@@ -665,8 +665,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                             customExoPlayerInfoPanel.postDelayed(() -> customExoPlayerInfoPanel.setVisibility(View.INVISIBLE), 5000);
                         }
                         customExoPlayerInfoPanel.setVisibility(View.VISIBLE);
-                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                        cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
+                        downloadedByteCountView.setText(IOUtils.bytesToNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.bytesToNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.bytesToNormalizedText(cacheFileContent.getTotalBytes())));
                         timebar.invalidate();
                     }
                 });
@@ -681,8 +681,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                     public void run() {
                         if (getContext() != null) {
                             bytesDownloaded += bytesAddedToCache;
-                            downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(bytesCachedInThisRange), IOUtils.toNormalizedText(totalBytes)));
+                            downloadedByteCountView.setText(IOUtils.bytesToNormalizedText(bytesDownloaded));
+                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.bytesToNormalizedText(bytesCachedInThisRange), IOUtils.bytesToNormalizedText(totalBytes)));
                         }
                     }
                 });

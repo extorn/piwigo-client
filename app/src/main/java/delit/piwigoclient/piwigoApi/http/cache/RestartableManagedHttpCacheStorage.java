@@ -174,7 +174,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
                 File sourceFile = new File(cacheFolder, cacheFilename);
                 if (sourceFile.exists()) {
                     if (sourceFile.length() > MAX_EXPECTED_CACHE_SIZE) {
-                        Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.toNormalizedText(sourceFile.length())));
+                        Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.bytesToNormalizedText(sourceFile.length())));
                     }
                     entries = LegacyIOUtils.readObjectFromFile(sourceFile);
 
@@ -224,7 +224,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
                 }
             }
             if (destination.length() > MAX_EXPECTED_CACHE_SIZE) {
-                Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.toNormalizedText(destination.length())));
+                Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.bytesToNormalizedText(destination.length())));
             }
         }
     }

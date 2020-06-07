@@ -68,12 +68,15 @@ public class FilterControl extends FlowLayout {
     }
 
     public void selectAll() {
+        selectAll(true);
+    }
+    public void selectAll(boolean notifyListenersOfFilterStatusChange) {
         if(allPossiblyVisibleFileExts != null) {
             selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
         } else {
             selectedVisibleFileExts = new HashSet<>();
         }
-        buildFileExtFilterControls(true);
+        buildFileExtFilterControls(notifyListenersOfFilterStatusChange);
     }
 
     public void buildFileExtFilterControls(boolean notifyOnFiltersChanged) {

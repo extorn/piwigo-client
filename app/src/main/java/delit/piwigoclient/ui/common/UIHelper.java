@@ -11,7 +11,6 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -134,12 +133,8 @@ public abstract class UIHelper<T> {
 
     public static void recycleImageViewContent(ImageView imgView) {
         if (imgView != null) {
-            Bitmap img = imgView.getDrawingCache();
-            if (img != null) {
-                img.recycle();
-            }
+            imgView.setImageDrawable(null);
         }
-
     }
 
     public void swapToNewContext(Context context) {

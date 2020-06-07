@@ -22,15 +22,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
 
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
@@ -58,15 +55,13 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public static final int SCALING_QUALITY_LOW = 120;
     public static final int SCALING_QUALITY_VLOW = 60;
     public static final String MEDIA_SCANNER_TASK_ID_FILES_FOR_UPLOAD = "id_filesForUpload";
-    private final WeakReference<Context> contextRef;
 
     private UploadDataItemModel uploadDataItemsModel;
     private final RemoveListener listener;
     private final int scalingQuality = SCALING_QUALITY_MEDIUM;
     private int viewType = VIEW_TYPE_LIST;
 
-    public FilesToUploadRecyclerViewAdapter(ArrayList<DocumentFile> filesToUpload, @NonNull Context context, RemoveListener listener) {
-        contextRef = new WeakReference<>(context);
+    public FilesToUploadRecyclerViewAdapter(ArrayList<DocumentFile> filesToUpload, RemoveListener listener) {
         this.listener = listener;
         this.uploadDataItemsModel = new UploadDataItemModel(filesToUpload);
         this.setHasStableIds(true);
@@ -103,10 +98,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         this.viewType = viewType;
     }
 
-    private Context getContext() {
-        return contextRef.get();
-    }
-
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final UploadDataItem uploadDataItem = uploadDataItemsModel.get(position);
@@ -138,7 +129,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                     if (uploadDataItem.uploadProgress.compressionProgress == 100) {
                         // change the filesize to be that of the compressed file
                         try {
-                            holder.itemHeading.setText(uploadDataItem.getFileSizeStr(getContext()));
+                            holder.itemHeading.setText(uploadDataItem.getFileSizeStr(holder.mView.getContext()));
                         } catch (IllegalStateException e) {
                             // don't care - this happens due to file being deleted post upload
                         }
@@ -163,9 +154,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
 
         if (item != null) {
-            holder.fileNameField.setText(item.getFilename(getContext()));
+            holder.fileNameField.setText(item.getFilename(holder.mView.getContext()));
             try {
-                holder.itemHeading.setText(item.getFileSizeStr(getContext()));
+                holder.itemHeading.setText(item.getFileSizeStr(holder.mView.getContext()));
             } catch (IllegalStateException e) {
                 // don't care - this happens due to file being deleted post upload
             }
@@ -262,22 +253,21 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
      * Note that this will not invoke a media scanner call.
      *
      *
-     * @param context
-     * @param mediaContentUri
+     * @param uploadDataItem
      * @return
      */
-    public boolean add(@NonNull Context context, @NonNull Uri mediaContentUri) {
-        return uploadDataItemsModel.add(context, mediaContentUri);
+    public boolean add(@NonNull UploadDataItem uploadDataItem) {
+        return uploadDataItemsModel.add(uploadDataItem);
     }
 
     /**
      * @param filesForUpload
      * @return List of all files that were not already present
      */
-    public ArrayList<Uri> addAll(List<Uri> filesForUpload) {
-        ArrayList<Uri> newFiles = uploadDataItemsModel.addAll(getContext(), filesForUpload);
+    public int addAll(List<UploadDataItem> filesForUpload) {
+        int itemsAdded = uploadDataItemsModel.addAll(filesForUpload);
         notifyDataSetChanged();
-        return newFiles;
+        return itemsAdded;
     }
 
     public void clear() {
@@ -285,38 +275,66 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         notifyDataSetChanged();
     }
 
-    private static class UploadDataItem implements Parcelable {
+    public String getItemMimeType(int i) {
+        return uploadDataItemsModel.get(i).getMimeType();
+    }
+
+    public static class UploadDataItem implements Parcelable {
 
         private static long nextUid;
         private final long uid;
+        private String mimeType;
         private Uri uri;
         private String dataHashcode = null;
         private long dataLength = -1;
         private String filename = null;
         private UploadProgressInfo uploadProgress;
 
-        public UploadDataItem(Parcel p) {
-            uri = ParcelUtils.readParcelable(p, Uri.class);
-            uploadProgress = ParcelUtils.readParcelable(p, UploadProgressInfo.class);
+        public UploadDataItem(Uri uri, String filename, String mimeType) {
+            this.uri = uri;
+            this.mimeType = mimeType;
+            uploadProgress = new UploadProgressInfo(uri);
+            this.filename = filename;
             uid = getNextUid();
         }
 
-        public static final Parcelable.Creator<UploadDataItem> CREATOR
-                = new Parcelable.Creator<UploadDataItem>() {
+        protected UploadDataItem(Parcel in) {
+            uid = in.readLong();
+            mimeType = in.readString();
+            uri = in.readParcelable(Uri.class.getClassLoader());
+            dataHashcode = in.readString();
+            dataLength = in.readLong();
+            filename = in.readString();
+            uploadProgress = in.readParcelable(UploadProgressInfo.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(uid);
+            dest.writeString(mimeType);
+            dest.writeParcelable(uri, flags);
+            dest.writeString(dataHashcode);
+            dest.writeLong(dataLength);
+            dest.writeString(filename);
+            dest.writeParcelable(uploadProgress, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UploadDataItem> CREATOR = new Creator<UploadDataItem>() {
+            @Override
             public UploadDataItem createFromParcel(Parcel in) {
                 return new UploadDataItem(in);
             }
 
+            @Override
             public UploadDataItem[] newArray(int size) {
                 return new UploadDataItem[size];
             }
         };
-
-        public UploadDataItem(Uri uri) {
-            this.uri = uri;
-            uploadProgress = new UploadProgressInfo(uri);
-            uid = getNextUid();
-        }
 
         public String calculateDataHashCode(Context context) throws Md5SumUtils.Md5SumException {
             dataHashcode = Md5SumUtils.calculateMD5(context.getContentResolver(), uri);
@@ -331,16 +349,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             return nextUid;
         }
 
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            ParcelUtils.writeParcelable(dest, uri);
-            ParcelUtils.writeParcelable(dest, uploadProgress);
-            dest.writeValue(dataHashcode);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
+        public String getMimeType() {
+            return mimeType;
         }
 
         public long getItemUid() {
@@ -355,7 +365,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 }
                 dataLength = IOUtils.getFilesize(context, uri);
             }
-            double sizeMb = BigDecimal.valueOf(dataLength).divide(BigDecimal.valueOf(1024 * 1024), 2, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+            double sizeMb = IOUtils.bytesToMb(dataLength);
             return String.format(Locale.getDefault(), "%1$.2fMB", sizeMb);
         }
 
@@ -388,7 +398,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         public UploadDataItemModel(ArrayList<DocumentFile> filesToUpload) {
             this.uploadDataItems = new ArrayList<>();
             for (DocumentFile f : filesToUpload) {
-                uploadDataItems.add(new UploadDataItem(f.getUri()));
+                uploadDataItems.add(new UploadDataItem(f.getUri(), IOUtils.getFilename(f), f.getType()));
             }
         }
 
@@ -422,27 +432,24 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         /**
          * @param filesForUpload
-         * @return List of all files that were not already present
+         * @return count of items actually added
          */
-        public ArrayList<Uri> addAll(Context context, List<Uri> filesForUpload) {
-            ArrayList<Uri> filesAdded = new ArrayList<>(filesForUpload.size());
-            HashMap<String,UploadDataItem> itemsToAdd = new HashMap<>(filesForUpload.size());
-            for (Uri f : filesForUpload) {
-                UploadDataItem item = new UploadDataItem(f);
-                try {
-                    String dataHashCode = item.calculateDataHashCode(context);
-                    itemsToAdd.put(dataHashCode, item);
-                    filesAdded.add(item.uri);
-                } catch (Md5SumUtils.Md5SumException e) {
-                    Crashlytics.logException(e);
+        public int addAll(List<UploadDataItem> filesForUpload) {
+
+            Set<String> hashcodesForFilesToAll = new HashSet<>(filesForUpload.size());
+            for(UploadDataItem item : filesForUpload) {
+                hashcodesForFilesToAll.add(item.dataHashcode);
+            }
+
+            Set<String> hashCodesAlreadyPresent = findDataHashCodes(hashcodesForFilesToAll);
+            int itemsAdded = 0;
+            for(UploadDataItem item : filesForUpload) {
+                if(!hashCodesAlreadyPresent.contains(item.dataHashcode)) {
+                    uploadDataItems.add(item);
+                    itemsAdded++;
                 }
             }
-            Set<String> hashCodesAlreadyPresent = findDataHashCodes(itemsToAdd.keySet());
-            for(String hashcode : hashCodesAlreadyPresent) {
-                filesAdded.remove(Objects.requireNonNull(itemsToAdd.remove(hashcode)).uri);
-            }
-            uploadDataItems.addAll(itemsToAdd.values());
-            return filesAdded;
+            return itemsAdded;
         }
 
         private Set<String> findDataHashCodes(Set<String> dataHashCodesToFind) {
@@ -455,8 +462,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             return foundHashcodes;
         }
 
-        public boolean add(Context context, Uri uri) {
-            return addAll(context, Collections.singletonList(uri)).size() == 1;
+        public boolean add(UploadDataItem uploadItem) {
+            return addAll(Collections.singletonList(uploadItem)) == 1;
         }
 
         public long getItemUid(int position) {
@@ -599,8 +606,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
             itemHeading = itemView.findViewById(R.id.file_for_upload_heading_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);
-            Context context = view.getContext();
-            if (context == null) {
+            if (view.getContext() == null) {
                 throw new IllegalStateException("Context is not available in the view at this time");
             }
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);

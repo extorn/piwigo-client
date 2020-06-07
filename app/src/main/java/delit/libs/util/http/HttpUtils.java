@@ -5,7 +5,6 @@ import android.os.Build;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.drew.lang.StringUtil;
 
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertificateException;

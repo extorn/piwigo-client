@@ -1,7 +1,6 @@
 package delit.libs.ui.view.list;
 
 import android.content.Context;
-import android.text.Editable;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.IdRes;
@@ -63,8 +62,9 @@ public class MappedArrayAdapter<T, S> extends ArrayAdapter<T> {
         throw new UnsupportedOperationException("Use add with two args");
     }
 
+    @SafeVarargs
     @Override
-    public void addAll(T... items) {
+    public final void addAll(T... items) {
         throw new UnsupportedOperationException("Use add with two collection args");
     }
 

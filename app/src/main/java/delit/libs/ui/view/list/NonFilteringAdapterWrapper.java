@@ -101,7 +101,7 @@ public class NonFilteringAdapterWrapper<T extends BaseAdapter> implements ListAd
         @Override
         public FilterResults performFiltering(CharSequence constraint) {
 
-            List values = new ArrayList<>(getCount());
+            List<Object> values = new ArrayList<>(getCount());
             for(int i = 0; i < getCount(); i++) {
                 values.add(getItem(i));
             }

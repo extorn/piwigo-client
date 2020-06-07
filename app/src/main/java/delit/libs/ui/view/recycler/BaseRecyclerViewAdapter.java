@@ -163,6 +163,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
                 T selectedItem = getItemById(selectedItemId);
                 if(selectedItem != null) {
                     selectedItems.add(selectedItem);
+                } else {
+                    throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them: Item not found");
                 }
             }
             return selectedItems;

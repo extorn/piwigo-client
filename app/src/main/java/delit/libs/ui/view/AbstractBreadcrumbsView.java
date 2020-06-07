@@ -28,7 +28,7 @@ import delit.piwigoclient.R;
 public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
 
     private PathNavigator<T> pathNavigator;
-    private NavigationListener navigationListener;
+    private NavigationListener<T> navigationListener;
     private @IdRes int pathItemTextViewResId;
     private @LayoutRes int breadcrumbLayoutResId;
     private @LayoutRes int breadcrumbDivisionLayoutResId;
@@ -58,7 +58,7 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
         if(isInEditMode()) {
             // add some demo data
             DemoData demoData = new DemoData();
-            setPathNavigator(demoData.getPathNavigator());
+            setPathNavigator((PathNavigator<T>) demoData.getPathNavigator());
             populate((T)demoData.getItem());
         }
         super.onFinishInflate();
@@ -92,7 +92,7 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
 
     protected abstract PathNavigator<T> buildPathNavigator();
 
-    public void setNavigationListener(NavigationListener navigationListener) {
+    public void setNavigationListener(NavigationListener<T> navigationListener) {
         this.navigationListener = navigationListener;
     }
 
@@ -186,10 +186,10 @@ public abstract class AbstractBreadcrumbsView<T> extends FlowLayout {
     }
 
 
-    private class DemoData {
+    private static class DemoData {
         ArrayList<String> items = new ArrayList<>(Arrays.asList("root","sub1","sub2", "sub3"));
 
-        PathNavigator getPathNavigator() {
+        DemoPathNavigator getPathNavigator() {
             return new DemoPathNavigator();
         }
 

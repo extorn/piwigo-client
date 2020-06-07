@@ -75,6 +75,7 @@ import delit.libs.util.security.SecurityOperationException;
 import delit.libs.util.security.X509LoadOperation;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.PreferencesActivity;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 
@@ -97,8 +98,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private ProgressIndicator progressIndicator;
 
     @Override
-    public Preference findPreference(CharSequence key) {
-        return getPreference();
+    public <T extends Preference> T findPreference(CharSequence key) {
+        return (T)getPreference();
     }
 
     @Override
