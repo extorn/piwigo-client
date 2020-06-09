@@ -5,9 +5,8 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <ProgressBar
+    <delit.libs.ui.view.ProgressIndicator
         android:id="@+id/overall_upload_progress_bar"
-        style="?android:progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="false"

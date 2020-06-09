@@ -31,6 +31,9 @@
          necessary to support previous API levels. -->
 
 
+    <declare-styleable name="ProgressIndicator">
+        <attr name="backgroundTint" format="color"/>
+    </declare-styleable>
 
     <declare-styleable name="ButtonBarContainerTheme">
         <attr name="metaButtonBarStyle" format="reference" />

@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -69,6 +68,7 @@ import java.util.TimeZone;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
+import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.list.BiArrayAdapter;
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.CollectionUtils;
@@ -128,8 +128,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final boolean ENABLE_COMPRESSION_BUTTON = true;
     private static final int TAB_IDX_SETTINGS = 1;
     private static final int TAB_IDX_FILES = 0;
-    public static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
-    public static final String URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD = "foregroundUpload";
+    private static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
+    private static final String URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD = "foregroundUpload";
 
     private AppSettingsViewModel appSettingsViewModel;
     private Long uploadJobId;
@@ -157,7 +157,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private Spinner compressImagesOutputFormatSpinner;
     private NumberPicker compressImagesMaxHeightNumberPicker;
     private NumberPicker compressImagesMaxWidthNumberPicker;
-    private ProgressBar overallUploadProgressBar;
+    private ProgressIndicator overallUploadProgressBar;
 
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
@@ -210,10 +210,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         private final WeakReference<AbstractUploadFragment> parentRef;
 
-        public SharedFilesIntentProcessingTask(AbstractUploadFragment parent) {
+        SharedFilesIntentProcessingTask(AbstractUploadFragment parent) {
             parentRef = new WeakReference<>(parent);
-            parent.overallUploadProgressBar.setVisibility(VISIBLE);
-            parent.overallUploadProgressBar.setProgress(0);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            parentRef.get().overallUploadProgressBar.showProgressIndicator(0);
         }
 
         @Override
@@ -240,7 +244,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         }
                     }
                     int currentProgress = (int)Math.round(((0.5 * currentItem) / itemCount) * 100);
-                    parentRef.get().overallUploadProgressBar.post(() -> parentRef.get().overallUploadProgressBar.setProgress(currentProgress));
+                    parentRef.get().overallUploadProgressBar.post(() -> parentRef.get().overallUploadProgressBar.showProgressIndicator(R.string.adding_files, currentProgress));
 
                 }
                 if (!unsupportedExts.isEmpty()) {
@@ -264,7 +268,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     Crashlytics.logException(e);
                 }
                 int currentProgress = (int)Math.round((0.5 + ((0.5 * currentItem) / itemCount)) * 100);
-                parentRef.get().overallUploadProgressBar.post(() -> parentRef.get().overallUploadProgressBar.setProgress(currentProgress));
+                parentRef.get().overallUploadProgressBar.post(() -> parentRef.get().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, currentProgress));
             }
             parentRef.get().updateLastOpenedFolderPref(parentRef.get().requireContext(), event.getSelectedFolderItems());
             return uploadDataItems;
@@ -367,21 +371,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(defaultPrivacyLevelGroup));
 
         deleteUploadJobButton = view.findViewById(R.id.delete_upload_job_button);
-        deleteUploadJobButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadFilesNowButton.setText(R.string.upload_files_button_title);
-                onDeleteUploadJobButtonClick();
-            }
+        deleteUploadJobButton.setOnClickListener(v -> {
+            uploadFilesNowButton.setText(R.string.upload_files_button_title);
+            onDeleteUploadJobButtonClick();
         });
 
         uploadJobStatusButton = view.findViewById(R.id.view_detailed_upload_status_button);
-        uploadJobStatusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onUploadJobStatusButtonClick();
-            }
-        });
+        uploadJobStatusButton.setOnClickListener(v -> onUploadJobStatusButtonClick());
 
 
         updateActiveJobActionButtonsStatus();
@@ -415,20 +411,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         } else {
             boolean compressVids = UploadPreferences.isCompressVideosByDefault(getContext(), getPrefs());
             compressVideosCheckbox.setChecked(!compressVids);// ensure the checked change listener is called!
-            compressVideosCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    compressVideosSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
+            compressVideosCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                compressVideosSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
 //                    compressVideosSettings.setEnabled(buttonView.isEnabled());
-                }
             });
-            compressVideosCheckbox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    CompoundButton buttonView = (CompoundButton) v;
-                    compressVideosSettings.setVisibility(buttonView.isChecked() && buttonView.isEnabled() ? VISIBLE : GONE);
-                    DisplayUtils.toggleHierachyEnabled(compressVideosSettings, buttonView.isEnabled());
-                }
+            compressVideosCheckbox.setOnClickListener(v -> {
+                CompoundButton buttonView = (CompoundButton) v;
+                compressVideosSettings.setVisibility(buttonView.isChecked() && buttonView.isEnabled() ? VISIBLE : GONE);
+                DisplayUtils.toggleHierachyEnabled(compressVideosSettings, buttonView.isEnabled());
             });
             compressVideosCheckbox.setChecked(compressVids);
         }
@@ -456,32 +446,23 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
         boolean compressPics = UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs());
         compressImagesCheckbox.setChecked(!compressPics);// ensure the checked change listener is called!
-        compressImagesCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                compressImagesSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
+        compressImagesCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            compressImagesSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
 //                compressImagesSettings.setEnabled(buttonView.isEnabled());
-            }
         });
-        compressImagesCheckbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CompoundButton buttonView = (CompoundButton) v;
-                compressImagesSettings.setVisibility(buttonView.isChecked() && buttonView.isEnabled() ? VISIBLE : GONE);
-                DisplayUtils.toggleHierachyEnabled(compressImagesSettings, buttonView.isEnabled());
-            }
+        compressImagesCheckbox.setOnClickListener(v -> {
+            CompoundButton buttonView = (CompoundButton) v;
+            compressImagesSettings.setVisibility(buttonView.isChecked() && buttonView.isEnabled() ? VISIBLE : GONE);
+            DisplayUtils.toggleHierachyEnabled(compressImagesSettings, buttonView.isEnabled());
         });
         compressImagesCheckbox.setChecked(compressPics);
 
         allowUploadOfRawVideosIfIncompressibleCheckbox.setChecked(UploadPreferences.isAllowUploadOfRawVideosIfIncompressible(getContext(), getPrefs()));
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
-        uploadFilesNowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadFilesNowButton.setText(R.string.upload_files_button_title);
-                uploadFiles();
-            }
+        uploadFilesNowButton.setOnClickListener(v -> {
+            uploadFilesNowButton.setText(R.string.upload_files_button_title);
+            uploadFiles();
         });
 
         if (filesToUploadAdapter == null) {
@@ -538,7 +519,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void injectCompressionControlsIntoView() {
-        MaterialButton compressVideosButton = new MaterialButton(getContext());
+        MaterialButton compressVideosButton = new MaterialButton(requireContext());
         compressVideosButton.setText("Compress");
         compressVideosButton.setOnClickListener(v -> {
             v.setEnabled(false);
@@ -607,15 +588,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    protected boolean isImageFilesWaitingForUpload() {
+    private boolean isImageFilesWaitingForUpload() {
         return hasFileMatchingMime("image/*");
     }
 
-    protected boolean isVideoFilesWaitingForUpload() {
+    private boolean isVideoFilesWaitingForUpload() {
         return hasFileMatchingMime("video/*");
     }
 
-    protected boolean hasFileMatchingMime(String mimeTypeFilter) {
+    private boolean hasFileMatchingMime(String mimeTypeFilter) {
         for (int i = 0; i < filesToUploadAdapter.getItemCount(); i++) {
             String mimeType = filesToUploadAdapter.getItemMimeType(i);
             if (MimeTypeFilter.matches(mimeType,mimeTypeFilter)) {
@@ -644,7 +625,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
             String initialFolder = UploadPreferences.getDefaultLocalUploadFolder(getContext(), getPrefs());
             if(initialFolder != null) {
-                event.withInitialFolder(IOUtils.getLocalFileUri(initialFolder));
+                event.withInitialFolder(Objects.requireNonNull(IOUtils.getLocalFileUri(initialFolder)));
             }
             event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
             //        event.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey()); Not currently needed as permissions are transient.
@@ -675,7 +656,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    public Long getUploadJobId() {
+    private Long getUploadJobId() {
         return uploadJobId;
     }
 
@@ -711,14 +692,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 fileSelectButton.setEnabled(false);
                 Bundle b = new Bundle();
                 sessionDetails.writeToBundle(b);
-                FirebaseAnalytics.getInstance(getContext()).logEvent("IncompleteUserSession", b);
+                FirebaseAnalytics.getInstance(requireContext()).logEvent("IncompleteUserSession", b);
                 getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_user_session_no_allowed_filetypes);
-                getView().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fileSelectButton.setEnabled(true);
-                        requestFileSelection(null); // show all files... I hope the user is sensible!
-                    }
+                requireView().postDelayed(() -> {
+                    fileSelectButton.setEnabled(true);
+                    requestFileSelection(null); // show all files... I hope the user is sensible!
                 }, 3000);
             } else {
                 requestFileSelection(sessionDetails.getAllowedFileTypes());
@@ -731,10 +709,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         private final WeakReference<AbstractUploadFragment> parentRef;
         private UploadJob uploadJob;
 
-        public ReloadDataFromUploadJobTask(AbstractUploadFragment parent, UploadJob job) {
+        ReloadDataFromUploadJobTask(AbstractUploadFragment parent, UploadJob job) {
             parentRef = new WeakReference<>(parent);
-            parent.overallUploadProgressBar.setVisibility(VISIBLE);
-            parent.overallUploadProgressBar.setProgress(0);
             this.uploadJob = job;
         }
 
@@ -749,6 +725,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            getParent().overallUploadProgressBar.showProgressIndicator(R.string.loading_please_wait,0);
 
             //register the potentially completely new handler to handle the existing job messages
             getUiHelper().getPiwigoResponseListener().switchHandlerId(uploadJob.getResponseHandlerId());
@@ -781,7 +758,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 // this recalculates the hash-codes - maybe unnecessary, but the file could have been altered since added to the job
                 itemsToBeUploaded.add(new FilesToUploadRecyclerViewAdapter.UploadDataItem(toUpload, null, null));
                 int currentProgress = (int)Math.round((((double)currentItem) / itemCount) * 100);
-                parentRef.get().overallUploadProgressBar.post(() -> parentRef.get().overallUploadProgressBar.setProgress(currentProgress));
+                parentRef.get().overallUploadProgressBar.post(() -> parentRef.get().overallUploadProgressBar.showProgressIndicator(R.string.loading_please_wait,currentProgress));
             }
             return itemsToBeUploaded;
         }
@@ -816,7 +793,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 getParent().uploadJobId = null;
             }
 
-            getParent().overallUploadProgressBar.setVisibility(GONE);
+            getParent().overallUploadProgressBar.hideProgressIndicator();
         }
     }
 
@@ -859,7 +836,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         super.onResume();
     }
 
-    protected FilesToUploadRecyclerViewAdapter getFilesForUploadViewAdapter() {
+    private FilesToUploadRecyclerViewAdapter getFilesForUploadViewAdapter() {
         return (FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter();
     }
 
@@ -867,7 +844,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return uploadToAlbum;
     }
 
-    protected void updateFilesForUploadList(List<FilesToUploadRecyclerViewAdapter.UploadDataItem> folderItemsToBeUploaded) {
+    private void updateFilesForUploadList(List<FilesToUploadRecyclerViewAdapter.UploadDataItem> folderItemsToBeUploaded) {
         if (folderItemsToBeUploaded.size() > 0) {
             FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
             int addedItems = 0;
@@ -1157,7 +1134,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
             //ensure the handler is actively listening before the job starts.
             getUiHelper().addBackgroundServiceCall(uploadJobId);
-            ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob);
+            ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(requireContext(), activeJob);
             allowUserUploadConfiguration(activeJob);
         }
     }
@@ -1270,6 +1247,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+        private static final long serialVersionUID = 7834616791801869130L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             AbstractUploadFragment fragment = uiHelper.getParent();
@@ -1286,7 +1265,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-        public DeleteAllFilesSelectedAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
+        private static final long serialVersionUID = -160459487188984144L;
+
+        DeleteAllFilesSelectedAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -1307,9 +1288,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
 
+        private static final long serialVersionUID = -5416665561415768505L;
         private final Uri itemToRemove;
 
-        public PartialUploadFileAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Uri itemToRemove) {
+        PartialUploadFileAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Uri itemToRemove) {
             super(uiHelper);
             this.itemToRemove = itemToRemove;
         }
@@ -1415,9 +1397,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     private static class UnacceptableFilesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
 
+        private static final long serialVersionUID = -6658551916072891874L;
         private final Set<String> unacceptableFileExts;
 
-        public UnacceptableFilesAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<String> unacceptableFileExts) {
+        UnacceptableFilesAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<String> unacceptableFileExts) {
             super(uiHelper);
             this.unacceptableFileExts = unacceptableFileExts;
         }
@@ -1445,9 +1428,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
+        private static final long serialVersionUID = 7104690861610172716L;
         private Set<Uri> filesToDelete;
 
-        public FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<Uri> filesForReview) {
+        FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<Uri> filesForReview) {
             super(uiHelper);
             this.filesToDelete = filesForReview;
         }
@@ -1468,7 +1452,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-        public OnDeleteJobQuestionAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
+        private static final long serialVersionUID = 9093460171761189408L;
+
+        OnDeleteJobQuestionAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -1494,6 +1480,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private static class OnGetSubAlbumNamesAction extends UIHelper.Action<FragmentUIHelper<UploadFragment>, UploadFragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> {
+        private static final long serialVersionUID = -2486104874719308423L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<UploadFragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
             if (response.getAlbumNames().size() > 0) {
@@ -1546,7 +1534,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     }
                 }
             } else {
-                FirebaseAnalytics.getInstance(getContext()).logEvent("noJobDelFile", null);
+                FirebaseAnalytics.getInstance(requireContext()).logEvent("noJobDelFile", null);
             }
         }
 
@@ -1603,12 +1591,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             String cause = response.getError().getMessage();
             Uri fileForUploadUri = response.getFileForUpload();
             DocumentFile fileForUpload = DocumentFile.fromSingleUri(context, fileForUploadUri);
+            String uploadFilename = fileForUpload == null ? null : fileForUpload.getName();
             if (response.getError() instanceof FileNotFoundException) {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), fileForUpload.getName(),fileForUploadUri);
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), uploadFilename,fileForUploadUri);
             } else if (response.getError() instanceof ExoPlaybackException) {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_compression_error_message_pattern), fileForUpload.getName(), fileForUploadUri);
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_compression_error_message_pattern), uploadFilename, fileForUploadUri);
             } else {
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), fileForUpload.getName(), fileForUploadUri);
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), uploadFilename, fileForUploadUri);
             }
             //TODO show the user the full cause perhaps
             notifyUser(context, R.string.alert_error, errorMessage);
@@ -1628,10 +1617,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         private void updateOverallUploadProgress(int progress) {
-            overallUploadProgressBar.setProgress(progress);
-            overallUploadProgressBar.setVisibility(VISIBLE);
+            overallUploadProgressBar.showProgressIndicator(R.string.uploading_progress_bar_message, progress);
             if (progress == 100) {
-                overallUploadProgressBar.setVisibility(GONE);
+                overallUploadProgressBar.hideProgressIndicator();
             }
         }
 
@@ -1759,13 +1747,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             Uri fileForUploadUri = response.getFileForUpload();
             DocumentFile fileForUpload = DocumentFile.fromSingleUri(context, fileForUploadUri);
             String errorMessage = null;
+            String uploadFilename = fileForUpload == null ? "" : fileForUpload.getName();
 
             if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
                 PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
-                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload.getName(), err.getStatusCode(), err.getErrorMessage());
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), uploadFilename, err.getStatusCode(), err.getErrorMessage());
             } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
                 PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse err = (PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error;
-                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), fileForUpload.getName(), err.getRawResponse());
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), uploadFilename, err.getRawResponse());
             } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
                 PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
                 if ("file already exists".equals(err.getPiwigoErrorMessage())) {
@@ -1774,9 +1763,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         adapter.remove(fileForUploadUri);
                         releaseUriPermissionsForUploadItem(fileForUploadUri);
                     }
-                    errorMessage = String.format(context.getString(R.string.alert_error_upload_file_already_on_server_message_pattern), fileForUpload.getName());
+                    errorMessage = String.format(context.getString(R.string.alert_error_upload_file_already_on_server_message_pattern), uploadFilename);
                 } else {
-                    errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), fileForUpload.getName(), err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
+                    errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), uploadFilename, err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
                 }
             } else if (error instanceof PiwigoResponseBufferingHandler.CustomErrorResponse) {
                 errorMessage = ((PiwigoResponseBufferingHandler.CustomErrorResponse) error).getErrorMessage();

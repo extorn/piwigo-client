@@ -650,5 +650,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="createGallery_galleryCommentsAllowed_title">Commentaires des utilisateurs</string>
     <string name="uri_permission_justification_to_upload">Pour télécharger sur le serveur</string>
     <string name="progress_loading_folder_content">Chargement du contenu du dossier</string>
+    <string name="adding_files">Adding files</string>
+    <string name="calculating_file_checksums">Calculating File Checksums</string>
 
 </resources>

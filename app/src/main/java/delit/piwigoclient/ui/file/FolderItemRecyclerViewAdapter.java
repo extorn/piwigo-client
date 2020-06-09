@@ -36,6 +36,7 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -53,12 +54,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
-    private transient List<FolderItem> currentFullContent;
-    private transient List<FolderItem> currentDisplayContent;
-    private DocumentFile activeFolder;
     private Comparator<? super FolderItem> fileComparator;
     private NavigationListener navigationListener;
     private TreeMap<String, String> currentVisibleDocumentFileExts;
+    private List<FolderItem> currentFullContent;
+    private List<FolderItem> currentDisplayContent;
+    private DocumentFile activeFolder;
     private Uri activeRootUri;
     private boolean isBusy;
     private AsyncTask activeTask;
@@ -69,6 +70,55 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         super(multiSelectStatusListener, folderViewPrefs);
         this.contextRef = new WeakReference<>(context);
         this.navigationListener = navigationListener;
+    }
+
+    protected SavedState saveState() {
+        return new SavedState(this);
+    }
+
+    public void restoreState(SavedState state) {
+        // don't call pre folder opened because that saves the state
+        // navigationListener.onPreFolderOpened();
+        DocumentFile oldFolder = activeFolder;
+        state.restoreToAdapter(this);
+        navigationListener.onPostFolderOpened(oldFolder, activeFolder);
+    }
+
+    public class SavedState {
+        private boolean restored = false;
+        private TreeMap<String, String> currentVisibleDocumentFileExts;
+        private List<FolderItem> currentFullContent;
+        private List<FolderItem> currentDisplayContent;
+        private DocumentFile activeFolder;
+        private Uri activeRootUri;
+
+        private SavedState(FolderItemRecyclerViewAdapter adapter) {
+            if(adapter.currentVisibleDocumentFileExts != null) {
+                currentVisibleDocumentFileExts = new TreeMap<>(adapter.currentVisibleDocumentFileExts);
+            }
+            if(adapter.currentFullContent != null) {
+                currentFullContent = new ArrayList<>(adapter.currentFullContent);
+            }
+            if(currentDisplayContent != null) {
+                currentDisplayContent = new ArrayList<>(adapter.currentDisplayContent);
+            }
+            activeFolder = adapter.activeFolder;
+            activeRootUri = adapter.activeRootUri;
+        }
+
+        protected void restoreToAdapter(FolderItemRecyclerViewAdapter adapter) {
+            if(restored) {
+                throw new IllegalStateException("already restored - this object cannot be reused as it doesn't take a copy");
+            }
+            adapter.currentVisibleDocumentFileExts = currentVisibleDocumentFileExts;
+            adapter.currentFullContent = currentFullContent;
+            adapter.currentDisplayContent = currentDisplayContent;
+            adapter.activeFolder = activeFolder;
+            adapter.activeRootUri = activeRootUri;
+            restored = true;
+        }
+
+
     }
 
     public void setInitiallySelectedItems(Context context) {

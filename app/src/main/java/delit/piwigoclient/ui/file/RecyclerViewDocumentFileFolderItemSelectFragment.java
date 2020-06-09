@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
@@ -37,13 +39,16 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
@@ -68,14 +73,13 @@ import static android.view.View.GONE;
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
     private static final String TAG = "RVFolderSelFrg";
-    private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
     private DocumentFileBreadcrumbsView folderPathView;
     private Spinner folderRootFolderSpinner;
     private DocumentFileArrayAdapter folderRootsAdapter;
     private long startedActionAtTime;
     private FolderItemRecyclerViewAdapter.NavigationListener navListener;
-    private LinkedHashMap<Uri, Parcelable> listViewStates; // one state for each level within the list (created and deleted on demand)
+    private SortedMap<DocumentFile, List<Object>> listViewStates; // one state for each level within the list (created and deleted on demand)
     private AppSettingsViewModel appSettingsViewModel;
     private ProgressIndicator progressIndicator;
     private FilterControl fileExtFilters;
@@ -115,7 +119,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
         super.onSaveInstanceState(outState);
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
-        BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
+
     }
 
     private @Nullable Uri getCurrentFolder() {
@@ -151,7 +155,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<>(), Parcelable.class.getClassLoader());
         }
 
         startedActionAtTime = System.currentTimeMillis();
@@ -253,9 +256,18 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private void recordTheCurrentListOfVisibleItemsInState(DocumentFile folder) {
         if (folder != null) {
             if (listViewStates == null) {
-                listViewStates = new LinkedHashMap<>(5);
+                listViewStates = new TreeMap<>((o1, o2) -> {
+                    int o1PathLen = Objects.requireNonNull(o1.getUri().getPath()).length();
+                    int o2PathLen = Objects.requireNonNull(o2.getUri().getPath()).length();
+                    return Integer.compare(o1PathLen,o2PathLen);
+                });
             }
-            listViewStates.put(folder.getUri(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
+            List<Object> folderListState = new ArrayList<>();
+            if(getList().getLayoutManager() != null) {
+                folderListState.add(getListAdapter().saveState());
+                folderListState.add(getList().getLayoutManager().onSaveInstanceState());
+            }
+            listViewStates.put(folder, folderListState);
         }
     }
 
@@ -602,6 +614,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private class RootFolderSelectionListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if(listViewStates != null) {
+                listViewStates.clear();
+            }
             if (id > 0) {
                 DisplayUtils.postOnUiThread(() -> {
                     DocumentFileArrayAdapter adapter = (DocumentFileArrayAdapter) parent.getAdapter();
@@ -621,9 +636,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                             getListAdapter().resetRoot(newRoot); // just use the current root and ignore the initial folder.
                         }
                         deselectAllItems();
-                        if(listViewStates != null) {
-                            listViewStates.clear();
-                        }
                     } else {
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
                         getListAdapter().resetRoot(newRoot);
@@ -690,25 +702,34 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             if(getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
                 getListAdapter().rebuildContentView();
             } else {
-                boolean folderChanged = getListAdapter().changeFolderViewed(pathItemFile);
-                if(folderChanged && listViewStates != null) {
-                    Iterator<Map.Entry<Uri, Parcelable>> iterator = listViewStates.entrySet().iterator();
-                    Map.Entry<Uri, Parcelable> item;
+                boolean loadedFromMemory = false;
+                if(listViewStates != null) {
+                    Iterator<Map.Entry<DocumentFile, List<Object>>> iterator = listViewStates.entrySet().iterator();
+                    Map.Entry<DocumentFile, List<Object>> item;
                     while (iterator.hasNext()) {
                         item = iterator.next();
-                        if (item.getKey().equals(pathItemFile.getUri())) {
+                        if (item.getKey().getUri().equals(pathItemFile.getUri())) {
+                            loadedFromMemory = true;
                             if (getList().getLayoutManager() != null) {
-                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                                getList().getLayoutManager().onRestoreInstanceState((Parcelable) item.getValue().get(1));
+                                FolderItemRecyclerViewAdapter adapter = (FolderItemRecyclerViewAdapter) getList().getAdapter();
+                                Objects.requireNonNull(adapter).restoreState((FolderItemRecyclerViewAdapter.SavedState) item.getValue().get(0));
+
                             } else {
                                 Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
                             }
-                            iterator.remove();
-                            while (iterator.hasNext()) {
+                            // only keep a single level below our current level in case we moved back accidentally.
+                            if(iterator.hasNext()) {
                                 iterator.next();
-                                iterator.remove();
+                                if(iterator.hasNext()) {
+                                    iterator.remove();
+                                }
                             }
                         }
                     }
+                }
+                if(!loadedFromMemory) {
+                    getListAdapter().changeFolderViewed(pathItemFile);
                 }
             }
         }

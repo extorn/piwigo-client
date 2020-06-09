@@ -645,6 +645,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="createGallery_galleryCommentsAllowed_title">Benutzerkommentare</string>
     <string name="uri_permission_justification_to_upload">Zum Hochladen auf den Server</string>
     <string name="progress_loading_folder_content">Ordnerinhalt laden</string>
+    <string name="adding_files">Adding files</string>
+    <string name="calculating_file_checksums">Calculating File Checksums</string>
 
 </resources>
 

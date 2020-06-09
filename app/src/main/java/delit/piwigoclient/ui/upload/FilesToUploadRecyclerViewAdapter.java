@@ -11,10 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -31,14 +30,13 @@ import java.util.Locale;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-
-import static android.view.View.GONE;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
@@ -104,37 +102,25 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         // Configure the progress bar (upload progress)
 
-        holder.progressBar.setVisibility(GONE);
-        holder.progressBarDescription.setVisibility(GONE);
-        holder.progressBar.setIndeterminate(false);
-        holder.progressBar.setProgress(0);
-        holder.progressBar.setSecondaryProgress(0);
+        holder.progressBar.hideProgressIndicator();
 
         if (uploadDataItem.uploadProgress != null) {
             if (uploadDataItem.uploadProgress.inProgress()) {
-                holder.progressBar.setVisibility(View.VISIBLE);
-                holder.progressBarDescription.setVisibility(View.VISIBLE);
-
-                if (uploadDataItem.uploadProgress.uploadProgress < 0) {
-                    holder.progressBar.setIndeterminate(true);
-                } else {
-                    holder.progressBar.setIndeterminate(false);
-                    if (uploadDataItem.uploadProgress.uploadProgress > 0) {
-                        holder.progressBarDescription.setText(R.string.uploading_progress_bar_message);
-                    } else {
-                        holder.progressBarDescription.setText(R.string.compressing_progress_bar_message);
-                    }
-                    holder.progressBar.setSecondaryProgress(uploadDataItem.uploadProgress.compressionProgress);
-                    holder.progressBar.setProgress(uploadDataItem.uploadProgress.uploadProgress);
-                    if (uploadDataItem.uploadProgress.compressionProgress == 100) {
-                        // change the filesize to be that of the compressed file
-                        try {
-                            holder.itemHeading.setText(uploadDataItem.getFileSizeStr(holder.mView.getContext()));
-                        } catch (IllegalStateException e) {
-                            // don't care - this happens due to file being deleted post upload
-                        }
+                @StringRes int progressTextResId = R.string.uploading_progress_bar_message;
+                if (uploadDataItem.uploadProgress.uploadProgress <= 0 && uploadDataItem.uploadProgress.compressionProgress > 0) {
+                    progressTextResId = R.string.compressing_progress_bar_message;
+                }
+                holder.progressBar.showMultiProgressIndicator(progressTextResId, uploadDataItem.uploadProgress.compressionProgress, uploadDataItem.uploadProgress.compressionProgress);
+                if (uploadDataItem.uploadProgress.compressionProgress == 100) {
+                    // change the shown file size to be that of the compressed file
+                    try {
+                        holder.itemHeading.setText(uploadDataItem.getFileSizeStr(holder.mView.getContext()));
+                    } catch (IllegalStateException e) {
+                        // don't care - this happens due to file being deleted post upload
                     }
                 }
+            } else {
+                holder.progressBar.hideProgressIndicator();
             }
 
             // Now we've updated the progress bar, we can return, no need to reload the remainder of the fields as they won't have altered.
@@ -160,13 +146,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             } catch (IllegalStateException e) {
                 // don't care - this happens due to file being deleted post upload
             }
-
-            if (item.uri != null) {
-                holder.imageLoader.setUriToLoad(item.uri.toString());
-            } else {
-                // TODO is the media store reference always up to date? Can it be relied upon to be?
-//                holder.imageLoader.setFileToLoad(item.fileToUpload);
-            }
+            holder.imageLoader.setUriToLoad(item.uri.toString());
             holder.itemHeading.setVisibility(View.VISIBLE);
         } else {
             // theoretically this shouldn't happen I think
@@ -229,12 +209,12 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return uploadDataItemsModel.size();
     }
 
-    public void updateUploadProgress(Uri fileBeingUploaded, int percentageComplete) {
+    void updateUploadProgress(Uri fileBeingUploaded, int percentageComplete) {
         uploadDataItemsModel.updateUploadProgress(fileBeingUploaded, percentageComplete);
         notifyDataSetChanged();
     }
 
-    public void updateCompressionProgress(Uri fileBeingCompressed, Uri compressedFile, int percentageComplete) {
+    void updateCompressionProgress(Uri fileBeingCompressed, Uri compressedFile, int percentageComplete) {
         uploadDataItemsModel.updateCompressionProgress(fileBeingCompressed, compressedFile, percentageComplete);
         notifyDataSetChanged();
     }
@@ -275,7 +255,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         notifyDataSetChanged();
     }
 
-    public String getItemMimeType(int i) {
+    String getItemMimeType(int i) {
         return uploadDataItemsModel.get(i).getMimeType();
     }
 
@@ -336,9 +316,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             }
         };
 
-        public String calculateDataHashCode(Context context) throws Md5SumUtils.Md5SumException {
+        public void calculateDataHashCode(Context context) throws Md5SumUtils.Md5SumException {
             dataHashcode = Md5SumUtils.calculateMD5(context.getContentResolver(), uri);
-            return dataHashcode;
         }
 
         private static long getNextUid() {
@@ -587,8 +566,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     public class ViewHolder extends RecyclerView.ViewHolder implements PicassoLoader.PictureItemImageLoaderListener {
         public final View mView;
-        private final ProgressBar progressBar;
-        private final TextView progressBarDescription;
+        private final ProgressIndicator progressBar;
         private final TextView fileNameField;
         private final TextView itemHeading;
         private final MaterialButton deleteButton;
@@ -602,7 +580,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             super(view);
             mView = view;
             progressBar = itemView.findViewById(R.id.file_for_upload_progress);
-            progressBarDescription = itemView.findViewById(R.id.file_for_upload_progress_description);
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
             itemHeading = itemView.findViewById(R.id.file_for_upload_heading_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);

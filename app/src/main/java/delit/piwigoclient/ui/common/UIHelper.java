@@ -748,12 +748,7 @@ public abstract class UIHelper<T> {
                 progressIndicator.showProgressIndicator(titleString, progress);
             } else {
                 // publish on the main thread
-                progressIndicator.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressIndicator.showProgressIndicator(titleString, progress);
-                    }
-                });
+                progressIndicator.post(() -> progressIndicator.showProgressIndicator(titleString, progress));
             }
         }
     }
