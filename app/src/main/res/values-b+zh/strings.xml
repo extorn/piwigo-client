@@ -518,7 +518,7 @@
     <string name="createGallery_galleryCommentsAllowed_title">用户评论</string>
     <string name="uri_permission_justification_to_upload">用于上传到服务器</string>
     <string name="progress_loading_folder_content">加载文件夹内容</string>
-    <string name="adding_files">Adding files</string>
-    <string name="calculating_file_checksums">Calculating File Checksums</string>
+    <string name="adding_files">新增档案</string>
+    <string name="calculating_file_checksums">计算文件校验和</string>
 
 </resources>

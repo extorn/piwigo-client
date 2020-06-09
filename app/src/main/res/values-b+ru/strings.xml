@@ -647,7 +647,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="createGallery_galleryCommentsAllowed_title">Комментарии пользователей</string>
     <string name="uri_permission_justification_to_upload">Для загрузки на сервер</string>
     <string name="progress_loading_folder_content">Загрузка содержимого папки</string>
-    <string name="adding_files">Adding files</string>
-    <string name="calculating_file_checksums">Calculating File Checksums</string>
+    <string name="adding_files">Добавление файлов</string>
+    <string name="calculating_file_checksums">Расчет контрольных сумм файлов</string>
 
 </resources>
