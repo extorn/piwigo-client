@@ -8,6 +8,7 @@
         <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
         <item name="android:theme">@style/ThemeOverlay.App.Dark</item>
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Dark</item>
+        <item name="colorControlHighlight">@color/ripple_dark</item>
     </style>
 
     <!-- used at activity level -->
@@ -17,6 +18,7 @@
         <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>
+        <item name="colorControlHighlight">@color/ripple_light</item>
     </style>
 
 
@@ -49,7 +51,7 @@
         <!-- the style isn't applied correctly when set here. Make sure to set it direct on the toolbar! -->
         <item name="toolbarStyle">@style/App.Widget.MaterialComponents.Toolbar</item>
         <!--<item name="toolbarNavigationButtonStyle">@style/App.Widget.AppCompat.Toolbar.Button.Navigation</item>-->
-
+        <item name="extendedFloatingActionButtonStyle">@style/App.Widget.MaterialComponents.ExtendedFloatingActionButton.Icon</item>
         <item name="android:checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
         <item name="checkboxStyle">@style/App.Widget.CompoundButton.CheckBox</item>
 
@@ -89,6 +91,7 @@
         <item name="android:dropDownListViewStyle">@style/App.Widget.AppCompat.DropDownItem.Spinner</item>
 
         <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>-->
+        <item name="android:progressBarStyleHorizontal">@style/App.Widget.AppCompat.ProgressBar.Horizontal</item>
         <item name="preferenceTheme">@style/App.Theme.PreferenceThemeOverlay.v14.Material</item>
         <item name="editableFieldLabel">@style/App.Widget.Material.TextView.FieldLabel</item>
         <item name="editableFieldText">@style/App.Widget.EditText.FieldEntry</item>

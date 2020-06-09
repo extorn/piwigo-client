@@ -275,7 +275,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private void finishPreferenceValuesValidation(List<CategoryItemStub> albumNames) {
+    void finishPreferenceValuesValidation(List<CategoryItemStub> albumNames) {
         boolean remoteAlbumExists = albumNames != null && albumNames.size() >= 1;
 
         SharedPreferences.Editor editor = getPrefs().edit();
@@ -379,7 +379,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends AutoUploadJobPreferenceFragment> extends BasicPiwigoResponseListener<S> {
 
 
         @Override
@@ -387,7 +387,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             // for now, allow the default "retry button" to pop-up.
             super.handleErrorRetryPossible(errorResponse, title, msg, null);
             // ensure the job is marked as invalid (it'll be updated if the user retries and it succeeds)
-            finishPreferenceValuesValidation(null);
+            getParent().finishPreferenceValuesValidation(null);
 
             // different idea for the retries button
 //            getListView().removeHeaderView(retryActionView);
@@ -404,14 +404,14 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             //TODO do something to notify user
             super.showOrQueueMessage(title, message);
             // ensure the job is marked as invalid.
-            finishPreferenceValuesValidation(null);
+            getParent().finishPreferenceValuesValidation(null);
         }
 
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             super.onAfterHandlePiwigoResponse(response);
             if(response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                finishPreferenceValuesValidation(((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                getParent().finishPreferenceValuesValidation(((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             }
         }
     }

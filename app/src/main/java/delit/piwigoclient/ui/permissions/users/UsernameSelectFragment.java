@@ -278,13 +278,13 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<UsernameSelectFragment> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
+                getParent().onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
             } else {
-                onUsernamesLoadFailed(response);
+                getParent().onUsernamesLoadFailed(response);
             }
         }
     }

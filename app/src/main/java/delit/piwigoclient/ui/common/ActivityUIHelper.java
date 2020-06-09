@@ -29,7 +29,11 @@ public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
 
     @Override
     protected View getParentView() {
-        View v = getParent().getWindow().getDecorView().findViewById(android.R.id.content);
+        T parent = getParent();
+        if(parent == null) {
+            return null;
+        }
+        View v = parent.getWindow().getDecorView().findViewById(android.R.id.content);
         View iv = v.findViewById(R.id.main_view);
         return iv != null ? iv : v;
     }

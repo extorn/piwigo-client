@@ -194,41 +194,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         DocumentFile documentFile = folderRootsAdapter.getItemValue(pos);
         if(documentFile != null) {
             Uri treeUri = IOUtils.getTreeUri(documentFile.getUri());
-            LiveData<List<UriPermissionUse>> uriPermissionsData = appSettingsViewModel.getAllForUri(treeUri);
-            uriPermissionsData.observe(getViewLifecycleOwner(), new Observer<List<UriPermissionUse>>() {
-                @Override
-                public void onChanged(List<UriPermissionUse> permissionsHeld) {
-                    uriPermissionsData.removeObserver(this);
-                    if(permissionsHeld != null) {
-                        List<String> consumerDescs = new ArrayList<>();
-                        for (UriPermissionUse use : permissionsHeld) {
-                            if (!use.consumerId.equals(UriPermissionUse.CONSUMER_ID_FILE_SELECT)
-                            && !use.consumerId.equals(getViewPrefs().getSelectedUriPermissionConsumerId())) {
-                                consumerDescs.add(use.localizedConsumerName);
-                            }
-                        }
-                        if (consumerDescs.size() > 0) {
-                            StringBuilder consumerListSb = new StringBuilder();
-                            for (Iterator<String> iterator = consumerDescs.iterator(); iterator.hasNext(); ) {
-                                String consumerDesc = iterator.next();
-                                consumerListSb.append(consumerDesc);
-                                if(iterator.hasNext()) {
-                                    consumerListSb.append('\n');
-                                }
-                            }
-                            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.uri_still_needed_pattern, consumerListSb));
-                        } else {
-                            int flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                            Uri treeUri = IOUtils.getTreeUri(documentFile.getUri());
-                            appSettingsViewModel.releasePersistableUriPermission(requireContext(), permissionsHeld, treeUri, flags);
-
-                            folderRootsAdapter.remove(folderRootsAdapter.getItem(pos));
-                            folderRootFolderSpinner.setSelection(0); //  calls listener because it's a definite change.
+            appSettingsViewModel.releasePersistableUriPermission(requireContext(), treeUri, UriPermissionUse.CONSUMER_ID_FILE_SELECT);
+            folderRootsAdapter.remove(folderRootsAdapter.getItem(pos));
+            folderRootFolderSpinner.setSelection(0); //  calls listener because it's a definite change.
 //                            DisplayUtils.selectSpinnerItemAndCallItemSelectedListener(folderRootFolderSpinner, 0);
-                        }
-                    }
-                }
-            });
         }
     }
 
@@ -247,7 +216,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         @Override
         public void onTaskProgress(double percentageComplete) {
-            progressIndicator.showProgressIndicator((int) Math.rint(percentageComplete* 100));
+            progressIndicator.showProgressIndicator(getString(R.string.progress_loading_folder_content), (int) Math.rint(percentageComplete* 100));
         }
 
         @Override
@@ -329,9 +298,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     }
 
     private void retrieveFilesFromSystemPicker(@Nullable Uri uri) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_MIME_TYPES, CollectionUtils.asStringArray(getViewPrefs().getVisibleMimeTypes()));
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        intent.addFlags(getViewPrefs().getSelectedUriPermissionFlags());
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 //        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
@@ -382,10 +353,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             int items = clipData.getItemCount();
             for (int i = 0; i < items; i++) {
                 Uri itemUri = clipData.getItemAt(i).getUri();
-//                // convert all uris to document uris (makes things easier (possibly) - at the expense of time...).
-//                if(itemUri.getAuthority().equals(MediaStore.AUTHORITY)) {
-//                    itemUri = MediaStore.getDocumentUri(requireContext(), itemUri);
-//                }
+
+                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+
                 FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(itemUri);
                 item.cacheDocFileFields(getContext());
                 itemsShared.add(item);
@@ -412,8 +383,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             try {
                 DocumentFile docFile = DocumentFile.fromTreeUri(requireContext(), permittedUri);
                 if(docFile != null) {
-                    final int takeFlags = resultData.getFlags()
-                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
                     FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
                     folderItem.cacheDocFileFields(requireContext());
@@ -424,6 +394,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             } catch(IllegalArgumentException e) {
                 // this is most likely because it is not a folder.
                 DocumentFile docFile = DocumentFile.fromSingleUri(requireContext(), permittedUri);
+
+                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                appSettingsViewModel.takePersistableUriPermissions(requireContext(), permittedUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+
+
                 FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
                 folderItem.cacheDocFileFields(requireContext());
                 itemsShared.add(folderItem);
@@ -480,9 +455,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 // We still have access to the given Uri somehow.
                 DocumentFile root = IOUtils.getRootDocFile(initialFolder);
                 int selectRoot = folderRootsAdapter.getPositionByValue(root);
+                buildBreadcrumbs(initialFolder); // causes issues as triggers rebuild
                 folderRootFolderSpinner.setSelection(selectRoot);
+            } else {
+                buildBreadcrumbs(getListAdapter().getActiveFolder());
             }
-            buildBreadcrumbs(getListAdapter().getActiveFolder());
+
         }
 
         // call this here to ensure page reformats if orientation changes for example.
@@ -500,15 +478,20 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     }
 
     private DocumentFileArrayAdapter buildFolderRootsAdapter() {
-
+        //TODO get the list of app registered permissions and use that as the basis rather than all of them which includes files etc.
         List<UriPermission> permissions = requireContext().getContentResolver().getPersistedUriPermissions();
         Map<String, DocumentFile> roots = new LinkedHashMap<>();
         roots.put("", null);
         roots.put(getString(R.string.system_file_selector_label), null);
         for(UriPermission perm : permissions) {
             if(perm.isWritePermission()) {
-                DocumentFile documentFile = DocumentFile.fromTreeUri(requireContext(), perm.getUri());
-                roots.put(documentFile == null ? "???" : IOUtils.getFilename(documentFile), documentFile);
+                try {
+                    DocumentFile documentFile = DocumentFile.fromTreeUri(requireContext(), perm.getUri());
+                    roots.put(documentFile == null ? "???" : IOUtils.getFilename(documentFile), documentFile);
+                } catch(IllegalArgumentException e) {
+                    // it's a file not a folder. Ignore the error.
+                }
+
             }
         }
 
@@ -575,9 +558,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         @Override
         public void onFiltersChanged(boolean filterHidden, boolean filterShown) {
-            if(filterShown) {
-                listAdapter.refreshContentView();
-            }
+            listAdapter.refreshContentView();
         }
     }
 
@@ -622,7 +603,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             if (id > 0) {
-                progressIndicator.showProgressIndicator(-1);
                 DisplayUtils.postOnUiThread(() -> {
                     DocumentFileArrayAdapter adapter = (DocumentFileArrayAdapter) parent.getAdapter();
                     DocumentFile newRoot = adapter.getItemValue(position);
@@ -651,7 +631,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         fileExtFilters.setEnabled(false);
                         retrieveFilesFromSystemPicker(getViewPrefs().getInitialFolder());
                     }
-                    progressIndicator.hideProgressIndicator();
                 });
             } else {
                 // just show the empty view.

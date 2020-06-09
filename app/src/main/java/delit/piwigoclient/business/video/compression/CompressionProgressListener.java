@@ -1,5 +1,6 @@
 package delit.piwigoclient.business.video.compression;
 
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -111,7 +112,7 @@ public class CompressionProgressListener implements Runnable {
         if (progress < minReportedChange || progress - lastReportedCompressionProgress > minReportedChange || progress + minReportedChange > 1 || mediaMuxerControl.isFinished()) {
             lastReportedCompressionProgress = progress;
             millisSinceLastReport = 0;
-            progressListener.onCompressionProgress(100 * lastReportedCompressionProgress, durationMs);
+            progressListener.onCompressionProgress(mediaMuxerControl.getInputFile(), mediaMuxerControl.getOutputFile(), 100 * lastReportedCompressionProgress, durationMs);
         }
     }
 

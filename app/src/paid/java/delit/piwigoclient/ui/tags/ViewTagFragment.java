@@ -720,47 +720,47 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<ViewTagFragment> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(isVisible()) {
-                updateActiveSessionDetails();
+            if(getParent().isVisible()) {
+                getParent().updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            synchronized (loadingMessageIds) {
+            synchronized (getParent().loadingMessageIds) {
 
                 if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
-                    onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
+                    getParent().onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
-                    onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
+                    getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
                 } else if(response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                     for(ResourceItem r : ((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItems()) {
-                        onItemRemovedFromServer(r);
+                        getParent().onItemRemovedFromServer(r);
                     }
                 } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
                     ResourceItem r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) response).getPiwigoResource();
-                    onItemRemovedFromTag(r);
+                    getParent().onItemRemovedFromTag(r);
                 } else if (response instanceof PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) {
-                    onTagUpdateResponse(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response));
+                    getParent().onTagUpdateResponse(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response));
                 } else if (response instanceof GetMethodsAvailableResponseHandler.PiwigoGetMethodsAvailableResponse) {
-                    viewPrefs.withAllowMultiSelect(getMultiSelectionAllowed());
+                    getParent().viewPrefs.withAllowMultiSelect(getParent().getMultiSelectionAllowed());
                 } else {
-                    String failedCall = loadingMessageIds.get(response.getMessageId());
-                    synchronized (itemsToLoad) {
-                        itemsToLoad.add(failedCall);
-                        emptyTagLabel.setText(R.string.tag_content_load_failed_text);
-                        if (itemsToLoad.size() > 0) {
-                            emptyTagLabel.setVisibility(VISIBLE);
-                            retryActionButton.show();
+                    String failedCall = getParent().loadingMessageIds.get(response.getMessageId());
+                    synchronized (getParent().itemsToLoad) {
+                        getParent().itemsToLoad.add(failedCall);
+                        getParent().emptyTagLabel.setText(R.string.tag_content_load_failed_text);
+                        if (getParent().itemsToLoad.size() > 0) {
+                            getParent().emptyTagLabel.setVisibility(VISIBLE);
+                            getParent().retryActionButton.show();
                         }
                     }
                 }
-                loadingMessageIds.remove(response.getMessageId());
+                getParent().loadingMessageIds.remove(response.getMessageId());
             }
         }
     }

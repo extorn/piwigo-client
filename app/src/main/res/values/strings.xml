@@ -1026,5 +1026,7 @@ SOFTWARE.
     <string name="user_high_definition_field">Allow access to original (full size) files</string>
     <string name="group_is_default_field">Assign new users to this group</string>
     <string name="createGallery_galleryCommentsAllowed_title">User Comments</string>
+    <string name="uri_permission_justification_to_upload">For upload to server</string>
+    <string name="progress_loading_folder_content">Loading folder content</string>
 
 </resources>

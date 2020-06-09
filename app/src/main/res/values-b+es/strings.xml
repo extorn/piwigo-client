@@ -512,5 +512,7 @@
     <string name="user_high_definition_field">Permitir acceso a archivos de tamaño completo</string>
     <string name="group_is_default_field">Asignar nuevas usuarios a este grupo.</string>
     <string name="createGallery_galleryCommentsAllowed_title">Comentarios del usuario</string>
+    <string name="uri_permission_justification_to_upload">Para subir al servidor</string>
+    <string name="progress_loading_folder_content">Cargando el contenido de la carpeta</string>
 
 </resources>

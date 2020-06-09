@@ -66,8 +66,6 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/gallery_retryAction_actionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/gallery_list"
         android:layout_margin="10dp"
@@ -75,7 +73,7 @@
         android:focusable="true"
         app:fabSize="mini"
         app:icon="@drawable/ic_refresh_black_24dp"
-        app:iconTint="?attr/colorOnBackground" />
+        style="?extendedFloatingActionButtonStyle" />
 
 
     <TextView
@@ -117,67 +115,53 @@
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_permissions_bulk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="10dp"
             app:icon="@drawable/ic_vpn_key_black_24dp"
-            app:iconTint="?attr/colorOnBackground" />
+            style="?extendedFloatingActionButtonStyle"/>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_tag_bulk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_permissions_bulk"
             app:icon="@drawable/ic_add_tag_black_24dp"
-            app:iconTint="?attr/colorOnBackground" />
+            style="?extendedFloatingActionButtonStyle" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_paste_bulk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_tag_bulk"
             app:icon="@drawable/ic_content_paste_black_24dp"
-            app:iconTint="?attr/colorOnBackground" />
+            style="?extendedFloatingActionButtonStyle" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_cut_bulk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_paste_bulk"
             app:icon="@drawable/ic_content_cut_black_24px"
-            app:iconTint="?attr/colorOnBackground" />
+            style="?extendedFloatingActionButtonStyle" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_copy_bulk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_cut_bulk"
             app:icon="@drawable/ic_content_copy_black_24px"
-            app:iconTint="?attr/colorOnBackground" />
+            style="?extendedFloatingActionButtonStyle"/>
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_download_bulk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_copy_bulk"
             app:icon="@drawable/ic_file_download_black_24px"
-            app:iconTint="?attr/colorOnBackground" />
+            style="?extendedFloatingActionButtonStyle" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_delete_bulk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_download_bulk"
             app:icon="@drawable/ic_delete_black_24px"
-            app:iconTint="?attr/colorOnBackground" />
+            style="?extendedFloatingActionButtonStyle" />
 
     </RelativeLayout>
 

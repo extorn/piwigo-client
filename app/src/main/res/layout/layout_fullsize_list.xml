@@ -15,14 +15,12 @@
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/list_action_add_item_button"
             android:visibility="visible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignEnd="@+id/heading"
             android:layout_marginEnd="5dp"
             app:fabSize="mini"
             app:icon="@drawable/ic_add_circle_black_24px"
-            app:iconTint="?attr/colorOnBackground"/>
+            style="?extendedFloatingActionButtonStyle"/>
 
         <TextView
             android:id="@+id/heading"
@@ -119,8 +117,6 @@
         android:id="@+id/list_retryAction_actionButton"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@id/pageContent1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:clickable="true"
         android:visibility="gone"
@@ -128,6 +124,6 @@
         app:fabSize="mini"
         android:focusable="true"
         app:icon="@drawable/ic_refresh_black_24dp"
-        app:iconTint="?attr/colorOnBackground"/>
+        style="?extendedFloatingActionButtonStyle"/>
 
 </RelativeLayout>

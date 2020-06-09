@@ -305,7 +305,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         return new CustomPiwigoResponseListener();
     }
 
-    private void onAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
+    void onAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
         getUiHelper().hideProgressIndicator();
         if(rootAlbum == null) {
             rootAlbum = CategoryItem.ROOT_ALBUM.clone();
@@ -329,18 +329,20 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends RecyclerViewCategoryItemSelectFragment> extends BasicPiwigoResponseListener<S> {
+
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
+                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums(), false);
             } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
+                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums(), true);
             } else if(response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
 
                 ArrayList<CategoryItemStub> albumNames = ((CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) response).getAlbumNames();
                 ArrayList<CategoryItem> albums = CategoryItem.newListFromStubs(albumNames);
-                onAlbumsLoaded(albums, false);
+                getParent().onAlbumsLoaded(albums, false);
             }
         }
     }

@@ -38,6 +38,8 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     private boolean showFilenames = true;
     private SortedSet<String> visibleMimeTypes;
     private String selectedUriPermissionsForConsumerId;
+    private String selectedUriPermissionConsumerPurpose;
+    private int selectedUriPermissionFlags;
 
     protected FolderItemViewAdapterPreferences() {
     }
@@ -101,7 +103,10 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         b.putParcelable("initialFolder", initialFolder);
         BundleUtils.putSortedSet(b, "initialSelection", initialSelection);
         b.putString("selectedUriPermissionsForConsumerId", selectedUriPermissionsForConsumerId);
+        b.putString("selectedUriPermissionConsumerPurpose", selectedUriPermissionConsumerPurpose);
+        b.putInt("selectedUriPermissionFlags", selectedUriPermissionFlags);
         parent.putBundle("FolderItemViewAdapterPreferences", b);
+
         super.storeToBundle(b);
         return parent;
     }
@@ -124,6 +129,8 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         initialFolder = b.getParcelable("initialFolder");
         initialSelection = BundleUtils.readSortedSet(b, "initialSelection", new TreeSet<>());
         selectedUriPermissionsForConsumerId = b.getString("selectedUriPermissionsForConsumerId");
+        selectedUriPermissionConsumerPurpose = b.getString("selectedUriPermissionConsumerPurpose");
+        selectedUriPermissionFlags = b.getInt("selectedUriPermissionFlags");
         super.loadFromBundle(b);
         return this;
     }
@@ -209,5 +216,21 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
 
     public boolean isShowFolderContent() {
         return showFolderContents;
+    }
+
+    public String getSelectedUriPermissionConsumerPurpose() {
+        return selectedUriPermissionConsumerPurpose;
+    }
+
+    public void setSelectedUriPermissionConsumerPurpose(String selectedUriPermissionConsumerPurpose) {
+        this.selectedUriPermissionConsumerPurpose = selectedUriPermissionConsumerPurpose;
+    }
+
+    public int getSelectedUriPermissionFlags() {
+        return selectedUriPermissionFlags;
+    }
+
+    public void setSelectedUriPermissionFlags(int selectedUriPermissionFlags) {
+        this.selectedUriPermissionFlags = selectedUriPermissionFlags;
     }
 }

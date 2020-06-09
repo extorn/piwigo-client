@@ -15,6 +15,8 @@ import androidx.preference.DialogPreference;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.lang.ref.WeakReference;
+
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
@@ -27,17 +29,21 @@ import delit.piwigoclient.ui.common.UIHelper;
  * Created by gareth on 15/10/17.
  */
 
-public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandler.PiwigoResponseListener {
+public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHandler.PiwigoResponseListener {
 
     private static final String TAG = "BasicPiwigoLsnr";
     private static final String HANDLER_ID = "handlerId";
     private long handlerId;
     private UIHelper uiHelper;
-    private Object parent;
+    private WeakReference<T> parent;
 
 
     public BasicPiwigoResponseListener() {
         handlerId = PiwigoResponseBufferingHandler.getNextHandlerId();
+    }
+
+    public T getParent() {
+        return parent.get();
     }
 
     @Override
@@ -49,24 +55,9 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         handlerId = newHandlerId;
     }
 
-    public void withUiHelper(DialogPreference parent, UIHelper uiHelper) {
+    public void withUiHelper(T parent, UIHelper uiHelper) {
         this.uiHelper = uiHelper;
-        this.parent = parent;
-    }
-
-    public void withUiHelper(ViewGroup parent, UIHelper uiHelper) {
-        this.uiHelper = uiHelper;
-        this.parent = parent;
-    }
-
-    public void withUiHelper(AppCompatActivity parent, UIHelper uiHelper) {
-        this.uiHelper = uiHelper;
-        this.parent = parent;
-    }
-
-    public void withUiHelper(Fragment parent, UIHelper uiHelper) {
-        this.uiHelper = uiHelper;
-        this.parent = parent;
+        this.parent = new WeakReference<T>(parent);
     }
 
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -252,6 +243,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     public boolean canHandlePiwigoResponseNow(PiwigoResponseBufferingHandler.Response response) {
         // If this fragment is not presently active, delay processing the response till it is.
         boolean retVal;
+        T parent = getParent();
         if (parent instanceof Fragment) {
             // If this fragment is not presently active, delay processing the response till it is.
             Activity activity = ((Fragment) parent).getActivity();

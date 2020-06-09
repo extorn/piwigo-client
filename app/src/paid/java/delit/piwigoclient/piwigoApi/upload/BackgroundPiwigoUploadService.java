@@ -108,31 +108,32 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         return new BackgroundActionsBroadcastReceiver();
     }
 
-    public synchronized static void startService(Context context) {
-        if(starting || isStarted(context)) {
+    public synchronized static void startService(@NonNull Context context) {
+        Context appContext = context.getApplicationContext();
+        if(starting || isStarted(appContext)) {
             return;
         }
         terminateUploadServiceThreadAsap = false;
         starting = true;
-        Intent intent = new Intent(context, BackgroundPiwigoUploadService.class);
+        Intent intent = new Intent(appContext, BackgroundPiwigoUploadService.class);
         intent.setAction(ACTION_BACKGROUND_UPLOAD_FILES);
-        enqueueWork(context, BackgroundPiwigoUploadService.class, JOB_ID, intent);
+        enqueueWork(appContext, BackgroundPiwigoUploadService.class, JOB_ID, intent);
     }
 
     public static void sendActionWakeServiceIfSleeping(Context context) {
         Intent intent = new Intent();
         intent.setAction(ACTION_WAKE);
-        context.sendBroadcast(intent);
+        context.getApplicationContext().sendBroadcast(intent);
     }
 
     private static void pauseAnyRunningUpload(Context context) {
         Intent intent = new Intent();
         intent.setAction(ACTION_PAUSE);
-        context.sendBroadcast(intent);
+        context.getApplicationContext().sendBroadcast(intent);
     }
 
     public static boolean isStarted(Context context) {
-        return isMyServiceRunning(context, BackgroundPiwigoUploadService.class);
+        return isMyServiceRunning(context.getApplicationContext(), BackgroundPiwigoUploadService.class);
     }
 
     @Override

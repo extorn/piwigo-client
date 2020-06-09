@@ -648,5 +648,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="user_high_definition_field">Autoriser l\'accès aux fichiers en taille réelle</string>
     <string name="group_is_default_field">Attribuer de nouveaux utilisateurs à ce groupe</string>
     <string name="createGallery_galleryCommentsAllowed_title">Commentaires des utilisateurs</string>
+    <string name="uri_permission_justification_to_upload">Pour télécharger sur le serveur</string>
+    <string name="progress_loading_folder_content">Chargement du contenu du dossier</string>
 
 </resources>

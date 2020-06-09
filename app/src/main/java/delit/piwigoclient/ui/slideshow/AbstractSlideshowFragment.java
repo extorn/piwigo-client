@@ -435,12 +435,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends AbstractSlideshowFragment> extends BasicPiwigoResponseListener<S> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (isVisible()) {
-                updateActiveSessionDetails();
+            if (getParent().isVisible()) {
+                getParent().updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
@@ -453,14 +453,19 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
 
         public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
-            resourceContainer.acquirePageLoadLock();
-            try {
-                ArrayList<GalleryItem> resources = response.getResources();
-                int firstPositionAddedAt = resourceContainer.addItemPage(response.getPage(), response.getPageSize(), resources);
-                galleryItemAdapter.onDataAppended(firstPositionAddedAt, response.getResources().size());
-            } finally {
-                resourceContainer.releasePageLoadLock();
-            }
+            ArrayList<GalleryItem> resources = response.getResources();
+            getParent().onResourcesReceived(response.getPage(), response.getPageSize(), resources);
+
+        }
+    }
+
+    void onResourcesReceived(int page, int pageSize, ArrayList<GalleryItem> resources) {
+        resourceContainer.acquirePageLoadLock();
+        try {
+            int firstPositionAddedAt = resourceContainer.addItemPage(page, pageSize, resources);
+            galleryItemAdapter.onDataAppended(firstPositionAddedAt, resources.size());
+        } finally {
+            resourceContainer.releasePageLoadLock();
         }
     }
 

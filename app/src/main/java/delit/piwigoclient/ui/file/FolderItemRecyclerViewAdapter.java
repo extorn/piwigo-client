@@ -24,7 +24,6 @@ import com.crashlytics.android.Crashlytics;
 import com.drew.lang.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -220,9 +219,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     public boolean changeFolderViewed(DocumentFile newContent) {
-        if(isBusy) {
-            return false;
-        }
         updateContent(newContent, false);
         return true;
     }
@@ -267,10 +263,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return (Comparator<FolderItem>) (o1, o2) -> {
 
             if (o1.isFolder() && !o2.isFolder()) {
-                return -1;
+                return 1;
             }
             if (!o1.isFolder() && o2.isFolder()) {
-                return 1;
+                return -1;
             }
             if (o1.isFolder() && o2.isFolder()) {
                 return ObjectUtils.compare(o1.getName(), o2.getName());
@@ -283,7 +279,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                         return ObjectUtils.compare(o1.getName(), o2.getName());
                     } else {
                         // this is reversed order
-                        return o1.lastModified() > o2.lastModified() ? -1 : 1;
+                        return o1.lastModified() < o2.lastModified() ? -1 : 1;
                     }
                 default:
                     return 0;
@@ -774,6 +770,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     protected class FolderItemDocumentFileViewHolder extends FolderItemViewHolder {
 
         private TextView itemHeading;
+        private static final String TAG = "FolderItemDocFileVH";
 
         public FolderItemDocumentFileViewHolder(View view) {
             super(view);

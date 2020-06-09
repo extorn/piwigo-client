@@ -317,42 +317,42 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<GroupsListFragment> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (isVisible()) {
-                updateActiveSessionDetails();
+            if (getParent().isVisible()) {
+                getParent().updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (isVisible()) {
+            if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getParentFragmentManager().popBackStack();
+                    getParent().getParentFragmentManager().popBackStack();
                     return;
                 }
             }
             if (response instanceof GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) {
-                onGroupDeleted((GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) response);
+                getParent().onGroupDeleted((GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) response);
             } else if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
+                getParent().onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
-                if(groupsModel.isTrackingPageLoaderWithId(response.getMessageId())) {
-                    onGroupsLoadFailed(response);
-                } else if (deleteActionsPending.size() == 0) {
+                if(getParent().groupsModel.isTrackingPageLoaderWithId(response.getMessageId())) {
+                    getParent().onGroupsLoadFailed(response);
+                } else if (getParent().deleteActionsPending.size() == 0) {
                     // assume this to be a list reload that's required.
-                    retryActionButton.show();
+                    getParent().retryActionButton.show();
                 }
             }
         }
 
         @Override
         protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onGroupDeleteFailed(msg.getMessageId());
+            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+                getParent().onGroupDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoHttpErrorResponse(msg);
             }
@@ -360,8 +360,8 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
 
         @Override
         protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onGroupDeleteFailed(msg.getMessageId());
+            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+                getParent().onGroupDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoServerErrorResponse(msg);
             }
@@ -369,8 +369,8 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
 
         @Override
         protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onGroupDeleteFailed(msg.getMessageId());
+            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+                getParent().onGroupDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoUnexpectedReplyErrorResponse(msg);
             }

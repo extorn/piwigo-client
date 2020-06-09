@@ -625,14 +625,14 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<BaseConnectionPreferenceFragment> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
 
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 
             if (response instanceof HttpConnectionCleanup.HttpClientsShutdownResponse) {
-                reloadConnectionProfilePrefs();
+                getParent().reloadConnectionProfilePrefs();
             }
         }
     }

@@ -144,7 +144,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         return fragment;
     }
 
-    private long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
+    long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
             return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler(), connectionPrefs);
         } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
@@ -171,7 +171,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
     }
 
-    private ConnectionPreferences.ProfilePreferences getConnectionProfile() {
+    ConnectionPreferences.ProfilePreferences getConnectionProfile() {
         SharedPreferences prefs = getSharedPreferences();
         ServerAlbumListPreference pref = getPreference();
         String connectionProfile = prefs.getString(pref.getConnectionProfileNamePreferenceKey(), null);
@@ -189,26 +189,27 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends ServerAlbumListPreferenceDialogFragmentCompat> extends BasicPiwigoResponseListener<S> {
+
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionProfile();
+            ConnectionPreferences.ProfilePreferences connectionPrefs = getParent().getConnectionProfile();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+                getParent().retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
             } else if (response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
-                addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                getParent().addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 PiwigoSessionDetails.getInstance(connectionPrefs);
                 // need to try again as this call will have been pointless.
                 if (sessionDetails != null && (sessionDetails.isCommunityApiAvailable() || sessionDetails.isAdminUser())) {
-                    retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+                    getParent().retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
                 } else {
-                    addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                    getParent().addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
                 }
             } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
+                getParent().addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
             }
             super.onAfterHandlePiwigoResponse(response);
         }
@@ -224,7 +225,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         return getSharedPreferences().getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
-    private void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
+    void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
 
         AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
         viewPrefs.selectable(false, false);
@@ -283,7 +284,11 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
 
         @Override
         protected View getParentView() {
-            return getParent().getView();
+            DialogFragment parent = getParent();
+            if(parent == null) {
+                return null;
+            }
+            return parent.getView();
         }
 
         @Override

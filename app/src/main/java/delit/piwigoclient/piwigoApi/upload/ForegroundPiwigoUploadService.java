@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import java.util.HashMap;
@@ -38,14 +39,20 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         return new ActionsBroadcastReceiver(ACTION_STOP);
     }
 
-    public static long startActionRunOrReRunUploadJob(Context context, UploadJob uploadJob) {
-
-        Intent intent = new Intent(context, ForegroundPiwigoUploadService.class);
+    /**
+     *
+     * @param context
+     * @param uploadJob
+     * @return jobId of the started job (passed in as param)
+     */
+    public static long startActionRunOrReRunUploadJob(@NonNull Context context, UploadJob uploadJob) {
+        Context appContext = context.getApplicationContext();
+        Intent intent = new Intent(appContext, ForegroundPiwigoUploadService.class);
         intent.setAction(ACTION_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_JOB_ID, uploadJob.getJobId());
         uploadJob.setSubmitted(true);
         try {
-            enqueueWork(context, ForegroundPiwigoUploadService.class, JOB_ID, intent);
+            enqueueWork(appContext, ForegroundPiwigoUploadService.class, JOB_ID, intent);
         } catch(RuntimeException e) {
             uploadJob.setSubmitted(false);
         }

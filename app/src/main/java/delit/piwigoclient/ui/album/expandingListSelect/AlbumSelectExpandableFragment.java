@@ -401,19 +401,21 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         return new CustomPiwigoResponseListener();
     }
 
-    private void onAlbumsLoaded(final ArrayList<CategoryItem> albums) {
+    void onAlbumsLoaded(final ArrayList<CategoryItem> albums) {
         getUiHelper().hideProgressIndicator();
         availableAlbums = albums;
         setupListContentLoadingIfNeeded();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends AlbumSelectExpandableFragment> extends BasicPiwigoResponseListener<S> {
+
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums());
+                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response).getAlbums());
             } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums());
+                getParent().onAlbumsLoaded(((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().getAlbums());
             }
         }
     }

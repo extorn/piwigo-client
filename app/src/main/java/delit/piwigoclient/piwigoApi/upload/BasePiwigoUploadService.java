@@ -102,7 +102,7 @@ import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponse
 public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private static final String TAG = "BaseUpldSvc";
-    private static final List<UploadJob> activeUploadJobs = Collections.synchronizedList(new ArrayList<UploadJob>(1));
+    private static final List<UploadJob> activeUploadJobs = Collections.synchronizedList(new ArrayList<>(1));
     private static final SecureRandom random = new SecureRandom();
     private UploadJob runningUploadJob = null;
     private final String tag;
@@ -1002,7 +1002,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
 
         DocumentFile outputVideo = uploadJob.addCompressedFile(this, rawVideo, compressionSettings.getOutputFileMimeType());
-        final UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob, rawVideo, outputVideo.getUri());
+        final UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob);
 
         compressor.invokeFileCompression(this, rawVideo, outputVideo.getUri(), listener, compressionSettings);
 
@@ -1303,6 +1303,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         long chunkCount;
         long chunksUploadedAlready = 0;
 
+        if(totalBytesInFile < 0) {
+            throw new IOException("Unable to ascertain file size - essential to upload");
+        }
 
         String newChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
         if (isUseFilenamesOverMd5ChecksumForUniqueness(thisUploadJob)) {
@@ -1708,28 +1711,23 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private static class UploadFileCompressionListener implements ExoPlayerCompression.CompressionListener {
 
-        private final Uri rawVideo;
-        private final Uri compressedVideo;
         private boolean compressionComplete;
         private BasePiwigoUploadService uploadService;
         private UploadJob job;
         private Exception compressionError;
 
-        UploadFileCompressionListener(BasePiwigoUploadService uploadService, UploadJob job, Uri rawVideo, Uri compressedVideo) {
+        UploadFileCompressionListener(BasePiwigoUploadService uploadService, UploadJob job) {
             this.uploadService = uploadService;
             this.job = job;
-            this.rawVideo = rawVideo;
-            this.compressedVideo = compressedVideo;
         }
 
         @Override
-        public void onCompressionStarted() {
-
+        public void onCompressionStarted(Uri inputFile, Uri outputFile) {
         }
 
         @Override
-        public void onCompressionComplete() {
-            uploadService.postNewResponse(job.getJobId(), new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, 100));
+        public void onCompressionComplete(Uri inputFile, Uri outputFile) {
+            uploadService.postNewResponse(job.getJobId(), new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), inputFile, outputFile, 100));
             compressionComplete = true;
             // wake the main upload thread.
             synchronized (this) {
@@ -1742,14 +1740,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
 
         @Override
-        public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
+        public void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs) {
             int intCompProgress = (int) Math.round(compressionProgress);
             uploadService.updateNotificationProgressText(job.getUploadProgress());
-            uploadService.postNewResponse(job.getJobId(), new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, intCompProgress));
+            uploadService.postNewResponse(job.getJobId(), new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(),  inputFile, outputFile, intCompProgress));
         }
 
         @Override
-        public void onCompressionError(Exception e) {
+        public void onCompressionError(Uri inputFile, Uri outputFile, Exception e) {
             compressionError = e;
             // wake the main upload thread.
             synchronized (this) {

@@ -327,7 +327,7 @@ public class UploadActivity extends MyActivity {
         EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 
-    private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
+    void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
 
         final int trackingRequestId = TrackableRequestEvent.getNextEventId();
         getUiHelper().setTrackingRequest(trackingRequestId);
@@ -364,7 +364,7 @@ public class UploadActivity extends MyActivity {
         return isAdminUser || hasCommunityPlugin;
     }
 
-    private void showUploadFragment(boolean allowLogin, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    void showUploadFragment(boolean allowLogin, ConnectionPreferences.ProfilePreferences connectionPrefs) {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         CategoryItemStub currentAlbum = getIntent().getParcelableExtra(INTENT_DATA_CURRENT_ALBUM);
@@ -683,15 +683,19 @@ public class UploadActivity extends MyActivity {
         return new CustomPiwigoResponseListener();
     }
 
-    class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<A extends UploadActivity> extends BasicPiwigoResponseListener<A> {
+        public A getParent() {
+            return super.getParent();
+        }
+
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
                 if (((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails() != null) {
                     Log.e("UploadActivity", "Retrieved user login success response");
-                    showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
+                    getParent().showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
                 } else {
-                    createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+                    getParent().createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
                 }
             } else {
                 super.onAfterHandlePiwigoResponse(response);

@@ -322,52 +322,52 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<UsersListFragment> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (isVisible()) {
-                updateActiveSessionDetails();
+            if (getParent().isVisible()) {
+                getParent().updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (isVisible()) {
+            if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getParentFragmentManager().popBackStack();
+                    getParent().getParentFragmentManager().popBackStack();
                     return;
                 }
             }
             if (response instanceof UsersGetListResponseHandler.PiwigoGetUsersListResponse) {
-                onUsersLoaded((UsersGetListResponseHandler.PiwigoGetUsersListResponse) response);
+                getParent().onUsersLoaded((UsersGetListResponseHandler.PiwigoGetUsersListResponse) response);
             } else if (response instanceof UserDeleteResponseHandler.PiwigoDeleteUserResponse) {
-                onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
+                getParent().onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
-                if(usersModel.isTrackingPageLoaderWithId(response.getMessageId())) {
+                if(getParent().usersModel.isTrackingPageLoaderWithId(response.getMessageId())) {
                     onUsersLoadFailed(response);
-                } else if (deleteActionsPending.size() == 0) {
+                } else if (getParent().deleteActionsPending.size() == 0) {
                     // assume this to be a list reload that's required.
-                    retryActionButton.show();
+                    getParent().retryActionButton.show();
                 }
             }
         }
 
         protected void onUsersLoadFailed(PiwigoResponseBufferingHandler.Response response) {
-            usersModel.acquirePageLoadLock();
+            getParent().usersModel.acquirePageLoadLock();
             try {
-                usersModel.recordPageLoadFailed(response.getMessageId());
+                getParent().usersModel.recordPageLoadFailed(response.getMessageId());
 //                onListItemLoadFailed();
             } finally {
-                usersModel.releasePageLoadLock();
+                getParent().usersModel.releasePageLoadLock();
             }
         }
 
         @Override
         protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onUserDeleteFailed(msg.getMessageId());
+            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+                getParent().onUserDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoHttpErrorResponse(msg);
             }
@@ -375,8 +375,8 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
 
         @Override
         protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onUserDeleteFailed(msg.getMessageId());
+            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+                getParent().onUserDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoUnexpectedReplyErrorResponse(msg);
             }
@@ -384,8 +384,8 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
 
         @Override
         protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onUserDeleteFailed(msg.getMessageId());
+            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+                getParent().onUserDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoServerErrorResponse(msg);
             }

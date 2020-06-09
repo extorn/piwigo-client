@@ -67,7 +67,7 @@ import static android.os.Build.VERSION_CODES.KITKAT;
 
 public class IOUtils {
 
-    public static final String TAG = "IOUtils";
+    private static final String TAG = "IOUtils";
 
     public static void write(InputStream src, OutputStream dst) throws IOException {
         BufferedInputStream inStream = new BufferedInputStream(src);
@@ -966,30 +966,38 @@ public class IOUtils {
     }
 
     public static long getFilesize(Context context, Uri uri) {
+
+        if("file".equals(uri.getScheme())) {
+            return new File(uri.getPath()).length();
+        }
+
         DocumentFile docFile = DocumentFile.fromSingleUri(context, uri);
-        if(docFile == null) {
-            ParcelFileDescriptor fd = null;
-            try {
-                fd = context.getContentResolver().openFileDescriptor(uri, "r");
-                if(fd != null) {
-                    return fd.getStatSize();
-                }
+        if(docFile != null) {
+            if (!docFile.exists()) {
                 return -1;
-            } catch (FileNotFoundException e) {
-                return -1;
-            } finally {
-                if(fd != null) {
-                    try {
-                        fd.close();
-                    } catch (IOException e) {
-                        Crashlytics.logException(e);
-                    }
+            } else {
+                return docFile.length();
+            }
+        }
+
+        // Maybe was shared and isn't available as a document file. Open and use a file descriptor.
+        ParcelFileDescriptor fd = null;
+        try {
+            fd = context.getContentResolver().openFileDescriptor(uri, "r");
+            if(fd != null) {
+                return fd.getStatSize();
+            }
+            return -1;
+        } catch (FileNotFoundException e) {
+            return -1;
+        } finally {
+            if(fd != null) {
+                try {
+                    fd.close();
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
                 }
             }
-        } else if (!docFile.exists()) {
-            return -1;
-        } else {
-            return docFile.length();
         }
     }
 

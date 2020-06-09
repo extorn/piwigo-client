@@ -2,23 +2,23 @@ package delit.piwigoclient.database;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
 
 public class AppSettingsViewModel extends AndroidViewModel {
@@ -70,36 +70,42 @@ public class AppSettingsViewModel extends AndroidViewModel {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void releasePersistableUriPermission(@NonNull Context context, @Nullable List<UriPermissionUse> uriPermissionConsumers, @NonNull Uri uri, int flags) {
-        if(uriPermissionConsumers == null || uriPermissionConsumers.isEmpty()) {
-            List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, Arrays.asList(uri));
-            for(Uri uriPermHeld : uriPermsHeld) {
-                context.getContentResolver().releasePersistableUriPermission(uriPermHeld, flags);
+    public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId) {
+        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
+        LiveData<List<UriPermissionUse>> liveData = getAllForUri(uri);
+        liveData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
+            @Override
+            public void onChanged(List<UriPermissionUse> permissionsHeld) {
+                liveData.removeObserver(this);
+                List<String> consumers = new ArrayList<>();
+                int flagsToRemove = 0;
+                int flagsStillUsed = 0;
+                for (UriPermissionUse use : permissionsHeld) {
+                    if (!use.consumerId.equals(consumerId)) {
+                        consumers.add(use.consumerId);
+                        flagsStillUsed |= use.flags;
+                    } else {
+                        flagsToRemove = use.flags;
+                        // remove our tracking entry for how we are using the uri permission
+                        delete(use);
+                    }
+                }
+                // remove the flags to keep from the flags to remove
+                int mask = ~flagsStillUsed;
+                flagsToRemove &= mask;
+
+                if (flagsToRemove != 0 && consumers.size() == 0 && permissionsHeld.size() > 0) {
+                    // remove the Uri permission if it is no longer in use
+                    List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, Arrays.asList(uri));
+                    if(uriPermsHeld.indexOf(uri) >= 0) {
+                        context.getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
+                    }
+                }
             }
-            return;
-        }
-        int readPerm = flags & Intent.FLAG_GRANT_READ_URI_PERMISSION;
-        int writePerm = flags & Intent.FLAG_GRANT_READ_URI_PERMISSION;
-
-        Set<Uri> uniqueUris = new HashSet<>(uriPermissionConsumers.size());
-        for(UriPermissionUse uriConsumerLink : uriPermissionConsumers) {
-            int adjustedFlags = (uriConsumerLink.flags ^ readPerm) ^ writePerm;
-            if(adjustedFlags == 0) {
-                delete(uriConsumerLink);
-            } else if(adjustedFlags != uriConsumerLink.flags) {
-                uriConsumerLink.flags = adjustedFlags;
-                insert(uriConsumerLink);
-            }
-            uniqueUris.add(Uri.parse(uriConsumerLink.uri));
-        }
-
-        IOUtils.removeUrisWeLackPermissionFor(context, uniqueUris);
-
-        for(Uri uniqueUri : uniqueUris) {
-            context.getContentResolver().releasePersistableUriPermission(uniqueUri, flags);
-        }
+        });
     }
 
+    //TODO need to use this kind of thing to ensure we ask user to add permissions back for URis that they removed permissions for in the system UI
     private boolean hasRequiredPermissionsForUri(Uri uri) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Uri rootUri = null;

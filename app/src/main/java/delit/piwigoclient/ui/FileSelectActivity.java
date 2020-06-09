@@ -156,6 +156,8 @@ public class FileSelectActivity extends MyActivity {
         folderItemSelectPrefs.withVisibleContent(event.getVisibleFileTypes(), event.getFileSortOrder());
         folderItemSelectPrefs.withVisibleMimeTypes(event.getVisibleMimeTypes());
         folderItemSelectPrefs.withSelectedUriPermissionsForConsumerId(event.getSelectedUriPermissionsForConsumerId());
+        folderItemSelectPrefs.setSelectedUriPermissionConsumerPurpose(event.getSelectedUriPermissionsForConsumerPurpose());
+        folderItemSelectPrefs.setSelectedUriPermissionFlags(event.getSelectedUriPermissionsFlags());
         // basic settings
         folderItemSelectPrefs.selectable(event.isMultiSelectAllowed(), false);
         folderItemSelectPrefs.setInitialSelection(event.getInitialSelection());

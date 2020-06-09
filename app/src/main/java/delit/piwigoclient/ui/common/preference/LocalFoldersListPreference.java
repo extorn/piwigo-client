@@ -7,11 +7,6 @@ import android.os.Build;
 import android.util.AttributeSet;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.documentfile.provider.DocumentFile;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.Preference;
@@ -20,9 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import delit.libs.ui.util.DisplayUtils;
@@ -30,7 +23,6 @@ import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.database.AppSettingsViewModel;
-import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -125,6 +117,8 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
         fileSelectNeededEvent.withVisibleContent(FileSelectionNeededEvent.ALPHABETICAL);
         fileSelectNeededEvent.withInitialSelection(selection);
         fileSelectNeededEvent.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey());
+        fileSelectNeededEvent.setSelectedUriPermissionsForConsumerPurpose(getTitle().toString());
+        fileSelectNeededEvent.requestUriReadWritePermissions();
         return fileSelectNeededEvent;
     }
 
@@ -179,25 +173,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
                     Uri oldFolder = IOUtils.getLocalFileUri(oldValue);
                     if(!"file".equals(oldFolder.getScheme())) {
                         // file uris dont get dealt with in this way.
-                        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(thisPref.getContext());
-                        LiveData<List<UriPermissionUse>> liveData = thisPref.appSettingsViewModel.getAllForUri(oldFolder);
-                        liveData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
-                            @Override
-                            public void onChanged(List<UriPermissionUse> permissionsHeld) {
-                                liveData.removeObserver(this);
-                                List<String> consumers = new ArrayList<>();
-                                for (UriPermissionUse use : permissionsHeld) {
-                                    if (!use.consumerId.equals(thisPref.getUriPermissionsKey())) {
-                                        consumers.add(use.consumerId);
-                                    }
-                                }
-                                if (consumers.size() == 0 && permissionsHeld.size() > 0) {
-                                    DocumentFile documentFile = DocumentFile.fromSingleUri(thisPref.getContext(), oldFolder);
-                                    String folderName = documentFile != null ? documentFile.getName() : oldFolder.getLastPathSegment();
-                                    uiHelper.showOrQueueDialogQuestion(R.string.alert_question_title, thisPref.getContext().getString(R.string.release_permissions_for_uri_pattern, folderName), R.string.button_no, R.string.button_yes, new PermissionReleaseAnswerHandler(uiHelper, thisPref, oldFolder, selectedFolder));
-                                }
-                            }
-                        });
+                        thisPref.appSettingsViewModel.releasePersistableUriPermission(thisPref.getContext(), oldFolder, thisPref.getUriPermissionsKey());
                     }
                 }
                 if(newValue != null) {
@@ -212,34 +188,5 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     private void takePersistableUriPermission(Uri selectedFolder) {
         int flags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
         appSettingsViewModel.takePersistableUriPermissions(getContext(), selectedFolder, flags, getUriPermissionsKey(), getContext().getString(R.string.preference_uri_consumer_description_pattern, getTitle()));
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private static class PermissionReleaseAnswerHandler extends UIHelper.QuestionResultAdapter {
-
-        private final Uri oldFolder;
-        private final Uri newFolder;
-        private final LocalFoldersListPreference thisPreference;
-
-        public PermissionReleaseAnswerHandler(UIHelper uiHelper, LocalFoldersListPreference thisPreference, Uri oldFolder, Uri newFolder) {
-            super(uiHelper);
-            this.oldFolder = oldFolder;
-            this.newFolder = newFolder;
-            this.thisPreference = thisPreference;
-        }
-
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            super.onResult(dialog, positiveAnswer);
-            if(Boolean.TRUE.equals(positiveAnswer)) {
-                LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(thisPreference.getContext());
-                LiveData<List<UriPermissionUse>> uriPermissionsData = thisPreference.appSettingsViewModel.getAllForUri(oldFolder);
-                uriPermissionsData.observe(lifecycleOwner, permissionsHeld -> thisPreference.appSettingsViewModel.releasePersistableUriPermission(getContext(), permissionsHeld, oldFolder, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
-            }
-            if(newFolder != null) {
-                thisPreference.takePersistableUriPermission(newFolder);
-            }
-        }
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="App.Widget.EditText.FieldEntry.Clickable" parent="App.Widget.EditText.FieldEntry">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
@@ -212,7 +212,17 @@
     <style name="App.Widget.MaterialComponents.AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.PrimarySurface">
     </style>
 
+    <style name="App.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:minHeight">9dp</item>
+        <item name="android:maxHeight">9dp</item>
+        <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
+    </style>
 
-
+    <style name="App.Widget.MaterialComponents.ExtendedFloatingActionButton.Icon" parent="Widget.MaterialComponents.ExtendedFloatingActionButton.Icon">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="iconTint">?attr/colorOnBackground</item>
+        <item name="rippleColor">?attr/colorControlHighlight</item>
+    </style>
 
 </resources>

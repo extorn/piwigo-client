@@ -46,7 +46,7 @@ import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 public class ExoPlayerCompression {
 
     private static final String TAG = "ExoPlayerCompression";
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE_LOGGING = true;
     private ArrayList<ExoPlayerCompressionThread> activeCompressionThreads = new ArrayList<>(1);
     private Context context;
 
@@ -102,7 +102,7 @@ public class ExoPlayerCompression {
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
-            listenerWrapper.onCompressionError(error);
+            listenerWrapper.onCompressionError(mediaMuxerControl.getInputFile(), mediaMuxerControl.getOutputFile(), error);
         }
 
         @Override
@@ -120,7 +120,7 @@ public class ExoPlayerCompression {
     }
 
     private void makeTranscodedFileStreamable(Uri fileUri) {
-        if (VERBOSE) {
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "Enabling streaming for transcoded MP4");
         }
 
@@ -163,13 +163,13 @@ public class ExoPlayerCompression {
 
     public interface CompressionListener {
 
-        void onCompressionStarted();
+        void onCompressionStarted(Uri inputFile, Uri outputFile);
 
-        void onCompressionError(Exception e);
+        void onCompressionError(Uri inputFile, Uri outputFile, Exception e);
 
-        void onCompressionComplete();
+        void onCompressionComplete(Uri inputFile, Uri outputFile);
 
-        void onCompressionProgress(double compressionProgress, long mediaDurationMs);
+        void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs);
     }
 
     private static class CompressionListenerWrapper implements CompressionListener {
@@ -184,23 +184,23 @@ public class ExoPlayerCompression {
         }
 
         @Override
-        public void onCompressionStarted() {
-            wrapped.onCompressionStarted();
+        public void onCompressionStarted(Uri inputFile, Uri outputFile) {
+            wrapped.onCompressionStarted(inputFile, outputFile);
         }
 
         @Override
-        public void onCompressionError(Exception e) {
-            wrapped.onCompressionError(e);
+        public void onCompressionError(Uri inputFile, Uri outputFile, Exception e) {
+            wrapped.onCompressionError(inputFile, outputFile, e);
         }
 
         @Override
-        public void onCompressionComplete() {
-            wrapped.onCompressionComplete();
+        public void onCompressionComplete(Uri inputFile, Uri outputFile) {
+            wrapped.onCompressionComplete(inputFile, outputFile);
         }
 
         @Override
-        public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
-            wrapped.onCompressionProgress(compressionProgress, mediaDurationMs);
+        public void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs) {
+            wrapped.onCompressionProgress(inputFile, outputFile, compressionProgress, mediaDurationMs);
         }
     }
 
@@ -401,13 +401,13 @@ public class ExoPlayerCompression {
         }
 
         @Override
-        public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
-            super.onCompressionProgress(compressionProgress, mediaDurationMs);
+        public void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs) {
+            super.onCompressionProgress(inputFile, outputFile, compressionProgress, mediaDurationMs);
             this.mediaDurationMs = mediaDurationMs;
         }
 
         @Override
-        public void onCompressionComplete() {
+        public void onCompressionComplete(Uri inputFile, Uri outputFile) {
             DocumentFile inputDocFile = DocumentFile.fromSingleUri(context, inputFile);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 if(inputDocFile != null) {
@@ -419,13 +419,13 @@ public class ExoPlayerCompression {
             if (enableFastStart) {
                 makeTranscodedFileStreamable(outputFile);
             }
-            super.onCompressionProgress(100d, mediaDurationMs);
-            super.onCompressionComplete();
+            super.onCompressionProgress(inputFile, outputFile, 100d, mediaDurationMs);
+            super.onCompressionComplete(inputFile, outputFile);
         }
 
         @Override
-        public void onCompressionError(Exception e) {
-            super.onCompressionError(e);
+        public void onCompressionError(Uri inputFile, Uri outputFile, Exception e) {
+            super.onCompressionError(inputFile, outputFile, e);
         }
     }
 
@@ -454,10 +454,10 @@ public class ExoPlayerCompression {
                 invokeCompressor(compressionSettings);
             } catch (RuntimeException e) {
                 Crashlytics.logException(e);
-                listener.onCompressionError(e);
+                listener.onCompressionError(inputFile, outputFile, e);
             } catch (IOException e) {
                 Crashlytics.logException(e);
-                listener.onCompressionError(e);
+                listener.onCompressionError(inputFile, outputFile, e);
             }
         }
 
@@ -494,7 +494,7 @@ public class ExoPlayerCompression {
             ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(contextRef.get(), "PiwigoCompression"));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             factory.setExtractorsFactory(extractorsFactory);
-            listenerWrapper.onCompressionStarted();
+            listenerWrapper.onCompressionStarted(inputFile, outputFile);
             ExtractorMediaSource videoSource = factory.createMediaSource(inputFile);
             player.prepare(videoSource);
             PlaybackParameters playbackParams = new PlaybackParameters(1.0f);

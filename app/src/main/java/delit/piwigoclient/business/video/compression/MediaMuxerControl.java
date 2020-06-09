@@ -34,7 +34,7 @@ import delit.libs.util.LegacyIOUtils;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {
     private static final String TAG = "MediaMuxerControl";
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE_LOGGING = false;
     private final Uri inputFile;
     private long inputBytes;
     private final ExoPlayerCompression.CompressionListener listener;
@@ -68,7 +68,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         extractInputVideoFormat(inputFile);
         DocumentFile docFile = DocumentFile.fromSingleUri(context, inputFile);
         inputBytes = docFile.length();
-        //mediaMuxer = buildMediaMuxer(outputFile);
+        if(VERBOSE_LOGGING) {
+            Log.d(TAG, "Extracted file length from input file");
+        }
         trackFormats = new HashMap<>(2);
         trackStatistics = new HashMap<>(2);
         this.listener = listener;
@@ -79,7 +81,18 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         this.eventHandler = new Handler(looper);
     }
 
+    public Uri getInputFile() {
+        return inputFile;
+    }
+
+    public Uri getOutputFile() {
+        return outputFile;
+    }
+
     private void extractInputVideoFormat(Uri inputFile) throws IOException {
+        if(VERBOSE_LOGGING) {
+            Log.d(TAG, "Extrcting video format from input file");
+        }
         MediaExtractor mExtractor = new MediaExtractor();
         try {
             mExtractor.setDataSource(context, inputFile, null);
@@ -99,7 +112,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     public void markAudioConfigured() {
         if (!audioConfigured) {
             audioConfigured = true;
-            if (VERBOSE) {
+            if (VERBOSE_LOGGING) {
                 Log.d(TAG, "Muxer : Audio Input configured");
             }
         }
@@ -116,14 +129,14 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     public void markVideoConfigured() {
         if (!videoConfigured) {
             videoConfigured = true;
-            if (VERBOSE) {
+            if (VERBOSE_LOGGING) {
                 Log.d(TAG, "Muxer : Video Input configured");
             }
         }
     }
 
     public void reset() {
-        if (VERBOSE) {
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "resetting media muxer");
         }
         audioConfigured = false;
@@ -143,7 +156,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             mediaMuxer = buildMediaMuxer();
             try {
                 // the media muxer is ready to start accepting data now from the encoder
-                if (VERBOSE) {
+                if (VERBOSE_LOGGING) {
                     Log.d(TAG, "starting media muxer");
                 }
                 mediaMuxer.start();
@@ -162,7 +175,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     public boolean stopMediaMuxer() {
-        if (VERBOSE) {
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "stopping media muxer");
         }
         if (mediaMuxerStarted) {
@@ -173,6 +186,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     private void extractLocationData(Uri inputFile) {
+        if(VERBOSE_LOGGING) {
+            Log.d(TAG, "Extrcting location data from input file");
+        }
         MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
         try {
             metadataRetriever.setDataSource(context, inputFile);
@@ -321,7 +337,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
         thisTrackStats.addTranscodedBytesWritten(encodedData.remaining());
 //        lastWrittenDataTimeUs = info.presentationTimeUs;
-        if (VERBOSE) {
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "muxing data - " + getTrackName(outputTrackIndex) + " [" + info.presentationTimeUs + ']');
         }
         // if there's only one track, write all data to that track otherwise write to appropriate track.
@@ -335,7 +351,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             flush();
         }
 
-        if (VERBOSE) {
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "Muxer : releasing old muxer");
         }
         if (this.mediaMuxer != null) {
@@ -374,6 +390,26 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
      * @return percentage 0 - 1
      */
     public double getOverallProgress() {
+        long bytesTranscoded = getBytesTranscoded();
+
+        double progress = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(inputBytes), new MathContext(2, RoundingMode.DOWN)).doubleValue();
+        return progress;
+    }
+
+    private long getBytesTranscodedAndWritten() {
+        long bytesTranscoded = 0;
+        TrackStats trackStats = trackStatistics.get("video");
+        if (trackStats != null) {
+            bytesTranscoded += trackStats.getTranscodedBytesWritten();
+        }
+        trackStats = trackStatistics.get("audio");
+        if (trackStats != null) {
+            bytesTranscoded += trackStats.getTranscodedBytesWritten();
+        }
+        return bytesTranscoded;
+    }
+
+    private long getBytesTranscoded() {
         long bytesTranscoded = 0;
         TrackStats trackStats = trackStatistics.get("video");
         if (trackStats != null) {
@@ -383,9 +419,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         if (trackStats != null) {
             bytesTranscoded += trackStats.getOriginalBytesTranscoded();
         }
-
-        double value = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(inputBytes), new MathContext(2, RoundingMode.DOWN)).doubleValue();
-        return value;
+        return bytesTranscoded;
     }
 
     public int getVideoTrackId() {
@@ -403,7 +437,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     private MediaMuxer buildMediaMuxer() {
-        if (VERBOSE) {
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "Building new MediaMuxer");
         }
         try {
@@ -437,32 +471,47 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         if (rotationDegrees > 0) {
             muxer.setOrientationHint(rotationDegrees);
         }
+        if(VERBOSE_LOGGING) {
+            Log.d(TAG, "New MediaMuxer configured");
+        }
     }
 
     public void addAudioTrack(MediaFormat outputFormat) {
-        if (VERBOSE) {
+        hasAudio = true;
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "Muxer : Adding Audio track");
         }
-        if (null != trackFormats.put("audio", outputFormat)) {
-            // rebuild needed
-            release();
-        } else {
+        MediaFormat oldOutputFormat = trackFormats.put("audio", outputFormat);
+        if (null == oldOutputFormat) {
             trackStatistics.put("audio", new TrackStats());
+        } else {
+            String outputFormatAsStr = outputFormat.toString();
+            String oldOutputFormatAsStr = oldOutputFormat.toString();
+            if(!outputFormatAsStr.equals(oldOutputFormatAsStr)) {
+                // rebuild needed
+                if(getBytesTranscodedAndWritten() > 0) {
+                    throw new IllegalStateException("unable to release media muxer after data has been written");
+                }
+                release();
+            }
         }
-//        mediaMuxer = buildMediaMuxer();
     }
 
     public void addVideoTrack(MediaFormat outputFormat) {
-        if (VERBOSE) {
+        hasVideo = true;
+        if (VERBOSE_LOGGING) {
             Log.d(TAG, "Muxer : Adding Video track");
         }
-        if (null != trackFormats.put("video", outputFormat)) {
-            // rebuild needed
-            release();
-        } else {
+        MediaFormat oldOutputFormat = trackFormats.put("video", outputFormat);
+        if (null == oldOutputFormat) {
             trackStatistics.put("video", new TrackStats());
+        } else if(outputFormat != null && !outputFormat.toString().equals((oldOutputFormat.toString()))) {
+            // rebuild needed
+            if(getBytesTranscodedAndWritten() > 0) {
+                throw new IllegalStateException("unable to release media muxer after data has been written");
+            }
+            release();
         }
-//        mediaMuxer = buildMediaMuxer();
     }
 
     public boolean isConfigured() {
@@ -477,6 +526,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             muxer = new MediaMuxer(outputFileDescriptor.getFileDescriptor(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         } else {
             muxer = new MediaMuxer(LegacyIOUtils.getFile(outputFile).getPath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        }
+        if(VERBOSE_LOGGING) {
+            Log.d(TAG, "New MediaMuxer built");
         }
         return muxer;
     }
@@ -507,7 +559,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     public void videoRendererStopped() {
         if (hasVideo) {
-            if (VERBOSE) {
+            if (VERBOSE_LOGGING) {
                 Log.d(TAG, "Video Rendering stopped");
             }
             hasVideo = false;
@@ -526,7 +578,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     public void audioRendererStopped() {
         if (hasAudio) {
-            if (VERBOSE) {
+            if (VERBOSE_LOGGING) {
                 Log.d(TAG, "Audio Rendering stopped");
             }
             hasAudio = false;
@@ -544,21 +596,11 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     private void onCompressionError(final Exception e) {
-        eventHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onCompressionError(e);
-            }
-        });
+        eventHandler.post(() -> listener.onCompressionError(inputFile, outputFile, e));
     }
 
     private void onCompressionComplete() {
-        eventHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                listener.onCompressionComplete();
-            }
-        });
+        eventHandler.post(() -> listener.onCompressionComplete(inputFile, outputFile));
     }
 
     public boolean isAudioConfigured() {
@@ -649,6 +691,10 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
         public void addOriginalBytesTranscoded(long originalBytesTranscoded) {
             this.originalBytesTranscoded += originalBytesTranscoded;
+        }
+
+        public long getTranscodedBytesWritten() {
+            return transcodedBytesWritten;
         }
 
         public long getOriginalBytesTranscoded() {

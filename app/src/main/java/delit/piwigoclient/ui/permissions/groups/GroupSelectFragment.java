@@ -278,13 +278,13 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         getListAdapter().replaceOrAddItem(event.getGroup());
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<GroupSelectFragment> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
+                getParent().onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else {
-                onGroupsLoadFailed(response);
+                getParent().onGroupsLoadFailed(response);
             }
         }
     }

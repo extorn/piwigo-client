@@ -35,6 +35,8 @@ import java.util.Map;
 import delit.piwigoclient.BuildConfig;
 
 public class LegacyIOUtils {
+    private static final String TAG = "LegacyIO";
+
     public static long getFolderSize(File directory, boolean recursive) {
         long length = 0;
         File[] fileList = directory.listFiles();
@@ -64,36 +66,36 @@ public class LegacyIOUtils {
             return (T) o;
 
         } catch (FileNotFoundException e) {
-            Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
+            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(IOUtils.TAG, "Error reading object from disk", e);
+                Log.e(TAG, "Error reading object from disk", e);
             }
         } catch (InvalidClassException e) {
-            Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
+            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(IOUtils.TAG, "Error reading object from disk (class blueprint has altered since saved)", e);
+                Log.e(TAG, "Error reading object from disk (class blueprint has altered since saved)", e);
             }
             deleteFileNow = true;
         } catch (ObjectStreamException e) {
-            Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
+            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(IOUtils.TAG, "Error reading object from disk", e);
+                Log.e(TAG, "Error reading object from disk", e);
             }
             deleteFileNow = true;
         } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
+            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(IOUtils.TAG, "Error reading object from disk", e);
+                Log.e(TAG, "Error reading object from disk", e);
             }
         } catch (ClassNotFoundException e) {
-            Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
+            Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(IOUtils.TAG, "Error reading object from disk", e);
+                Log.e(TAG, "Error reading object from disk", e);
             }
             deleteFileNow = true;
         } finally {
@@ -101,10 +103,10 @@ public class LegacyIOUtils {
                 try {
                     ois.close();
                 } catch (IOException e) {
-                    Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
+                    Crashlytics.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getAbsolutePath());
                     Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
-                        Log.d(IOUtils.TAG, "Error closing stream when reading object from disk", e);
+                        Log.d(TAG, "Error closing stream when reading object from disk", e);
                     }
                 }
             }
@@ -123,23 +125,23 @@ public class LegacyIOUtils {
         File tmpFile = new File(destinationFile.getParentFile(), destinationFile.getName() + ".tmp");
         if (tmpFile.exists()) {
             if (!tmpFile.delete()) {
-                Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error writing Object to disk - unable to delete previous temporary file : " + destinationFile.getAbsolutePath());
+                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to delete previous temporary file : " + destinationFile.getAbsolutePath());
                 canContinue = false;
             }
         }
         if(canContinue && !destinationFile.getParentFile().isDirectory()) {
             if (!destinationFile.getParentFile().mkdir()) {
-                Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error writing Object to disk - unable to create parent folder : " + destinationFile.getParentFile().getAbsolutePath());
+                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create parent folder : " + destinationFile.getParentFile().getAbsolutePath());
                 canContinue = false;
             }
         }
         try {
             if (canContinue && !tmpFile.createNewFile()) {
-                Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error writing Object to disk - unable to create new temporary file : " + destinationFile.getAbsolutePath());
+                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create new temporary file : " + destinationFile.getAbsolutePath());
                 canContinue = false;
             }
         } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error writing Object to disk (creating new file) : " + destinationFile.getAbsolutePath());
+            Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk (creating new file) : " + destinationFile.getAbsolutePath());
             Crashlytics.logException(e);
         }
 
@@ -153,14 +155,14 @@ public class LegacyIOUtils {
             oos.writeObject(o);
             oos.flush();
         } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error writing Object to disk : " + tmpFile.getAbsolutePath());
+            Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk : " + tmpFile.getAbsolutePath());
             Crashlytics.logException(e);
         } finally {
             if (oos != null) {
                 try {
                     oos.close();
                 } catch (IOException e) {
-                    Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error closing stream when writing Object to disk : " + tmpFile.getAbsolutePath());
+                    Crashlytics.log(Log.ERROR, TAG, "Error closing stream when writing Object to disk : " + tmpFile.getAbsolutePath());
                     Crashlytics.logException(e);
                 }
             }
@@ -168,7 +170,7 @@ public class LegacyIOUtils {
         boolean canWrite = true;
         if (destinationFile.exists()) {
             if (!destinationFile.delete()) {
-                Crashlytics.log(Log.ERROR, IOUtils.TAG, "Error writing Object to disk - unable to delete previous file to allow replace : " + destinationFile.getAbsolutePath());
+                Crashlytics.log(Log.ERROR, TAG, "Error writing Object to disk - unable to delete previous file to allow replace : " + destinationFile.getAbsolutePath());
                 canWrite = false;
             }
         }

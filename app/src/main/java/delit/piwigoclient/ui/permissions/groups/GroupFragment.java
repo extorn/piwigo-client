@@ -674,35 +674,35 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<GroupFragment> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (isVisible()) {
+            if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    getParentFragmentManager().popBackStack();
+                    getParent().getParentFragmentManager().popBackStack();
                     return;
                 }
             }
             if (response instanceof UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
+                getParent().onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
             } else if (response instanceof GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) {
-                onGroupDeleted((GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) response);
+                getParent().onGroupDeleted((GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) response);
             } else if (response instanceof GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) {
-                onGroupPermissionsRetrieved((GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) response);
+                getParent().onGroupPermissionsRetrieved((GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) response);
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+                getParent().onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof GroupUpdateInfoResponseHandler.PiwigoGroupUpdateInfoResponse) {
-                onGroupInfoUpdated((GroupUpdateInfoResponseHandler.PiwigoGroupUpdateInfoResponse) response);
+                getParent().onGroupInfoUpdated((GroupUpdateInfoResponseHandler.PiwigoGroupUpdateInfoResponse) response);
             } else if (response instanceof GroupAddResponseHandler.PiwigoAddGroupResponse) {
-                onGroupAdded((GroupAddResponseHandler.PiwigoAddGroupResponse) response);
+                getParent().onGroupAdded((GroupAddResponseHandler.PiwigoAddGroupResponse) response);
             } else if (response instanceof GroupAddMembersResponseHandler.PiwigoGroupAddMembersResponse) {
-                onGroupMembersAdded((GroupAddMembersResponseHandler.PiwigoGroupAddMembersResponse) response);
+                getParent().onGroupMembersAdded((GroupAddMembersResponseHandler.PiwigoGroupAddMembersResponse) response);
             } else if (response instanceof GroupRemoveMembersResponseHandler.PiwigoGroupRemoveMembersResponse) {
-                onGroupMembersRemoved((GroupRemoveMembersResponseHandler.PiwigoGroupRemoveMembersResponse) response);
+                getParent().onGroupMembersRemoved((GroupRemoveMembersResponseHandler.PiwigoGroupRemoveMembersResponse) response);
             } else if (response instanceof GroupPermissionsAddResponseHandler.PiwigoGroupPermissionsAddedResponse) {
-                onGroupPermissionsAdded((GroupPermissionsAddResponseHandler.PiwigoGroupPermissionsAddedResponse) response);
+                getParent().onGroupPermissionsAdded((GroupPermissionsAddResponseHandler.PiwigoGroupPermissionsAddedResponse) response);
             } else if (response instanceof GroupPermissionsRemovedResponseHandler.PiwigoGroupPermissionsRemovedResponse) {
-                onGroupPermissionsRemoved((GroupPermissionsRemovedResponseHandler.PiwigoGroupPermissionsRemovedResponse) response);
+                getParent().onGroupPermissionsRemoved((GroupPermissionsRemovedResponseHandler.PiwigoGroupPermissionsRemovedResponse) response);
             }
             //TODO check I'm handling all data flow streams for adding and updating an existing group... including sending that refreshed gorup back to previous groups list screen.
         }

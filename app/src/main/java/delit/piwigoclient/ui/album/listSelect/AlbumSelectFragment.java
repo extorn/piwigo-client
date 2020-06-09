@@ -173,19 +173,21 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         return new CustomPiwigoResponseListener();
     }
 
-    private void onAlbumsLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    void onAlbumsLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().hideProgressIndicator();
         availableAlbums = response.getAlbumNames();
         rerunRetrievalForFailedPages();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends AlbumSelectFragment> extends BasicPiwigoResponseListener<S> {
+
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                onAlbumsLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+                getParent().onAlbumsLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else {
-                onListItemLoadFailed();
+                getParent().onListItemLoadFailed();
             }
         }
     }

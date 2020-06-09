@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.events.trackable;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -29,6 +30,8 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent implements P
     private int fileSortOrder = ALPHABETICAL;
     private Set<Uri> initialSelection;
     private Set<String> visibleMimeTypes;
+    private String selectedUriPermissionsForConsumerPurpose;
+    private int selectedUriPermissionsFlags;
 
     public FileSelectionNeededEvent(Parcel in) {
         super(in);
@@ -42,6 +45,8 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent implements P
         initialSelection = ParcelUtils.readHashSet(in, Uri.class.getClassLoader());
         visibleMimeTypes = ParcelUtils.readStringSet(in);
         selectedUriPermissionsForConsumerId = ParcelUtils.readString(in);
+        selectedUriPermissionsForConsumerPurpose = ParcelUtils.readString(in);
+        selectedUriPermissionsFlags = in.readInt();
     }
 
     public FileSelectionNeededEvent(boolean allowFileSelection, boolean allowFolderSelection, boolean multiSelectAllowed) {
@@ -150,5 +155,27 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent implements P
         ParcelUtils.writeSet(dest, initialSelection);
         ParcelUtils.writeStringSet(dest, visibleMimeTypes);
         dest.writeValue(selectedUriPermissionsForConsumerId);
+        dest.writeValue(selectedUriPermissionsForConsumerPurpose);
+        dest.writeInt(selectedUriPermissionsFlags);
+    }
+
+    public String getSelectedUriPermissionsForConsumerPurpose() {
+        return selectedUriPermissionsForConsumerPurpose;
+    }
+
+    public void setSelectedUriPermissionsForConsumerPurpose(String selectedUriPermissionsForConsumerPurpose) {
+        this.selectedUriPermissionsForConsumerPurpose = selectedUriPermissionsForConsumerPurpose;
+    }
+
+    public int getSelectedUriPermissionsFlags() {
+        return selectedUriPermissionsFlags;
+    }
+
+    public void requestUriReadPermission() {
+        this.selectedUriPermissionsFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+    }
+
+    public void requestUriReadWritePermissions() {
+        this.selectedUriPermissionsFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION & Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
     }
 }

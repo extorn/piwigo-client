@@ -342,12 +342,12 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         return new CustomPiwigoResponseListener();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<TagsListFragment> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(isVisible()) {
-                updateActiveSessionDetails();
+            if(getParent().isVisible()) {
+                getParent().updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
@@ -357,9 +357,9 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             /*if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse) {
                 onTagDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse) response);
             } else*/ if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
-                onTagCreated((TagAddResponseHandler.PiwigoAddTagResponse)response);
+                getParent().onTagCreated(((TagAddResponseHandler.PiwigoAddTagResponse)response).getTag());
             } else if (response instanceof TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) {
-                onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
+                getParent().onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
             } else if(response instanceof PiwigoResponseBufferingHandler.ErrorResponse){
 //                if(deleteActionsPending.size() == 0) {
 //                    // assume this to be a list reload that's required.
@@ -368,13 +368,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             }
         }
 
-        private void onTagCreated(TagAddResponseHandler.PiwigoAddTagResponse response) {
-            Tag newTag = response.getTag();
-            tagsModel.addItem(newTag);
-            tagsModel.sort();
-            int firstIndexChanged = tagsModel.getItemIdx(newTag);
-            viewAdapter.notifyItemRangeInserted(firstIndexChanged, 1);
-        }
+
 
         @Override
         protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
@@ -402,6 +396,13 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
                 super.handlePiwigoUnexpectedReplyErrorResponse(msg);
             }
         }
+    }
+
+    private void onTagCreated(Tag newTag) {
+        tagsModel.addItem(newTag);
+        tagsModel.sort();
+        int firstIndexChanged = tagsModel.getItemIdx(newTag);
+        viewAdapter.notifyItemRangeInserted(firstIndexChanged, 1);
     }
 
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {

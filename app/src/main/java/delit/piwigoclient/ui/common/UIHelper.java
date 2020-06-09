@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -106,7 +108,7 @@ public abstract class UIHelper<T> {
     private static final String STATE_SIMPLE_MESSAGE_QUEUE = "UIHelper.simpleMessageQueue";
     private static final String STATE_DIALOG_MESSAGE_QUEUE = "UIHelper.dialogMessageQueue";
     private static ExecutorService executors;
-    private final T parent;
+    private final WeakReference<T> parent;
     private final SharedPreferences prefs;
     private final Deque<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingDeque<>(20);
     private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(50);
@@ -124,9 +126,9 @@ public abstract class UIHelper<T> {
     private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.prefs = prefs;
-        this.parent = parent;
+        this.parent = new WeakReference<>(parent);
         setupDialogBoxes();
         setupNotificationsManager();
     }
@@ -319,7 +321,7 @@ public abstract class UIHelper<T> {
     protected abstract View getParentView();
 
     public T getParent() {
-        return parent;
+        return parent.get();
     }
 
     public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker) {
@@ -420,7 +422,7 @@ public abstract class UIHelper<T> {
     }
 
     protected void buildAlertDialog() {
-        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
         builder1.setCancelable(true);
         dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);

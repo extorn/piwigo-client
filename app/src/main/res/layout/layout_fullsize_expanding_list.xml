@@ -15,12 +15,10 @@
             android:id="@+id/list_action_add_item_button"
             android:visibility="visible"
             android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             app:icon="@drawable/ic_add_circle_black_24px"
-            app:iconTint="?attr/colorOnBackground"
-            app:fabSize="mini"/>
+            app:fabSize="mini"
+            style="?extendedFloatingActionButtonStyle"/>
 
         <TextView
             android:id="@+id/heading"
@@ -98,8 +96,6 @@
         android:id="@+id/list_retryAction_actionButton"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@id/list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:clickable="true"
         android:visibility="gone"
@@ -107,6 +103,6 @@
         app:fabSize="mini"
         android:focusable="true"
         app:icon="@drawable/ic_refresh_black_24dp"
-        app:iconTint="?attr/colorOnBackground"/>
+        style="?extendedFloatingActionButtonStyle"/>
 
 </RelativeLayout>

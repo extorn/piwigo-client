@@ -37,6 +37,7 @@ import java.util.Set;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
@@ -91,7 +92,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     private ExtendedFloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
     private PiwigoFavorites favoritesModel;
-    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
+    final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     private int colsOnScreen;
     private DeleteActionData deleteActionData;
@@ -184,7 +185,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         return viewPrefs;
     }
 
-    private boolean getMultiSelectionAllowed() {
+    boolean getMultiSelectionAllowed() {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean captureActionClicks = sessionDetails != null && sessionDetails.isAdminUser();
         captureActionClicks |= (sessionDetails != null && sessionDetails.isFullyLoggedIn());
@@ -670,7 +671,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onFavoritesUpdateResponse(FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse rsp) {
+    void onFavoritesUpdateResponse(FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse rsp) {
         ResourceItem r = rsp.getPiwigoResource();
         onItemRemovedFromFavorites(r);
         /*if(rsp.hasError()) {
@@ -683,65 +684,74 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         }*/
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends ViewFavoritesFragment> extends BasicPiwigoResponseListener<S> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(isVisible()) {
-                updateActiveSessionDetails();
+            if(getParent().isVisible()) {
+                getParent().updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            synchronized (loadingMessageIds) {
-
+            synchronized (getParent().loadingMessageIds) {
                 if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
-                    onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
+                    getParent().onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
-                    onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
+                    getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
                 } else if(response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                     for(ResourceItem r : ((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItems()) {
-                        onItemRemovedFromServer(r);
+                        getParent().onItemRemovedFromServer(r);
                     }
                 } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
                     ResourceItem r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) response).getPiwigoResource();
-                    onItemRemovedFromFavorites(r);
+                    getParent().onItemRemovedFromFavorites(r);
                 } else if (response instanceof FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) {
-                    onFavoritesUpdateResponse(((FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) response));
+                    getParent().onFavoritesUpdateResponse(((FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) response));
                 } else if (response instanceof GetMethodsAvailableResponseHandler.PiwigoGetMethodsAvailableResponse) {
-                    viewPrefs.withAllowMultiSelect(getMultiSelectionAllowed());
+                    getParent().getViewPrefs().withAllowMultiSelect(getParent().getMultiSelectionAllowed());
                 } else {
-                    String failedCall = loadingMessageIds.get(response.getMessageId());
-                    synchronized (itemsToLoad) {
-                        itemsToLoad.add(failedCall);
-                        emptyFavoritesLabel.setText(R.string.favorites_content_load_failed_text);
-                        if (itemsToLoad.size() > 0) {
-                            emptyFavoritesLabel.setVisibility(VISIBLE);
-                            retryActionButton.show();
-                            favoritesModel.acquirePageLoadLock();
-                            try {
-                                favoritesModel.recordPageLoadFailed(response.getMessageId());
-                            } finally {
-                                favoritesModel.releasePageLoadLock();
-                            }
-                        }
-                    }
+                    getParent().onLoadFavoritesFailure(response.getMessageId());
                 }
-                loadingMessageIds.remove(response.getMessageId());
+                getParent().loadingMessageIds.remove(response.getMessageId());
             }
         }
+
+
     }
 
-    private void onItemRemovedFromServer(ResourceItem r) {
+    AlbumItemRecyclerViewAdapterPreferences getViewPrefs() {
+        return viewPrefs;
+    }
+
+    void onItemRemovedFromServer(ResourceItem r) {
         onItemRemovedFromFavorites(r);
         for(Long albumId : r.getLinkedAlbums()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
         }
     }
 
-    private void onItemRemovedFromFavorites(ResourceItem r) {
+    void onLoadFavoritesFailure(long messageId) {
+        String failedCall = loadingMessageIds.get(messageId);
+        synchronized (itemsToLoad) {
+            itemsToLoad.add(failedCall);
+            emptyFavoritesLabel.setText(R.string.favorites_content_load_failed_text);
+            if (itemsToLoad.size() > 0) {
+                emptyFavoritesLabel.setVisibility(VISIBLE);
+                retryActionButton.show();
+                favoritesModel.acquirePageLoadLock();
+                try {
+                    favoritesModel.recordPageLoadFailed(messageId);
+                } finally {
+                    favoritesModel.releasePageLoadLock();
+                }
+            }
+        }
+    }
+
+    void onItemRemovedFromFavorites(ResourceItem r) {
         int itemIdx = favoritesModel.getItemIdx(r);
         favoritesModel.remove(itemIdx);
         viewAdapter.notifyItemRemoved(itemIdx);
@@ -773,7 +783,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         }
     }
 
-    private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
+    void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
             favoritesModel.getContainerDetails().setPhotoCount(response.getTotalResourceCount());
             favoritesModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
@@ -839,7 +849,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         }
     }
 
-    private void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
+    void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
         if(this.deleteActionData.isTrackingMessageId(response.getMessageId())) {
             this.deleteActionData.updateLinkedAlbums(response.getResource());
             if (this.deleteActionData.isResourceInfoAvailable()) {

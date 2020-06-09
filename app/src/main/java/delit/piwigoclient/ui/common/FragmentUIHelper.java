@@ -21,7 +21,11 @@ public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
 
     @Override
     protected View getParentView() {
-        return getParent().getView();
+        T parent = getParent();
+        if(parent == null) {
+            return null;
+        }
+        return parent.getView();
     }
 
     @Override

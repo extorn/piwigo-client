@@ -328,7 +328,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onUsernamesRetrievedForSelectedGroups(UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
+    void onUsernamesRetrievedForSelectedGroups(UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
         if (response.getItemsOnPage() == response.getPageSize()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_too_many_users_message));
         } else {
@@ -401,36 +401,42 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
         void onDialogClose();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener<S extends CreateAlbumFragment> extends BasicPiwigoResponseListener<S> {
+
+
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
-                onAlbumDeleted((AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) response);
+                getParent().onAlbumDeleted((AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) response);
             } else if (response instanceof AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse) {
-                onAlbumCreated((AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse) response);
+                getParent().onAlbumCreated((AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse) response);
             } else if (response instanceof AlbumAddPermissionsResponseHandler.PiwigoAddAlbumPermissionsResponse) {
-                onAlbumPermissionsAdded((AlbumAddPermissionsResponseHandler.PiwigoAddAlbumPermissionsResponse) response);
+                getParent().onAlbumPermissionsAdded((AlbumAddPermissionsResponseHandler.PiwigoAddAlbumPermissionsResponse) response);
             } else if (response instanceof AlbumSetStatusResponseHandler.PiwigoSetAlbumStatusResponse) {
-                onAlbumStatusAltered((AlbumSetStatusResponseHandler.PiwigoSetAlbumStatusResponse) response);
+                getParent().onAlbumStatusAltered((AlbumSetStatusResponseHandler.PiwigoSetAlbumStatusResponse) response);
             } else if (response instanceof UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesRetrievedForSelectedGroups((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
+                getParent().onUsernamesRetrievedForSelectedGroups((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
             }
         }
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
-                if (response.getMessageId() == createGalleryMessageId) {
-                    // error action failed and server state unchanged.
-                    getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_create_failed));
-                } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
+                getParent().onServerCallFailed(response.getMessageId());
+            }
+        }
+    }
+
+    void onServerCallFailed(long messageId) {
+        if (messageId == createGalleryMessageId) {
+            // error action failed and server state unchanged.
+            getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_create_failed));
+        } else if (messageId == setGalleryPermissionsMessageId) {
 //                    deleteGalleryMessageId = PiwigoAccessService.startActionDeleteAlbum(newAlbum.getGalleryId(), getContext());
 //                    callServer(deleteGalleryMessageId);
-                    getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
-                } else if (response.getMessageId() == deleteGalleryMessageId) {
+            getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+        } else if (messageId == deleteGalleryMessageId) {
 //                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
-                }
-            }
         }
     }
 }

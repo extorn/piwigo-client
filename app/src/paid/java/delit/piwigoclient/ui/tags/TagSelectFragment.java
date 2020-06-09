@@ -404,15 +404,15 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         return new CustomPiwigoResponseListener();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<TagSelectFragment> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
-                onTagCreated((TagAddResponseHandler.PiwigoAddTagResponse)response);
+                getParent().onTagCreated((TagAddResponseHandler.PiwigoAddTagResponse)response);
             } else if (response instanceof TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) {
-                onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
+                getParent().onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
             } else {
-                onTagsLoadFailed(response);
+                getParent().onTagsLoadFailed(response);
             }
         }
     }
