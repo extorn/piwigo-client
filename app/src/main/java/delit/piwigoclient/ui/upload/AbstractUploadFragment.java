@@ -251,7 +251,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         }
                     }
                     if (!allowedFileTypes.contains(f.getExt())) {
-                        String mimeType = f.getDocumentFile(getContext()).getType();
+                        String mimeType = f.getMime();
                         if (mimeType == null || !MimeTypeFilter.matches(mimeType, "video/*")) {
                             iter.remove();
                             unsupportedExts.add(f.getExt());

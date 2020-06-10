@@ -85,6 +85,7 @@ public class UploadActivity extends MyActivity {
     private int fileSelectionEventId;
     private Toolbar toolbar;
     private AppBarLayout appBar;
+    private Intent lastIntent;
 
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
@@ -97,11 +98,24 @@ public class UploadActivity extends MyActivity {
     @Override
     public void onStart() {
         super.onStart();
+        if(lastIntent == null) {
+            lastIntent = getIntent();
+        }
+        checkForSentFiles(lastIntent);
+    }
 
-        if(Intent.ACTION_SEND.equals(getIntent().getAction())
-            || Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction())) {
+    private void checkForSentFiles(Intent intent) {
+        if(Intent.ACTION_SEND.equals(intent.getAction())
+                || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        lastIntent = intent;
+        checkForSentFiles(lastIntent);
     }
 
     @Override
@@ -395,9 +409,8 @@ public class UploadActivity extends MyActivity {
         getSupportFragmentManager().popBackStackImmediate();
     }
 
-    private ArrayList<Uri> handleSentFiles() {
+    private ArrayList<Uri> handleSentFiles(Intent intent) {
         // Get intent, action and MIME type
-        Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
 
@@ -625,7 +638,7 @@ public class UploadActivity extends MyActivity {
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
-                ArrayList<Uri> sentFiles = handleSentFiles();
+                ArrayList<Uri> sentFiles = handleSentFiles(lastIntent);
                 if(sentFiles != null) {
                     // this activity was invoked from another application
                     FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, -1).withFiles(sentFiles);

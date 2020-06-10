@@ -19,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:src="@drawable/ic_file_black_24dp"
-            android:contentDescription="TODO"
             android:scaleType="fitCenter"
             tools:background="#FFDDDDDD"/>
 
@@ -41,19 +40,17 @@
         android:layout_height="wrap_content"
         tools:text="Heading"
         android:textAlignment="center"
-        android:background="#FFFFFF"
-        app:backgroundTint="?scrimHeavy"
+        android:background="@drawable/drawable_scrim_heavy_bright"
         android:textAppearance="?textAppearanceBody2"/>
 
-    <com.google.android.material.textview.MaterialTextView
+    <TextView
         android:id="@+id/file_for_upload_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
         android:padding="5dp"
         android:layout_alignBottom="@+id/thumbnail_container"
-        android:background="#FFFFFF"
-        app:backgroundTint="?scrimHeavy"
+        android:background="@drawable/drawable_scrim_heavy_bright"
         tools:text="filename"
         android:textAppearance="?textAppearanceBody2"/>
 
@@ -64,7 +61,7 @@
         android:layout_alignParentTop="true"
         android:contentDescription="@string/button_delete"
         app:icon="@drawable/ic_delete_black_24px"
-        app:backgroundTint="?scrimLight"
+        app:backgroundTint="?scrimHeavy"
         style="?materialButtonIconStyle"/>
 
     <delit.libs.ui.view.ProgressIndicator
