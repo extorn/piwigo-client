@@ -1003,7 +1003,7 @@ public class IOUtils {
         }
         try (Cursor c = context.getContentResolver().query(uri, null, null, null, null)) {
             if (c != null) {
-                int idx = c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED);
+                int idx = c.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED);
                 if(idx < 0 && Build.VERSION.SDK_INT >= KITKAT) {
                     idx = c.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED);
                 }
