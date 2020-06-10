@@ -2,6 +2,8 @@ package delit.piwigoclient.piwigoApi;
 
 import android.content.Context;
 
+import delit.libs.ui.OwnedSafeAsyncTask;
+import delit.libs.ui.SafeAsyncTask;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -10,7 +12,7 @@ import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler
  * Created by gareth on 4/19/18.
  */
 
-public class HttpConnectionCleanup extends Worker {
+public class HttpConnectionCleanup extends SafeAsyncTask {
 
 
     private final long messageId;
@@ -22,19 +24,18 @@ public class HttpConnectionCleanup extends Worker {
     }
 
     public HttpConnectionCleanup(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context, boolean fullClientShutdown) {
-        super(null, context);
+        withContext(context);
         this.connectionPrefs = connectionPrefs;
         messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         this.fullClientShutdown = fullClientShutdown;
     }
 
-    @Override
-    protected String getTaskName() {
-        return "HttpConnCleanup";
+    public long getMessageId() {
+        return messageId;
     }
 
     @Override
-    protected boolean executeCall(long messageId) {
+    protected Object doInBackgroundSafely(Object[] objects) {
         if (fullClientShutdown) {
             HttpClientFactory.getInstance(getContext()).clearCachedClients(connectionPrefs);
         } else {
@@ -46,11 +47,8 @@ public class HttpConnectionCleanup extends Worker {
     }
 
     public long start() {
-        return start(messageId);
-    }
-
-    public long getMessageId() {
-        return messageId;
+        execute();
+        return getMessageId();
     }
 
     public static class HttpClientsShutdownResponse extends PiwigoResponseBufferingHandler.BaseResponse {

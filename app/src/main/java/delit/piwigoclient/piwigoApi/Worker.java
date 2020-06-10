@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import delit.libs.ui.OwnedSafeAsyncTask;
+import delit.libs.ui.SafeAsyncTask;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -34,7 +36,7 @@ import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 
 import static android.os.AsyncTask.Status.FINISHED;
 
-public class Worker extends AsyncTask<Long, Integer, Boolean> {
+public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     /**
      * An {@link Executor} that can be used to execute tasks in parallel.
@@ -50,6 +52,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private static final List<String> queuedExecutorTasks = new ArrayList<>(MAXIMUM_POOL_SIZE);
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
             new LinkedBlockingQueue<Runnable>(128) {
+                private static final long serialVersionUID = -7597713770114087334L;
+
                 @Override
                 public void put(@NonNull Runnable o) throws InterruptedException {
                     Log.d("StandardQueue", "New Queue Size : " + size());
@@ -58,6 +62,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             };
     private static final BlockingQueue<Runnable> loginPoolWorkQueue =
             new LinkedBlockingQueue<Runnable>(20) {
+                private static final long serialVersionUID = 3662009715398722828L;
+
                 @Override
                 public void put(@NonNull Runnable o) throws InterruptedException {
                     Log.d("LoginQueue", "New Queue Size : " + size());
@@ -96,7 +102,6 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     private final String DEFAULT_TAG = "PwgAccessSvcAsyncTask";
-    private WeakReference<Context> context;
     private String tag = DEFAULT_TAG;
 
 
@@ -104,26 +109,27 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private ConnectionPreferences.ProfilePreferences connectionPreferences;
 
     public Worker(@NonNull AbstractPiwigoDirectResponseHandler handler, Context context) {
-        this.context = new WeakReference<>(context);
         this.handler = handler;
-    }
-
-    public Context getContext() {
-        return context.get();
+        withContext(context);
     }
 
     public void beforeCall() {
     }
 
+    //TODO why can't I use the WeakReference here (OwnedSafeAsyncTask)
+    private AbstractPiwigoDirectResponseHandler getOwner() {
+        return handler;
+    }
+
     private void updatePoolSize(AbstractPiwigoDirectResponseHandler handler) {
         //Update the max pool size.
         try {
-            CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient(handler.getConnectionPrefs(), context.get());
-            if (client != null) {
+            CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient(handler.getConnectionPrefs(), getContext());
+//            if (client != null) {
 //                int newMaxPoolSize = client.getMaxConcurrentConnections();
 //                HTTP_THREAD_POOL_EXECUTOR.setCorePoolSize(Math.min(newMaxPoolSize, Math.max(3, newMaxPoolSize / 2)));
 //                HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
-            }
+//            }
         } catch (RuntimeException e) {
             Crashlytics.logException(e);
             handler.sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
@@ -132,11 +138,10 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     public void afterCall(boolean success) {
-        context = null;
     }
 
     @Override
-    protected final Boolean doInBackground(Long... params) {
+    protected final Boolean doInBackgroundSafely(Long... params) {
         boolean result;
         try {
             if (params.length != 1) {
@@ -157,32 +162,27 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         }
     }
 
-    protected ConnectionPreferences.ProfilePreferences getProfilePreferences() {
+    private ConnectionPreferences.ProfilePreferences getProfilePreferences() {
         return connectionPreferences != null ? connectionPreferences : ConnectionPreferences.getActiveProfile();
     }
 
-    protected boolean executeCall(long messageId) {
+    private boolean executeCall(long messageId) {
 
         recordExcutionStart();
 
 //        Thread.currentThread().setName(handler.getClass().getSimpleName());
 
         if (BuildConfig.DEBUG) {
-            Crashlytics.log(Log.ERROR, tag, "Running worker for handler " + handler.getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+            Crashlytics.log(Log.ERROR, tag, "Running worker for handler " + getOwner().getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
         }
 
-        SharedPreferences prefs = null;
-        if (context != null) {
-            prefs = PreferenceManager.getDefaultSharedPreferences(context.get());
-        }
-
-        AbstractPiwigoDirectResponseHandler handler = getHandler(prefs);
+        AbstractPiwigoDirectResponseHandler handler = getOwner();
         this.tag = handler.getTag();
 
         ConnectionPreferences.ProfilePreferences profilePrefs = getProfilePreferences();
 
         handler.setMessageId(messageId);
-        handler.setCallDetails(context.get(), profilePrefs, true);
+        handler.setCallDetails(getContext(), profilePrefs, true);
 
         beforeCall();
         updatePoolSize(handler);
@@ -203,7 +203,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             // this is the absolute timeout - in case something is seriously wrong.
             long callTimeoutAtTime = System.currentTimeMillis() + 300000;
 
-            synchronized (handler) {
+            synchronized (getOwner()) {
                 boolean timedOut = false;
                 while (handler.isRunning() && !isCancelled() && !timedOut) {
                     long waitForMillis = Math.min(1000, callTimeoutAtTime - System.currentTimeMillis());
@@ -237,8 +237,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private void recordExcutionStart() {
         synchronized (queuedExecutorTasks) {
             synchronized (runningExecutorTasks) {
-                queuedExecutorTasks.remove(handler.getTag());
-                runningExecutorTasks.add(handler.getTag());
+                queuedExecutorTasks.remove(getOwner().getTag());
+                runningExecutorTasks.add(getOwner().getTag());
             }
         }
     }
@@ -249,8 +249,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         }
     }
 
-    protected String getTaskName() {
-        return handler != null ? handler.getTag() : "Unknown";
+    private String getTaskName() {
+        return getOwner().getTag();
     }
 
     private void recordExcutionFinished() {
@@ -260,13 +260,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     @Override
-    protected void onPostExecute(Boolean aBoolean) {
-        super.onPostExecute(aBoolean);
+    protected void onPostExecuteSafely(Boolean aBoolean) {
         recordExcutionFinished();
-    }
-
-    protected @NonNull AbstractPiwigoDirectResponseHandler getHandler(SharedPreferences prefs) {
-        return handler;
     }
 
     public long start(long messageId) {
@@ -285,7 +280,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                     sb.append('\n');
                     sb.append("Main Executor has Queued Tasks: ").append(queuedTaskFreqMapStr);
                     sb.append('\n');
-                    sb.append("This task was of type : ").append(handler.getTag());
+                    sb.append("This task was of type : ").append(getOwner().getTag());
                 }
             }
             throw new RejectedExecutionException(sb.toString(), e);
@@ -321,14 +316,14 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             }
             try {
                 if (BuildConfig.DEBUG) {
-                    Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + handler.getClass().getSimpleName());
+                    Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + getOwner().getClass().getSimpleName());
                 }
                 if(retVal == null) {
                     try {
                         retVal = task.get(1000, TimeUnit.MILLISECONDS); // allow it to loop around until timed out (rather than hang forever)
                     } catch (TimeoutException e) {
 
-                        Log.e(tag, " Thread " + Thread.currentThread().getName() + " timed out waiting for response from handler " + handler.getClass().getSimpleName() + " in task with status : " + task.getStatus().name());
+                        Log.e(tag, " Thread " + Thread.currentThread().getName() + " timed out waiting for response from handler " + getOwner().getClass().getSimpleName() + " in task with status : " + task.getStatus().name());
                     }
                     if (retVal != null) {
                         timeoutAt = System.currentTimeMillis() + 1500;
@@ -341,17 +336,17 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             } catch (InterruptedException e) {
                 // ignore unless the worker is cancelled.
                 if (BuildConfig.DEBUG) {
-                    Log.e(tag, "Thread " + Thread.currentThread().getName() + " awakened from waiting for response from handler " + handler.getClass().getSimpleName());
+                    Log.e(tag, "Thread " + Thread.currentThread().getName() + " awakened from waiting for response from handler " + getOwner().getClass().getSimpleName());
                 }
             } catch (ExecutionException e) {
                 if (BuildConfig.DEBUG) {
-                    Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Error retrieving result from handler " + handler.getClass().getSimpleName(), e);
+                    Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Error retrieving result from handler " + getOwner().getClass().getSimpleName(), e);
                 }
             }
         }
         if(timedOut) {
             if (BuildConfig.DEBUG) {
-                Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Task not correctly being updated as finished from handler " + handler.getClass().getSimpleName());
+                Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Task not correctly being updated as finished from handler " + getOwner().getClass().getSimpleName());
             }
             task.cancel(true);
         }
@@ -359,7 +354,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     public Executor getExecutor() {
-        return handler != null && handler.isPerformingLogin() ? HTTP_LOGIN_THREAD_POOL_EXECUTOR : HTTP_THREAD_POOL_EXECUTOR;
+        return getOwner().isPerformingLogin() ? HTTP_LOGIN_THREAD_POOL_EXECUTOR : HTTP_THREAD_POOL_EXECUTOR;
     }
 
     public ConnectionPreferences.ProfilePreferences getConnectionPreferences() {

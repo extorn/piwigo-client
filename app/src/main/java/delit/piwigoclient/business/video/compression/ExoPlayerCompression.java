@@ -8,6 +8,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
@@ -448,6 +450,10 @@ public class ExoPlayerCompression {
             this.compressionSettings = compressionSettings;
         }
 
+        private @NonNull Context getContext() {
+            return Objects.requireNonNull(contextRef.get());
+        }
+
         @Override
         protected void onLooperPrepared() {
             try {
@@ -485,13 +491,13 @@ public class ExoPlayerCompression {
             CompressionListener listenerWrapper = new InternalCompressionListener(listener, inputFile, outputFile, compressionSettings.isEnableFastStart());
 
             MediaMuxerControl mediaMuxerControl;
-            mediaMuxerControl = new MediaMuxerControl(contextRef.get(), inputFile, outputFile, listenerWrapper);
+            mediaMuxerControl = new MediaMuxerControl(getContext(), inputFile, outputFile, listenerWrapper);
 
-            CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(contextRef.get(), mediaMuxerControl, compressionSettings);
+            CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(getContext(), mediaMuxerControl, compressionSettings);
             player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
             PlayerMonitor playerMonitor = new PlayerMonitor(player, mediaMuxerControl, listenerWrapper, Looper.myLooper());
             player.addListener(playerMonitor); // watch for errors and report them
-            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(contextRef.get(), "PiwigoCompression"));
+            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(getContext(), "PiwigoCompression"));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             factory.setExtractorsFactory(extractorsFactory);
             listenerWrapper.onCompressionStarted(inputFile, outputFile);
@@ -504,7 +510,7 @@ public class ExoPlayerCompression {
             Handler progressHandler = new Handler(getLooper());
             progressHandler.postDelayed(new CompressionProgressListener(progressHandler, player, mediaMuxerControl, listenerWrapper), 1000);
             if (cancelled) {
-                DocumentFile outputDocFile = DocumentFile.fromSingleUri(contextRef.get(), outputFile);
+                DocumentFile outputDocFile = DocumentFile.fromSingleUri(getContext(), outputFile);
                 if (outputDocFile.exists() && !outputDocFile.delete()) {
                     Crashlytics.log(Log.ERROR, TAG, "Unable to delete output file after compression cancelled");
                 }

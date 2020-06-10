@@ -641,7 +641,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         //Send multiple seems essential to allow to work with the other apps. Not clear why.
         Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        ContentResolver contentResolver = context.getContentResolver();
         MimeTypeMap map = MimeTypeMap.getSingleton();
 
         ArrayList<Uri> urisToShare = new ArrayList<>(filesToShare.size());

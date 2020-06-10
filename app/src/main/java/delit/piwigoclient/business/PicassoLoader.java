@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.ui.OwnedSafeAsyncTask;
+import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -235,19 +237,14 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             } else {
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
                 if(placeholderUri != null && placeholderLoaded && isLoadingGif()) {
-                    GifLoaderTask task = new GifLoaderTask();
+                    GifLoaderTask task = new GifLoaderTask(this);
                     if (DisplayUtils.isRunningOnUIThread()) {
-                        task.execute(this);
+                        task.execute();
                     } else {
-                        task.doInBackground(this);
+                        task.doInBackgroundSafely();
                     }
                 } else {
-                    DisplayUtils.postOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            runLoad(forceServerRequest);
-                        }
-                    }); // this is sensible because if called in a predraw method for example, we don't want to take too long at this point.
+                    DisplayUtils.postOnUiThread(() -> runLoad(forceServerRequest)); // this is sensible because if called in a predraw method for example, we don't want to take too long at this point.
                 }
             }
         }
@@ -481,19 +478,22 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         return errorResourceId;
     }
 
-    private static class GifLoaderTask extends AsyncTask<PicassoLoader, Void, GifDrawable> {
+    private static class GifLoaderTask extends OwnedSafeAsyncTask<PicassoLoader, Void, Void, GifDrawable> {
 
         private IOException error;
-        private PicassoLoader loader;
+
+        public GifLoaderTask(PicassoLoader owner) {
+            super(owner);
+        }
+
 
         @Override
-        protected GifDrawable doInBackground(PicassoLoader... picassoLoaders) {
-            loader = picassoLoaders[0];
-            loader.setWaitForErrorMessage(false);
+        protected GifDrawable doInBackgroundSafely(Void... nothing) {
+            getOwner().setWaitForErrorMessage(false);
             // load the gif straight into the image manually.
             CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader();
             try {
-                Downloader.Response rsp = downloader.load(Uri.parse(loader.getUriToLoad()), 0);
+                Downloader.Response rsp = downloader.load(Uri.parse(getOwner().getUriToLoad()), 0);
                 if (rsp != null) {
                     //TODO create a custom video downloader that creates and uses a gif drawable as the basis for the stream decoder perhaps.
                     return new GifDrawable(rsp.getInputStream());
@@ -505,28 +505,22 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         }
 
         @Override
-        protected void onPostExecute(GifDrawable drawable) {
-            try {
-                if (drawable != null) {
-                    loader.getLoadInto().setImageDrawable(drawable);
-                    loader.onSuccess();
-                } else {
-                    Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
-                    loader.getLoadInto().setImageResource(loader.getErrorResourceId());
-                    loader.onError();
-                    if (error != null) {
-                        Crashlytics.logException(error);
-                    }
+        protected void onPostExecuteSafely(GifDrawable drawable) {
+            if (drawable != null) {
+                getOwner().getLoadInto().setImageDrawable(drawable);
+                getOwner().onSuccess();
+            } else {
+                Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
+                getOwner().getLoadInto().setImageResource(getOwner().getErrorResourceId());
+                getOwner().onError();
+                if (error != null) {
+                    Crashlytics.logException(error);
                 }
-            } finally {
-                loader = null;
             }
         }
 
         @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            loader = null;
+        protected void onCancelledSafely() {
             error = null;
         }
     }

@@ -403,6 +403,10 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
             this.contextRef = new WeakReference<>(context);
         }
 
+        private @NonNull Context getContext() {
+            return Objects.requireNonNull(contextRef.get());
+        }
+
         @Override
         public void onFilterUnchecked(String fileExt) {
             SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
@@ -417,7 +421,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
         @Override
         public void onFiltersChanged(boolean filterHidden, boolean filterShown) {
-            listAdapter.rebuildContentView(contextRef.get());
+            listAdapter.rebuildContentView(getContext());
         }
     }
 

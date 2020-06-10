@@ -573,8 +573,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 }
             }
 
+            private @NonNull Context getContext() {
+                return Objects.requireNonNull(contextRef.get());
+            }
+
             private boolean processEvent(Uri watchedUri, Uri eventSourceUri, int eventId) {
-                DocumentFile file = DocumentFile.fromSingleUri(contextRef.get(), eventSourceUri);
+                DocumentFile file = DocumentFile.fromSingleUri(getContext(), eventSourceUri);
                 if(file == null) {
                     Crashlytics.log(Log.ERROR, TAG, "Unable to retrieve DocumentFile for uri " + eventSourceUri);
                     return false;

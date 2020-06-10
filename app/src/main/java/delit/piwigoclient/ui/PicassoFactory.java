@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.MimeTypeFilter;
 
@@ -25,6 +26,7 @@ import com.squareup.picasso.RequestHandler;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Objects;
 
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
@@ -76,8 +78,13 @@ public class PicassoFactory {
         }
     }
 
+    private @NonNull
+    Context getAppContext() {
+        return Objects.requireNonNull(appContextRef.get());
+    }
+
     public CustomImageDownloader getDownloader() {
-        return new CustomImageDownloader(appContextRef.get());
+        return new CustomImageDownloader(getAppContext());
     }
 
     public int getCacheSizeBytes() {

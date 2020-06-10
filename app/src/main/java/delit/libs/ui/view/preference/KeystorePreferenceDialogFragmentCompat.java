@@ -53,12 +53,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.security.auth.x500.X500Principal;
 
+import delit.libs.ui.OwnedSafeAsyncTask;
+import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.ProgressIndicator;
@@ -307,15 +310,19 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             return new char[0];
         }
 
+        private @NonNull Context getContext() {
+            return Objects.requireNonNull(contextRef.get());
+        }
+
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
             if (viewType == VIEW_TYPE_PRIVATE_KEY) {
-                view = LayoutInflater.from(contextRef.get()).inflate(R.layout.layout_x509key_actionable_list_item, parent, false);
+                view = LayoutInflater.from(getContext()).inflate(R.layout.layout_x509key_actionable_list_item, parent, false);
                 return new KeyStorePrivateKeyItemViewHolder(view);
             } else if (viewType == VIEW_TYPE_CERTIFICATE) {
-                view = LayoutInflater.from(contextRef.get()).inflate(R.layout.layout_x509cert_actionable_list_item, parent, false);
+                view = LayoutInflater.from(getContext()).inflate(R.layout.layout_x509cert_actionable_list_item, parent, false);
                 return new KeyStoreCertificateItemViewHolder(view);
             } else {
                 throw new RuntimeException("Unsupported view type : " + viewType);
@@ -382,8 +389,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         private void populatePrivateKeyDetails(KeyStorePrivateKeyItemViewHolder viewHolder, final int position, KeyStore.PrivateKeyEntry item) {
 
             PrivateKey privateKey = item.getPrivateKey();
-            viewHolder.keyTypeField.setText(contextRef.get().getString(R.string.x509_key_type_field_pattern, privateKey.getAlgorithm()));
-            viewHolder.keyStrengthField.setText(contextRef.get().getString(R.string.x509_key_strength_field_pattern, ((RSAPrivateKey) privateKey).getModulus().bitLength()));
+            viewHolder.keyTypeField.setText(getContext().getString(R.string.x509_key_type_field_pattern, privateKey.getAlgorithm()));
+            viewHolder.keyStrengthField.setText(getContext().getString(R.string.x509_key_strength_field_pattern, ((RSAPrivateKey) privateKey).getModulus().bitLength()));
 
             X509Certificate cert = (X509Certificate) item.getCertificate();
             fillCertificateFields(cert, viewHolder);
@@ -408,10 +415,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         private void fillCertificateFields(X509Certificate cert, KeyStoreCertificateItemViewHolder viewHolder) {
             String certSubject = getIsolatedCnFieldIfPossible(cert.getSubjectX500Principal());
             String issuerSubject = getIsolatedCnFieldIfPossible(cert.getIssuerX500Principal());
-            viewHolder.certNameField.setText(contextRef.get().getString(R.string.x509_cert_name_field_pattern, certSubject));
-            viewHolder.certVerifiedByField.setText(contextRef.get().getString(R.string.x509_cert_verified_by_field_pattern, issuerSubject));
-            viewHolder.certValidFromField.setText(contextRef.get().getString(R.string.x509_cert_valid_from_field_pattern, sdf.format(cert.getNotBefore())));
-            viewHolder.certValidToField.setText(contextRef.get().getString(R.string.x509_cert_valid_to_field_pattern, sdf.format(cert.getNotAfter())));
+            viewHolder.certNameField.setText(getContext().getString(R.string.x509_cert_name_field_pattern, certSubject));
+            viewHolder.certVerifiedByField.setText(getContext().getString(R.string.x509_cert_verified_by_field_pattern, issuerSubject));
+            viewHolder.certValidFromField.setText(getContext().getString(R.string.x509_cert_valid_from_field_pattern, sdf.format(cert.getNotBefore())));
+            viewHolder.certValidToField.setText(getContext().getString(R.string.x509_cert_valid_to_field_pattern, sdf.format(cert.getNotAfter())));
         }
 
         private void populateCertificateDetails(KeyStoreCertificateItemViewHolder viewHolder, final int position, KeyStore.TrustedCertificateEntry item) {
@@ -480,29 +487,23 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
     }
 
-    static class AsyncX509LoaderTask extends AsyncTask<X509LoadOperation, Integer, LoadOperationResult> {
-
-        private final KeystorePreferenceDialogFragmentCompat sourcePref;
+    static class AsyncX509LoaderTask extends OwnedSafeAsyncTask<KeystorePreferenceDialogFragmentCompat, X509LoadOperation, Integer, LoadOperationResult> {
 
         private AsyncX509LoaderTask(KeystorePreferenceDialogFragmentCompat sourcePref) {
-            this.sourcePref = sourcePref;
+            super(sourcePref);
+            withContext(sourcePref.requireContext());
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected LoadOperationResult doInBackground(X509LoadOperation... loadOps) {
+        protected LoadOperationResult doInBackgroundSafely(X509LoadOperation... loadOps) {
             LoadOperationResult loadOperationResult = new LoadOperationResult();
             int currentFile = 0;
             for (X509LoadOperation loadOp : loadOps) {
-                String fileExt = '.' + IOUtils.getFileExt(sourcePref.requireContext(), loadOp.getFileUri()).toLowerCase();
+                String fileExt = '.' + IOUtils.getFileExt(getContext(), loadOp.getFileUri()).toLowerCase();
                 //TODO fileExt is not . prefixed, but getAllowedCertificateFileTypes is
-                if (sourcePref.getPreference().getAllowedCertificateFileTypes().contains(fileExt)) {
+                if (getOwner().getPreference().getAllowedCertificateFileTypes().contains(fileExt)) {
                     try {
-                        Collection<X509Certificate> certs = X509Utils.loadCertificatesFromUri(sourcePref.requireContext(), loadOp.getFileUri());
+                        Collection<X509Certificate> certs = X509Utils.loadCertificatesFromUri(getContext(), loadOp.getFileUri());
                         CertificateLoadOperationResult result = new CertificateLoadOperationResult(loadOp);
                         result.getCerts().addAll(certs);
                         loadOperationResult.getCertLoadResults().add(result);
@@ -512,12 +513,12 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                         result.setException(e);
                         loadOperationResult.getCertLoadResults().add(result);
                     }
-                } else if (sourcePref.getPreference().getAllowedKeyFileTypes().contains(fileExt)) {
+                } else if (getOwner().getPreference().getAllowedKeyFileTypes().contains(fileExt)) {
                     KeystoreLoadOperationResult keystoreLoadOperationResult;
                     if (KeyStorePreference.BKS_FILE_SUFFIX.equals(fileExt)) {
-                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "bks", sourcePref.requireContext());
+                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "bks", getContext());
                     } else {
-                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(sourcePref.requireContext(), KeystoreLoadOperation.from(loadOp));
+                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(getContext(), KeystoreLoadOperation.from(loadOp));
                     }
                     loadOperationResult.getKeystoreLoadResults().add(keystoreLoadOperationResult);
                 }
@@ -528,15 +529,15 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
+        protected void onProgressUpdateSafely(Integer... values) {
             for (Integer i : values) {
-                sourcePref.onProgressUpdate(i);
+                getOwner().onProgressUpdate(i);
             }
         }
 
         @Override
-        protected void onPostExecute(LoadOperationResult loadOperationResult) {
-            sourcePref.onKeystoreLoadFinished(loadOperationResult, isCancelled());
+        protected void onPostExecuteSafely(LoadOperationResult loadOperationResult) {
+            getOwner().onKeystoreLoadFinished(loadOperationResult, isCancelled());
         }
     }
 

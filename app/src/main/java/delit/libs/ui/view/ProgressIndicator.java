@@ -2,24 +2,17 @@ package delit.libs.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.IntRange;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
-import androidx.annotation.StyleRes;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 
 import delit.piwigoclient.R;
@@ -119,8 +112,12 @@ public class ProgressIndicator extends FrameLayout {
             descriptionField.setVisibility(GONE);
         }
 
-        progressBar.setSecondaryProgress(secondaryProgress);
-        progressBar.setProgress(progress);
+        if(progressBar.getSecondaryProgress() != secondaryProgress) {
+            progressBar.setSecondaryProgress(secondaryProgress);
+        }
+        if(progressBar.getProgress() != secondaryProgress) {
+            progressBar.setProgress(progress);
+        }
     }
 
     public void updateProgressIndicator(@IntRange(from=0,to=100) int progress) {

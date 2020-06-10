@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
@@ -72,12 +73,12 @@ public class UploadJob implements Parcelable {
     private boolean allowUploadOfRawVideosIfIncompressible;
     private boolean isDeleteFilesAfterUpload;
 
-    private volatile transient boolean submitted = false;
-    private volatile transient boolean runningNow = false;
-    private volatile transient boolean cancelUploadAsap;
-    private transient DocumentFile loadedFromFile;
-    private transient boolean wasLastRunCancelled;
-    private transient WeakReference<Context> contextRef;
+    private volatile boolean submitted = false;
+    private volatile boolean runningNow = false;
+    private volatile boolean cancelUploadAsap;
+    private DocumentFile loadedFromFile;
+    private boolean wasLastRunCancelled;
+    private WeakReference<Context> contextRef;
 
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, List<Uri> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
@@ -479,11 +480,7 @@ public class UploadJob implements Parcelable {
     }
 
     private @NonNull Context getContext() {
-        Context context = contextRef.get();
-        if(context == null) {
-            throw new IllegalStateException("Context is null");
-        }
-        return context;
+        return Objects.requireNonNull(contextRef.get());
     }
 
     public synchronized ArrayList<Uri> getFilesNotYetUploaded() {

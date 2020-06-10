@@ -1117,9 +1117,10 @@ public abstract class UIHelper<T> {
 
     public static abstract class QuestionResultAdapter<Q extends UIHelper<?>> implements QuestionResultListener<Q> {
 
+        private static final long serialVersionUID = 3153522325208957555L;
         private QuestionResultListener chainedListener;
 
-        private Q uiHelper;
+        private transient Q uiHelper;
 
         public QuestionResultAdapter(Q uiHelper) {
             this.uiHelper = uiHelper;

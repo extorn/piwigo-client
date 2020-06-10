@@ -161,9 +161,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
     public static final String TAG = "AbsViewAlbumFrag";
-    public static final String RESUME_ACTION = "ALBUM";
+    private static final String RESUME_ACTION = "ALBUM";
     private static final String STATE_SELECTED_ITEMS = "selectedItemIds";
-    private static transient PiwigoAlbumAdminList albumAdminList;
+    private static PiwigoAlbumAdminList albumAdminList;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     AlbumItemRecyclerViewAdapter viewAdapter;
@@ -989,16 +989,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         AppCompatImageView basketImage = basketView.findViewById(R.id.basket_image);
 
         AppCompatImageView clearButton = basketView.findViewById(R.id.basket_clear_button);
-        clearButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    Basket basket = getBasket();
-                    basket.clear();
-                    updateBasketDisplay(basket);
-                }
-                return true;
+        clearButton.setOnTouchListener((v1, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                Basket basket = getBasket();
+                basket.clear();
+                updateBasketDisplay(basket);
             }
+            return true;
         });
     }
 
@@ -2643,9 +2640,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     protected static class BulkResourceActionData implements Parcelable {
-        public final static int ACTION_DELETE = 1;
-        public final static int ACTION_UPDATE_PERMISSIONS = 2;
-        public final static int ACTION_DOWNLOAD_ALL = 3;
+        final static int ACTION_DELETE = 1;
+        final static int ACTION_UPDATE_PERMISSIONS = 2;
+        final static int ACTION_DOWNLOAD_ALL = 3;
         public static final Creator<BulkResourceActionData> CREATOR = new Creator<BulkResourceActionData>() {
             @Override
             public BulkResourceActionData createFromParcel(Parcel in) {
@@ -2665,7 +2662,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         private ArrayList<Long> trackedMessageIds = new ArrayList<>();
         private int action;
 
-        public BulkResourceActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems, int action) {
+        BulkResourceActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems, int action) {
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
             this.resourceInfoAvailable = false; //FIXME when Piwigo provides this info as standard, this can be removed and the method simplified.
@@ -2674,7 +2671,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             this.action = action;
         }
 
-        public BulkResourceActionData(Parcel in) {
+        BulkResourceActionData(Parcel in) {
             selectedItemIds = ParcelUtils.readLongSet(in);
             itemsUpdated = ParcelUtils.readLongSet(in);
             itemsUpdating = ParcelUtils.readMap(in, null);
@@ -2698,7 +2695,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             dest.writeInt(action);
         }
 
-        public void updateLinkedAlbums(ResourceItem item) {
+        void updateLinkedAlbums(ResourceItem item) {
             itemsUpdated.add(item.getId());
             if (itemsUpdated.size() == selectedItemIds.size()) {
                 resourceInfoAvailable = true;
@@ -2706,7 +2703,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             selectedItems.add(item); // will replace the previous with this one.
         }
 
-        public boolean isResourceInfoAvailable() {
+        boolean isResourceInfoAvailable() {
             return resourceInfoAvailable;
         }
 
@@ -2724,7 +2721,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             itemsUpdated.clear();
         }
 
-        public Set<ResourceItem> getItemsWithoutLinkedAlbumData() {
+        Set<ResourceItem> getItemsWithoutLinkedAlbumData() {
             if (itemsUpdated.size() == 0) {
                 return selectedItems;
             }
@@ -2744,14 +2741,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return itemsWithoutLinkedAlbumData;
         }
 
-        public boolean removeProcessedResource(ResourceItem resource) {
+        boolean removeProcessedResource(ResourceItem resource) {
             selectedItemIds.remove(resource.getId());
             selectedItems.remove(resource);
             itemsUpdated.remove(resource.getId());
             return selectedItemIds.size() == 0;
         }
 
-        public boolean removeProcessedResources(HashSet<? extends ResourceItem> deletedItems) {
+        boolean removeProcessedResources(HashSet<? extends ResourceItem> deletedItems) {
             HashSet<Long> deletedItemIds = PiwigoUtils.toSetOfIds(deletedItems);
             selectedItemIds.removeAll(deletedItemIds);
             itemsUpdated.removeAll(deletedItemIds);
@@ -2763,12 +2760,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return selectedItemIds.isEmpty();
         }
 
-        public long trackMessageId(long messageId) {
+        long trackMessageId(long messageId) {
             trackedMessageIds.add(messageId);
             return messageId;
         }
 
-        public boolean isTrackingMessageId(long messageId) {
+        boolean isTrackingMessageId(long messageId) {
             return trackedMessageIds.remove(messageId);
         }
 
@@ -2783,7 +2780,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return trackedMessageIds.size();
         }
 
-        public void getResourcesInfoIfNeeded(AbstractViewAlbumFragment fragment) {
+        void getResourcesInfoIfNeeded(AbstractViewAlbumFragment fragment) {
             Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(fragment.getPrefs(), fragment.requireContext());
             int simultaneousCalls = trackedMessageIds.size();
             if (maxHttpRequestsQueued > simultaneousCalls) {
@@ -2799,7 +2796,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     private static class AddingAlbumPermissionsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
-        public AddingAlbumPermissionsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+        private static final long serialVersionUID = -2501168525443400512L;
+
+        AddingAlbumPermissionsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -2937,7 +2936,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     private final class AlbumScrollListener extends EndlessRecyclerViewScrollListener {
 
-        public AlbumScrollListener(GridLayoutManager gridLayoutMan) {
+        AlbumScrollListener(GridLayoutManager gridLayoutMan) {
             super(gridLayoutMan);
         }
 

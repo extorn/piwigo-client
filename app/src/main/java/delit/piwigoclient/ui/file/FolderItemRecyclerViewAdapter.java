@@ -1,17 +1,20 @@
 package delit.piwigoclient.ui.file;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,24 +26,30 @@ import androidx.documentfile.provider.DocumentFile;
 import com.crashlytics.android.Crashlytics;
 import com.drew.lang.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 
+import delit.libs.ui.OwnedSafeAsyncTask;
+import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
@@ -337,8 +346,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         };
     }
 
-    protected Context getContext() {
-        return contextRef.get();
+    private @NonNull Context getContext() {
+        return Objects.requireNonNull(contextRef.get());
     }
 
     @Override
@@ -733,6 +742,36 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             }
             return fileLength;
         }
+
+        public void withLegacyCachedFields() throws IOException {
+            File f = LegacyIOUtils.getFile(itemUri);
+            if(f == null) {
+                throw new IOException("Uri is not a file");
+            }
+            isFolder = f.isDirectory();
+            isFile = f.isFile();
+            name = f.getName();
+            ext = IOUtils.getFileExt(name);
+            mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+            lastModified = f.lastModified();
+            fileLength = f.length();
+        }
+
+        public void withMediaStoreCachedFields(Context context) {
+            String[] projection = new String[]{MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE, MediaStore.MediaColumns.DATE_MODIFIED};
+            try (Cursor c = context.getContentResolver().query(itemUri, projection, null,null, null)) {
+                if (c != null) {
+                    c.moveToFirst();
+                    mime = c.getString(c.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+                    name = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME));
+                    ext = IOUtils.getFileExt(name, mime);
+                    fileLength = c.getLong(c.getColumnIndex(MediaStore.MediaColumns.SIZE));
+                    lastModified = c.getLong(c.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED));
+                    isFile = true;
+                    isFolder = false;
+                }
+            }
+        }
     }
 
     @Override
@@ -932,77 +971,73 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    private static class UpdateContentListAndSortContentAfterAdd extends AsyncTask<Object,Object,Object> {
+    private static class UpdateContentListAndSortContentAfterAdd extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Object,Object,Object> {
         private static final String TAG = "UpdateContentListAndSort";
-        private FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter;
 
         public UpdateContentListAndSortContentAfterAdd(FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter) {
-            this.folderItemRecyclerViewAdapter = folderItemRecyclerViewAdapter;
+            super(folderItemRecyclerViewAdapter);
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            folderItemRecyclerViewAdapter.isBusy = true;
+        protected void onPreExecuteSafely() {
+            getOwner().isBusy = true;
         }
 
         @Override
-        protected Object doInBackground(Object[] objects) {
-            folderItemRecyclerViewAdapter.currentVisibleDocumentFileExts = folderItemRecyclerViewAdapter.buildListOfFileExtsAndMimesInCurrentFolder(folderItemRecyclerViewAdapter.currentDisplayContent);
+        protected Object doInBackgroundSafely(Object[] objects) {
+            getOwner().currentVisibleDocumentFileExts = getOwner().buildListOfFileExtsAndMimesInCurrentFolder(getOwner().currentDisplayContent);
             if(Thread.currentThread().isInterrupted()) {
                 return null;
             }
-            Collections.sort(folderItemRecyclerViewAdapter.currentDisplayContent, folderItemRecyclerViewAdapter.getFolderItemComparator());
+            Collections.sort(getOwner().currentDisplayContent, getOwner().getFolderItemComparator());
             return null;
         }
 
         @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            folderItemRecyclerViewAdapter.notifyDataSetChanged();
+        protected void onPostExecuteSafely(Object o) {
+            super.onPostExecuteSafely(o);
+            getOwner().notifyDataSetChanged();
             // this will trigger rebuild of the file filters view and possibly post filter the files selected
-            folderItemRecyclerViewAdapter.navigationListener.onPostFolderOpened(null, null);
-            folderItemRecyclerViewAdapter.isBusy = false;
+            getOwner().navigationListener.onPostFolderOpened(null, null);
+            getOwner().isBusy = false;
         }
 
         @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            folderItemRecyclerViewAdapter.isBusy = false;
+        protected void onCancelledSafely() {
+            getOwner().isBusy = false;
             Crashlytics.log(Log.WARN, TAG, "Async Task cancelled");
         }
     }
 
-    private static class UpdateFolderContentTask extends AsyncTask<Object,Object,List<FolderItem>[]> {
+    private static class UpdateFolderContentTask extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Object,Object,List<FolderItem>[]> {
 
         private static final String TAG = "UpdateFolderContentTask";
         private final DocumentFile newContent;
         private final boolean force;
-        private FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter;
         private boolean refreshingExistingFolder;
         private DocumentFile oldFolder;
 
         public UpdateFolderContentTask(FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter, DocumentFile newContent, boolean force) {
+            super(folderItemRecyclerViewAdapter);
             this.newContent = newContent;
             this.force = force;
-            this.folderItemRecyclerViewAdapter = folderItemRecyclerViewAdapter;
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if(folderItemRecyclerViewAdapter.taskListener != null) {
-                folderItemRecyclerViewAdapter.taskListener.onTaskStarted();
+        protected void onPreExecuteSafely() {
+            super.onPreExecuteSafely();
+            if(getOwner().taskListener != null) {
+                getOwner().taskListener.onTaskStarted();
             }
-            folderItemRecyclerViewAdapter.isBusy = true;
-            if(folderItemRecyclerViewAdapter.activeRootUri == null) {
-                folderItemRecyclerViewAdapter.activeRootUri = newContent != null ? IOUtils.getTreeUri(newContent.getUri()) : null;
+            getOwner().isBusy = true;
+            if(getOwner().activeRootUri == null) {
+                getOwner().activeRootUri = newContent != null ? IOUtils.getTreeUri(newContent.getUri()) : null;
             }
             refreshingExistingFolder = false;
-            Uri activeUri = folderItemRecyclerViewAdapter.activeFolder != null ? folderItemRecyclerViewAdapter.activeFolder.getUri() : null;
+            Uri activeUri = getOwner().activeFolder != null ? getOwner().activeFolder.getUri() : null;
             Uri newUri = newContent != null ? newContent.getUri() : null;
             if (ObjectUtils.areEqual(activeUri, newUri)) {
-                /*if (!force && folderItemRecyclerViewAdapter.currentDisplayContent != null && folderItemRecyclerViewAdapter.activeFolder != null) {
+                /*if (!force && getOwner().currentDisplayContent != null && getOwner().activeFolder != null) {
                     return;
                 } else {
                     refreshingExistingFolder = true;
@@ -1010,48 +1045,47 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 refreshingExistingFolder = true;
             }
 
-            oldFolder = folderItemRecyclerViewAdapter.activeFolder;
+            oldFolder = getOwner().activeFolder;
 
             if (!refreshingExistingFolder) {
-                folderItemRecyclerViewAdapter.navigationListener.onPreFolderOpened(oldFolder, newContent != null ? newContent.listFiles() : null);
+                getOwner().navigationListener.onPreFolderOpened(oldFolder, newContent != null ? newContent.listFiles() : null);
             }
         }
 
         @Override
-        protected List<FolderItem>[] doInBackground(Object[] objects) {
-            List<FolderItem> fullContent = folderItemRecyclerViewAdapter.currentFullContent;
+        protected List<FolderItem>[] doInBackgroundSafely(Object[] objects) {
+            List<FolderItem> fullContent = getOwner().currentFullContent;
             if(!refreshingExistingFolder || force) {
-                fullContent = folderItemRecyclerViewAdapter.getNewDisplayContentInternal(newContent);
+                fullContent = getOwner().getNewDisplayContentInternal(newContent);
             }
             List<FolderItem> filteredContent = fullContent;
             if(fullContent != null) {
-                filteredContent = folderItemRecyclerViewAdapter.getFilteredListOfContent(fullContent);
+                filteredContent = getOwner().getFilteredListOfContent(fullContent);
             }
             return new List[]{fullContent, filteredContent};
         }
 
         @Override
-        protected void onPostExecute(List<FolderItem>[] result) {
-            super.onPostExecute(result);
+        protected void onPostExecuteSafely(List<FolderItem>[] result) {
             if(result != null) {
                 // result only null if the task was cancelled.
-                folderItemRecyclerViewAdapter.currentFullContent = result[0];
-                folderItemRecyclerViewAdapter.currentDisplayContent = result[1];
-                folderItemRecyclerViewAdapter.notifyDataSetChanged();
+                getOwner().currentFullContent = result[0];
+                getOwner().currentDisplayContent = result[1];
+                getOwner().notifyDataSetChanged();
                 if (!refreshingExistingFolder) {
-                    folderItemRecyclerViewAdapter.navigationListener.onPostFolderOpened(oldFolder, newContent);
+                    getOwner().navigationListener.onPostFolderOpened(oldFolder, newContent);
                 }
-                folderItemRecyclerViewAdapter.isBusy = false;
-                if (folderItemRecyclerViewAdapter.taskListener != null) {
-                    folderItemRecyclerViewAdapter.taskListener.onTaskFinished();
+                getOwner().isBusy = false;
+                if (getOwner().taskListener != null) {
+                    getOwner().taskListener.onTaskFinished();
                 }
             }
         }
 
         @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            folderItemRecyclerViewAdapter.isBusy = false;
+        protected void onCancelledSafely() {
+            super.onCancelledSafely();
+            getOwner().isBusy = false;
             Crashlytics.log(Log.WARN, TAG, "Async Task cancelled");
         }
     }

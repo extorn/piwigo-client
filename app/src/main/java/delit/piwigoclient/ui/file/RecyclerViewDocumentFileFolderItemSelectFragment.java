@@ -50,6 +50,8 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
+import delit.libs.ui.OwnedSafeAsyncTask;
+import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
@@ -657,34 +659,33 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private static class SharedFilesIntentProcessingTask extends AsyncTask<Intent, Object, List<FolderItemRecyclerViewAdapter.FolderItem>> {
+    private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, Intent, Object, List<FolderItemRecyclerViewAdapter.FolderItem>> {
 
-        private final WeakReference<RecyclerViewDocumentFileFolderItemSelectFragment> parentRef;
 
         public SharedFilesIntentProcessingTask(RecyclerViewDocumentFileFolderItemSelectFragment parent) {
-             parentRef = new WeakReference<>(parent);
+             super(parent);
+             withContext(parent.requireContext());
         }
 
         @Override
-        protected List<FolderItemRecyclerViewAdapter.FolderItem> doInBackground(Intent[] objects) {
+        protected List<FolderItemRecyclerViewAdapter.FolderItem> doInBackgroundSafely(Intent[] objects) {
             Intent intent = objects[0];
             if (intent.getClipData() != null) {
-                return parentRef.get().processOpenDocuments(intent);
+                return getOwner().processOpenDocuments(intent);
             } else {
-                return parentRef.get().processOpenDocumentTree(intent);
+                return getOwner().processOpenDocumentTree(intent);
             }
         }
 
         @Override
-        protected void onPostExecute(List<FolderItemRecyclerViewAdapter.FolderItem> folderItems) {
-            super.onPostExecute(folderItems);
+        protected void onPostExecuteSafely(List<FolderItemRecyclerViewAdapter.FolderItem> folderItems) {
 
             if(folderItems.size() == 1 && folderItems.get(0).isFolder()) {
                 FolderItemRecyclerViewAdapter.FolderItem item = folderItems.get(0);
-                parentRef.get().addRootFolder(item.getDocumentFile());
+                getOwner().addRootFolder(item.getDocumentFile());
             } else {
-                parentRef.get().getListAdapter().addItems(folderItems);
-                parentRef.get().selectAllItems();
+                getOwner().getListAdapter().addItems(folderItems);
+                getOwner().selectAllItems();
             }
         }
     }
