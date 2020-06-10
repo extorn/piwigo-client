@@ -161,7 +161,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
     public static final String TAG = "AbsViewAlbumFrag";
-    private static final String RESUME_ACTION = "ALBUM";
+    public static final String RESUME_ACTION = "ALBUM";
     private static final String STATE_SELECTED_ITEMS = "selectedItemIds";
     private static PiwigoAlbumAdminList albumAdminList;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);

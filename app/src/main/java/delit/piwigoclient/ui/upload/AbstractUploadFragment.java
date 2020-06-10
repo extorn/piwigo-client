@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Notification;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -86,6 +87,7 @@ import delit.libs.util.ObjectUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
@@ -97,12 +99,14 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumsGetFirstAvailableAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -202,6 +206,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             uploadToAlbum = getArguments().getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
             if (uploadToAlbum == null) {
                 uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
+                SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+                if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+                    ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                    if(!albumPath.isEmpty()) {
+                        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+                        AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
+                        getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
+                    }
+                }
             }
             externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
         }
@@ -1247,6 +1260,25 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     }
 
+    private static class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> {
+        private static final long serialVersionUID = -6619401114043943514L;
+
+        @Override
+        public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
+            getActionParent(uiHelper).setUploadToAlbum(response.getDeepestAlbumOnDesiredPath().toStub());
+            return true; // to close the progress indicator
+        }
+    }
+
+    private void setUploadToAlbum(CategoryItemStub uploadToAlbum) {
+        this.uploadToAlbum =  uploadToAlbum;
+        if (!uploadToAlbum.isRoot() && !uploadToAlbum.isParentRoot()) {
+            getSelectedGalleryTextView().setText(getString(R.string.subAlbum_text, uploadToAlbum.getName()));
+        } else {
+            getSelectedGalleryTextView().setText(uploadToAlbum.getName());
+        }
+    }
+
     private TextView getSelectedGalleryTextView() {
         return selectedGalleryTextView;
     }
@@ -1498,14 +1530,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();
                 if (uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
                     uploadToAlbum = response.getAlbumNames().get(0);
-                    if (!uploadToAlbum.isRoot() && !uploadToAlbum.isParentRoot()) {
-                        fragment.getSelectedGalleryTextView().setText(fragment.getString(R.string.subAlbum_text, uploadToAlbum.getName()));
-                    } else {
-                        fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
-                    }
+                    fragment.setUploadToAlbum(uploadToAlbum);
+
                 } else if (uploadToAlbum.isParentRoot()) {
-                    uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
-                    fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
+                    fragment.setUploadToAlbum(CategoryItemStub.ROOT_GALLERY);
                 }
             }
             return super.onSuccess(uiHelper, response);
