@@ -1148,16 +1148,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         for (Uri fileForUploadUri : thisUploadJob.getFilesForUpload()) {
 
             boolean isHaveUploadedCompressedFile = false;
-            boolean canUploadFile;
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                DocumentFile docFile = DocumentFile.fromSingleUri(this, fileForUploadUri);
-                canUploadFile = docFile.exists();
+            boolean canUploadFile = IOUtils.exists(this, fileForUploadUri);
 
-            } else {
-                canUploadFile = 0 < IOUtils.getFilesize(this, fileForUploadUri);
-            }
             if (!canUploadFile) {
                 thisUploadJob.cancelFileUpload(fileForUploadUri);
+                // notify the listener of the final error we received from the server
+                String filename = IOUtils.getFilename(this, fileForUploadUri);
+                String errorMsg = getString(R.string.alert_error_upload_file_no_longer_available_message_pattern, filename, fileForUploadUri.getPath());
+                notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUploadUri, errorMsg);
             }
 
             if (thisUploadJob.needsUpload(fileForUploadUri)) {

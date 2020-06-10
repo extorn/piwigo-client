@@ -12,6 +12,7 @@ import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -580,11 +581,7 @@ public class IOUtils {
     }
 
     public static boolean exists(Context context, Uri uri) {
-        DocumentFile docFile = DocumentFile.fromSingleUri(context, uri);
-        if(docFile != null) {
-            return docFile.exists();
-        }
-        return getFilesize(context, uri) > -1;
+        return getFilesize(context, uri) >= 0;
     }
 
     public static List<DocumentFile> toDocumentFileList(Context context, List<Uri> uris) {
@@ -973,9 +970,7 @@ public class IOUtils {
 
         DocumentFile docFile = DocumentFile.fromSingleUri(context, uri);
         if(docFile != null) {
-            if (!docFile.exists()) {
-                return -1;
-            } else {
+            if (docFile.exists()) {
                 return docFile.length();
             }
         }
@@ -1008,9 +1003,14 @@ public class IOUtils {
         }
         try (Cursor c = context.getContentResolver().query(uri, null, null, null, null)) {
             if (c != null) {
-                int colDateModified = c.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_LAST_MODIFIED);
-                c.moveToFirst();
-                return c.getLong(colDateModified);
+                int idx = c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED);
+                if(idx < 0 && Build.VERSION.SDK_INT >= KITKAT) {
+                    idx = c.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED);
+                }
+                if(idx >= 0) {
+                    c.moveToFirst();
+                    return c.getLong(idx);
+                }
             }
         }
 
