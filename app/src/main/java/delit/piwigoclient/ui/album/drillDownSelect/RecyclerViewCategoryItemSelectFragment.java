@@ -176,7 +176,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if(getListAdapter() == null) {
 
-            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(requireContext(), rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter<CategoryItem>(), getViewPrefs());
+            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter<>(), getViewPrefs());
             if (activeCategory != null) {
                 viewAdapter.setActiveItem(activeCategory);
             } else {

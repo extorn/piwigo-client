@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.ortiz.touchview.TouchImageView;
@@ -209,7 +210,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     public void onImageUnavailable(PicassoLoader<TouchImageView> loader, String lastLoadError) {
         if (!loader.hasPlaceholder()) {
-            imageView.setBackgroundColor(Color.DKGRAY);
+            imageView.setBackgroundColor(ContextCompat.getColor(imageView.getContext(), R.color.color_scrim_heavy));
             imageView.setImageResource(R.drawable.ic_file_gray_24dp);
         } else {
             // show the placeholder marker

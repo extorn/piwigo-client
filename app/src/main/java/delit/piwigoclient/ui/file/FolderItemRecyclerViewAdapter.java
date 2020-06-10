@@ -967,7 +967,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
         @Override
         public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
-            getIconView().setBackgroundColor(Color.DKGRAY);
+            getIconView().setBackgroundColor(ContextCompat.getColor(getIconView().getContext(), R.color.color_scrim_heavy));
         }
     }
 

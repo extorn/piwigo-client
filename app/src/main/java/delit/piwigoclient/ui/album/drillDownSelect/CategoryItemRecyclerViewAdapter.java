@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
@@ -37,7 +39,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     private CategoryItem activeItem;
     private NavigationListener navigationListener;
 
-    public CategoryItemRecyclerViewAdapter(@NonNull Context context, CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener<CategoryItem> multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
+    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener<CategoryItem> multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
         super(multiSelectStatusListener, viewPrefs);
         this.navigationListener = navigationListener;
         overallRoot = root;
@@ -284,9 +286,10 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             getCheckBox().setEnabled(isEnabled());
 
             if(newItem.getThumbnailUrl() != null) {
-                ImageViewCompat.setImageTintMode(getIconView(), null);
+                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.DST); //IGNORE THE TINT - Use the image as is.
                 geticonViewLoader().setUriToLoad(newItem.getThumbnailUrl());
             } else {
+                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); // SRC_ATOP: use color of the tint to shade the non transparent parts of the image
                 geticonViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             }
         }
@@ -300,12 +303,13 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             // default to setting a tint (we'll apply it if needed depending on image shown)
             ColorStateList colorList;
             if (!getAdapterPrefs().isEnabled()) {
-                colorList = ColorStateList.valueOf(Color.GRAY);
+                @ColorInt int c = DisplayUtils.getColor(getIconView().getContext(), R.attr.scrimHeavy);
+                colorList = ColorStateList.valueOf(c);
             } else {
-                colorList = ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.app_primary));//ColorStateList.valueOf(DisplayUtils.getColor(getContext(), R.attr.colorPrimary));
+                colorList = ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.app_secondary));//ColorStateList.valueOf(DisplayUtils.getColor(getContext(), R.attr.colorPrimary));
             }
             ImageViewCompat.setImageTintList(getIconView(), colorList);
-            ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_IN);
+            ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); //SRC_ATOP: use color of the tint to shade the non transparent parts of the image
 
 
             getIconView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -362,7 +366,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
         @Override
         public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
-            getIconView().setBackgroundColor(Color.DKGRAY);
+            getIconView().setBackgroundColor(ContextCompat.getColor(getIconView().getContext(), R.color.color_scrim_heavy));
         }
     }
 

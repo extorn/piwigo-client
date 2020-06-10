@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -151,6 +152,6 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
 
     @Override
     public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
-        mImageView.setBackgroundColor(Color.DKGRAY);
+        mImageView.setBackgroundColor(ContextCompat.getColor(mImageView.getContext(), R.color.color_scrim_heavy));
     }
 }

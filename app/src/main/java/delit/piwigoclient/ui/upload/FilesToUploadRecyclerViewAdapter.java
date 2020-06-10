@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -605,7 +606,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         @Override
         public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
-            fileForUploadImageView.setBackgroundColor(Color.DKGRAY);
+            fileForUploadImageView.setBackgroundColor(ContextCompat.getColor(fileForUploadImageView.getContext(), R.color.color_scrim_heavy));
         }
 
         @Override
