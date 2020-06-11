@@ -19,6 +19,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -34,7 +35,7 @@ import delit.libs.util.LegacyIOUtils;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {
     private static final String TAG = "MediaMuxerControl";
-    private static final boolean VERBOSE_LOGGING = false;
+    private static final boolean VERBOSE_LOGGING = true;
     private final Uri inputFile;
     private long inputBytes;
     private final ExoPlayerCompression.CompressionListener listener;
@@ -58,7 +59,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     private TreeSet<Sample> queuedData = new TreeSet<>();
     private boolean safeShutdownInProgress;
     private Context context;
-    private ParcelFileDescriptor outputFileDescriptor;
+
 
     public MediaMuxerControl(Context context, Uri inputFile, Uri outputFile, ExoPlayerCompression.CompressionListener listener) throws IOException {
         this.context = context;
@@ -91,7 +92,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     private void extractInputVideoFormat(Uri inputFile) throws IOException {
         if(VERBOSE_LOGGING) {
-            Log.d(TAG, "Extrcting video format from input file");
+            Log.d(TAG, "Extracting video format from input file");
         }
         MediaExtractor mExtractor = new MediaExtractor();
         try {
@@ -187,7 +188,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     private void extractLocationData(Uri inputFile) {
         if(VERBOSE_LOGGING) {
-            Log.d(TAG, "Extrcting location data from input file");
+            Log.d(TAG, "Extracting location data from input file");
         }
         MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
         try {
@@ -291,6 +292,8 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         return val;
     }
 
+
+
     public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Long originalBytes) {
 
         TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
@@ -355,14 +358,8 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             Log.d(TAG, "Muxer : releasing old muxer");
         }
         if (this.mediaMuxer != null) {
+            this.mediaMuxer.stop();
             this.mediaMuxer.release();
-        }
-        try {
-            if(outputFileDescriptor != null) {
-                outputFileDescriptor.close();
-            }
-        } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Unable to close output file descriptor");
         }
         mediaMuxerStarted = false;
     }
@@ -522,8 +519,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         release();
         MediaMuxer muxer;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            outputFileDescriptor = context.getContentResolver().openFileDescriptor(outputFile, "rwt");
-            muxer = new MediaMuxer(outputFileDescriptor.getFileDescriptor(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            try(ParcelFileDescriptor outputParcelFileDescriptor = context.getContentResolver().openFileDescriptor(outputFile, "rwt")) {
+                muxer = new MediaMuxer(outputParcelFileDescriptor.getFileDescriptor(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            }
         } else {
             muxer = new MediaMuxer(LegacyIOUtils.getFile(outputFile).getPath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         }
@@ -624,6 +622,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             }
         }
     }
+
 
     private static class Sample implements Comparable<Sample> {
         private static MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo(); // static copy to save allocations

@@ -2,6 +2,7 @@ package delit.piwigoclient.business.video.compression;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -14,30 +15,26 @@ import delit.libs.util.IOUtils;
 public class MyFastStart {
 
     public static boolean fastStart(Context context, Uri in) throws IOException, QtFastStart.MalformedFileException, QtFastStart.UnsupportedFileException {
-        boolean ret = false;
-        FileInputStream inStream = null;
-        FileOutputStream outStream = null;
-        File tmpFile = null;
-        try {
-            tmpFile = File.createTempFile("compressed.", ".mp4", context.getExternalCacheDir());
-            FileDescriptor fd = context.getContentResolver().openFileDescriptor(in, "rw").getFileDescriptor();
-            inStream = new FileInputStream(fd);
-            outStream = new FileOutputStream(tmpFile);
-            ret = QtFastStart.fastStartImpl(inStream.getChannel(), outStream.getChannel());
-            if(ret) {
-                IOUtils.copyFile(context, tmpFile, in);
+        boolean ret;
+        File tmpFile;
+        try(ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(in, "r")) {
+            String fileExt = IOUtils.getFileExt(context, in);
+            tmpFile = File.createTempFile("compressed.", fileExt, context.getExternalCacheDir());
+            FileDescriptor fd = pfd.getFileDescriptor();
+            try(FileInputStream inStream = new FileInputStream(fd); FileOutputStream outStream = new FileOutputStream(tmpFile)){
+                ret = QtFastStart.fastStartImpl(inStream.getChannel(), outStream.getChannel());
             }
-            return ret;
-        } finally {
-            QtFastStart.safeClose(inStream);
-            QtFastStart.safeClose(outStream);
-            if (!ret) {
-                if(tmpFile != null && tmpFile.exists()) {
-                    if(!tmpFile.delete()) {
-                        QtFastStart.printf("Error deleting tmp file");
-                    }
+        }
+        if(ret) {
+            IOUtils.copyFile(context, tmpFile, in);
+        }
+        if (!ret) {
+            if(tmpFile.exists()) {
+                if(!tmpFile.delete()) {
+                    QtFastStart.printf("Error deleting tmp file");
                 }
             }
         }
+        return ret;
     }
 }

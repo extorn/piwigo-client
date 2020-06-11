@@ -63,23 +63,11 @@ public class FileSelectActivity extends MyActivity {
         }
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        // Need to register here as the call is handled immediately if the permissions are already present.
-        EventBus.getDefault().register(this);
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         this.setIntent(intent);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Override
@@ -94,7 +82,6 @@ public class FileSelectActivity extends MyActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
 
         if (!hasAgreedToEula()) {
             finish();

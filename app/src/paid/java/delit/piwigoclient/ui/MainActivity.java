@@ -39,24 +39,11 @@ public class MainActivity extends AbstractMainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Override

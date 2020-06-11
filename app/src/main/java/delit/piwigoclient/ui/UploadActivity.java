@@ -92,6 +92,7 @@ public class UploadActivity extends MyActivity {
     private Toolbar toolbar;
     private AppBarLayout appBar;
     private Intent lastIntent;
+    private boolean startedFresh;
 
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
@@ -99,15 +100,6 @@ public class UploadActivity extends MyActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
         return intent;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(lastIntent == null) {
-            lastIntent = getIntent();
-        }
-        checkForSentFiles(lastIntent);
     }
 
     private void checkForSentFiles(Intent intent) {
@@ -121,20 +113,15 @@ public class UploadActivity extends MyActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         lastIntent = intent;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(lastIntent == null) {
+            lastIntent = getIntent();
+        }
         checkForSentFiles(lastIntent);
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        // Need to register here as the call is handled immediately if the permissions are already present.
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Override
@@ -150,13 +137,31 @@ public class UploadActivity extends MyActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
 
         if (savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
         } else {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
+
+        setContentView(R.layout.activity_upload);
+
+//            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+//
+//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+//                drawer.setFitsSystemWindows(true);
+//            }
+
+        toolbar = findViewById(R.id.toolbar);
+        appBar = findViewById(R.id.appbar);
+        if(BuildConfig.DEBUG) {
+            toolbar.setTitle(getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')');
+        } else {
+            toolbar.setTitle(R.string.upload_page_title);
+        }
+        setSupportActionBar(toolbar);
+
+        startedFresh = savedInstanceState == null;
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         boolean canContinue = true;
@@ -171,31 +176,13 @@ public class UploadActivity extends MyActivity {
         if (!canContinue) {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
-            setContentView(R.layout.activity_upload);
 
-//            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//
-//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-//                drawer.setFitsSystemWindows(true);
-//            }
-
-            toolbar = findViewById(R.id.toolbar);
-            appBar = findViewById(R.id.appbar);
-            if(BuildConfig.DEBUG) {
-                toolbar.setTitle(getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')');
-            } else {
-                toolbar.setTitle(R.string.upload_page_title);
-            }
-            setSupportActionBar(toolbar);
-            if (savedInstanceState == null) { // the fragment will be created automatically from the fragment manager state if there is state :-)
+            if (startedFresh) { // the fragment will be created automatically from the fragment manager state if there is state :-)
                 showUploadFragment(true, connectionPrefs);
             }
         }
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
         if (!BuildConfig.DEBUG && result != ConnectionResult.SUCCESS) {
@@ -219,6 +206,8 @@ public class UploadActivity extends MyActivity {
             }
         }
     }
+
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public final void onNavigationItemSelected(NavigationItemSelectEvent event) {

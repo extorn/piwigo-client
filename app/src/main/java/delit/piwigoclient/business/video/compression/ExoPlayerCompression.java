@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -37,6 +38,7 @@ import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Set;
 
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
@@ -222,13 +224,17 @@ public class ExoPlayerCompression {
         }
 
         public void setBitRate(int bitRate) {
-            if (bitRate > 0) {
+            if (bitRate > 0 || bitRate == AUDIO_PASSTHROUGH_BITRATE) {
                 this.bitRate = bitRate;
             }
         }
 
         public long getMaxInterleavingIntervalUs() {
             return maxInterleavingIntervalUs;
+        }
+
+        public boolean isTranscodeDesired() {
+            return bitRate != AUDIO_PASSTHROUGH_BITRATE;
         }
     }
     public static class VideoCompressionParameters {
@@ -379,8 +385,61 @@ public class ExoPlayerCompression {
             return audioCompressionParameters;
         }
 
-        public String getOutputFileMimeType() {
-            return MimeTypes.VIDEO_MP4;
+        public String getOutputFileExt() {
+            return getOutputFileExt(null);
+        }
+
+
+        public String getOutputFileExt(Set<String> acceptableFileExts) {
+            if(isAddAudioTrack() && isAddVideoTrack()) {
+                String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
+                if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                    return ext;
+                }
+            }
+            if(isAddAudioTrack()) {
+                String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.AUDIO_MP4);
+                if(ext == null) {
+                    ext = "m4a";
+                }
+                if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                    return ext;
+                }
+            }
+            if(isAddVideoTrack()) {
+                String ext = "m4v";
+                if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                    return ext;
+                }
+            }
+            throw new IllegalStateException("No valid output MIME Type specified");
+        }
+
+        /**
+         * Ensure the Mime type is contained in the list provided.
+         * @param acceptableMimeTypes
+         * @return
+         */
+        public String getOutputFileMimeType(Set<String> acceptableMimeTypes) {
+            if(isAddAudioTrack() && isAddVideoTrack()) {
+                String mime = MimeTypes.VIDEO_MP4;
+                if(acceptableMimeTypes == null || acceptableMimeTypes.contains(mime)) {
+                    return mime;
+                }
+            }
+            if(isAddAudioTrack()) {
+                String mime = MimeTypes.AUDIO_MP4;
+                if(acceptableMimeTypes == null || acceptableMimeTypes.contains(mime)) {
+                    return mime;
+                }
+            }
+            if(isAddVideoTrack()) {
+                String mime = MimeTypes.VIDEO_MP4;
+                if(acceptableMimeTypes == null || acceptableMimeTypes.contains(mime)) {
+                    return mime;
+                }
+            }
+            throw new IllegalStateException("No valid output MIME Type specified");
         }
 
         public boolean isEnableFastStart() {
@@ -391,15 +450,12 @@ public class ExoPlayerCompression {
 
     private class InternalCompressionListener extends CompressionListenerWrapper {
 
-        private final Uri inputFile;
-        private final Uri outputFile;
         private long mediaDurationMs;
         private boolean enableFastStart;
 
-        public InternalCompressionListener(CompressionListener wrapped, Uri inputFile, Uri outputFile, boolean enableFastStart) {
+        public InternalCompressionListener(CompressionListener wrapped, boolean enableFastStart) {
             super(wrapped);
-            this.inputFile = inputFile;
-            this.outputFile = outputFile;
+            this.enableFastStart = enableFastStart;
         }
 
         @Override
@@ -410,16 +466,14 @@ public class ExoPlayerCompression {
 
         @Override
         public void onCompressionComplete(Uri inputFile, Uri outputFile) {
-            DocumentFile inputDocFile = DocumentFile.fromSingleUri(context, inputFile);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if(inputDocFile != null) {
-                    if(!IOUtils.setLastModified(context, outputFile, inputDocFile.lastModified())) {
-                        Crashlytics.log(Log.WARN, TAG, "Unable to set last modified date on compressed video " + outputFile);
-                    }
-                }
-            }
             if (enableFastStart) {
                 makeTranscodedFileStreamable(outputFile);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                long lastModified = IOUtils.getLastModifiedTime(context, inputFile);
+                if(!IOUtils.setLastModified(context, outputFile, lastModified)) {
+                    Crashlytics.log(Log.WARN, TAG, "Unable to set last modified date on compressed video " + outputFile);
+                }
             }
             super.onCompressionProgress(inputFile, outputFile, 100d, mediaDurationMs);
             super.onCompressionComplete(inputFile, outputFile);
@@ -488,7 +542,7 @@ public class ExoPlayerCompression {
             LoadControl loadControl = new DefaultLoadControl();
             TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
-            CompressionListener listenerWrapper = new InternalCompressionListener(listener, inputFile, outputFile, compressionSettings.isEnableFastStart());
+            CompressionListener listenerWrapper = new InternalCompressionListener(listener, compressionSettings.isEnableFastStart());
 
             MediaMuxerControl mediaMuxerControl;
             mediaMuxerControl = new MediaMuxerControl(getContext(), inputFile, outputFile, listenerWrapper);

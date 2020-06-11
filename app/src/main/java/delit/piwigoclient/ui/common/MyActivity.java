@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.common;
 
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.os.ConfigurationCompat;
 import androidx.fragment.app.Fragment;
@@ -28,6 +30,8 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,6 +72,7 @@ import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActivity {
 
+    private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String TAG = "MyActivity";
     protected static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
@@ -139,6 +144,22 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        if(EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+        super.onStop();
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -159,19 +180,6 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         initialisedWithLanguage = AppPreferences.getDesiredLanguage(getSharedPrefs(), this);
 
-        if (uiHelper == null) {
-            //TODO move this to after the view is created so that the UI helper progress indicator can init if needed!
-            uiHelper = new ActivityUIHelper<>((T) this, prefs);
-            BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
-            listener.withUiHelper(this, uiHelper);
-            uiHelper.setPiwigoResponseListener(listener);
-        }
-
-        if (savedInstanceState != null) {
-            uiHelper.onRestoreSavedInstanceState(savedInstanceState);
-            trackedActionIntentsMap = BundleUtils.readMap(savedInstanceState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, null);
-        }
-
         if (BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
             licencingHelper = new LicenceCheckingHelper();
             licencingHelper.onCreate(this);
@@ -187,7 +195,60 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             Crashlytics.log(Log.ERROR, TAG, "Unable to  create activity (cause : " + error + ")");
             Crashlytics.logException(e.getCause());
         }
+
+        if (uiHelper == null) {
+            //TODO move this to after the view is created so that the UI helper progress indicator can init if needed!
+            uiHelper = new ActivityUIHelper<>((T)this, prefs);
+            BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
+            listener.withUiHelper(this, uiHelper);
+            uiHelper.setPiwigoResponseListener(listener);
+        }
+        if(savedInstanceState != null) {
+            uiHelper.onRestoreSavedInstanceState(savedInstanceState);
+            trackedActionIntentsMap = BundleUtils.readMap(savedInstanceState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, null);
+        }
+
+        if(!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+
         uiHelper.registerToActiveServiceCalls();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            throw new RuntimeException("Activity must register with event bus to ensure handling of UserNotUniqueWarningEvent");
+        }
+        uiHelper.handleAnyQueuedPiwigoMessages();
+        uiHelper.showNextQueuedMessage();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            checkAllUriPermissionsStillPresent();
+        }
+        checkPrerequisites();
+    }
+
+
+    private void checkPrerequisites() {
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
+        if (!BuildConfig.DEBUG && result != ConnectionResult.SUCCESS) {
+            if (googleApi.isUserResolvableError(result)) {
+                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
+                d.setOnDismissListener(dialog -> {
+                    if (!BuildConfig.DEBUG) {
+                        finish();
+                    }
+                });
+                d.show();
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                        if (!BuildConfig.DEBUG) {
+                            finish();
+                        }
+                    }
+                });
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -265,17 +326,9 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             onAppResumed();
         }
         super.onResume();
-        uiHelper.registerToActiveServiceCalls();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            throw new RuntimeException("Activity must register with event bus to ensure handling of UserNotUniqueWarningEvent");
-        }
-        uiHelper.handleAnyQueuedPiwigoMessages();
-        uiHelper.showNextQueuedMessage();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            checkAllUriPermissionsStillPresent();
-        }
     }
+
 
     protected abstract String getDesiredLanguage(Context context);
 

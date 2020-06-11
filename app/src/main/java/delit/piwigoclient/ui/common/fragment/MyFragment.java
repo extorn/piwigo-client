@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -105,12 +106,13 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         return inflator;
     }
 
+
     @Override
-    public void onDetach() {
-        Crashlytics.log("onDetach : " + getClass().getName());
+    public void onStop() {
+        Crashlytics.log("onDestroyView : " + getClass().getName());
         uiHelper.deregisterFromActiveServiceCalls();
         uiHelper.closeAllDialogs();
-        super.onDetach();
+        super.onStop();
     }
 
     @Override
@@ -126,12 +128,6 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     public void onAttach(Context context) {
         Crashlytics.log("onAttach : " + getClass().getName());
         prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        if (uiHelper == null) {
-            uiHelper = buildUIHelper(context);
-            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(context);
-            listener.withUiHelper(this, uiHelper);
-            uiHelper.setPiwigoResponseListener(listener);
-        }
         super.onAttach(context);
     }
 
@@ -184,6 +180,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         if (uiHelper.isContextOutOfSync(context)) {
             uiHelper.swapToNewContext(context);
         }
+        uiHelper.registerToActiveServiceCalls();
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
         if(AdsManager.getInstance().hasAdvertLoadProblem(getContext())) {
@@ -210,6 +207,12 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (uiHelper == null) {
+            uiHelper = buildUIHelper(getContext());
+            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
+            listener.withUiHelper(this, uiHelper);
+            uiHelper.setPiwigoResponseListener(listener);
+        }
         if (savedInstanceState != null) {
             Crashlytics.log("onCreateView(restore) : " + getClass().getName());
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
@@ -222,15 +225,14 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
             updateActiveSessionDetails();
         }
 
-        doInOnCreateView();
-
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    /**
-     * Currently registers for active service calls.
-     */
-    protected void doInOnCreateView() {
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         uiHelper.registerToActiveServiceCalls();
     }
 

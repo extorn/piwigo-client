@@ -23,7 +23,6 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
     protected void onCreate(Bundle savedInstanceState) {
         rewardedVideoAd = AdsManager.getInstance().getRewardedVideoAd(this, new AdsManager.OnRewardEarnedListener(this, REWARD_COUNT_UPDATE_FREQUENCY));
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -47,18 +46,6 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
     protected void onDestroy() {
         rewardedVideoAd.destroy(this);
         super.onDestroy();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Override

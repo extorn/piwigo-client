@@ -8,6 +8,7 @@
     </string-array>
 
     <integer-array name="preference_data_upload_compress_videos_quality_values">
+        <item>0</item>
         <item>25</item>
         <item>50</item>
         <item>100</item>
@@ -18,6 +19,7 @@
     </integer-array>
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0bps ( --X )</item>
         <item>very low (0.025 b/pixels*frame)</item>
         <item>lower (0.05 b/pixels*frame)</item>
         <item>low (0.1 b/pixels*frame)</item>
@@ -28,8 +30,8 @@
     </string-array>
 
     <string-array name="preference_data_upload_compress_videos_audio_bitrate_items" translatable="false">
-        <item>0kbps</item>
-        <item><![CDATA[-->]]></item>
+        <item>0kbps ( --X )</item>
+        <!--<item><![CDATA[&ndash;&gt;]]></item>-->
         <item>32kbps</item>
         <item>64kbps</item>
         <item>96kbps</item>
@@ -38,7 +40,7 @@
     </string-array>
     <integer-array name="preference_data_upload_compress_videos_audio_bitrate_values">
         <item>0</item>
-        <item>-1</item>
+        <!--<item>-1</item> audio pass-through isn't working :-( -->
         <item>32000</item>
         <item>64000</item>
         <item>96000</item>
@@ -262,6 +264,23 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.66</item>
+        <item>"Changes:
+                - Major ewrite of all the theme related code to radically simplify and correct colors across android versions
+                - Changed the theme to a day/night one so it is user configurable (in night, no screens have white background).
+                - added support for Uri and scoped storage:
+                    - share files easily
+                    - select files using the system file selector or the in app one
+                    - deleting files after upload is now working again
+                    - check files are unique prior to upload - this is now harder, so it takes a little longer
+                    - The in app file selector is relatively slow to load folders containing lots of files - limitations in android APIs at present
+                - when compressing videos, it will try and use m4a or m4v extensions (if your server supports these) and you select audio only or video only
+                - Drawer menu available from the upload screen to allow you to jump to gallery, or settings
+               Bugfix:
+                - Upload page retains files when adding new files from system selector and or navigation to in the main gallery
+                - The video compression code has been radically overhauled. It shouldn't freeze and give up on any videos now. (Let me know if it does)
+                - Rewrite of large areas to remove potential memory leaks
+                - Should be much less prone to crash on old versions of Android (pre Lollipop)"</item>
         <item>1.4.0.65</item>
         <item>"Changes:
             - Corrected remaining theme issue for dialogs

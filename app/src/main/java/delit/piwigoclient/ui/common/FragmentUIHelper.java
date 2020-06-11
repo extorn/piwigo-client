@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -37,7 +38,8 @@ public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
                 MyActivity activity = (MyActivity) f.getActivity();
                 if(activity != null) {
                     UIHelper activityUiHelper = activity.getUiHelper();
-                    canShowDialog = !activityUiHelper.isDialogShowing();
+                    canShowDialog = getParentView() != null && ViewCompat.isAttachedToWindow(getParentView());
+                    canShowDialog &= !activityUiHelper.isDialogShowing();
                     canShowDialog &= !activity.isFinishing();
                     canShowDialog &= (!blockDialogsFromShowing) && getParent().isResumed();
                 }

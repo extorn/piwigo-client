@@ -2,6 +2,7 @@ package delit.piwigoclient.model.piwigo;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.webkit.MimeTypeMap;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
@@ -374,5 +376,17 @@ public class PiwigoSessionDetails {
 
     public Username getUser() {
         return new Username(getUserId(), getUsername(), getUserType());
+    }
+
+    public Set<String> getAllowedMimeTypes() {
+        Set<String> fileExts = getAllowedFileTypes();
+        Set<String> mimeTypes = new HashSet<>();
+        for(String fileExt : fileExts) {
+            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+            if(mime != null) {
+                mimeTypes.add(mime);
+            }
+        }
+        return mimeTypes;
     }
 }

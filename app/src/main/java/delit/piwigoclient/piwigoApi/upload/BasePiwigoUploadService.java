@@ -1000,8 +1000,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         compressionSettings.setAddAudioTrack(desiredAudioBitrate != 0);
         compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(desiredBitratePerPixelPerSec);
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
+        Set<String> serverAcceptedMimeTypes = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs()).getAllowedMimeTypes();
 
-        DocumentFile outputVideo = uploadJob.addCompressedFile(this, rawVideo, compressionSettings.getOutputFileMimeType());
+        String outputMimeType = compressionSettings.getOutputFileExt(serverAcceptedMimeTypes);
+        DocumentFile outputVideo = uploadJob.addCompressedFile(this, rawVideo, outputMimeType);
         final UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob);
 
         compressor.invokeFileCompression(this, rawVideo, outputVideo.getUri(), listener, compressionSettings);

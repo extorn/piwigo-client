@@ -139,7 +139,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
-    private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final String MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE = "id_downloadedFile";
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
@@ -325,33 +324,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     public Basket getBasket() {
         return basket;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
-        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        if (!BuildConfig.DEBUG && result != ConnectionResult.SUCCESS) {
-            if (googleApi.isUserResolvableError(result)) {
-                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
-                d.setOnDismissListener(dialog -> {
-                    if (!BuildConfig.DEBUG) {
-                        finish();
-                    }
-                });
-                d.show();
-            } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                        if (!BuildConfig.DEBUG) {
-                            finish();
-                        }
-                    }
-                });
-            }
-        }
     }
 
     @Override

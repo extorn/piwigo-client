@@ -594,7 +594,8 @@ public class IOUtils {
 
     @RequiresApi(api = KITKAT)
     public static boolean setLastModified(Context context, @NonNull Uri uri, long lastModified) {
-        if("file".equals(uri.getScheme())) {
+        String uriScheme = uri.getScheme();
+        if(uriScheme == null || "file".equals(uri.getScheme())) {
             File f = new File(Objects.requireNonNull(uri.getPath()));
             if(f.exists()) {
                 return f.setLastModified(lastModified);
@@ -950,15 +951,17 @@ public class IOUtils {
         return map;
     }
 
-    public static void copyFile(Context context, File tmpFile, Uri toUri) throws FileNotFoundException {
-        FileDescriptor fdOut = context.getContentResolver().openFileDescriptor(toUri,"rwt").getFileDescriptor();
-        try(FileChannel fcOut = new FileInputStream(fdOut).getChannel();
-            FileChannel fcIn = new FileInputStream(tmpFile).getChannel();) {
-            fcOut.transferFrom(fcIn, 0, fcIn.size());
+    public static void copyFile(Context context, File tmpFile, Uri toUri) {
+
+        try(ParcelFileDescriptor pfdOut = context.getContentResolver().openFileDescriptor(toUri,"rwt")) {
+            FileDescriptor fdOut = pfdOut.getFileDescriptor();
+            try(FileChannel fcOut = new FileInputStream(fdOut).getChannel(); FileChannel fcIn = new FileInputStream(tmpFile).getChannel()) {
+                fcOut.transferFrom(fcIn, 0, fcIn.size());
+            }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
         }
     }
 
@@ -1020,5 +1023,25 @@ public class IOUtils {
 
     public static double bytesToMb(long bytes) {
         return BigDecimal.valueOf(bytes).divide(BigDecimal.valueOf(1024 * 1024), 2, BigDecimal.ROUND_HALF_EVEN).doubleValue();
+    }
+
+    public static boolean delete(Context context, Uri uri) {
+        String path = uri.getPath();
+        if(path != null) {
+            File f = new File(path);
+            if (f.exists()) {
+                return f.delete();
+            }
+        }
+        return 0 < context.getContentResolver().delete(uri, null, null);
+    }
+
+    public static void addFileToMediaStore(Context context, Uri fileUri) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
+        values.put(MediaStore.MediaColumns.MIME_TYPE, IOUtils.getMimeType(context, fileUri));
+        values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
+        Uri uri = context.getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
     }
 }

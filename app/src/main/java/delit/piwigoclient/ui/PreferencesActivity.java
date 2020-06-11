@@ -46,7 +46,6 @@ public class PreferencesActivity extends MyActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
-        EventBus.getDefault().register(this);
         showFragmentNow(new PreferencesFragment());
         //getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).commit();
     }
@@ -140,18 +139,6 @@ public class PreferencesActivity extends MyActivity {
     @Override
     public void onStart() {
         super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     @Override

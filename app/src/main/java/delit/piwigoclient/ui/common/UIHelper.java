@@ -129,7 +129,9 @@ public abstract class UIHelper<T> {
         this.context = context.getApplicationContext();
         this.prefs = prefs;
         this.parent = new WeakReference<>(parent);
-        setupDialogBoxes();
+        if(canShowDialog()) {
+            setupDialogBoxes();
+        }
         setupNotificationsManager();
     }
 
@@ -260,6 +262,9 @@ public abstract class UIHelper<T> {
         View parentView = getParentView();
         if(parentView == null || !canShowDialog()) {
             return;
+        }
+        if(canShowDialog()) {
+            setupDialogBoxes();
         }
         if(simpleMessageQueue.isEmpty()) {
             return;
@@ -629,7 +634,9 @@ public abstract class UIHelper<T> {
     }
 
     public void closeAllDialogs() {
-        alertDialog.dismiss();
+        if(alertDialog != null) {
+            alertDialog.dismiss();
+        }
         hideProgressIndicator();
     }
 

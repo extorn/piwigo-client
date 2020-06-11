@@ -84,7 +84,7 @@ public class LicenceCheckingHelper {
         doCheck();
     }
 
-    private static class LicenceCheckAction<T extends ActivityUIHelper<MyActivity>> extends UIHelper.QuestionResultAdapter<T> {
+    private static class LicenceCheckAction<T extends ActivityUIHelper<? extends MyActivity<?>>> extends UIHelper.QuestionResultAdapter<T> {
         private static final long serialVersionUID = 9060842177348571227L;
         private final boolean allowRetry;
 

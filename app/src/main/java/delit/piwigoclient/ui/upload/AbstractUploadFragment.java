@@ -2,16 +2,12 @@ package delit.piwigoclient.ui.upload;
 
 import android.Manifest;
 import android.app.Notification;
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +42,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MediaContent;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -57,7 +52,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,7 +67,6 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.ProgressIndicator;
@@ -83,7 +76,6 @@ import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.Md5SumUtils;
-import delit.libs.util.ObjectUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -557,7 +549,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                compressVideosButton.setEnabled(isVideoFilesWaitingForUpload() && uploadFilesNowButton.isEnabled());
+                compressVideosButton.setEnabled(isVideoFilesWaitingForUpload());
             }
         });
         ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
@@ -585,6 +577,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             long rawVal = compressVideosQualitySpinner.getSelectedItemId();
             int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
             double bpps = ((double) rawVal) / 1000;
+            compressionSettings.setAddVideoTrack(rawVal != 0);
             compressionSettings.setAddAudioTrack(audioBitrate != 0);
             compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
             compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
@@ -600,7 +593,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 String filename = inputDocFile.getName();
                 outputVideo = new File(moviesFolder, "compressed_" + i + filename);
             } while (outputVideo.exists());
-            Uri outputVideoUri = Uri.fromFile(LegacyIOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType())));
+            String compressedFileExt = compressionSettings.getOutputFileExt();
+            Uri outputVideoUri = Uri.fromFile(LegacyIOUtils.changeFileExt(outputVideo, compressedFileExt));
             new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, outputVideoUri, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
         }
     }
@@ -856,6 +850,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Override
     public void onResume() {
         super.onResume();
+        FileSelectionCompleteEvent evt = EventBus.getDefault().getStickyEvent(FileSelectionCompleteEvent.class);
+        if(evt != null) {
+            onEvent(evt);
+        }
     }
 
     private FilesToUploadRecyclerViewAdapter getFilesForUploadViewAdapter() {
@@ -1242,9 +1240,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             if (event.getSelectedItems() != null && event.getSelectedItems().size() > 0) {
                 CategoryItem selectedAlbum = event.getSelectedItems().iterator().next();
-                uploadToAlbum = selectedAlbum.toStub();
-                selectedGalleryTextView.setText(event.getAlbumPath(selectedAlbum));
-//                selectedGalleryTextView.setText(uploadToAlbum.getName());
+                setUploadToAlbum(selectedAlbum.toStub());
             }
         }
     }
@@ -1277,6 +1273,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         } else {
             getSelectedGalleryTextView().setText(uploadToAlbum.getName());
         }
+
     }
 
     private TextView getSelectedGalleryTextView() {
@@ -1390,8 +1387,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             DisplayUtils.runOnUiThread(() -> {
                 uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression failed");
                 linkedView.setEnabled(true);
+                Crashlytics.log(Log.ERROR, TAG, "Video Compression failed");
+                Crashlytics.logException(e);
                 AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
+                IOUtils.delete(uiHelper.getContext(), outputFile);
             });
 
         }
@@ -1403,6 +1403,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 linkedView.setEnabled(true);
                 AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
+                IOUtils.addFileToMediaStore(uiHelper.getContext(), outputFile);
             });
         }
 
@@ -1432,7 +1433,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             } else {
                 uiHelper.showDetailedMsg(R.string.alert_information, String.format(Locale.getDefault(), "Video Compression\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr), Toast.LENGTH_SHORT, 1);
             }
-            linkedView.setEnabled(false);
         }
     }
 

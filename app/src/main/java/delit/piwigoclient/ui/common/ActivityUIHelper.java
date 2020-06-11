@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -24,7 +25,7 @@ public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
 
     @Override
     protected boolean canShowDialog() {
-        return super.canShowDialog() && !getParent().isFinishing();
+        return super.canShowDialog() && ViewCompat.isAttachedToWindow(getParentView()) && !getParent().isFinishing();
     }
 
     @Override

@@ -196,11 +196,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     @Override
-    protected void doInOnCreateView() {
-        // Do nothing (don't want to register for service calls. we'll do that as the fragment is displayed).
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
         if (args != null) {
