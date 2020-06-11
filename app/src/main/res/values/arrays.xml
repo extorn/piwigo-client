@@ -266,7 +266,7 @@
         -->
         <item>1.4.0.66</item>
         <item>"Changes:
-                - Major ewrite of all the theme related code to radically simplify and correct colors across android versions
+                - Major rewrite of all the theme related code to radically simplify and correct colors across android versions
                 - Changed the theme to a day/night one so it is user configurable (in night, no screens have white background).
                 - added support for Uri and scoped storage:
                     - share files easily
@@ -274,7 +274,7 @@
                     - deleting files after upload is now working again
                     - check files are unique prior to upload - this is now harder, so it takes a little longer
                     - The in app file selector is relatively slow to load folders containing lots of files - limitations in android APIs at present
-                - when compressing videos, it will try and use m4a or m4v extensions (if your server supports these) and you select audio only or video only
+                - when compressing videos, you can strip the audio or video stream off if wanted to create an m4a or m4v file (mp4 file extension added if that's all your server allows).
                 - Drawer menu available from the upload screen to allow you to jump to gallery, or settings
                Bugfix:
                 - Upload page retains files when adding new files from system selector and or navigation to in the main gallery
