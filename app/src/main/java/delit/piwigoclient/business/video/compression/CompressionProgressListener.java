@@ -1,6 +1,5 @@
 package delit.piwigoclient.business.video.compression;
 
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;

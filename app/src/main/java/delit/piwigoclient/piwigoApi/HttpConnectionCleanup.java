@@ -2,7 +2,6 @@ package delit.piwigoclient.piwigoApi;
 
 import android.content.Context;
 
-import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.SafeAsyncTask;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;

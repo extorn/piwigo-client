@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.preference.ClientCertificatePreference;
 import delit.libs.ui.view.preference.EditableListPreference;

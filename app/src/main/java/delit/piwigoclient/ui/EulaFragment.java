@@ -51,8 +51,6 @@ public class EulaFragment extends MyFragment<EulaFragment> {
             adView.setVisibility(View.GONE);
         }
 
-//        ScrollView eulaScrollingTextView = view.findViewById(R.id.eula_text);
-
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
         int currentEulaVersion = getResources().getInteger(R.integer.eula_version);
         boolean agreedEula = agreedEulaVersion >= currentEulaVersion;

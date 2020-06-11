@@ -2,7 +2,6 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -27,7 +26,6 @@ import java.util.concurrent.RejectedExecutionException;
 
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;

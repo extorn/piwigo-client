@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;

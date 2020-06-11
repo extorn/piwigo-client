@@ -1,16 +1,13 @@
 package delit.piwigoclient.piwigoApi;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -24,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.SafeAsyncTask;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;

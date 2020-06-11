@@ -16,7 +16,6 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 import cz.msebera.android.httpclient.util.TextUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 

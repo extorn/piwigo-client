@@ -3,7 +3,6 @@ package delit.libs.ui.view.preference;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -61,7 +60,6 @@ import java.util.regex.Pattern;
 import javax.security.auth.x500.X500Principal;
 
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.SafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.ProgressIndicator;
@@ -78,7 +76,6 @@ import delit.libs.util.security.SecurityOperationException;
 import delit.libs.util.security.X509LoadOperation;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.PreferencesActivity;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 

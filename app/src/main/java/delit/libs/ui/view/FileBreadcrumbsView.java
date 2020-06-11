@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-
 import java.io.File;
 
 public class FileBreadcrumbsView extends AbstractBreadcrumbsView<File> {
