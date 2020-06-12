@@ -2,17 +2,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- used at activity level -->
-    <style name="Theme.App" parent="Theme.App.Base">
-        <!-- these colors MUST be applied here else it isn't taken -->
+    <style name="Theme.App" parent="Theme.App.Dark.Base"/>
+
+    <!-- used at activity level -->
+    <style name="Theme.App.EditPages" parent="Theme.App.EditPages.Base"/>
+
+
+    <style name="Theme.App.Dark.Base" parent="Theme.App.Base">
+        <!-- these colors MUST be applied here else it isn't taken by the top level activity for some reason -->
         <item name="android:colorBackground">@color/app_color_background</item>
+        <item name="colorPrimary">@color/app_primary</item>
         <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
         <item name="android:theme">@style/ThemeOverlay.App.Dark</item>
         <item name="materialThemeOverlay">@style/ThemeOverlay.App.Dark</item>
         <item name="colorControlHighlight">@color/ripple_dark</item>
     </style>
 
-    <!-- used at activity level -->
-    <style name="Theme.App.EditPages" parent="Theme.App.Base">
+    <style name="Theme.App.EditPages.Base" parent="Theme.App.Base">
+        <!-- these colors MUST be applied here else it isn't taken by the top level activity for some reason -->
+        <item name="colorPrimary">@color/app_primary</item>
         <!-- the window background is set in the main app theme, so we need to cover it - hence use of background for these panels -->
         <item name="android:colorBackground">@color/app_color_background_light</item>
         <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
@@ -24,6 +32,8 @@
 
     <!-- this defines how things are laid out -->
     <style name="Theme.App.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+
         <!-- needed for older versions (pre lollipop - don't know why - it's inferring that the Light theme is in use) -->
         <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
 
@@ -46,7 +56,7 @@
         <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
 
         <!-- change the app bar at screen top to not use default background color -->
-        <!--<item name="actionBarStyle">@style/Theme.MaterialComponents.DayNight.DarkActionBar</item>-->
+        <item name="actionBarStyle">@style/App.Theme.MaterialComponents.DayNight.DarkActionBar</item>
         <item name="appBarLayoutStyle">@style/App.Widget.MaterialComponents.AppBarLayout</item>
         <!-- the style isn't applied correctly when set here. Make sure to set it direct on the toolbar! -->
         <item name="toolbarStyle">@style/App.Widget.MaterialComponents.Toolbar</item>
@@ -59,6 +69,7 @@
         <!--<item name="fontFamily">@font/roboto_mono</item>
         <item name="android:fontFamily">@font/roboto_mono</item>-->
 
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.MyTheme.BottomSheetDialog</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
         <item name="android:alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
         <item name="android:dialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
@@ -112,6 +123,9 @@
         <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
     </style>
 
+    <style name="App.Theme.MaterialComponents.DayNight.DarkActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    </style>
+
     <!-- dark color theme -->
     <style name="ThemeOverlay.App.Dark" parent="ThemeOverlay.MaterialComponents.Dark">
         <!-- used for text -->
@@ -150,8 +164,15 @@
         <item name="scrimLight">@color/color_scrim_light_bright</item>
 
         <!-- These override the standard light colors -->
+
+        <!--   color for the app bar and other primary UI elements -->
         <item name="colorPrimary">@color/app_primary</item>
+        <!--   a darker variant of the primary color, used for
+           the status bar (on Android 5.0+) and contextual app bars -->
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
+        <!--   a secondary color for controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/app_secondary</item>
+
         <item name="colorPrimarySurface">?attr/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/app_primary_variant</item>
         <item name="colorOnPrimary">@color/app_color_on_primary</item>

@@ -10,7 +10,8 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="delit.piwigoclient.ui.CustomAppBarLayoutBehaviour">
+        app:layout_behavior="delit.piwigoclient.ui.CustomAppBarLayoutBehaviour"
+        style="?appBarLayoutStyle">
 
         <delit.libs.ui.view.CustomToolbar
             android:id="@+id/toolbar"

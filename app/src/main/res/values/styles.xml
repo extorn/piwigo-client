@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="App.Widget.EditText.FieldEntry.Clickable" parent="App.Widget.EditText.FieldEntry">
         <item name="android:textColor">@color/clickable_text_color_selector</item>
@@ -47,13 +47,31 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+    <style name="App.MaterialAlertDialog.MaterialComponents.Title.Panel" parent="MaterialAlertDialog.MaterialComponents.Title.Panel">
+    </style>
+
+    <style name="ThemeOverlay.MyTheme.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--<item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>-->
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <!--<item name="bottomSheetStyle">@style/Widget.MyTheme.BottomSheet.Modal</item>-->
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="materialAlertDialogTitlePanelStyle">@style/App.MaterialAlertDialog.MaterialComponents.Title.Panel</item>
+        <!-- TODO why isn't the parent ThemeOverlay.MaterialComponents.MaterialAlertDialog ???-->
         <!-- Use the edit color scheme (to force it on other themed pages) -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
+        <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
     </style>
     <style name="ThemeOverlay.App.AlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <!-- TODO why isn't the parentThemeOverlay.MaterialComponents.Dialog.Alert ??? -->
         <!-- Use the edit color scheme (to force it on other themed pages) -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
+        <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
     </style>
 
 
@@ -198,7 +216,7 @@
         <item name="android:layout_marginTop">0dp</item>
     </style>
 
-    <style name="App.Widget.MaterialComponents.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" >
+    <style name="App.Widget.MaterialComponents.Toolbar" parent="Widget.MaterialComponents.Toolbar.PrimarySurface" >
     </style>
 
     <style name="ThemeOverlay.MaterialComponents.Toolbar.Primary" parent="">

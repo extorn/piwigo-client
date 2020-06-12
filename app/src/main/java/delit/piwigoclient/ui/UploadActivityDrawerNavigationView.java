@@ -310,9 +310,9 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
         Menu m = getMenu();
         if (m != null) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-            boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
-            m.findItem(R.id.nav_groups).setVisible(isAdminUser && !isReadOnly);
-            m.findItem(R.id.nav_users).setVisible(isAdminUser && !isReadOnly);
+//            boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
+//            m.findItem(R.id.nav_groups).setVisible(isAdminUser && !isReadOnly);
+//            m.findItem(R.id.nav_users).setVisible(isAdminUser && !isReadOnly);
             m.findItem(R.id.nav_settings).setVisible(!isReadOnly);
         }
     }

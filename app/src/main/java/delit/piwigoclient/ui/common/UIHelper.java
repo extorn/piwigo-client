@@ -21,6 +21,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -361,7 +362,6 @@ public abstract class UIHelper<T> {
         if(contextBase instanceof Activity) {
             Activity activity = (Activity) contextBase;
             try {
-
                 progressIndicator = ActivityCompat.requireViewById(activity, R.id.progressIndicator);
             } catch (IllegalArgumentException e) {
                 if (BuildConfig.DEBUG) {
@@ -427,7 +427,7 @@ public abstract class UIHelper<T> {
     }
 
     protected void buildAlertDialog() {
-        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new ContextThemeWrapper(getContext(), R.style.Theme_App_EditPages));
         builder1.setCancelable(true);
         dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);
@@ -473,8 +473,14 @@ public abstract class UIHelper<T> {
         }
         dismissListener.setListener(nextMessage.getListener());
         dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != Integer.MIN_VALUE);
-        alertDialog.show();
-        nextMessage.getListener().onShow(alertDialog);
+
+        try {
+            alertDialog.show();
+            nextMessage.getListener().onShow(alertDialog);
+        } catch(WindowManager.BadTokenException e) {
+            Crashlytics.logException(e);
+            Crashlytics.log(Log.ERROR, TAG, "Unable to show dialog as window is detached from parent : " + getParent());
+        }
     }
 
     protected void showDialog(final QueuedDialogMessage nextMessage) {

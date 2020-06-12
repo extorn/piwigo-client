@@ -7,12 +7,13 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    tools:context=".ui.UploadActivity">
+    tools:context=".ui.UploadActivity"
+    android:theme="@style/Theme.App.EditPages">
 
     <include
         layout="@layout/app_bar_upload"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <delit.piwigoclient.ui.UploadActivityDrawerNavigationView
         android:id="@+id/nav_view"

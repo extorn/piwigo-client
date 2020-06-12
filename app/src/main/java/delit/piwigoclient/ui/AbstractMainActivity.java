@@ -215,6 +215,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
 
         toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
         appBar = findViewById(R.id.appbar);
         /*

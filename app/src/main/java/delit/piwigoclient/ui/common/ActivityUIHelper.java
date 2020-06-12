@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 
@@ -21,6 +22,11 @@ import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
 public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
     public ActivityUIHelper(T parent, SharedPreferences prefs) {
         super(parent, prefs, parent);
+    }
+
+    @Override
+    public Context getContext() {
+        return getParent();
     }
 
     @Override

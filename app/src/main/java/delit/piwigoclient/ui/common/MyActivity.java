@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -325,8 +327,14 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         if (!activitySwap) {
             onAppResumed();
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String label = getString(R.string.app_name);
+            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_new);
+            int color = DisplayUtils.getColor(this, R.attr.colorPrimary);
+            ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(label, icon, color);
+            setTaskDescription(taskDesc);
+        }
         super.onResume();
-
     }
 
 

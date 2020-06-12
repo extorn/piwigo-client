@@ -115,6 +115,16 @@ public class UploadActivity extends MyActivity {
         if(lastIntent == null) {
             lastIntent = getIntent();
         }
+
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if (!isCurrentUserAuthorisedToUpload(sessionDetails)) {
+            if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
+                runLogin(connectionPrefs);
+            } else {
+                createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+            }
+        }
         checkForSentFiles(lastIntent);
     }
 
@@ -172,7 +182,7 @@ public class UploadActivity extends MyActivity {
         } else {
 
             if (startedFresh) { // the fragment will be created automatically from the fragment manager state if there is state :-)
-                showUploadFragment(true, connectionPrefs);
+                showUploadFragment(connectionPrefs);
             }
         }
 
@@ -369,7 +379,7 @@ public class UploadActivity extends MyActivity {
 
 
 
-    void showUploadFragment(boolean allowLogin, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    void showUploadFragment(ConnectionPreferences.ProfilePreferences connectionPrefs) {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         CategoryItemStub currentAlbum = getIntent().getParcelableExtra(INTENT_DATA_CURRENT_ALBUM);
@@ -378,10 +388,6 @@ public class UploadActivity extends MyActivity {
             Fragment f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
-        } else if (allowLogin && sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
-            runLogin(connectionPrefs);
-        } else {
-            createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
         }
     }
 
@@ -697,7 +703,7 @@ public class UploadActivity extends MyActivity {
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
                 if (((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails() != null) {
                     Log.e("UploadActivity", "Retrieved user login success response");
-                    getParent().showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
+                    getParent().showUploadFragment(((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
                 } else {
                     getParent().createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
                 }

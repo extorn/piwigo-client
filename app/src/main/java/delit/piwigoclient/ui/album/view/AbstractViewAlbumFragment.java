@@ -260,26 +260,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         return false;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            loadModelFromArguments();
-        } else {
-            // restore previous viewed album.
-            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
-                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
-                reopening = true;
-                String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
-                AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
-                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
-            } else {
-                throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
-            }
-        }
-    }
 
     protected void loadModelFromArguments() {
         Bundle args = getArguments();
@@ -451,6 +431,22 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
+
+        if (getArguments() != null) {
+            loadModelFromArguments();
+        } else {
+            // restore previous viewed album.
+            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                reopening = true;
+                String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+                AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
+                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
+            } else {
+                throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
+            }
+        }
 
         View v = inflater.inflate(R.layout.fragment_album_view, container, false);
         Crashlytics.log(Log.DEBUG, getTag(), "view from album fragment - " + v);

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- used at activity level -->
+    <style name="Theme.App" parent="Theme.App.Dark.Base">
+        <item name="android:windowTitleBackgroundStyle">@style/App.WindowTitleBackground.Material</item>
+    </style>
+
+    <!-- used at activity level -->
+    <style name="Theme.App.EditPages" parent="Theme.App.EditPages.Base">
+        <item name="android:windowTitleBackgroundStyle">@style/App.WindowTitleBackground.Material</item>
+    </style>
+
+    <style name="App.WindowTitleBackground.Material" parent="Base.DialogWindowTitleBackground.AppCompat">
+
+    </style>
+
+</resources>
