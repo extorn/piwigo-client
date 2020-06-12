@@ -45,6 +45,7 @@ import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
  */
 
 public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpResponseHandler {
+    private static final String TAG = "PiwigoRespHndlr";
     private final boolean built;
     private final String tag;
     private boolean allowSessionRefreshAttempt;
@@ -124,8 +125,14 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         if(BuildConfig.DEBUG) {
             double currentProgressPercent = Math.floor((totalSize > 0) ? (bytesWritten * 1.0 / totalSize) * 100 : -1);
             if(currentProgressPercent < 0 || currentProgressPercent > lastProgressReportAtPercent) {
-                lastProgressReportAtPercent = currentProgressPercent;
-                super.onProgress(bytesWritten, totalSize);
+                if(totalSize > 1) {
+                    lastProgressReportAtPercent = currentProgressPercent;
+                    super.onProgress(bytesWritten, totalSize);
+                } else {
+                    if(BuildConfig.DEBUG) {
+                        Log.v(TAG, String.format("Progress %d from %s", bytesWritten, getRequestURIAsStr()));
+                    }
+                }
             }
         }
     }
