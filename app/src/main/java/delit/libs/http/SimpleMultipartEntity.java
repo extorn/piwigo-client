@@ -141,7 +141,9 @@ class SimpleMultipartEntity implements HttpEntity {
 
     private void updateProgress(long count) {
         bytesWritten += count;
-        progressHandler.sendProgressMessage(bytesWritten, totalSize);
+        if(totalSize >= bytesWritten) {
+            progressHandler.sendProgressMessage(bytesWritten, totalSize);
+        }
     }
 
     @Override
@@ -189,7 +191,7 @@ class SimpleMultipartEntity implements HttpEntity {
     @Override
     public void writeTo(final OutputStream outstream) throws IOException {
         bytesWritten = 0;
-        totalSize = (int) getContentLength();
+        totalSize = getContentLength();
         out.writeTo(outstream);
         updateProgress(out.size());
 
