@@ -7,7 +7,6 @@ import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -37,6 +36,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -181,6 +181,9 @@ public abstract class UIHelper<T> {
 
     public void showNotification(String source, int notificationId, Notification notification) {
         // Builds the notification and issues it.
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "Posting notification : " + notificationId + " " + notification);
+        }
         notificationManager.notify(source, notificationId, notification);
     }
 
@@ -355,18 +358,16 @@ public abstract class UIHelper<T> {
     }
 
     private void loadProgressIndicatorIfPossible() {
-        Context contextBase = context;
-        if(contextBase instanceof ContextWrapper && !(contextBase instanceof Activity)) {
-            contextBase = ((ContextWrapper)context).getBaseContext();
-        }
-        if(contextBase instanceof Activity) {
-            Activity activity = (Activity) contextBase;
-            try {
-                progressIndicator = ActivityCompat.requireViewById(activity, R.id.progressIndicator);
-            } catch (IllegalArgumentException e) {
-                if (BuildConfig.DEBUG) {
-                    Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + activity.getLocalClassName());
-                }
+        try {
+            View view = getParentView();
+            if(view != null) {
+                progressIndicator = ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator);
+            } else {
+                throw new IllegalArgumentException("To get log statement");
+            }
+        } catch (IllegalArgumentException e) {
+            if (BuildConfig.DEBUG) {
+                Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + getParent().getClass().getName());
             }
         }
     }
@@ -451,25 +452,12 @@ public abstract class UIHelper<T> {
             nextMessage.populateCustomView(dialogView);
         }
 
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getString(nextMessage.getPositiveButtonTextId()), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                nextMessage.getListener().onResult(alertDialog, true);
-            }
-        });
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(nextMessage.getNegativeButtonTextId()), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                nextMessage.getListener().onResult(alertDialog, false);
-            }
-        });
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, context.getString(nextMessage.getPositiveButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, true));
+        if(nextMessage.isShowNegativeButton()) {
+            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(nextMessage.getNegativeButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, false));
+        }
         if (nextMessage.isShowNeutralButton()) {
-            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, context.getString(nextMessage.getNeutralButtonTextId()), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    nextMessage.getListener().onResult(alertDialog, null);
-                }
-            });
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, context.getString(nextMessage.getNeutralButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, null));
         }
         dismissListener.setListener(nextMessage.getListener());
         dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != Integer.MIN_VALUE);
@@ -1457,6 +1445,10 @@ public abstract class UIHelper<T> {
                 this.layoutId = layoutId;
             }
             this.neutralButtonTextId = neutralButtonTextId;
+        }
+
+        public boolean isShowNegativeButton() {
+            return negativeButtonTextId != Integer.MIN_VALUE;
         }
 
         public boolean isShowNeutralButton() {

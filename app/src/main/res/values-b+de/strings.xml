@@ -647,6 +647,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="progress_loading_folder_content">Ordnerinhalt laden</string>
     <string name="adding_files">Dateien hinzufügen</string>
     <string name="calculating_file_checksums">Berechnen von Dateiprüfsummen</string>
+    <string name="alert_error_starting_download">Fehler beim Starten des Dateidownloads</string>
 
 </resources>
 

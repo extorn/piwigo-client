@@ -1030,5 +1030,6 @@ SOFTWARE.
     <string name="progress_loading_folder_content">Loading folder content</string>
     <string name="adding_files">Adding files</string>
     <string name="calculating_file_checksums">Calculating File Checksums</string>
+    <string name="alert_error_starting_download">Error starting file download</string>
 
 </resources>

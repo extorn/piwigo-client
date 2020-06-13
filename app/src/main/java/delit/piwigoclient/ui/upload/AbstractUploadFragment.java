@@ -49,7 +49,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -73,7 +72,6 @@ import delit.libs.ui.view.list.BiArrayAdapter;
 import delit.libs.util.ArrayUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
@@ -583,18 +581,22 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 //                compressionSettings.disableFastStart();
 
 
-            File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-            File outputVideo;
+            DocumentFile moviesFolder = DocumentFile.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES));
+            DocumentFile outputVideo;
             int i = 0;
             DocumentFile inputDocFile = DocumentFile.fromSingleUri(requireContext(), fileForCompression);
+            String compressedFileExt = compressionSettings.getOutputFileExt();
+            String outputFilenameSuffix = IOUtils.getFileNameWithoutExt(inputDocFile.getName()) + '.' + compressedFileExt;
             do {
                 i++;
-                String filename = inputDocFile.getName();
-                outputVideo = new File(moviesFolder, "compressed_" + i + filename);
-            } while (outputVideo.exists());
-            String compressedFileExt = compressionSettings.getOutputFileExt();
-            Uri outputVideoUri = Uri.fromFile(LegacyIOUtils.changeFileExt(outputVideo, compressedFileExt));
-            new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, outputVideoUri, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
+                outputVideo = moviesFolder.findFile("compressed_" + i + outputFilenameSuffix);
+                if(outputVideo == null) {
+                    outputVideo = moviesFolder.createFile(compressionSettings.getOutputFileMimeType(null), "compressed_" + i + outputFilenameSuffix);
+                    break;
+                }
+            } while (true);
+
+            new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, outputVideo.getUri(), new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
         }
     }
 

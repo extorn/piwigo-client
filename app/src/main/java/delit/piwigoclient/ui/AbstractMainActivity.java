@@ -44,7 +44,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -53,15 +52,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.CustomToolbar;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -474,7 +472,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         synchronized (activeDownloads) {
             queuedDownloads.add(event);
             if (activeDownloads.size() == 0) {
-                processNextQueuedDownloadEvent();
+                try {
+                    processNextQueuedDownloadEvent();
+                } catch(Exception e) {
+                    Crashlytics.logException(e);
+                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), Integer.MIN_VALUE, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<?>>(getUiHelper()){});
+                    activeDownloads.remove(0);
+                }
             } else {
                 getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_queued_for_download, queuedDownloads.size()));
             }
@@ -579,13 +583,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         removeActionDownloadEvent(); // we've got the event, so ignore the return
         for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
             // add the file details to the media store :-)
-            try {
-                //TODO confirm this isn't needed for the new DocumentFile route too.
-                File f = LegacyIOUtils.getFile(fileDetail.getDownloadedFile());
-                MediaScanner.instance(this).invokeScan(new MediaScanner.MediaScannerImportTask(MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE, f));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            IOUtils.addFileToMediaStore(this, fileDetail.getDownloadedFile());
         }
         if (event.isShareDownloadedWithAppSelector()) {
             Set<Uri> destinationFiles = new HashSet<>(event.getFileDetails().size());
@@ -597,8 +595,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     private void notifyUserFileDownloadComplete(final UIHelper uiHelper, final Uri downloadedFile) {
-        uiHelper.showDetailedMsg(R.string.alert_image_download_title, uiHelper.getContext().getString(R.string.alert_image_download_complete_message));
-        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getContext()).load(R.drawable.ic_notifications_black_24dp).into(new DownloadTarget(uiHelper, downloadedFile));
+        //uiHelper.showDetailedMsg(R.string.alert_image_download_title, uiHelper.getContext().getString(R.string.alert_image_download_complete_message));
+        if(BuildConfig.DEBUG) {
+            Log.e(TAG, "Downloaded File - Generating Thumbnail for " + downloadedFile);
+        }
+        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getContext()).load(downloadedFile).resize(256,256).centerInside().into(new DownloadTarget(uiHelper, downloadedFile));
     }
 
     private void shareFilesWithOtherApps(Context context, final Set<Uri> filesToShare) {
@@ -706,6 +707,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     private static class DownloadTarget implements Target {
 
+        private static final AtomicInteger notificationId = new AtomicInteger(100);
 
         private final UIHelper uiHelper;
         private final Uri downloadedFile;
@@ -721,16 +723,17 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            Intent notificationIntent;
-            Context context;
-            try {
-                context = getContext();
-            } catch (IllegalStateException e) {
-                Crashlytics.log(Log.ERROR, TAG, "No context to create notification in");
-                return;
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG, "Generated bitmap from : " + downloadedFile.getPath());
             }
+            DisplayUtils.runOnUiThread(() -> buildAndShowNotification(bitmap));
+        }
 
-//        if(openImageNotFolder) {
+        private void buildAndShowNotification(Bitmap bitmap) {
+
+            Intent notificationIntent;
+
+            //        if(openImageNotFolder) {
             notificationIntent = new Intent(Intent.ACTION_VIEW);
             // Action on click on notification
             MimeTypeMap map = MimeTypeMap.getSingleton();
@@ -744,21 +747,23 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
             }
 
-//        } else {
+            //        } else {
             // N.B.this only works with a very select few android apps - folder browsing seemingly isn't a standard thing in android.
-//            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
-//            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
-//            notificationIntent.setDataAndType(selectedUri, "resource/folder");
-//        }
+            //            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
+            //            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
+            //            notificationIntent.setDataAndType(selectedUri, "resource/folder");
+            //        }
 
             PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
                     notificationIntent, 0);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), uiHelper.getDefaultNotificationChannelId())
+                    //                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                     .setLargeIcon(bitmap)
                     .setContentTitle(getContext().getString(R.string.notification_download_event))
                     .setContentText(IOUtils.getFilename(getContext(), downloadedFile))
                     .setContentIntent(pendingIntent)
+                    .setGroup("Downloads")
                     .setAutoCancel(true);
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -770,18 +775,24 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 mBuilder.setCategory(Notification.CATEGORY_EVENT);
             }
 
-//            uiHelper.clearNotification(TAG, 2);
-            uiHelper.showNotification(TAG, 2, mBuilder.build());
+            uiHelper.showNotification(TAG, notificationId.getAndIncrement(), mBuilder.build());
         }
 
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
-            //Do nothing... Should never ever occur
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG, "Failed to generate bitmap from : " + downloadedFile.getPath());
+            }
+            Bitmap errorBitmap = DisplayUtils.getBitmap(errorDrawable);
+            DisplayUtils.runOnUiThread(() -> buildAndShowNotification(errorBitmap));
         }
 
         @Override
         public void onPrepareLoad(Drawable placeHolderDrawable) {
             // Don't need to do anything before loading image
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG, "About to generate bitmap from : " + downloadedFile.getPath());
+            }
         }
 
     }

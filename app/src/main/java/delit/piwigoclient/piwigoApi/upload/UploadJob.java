@@ -633,13 +633,15 @@ public class UploadJob implements Parcelable {
     }
 
     private DocumentFile getCompressedFilesFolder(Context c) {
-        File f = new File(c.getExternalCacheDir(), "compressed_vids_for_upload");
-        if (!f.exists()) {
-            if (!f.mkdirs()) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create folder for comrepessed files to be placed");
-            }
+        DocumentFile f = DocumentFile.fromFile(c.getExternalCacheDir());
+        DocumentFile compressedFolder = f.findFile("compressed_vids_for_upload");
+        if (compressedFolder == null) {
+            compressedFolder = f.createDirectory("compressed_vids_for_upload");
         }
-        return DocumentFile.fromFile(f);
+        if (compressedFolder == null) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to create folder for comrepessed files to be placed");
+        }
+        return compressedFolder;
     }
 
     public boolean canCompressVideoFile(Uri rawVideo) {

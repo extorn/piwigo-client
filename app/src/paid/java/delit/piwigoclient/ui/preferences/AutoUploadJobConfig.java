@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.google.android.exoplayer2.util.MimeTypes;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.Collections;
@@ -23,7 +25,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import delit.libs.util.CollectionUtils;
-import delit.libs.util.LegacyIOUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -280,27 +282,32 @@ public class AutoUploadJobConfig implements Parcelable {
             return Collections.unmodifiableMap(filesToHashMap);
         }
 
-        public static File getFolder(Context c) {
+        public static DocumentFile getFolder(Context c) {
             File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobData");
             if(!jobsFolder.exists()) {
                 if(!jobsFolder.mkdir()) {
                     throw new RuntimeException("Unable to create required app data folder");
                 }
             }
-            return jobsFolder;
+            return DocumentFile.fromFile(jobsFolder);
         }
 
         public void saveToFile(Context c) {
-            File f = new File(getFolder(c), ""+jobId);
-            LegacyIOUtils.saveObjectToFile(f, this);
+            DocumentFile folder = getFolder(c);
+            DocumentFile child = folder.findFile(""+jobId);
+            if(!child.exists()) {
+                child = folder.createFile(MimeTypes.BASE_TYPE_APPLICATION, ""+jobId);
+            }
+            IOUtils.saveObjectToDocumentFile(c, child, this);
         }
 
         public static PriorUploads loadFromFile(Context c, int jobId) {
-            File f = new File(getFolder(c), ""+jobId);
-            if(!f.exists()) {
+            DocumentFile folder = getFolder(c);
+            DocumentFile child = folder.findFile(""+jobId);
+            if(child == null) {
                 return new PriorUploads(jobId);
             } else {
-                PriorUploads uploadedFiles = LegacyIOUtils.readObjectFromFile(f);
+                PriorUploads uploadedFiles = IOUtils.readObjectFromDocumentFile(c.getContentResolver(), child);
                 if(uploadedFiles == null) {
                     return new PriorUploads(jobId);
                 } else if(uploadedFiles.jobId != jobId) {

@@ -516,5 +516,6 @@
     <string name="progress_loading_folder_content">Cargando el contenido de la carpeta</string>
     <string name="adding_files">Agregar archivos</string>
     <string name="calculating_file_checksums">Cálculo de sumas de verificación de archivos</string>
+    <string name="alert_error_starting_download">Error al iniciar la descarga del archivo</string>
 
 </resources>

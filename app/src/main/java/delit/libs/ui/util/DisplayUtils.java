@@ -8,7 +8,11 @@ import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.LocaleList;
@@ -464,6 +468,25 @@ public class DisplayUtils {
         theme.resolveAttribute(attrResId, typedValue, true);
         @StyleRes int style = typedValue.data;
         return style;
+    }
+
+    public static Bitmap getBitmap(Drawable drawable) {
+        Bitmap bitmap = null;
+        if(drawable instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) drawable).getBitmap();
+        }
+        if(bitmap == null) {
+            if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+            } else {
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            }
+
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+        }
+        return bitmap;
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {

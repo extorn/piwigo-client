@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.core.os.ConfigurationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
-import java.io.File;
-
 import delit.piwigoclient.R;
 
 public class AppPreferences {
@@ -19,15 +17,15 @@ public class AppPreferences {
     }
 
     public static DocumentFile getAppDownloadFolder(SharedPreferences prefs, Context context) {
-        File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
         String folder = prefs.getString(context.getString(R.string.preference_app_default_download_folder_key), null);
         if(folder != null) {
             DocumentFile docFile = DocumentFile.fromTreeUri(context, Uri.parse(folder));
-            if(docFile.exists()) {
+            if(docFile != null && docFile.exists()) {
                 return docFile;
             }
         }
-        return DocumentFile.fromTreeUri(context, Uri.fromFile(downloadsFolder));
+        return DocumentFile.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
     }
 
     public static boolean isAlwaysShowStatusBar(SharedPreferences prefs, Context context) {

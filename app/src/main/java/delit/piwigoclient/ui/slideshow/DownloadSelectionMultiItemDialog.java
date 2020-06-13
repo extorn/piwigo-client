@@ -44,6 +44,7 @@ public class DownloadSelectionMultiItemDialog {
     private AlertDialog dialog;
     private FilterItemsRequestedForDownload filterItemsRequestedForDownload;
     private MappedArrayAdapter<String, Integer> downloadActionsOptionsAdapter;
+    private MappedArrayAdapter<AbstractBaseResourceItem.ResourceFile, String> downloadFileSizeOptionsAdapter;
 
     public DownloadSelectionMultiItemDialog(Context context) {
         this.context = new ContextThemeWrapper(context, R.style.Theme_App_EditPages);
@@ -89,7 +90,7 @@ public class DownloadSelectionMultiItemDialog {
         if(pos < 0) {
             throw new IllegalStateException("OK button pressed without a valid file size selected");
         }
-        String selectedFilesizeName = downloadActionsOptionsAdapter.getItem(pos);
+        String selectedFilesizeName = downloadFileSizeOptionsAdapter.getItemValue(pos);
 
         String selectedItem = (String) downloadOptionGroup.getSelectedItem();
         int selectedAction = -1;
@@ -157,7 +158,7 @@ public class DownloadSelectionMultiItemDialog {
                 downloadFileSizeOptionsValues.put(ResourceItem.ResourceFile.getGenericOriginalFile(), ResourceItem.ResourceFile.ORIGINAL);
             }
         }
-        MappedArrayAdapter<AbstractBaseResourceItem.ResourceFile, String> downloadFileSizeOptionsAdapter = new MappedArrayAdapter<>(view.getContext(), R.layout.layout_dialog_select_singlechoice_compressed, downloadFileSizeOptionsValues);
+        downloadFileSizeOptionsAdapter = new MappedArrayAdapter<>(view.getContext(), R.layout.layout_dialog_select_singlechoice_compressed, downloadFileSizeOptionsValues);
 
         ((TextView) view.findViewById(R.id.alertMessage)).setText(R.string.alert_image_download_message);
         downloadOptionGroup = view.findViewById(R.id.download_option);

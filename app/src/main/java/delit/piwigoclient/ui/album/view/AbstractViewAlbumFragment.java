@@ -432,6 +432,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         super.onCreateView(inflater, container, savedInstanceState);
 
+        View v = inflater.inflate(R.layout.fragment_album_view, container, false);
+        Crashlytics.log(Log.DEBUG, getTag(), "view from album fragment - " + v);
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         if (getArguments() != null) {
             loadModelFromArguments();
         } else {
@@ -448,14 +457,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         }
 
-        View v = inflater.inflate(R.layout.fragment_album_view, container, false);
-        Crashlytics.log(Log.DEBUG, getTag(), "view from album fragment - " + v);
-        return v;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
         cacheViewComponentReferences(view);
 
         String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());

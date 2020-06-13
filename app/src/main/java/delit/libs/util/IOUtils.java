@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidClassException;
@@ -40,9 +39,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -82,17 +79,6 @@ public class IOUtils {
         } while (read >= 0);
         inStream.close();
         dst.close();
-    }
-
-    public static void write(InputStream src, File dst) throws IOException {
-        BufferedInputStream inStream = new BufferedInputStream(src);
-        //TODO check what happens if file exists
-        FileOutputStream outStream = new FileOutputStream(dst);
-        ReadableByteChannel inChannel = Channels.newChannel(inStream);
-            FileChannel outChannel = outStream.getChannel();
-            outChannel.transferFrom(inChannel, 0, Long.MAX_VALUE);
-        inStream.close();
-        outStream.close();
     }
 
     public static long getFolderSize(DocumentFile directory, boolean recursive) {
@@ -327,7 +313,6 @@ public class IOUtils {
         return false;
     }
 
-    @RequiresApi(api = KITKAT)
     public static boolean saveObjectToDocumentFile(@NonNull Context context, @NonNull DocumentFile destinationFile, Serializable o) {
         if (destinationFile.isDirectory()) {
             throw new RuntimeException("Not designed to work with a folder as a destination!");

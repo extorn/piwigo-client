@@ -652,5 +652,6 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="progress_loading_folder_content">Chargement du contenu du dossier</string>
     <string name="adding_files">Ajout de fichiers</string>
     <string name="calculating_file_checksums">Calcul des sommes de contrôle de fichier</string>
+    <string name="alert_error_starting_download">Erreur lors du démarrage du téléchargement du fichier</string>
 
 </resources>
