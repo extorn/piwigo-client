@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- silly colors so I can be sure they aren't being used in the app -->
+    <color name="app_secondary">#FF00FF00</color>
+    <color name="app_color_on_surface">#FFFF0000</color>
+    <color name="color_scrim_heavy_bright">#FFFF00FF</color>
+</resources>
