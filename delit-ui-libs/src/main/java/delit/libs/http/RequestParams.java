@@ -128,13 +128,7 @@ public class RequestParams implements Serializable {
      * @param value the value string for the initial param.
      */
     public RequestParams(final String key, final String value) {
-        this(new HashMap<String, String>() {
-            private static final long serialVersionUID = -999160596788011552L;
-            private static final long serialVersionUID = -999160596788011552L;
-
-            {
-            put(key, value);
-        }});
+        this(Collections.singletonMap(key, value));
     }
 
     /**
