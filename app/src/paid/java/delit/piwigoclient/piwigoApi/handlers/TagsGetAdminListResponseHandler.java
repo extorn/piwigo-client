@@ -8,8 +8,8 @@ import org.json.JSONException;
 
 import java.util.HashSet;
 
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.libs.http.RequestParams;
+import delit.piwigoclient.model.piwigo.Tag;
 
 public class TagsGetAdminListResponseHandler extends AbstractPiwigoWsResponseHandler {
 

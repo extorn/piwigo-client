@@ -1,6 +1,5 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,9 +13,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.libs.http.RequestParams;
 
 public class TagsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -79,7 +79,7 @@ public class TagsGetListResponseHandler extends AbstractPiwigoWsResponseHandler 
                 try {
                     return piwigoDateFormat.parse(dateStr);
                 } catch (ParseException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + dateStr);
                 }
             }

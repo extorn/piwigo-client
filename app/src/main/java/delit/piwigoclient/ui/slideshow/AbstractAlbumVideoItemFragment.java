@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -44,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
@@ -263,25 +263,17 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         downloadedByteCountView = customExoPlayerInfoPanel.findViewById(R.id.exo_downloaded);
         cachedByteCountView = customExoPlayerInfoPanel.findViewById(R.id.exo_cached_summary);
 
-        simpleExoPlayerView.getVideoSurfaceView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getOverlaysVisibilityControl().runWithDelay(getView());
-            }
-        });
+        simpleExoPlayerView.getVideoSurfaceView().setOnClickListener(v -> getOverlaysVisibilityControl().runWithDelay(getView()));
 
-        simpleExoPlayerView.getVideoSurfaceView().setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (!AppPreferences.isUseVideoCache(requireContext(), prefs)) {
-                    stopVideoDownloadAndPlay();
-                    player.stop(); // this is terminal.
-                    videoPlaybackPosition = 0; // ensure it starts at the beginning again
-                    configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
-                }
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction(getUiHelper()));
-                return true;
+        simpleExoPlayerView.getVideoSurfaceView().setOnLongClickListener(v -> {
+            if (!AppPreferences.isUseVideoCache(requireContext(), prefs)) {
+                stopVideoDownloadAndPlay();
+                player.stop(); // this is terminal.
+                videoPlaybackPosition = 0; // ensure it starts at the beginning again
+                configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
             }
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction(getUiHelper()));
+            return true;
         });
 
         CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
@@ -363,7 +355,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
             setAllowDownload(false);
             displayItemDetailsControlsBasedOnSessionState();
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_clear_cached_content));
         }
         logStatus("Cache cleared - configure a new datasource and player - start playback? : " + videoIsPlayingWhenVisible);
@@ -392,10 +384,14 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                     DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
                     AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
+                        private static final long serialVersionUID = -8359660259637468002L;
+
                         @Override
                         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
                                 getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    private static final long serialVersionUID = 601237549701440365L;
+
                                     @Override
                                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                         doDownloadAction(items, selectedPiwigoFilesizeName, false);
@@ -411,6 +407,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                         public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
                                 getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    private static final long serialVersionUID = -5425847829422082992L;
+
                                     @Override
                                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                         doDownloadAction(items, selectedPiwigoFilesizeName, true);
@@ -596,7 +594,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
             try {
                 CacheUtils.manageVideoCache(getContext(), maxCacheSizeBytes);
             } catch (IOException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_tidying_video_cache));
             }
         }
@@ -676,14 +674,11 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         @Override
         public void onDownload(final long bytesCachedInThisRange, final long totalBytes, final long bytesAddedToCache) {
             if (isVisible()) {
-                getView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (getContext() != null) {
-                            bytesDownloaded += bytesAddedToCache;
-                            downloadedByteCountView.setText(IOUtils.bytesToNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.bytesToNormalizedText(bytesCachedInThisRange), IOUtils.bytesToNormalizedText(totalBytes)));
-                        }
+                getView().post(() -> {
+                    if (getContext() != null) {
+                        bytesDownloaded += bytesAddedToCache;
+                        downloadedByteCountView.setText(IOUtils.bytesToNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.bytesToNormalizedText(bytesCachedInThisRange), IOUtils.bytesToNormalizedText(totalBytes)));
                     }
                 });
             }
@@ -691,6 +686,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     }
 
     private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractAlbumVideoItemFragment>> {
+
+        private static final long serialVersionUID = 5223240592825893152L;
 
         public ClearCachedContentAction(FragmentUIHelper<AbstractAlbumVideoItemFragment> uiHelper) {
             super(uiHelper);

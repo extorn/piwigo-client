@@ -15,37 +15,21 @@
       },
       "oauth_client": [
         {
-          "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
+          "client_id": "189126489517-s4pqbp7le68pfmh38b2527akklqjc006.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "delit.piwigoclient",
+            "certificate_hash": "1058014792ce2f211b0580a0a4e17be0d61f675b"
+          }
+        },
         {
-          "current_key": "AIzaSyC8StJ37U9ciOiL5Tj1vRf3GfdWfZlxerY"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
+          "client_id": "189126489517-0epok24780p765qlkliluq2lrtf519ra.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "delit.piwigoclient",
+            "certificate_hash": "55d98e8e3ed36c73a7071081b35714c26135ad1a"
+          }
         },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      },
-      "admob_app_id": "ca-app-pub-1408465472557768~4878187139"
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:189126489517:android:063c15da5457b248",
-        "android_client_info": {
-          "package_name": "delit.piwigoclient.phone"
-        }
-      },
-      "oauth_client": [
         {
           "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
           "client_type": 3
@@ -53,19 +37,20 @@
       ],
       "api_key": [
         {
+          "current_key": "AIzaSyBNP-kanV3Cf2bzhZdWYmqWq_v1d35_pcA"
+        },
+        {
           "current_key": "AIzaSyC8StJ37U9ciOiL5Tj1vRf3GfdWfZlxerY"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       },
       "admob_app_id": "ca-app-pub-1408465472557768~4878187139"
@@ -79,36 +64,21 @@
       },
       "oauth_client": [
         {
-          "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
+          "client_id": "189126489517-4jrh7i1sdfjndhh14jt9ghur4qdst9sd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "delit.piwigoclient.paid",
+            "certificate_hash": "1058014792ce2f211b0580a0a4e17be0d61f675b"
+          }
+        },
         {
-          "current_key": "AIzaSyC8StJ37U9ciOiL5Tj1vRf3GfdWfZlxerY"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
+          "client_id": "189126489517-5c18psnn557a52raq8q8da191n16skno.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "delit.piwigoclient.paid",
+            "certificate_hash": "55d98e8e3ed36c73a7071081b35714c26135ad1a"
+          }
         },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:189126489517:android:7abb5361e3bb1714",
-        "android_client_info": {
-          "package_name": "delit.piwigoclient.paid.phone"
-        }
-      },
-      "oauth_client": [
         {
           "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
           "client_type": 3
@@ -116,19 +86,20 @@
       ],
       "api_key": [
         {
+          "current_key": "AIzaSyBNP-kanV3Cf2bzhZdWYmqWq_v1d35_pcA"
+        },
+        {
           "current_key": "AIzaSyC8StJ37U9ciOiL5Tj1vRf3GfdWfZlxerY"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

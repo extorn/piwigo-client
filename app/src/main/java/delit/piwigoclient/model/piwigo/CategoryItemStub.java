@@ -3,6 +3,8 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +28,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
     }
 
     public CategoryItemStub(String name, long id) {
-        this(name, id, new ArrayList<Long>());
+        this(name, id, new ArrayList<>());
     }
 
     public CategoryItemStub(Parcel in) {
@@ -64,6 +66,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
         this.parentageChain = new ArrayList<>(parentageChain);
     }
 
+    @NotNull
     @Override
     public String toString() {
         return name;

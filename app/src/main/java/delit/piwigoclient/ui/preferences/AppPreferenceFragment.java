@@ -13,8 +13,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -25,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ProjectUtils;
@@ -53,30 +51,24 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
 
         Preference alwaysShowNavButtonsPref = findPreference(R.string.preference_app_always_show_nav_buttons_key);
 
-        alwaysShowNavButtonsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Boolean newVal = (Boolean) newValue;
-                FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
-                DisplayUtils.setUiFlags(fragmentActivity, newVal, AppPreferences.isAlwaysShowStatusBar(getUiHelper().getPrefs(), getUiHelper().getContext()));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                    getUiHelper().getParent().requireView().requestApplyInsets();
-                }
-                return true;
+        alwaysShowNavButtonsPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            Boolean newVal = (Boolean) newValue;
+            FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
+            DisplayUtils.setUiFlags(fragmentActivity, newVal, AppPreferences.isAlwaysShowStatusBar(getUiHelper().getPrefs(), getUiHelper().getAppContext()));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                getUiHelper().getParent().requireView().requestApplyInsets();
             }
+            return true;
         });
         Preference alwaysShowStatusBarPref = findPreference(R.string.preference_app_always_show_status_bar_key);
-        alwaysShowStatusBarPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Boolean newVal = (Boolean) newValue;
-                FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
-                DisplayUtils.setUiFlags(fragmentActivity, AppPreferences.isAlwaysShowNavButtons(getUiHelper().getPrefs(), getUiHelper().getContext()), newVal);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                    getUiHelper().getParent().requireView().requestApplyInsets();
-                }
-                return true;
+        alwaysShowStatusBarPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            Boolean newVal = (Boolean) newValue;
+            FragmentActivity fragmentActivity = getUiHelper().getParent().getActivity();
+            DisplayUtils.setUiFlags(fragmentActivity, AppPreferences.isAlwaysShowNavButtons(getUiHelper().getPrefs(), getUiHelper().getAppContext()), newVal);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                getUiHelper().getParent().requireView().requestApplyInsets();
             }
+            return true;
         });
         ListPreference desiredLanguagePref = (ListPreference) findPreference(R.string.preference_app_desired_language_key);
         List<Locale> localeOptions = ProjectUtils.listLocalesWithUniqueTranslationOf(getContext(), R.string.album_create_failed);
@@ -92,22 +84,19 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
         if(desiredLanguagePref.getValue() == null) {
             desiredLanguagePref.setValue(values.get(0));
         }
-        desiredLanguagePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Locale newVal = new Locale((String) newValue);
+        desiredLanguagePref.setOnPreferenceChangeListener((preference, newValue) -> {
+            Locale newVal = new Locale((String) newValue);
 
-                DisplayUtils.updateContext(getContext(), newVal);
+            DisplayUtils.updateContext(getContext(), newVal);
 //                getActivity().recreate(); (don't do this as the preference may not be saved)
 
-                DisplayUtils.postOnUiThread(() -> {
-                    Activity activity = getActivity();
-                    if (activity != null) {
-                        activity.recreate();
-                    }
-                });
-                return true;
-            }
+            DisplayUtils.postOnUiThread(() -> {
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.recreate();
+                }
+            });
+            return true;
         });
 
         Preference pref = findPreference(R.string.preference_app_clear_list_of_user_hints_shown_key);
@@ -119,32 +108,26 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
 
         Preference button = findPreference(R.string.preference_gallery_clearMemoryCache_key);
         button.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
-        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                PicassoFactory.getInstance().clearPicassoCache(getContext(), true);
-                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
-                preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
-                return true;
-            }
+        button.setOnPreferenceClickListener(preference -> {
+            PicassoFactory.getInstance().clearPicassoCache(getContext(), true);
+            getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
+            preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
+            return true;
         });
 
         Preference videoCacheFlushButton = findPreference(R.string.preference_gallery_clearVideoCache_key);
         setVideoCacheButtonText(videoCacheFlushButton);
-        videoCacheFlushButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                try {
-                    CacheUtils.clearVideoCache(getContext());
-                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheCleared_message));
-                } catch (IOException e) {
-                    Crashlytics.logException(e);
-                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheClearFailed_message));
-                }
-                setVideoCacheButtonText(preference);
-                return true;
-
+        videoCacheFlushButton.setOnPreferenceClickListener(preference -> {
+            try {
+                CacheUtils.clearVideoCache(getContext());
+                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheCleared_message));
+            } catch (IOException e) {
+                Logging.recordException(e);
+                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheClearFailed_message));
             }
+            setVideoCacheButtonText(preference);
+            return true;
+
         });
 
     }
@@ -206,17 +189,14 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
         videoCacheFlushButton.setTitle(newTitle);
     }
 
-    private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object value) {
-            final Boolean val = (Boolean) value;
-            if (Boolean.TRUE.equals(val)) {
-                getUiHelper().runWithExtraPermissions(AppPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
-            } else {
-                getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
-                getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_not_recommended));
-            }
-            return true;
+    private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = (preference, value) -> {
+        final Boolean val = (Boolean) value;
+        if (Boolean.TRUE.equals(val)) {
+            getUiHelper().runWithExtraPermissions(AppPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
+        } else {
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
+            getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_not_recommended));
         }
+        return true;
     };
 }

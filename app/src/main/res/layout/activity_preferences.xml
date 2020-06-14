@@ -8,11 +8,19 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
+    <delit.libs.ui.view.ProgressIndicator
+        android:id="@+id/progressIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_above="@+id/prefs_adView"
+        android:layout_below="@id/progressIndicator"
         android:layout_alignWithParentIfMissing="true"
         android:id="@+id/main_view"
         layout="@layout/fragment_preferences_view_all"/>

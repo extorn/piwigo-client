@@ -16,6 +16,7 @@
 // from: https://android.googlesource.com/platform/cts/+/lollipop-release/tests/tests/media/src/android/media/cts/InputSurface.java
 // blob: 157ed88d143229e4edb6889daf18fb73aa2fc5a5
 package delit.piwigoclient.business.video.compression;
+
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
@@ -26,7 +27,7 @@ import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
 
-import com.crashlytics.android.Crashlytics;
+import delit.libs.core.util.Logging;
 
 /**
  * Holds state associated with a Surface used for MediaCodec encoder input.
@@ -184,7 +185,7 @@ class InputSurface {
         boolean failed = false;
         int error;
         while ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {
-            Crashlytics.log(Log.ERROR, TAG, msg + ": EGL error: 0x" + Integer.toHexString(error));
+            Logging.log(Log.ERROR, TAG, msg + ": EGL error: 0x" + Integer.toHexString(error));
             failed = true;
         }
         if (failed) {

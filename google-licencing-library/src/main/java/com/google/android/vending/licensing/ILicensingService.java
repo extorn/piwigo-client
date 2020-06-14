@@ -27,7 +27,7 @@ if ((obj==null)) {
 return null;
 }
 android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
-if (((iin!=null)&&(iin instanceof com.google.android.vending.licensing.ILicensingService))) {
+if (((iin instanceof ILicensingService))) {
 return ((com.google.android.vending.licensing.ILicensingService)iin);
 }
 return new com.google.android.vending.licensing.ILicensingService.Stub.Proxy(obj);

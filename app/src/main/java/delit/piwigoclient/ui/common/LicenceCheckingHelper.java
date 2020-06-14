@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.BuildConfig;
 import com.google.android.vending.licensing.LicenseChecker;
@@ -19,6 +18,7 @@ import com.google.android.vending.licensing.ServerManagedPolicy;
 import java.util.Date;
 import java.util.Random;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.PreferenceUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
@@ -100,7 +100,7 @@ public class LicenceCheckingHelper {
                 if (allowRetry) {
                     activity.getLicencingHelper().forceCheck();
                 } else {
-                    Crashlytics.log(Log.DEBUG, TAG, "Starting Market Intent");
+                    Logging.log(Log.DEBUG, TAG, "Starting Market Intent");
                     Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
                             "http://market.android.com/details?id=" + activity.getPackageName()));
                     activity.startActivity(Intent.createChooser(marketIntent, ""));

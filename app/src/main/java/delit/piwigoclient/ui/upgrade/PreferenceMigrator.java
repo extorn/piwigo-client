@@ -7,13 +7,13 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.Set;
 
-import delit.libs.ui.util.SecurePrefsUtil;
+import delit.libs.core.util.Logging;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 public abstract class PreferenceMigrator implements Comparable<PreferenceMigrator> {
 
@@ -34,12 +34,12 @@ public abstract class PreferenceMigrator implements Comparable<PreferenceMigrato
 
     public final void execute(Context context, SharedPreferences prefs, int currentPrefsVersion) {
         if (currentPrefsVersion < prefsVersion) {
-            Crashlytics.log(Log.DEBUG, TAG, "Upgrading app Preferences from " + currentPrefsVersion +" to " + prefsVersion);
+            Logging.log(Log.DEBUG, TAG, "Upgrading app Preferences from " + currentPrefsVersion +" to " + prefsVersion);
             SharedPreferences.Editor editor = prefs.edit();
             upgradePreferences(context, prefs, editor);
             editor.putInt(context.getString(R.string.preference_app_prefs_version_key), prefsVersion);
             editor.commit(); // need to wait for it - make sure they're written to disk in order
-            Crashlytics.log(Log.DEBUG, TAG, "Upgraded app Preferences to " + prefsVersion);
+            Logging.log(Log.DEBUG, TAG, "Upgraded app Preferences to " + prefsVersion);
         }
     }
 
@@ -59,7 +59,7 @@ public abstract class PreferenceMigrator implements Comparable<PreferenceMigrato
         String key = context.getString(keyId);
         String currentVal = prefs.getString(key, defaultVal);
         if (currentVal != null && !currentVal.equals(defaultVal)) {
-            String encryptedVal = SecurePrefsUtil.getInstance(context).encryptValue(key, currentVal);
+            String encryptedVal = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID).encryptValue(key, currentVal);
             editor.putString(key, encryptedVal);
         }
     }

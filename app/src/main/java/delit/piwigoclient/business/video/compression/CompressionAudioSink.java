@@ -9,7 +9,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioSink;
@@ -23,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import delit.libs.core.util.Logging;
 
 import static android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM;
 
@@ -432,7 +433,7 @@ public class CompressionAudioSink implements AudioSink {
                 processEncoderOutputFormatChanged(encoder);
             } else if (outputBufIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) { // -3
                 // we don't care - this is a deprecated signal.
-                Crashlytics.log(Log.ERROR, TAG, "Output buffers changed during encode!");
+                Logging.log(Log.ERROR, TAG, "Output buffers changed during encode!");
             } else if (outputBufIndex == MediaCodec.INFO_TRY_AGAIN_LATER) { //-1
                 // No data to process at the moment. (Can any flags be present?). If not, do a continue; ?
             }
@@ -604,8 +605,8 @@ public class CompressionAudioSink implements AudioSink {
                 continue;
             }
             String[] types = codecInfo.getSupportedTypes();
-            for (int j = 0; j < types.length; j++) {
-                if (types[j].equalsIgnoreCase(mimeType)) {
+            for (String type : types) {
+                if (type.equalsIgnoreCase(mimeType)) {
                     return codecInfo;
                 }
             }
@@ -621,8 +622,8 @@ public class CompressionAudioSink implements AudioSink {
                 continue;
             }
             String[] types = codecInfo.getSupportedTypes();
-            for (int j = 0; j < types.length; j++) {
-                if (types[j].equalsIgnoreCase(mimeType)) {
+            for (String type : types) {
+                if (type.equalsIgnoreCase(mimeType)) {
                     return codecInfo;
                 }
             }

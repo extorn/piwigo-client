@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.MimeTypeFilter;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.MyPicasso;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -28,6 +27,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Objects;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.CustomImageDownloader;
@@ -101,7 +101,7 @@ public class PicassoFactory {
         }
         EnhancedPicassoListener old = errorHandler.addListener(uri, listener);
         if (old != null) {
-            Crashlytics.log(Log.ERROR, TAG, String.format("There was already a Uri Load Listener registered for Uri %1$s", uri));
+            Logging.log(Log.ERROR, TAG, String.format("There was already a Uri Load Listener registered for Uri %1$s", uri));
         }
 //        if (BuildConfig.DEBUG) {
 //            Log.d(TAG, String.format("There are %1$d Uri Load Listeners registered", errorHandler.listeners.size()));
@@ -142,7 +142,7 @@ public class PicassoFactory {
         return clearPicassoCache(context, false);
     }
 
-    class VideoRequestHandler extends RequestHandler {
+    static class VideoRequestHandler extends RequestHandler {
 
         public static final int DEFAULT_WIDTH = 512;
         public static final int DEFAULT_HEIGHT = 384;
@@ -227,7 +227,7 @@ public class PicassoFactory {
 
 
 
-    class ResourceRequestHandler extends RequestHandler {
+    static class ResourceRequestHandler extends RequestHandler {
         private final Context context;
 
         ResourceRequestHandler(Context context) {
@@ -255,7 +255,7 @@ public class PicassoFactory {
             }
 
             if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-                bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+                bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single colors bitmap will be created of 1x1 pixel
             } else {
                 bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             }
@@ -269,7 +269,7 @@ public class PicassoFactory {
 
     }
 
-    private class PicassoErrorHandler implements Picasso.Listener {
+    private static class PicassoErrorHandler implements Picasso.Listener {
 
         private final HashMap<Uri, EnhancedPicassoListener> listeners = new HashMap<>();
 
@@ -278,7 +278,7 @@ public class PicassoFactory {
                 EnhancedPicassoListener old = listeners.put(uri, listener);
                 for (EnhancedPicassoListener l : listeners.values()) {
                     if (!l.isLikelyStillNeeded()) {
-                        Crashlytics.log(Log.ERROR, TAG, String.format("Listener is probably obsolete: %1$s", l.getListenerPurpose()));
+                        Logging.log(Log.ERROR, TAG, String.format("Listener is probably obsolete: %1$s", l.getListenerPurpose()));
                     }
                 }
                 return old;

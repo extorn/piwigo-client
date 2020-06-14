@@ -3,9 +3,9 @@ package delit.piwigoclient.business;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.RequestCreator;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 
 public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T> {
@@ -43,7 +43,7 @@ public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T>
             return reqCreator;
         } catch (IllegalArgumentException e) {
             String pathToView = DisplayUtils.getPathToView(getLoadInto());
-            Crashlytics.log(Log.ERROR, TAG, "ERROR: " + e.getMessage() + "\nViewId: " + getLoadInto().getId() + "\nURI: " + getUriToLoad() + "\nPathToView : " + pathToView);
+            Logging.log(Log.ERROR, TAG, "ERROR: " + e.getMessage() + "\nViewId: " + getLoadInto().getId() + "\nURI: " + getUriToLoad() + "\nPathToView : " + pathToView);
             throw e;
         }
     }

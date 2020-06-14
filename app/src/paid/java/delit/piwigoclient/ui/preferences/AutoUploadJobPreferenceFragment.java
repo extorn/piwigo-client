@@ -17,8 +17,6 @@ import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -29,8 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SetUtils;
@@ -89,12 +87,9 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
         Preference viewUploadStatus = findPreference(R.string.preference_data_upload_automatic_job_view_status_key);
         viewUploadStatus.setEnabled(BackgroundPiwigoUploadService.getActiveBackgroundJobByJobConfigId(requireContext(), jobConfigId) != null);
-        viewUploadStatus.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                onUploadJobStatusButtonClick();
-                return true;
-            }
+        viewUploadStatus.setOnPreferenceClickListener(preference -> {
+            onUploadJobStatusButtonClick();
+            return true;
         });
 
         LocalFoldersListPreference uploadFromFolder = (LocalFoldersListPreference) findPreference(R.string.preference_data_upload_automatic_job_local_folder_key);
@@ -127,12 +122,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(profilePrefs);
         if (sessionDetails != null) {
-            DisplayUtils.postOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    updateAvailableFileTypes(sessionDetails.getAllowedFileTypes());
-                }
-            });
+            DisplayUtils.postOnUiThread(() -> updateAvailableFileTypes(sessionDetails.getAllowedFileTypes()));
         } else {
             String serverUri = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
             LoginResponseHandler loginHandler = new LoginResponseHandler();
@@ -173,7 +163,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                         File file = LegacyIOUtils.getFile(uri);
                         allPreferencesValid = file != null && file.exists();
                     } catch (IOException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                     }
                 } else {
                     DocumentFile docFile = DocumentFile.fromTreeUri(requireContext(), uri);
@@ -215,6 +205,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     private static class LoginResponseAction extends UIHelper.Action<FragmentUIHelper<AutoUploadJobPreferenceFragment>, AutoUploadJobPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
 
+        private static final long serialVersionUID = -7554482800141220488L;
         private ConnectionPreferences.ProfilePreferences profilePrefs;
 
         public LoginResponseAction(ConnectionPreferences.ProfilePreferences profilePrefs) {
@@ -260,7 +251,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
             if(albumId >= 0) {
                 if (CategoryItem.isRoot(albumId)) {
-                    finishPreferenceValuesValidation(Arrays.asList(CategoryItemStub.ROOT_GALLERY));
+                    finishPreferenceValuesValidation(Collections.singletonList(CategoryItemStub.ROOT_GALLERY));
                 } else {
                     AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
                     albumHandler.withConnectionPreferences(profilePrefs);

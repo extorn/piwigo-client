@@ -172,7 +172,7 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         public static long getSelectedAlbumId(String preferenceValue) {
             if (preferenceValue != null) {
-                return Long.valueOf(preferenceValue.split(";", 2)[0]);
+                return Long.parseLong(preferenceValue.split(";", 2)[0]);
             }
             return -1;
         }

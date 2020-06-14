@@ -8,18 +8,16 @@ import android.widget.ExpandableListView;
 import androidx.annotation.LayoutRes;
 import androidx.viewpager.widget.ViewPager;
 
-import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.Metadata;
-import com.google.android.material.tabs.TabLayout;
 import com.ortiz.touchview.TouchImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomViewPager;
-import delit.libs.ui.view.InlineViewPagerAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -98,7 +96,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ExifDataRetrievedEvent event) {
         if(event.getUri() == null) {
-            Crashlytics.log(Log.ERROR, TAG, "invalid event received");
+            Logging.log(Log.ERROR, TAG, "invalid event received");
         } else if(getCurrentImageUrlDisplayed() != null && event.getUri().startsWith(getCurrentImageUrlDisplayed())) {
             setupExifDataTab(resourceDetailsViewPager, event.getMetadata());
         }

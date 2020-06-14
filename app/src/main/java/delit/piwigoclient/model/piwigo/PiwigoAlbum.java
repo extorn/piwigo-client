@@ -4,16 +4,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.crashlytics.android.BuildConfig;
-import com.crashlytics.android.Crashlytics;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.ObjectUtils;
+import delit.piwigoclient.BuildConfig;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -125,14 +125,15 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         try {
             return super.getItemByIdx(adjustedIdx);
         } catch (ArrayIndexOutOfBoundsException e) {
-            Crashlytics.log("error getting spansize for position " + idx + ", adjusted to " + adjustedIdx + ".\n"
+            String errorMsg = "error getting spansize for position " + idx + ", adjusted to " + adjustedIdx + ".\n"
                     + " Is reverse order : " + isRetrieveItemsInReverseOrder() + ",\n"
                     + "  model count: " + getItemCount() + ",\n"
                     + " model resource count: " + getImgResourceCount() + ",\n"
                     + " subAlbumCnt : " + subAlbumCount + ",\n"
                     + " spacerAlbums : " + spacerAlbums + ",\n"
-                    + " hideAlbums : " + hideAlbums);
-            Crashlytics.logException(e);
+                    + " hideAlbums : " + hideAlbums;
+            Logging.log(Log.ERROR,TAG,errorMsg);
+            Logging.recordException(e);
             throw e;
         }
     }
@@ -248,8 +249,9 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         return subAlbumCount;
     }
 
-    private static class AlbumComparator implements Comparator<GalleryItem> {
+    private static class AlbumComparator implements Comparator<GalleryItem>, Serializable {
 
+        private static final long serialVersionUID = -6822471227339812339L;
         private boolean sortInReverseOrder;
         private int albumSortOrder;
 

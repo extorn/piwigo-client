@@ -1,0 +1,37 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion '29.0.3'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 29
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.google.firebase:firebase-core:17.4.3'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation project(path: ':delit-core-libs')
+}

@@ -52,8 +52,8 @@
     <string name="alert_error_no_app_available_to_rate_app">No app could be found to rate this app. Thanks for trying though.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Download cancelled. Required permissions are not granted.</string>
     <string name="button_retry">Retry</string>
-    <string name="button_cancel">Cancel</string>
-    <string name="button_delete">Delete</string>
+
+
     <string name="button_unlink">UnLink</string>
     <string name="button_untag">Remove Tag</string>
     <string name="button_close">Close</string>
@@ -956,15 +956,14 @@ SOFTWARE.
     <string name="default_str">default</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
     <string name="alert_plugin_required_pattern">%1$s Server Plugin Required - Version %2$s or newer</string>
-    <string name="certificate_chain_not_verifiable_error">Certificate chain could not be verified using the certificates on this device.</string>
-    <string name="certificate_chain_not_verifiable_error_detail">Certificate chain could not be verified using the certificates on this device. To resolve this, allow this app to maintain a list of trusted certificates (within this app connection settings).</string>
-    <string name="undefined_error_msg">Undefined error</string>
-    <string name="resource_unavailable_error_msg_pattern">Requested resource could not be accessed.\nHTTP Status Code (%1$d)</string>
-    <string name="server_error_msg_pattern">Something went wrong in the server or between the server and your device.\nHTTP Status Code (%1$d)</string>
-    <string name="redirect_error_msg_pattern">Request redirection error :\nHTTP Status Code (%1$d)</string>
-    <string name="http_error_msg_pattern">HTTP Error Message (%1$s)</string>
-    <string name="unexpected_response_error_msg_pattern">Unexpected response : \nHTTP Status Code (%1$d)</string>
-    <string name="connection_error_msg_pattern">Unable to connect to server</string>
+
+
+
+
+
+
+
+
     <string name="preference_corrupt_please_re_type_pattern">"Preference %1$s is irretrievable and has been defaulted to %2$s. Please reset this value in the app settings"</string>
     <string name="switch_to_cached_mode">The server is presently not available. Use cached data?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>

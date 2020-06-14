@@ -17,7 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.crashlytics.android.Crashlytics;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 
@@ -162,8 +163,8 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
                 mediaMuxer.start();
                 mediaMuxerStarted = true;
             } catch (IllegalStateException e) {
-                Crashlytics.log(Log.ERROR, TAG, "Error starting media muxer");
-                Crashlytics.logException(e);
+                Logging.log(Log.ERROR, TAG, "Error starting media muxer");
+                Logging.recordException(e);
             }
             return true;
         }
@@ -241,7 +242,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
                     latitude = Float.valueOf(latStr);
                     longitude = Float.valueOf(longStr);
                 } catch (NumberFormatException e) {
-                    Crashlytics.log(Log.ERROR, TAG, String.format("Error parsing lat long ISO String %1$s (%2$s), lat : %3$s, long : %4$s", location, mode, latStr, longStr));
+                    Logging.log(Log.ERROR, TAG, String.format("Error parsing lat long ISO String %1$s (%2$s), lat : %3$s, long : %4$s", location, mode, latStr, longStr));
                 }
             }
         } finally {
@@ -459,8 +460,8 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
                 try {
                     muxer.setLocation(latitude, longitude);
                 } catch (IllegalArgumentException e) {
-                    Crashlytics.log(Log.ERROR, TAG, "Location data out of range - cannot copy to transcoded file");
-                    Crashlytics.logException(e);
+                    Logging.log(Log.ERROR, TAG, "Location data out of range - cannot copy to transcoded file");
+                    Logging.recordException(e);
                 }
             }
         }
@@ -648,13 +649,13 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         }
 
         @Override
-        public int compareTo(Sample o) {
+        public int compareTo(@NotNull Sample o) {
 
             int comparison = compareToBufferPresentationTime(o);
             if (comparison == 0) {
                 int x = outputTrackIndex;
                 int y = o.outputTrackIndex;
-                comparison = (x < y) ? -1 : ((x == y) ? 0 : 1);
+                comparison = Integer.compare(x, y);
             }
             return comparison;
         }
@@ -663,7 +664,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
             long x = bufferPresentationTimeUs;
             long y = o.bufferPresentationTimeUs;
-            return (x < y) ? -1 : ((x == y) ? 0 : 1);
+            return Long.compare(x, y);
         }
 
         public void setData(ByteBuffer data) {

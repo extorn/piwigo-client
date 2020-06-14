@@ -12,8 +12,6 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -21,6 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
@@ -302,6 +301,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     private abstract static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<FragmentUIHelper<SlideshowItemFragment<T>>, SlideshowItemFragment<T>, S> {
 
+        private static final long serialVersionUID = -5856082027415983416L;
+
         protected abstract boolean getValueOnSucess();
 
         @Override
@@ -318,6 +319,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     }
 
     private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> {
+        private static final long serialVersionUID = -6126841919397104419L;
+
         @Override
         protected boolean getValueOnSucess() {
             return false;
@@ -333,6 +336,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     }
 
     private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {
+        private static final long serialVersionUID = 2666244883152710932L;
+
         @Override
         protected boolean getValueOnSucess() {
             return true;
@@ -359,7 +364,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             this.helper = helper;
             this.item = item;
             if (item == null) {
-                Crashlytics.log(Log.ERROR, TAG, "Model item is null");
+                Logging.log(Log.ERROR, TAG, "Model item is null");
             }
         }
 
@@ -370,7 +375,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                 return;
             }
             if (!buttonView.isEnabled()) {
-                Crashlytics.log(Log.ERROR, TAG, "tag/untag favorite image called but ignored as in progress");
+                Logging.log(Log.ERROR, TAG, "tag/untag favorite image called but ignored as in progress");
                 return; // should never occur
             }
             buttonView.setEnabled(false);

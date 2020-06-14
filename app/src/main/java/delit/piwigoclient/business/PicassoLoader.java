@@ -11,7 +11,6 @@ import androidx.annotation.DrawableRes;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.MemoryPolicy;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
@@ -100,8 +100,8 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         waitForErrorMessage = false;
         onError();
         if (!(exception instanceof Downloader.ResponseException)) {
-            Crashlytics.log(Log.ERROR, "PicassoLoader", "Unexpected error loading image");
-            Crashlytics.logException(exception);
+            Logging.log(Log.ERROR, "PicassoLoader", "Unexpected error loading image");
+            Logging.recordException(exception);
         } else {
             lastResponseException = (CustomResponseException) exception;
         }
@@ -272,7 +272,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
                 Log.d(TAG, "exiting picasso loader - runLoad");
             }
         } catch (RejectedExecutionException e) {
-            Crashlytics.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
+            Logging.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
         } catch (IllegalStateException e) {
             if (!placeholderLoaded) {
                 throw e;
@@ -360,7 +360,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             return picassoSingleton.load(placeholderPlaceholderId);
         }
 
-        Crashlytics.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image");
+        Logging.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image");
         throw new IllegalStateException("No valid source specified from which to load image");
     }
 
@@ -508,11 +508,11 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
                 getOwner().getLoadInto().setImageDrawable(drawable);
                 getOwner().onSuccess();
             } else {
-                Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
+                Logging.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
                 getOwner().getLoadInto().setImageResource(getOwner().getErrorResourceId());
                 getOwner().onError();
                 if (error != null) {
-                    Crashlytics.logException(error);
+                    Logging.recordException(error);
                 }
             }
         }

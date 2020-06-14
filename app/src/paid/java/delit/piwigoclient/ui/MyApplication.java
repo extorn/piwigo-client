@@ -5,7 +5,6 @@ import android.content.Context;
 import java.util.List;
 
 import delit.piwigoclient.business.AppPreferences;
-import delit.piwigoclient.database.AppSettingsDatabase;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator;

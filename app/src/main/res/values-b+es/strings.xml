@@ -30,8 +30,8 @@
     <string name="alert_error_no_app_available_to_rate_app">No se pudo encontrar ninguna aplicación para calificar esta aplicación. Gracias por intentarlo sin embargo.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Descarga cancelada No se otorgan los permisos requeridos.</string>
     <string name="button_retry">Procesar de nuevo</string>
-    <string name="button_cancel">Cancelar</string>
-    <string name="button_delete">Eliminar</string>
+
+
     <string name="button_unlink">Desconectar</string>
     <string name="button_untag">Remover etiqueta</string>
     <string name="button_close">Cerca</string>
@@ -445,15 +445,8 @@
     <string name="default_str">defecto</string>
     <string name="copied_to_clipboard">Copiado al portapapeles</string>
     <string name="alert_plugin_required_pattern">Se requiere el complemento de servidor%1$s - Versión%2$so más reciente</string>
-    <string name="certificate_chain_not_verifiable_error">La cadena de certificados no se pudo verificar utilizando los certificados en este dispositivo.</string>
-    <string name="certificate_chain_not_verifiable_error_detail">La cadena de certificados no se pudo verificar utilizando los certificados en este dispositivo. Para resolver esto, permita que esta aplicación mantenga una lista de certificados confiables (dentro de la configuración de conexión de esta aplicación).</string>
-    <string name="undefined_error_msg">Error indefinido</string>
-    <string name="resource_unavailable_error_msg_pattern">No se pudo acceder al recurso solicitado. \ NCódigo de estado HTTP (%1$d)</string>
-    <string name="server_error_msg_pattern">Algo salió mal en el servidor o entre el servidor y su dispositivo. \ NCódigo de estado HTTP (%1$d)</string>
-    <string name="redirect_error_msg_pattern">Error de redireccionamiento de solicitud: \ nHTTP Status Code (%1$d)</string>
-    <string name="http_error_msg_pattern">Mensaje de error HTTP (%1$s)</string>
-    <string name="unexpected_response_error_msg_pattern">Respuesta inesperada: \ nHTTP Status Code (%1$d)</string>
-    <string name="connection_error_msg_pattern">No se puede conectar al servidor</string>
+
+
     <string name="preference_corrupt_please_re_type_pattern">"La preferencia%1$s es irrecuperable y se ha predeterminado a%2$s. Restablezca este valor en la configuración de la aplicación"</string>
     <string name="switch_to_cached_mode">El servidor actualmente no está disponible. ¿Usar datos en caché?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>

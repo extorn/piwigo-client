@@ -27,13 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
@@ -117,10 +115,14 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                     DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
                     AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
+                        private static final long serialVersionUID = -8248892484373261149L;
+
                         @Override
                         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
                                 getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    private static final long serialVersionUID = -354483518422514618L;
+
                                     @Override
                                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                         doDownloadAction(items, selectedPiwigoFilesizeName, false);
@@ -136,6 +138,8 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
                             if(filesUnavailableToDownload.size() > 0) {
                                 getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                    private static final long serialVersionUID = -6076782335293766632L;
+
                                     @Override
                                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                         doDownloadAction(items, selectedPiwigoFilesizeName, true);

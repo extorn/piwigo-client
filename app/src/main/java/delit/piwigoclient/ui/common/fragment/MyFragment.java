@@ -22,10 +22,9 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -52,6 +51,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     private String piwigoServerConnected;
     private boolean onInitialCreate;
     private @StyleRes int theme = Resources.ID_NULL;
+    private boolean coreComponentsInitialised;
 
     protected long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
         return addActiveServiceCall(getString(titleStringId), worker);
@@ -108,7 +108,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onStop() {
-        Crashlytics.log("onDestroyView : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onDestroyView : " + getClass().getName());
         uiHelper.deregisterFromActiveServiceCalls();
         uiHelper.closeAllDialogs();
         super.onStop();
@@ -117,7 +117,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Crashlytics.log("onSaveInstanceState : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onSaveInstanceState : " + getClass().getName());
         uiHelper.onSaveInstanceState(outState);
         outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
         outState.putString(STATE_ACTIVE_SERVER_CONNECTION, piwigoServerConnected);
@@ -125,7 +125,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        Crashlytics.log("onAttach : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onAttach : " + getClass().getName());
         prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         super.onAttach(context);
     }
@@ -153,7 +153,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onPause() {
-        Crashlytics.log("onPause : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onPause : " + getClass().getName());
         onInitialCreate = false;
         super.onPause();
     }
@@ -164,7 +164,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onResume() {
-        Crashlytics.log("onResume : " + getClass().getName());
+        Logging.log(Log.VERBOSE,TAG, "onResume : " + getClass().getName());
         super.onResume();
 
         updatePageTitle();
@@ -175,15 +175,11 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
             return;
         }
 
-        Context context = getContext();
-        if (uiHelper.isContextOutOfSync(context)) {
-            uiHelper.swapToNewContext(context);
-        }
         uiHelper.registerToActiveServiceCalls();
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
         if(AdsManager.getInstance().hasAdvertLoadProblem(getContext())) {
-            Crashlytics.log(Log.INFO, TAG, "warning user that adverts are unavailable");
+            Logging.log(Log.INFO, TAG, "warning user that adverts are unavailable");
             prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).apply();
             uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener(getUiHelper()));
         }
@@ -206,24 +202,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (uiHelper == null) {
-            uiHelper = buildUIHelper(getContext());
-            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
-            listener.withUiHelper(this, uiHelper);
-            uiHelper.setPiwigoResponseListener(listener);
-        }
-        if (savedInstanceState != null) {
-            Crashlytics.log("onCreateView(restore) : " + getClass().getName());
-            uiHelper.onRestoreSavedInstanceState(savedInstanceState);
-            piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
-            piwigoServerConnected = savedInstanceState.getString(STATE_ACTIVE_SERVER_CONNECTION);
-        } else {
-            Crashlytics.log("onCreateView(fresh) : " + getClass().getName());
-        }
-        if (piwigoSessionToken == null) {
-            updateActiveSessionDetails();
-        }
-
+        initialiseCoreComponents(savedInstanceState);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -231,8 +210,34 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        // do this here in case the onCreateView isn't called in a derived class
+        initialiseCoreComponents(savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
         uiHelper.registerToActiveServiceCalls();
+    }
+
+    private void initialiseCoreComponents(Bundle savedInstanceState) {
+        if(coreComponentsInitialised) {
+            return;
+        }
+        coreComponentsInitialised = true;
+        if (uiHelper == null) {
+            uiHelper = buildUIHelper(getContext());
+            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
+            listener.withUiHelper(this, uiHelper);
+            uiHelper.setPiwigoResponseListener(listener);
+        }
+        if (savedInstanceState != null) {
+            Logging.log(Log.VERBOSE,TAG, "onCreateView(restore) : " + getClass().getName());
+            uiHelper.onRestoreSavedInstanceState(savedInstanceState);
+            piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
+            piwigoServerConnected = savedInstanceState.getString(STATE_ACTIVE_SERVER_CONNECTION);
+        } else {
+            Logging.log(Log.VERBOSE,TAG, "onCreateView(fresh) : " + getClass().getName());
+        }
+        if (piwigoSessionToken == null) {
+            updateActiveSessionDetails();
+        }
     }
 
     protected void setTheme(@StyleRes int theme) {
@@ -241,6 +246,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     private static class AdLoadErrorDialogListener<T extends MyFragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>> {
 
+        private static final long serialVersionUID = -3304262607116424453L;
         private long shownAt;
         private transient LifecycleObserver observer;
 

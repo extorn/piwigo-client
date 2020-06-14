@@ -149,12 +149,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         itemListView = view.findViewById(R.id.list);
 
         ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDisplayUploadJob(null);
-            }
-        });
+        addListItemButton.setOnClickListener(v -> onDisplayUploadJob(null));
 
         return view;
     }
@@ -237,23 +232,13 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
         @Override
         protected void setViewContentForItemDisplay(Context context, View itemView, final AutoUploadJobConfig item, int levelInTreeOfItem) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDisplayUploadJob(item);
-                }
-            });
+            itemView.setOnClickListener(v -> onDisplayUploadJob(item));
             TextView nameView = itemView.findViewById(R.id.list_item_name);
             TextView detailView = itemView.findViewById(R.id.list_item_details);
             MaterialCheckboxTriState deleteUploadedFiles = itemView.findViewById(R.id.delete_uploaded);
             MaterialCheckboxTriState jobEnabledView = itemView.findViewById(R.id.enabled);
             MaterialButton deleteButton = itemView.findViewById(R.id.list_item_delete_button);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteUploadJob(item);
-                }
-            });
+            deleteButton.setOnClickListener(v -> onDeleteUploadJob(item));
 
             nameView.setText(getUploadFromSummary(context, item));
             detailView.setText(getUploadToSummary(context, item));

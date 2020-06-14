@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import delit.libs.http.RequestParams;
@@ -41,9 +40,8 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
         JsonObject result = rsp.getAsJsonObject();
         JsonArray methodsArray = result.get("methods").getAsJsonArray();
         Set<String> methodsAvailable = new HashSet<>(methodsArray.size());
-        Iterator<JsonElement> methodItem = methodsArray.iterator();
-        while (methodItem.hasNext()) {
-            methodsAvailable.add(methodItem.next().getAsString());
+        for (JsonElement jsonElement : methodsArray) {
+            methodsAvailable.add(jsonElement.getAsString());
         }
         return methodsAvailable;
     }

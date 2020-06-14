@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +14,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 
 /**
@@ -32,7 +31,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
     private boolean fullyLoaded;
-    private transient ReentrantLock pageLoadLock;
+    private ReentrantLock pageLoadLock;
     private boolean retrieveItemsInReverseOrder;
 
     public PagedList(String itemType) {
@@ -83,7 +82,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
                 } else {
                     page = pagesLoaded.first() - 1;
                     if (page < 0) {
-                        Crashlytics.log(Log.ERROR, TAG, "Model thinks a negative page is missing! - This should be impossible");
+                        Logging.log(Log.ERROR, TAG, "Model thinks a negative page is missing! - This should be impossible");
                         return null;
                     }
                 }
@@ -115,8 +114,8 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
             if(items == null) {
                 items = new ArrayList<>(0);
             }
-            Crashlytics.log(Log.ERROR, TAG, "Unable to load from parcel");
-            Crashlytics.logException(e);
+            Logging.log(Log.ERROR, TAG, "Unable to load from parcel");
+            Logging.recordException(e);
         }
     }
 
@@ -212,7 +211,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
             }
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
-            Crashlytics.log(Log.DEBUG, TAG, "ignoring page already loaded");
+            Logging.log(Log.DEBUG, TAG, "ignoring page already loaded");
         }
         return firstInsertPos;
     }

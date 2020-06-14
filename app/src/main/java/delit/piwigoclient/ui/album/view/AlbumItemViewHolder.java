@@ -10,8 +10,9 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 
-import com.crashlytics.android.Crashlytics;
+import org.jetbrains.annotations.NotNull;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.SquareLinearLayout;
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
@@ -100,37 +101,35 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
 
     protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(final ImageView target) {
         imageLoader = new ResizingPicassoLoader(target, this, 0, 0);
-        return new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                try {
-                    if(!imageLoader.hasResourceToLoad()) {
-                        return true;
-                    }
-                    int requiredSize = ((ViewGroup)target.getParent()).getMeasuredHeight();
-                    imageLoader.setResizeTo(requiredSize, requiredSize);
-                    if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading() && !imageLoader.isImageUnavailable()) {
-
-                        int desiredScalingQuality = parentAdapter.getAdapterPrefs().getScalingQuality();
-                        int imgSize = desiredScalingQuality;
-                        if (imgSize == Integer.MAX_VALUE) {
-                            imgSize = target.getMeasuredWidth();
-                        } else {
-                            // need that math.max to ensure that the image size remains positive
-                            imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(desiredScalingQuality, target.getMeasuredWidth()));
-                        }
-                        imageLoader.setResizeTo(imgSize, imgSize);
-                        imageLoader.load();
-                    }
-                } catch (IllegalStateException e) {
-                    Crashlytics.logException(e);
-                    // image loader not configured yet...
+        return () -> {
+            try {
+                if(!imageLoader.hasResourceToLoad()) {
+                    return true;
                 }
-                return true;
+                int requiredSize = ((ViewGroup)target.getParent()).getMeasuredHeight();
+                imageLoader.setResizeTo(requiredSize, requiredSize);
+                if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading() && !imageLoader.isImageUnavailable()) {
+
+                    int desiredScalingQuality = parentAdapter.getAdapterPrefs().getScalingQuality();
+                    int imgSize = desiredScalingQuality;
+                    if (imgSize == Integer.MAX_VALUE) {
+                        imgSize = target.getMeasuredWidth();
+                    } else {
+                        // need that math.max to ensure that the image size remains positive
+                        imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(desiredScalingQuality, target.getMeasuredWidth()));
+                    }
+                    imageLoader.setResizeTo(imgSize, imgSize);
+                    imageLoader.load();
+                }
+            } catch (IllegalStateException e) {
+                Logging.recordException(e);
+                // image loader not configured yet...
             }
+            return true;
         };
     }
 
+    @NotNull
     @Override
     public String toString() {
         return super.toString() + " '" + mNameView.getText() + "'";

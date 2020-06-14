@@ -39,7 +39,7 @@ public class CategoryBreadcrumbsView extends AbstractBreadcrumbsView<CategoryIte
         navigator.setRootAlbum(rootAlbum);
     }
 
-    private class CategoryPathNavigator implements PathNavigator<CategoryItem> {
+    private static class CategoryPathNavigator implements PathNavigator<CategoryItem> {
         private CategoryItem rootAlbum;
         private List<CategoryItem> itemChain = new ArrayList<>();
 

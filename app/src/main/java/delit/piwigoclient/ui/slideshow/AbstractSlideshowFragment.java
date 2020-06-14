@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -26,6 +25,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.CustomViewPager;
 import delit.piwigoclient.BuildConfig;
@@ -130,14 +130,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 try {
                     getParentFragmentManager().popBackStackImmediate();
                 } catch (RuntimeException e) {
-                    Crashlytics.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
+                    Logging.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
                     getParentFragmentManager().popBackStack(); //TODO - work out why resource container can be null - after app kill and restore?
                 }
             }
             super.onCreate(savedInstanceState);
 
         } catch (ModelUnavailableException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Unable to create fragment as model isn't available.");
+            Logging.log(Log.ERROR, TAG, "Unable to create fragment as model isn't available.");
         }
     }
 
@@ -218,7 +218,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
             viewPager.setCurrentItem(pagerItemsIdx);
         } catch (IllegalArgumentException e) {
-            Crashlytics.log(Log.WARN, TAG, "returning to album - slideshow empty");
+            Logging.log(Log.WARN, TAG, "returning to album - slideshow empty");
             getParentFragmentManager().popBackStack();
         }
 
@@ -407,6 +407,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     private static class AlbumLoadResponseAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>, AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
 
+        private static final long serialVersionUID = 459249485419954062L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
@@ -418,7 +420,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             CategoryItem currentAlbum = response.getAlbums().get(0);
             if (currentAlbum.getId() != fragment.resourceContainer.getId()) {
                 //Something wierd is going on - this should never happen
-                Crashlytics.log(Log.ERROR, TAG, "Closing slideshow - reloaded album had different id to that expected!");
+                Logging.log(Log.ERROR, TAG, "Closing slideshow - reloaded album had different id to that expected!");
                 fragment.getParentFragmentManager().popBackStack();
                 return false;
             }

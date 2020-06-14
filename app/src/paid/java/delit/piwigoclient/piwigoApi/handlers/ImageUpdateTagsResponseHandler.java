@@ -8,10 +8,10 @@ import org.json.JSONException;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.libs.http.RequestParams;
 
 public class ImageUpdateTagsResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 

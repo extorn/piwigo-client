@@ -20,6 +20,8 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import delit.libs.ui.util.DisplayUtils;
@@ -102,7 +104,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     }
 
     @Override
-    public Preference findPreference(CharSequence key) {
+    public Preference findPreference(@NotNull CharSequence key) {
         return getPreference();
     }
 
@@ -128,7 +130,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     }
 
     @Override
-    public void onDismiss(DialogInterface dialog) {
+    public void onDismiss(@NotNull DialogInterface dialog) {
         super.onDismiss(dialog);
         if (activeServiceCall >= 0) {
             PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeServiceCall);
@@ -277,7 +279,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private class CustomUIHelper extends UIHelper<DialogFragment> {
+    private static class CustomUIHelper extends UIHelper<DialogFragment> {
         public CustomUIHelper(DialogFragment parent, SharedPreferences prefs, Context context) {
             super(parent, prefs, context);
         }

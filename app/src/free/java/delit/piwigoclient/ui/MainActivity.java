@@ -4,8 +4,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 
-import org.greenrobot.eventbus.EventBus;
-
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -21,7 +20,7 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        rewardedVideoAd = AdsManager.getInstance().getRewardedVideoAd(this, new AdsManager.OnRewardEarnedListener(this, REWARD_COUNT_UPDATE_FREQUENCY));
+        rewardedVideoAd = AdsManager.getInstance().getRewardedVideoAd(this, new AdsManager.OnRewardEarnedListener(this, REWARD_COUNT_UPDATE_FREQUENCY, BuildConfig.APPLICATION_ID));
         super.onCreate(savedInstanceState);
     }
 
@@ -63,6 +62,8 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
     }
 
     private static class BuyAdvertFreeTimeQuestionListener<T extends ActivityUIHelper<MainActivity>> extends UIHelper.QuestionResultAdapter<T> {
+
+        private static final long serialVersionUID = -7607548650662570371L;
 
         public BuyAdvertFreeTimeQuestionListener(T uiHelper) {
             super(uiHelper);

@@ -43,9 +43,9 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
-            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>(indirectSelection));
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
-            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>());
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>());
         }
         args.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableAlbums);
         fragment.setArguments(args);

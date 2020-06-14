@@ -6,12 +6,11 @@ import android.os.Build;
 
 import androidx.documentfile.provider.DocumentFile;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 /**
@@ -38,7 +37,7 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
                         item.withLegacyCachedFields();
                     }
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                 }
             }
             selectedFolderItems.add(item);

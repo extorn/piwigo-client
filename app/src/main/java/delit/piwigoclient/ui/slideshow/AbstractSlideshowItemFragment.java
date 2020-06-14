@@ -28,7 +28,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -44,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
@@ -115,10 +115,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private HashSet<Long> albumsRequiringReload;
     private boolean editingItemDetails;
     private boolean informationShowing;
-    private transient boolean isPrimarySlideshowItem;
+    private boolean isPrimarySlideshowItem;
     private boolean allowDownload = true;
 
-    private transient boolean doOnPageSelectedAndAddedRun; // reset to false with every object re-use and never tracked.
+    private boolean doOnPageSelectedAndAddedRun; // reset to false with every object re-use and never tracked.
 
     private MaterialButton editButton;
     private TextView tagsField;
@@ -208,22 +208,16 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         // override page default values with any saved state
         restoreSavedInstanceState(savedInstanceState);
 
-        setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (model.getParentId() != null) {
-                    onUseAsAlbumThumbnailForParent();
-                } else {
-                    onUseAsAlbumThumbnailSelectAlbum();
-                }
+        setAsAlbumThumbnail.setOnClickListener(v -> {
+            if (model.getParentId() != null) {
+                onUseAsAlbumThumbnailForParent();
+            } else {
+                onUseAsAlbumThumbnailSelectAlbum();
             }
         });
-        myRatingForThisResourceBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if (fromUser) {
-                    onAlterRating(model, rating);
-                }
+        myRatingForThisResourceBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
+            if (fromUser) {
+                onAlterRating(model, rating);
             }
         });
 
@@ -241,7 +235,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if (model.isResourceDetailsLikelyOutdated() || model.isLikelyOutdated()) {
             // call this quietly in the background to avoid it ruining the slideshow experience.
             Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
-            long messageId = new ImageGetInfoResponseHandler<T>(model, multimediaExtensionList).invokeAsync(getContext());
+            long messageId = new ImageGetInfoResponseHandler<>(model, multimediaExtensionList).invokeAsync(getContext());
             getUiHelper().addBackgroundServiceCall(messageId);
         }
     }
@@ -259,7 +253,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             errBundle.putString("class", galleryModelClass.getName());
             errBundle.putLong("modelId", galleryModelId);
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelNull", errBundle);
-            Crashlytics.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
+            Logging.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
             throw new ModelUnavailableException();
         }
         long galleryItemId = b.getLong(ARG_GALLERY_ITEM_ID);
@@ -285,15 +279,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             errBundle.putInt("sortOrder", modelStore.isRetrieveItemsInReverseOrder() ? 1 : 0);
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelClassWrong", null);
             String errMsg = String.format(Locale.UK, "slideshow model is wrong type - %1$s(%2$d)\n%3$s", galleryModelClass.getName(), galleryModelId, errBundle.toString());
-            Crashlytics.log(Log.ERROR, TAG, errMsg);
+            Logging.log(Log.ERROR, TAG, errMsg);
             ModelUnavailableException er = new ModelUnavailableException(errMsg, e);
-            Crashlytics.logException(er);
+            Logging.recordException(er);
             throw er;
         } catch (IllegalArgumentException e) {
             String errMsg = String.format(Locale.UK, "slideshow galleryItem could not be found in model - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId);
-            Crashlytics.log(Log.ERROR, TAG, errMsg);
+            Logging.log(Log.ERROR, TAG, errMsg);
             ModelUnavailableException er = new ModelUnavailableException(errMsg, e);
-            Crashlytics.logException(er);
+            Logging.recordException(er);
         }
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
@@ -511,9 +505,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         resourceRatingScoreField = v.findViewById(R.id.slideshow_image_details_rating_score);
 
         linkedAlbumsField = v.findViewById(R.id.slideshow_image_details_linked_albums);
-        linkedAlbumsField.setOnClickListener(v1 -> {
-            showLinkedAlbumsView();
-        });
+        linkedAlbumsField.setOnClickListener(v1 -> showLinkedAlbumsView());
 
         tagsField = v.findViewById(R.id.slideshow_image_details_tags);
 
@@ -527,58 +519,25 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
 
         saveButton = v.findViewById(R.id.slideshow_resource_action_save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveChangesButtonClicked();
-            }
-        });
+        saveButton.setOnClickListener(v14 -> onSaveChangesButtonClicked());
         discardButton = v.findViewById(R.id.slideshow_resource_action_discard_button);
-        discardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDiscardChanges();
-            }
-        });
+        discardButton.setOnClickListener(v12 -> onDiscardChanges());
 
         editButton = v.findViewById(R.id.slideshow_resource_action_edit_button);
-        getEditButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleEditingItemDetails();
-                fillResourceEditFields();
-            }
+        getEditButton().setOnClickListener(v13 -> {
+            toggleEditingItemDetails();
+            fillResourceEditFields();
         });
 
 
         downloadButton = v.findViewById(R.id.slideshow_resource_action_download);
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDownloadItem(model);
-            }
-        });
+        downloadButton.setOnClickListener(v15 -> onDownloadItem(model));
         deleteButton = v.findViewById(R.id.slideshow_resource_action_delete);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDeleteItem(model);
-            }
-        });
+        deleteButton.setOnClickListener(v18 -> onDeleteItem(model));
         moveButton = v.findViewById(R.id.slideshow_resource_action_move);
-        moveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onMoveItem(model);
-            }
-        });
+        moveButton.setOnClickListener(v16 -> onMoveItem(model));
         copyButton = v.findViewById(R.id.slideshow_resource_action_copy);
-        copyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCopyItem(model);
-            }
-        });
+        copyButton.setOnClickListener(v17 -> onCopyItem(model));
     }
 
     private void showLinkedAlbumsView() {
@@ -736,13 +695,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             defaultAlbumSelectionId = albumNames.get(0).getId();
         }
         final SelectAlbumDialog dialogFact = new SelectAlbumDialog(activity, defaultAlbumSelectionId);
-        AlertDialog dialog = dialogFact.buildDialog(albumNames, CategoryItem.ROOT_ALBUM, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                long selectedAlbumId = dialogFact.getSelectedAlbumId();
-                Long selectedAlbumParentId = dialogFact.getSelectedAlbumParentId();
-                addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(selectedAlbumId, selectedAlbumParentId, model.getId()));
-            }
+        AlertDialog dialog = dialogFact.buildDialog(albumNames, CategoryItem.ROOT_ALBUM, (dialog1, which) -> {
+            long selectedAlbumId = dialogFact.getSelectedAlbumId();
+            Long selectedAlbumParentId = dialogFact.getSelectedAlbumParentId();
+            addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(selectedAlbumId, selectedAlbumParentId, model.getId()));
         });
         dialog.show();
     }
@@ -752,6 +708,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteItemAction(getUiHelper()) {
 
 
+            private static final long serialVersionUID = -3461890984976190060L;
         });
     }
 
@@ -764,6 +721,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
+        private static final long serialVersionUID = 2083670793785701410L;
+
         public UseAsAlbumThumbnailForParentAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
             super(uiHelper);
         }
@@ -917,6 +876,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private static class OnDeleteItemAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
+        private static final long serialVersionUID = -5420355636254441168L;
+
         public OnDeleteItemAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
             super(uiHelper);
         }
@@ -929,7 +890,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
                 getUiHelper().setTrackingRequest(event.getActionId());
                 EventBus.getDefault().post(event);
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler<T>(model));
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler<>(model));
             }
         }
     }

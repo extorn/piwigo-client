@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -40,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 
@@ -51,7 +51,7 @@ public class ExoPlayerCompression {
 
     private static final String TAG = "ExoPlayerCompression";
     private static final boolean VERBOSE_LOGGING = true;
-    private ArrayList<ExoPlayerCompressionThread> activeCompressionThreads = new ArrayList<>(1);
+    private final ArrayList<ExoPlayerCompressionThread> activeCompressionThreads = new ArrayList<>(1);
     private Context context;
 
 
@@ -146,22 +146,22 @@ public class ExoPlayerCompression {
             if (wroteFastStartFile) {
                 boolean deletedOriginal = fileAsFile.delete();
                 if (!deletedOriginal) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error deleting streaming input file");
+                    Logging.log(Log.ERROR, TAG, "Error deleting streaming input file");
                 }
                 boolean renamed = tmpFile.renameTo(new File(tmpFile.getParentFile(), fileAsFile.getName()));
                 if (!renamed) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error renaming streaming output file");
+                    Logging.log(Log.ERROR, TAG, "Error renaming streaming output file");
                 }
             }
         } catch (IOException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
-            Crashlytics.logException(e);
+            Logging.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
+            Logging.recordException(e);
         } catch (QtFastStart.MalformedFileException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
-            Crashlytics.logException(e);
+            Logging.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
+            Logging.recordException(e);
         } catch (QtFastStart.UnsupportedFileException e) {
-            Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
-            Crashlytics.logException(e);
+            Logging.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
+            Logging.recordException(e);
         }
     }
 
@@ -472,7 +472,7 @@ public class ExoPlayerCompression {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 long lastModified = IOUtils.getLastModifiedTime(context, inputFile);
                 if(!IOUtils.setLastModified(context, outputFile, lastModified)) {
-                    Crashlytics.log(Log.WARN, TAG, "Unable to set last modified date on compressed video " + outputFile);
+                    Logging.log(Log.WARN, TAG, "Unable to set last modified date on compressed video " + outputFile);
                 }
             }
             super.onCompressionProgress(inputFile, outputFile, 100d, mediaDurationMs);
@@ -513,10 +513,10 @@ public class ExoPlayerCompression {
             try {
                 invokeCompressor(compressionSettings);
             } catch (RuntimeException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 listener.onCompressionError(inputFile, outputFile, e);
             } catch (IOException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 listener.onCompressionError(inputFile, outputFile, e);
             }
         }
@@ -530,8 +530,8 @@ public class ExoPlayerCompression {
                     activeCompressionThreads.notifyAll();
                 }
             } catch(Exception e) {
-                Crashlytics.log(Log.ERROR, TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.");
-                Crashlytics.logException(e);
+                Logging.log(Log.ERROR, TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.");
+                Logging.recordException(e);
                 Log.e(TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.", e);
                 cancel();
             }
@@ -566,7 +566,7 @@ public class ExoPlayerCompression {
             if (cancelled) {
                 DocumentFile outputDocFile = DocumentFile.fromSingleUri(getContext(), outputFile);
                 if (outputDocFile.exists() && !outputDocFile.delete()) {
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to delete output file after compression cancelled");
+                    Logging.log(Log.ERROR, TAG, "Unable to delete output file after compression cancelled");
                 }
             }
         }

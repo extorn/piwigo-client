@@ -2,7 +2,6 @@ package delit.piwigoclient.ui;
 
 import android.os.Bundle;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 

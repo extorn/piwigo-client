@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Libs.Theme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="visibilityToggleStyle">@style/App.Widget.CompoundButton.CheckBox.Visibility</item>
+    </style>
+
+    <!-- password field visibility toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/none</item> <!-- needed for pre lollipop -->
+        <item name="paddingStart">0dp</item>
+        <item name="android:button">@drawable/none</item> <!-- just a null drawable - never shown -->
+        <item name="android:drawableEnd">@drawable/visibility_checkbox</item>
+    </style>
+</resources>

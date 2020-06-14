@@ -12,12 +12,12 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import delit.libs.http.RequestParams;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 
 public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -81,7 +81,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
 
     private void runSequenceOfNestedHandlers() {
         int nextPage = 0;
-        resultContainer = new ArrayList<Long>(pageSize);
+        resultContainer = new ArrayList<>(pageSize);
         PiwigoGetOrphansResponse nestedResponse = null;
         while(nextPage >= 0) {
             ImagesListOrphansResponseHandler nestedHandler = new ImagesListOrphansResponseHandler(nextPage, pageSize, resultContainer);

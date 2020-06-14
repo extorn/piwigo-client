@@ -19,7 +19,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -27,6 +26,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
@@ -292,8 +292,8 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                     dialog.getButton(
                             AlertDialog.BUTTON_POSITIVE).setEnabled(tagName.length() > 0 && !tagsModel.containsTag(tagName));
                 } catch (RuntimeException e) {
-                    Crashlytics.log(Log.ERROR, getTag(), "Error in on tag name change");
-                    Crashlytics.logException(e);
+                    Logging.log(Log.ERROR, getTag(), "Error in on tag name change");
+                    Logging.recordException(e);
                 }
             }
 

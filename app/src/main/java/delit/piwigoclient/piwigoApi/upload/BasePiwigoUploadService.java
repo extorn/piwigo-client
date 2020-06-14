@@ -27,7 +27,6 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
@@ -57,6 +56,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.ObjectUtils;
@@ -222,7 +222,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         UploadJob job = loadForegroundJobStateFromDisk(context);
         if (job != null && job.getJobId() != jobId) {
             // Is this an error caused by corruption. Delete the old job. We can't use it anyway.
-            Crashlytics.log(Log.WARN, TAG, "Job exists on disk, but it doesn't match that expected by the app - deleting");
+            Logging.log(Log.WARN, TAG, "Job exists on disk, but it doesn't match that expected by the app - deleting");
             deleteStateFromDisk(context, job, true);
             job = null;
         }
@@ -238,7 +238,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobs");
         if (!jobsFolder.exists()) {
             if (!jobsFolder.mkdir()) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create folder to store background upload job status data in");
+                Logging.log(Log.ERROR, TAG, "Unable to create folder to store background upload job status data in");
             }
             return new ArrayList<>();
         }
@@ -295,7 +295,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 DocumentFile compressedFile = DocumentFile.fromSingleUri(c, compressedVersion);
                 if(compressedFile != null && compressedFile.exists()) {
                     if (!compressedFile.delete()) {
-                        Crashlytics.log(Log.ERROR, TAG, "Unable to delete compressed file when attempting to delete job state from disk.");
+                        Logging.log(Log.ERROR, TAG, "Unable to delete compressed file when attempting to delete job state from disk.");
                     }
                 }
             }
@@ -345,7 +345,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "Unable to delete " + fileDesc + " : " + f.getUri());
             } else {
-                Crashlytics.log(Log.WARN, tag, "\"Unable to delete " + fileDesc);
+                Logging.log(Log.WARN, tag, "\"Unable to delete " + fileDesc);
             }
         }
     }
@@ -355,7 +355,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         File tmpUploads = new File(extCacheFolder, "piwigo-upload");
         if(!tmpUploads.exists()) {
             if(!tmpUploads.mkdirs()) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create tmp upload folder " + tmpUploads.getAbsolutePath());
+                Logging.log(Log.ERROR, TAG, "Unable to create tmp upload folder " + tmpUploads.getAbsolutePath());
                 throw new RuntimeException("Unable to create the tmp folder: " + tmpUploads.getAbsolutePath());
             }
         }
@@ -545,7 +545,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 if (BuildConfig.DEBUG) {
                     Log.e(tag, "Upload job could not be located immediately after creating it - weird!");
                 } else {
-                    Crashlytics.log(Log.WARN, tag, "Upload job could not be located immediately after creating it - weird!");
+                    Logging.log(Log.WARN, tag, "Upload job could not be located immediately after creating it - weird!");
                 }
                 return;
             }
@@ -1025,7 +1025,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (listener.getCompressionError() != null && uploadJob.isFileUploadStillWanted(rawVideo)) {
             if (outputVideo.exists()) {
                 if (!outputVideo.delete()) {
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to delete corrupt compressed file.");
+                    Logging.log(Log.ERROR, TAG, "Unable to delete corrupt compressed file.");
                 }
             }
 
@@ -1037,7 +1037,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 uploadJob.markFileAsCompressed(rawVideo);
                 outputVideo = DocumentFile.fromSingleUri(this, rawVideo);
             } else {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
                 uploadJob.cancelFileUpload(rawVideo);
             }
@@ -1133,7 +1133,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     onFileDeleteFailed(tag, outputPhoto, "compressed image - post compression");
                 }
             }
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawImage, e));
             return null;
         }
@@ -1400,7 +1400,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 try {
                     bis.close();
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(tag, "Exception on closing File input stream", e);
                     }
@@ -1409,7 +1409,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(tag, "Exception on closing File input stream", e);
                     }
@@ -1530,10 +1530,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     }
                 }
             } catch (FileNotFoundException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 postNewResponse(jobId, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), uploadJobKey, e));
             } catch (final IOException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 postNewResponse(jobId, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), uploadJobKey, e));
             }
         }
@@ -1572,29 +1572,29 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
             }
         } catch (ImageProcessingException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             // ignore for now
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "Error parsing EXIF data : sinking", e);
             } else {
-                Crashlytics.log(Log.ERROR, tag, "Error parsing EXIF data : sinking");
+                Logging.log(Log.ERROR, tag, "Error parsing EXIF data : sinking");
             }
         } catch(FileNotFoundException e) {
-            Crashlytics.log(Log.WARN, tag, "File Not found - Unable to parse EXIF data : sinking");
+            Logging.log(Log.WARN, tag, "File Not found - Unable to parse EXIF data : sinking");
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             // ignore for now
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "Error parsing EXIF data : sinking", e);
             } else {
-                Crashlytics.log(Log.ERROR, tag, "Error parsing EXIF data : sinking");
+                Logging.log(Log.ERROR, tag, "Error parsing EXIF data : sinking");
             }
         } finally {
             if (bis != null) {
                 try {
                     bis.close();
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(tag, "Exception on closing File input stream", e);
                     }
@@ -1603,7 +1603,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(tag, "Exception on closing File input stream", e);
                     }

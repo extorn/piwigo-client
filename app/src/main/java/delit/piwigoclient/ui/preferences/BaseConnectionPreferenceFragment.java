@@ -16,8 +16,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -28,11 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
-import delit.libs.ui.view.preference.ClientCertificatePreference;
-import delit.libs.ui.view.preference.EditableListPreference;
-import delit.libs.ui.view.preference.TrustedCaCertificatesPreference;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.libs.util.SetUtils;
@@ -56,10 +51,10 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
 public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment<BaseConnectionPreferenceFragment> {
     private static final String TAG = "Connection Settings";
-    protected transient Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
-    private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
-    protected transient Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
-    private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
+    protected Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
+    private Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
+    protected Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
+    private Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
     private String preferencesKey;
     private ResponseCacheButtonTextRetriever responseCacheButtonTextRetriever;
@@ -181,7 +176,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
                 Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
                 if (removedCertThumbprints.size() > 0) {
-                    Set<String> preProcessedCerts = getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>(newAliases.size()));
+                    Set<String> preProcessedCerts = getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>(newAliases.size()));
                     for (String removedThumbprint : removedCertThumbprints) {
                         preProcessedCerts.remove(removedThumbprint);
                     }
@@ -416,6 +411,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     }
 
     private static class OnLogoutAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> {
+        private static final long serialVersionUID = -8551766853138956387L;
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -430,34 +426,36 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         @Override
         public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getContext()).start();
+            long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getAppContext()).start();
             if(loginAgain != null && !loginAgain) {
                 uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction());
             } else {
                 uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
             }
-            uiHelper.addActiveServiceCall(uiHelper.getContext().getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
+            uiHelper.addActiveServiceCall(uiHelper.getAppContext().getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
             return false;
         }
 
         @Override
         public boolean onFailure(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
+            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getAppContext());
             onSuccess(uiHelper, null);
             return false;
         }
     }
 
     private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+        private static final long serialVersionUID = -4028888774159894551L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+                String msg = uiHelper.getAppContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
                 if (sessionDetails.getAvailableImageSizes().size() == 0) {
-                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
+                    msg += '\n' + uiHelper.getAppContext().getString(R.string.alert_message_no_available_image_sizes);
                     uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
                 } else {
                     uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
@@ -469,6 +467,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     }
 
     private static class OnHttpClientShutdownAction extends UIHelper.Action<FragmentUIHelper<BaseConnectionPreferenceFragment>, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+        private static final long serialVersionUID = -2910419463800889829L;
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -485,20 +484,20 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             boolean retVal = false;
             if(loginAsProfileAfterLogout != null) {
                 // copy those profile values to the working app copy of prefs
-                ConnectionPreferences.clonePreferences(uiHelper.getPrefs(), uiHelper.getContext(), loginAsProfileAfterLogout, null);
+                ConnectionPreferences.clonePreferences(uiHelper.getPrefs(), uiHelper.getAppContext(), loginAsProfileAfterLogout, null);
                 retVal = true;
             }
 
             if(loginAgain) {
                 ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-                String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getContext());
+                String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getAppContext());
                 if ((serverUri == null || serverUri.trim().isEmpty())) {
                     if(loginAsProfileAfterLogout == null) {
                         // if we aren't swapping connection profiles, warn that a login is impossible.
-                        uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getContext().getString(R.string.alert_warning_no_server_url_specified));
+                        uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getAppContext().getString(R.string.alert_warning_no_server_url_specified));
                     }
                 } else {
-                    uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                    uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
                 }
             }
             return retVal;
@@ -651,7 +650,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 getOwner().forceHttpConnectionCleanupAndRebuild();
                 return Boolean.TRUE;
             } catch (SecurityException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 return Boolean.FALSE;
             }
         }

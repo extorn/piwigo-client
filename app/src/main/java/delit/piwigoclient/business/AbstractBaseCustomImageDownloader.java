@@ -9,7 +9,6 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
@@ -66,13 +66,13 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         Looper currentLooper = Looper.myLooper();
         if (currentLooper == null || currentLooper.getThread() != Looper.getMainLooper().getThread()) {
             if (BuildConfig.DEBUG) {
-                Crashlytics.log(Log.DEBUG, TAG, "Image downloader has been called on background thread for URI: " + uri);
+                Logging.log(Log.DEBUG, TAG, "Image downloader has been called on background thread for URI: " + uri);
             }
             handler.runCall(!NetworkPolicy.shouldReadFromDiskCache(networkPolicy));
         } else {
             if (BuildConfig.DEBUG) {
                 // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
-                Crashlytics.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread! - URI: " + uri);
+                Logging.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread! - URI: " + uri);
             }
             handler.invokeAndWait(context, connectionPrefs);
         }
@@ -120,9 +120,9 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             try {
                 metadata = ImageMetadataReader.readMetadata(imageDataStream);
             } catch (ImageProcessingException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             } catch (IOException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
         }
         return metadata;
@@ -184,7 +184,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
                         Bundle b = new Bundle();
                         b.putString("uri", uri.toString());
                         FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
-                        Crashlytics.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
+                        Logging.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
                     }
                     builder.encodedQuery(param);
                     piwigoFragmentAdded = true;

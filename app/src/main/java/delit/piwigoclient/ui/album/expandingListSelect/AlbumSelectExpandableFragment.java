@@ -171,42 +171,24 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
 
         Button cancelChangesButton = view.findViewById(R.id.list_action_cancel_button);
         cancelChangesButton.setVisibility(View.VISIBLE);
-        cancelChangesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCancelChanges();
-            }
-        });
+        cancelChangesButton.setOnClickListener(v -> onCancelChanges());
 
         toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllSelectionButton.setVisibility(viewPrefs.isMultiSelectionEnabled() ? View.VISIBLE : View.GONE);
-        toggleAllSelectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onToggleAllSelection();
-            }
-        });
+        toggleAllSelectionButton.setOnClickListener(v -> onToggleAllSelection());
         setToggleSelectionButtonText();
 
         saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
-        saveChangesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSaveChanges();
-            }
-        });
+        saveChangesButton.setOnClickListener(v -> onSaveChanges());
 
         reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
-        reloadListButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    reloadListButton.hide();
-                    setupListContentLoadingIfNeeded();
-                }
-                return true;
+        reloadListButton.setOnTouchListener((v, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                reloadListButton.hide();
+                setupListContentLoadingIfNeeded();
             }
+            return true;
         });
 
         return view;

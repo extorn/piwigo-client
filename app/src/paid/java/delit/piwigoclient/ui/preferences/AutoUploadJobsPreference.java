@@ -5,15 +5,16 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.preference.DialogPreference;
 import android.util.AttributeSet;
+
+import androidx.preference.DialogPreference;
+import androidx.preference.PreferenceDataStore;
 
 import java.util.ArrayList;
 
-import androidx.preference.PreferenceDataStore;
-import delit.piwigoclient.R;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.ObjectUtils;
+import delit.piwigoclient.R;
 
 public class AutoUploadJobsPreference extends DialogPreference {
 

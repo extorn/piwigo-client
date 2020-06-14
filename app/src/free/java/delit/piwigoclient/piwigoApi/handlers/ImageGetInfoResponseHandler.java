@@ -12,14 +12,14 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
         super(piwigoResource, multimediaExtensionList);
     }
 
-    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride) {
-        return new ImageGetInfoResourceParser(multimediaExtensionList, getPiwigoServerUrl(), usingPiwigoClientOveride);
+    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOverride) {
+        return new ImageGetInfoResourceParser(multimediaExtensionList, getPiwigoServerUrl(), usingPiwigoClientOverride);
     }
 
     public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
 
-        public ImageGetInfoResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
-            super(multimediaExtensionList, basePiwigoUrl, usingPiwigoClientOveride);
+        public ImageGetInfoResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOverride) {
+            super(multimediaExtensionList, basePiwigoUrl, usingPiwigoClientOverride);
         }
     }
 }

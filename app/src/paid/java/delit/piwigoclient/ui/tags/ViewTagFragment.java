@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
@@ -597,6 +597,8 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     }
 
     private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>> {
+        private static final long serialVersionUID = -8756018849954088911L;
+
         public OnDeleteTagsAction(FragmentUIHelper<ViewTagFragment> uiHelper) {
             super(uiHelper);
         }
@@ -659,6 +661,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
     private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>> {
 
+        private static final long serialVersionUID = 5113293632575048821L;
         private HashSet<Long> selectedItemIds;
         private HashSet<? extends ResourceItem> selectedItems;
 
@@ -791,18 +794,20 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 if(itemToLoad != null) {
 //                    switch (itemToLoad) {
 //                        default:
-                            int page = Integer.valueOf(itemToLoad);
+                            int page = Integer.parseInt(itemToLoad);
                             loadAlbumResourcesPage(page);
 //                            break;
 //                    }
                 } else {
-                    Crashlytics.log(Log.ERROR, getTag(), "User told tag page failed to load, but nothing to retry loading!");
+                    Logging.log(Log.ERROR, getTag(), "User told tag page failed to load, but nothing to retry loading!");
                 }
             }
         }
     }
 
     static class TagLoadedAction extends UIHelper.Action<FragmentUIHelper<ViewTagFragment>, ViewTagFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
+
+        private static final long serialVersionUID = 891254249084729586L;
 
         @Override
         public boolean onSuccess(FragmentUIHelper<ViewTagFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
@@ -817,7 +822,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             }
             if (!updated) {
                 //Something wierd is going on - this should never happen
-                Crashlytics.log(Log.ERROR, TAG, "Closing tag - tag was not available after refreshing session");
+                Logging.log(Log.ERROR, TAG, "Closing tag - tag was not available after refreshing session");
                 fragment.getParentFragmentManager().popBackStack();
                 return false;
             }

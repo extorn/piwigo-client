@@ -22,7 +22,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.appbar.AppBarLayout;
@@ -35,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
@@ -92,6 +92,7 @@ public class UploadActivity extends MyActivity {
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
         Intent intent = new Intent("delit.piwigoclient.MANUAL_UPLOAD", null, context.getApplicationContext(), UploadActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
         return intent;
     }
@@ -200,6 +201,8 @@ public class UploadActivity extends MyActivity {
                 d.show();
             } else {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<UploadActivity>>(getUiHelper()) {
+                    private static final long serialVersionUID = -3252380962165832098L;
+
                     @Override
                     public void onDismiss(AlertDialog dialog) {
                         if (!BuildConfig.DEBUG) {
@@ -264,7 +267,7 @@ public class UploadActivity extends MyActivity {
         try {
             startActivity(MainActivity.buildShowGroupsIntent(this));
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
     }
 
@@ -272,7 +275,7 @@ public class UploadActivity extends MyActivity {
         try {
             startActivity(MainActivity.buildShowUsersIntent(this));
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
     }
 
@@ -280,7 +283,7 @@ public class UploadActivity extends MyActivity {
         try {
             startActivity(MainActivity.buildShowTopTipsIntent(this));
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
     }
 
@@ -288,7 +291,7 @@ public class UploadActivity extends MyActivity {
         try {
             startActivity(PreferencesActivity.buildIntent(this));
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
     }
 
@@ -296,7 +299,7 @@ public class UploadActivity extends MyActivity {
         try {
             startActivity(MainActivity.buildShowGalleryIntent(this));
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
     }
 
@@ -331,9 +334,9 @@ public class UploadActivity extends MyActivity {
 
         if (hasFocus) {
             DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
-            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+            Logging.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
-            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+            Logging.log(Log.ERROR, TAG, "showing status bar!");
         }
 
         v.requestApplyInsets();
@@ -349,6 +352,7 @@ public class UploadActivity extends MyActivity {
     }
 
     private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
+        private static final long serialVersionUID = 8370875759830585817L;
         private final int trackingRequestId;
 
         public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
@@ -548,7 +552,7 @@ public class UploadActivity extends MyActivity {
 ////                        sharedFile = renamedTo;
 ////
 ////                    } catch (IOException e) {
-////                        Crashlytics.log(Log.ERROR, TAG, "Error retrieving correct file extension for shared media file!");
+////                        Logging.log(Log.ERROR, TAG, "Error retrieving correct file extension for shared media file!");
 ////                    }
 ////                } else {
 ////                    if(mimeType.equals("video/mpeg")) {
@@ -667,7 +671,7 @@ public class UploadActivity extends MyActivity {
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Crashlytics.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
+        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
         checkLicenceIfNeeded();
 
         DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());

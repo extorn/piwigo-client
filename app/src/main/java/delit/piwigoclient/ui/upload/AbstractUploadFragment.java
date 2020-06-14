@@ -38,7 +38,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
@@ -64,6 +63,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
@@ -281,7 +281,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     item.calculateDataHashCode(getContext());
                     uploadDataItems.add(item);
                 } catch (Md5SumUtils.Md5SumException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                 }
                 int currentProgress = (int)Math.round((0.5 + ((0.5 * currentItem) / itemCount)) * 100);
                 getOwner().overallUploadProgressBar.post(() -> getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, currentProgress));
@@ -295,7 +295,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getOwner().overallUploadProgressBar.setVisibility(View.GONE);
             getOwner().mViewPager.setCurrentItem(TAB_IDX_FILES);
             getOwner().updateFilesForUploadList(folderItems);
-            AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
     }
 
@@ -606,7 +605,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             int itemPosition = ((ArrayAdapter) spinner.getAdapter()).getPosition(item);
             spinner.setSelection(itemPosition);
         } else {
-            Crashlytics.log(Log.ERROR, TAG, "Cannot set selected spinner item - adapter is not instance of ArrayAdapter");
+            Logging.log(Log.ERROR, TAG, "Cannot set selected spinner item - adapter is not instance of ArrayAdapter");
         }
     }
 
@@ -665,7 +664,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if(mimeType != null) {
                     visibleMimeTypes.add(mimeType);
                 } else {
-                    Crashlytics.log(Log.WARN, TAG, "Unrecognised file extension - no mime type found : " + fileExt);
+                    Logging.log(Log.WARN, TAG, "Unrecognised file extension - no mime type found : " + fileExt);
                 }
             }
             event.withVisibleMimeTypes(visibleMimeTypes);
@@ -857,7 +856,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private FilesToUploadRecyclerViewAdapter getFilesForUploadViewAdapter() {
+    protected FilesToUploadRecyclerViewAdapter getFilesForUploadViewAdapter() {
         return (FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter();
     }
 
@@ -865,7 +864,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return uploadToAlbum;
     }
 
-    private void updateFilesForUploadList(List<FilesToUploadRecyclerViewAdapter.UploadDataItem> folderItemsToBeUploaded) {
+    protected void updateFilesForUploadList(List<FilesToUploadRecyclerViewAdapter.UploadDataItem> folderItemsToBeUploaded) {
         if (folderItemsToBeUploaded.size() > 0) {
             FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
             int addedItems = 0;
@@ -1057,6 +1056,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         } else {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
         }
+        AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
     }
 
     @Override
@@ -1349,7 +1349,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         fragment.getUploadFilesNowButton().setText(R.string.upload_files_finish_job_button_title);
                     }
                 } else {
-                    Crashlytics.log(Log.ERROR, TAG, "Attempt to alter upload job but it was null");
+                    Logging.log(Log.ERROR, TAG, "Attempt to alter upload job but it was null");
                 }
             }
         }
@@ -1388,11 +1388,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             DisplayUtils.runOnUiThread(() -> {
                 uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression failed");
                 linkedView.setEnabled(true);
-                Crashlytics.log(Log.ERROR, TAG, "Video Compression failed");
-                Crashlytics.logException(e);
+                Logging.log(Log.ERROR, TAG, "Video Compression failed");
+                Logging.recordException(e);
                 AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
-                IOUtils.delete(uiHelper.getContext(), outputFile);
+                IOUtils.delete(uiHelper.getAppContext(), outputFile);
             });
 
         }
@@ -1404,7 +1404,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 linkedView.setEnabled(true);
                 AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
-                IOUtils.addFileToMediaStore(uiHelper.getContext(), outputFile);
+                IOUtils.addFileToMediaStore(uiHelper.getAppContext(), outputFile);
             });
         }
 
@@ -1505,7 +1505,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             AbstractUploadFragment fragment = getUiHelper().getParent();
             Long currentJobId = fragment.getUploadJobId();
             if (currentJobId == null) {
-                Crashlytics.log(Log.WARN, TAG, "User attempted to delete job that was no longer exists");
+                Logging.log(Log.WARN, TAG, "User attempted to delete job that was no longer exists");
                 return;
             }
             UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), currentJobId);

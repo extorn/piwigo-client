@@ -23,11 +23,11 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+
+import delit.libs.core.util.Logging;
 
 /**
  * Code for rendering a texture onto a surface using OpenGL ES 2.0.
@@ -177,8 +177,8 @@ class TextureRender {
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
         if (compiled[0] == 0) {
-            Crashlytics.log(Log.ERROR, TAG, "Could not compile shader " + shaderType + ":");
-            Crashlytics.log(Log.ERROR, TAG, " " + GLES20.glGetShaderInfoLog(shader));
+            Logging.log(Log.ERROR, TAG, "Could not compile shader " + shaderType + ":");
+            Logging.log(Log.ERROR, TAG, " " + GLES20.glGetShaderInfoLog(shader));
             GLES20.glDeleteShader(shader);
             shader = 0;
         }
@@ -197,7 +197,7 @@ class TextureRender {
         int program = GLES20.glCreateProgram();
         checkGlError("glCreateProgram");
         if (program == 0) {
-            Crashlytics.log(Log.ERROR, TAG, "Could not create program");
+            Logging.log(Log.ERROR, TAG, "Could not create program");
         }
         GLES20.glAttachShader(program, vertexShader);
         checkGlError("glAttachShader");
@@ -207,8 +207,8 @@ class TextureRender {
         int[] linkStatus = new int[1];
         GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
         if (linkStatus[0] != GLES20.GL_TRUE) {
-            Crashlytics.log(Log.ERROR, TAG, "Could not link program: ");
-            Crashlytics.log(Log.ERROR, TAG, GLES20.glGetProgramInfoLog(program));
+            Logging.log(Log.ERROR, TAG, "Could not link program: ");
+            Logging.log(Log.ERROR, TAG, GLES20.glGetProgramInfoLog(program));
             GLES20.glDeleteProgram(program);
             program = 0;
         }
@@ -219,7 +219,7 @@ class TextureRender {
         int error;
         boolean hasError = false;
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
-            Crashlytics.log(Log.ERROR, TAG, op + ": glError " + error);
+            Logging.log(Log.ERROR, TAG, op + ": glError " + error);
             hasError = true;
         }
         if (hasError) {

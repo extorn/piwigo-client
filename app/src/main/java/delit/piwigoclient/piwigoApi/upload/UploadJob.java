@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.File;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -28,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
@@ -415,7 +414,7 @@ public class UploadJob implements Parcelable {
                         checksum = Md5SumUtils.calculateMD5(getContext().getContentResolver(), fileForChecksumCalc);
                     } catch (Md5SumUtils.Md5SumException e) {
                         failures.put(f, e);
-                        Crashlytics.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
+                        Logging.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
                     } finally {
                         if (!newJob) {
                             fileChecksums.remove(f);
@@ -639,7 +638,7 @@ public class UploadJob implements Parcelable {
             compressedFolder = f.createDirectory("compressed_vids_for_upload");
         }
         if (compressedFolder == null) {
-            Crashlytics.log(Log.ERROR, TAG, "Unable to create folder for comrepessed files to be placed");
+            Logging.log(Log.ERROR, TAG, "Unable to create folder for comrepessed files to be placed");
         }
         return compressedFolder;
     }

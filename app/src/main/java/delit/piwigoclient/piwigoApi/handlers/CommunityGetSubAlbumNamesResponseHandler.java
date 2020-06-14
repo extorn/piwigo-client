@@ -107,7 +107,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
         for (CategoryItemStub parentAlbum : parentAlbums) {
             albumsParsed.put(parentAlbum.getId(), parentAlbum);
         }
-        return albumsParsed.get(Long.valueOf(parentageArr[parentageArr.length - 2]));
+        return albumsParsed.get(Long.parseLong(parentageArr[parentageArr.length - 2]));
     }
 
     public static class PiwigoCommunityGetSubAlbumNamesResponse extends AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse {

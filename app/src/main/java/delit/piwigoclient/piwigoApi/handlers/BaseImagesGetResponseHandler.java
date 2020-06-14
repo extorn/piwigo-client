@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -22,6 +21,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -89,9 +89,9 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             images = result.get("_content").getAsJsonArray();
         } else {
             if(isCached) {
-                Crashlytics.log(Log.WARN, TAG, "Unable to find images in cached response " + result.toString());
+                Logging.log(Log.WARN, TAG, "Unable to find images in cached response " + result.toString());
             } else {
-                Crashlytics.log(Log.WARN, TAG, "Unable to find images in response " + result.toString());
+                Logging.log(Log.WARN, TAG, "Unable to find images in response " + result.toString());
             }
             images = null;
         }
@@ -215,7 +215,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 try {
                     dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
                 } catch (ParseException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + dateLastAlteredStr);
                 }
             }
@@ -228,7 +228,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 try {
                     dateCreated = piwigoDateFormat.parse(dateCreatedStr);
                 } catch (ParseException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + dateCreatedStr);
                 }
             }

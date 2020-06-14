@@ -15,9 +15,10 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.multidex.MultiDexApplication;
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.util.IOUtils;
@@ -50,10 +52,11 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     static {
         // required for vector graphics support on older devices
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        Logging.setDebug(BuildConfig.DEBUG);
     }
 
-    protected transient static Resources resources;
-    private transient SharedPreferences prefs;
+    protected static Resources resources;
+    private SharedPreferences prefs;
 
     public static Resources getAppResources() {
         return resources;
@@ -82,7 +85,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     protected abstract String getDesiredLanguage(Context context);
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
 //        Locale.setDefault(newConfig.locale);
@@ -109,7 +112,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             bundle.putInt("from_version", currentPrefsVersion);
             bundle.putInt("to_version", latestAppVersion);
             FirebaseAnalytics.getInstance(this).logEvent("app_upgraded", bundle);
-            Crashlytics.log(Log.DEBUG, TAG, "Upgraded app Preferences from " + currentPrefsVersion +" to " + latestAppVersion + " and saved");
+            Logging.log(Log.DEBUG, TAG, "Upgraded app Preferences from " + currentPrefsVersion +" to " + latestAppVersion + " and saved");
         }
     }
 
@@ -140,7 +143,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         // ensure it's available for any users of it
         resources = getResources();
 
-        //Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
+        //Fabric.with(this, new FirebaseCrashlytics.getInstance().Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
         MediaScanner.instance(getApplicationContext());
         PicassoFactory.initialise();
 
@@ -188,32 +191,32 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     protected abstract void onAppCreate();
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    public void onActivityCreated(@NotNull Activity activity, Bundle savedInstanceState) {
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
+    public void onActivityStarted(@NotNull Activity activity) {
 
     }
 
     @Override
-    public void onActivityResumed(Activity activity) {
+    public void onActivityResumed(@NotNull Activity activity) {
     }
 
     @Override
-    public void onActivityPaused(Activity activity) {
+    public void onActivityPaused(@NotNull Activity activity) {
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {
+    public void onActivityStopped(@NotNull Activity activity) {
     }
 
     @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    public void onActivitySaveInstanceState(@NotNull Activity activity, @NotNull Bundle outState) {
     }
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
+    public void onActivityDestroyed(@NotNull Activity activity) {
     }
 
     @Override

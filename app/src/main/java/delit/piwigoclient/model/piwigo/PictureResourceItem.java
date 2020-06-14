@@ -6,9 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.IntRange;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.Date;
+
+import delit.libs.core.util.Logging;
 
 /**
  * Created by gareth on 12/07/17.
@@ -76,7 +76,7 @@ public class PictureResourceItem extends ResourceItem {
             try {
                 return new PictureResourceItem(in);
             } catch(RuntimeException e) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create pic resource item from parcel: " + in.toString());
+                Logging.log(Log.ERROR, TAG, "Unable to create pic resource item from parcel: " + in.toString());
                 throw e;
             }
         }

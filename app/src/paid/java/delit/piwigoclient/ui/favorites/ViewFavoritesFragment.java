@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,10 +33,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
@@ -558,6 +557,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     }
 
     private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewFavoritesFragment>> {
+        private static final long serialVersionUID = -1305038324634310698L;
         private HashSet<Long> selectedItemIds;
         private HashSet<ResourceItem> selectedItems;
 
@@ -622,6 +622,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
 
     private static class OnDeleteFavoritesForeverAction extends UIHelper.QuestionResultAdapter {
 
+        private static final long serialVersionUID = 6920921489446041130L;
         private final HashSet<Long> selectedItemIds;
         private final HashSet<? extends ResourceItem> selectedItems;
 
@@ -772,12 +773,12 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
                 if(itemToLoad != null) {
 //                    switch (itemToLoad) {
 //                        default:
-                        int page = Integer.valueOf(itemToLoad);
+                        int page = Integer.parseInt(itemToLoad);
                         loadAlbumResourcesPage(page);
 //                        break;
 //                    }
                 } else {
-                    Crashlytics.log(Log.ERROR, getTag(), "User told favorites page failed to load, but nothing to retry loading!");
+                    Logging.log(Log.ERROR, getTag(), "User told favorites page failed to load, but nothing to retry loading!");
                 }
             }
         }

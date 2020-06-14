@@ -224,6 +224,8 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
 
     private static class OnLogoutAction extends UIHelper.Action<UIHelper<UploadActivityDrawerNavigationView>, UploadActivityDrawerNavigationView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
 
+        private static final long serialVersionUID = 116040811981634247L;
+
         @Override
         public boolean onSuccess(UIHelper<UploadActivityDrawerNavigationView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
@@ -235,13 +237,15 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
         @Override
         public boolean onFailure(UIHelper<UploadActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
+            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getAppContext());
             onSuccess(uiHelper, null);
             return false;
         }
     }
 
     private static class OnLoginAction extends UIHelper.Action<UIHelper<UploadActivityDrawerNavigationView>, UploadActivityDrawerNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
+
+        private static final long serialVersionUID = -7833712274332972824L;
 
         @Override
         public boolean onFailure(UIHelper<UploadActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
@@ -255,9 +259,9 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
             uiHelper.getParent().markRefreshSessionComplete();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+                String msg = uiHelper.getAppContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
                 if (sessionDetails.getAvailableImageSizes().size() == 0) {
-                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
+                    msg += '\n' + uiHelper.getAppContext().getString(R.string.alert_message_no_available_image_sizes);
                     uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
                 } else {
                     uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
@@ -270,6 +274,8 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
 
     private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<UIHelper<UploadActivityDrawerNavigationView>, UploadActivityDrawerNavigationView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
 
+        private static final long serialVersionUID = 3430739984652782596L;
+
         @Override
         public boolean onFailure(UIHelper<UploadActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().markRefreshSessionComplete();
@@ -279,12 +285,12 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
         @Override
         public boolean onSuccess(UIHelper<UploadActivityDrawerNavigationView> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getContext());
+            String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getAppContext());
             if ((serverUri == null || serverUri.trim().isEmpty())) {
-                uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getContext().getString(R.string.alert_warning_no_server_url_specified));
+                uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getAppContext().getString(R.string.alert_warning_no_server_url_specified));
                 uiHelper.getParent().markRefreshSessionComplete();
             } else {
-                uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
             }
             return false; // don't run standard listener code
         }
@@ -326,6 +332,7 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
 
     private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<UploadActivityDrawerNavigationView>> {
 
+        private static final long serialVersionUID = 2805625019197988481L;
         private final boolean networkAccessDesired;
 
         public ConfigureNetworkAccessQuestionResult(ViewGroupUIHelper<UploadActivityDrawerNavigationView> uiHelper, boolean networkAccessDesired) {
@@ -342,14 +349,14 @@ public class UploadActivityDrawerNavigationView extends NavigationView implement
                 if (sessionDetails != null) {
                     sessionDetails.setCached(!networkAccessDesired);
                     if (networkAccessDesired) {
-                        PiwigoSessionDetails.logout(connectionPrefs, getUiHelper().getContext());
-                        String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getContext());
-                        getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                        PiwigoSessionDetails.logout(connectionPrefs, getUiHelper().getAppContext());
+                        String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getAppContext());
+                        getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
                     }
                     getUiHelper().getParent().setMenuVisibilityToMatchSessionState();
                 } else if (!networkAccessDesired) {
-                    String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getContext());
-                    getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction());
+                    String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getAppContext());
+                    getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction());
                 }
             }
         }

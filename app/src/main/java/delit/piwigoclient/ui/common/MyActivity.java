@@ -31,7 +31,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -39,6 +38,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
+import delit.libs.ui.events.ShowMessageEvent;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
@@ -62,7 +64,6 @@ import delit.piwigoclient.ui.FileSelectActivity;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
-import delit.piwigoclient.ui.events.ShowMessageEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -174,7 +175,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
                 );
                 setTaskDescription(taskDesc);
             } /*else {
-                taskDesc = new ActivityManager.TaskDescription(null, null, ContextCompat.getColor(this, R.color.primary));
+                taskDesc = new ActivityManager.TaskDescription(null, null, ContextCompat.getColor(this, R.colors.primary));
             }*/
 
         }
@@ -194,8 +195,8 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             if (e.getCause() != null) {
                 error = e.getCause().getMessage();
             }
-            Crashlytics.log(Log.ERROR, TAG, "Unable to  create activity (cause : " + error + ")");
-            Crashlytics.logException(e.getCause());
+            Logging.log(Log.ERROR, TAG, "Unable to  create activity (cause : " + error + ")");
+            Logging.recordException(e.getCause());
         }
 
         if (uiHelper == null) {
@@ -242,6 +243,8 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
                 d.show();
             } else {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
+                    private static final long serialVersionUID = 3716587979356224753L;
+
                     @Override
                     public void onDismiss(AlertDialog dialog) {
                         if (!BuildConfig.DEBUG) {
@@ -267,7 +270,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
                 for(UriPermission actualHeldPerm : getContentResolver().getPersistedUriPermissions()) {
                     heldPerms.add(actualHeldPerm.getUri());
                 }
-                HashSet<UriPermissionUse> missingPermissions = new HashSet<UriPermissionUse>();
+                HashSet<UriPermissionUse> missingPermissions = new HashSet<>();
                 for(UriPermissionUse permWeNeed : permissionsHeld) {
                     if(!heldPerms.contains(Uri.parse(permWeNeed.uri))) {
                         missingPermissions.add(permWeNeed);
@@ -361,7 +364,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
         BundleUtils.writeMap(outState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, trackedActionIntentsMap);
@@ -392,7 +395,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             }
             super.startActivityForResult(intent, requestCode, options);
         } catch(IllegalArgumentException e) {
-            Crashlytics.log(String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
+            Logging.log(Log.ERROR,TAG, String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
         }
     }
@@ -409,7 +412,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             }
             super.startActivityForResult(intent, requestCode & 0xFFFF);
         } catch(IllegalArgumentException e) {
-            Crashlytics.log(String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
+            Logging.log(Log.ERROR,TAG, String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
         }
     }

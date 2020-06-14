@@ -6,10 +6,10 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.json.JSONException;
 
 import delit.libs.http.RequestParams;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 
 public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
 

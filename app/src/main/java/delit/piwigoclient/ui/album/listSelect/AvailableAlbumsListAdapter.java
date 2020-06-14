@@ -13,8 +13,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.list.CustomSelectListAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
@@ -108,7 +107,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
                 button.setVisibility(getPrefs().isAllowItemDeletion() ? View.VISIBLE : GONE);
             }
         } catch (ClassCastException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e("AvailableAlbumsListAd", "You must supply a resource ID for a TextView");
             }

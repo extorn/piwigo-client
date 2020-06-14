@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.crashlytics.android.Crashlytics;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
@@ -27,11 +28,22 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, BLANK_TAG, null, true, null, 0, 0, 0, null);
     public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 100, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
+        private static final long serialVersionUID = -8930057350023020736L;
+
         @Override
         public int getType() {
             return GalleryItem.ALBUM_HEADING_TYPE;
         }
     };
+    public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
+        private static final long serialVersionUID = 1280192865683046512L;
+
+        @Override
+        public int getType() {
+            return GalleryItem.ADVERT_TYPE;
+        }
+    };
+
     private static final long serialVersionUID = 6967613449661498517L;
     private List<CategoryItem> childAlbums;
     private int photoCount;
@@ -167,6 +179,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         return super.hashCode();
     }
 
+    @NotNull
     @Override
     public String toString() {
         return getName();
@@ -251,7 +264,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             }
         }
         String parents = CollectionUtils.toCsvList(parentageChain);
-        Crashlytics.log(Log.WARN, TAG, String.format("Failed to locate child album %1$d with parentage %2$s but it could not be found in any of %3$d children (%5$s) within album %4$d", parentageChain.get(idx + 1), parents, getChildAlbumCount(), parentageChain.get(idx), CollectionUtils.toCsvList(PiwigoUtils.toSetOfIds(getChildAlbums()))));
+        Logging.log(Log.WARN, TAG, String.format("Failed to locate child album %1$d with parentage %2$s but it could not be found in any of %3$d children (%5$s) within album %4$d", parentageChain.get(idx + 1), parents, getChildAlbumCount(), parentageChain.get(idx), CollectionUtils.toCsvList(PiwigoUtils.toSetOfIds(getChildAlbums()))));
         return null;
     }
 
@@ -302,7 +315,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             try {
                 return new CategoryItem(in);
             } catch(RuntimeException e) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create category item from parcel: " + in.toString());
+                Logging.log(Log.ERROR, TAG, "Unable to create category item from parcel: " + in.toString());
                 throw e;
             }
         }
@@ -327,6 +340,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         return childAlbums.size();
     }
 
+    @NotNull
     @Override
     public CategoryItem clone() {
         Parcel p = Parcel.obtain();
@@ -341,7 +355,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         // get a fresh parcel.
         p = Parcel.obtain();
 
-        CategoryItem clone = null;
+        CategoryItem clone;
         try {
             p.unmarshall(dataBytes, 0, dataBytes.length);
             p.setDataPosition(0);
@@ -393,7 +407,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     public List<CategoryItem> getFullPath(CategoryItem child) {
         List<Long> parentageIds = new ArrayList<>();
         if (child == null) {
-            Crashlytics.log(Log.ERROR, TAG, "GetFullPath called for null CategoryItem");
+            Logging.log(Log.ERROR, TAG, "GetFullPath called for null CategoryItem");
             return new ArrayList<>(0);
         }
         if(child.getParentageChain() != null) {
@@ -411,7 +425,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
                 if (root != null) {
                     parentage.add(root);
                 } else {
-                    Crashlytics.log(Log.ERROR, "CatItem", "Unable to find parent album with id : " + id);
+                    Logging.log(Log.ERROR, "CatItem", "Unable to find parent album with id : " + id);
                 }
             }
         }
@@ -487,7 +501,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     @Override
     public int getPagesOfPhotos(int pageSize) {
         int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
-        return pages < 0 ? 0 : pages;
+        return Math.max(pages, 0);
     }
 
     public @Nullable

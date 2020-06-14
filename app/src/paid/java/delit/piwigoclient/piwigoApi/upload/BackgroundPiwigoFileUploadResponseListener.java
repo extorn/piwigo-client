@@ -5,8 +5,6 @@ import android.net.Uri;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
-
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.upload.PiwigoFileUploadResponseListener;

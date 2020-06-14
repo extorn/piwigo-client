@@ -9,14 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.util.SecurePrefsUtil;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 /**
  * Created by gareth on 22/01/18.
@@ -31,7 +34,7 @@ public class ConnectionPreferences {
     }
 
     public static Set<String> getConnectionProfileList(SharedPreferences prefs, Context context) {
-        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<String>(0));
+        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<>(0));
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
@@ -83,7 +86,7 @@ public class ConnectionPreferences {
     public static ProfilePreferences.PreferenceActor getPreferenceActor(Context context, String profileId, int preferenceKey) {
         ProfilePreferences.PreferenceActor actor = new ProfilePreferences.PreferenceActor(profileId);
         actor.with(preferenceKey);
-        actor.with(SecurePrefsUtil.getInstance(context));
+        actor.with(SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID));
         return actor;
     }
 
@@ -131,6 +134,7 @@ public class ConnectionPreferences {
             return new ProfilePreferences(prefix, true);
         }
 
+        @NotNull
         @Override
         public String toString() {
             return prefix + " " + asGuest;
@@ -288,7 +292,7 @@ public class ConnectionPreferences {
         public static class PreferenceActor {
             int prefKey;
             String profileId;
-            private transient SecurePrefsUtil securePrefUtil;
+            private SecurePrefsUtil securePrefUtil;
 
             public PreferenceActor(String profileId) {
                 this.profileId = profileId;
@@ -317,7 +321,7 @@ public class ConnectionPreferences {
 
             public SharedPreferences.Editor writeStringEncrypted(SharedPreferences.Editor editor, Context context, String value) {
                 if(securePrefUtil == null) {
-                    securePrefUtil = SecurePrefsUtil.getInstance(context);
+                    securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
                 }
                 securePrefUtil.writeSecurePreference(editor, getPrefKeyInProfile(context, prefKey), value);
                 return editor;
@@ -333,9 +337,9 @@ public class ConnectionPreferences {
             
             public String readStringEncrypted(SharedPreferences prefs, Context context, String defaultVal) {
                 if(securePrefUtil == null) {
-                    securePrefUtil = SecurePrefsUtil.getInstance(context);
+                    securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
                 }
-                return securePrefUtil.readSecureStringPreference(prefs, getPrefKeyInProfile(context, prefKey), defaultVal);
+                return securePrefUtil.readSecureStringPreference(context, prefs, getPrefKeyInProfile(context, prefKey), defaultVal);
             }
 
             public boolean readBoolean(SharedPreferences prefs, Context context, boolean defaultVal) {
@@ -458,7 +462,7 @@ public class ConnectionPreferences {
 
             SharedPreferences.Editor editor = prefs.edit();
 
-            getPrefActor().with(SecurePrefsUtil.getInstance(context));
+            getPrefActor().with(SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID));
             
             // piwigo server connection details
             getPrefActor().with(R.string.preference_piwigo_server_address_key).writeString(editor, context, fromPrefs.getPiwigoServerAddress(prefs, context));

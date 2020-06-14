@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import delit.libs.http.RequestParams;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 
 public class AlbumsGetFirstAvailableAlbumResponseHandler extends AbstractPiwigoWsResponseHandler {
 

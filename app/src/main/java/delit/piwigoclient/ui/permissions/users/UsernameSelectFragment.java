@@ -49,7 +49,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         if (indirectSelection != null) {
             BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
-            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>());
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>());
         }
         fragment.setArguments(args);
         return fragment;

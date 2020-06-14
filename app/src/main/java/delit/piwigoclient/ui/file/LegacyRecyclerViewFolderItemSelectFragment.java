@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,6 +37,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.view.FileBreadcrumbsView;
@@ -117,7 +117,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<String, Parcelable>(), Parcelable.class.getClassLoader());
+            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<>(), Parcelable.class.getClassLoader());
         }
 
         startedActionAtTime = System.currentTimeMillis();
@@ -233,7 +233,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         if(getListAdapter() == null) {
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
-            final LegacyFolderItemRecyclerViewAdapter viewAdapter = new LegacyFolderItemRecyclerViewAdapter(requireContext(), navListener, MediaScanner.instance(getContext()), new LegacyFolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<>(), getViewPrefs());
+            final LegacyFolderItemRecyclerViewAdapter viewAdapter = new LegacyFolderItemRecyclerViewAdapter(requireContext(), navListener, MediaScanner.instance(getContext()), new LegacyFolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<LegacyFolderItemRecyclerViewAdapter.LegacyFolderItem>(), getViewPrefs());
 
             if (!viewAdapter.isItemSelectionAllowed()) {
                 viewAdapter.toggleItemSelection();
@@ -456,7 +456,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
                         return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
                 }
             } catch (IndexOutOfBoundsException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 //TODO why does this occur? How?
                 return 1;
             }
@@ -508,7 +508,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
                             if (getList().getLayoutManager() != null) {
                                 getList().getLayoutManager().onRestoreInstanceState(item.getValue());
                             } else {
-                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                                Logging.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
                             }
                             iterator.remove();
                             while (iterator.hasNext()) {

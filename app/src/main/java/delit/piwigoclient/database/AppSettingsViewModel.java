@@ -15,7 +15,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import delit.libs.ui.util.DisplayUtils;
@@ -96,7 +96,7 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
                 if (flagsToRemove != 0 && consumers.size() == 0 && permissionsHeld.size() > 0) {
                     // remove the Uri permission if it is no longer in use
-                    List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, Arrays.asList(uri));
+                    List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, Collections.singletonList(uri));
                     if(uriPermsHeld.indexOf(uri) >= 0) {
                         context.getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
                     }

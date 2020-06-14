@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -146,7 +145,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     public int getSlideshowIndex(int rawCurrentGalleryItemPosition) {
         int idx = galleryResourceItems.indexOf(rawCurrentGalleryItemPosition);
         if (idx < 0) {
-            Crashlytics.log(Log.WARN, TAG, String.format(Locale.getDefault(), "Slideshow does not contain album item with index position (%1$d) (only have %2$d items available) - probably deleted it - will show first available.", rawCurrentGalleryItemPosition, galleryResourceItems.size()));
+            Logging.log(Log.WARN, TAG, String.format(Locale.getDefault(), "Slideshow does not contain album item with index position (%1$d) (only have %2$d items available) - probably deleted it - will show first available.", rawCurrentGalleryItemPosition, galleryResourceItems.size()));
             if(galleryResourceItems.size() > 0) {
                 return 0;
             }

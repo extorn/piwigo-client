@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.events;
 
+import delit.libs.ui.events.SingleUseEvent;
 import delit.piwigoclient.business.ConnectionPreferences;
 
 public class BadRequestExposesInternalServerEvent extends SingleUseEvent {

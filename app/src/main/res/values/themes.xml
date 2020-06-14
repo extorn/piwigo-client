@@ -35,7 +35,7 @@
 
 
         <!-- needed for older versions (pre lollipop - don't know why - it's inferring that the Light theme is in use) -->
-        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
+        <!--<item name="android:textColorPrimary">?attr/colorOnPrimary</item>-->
 
         <item name="scrimBackground">@color/color_scrim_light</item>  <!-- what uses this? its material -->
         <item name="scrimHeavy">@color/color_scrim_heavy</item>
@@ -55,7 +55,7 @@
         <item name="android:spinnerStyle">@style/App.Widget.AppCompat.Spinner.Underlined</item>
         <item name="android:spinnerItemStyle">@style/App.Widget.AppCompat.TextView.SpinnerItem</item>
 
-        <!-- change the app bar at screen top to not use default background color -->
+        <!-- change the app bar at screen top to not use default background colors -->
         <item name="actionBarStyle">@style/App.Theme.MaterialComponents.DayNight.DarkActionBar</item>
         <item name="appBarLayoutStyle">@style/App.Widget.MaterialComponents.AppBarLayout</item>
         <!-- the style isn't applied correctly when set here. Make sure to set it direct on the toolbar! -->
@@ -95,7 +95,7 @@
         <!--
 
         <item name="switchStyle">@style/App.Widget.AppCompat.CompoundButton.Switch</item>
-        <item name="android:editTextColor">@color/edit_text_color_selector</item>
+        <item name="android:editTextColor">@colors/edit_text_color_selector</item>
         <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat</item>
 
 
@@ -113,12 +113,12 @@
         <item name="materialButtonIconStyle">@style/Widget.Button.OutlinedButton.IconOnly</item>
         <item name="materialButtonIconAccentedStyle">@style/Widget.Button.OutlinedButton.IconOnly.Accented</item>
         <item name="checkboxFavoriteAccentedStyle">@style/Widget.CompoundButton.CheckBox.Favorite.Accented</item>
-        <item name="visibilityToggleStyle">@style/Widget.CompoundButton.CheckBox.Visibility</item>
+        <item name="visibilityToggleStyle">@style/App.Widget.CompoundButton.CheckBox.Visibility</item>
         <item name="editableFieldCheckBox">@style/Widget.MaterialComponents.CompoundButton.CheckBox.EditField</item>
         <!--New material inputs (not used yet) <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Custom</item>-->
         <!-- edit text fields throughout the app -->
         <item name="editTextStyle">@style/App.Widget.EditText</item>
-        <!--<item name="android:editTextColor">@color/edit_text_color_selector</item>-->
+        <!--<item name="android:editTextColor">@colors/edit_text_color_selector</item>-->
         <item name="appTabLayout">@style/App.Widget.MaterialComponents.TabLayout</item>
         <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
     </style>
@@ -126,7 +126,7 @@
     <style name="App.Theme.MaterialComponents.DayNight.DarkActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
     </style>
 
-    <!-- dark color theme -->
+    <!-- dark colors theme -->
     <style name="ThemeOverlay.App.Dark" parent="ThemeOverlay.MaterialComponents.Dark">
         <!-- used for text -->
         <item name="android:colorForeground">@color/app_color_on_primary</item>
@@ -151,7 +151,7 @@
         <item name="colorAlbumItemBackground">@color/color_album_item_background</item>
     </style>
 
-    <!-- lighter color theme -->
+    <!-- lighter colors theme -->
     <style name="ThemeOverlay.App.EditPages" parent="ThemeOverlay.MaterialComponents.Light">
         <!-- the window background is set in the main app theme, so we need to cover it - hence use of background for these panels -->
         <item name="android:colorBackground">@color/app_color_background_light</item>
@@ -165,12 +165,12 @@
 
         <!-- These override the standard light colors -->
 
-        <!--   color for the app bar and other primary UI elements -->
+        <!--   colors for the app bar and other primary UI elements -->
         <item name="colorPrimary">@color/app_primary</item>
-        <!--   a darker variant of the primary color, used for
+        <!--   a darker variant of the primary colors, used for
            the status bar (on Android 5.0+) and contextual app bars -->
         <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <!--   a secondary color for controls like checkboxes and text fields -->
+        <!--   a secondary colors for controls like checkboxes and text fields -->
         <item name="colorAccent">@color/app_secondary</item>
 
         <item name="colorPrimarySurface">?attr/colorPrimary</item>

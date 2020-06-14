@@ -4,9 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.Date;
+
+import delit.libs.core.util.Logging;
 
 /**
  * Created by gareth on 12/07/17.
@@ -38,7 +38,7 @@ public class VideoResourceItem extends ResourceItem {
             try {
                 return new VideoResourceItem(in);
             } catch(RuntimeException e) {
-                Crashlytics.log(Log.ERROR, TAG, "Unable to create vid resource item from parcel: " + in.toString());
+                Logging.log(Log.ERROR, TAG, "Unable to create vid resource item from parcel: " + in.toString());
                 throw e;
             }
         }

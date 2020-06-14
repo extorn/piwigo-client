@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.widget.NestedScrollView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -39,6 +38,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
@@ -249,7 +249,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         lastVisitedField.setEnabled(editable);
 
         //TODO this doesn't work as the adapter prefs are marked readonly and still set as disabled after setenabled on the adapter
-        // the idea was to make the icons green (secondary color) when in editable mode.
+        // the idea was to make the icons green (secondary colors) when in editable mode.
 //        AlbumSelectionListAdapter adapter = ((AlbumSelectionListAdapter) albumPermissionsField.getAdapter());
 //        if(adapter != null) {
 //            adapter.setEnabled(editable);
@@ -440,6 +440,8 @@ public class UserFragment extends MyFragment<UserFragment> {
 
     private static class UserFragmentAction extends UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> {
 
+        private static final long serialVersionUID = -7852950121330647215L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
             UserFragment userFragment = uiHelper.getParent();
@@ -562,6 +564,7 @@ public class UserFragment extends MyFragment<UserFragment> {
 
     private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>> {
 
+        private static final long serialVersionUID = 4075391810293832237L;
         private transient User user; // user is not serializable.
 
         public OnDeleteUserAction(FragmentUIHelper<UserFragment> uiHelper, User user) {
@@ -758,7 +761,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     private void onGroupsLoaded(GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         HashSet<Long> differences = SetUtils.differences(user.getGroups(), PiwigoUtils.toSetOfIds(response.getGroups()));
         if(!differences.isEmpty()) {
-            Crashlytics.log(Log.ERROR, getTag(), String.format("Rxd %1$s groups but asked for %2$s", user.getGroups().size(), response.getGroups().size()));
+            Logging.log(Log.ERROR, getTag(), String.format("Rxd %1$s groups but asked for %2$s", user.getGroups().size(), response.getGroups().size()));
             throw new RuntimeException("error in group retrieval");
         }
         currentGroupMembership = response.getGroups();

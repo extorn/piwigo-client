@@ -272,14 +272,14 @@ public class AutoUploadJobConfig implements Parcelable {
 
         private static final long serialVersionUID = -1292778740052847415L;
         private int jobId;
-        private final HashMap<Uri, String> filesToHashMap = new HashMap<>();
+        private final HashMap<Uri, String> fileUrisAndHashcodes = new HashMap<>();
 
         public PriorUploads(int jobId) {
             this.jobId = jobId;
         }
 
-        public Map<Uri, String> getFilesToHashMap() {
-            return Collections.unmodifiableMap(filesToHashMap);
+        public Map<Uri, String> getFileUrisAndHashcodes() {
+            return Collections.unmodifiableMap(fileUrisAndHashcodes);
         }
 
         public static DocumentFile getFolder(Context c) {
@@ -324,16 +324,17 @@ public class AutoUploadJobConfig implements Parcelable {
          */
         public boolean isOutOfSyncWithFileSystem(Context context) {
             boolean outOfSync = false;
-            if(filesToHashMap != null && filesToHashMap.size() > 0) {
-                Set<File> itemsToRemove = new HashSet<>();
-                for(Map.Entry<Uri, String> priorUploadEntry : filesToHashMap.entrySet()) {
+            if(fileUrisAndHashcodes.size() > 0) {
+                Set<Uri> itemsToRemove = new HashSet<>();
+                for(Map.Entry<Uri, String> priorUploadEntry : fileUrisAndHashcodes.entrySet()) {
                     DocumentFile docFile = DocumentFile.fromSingleUri(context, priorUploadEntry.getKey());
                     if(docFile == null || !docFile.exists()) {
+                        itemsToRemove.add(priorUploadEntry.getKey());
                         outOfSync = true;
                     }
                 }
-                for(File itemToRemove : itemsToRemove) {
-                    filesToHashMap.remove(itemToRemove);
+                for(Uri itemToRemove : itemsToRemove) {
+                    fileUrisAndHashcodes.remove(itemToRemove);
                 }
             }
             return outOfSync;

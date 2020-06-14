@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -43,6 +42,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
@@ -172,9 +172,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         MaterialButton removeRootButton = v.findViewById(R.id.remove_root);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            removeRootButton.setOnClickListener(view -> {
-                onRemoveRoot();
-            });
+            removeRootButton.setOnClickListener(view -> onRemoveRoot());
         } else {
             removeRootButton.setVisibility(GONE);
         }
@@ -438,7 +436,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if(getListAdapter() == null) {
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(requireContext(), navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<>(), getViewPrefs());
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(requireContext(), navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
             viewAdapter.setTaskListener(new FolderItemTaskListener());
 
             if (!viewAdapter.isItemSelectionAllowed()) {
@@ -597,7 +595,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
                 }
             } catch (IndexOutOfBoundsException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 //TODO why does this occur? How?
                 return 1;
             }
@@ -708,7 +706,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                                 Objects.requireNonNull(adapter).restoreState((FolderItemRecyclerViewAdapter.SavedState) item.getValue().get(0));
 
                             } else {
-                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                                Logging.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
                             }
                             // only keep a single level below our current level in case we moved back accidentally.
                             if(iterator.hasNext()) {

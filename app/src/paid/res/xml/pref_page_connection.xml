@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- Look at this as a way of auto enable disable prefs - android:dependency="EnablePreferences" -->
-    <delit.libs.ui.view.preference.EditableListPreference
+    <delit.piwigoclient.ui.preferences.EditableListPreference
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="@string/preference_piwigo_connection_profile_key"
@@ -29,7 +29,7 @@
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_address_summary"
             android:title="@string/preference_piwigo_server_address_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
+        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textNoSuggestions"
@@ -39,7 +39,7 @@
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_username_summary"
             android:title="@string/preference_piwigo_server_username_title" />
-        <delit.libs.ui.view.preference.SecureEditTextPreference
+        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -50,7 +50,7 @@
             android:summary="@string/preference_piwigo_server_password_summary"
             android:title="@string/preference_piwigo_server_password_title" />
 
-        <delit.libs.ui.view.preference.EditableListPreference
+        <delit.piwigoclient.ui.preferences.EditableListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_piwigo_playable_media_extensions_key"
@@ -81,7 +81,7 @@
                 android:key="@string/preference_server_use_basic_auth_key"
                 android:summary="@string/preference_server_use_basic_auth_summary"
                 android:title="@string/preference_server_use_basic_auth_title" />
-            <delit.libs.ui.view.preference.SecureEditTextPreference
+            <delit.piwigoclient.ui.preferences.SecureEditTextPreference
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:dependency="@string/preference_server_use_basic_auth_key"
@@ -91,7 +91,7 @@
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
                 android:title="@string/preference_server_basic_auth_username_title" />
-            <delit.libs.ui.view.preference.SecureEditTextPreference
+            <delit.piwigoclient.ui.preferences.SecureEditTextPreference
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:dependency="@string/preference_server_use_basic_auth_key"
@@ -114,7 +114,7 @@
                 android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
                 android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
                 android:title="@string/preference_server_use_custom_trusted_ca_certs_title" />
-            <delit.libs.ui.view.preference.TrustedCaCertificatesPreference
+            <delit.piwigoclient.ui.preferences.TrustedCaCertificatesPreference
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:key="@string/preference_select_trusted_certificate_key"
@@ -134,7 +134,7 @@
                 android:key="@string/preference_server_use_client_certs_key"
                 android:summary="@string/preference_server_use_client_certs_summary"
                 android:title="@string/preference_server_use_client_certs_title" />
-            <delit.libs.ui.view.preference.ClientCertificatePreference
+            <delit.piwigoclient.ui.preferences.ClientCertificatePreference
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:dependency="@string/preference_server_use_client_certs_key"

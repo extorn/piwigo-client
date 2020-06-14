@@ -19,7 +19,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -30,6 +29,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
@@ -285,8 +285,8 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
                     addNewTagDialog.getButton(
                             AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
                 } catch (RuntimeException e) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error in on tag name change");
-                    Crashlytics.logException(e);
+                    Logging.log(Log.ERROR, TAG, "Error in on tag name change");
+                    Logging.recordException(e);
                 }
             }
 
@@ -306,10 +306,12 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem) {
 
 
+            private static final long serialVersionUID = 7194893076945270189L;
         });
     }
 
     private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment>> {
+        private static final long serialVersionUID = -7336385030782357194L;
         private final Tag tag;
 
         public OnDeleteTagAction(FragmentUIHelper<TagsListFragment> uiHelper, Tag tag) {

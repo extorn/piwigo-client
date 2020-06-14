@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- my custom style attribs -->
+    <attr format="reference" name="materialButtonIconStyle"/>
+    <attr name="initialTabIdx" format="integer" />
+    <attr format="reference" name="visibilityToggleStyle"/>
+    <attr format="reference" name="clickableTextViewStyleBody2"/>
+
+    <declare-styleable name="SlidingTabLayout">
+        <attr name="viewPager" format="reference" />
+        <attr name="initialTabIdx"/>
+        <attr name="tabTitleViewLayoutId" format="reference"/>
+        <attr name="tabTitleTextViewId" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="SlidingBottomSheet">
+        <attr name="appBarViewId" format="reference"/>
+        <attr name="stateExpanded" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomEditTextPreference">
+        <attr name="android:inputType"/>
+    </declare-styleable>
+
+
+
+    <declare-styleable name="MappedListPreference">
+        <attr name="entries" format="reference"/>
+        <attr name="entryValues" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="NumberPickerPreference">
+        <attr name="maxValue" format="integer"/>
+        <attr name="minValue" format="integer"/>
+        <attr name="multiplier" format="integer"/>
+        <attr name="wrapPickList" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="AbstractBreadcrumbsView">
+        <attr name="breadcrumbLayout" format="reference"/>
+        <attr name="breadcrumbDivisionLayout" format="reference"/>
+        <attr name="breadcrumbTextViewId" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="ProgressIndicator">
+        <attr name="backgroundTint" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="FlowLayout">
+        <attr name="horizontalSpacing" format="dimension"/>
+        <attr name="verticalSpacing" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="FlowLayout_LayoutParams">
+        <attr name="layout_breakLine" format="boolean" />
+        <attr name="layout_horizontalSpacing" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="MaterialCheckboxTriState">
+        <attr name="state_always_checked" format="boolean"/>
+        <attr name="checkbox_at_end" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="CustomMaterialTabLayout">
+        <attr name="initialTabIdx"/>
+    </declare-styleable>
+</resources>

@@ -10,6 +10,8 @@ import java.util.Date;
  */
 public class ResourceItem extends AbstractBaseResourceItem {
 
+    private static final long serialVersionUID = -1726930101244306279L;
+
     public ResourceItem(long id, String name, String description, Date created, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, created, lastAltered, thumbnailUrl);
     }

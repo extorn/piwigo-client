@@ -10,8 +10,9 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import delit.libs.core.util.Logging;
 
 import static hotchemi.android.rate.IntentHelper.createIntentForAmazonAppstore;
 import static hotchemi.android.rate.IntentHelper.createIntentForGooglePlay;
@@ -42,10 +43,10 @@ final class MyDialogManager {
                 final Intent intentToAppstore = options.getStoreType() == StoreType.GOOGLEPLAY ?
                         createIntentForGooglePlay(context) : createIntentForAmazonAppstore(context);
                 try {
-                    Crashlytics.log(Log.DEBUG, "MyDialogMgr", String.format("Trying to start activity for result : %1$s", intentToAppstore.toString()));
+                    Logging.log(Log.DEBUG, "MyDialogMgr", String.format("Trying to start activity for result : %1$s", intentToAppstore.toString()));
                     context.startActivity(Intent.createChooser(intentToAppstore, ""));
                 } catch (ActivityNotFoundException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     // should never happen but will on an emulator almost certainly.
                     //Lets just sink the error for now and let the dialog close.
                     MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);

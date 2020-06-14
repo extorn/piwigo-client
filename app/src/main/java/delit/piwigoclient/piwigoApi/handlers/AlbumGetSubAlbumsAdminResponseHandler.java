@@ -2,7 +2,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,6 +10,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
@@ -72,7 +72,7 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
                 try {
                     parentageChain.add(Long.valueOf(parentId));
                 } catch(NumberFormatException e) {
-                    Crashlytics.log(Log.ERROR, "getAdminAlbums", "parentId is invalid in response : " + rsp.toString());
+                    Logging.log(Log.ERROR, "getAdminAlbums", "parentId is invalid in response : " + rsp.toString());
                 }
             }
             // remove this album from parentage list

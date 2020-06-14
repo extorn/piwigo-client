@@ -18,7 +18,6 @@ package com.google.android.vending.licensing;
 
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.util.Base64;
 import com.google.android.vending.licensing.util.Base64DecoderException;
 
@@ -40,6 +39,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import delit.libs.core.util.Logging;
 
 /**
  * An Obfuscator that uses AES to encrypt data.
@@ -70,7 +71,7 @@ public class AESObfuscator implements Obfuscator {
             SecretKey tmp = factory.generateSecret(keySpec);
             secret = new SecretKeySpec(tmp.getEncoded(), "AES");
         } catch (GeneralSecurityException e) {
-Crashlytics.logException(e);
+Logging.recordException(e);
             // This can't happen on a compatible Android device.
             throw new RuntimeException("Invalid environment", e);
         }
@@ -102,8 +103,8 @@ Crashlytics.logException(e);
         byte[] output = new byte[totLen];
         totLen = 0;
         for (byte[] arr : arrays) {
-            for (int i = 0; i < arr.length; i++) {
-                output[totLen++] = arr[i];
+            for (byte b : arr) {
+                output[totLen++] = b;
             }
         }
         return output;
@@ -126,10 +127,10 @@ Crashlytics.logException(e);
             byte[] finalOutput = mergeArrays(iv, encrypted);
             return Base64.encode(finalOutput);
         } catch (GeneralSecurityException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (UnsupportedEncodingException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new RuntimeException("Invalid environment", e);
         }
     }
@@ -143,7 +144,7 @@ Crashlytics.logException(e);
         try {
             return obfuscateBytes(original.getBytes(UTF8), key);
         } catch (UnsupportedEncodingException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new RuntimeException("Invalid environment", e);
         }
     }
@@ -158,7 +159,7 @@ Crashlytics.logException(e);
             return new String(bytes, UTF8);
         } catch (UnsupportedEncodingException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new RuntimeException("Invalid environment", e);
         }
@@ -202,52 +203,52 @@ Crashlytics.logException(e);
             return Arrays.copyOfRange(decrypted, totalHeaderLen, decrypted.length);
         } catch (Base64DecoderException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch (IllegalBlockSizeException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(ArrayIndexOutOfBoundsException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(IllegalArgumentException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(BadPaddingException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch (NoSuchPaddingException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new RuntimeException("Invalid environment", e);
         } catch (InvalidKeyException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new RuntimeException("Invalid environment", e);
         } catch (NoSuchAlgorithmException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new RuntimeException("Invalid environment", e);
         } catch (InvalidAlgorithmParameterException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new RuntimeException("Invalid environment", e);
         } catch (UnsupportedEncodingException e) {
             if (recordErrors) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
             }
             throw new RuntimeException("Invalid environment", e);
         }

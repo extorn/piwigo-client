@@ -17,12 +17,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
@@ -124,9 +123,9 @@ public class FileSelectActivity extends MyActivity {
 
         if (hasFocus) {
             DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
-            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+            Logging.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
-            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+            Logging.log(Log.ERROR, TAG, "showing status bar!");
         }
 
         v.requestApplyInsets();
@@ -217,6 +216,7 @@ public class FileSelectActivity extends MyActivity {
     }
 
     private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
+        private static final long serialVersionUID = -8487168389408332682L;
         private final int trackingRequestId;
 
         public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {

@@ -3,7 +3,6 @@ package delit.piwigoclient.business.video;
 import android.content.Context;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.Base64Utils;
 
 import java.io.File;
@@ -18,6 +17,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -94,7 +94,7 @@ public class CacheUtils {
         } else {
             if (f.exists()) {
                 if (!f.delete()) {
-                    Crashlytics.log(Log.ERROR, TAG, "Error deleting corrupt file : " + f.getAbsolutePath());
+                    Logging.log(Log.ERROR, TAG, "Error deleting corrupt file : " + f.getAbsolutePath());
                 }
             }
             Log.e(TAG, "Unable to load cached content from file " + f);
@@ -124,7 +124,7 @@ public class CacheUtils {
                         }
                         loaded = true;
                     } catch (IOException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                         // occurs when file is in use
                         attempts++;
                         try {
@@ -168,7 +168,7 @@ public class CacheUtils {
                 if (BuildConfig.DEBUG) {
                     Log.e("VideoCacheUtils", "Error, Unable to delete cache item");
                 } else {
-                    Crashlytics.log(Log.ERROR, "VideoCacheUtils", "Error, Unable to delete cache item");
+                    Logging.log(Log.ERROR, "VideoCacheUtils", "Error, Unable to delete cache item");
                 }
             }
         }
@@ -283,7 +283,7 @@ public class CacheUtils {
                 throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
             }
         } catch (SecurityException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             //Permission has been revoked!
             throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
         }
@@ -295,7 +295,7 @@ public class CacheUtils {
             File responseCacheFolder = getBasicCacheFolder(context);
             return folderSize(responseCacheFolder);
         } catch (SecurityException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             return 0;
         }
     }
@@ -305,7 +305,7 @@ public class CacheUtils {
             File videoCacheFolder = getVideoCacheFolder(context);
             return folderSize(videoCacheFolder);
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             return 0;
         }
     }

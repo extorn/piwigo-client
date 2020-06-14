@@ -62,7 +62,7 @@ public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsRespon
     public static Tag parseTagFromJson(JsonObject tagObj) {
         String idStr = tagObj.get("id").getAsString();
         idStr = idStr.replaceAll("~~","");
-        long id = Long.valueOf(idStr);
+        long id = Long.parseLong(idStr);
         String name = tagObj.get("name").getAsString();
         return new Tag(id, name);
     }

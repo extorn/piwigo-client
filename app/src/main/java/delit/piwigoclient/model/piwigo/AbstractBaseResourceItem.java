@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 
 /**
@@ -260,7 +261,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     public void addResourceFile(String name, String url, int originalResourceUrlWidth, int originalResourceUrlHeight) {
         ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(name, getRelativePath(url), originalResourceUrlWidth, originalResourceUrlHeight);
         if (getFile(name) != null) {
-            Crashlytics.log(Log.ERROR, TAG, "attempting to add duplicate resource file of type " + name);
+            Logging.log(Log.ERROR, TAG, "attempting to add duplicate resource file of type " + name);
         }
         addResourceFile(img);
     }
@@ -320,7 +321,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             height = in.readInt();
         }
 
-        private static final String getName(byte id) {
+        private static String getName(byte id) {
             switch (id) {
                 case 0:
                     return ORIGINAL;
@@ -345,12 +346,12 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
                 case 10:
                     return SQUARE;
                 default:
-                    Crashlytics.log(Log.ERROR, TAG, "Unsupported resource id encountered : " + id);
+                    Logging.log(Log.ERROR, TAG, "Unsupported resource id encountered : " + id);
                     return "unknown";
             }
         }
 
-        private static final byte getId(String name) {
+        private static byte getId(String name) {
             if (name == null) {
                 name = "null";
             }
@@ -378,7 +379,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
                 case SQUARE:
                     return 10;
                 default:
-                    Crashlytics.log(Log.ERROR, TAG, "Unsupported resource name encountered : " + name);
+                    Logging.log(Log.ERROR, TAG, "Unsupported resource name encountered : " + name);
                     return -1;
             }
         }
@@ -407,6 +408,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             return getName(id);
         }
 
+        @NotNull
         @Override
         public String toString() {
             if(width < Integer.MAX_VALUE && height < Integer.MAX_VALUE) {
@@ -424,13 +426,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             if (this.width < o.width) {
                 return -1;
             }
-            if (this.id > o.id) {
-                return 1;
-            }
-            if (this.id < o.id) {
-                return -1;
-            }
-            return 0;
+            return Byte.compare(this.id, o.id);
         }
 
         @Override

@@ -90,8 +90,8 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
     private String[] flatten(List<? extends Map<String, ?>> childItems) {
         List<String> flatList = new ArrayList<>(childItems.size() * childFrom.length);
         for(Map<String, ?> childDetails : childItems) {
-            for (int i = 0; i < childFrom.length; i++) {
-                String value = (String) childDetails.get(childFrom[i]);
+            for (String s : childFrom) {
+                String value = (String) childDetails.get(s);
                 flatList.add(value);
             }
         }

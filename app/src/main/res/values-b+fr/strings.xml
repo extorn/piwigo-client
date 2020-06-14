@@ -33,8 +33,8 @@
     <string name="alert_error_no_app_available_to_rate_app">Aucune application n\'a pu être trouvée pour noter cette application. Merci d\'avoir essayé.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Téléchargement annulé. Les permissions requises ne sont pas accordées.</string>
     <string name="button_retry">Réessayer</string>
-    <string name="button_cancel">Annuler</string>
-    <string name="button_delete">Supprimer</string>
+
+
     <string name="button_unlink">UnLink</string>
     <string name="button_untag">Enlever l\'étiquette</string>
     <string name="button_close">Fermer</string>
@@ -581,15 +581,9 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="default_str">défaut</string>
     <string name="copied_to_clipboard">Copié dans le Presse-papiers</string>
     <string name="alert_plugin_required_pattern">%1$s Plugin serveur requis - Version %2$s ou plus récente</string>
-    <string name="certificate_chain_not_verifiable_error">La chaîne de certificats n\'a pas pu être vérifiée</string>
-    <string name="certificate_chain_not_verifiable_error_detail">La chaîne de certificats n\'a pas pu être vérifiée à l\'aide des certificats de cet appareil. Pour résoudre ce problème, autorisez cette application à maintenir une liste de certificats approuvés (dans les paramètres de connexion de cette application).</string>
-    <string name="undefined_error_msg">Erreur non définie</string>
-    <string name="resource_unavailable_error_msg_pattern">La ressource demandée n\'était pas accessible.\nHTTP Status Code (%1$d)</string>
-    <string name="server_error_msg_pattern">Quelque chose a mal tourné sur le serveur ou entre le serveur et votre appareil.\nHTTP Status Code (%1$d)</string>
-    <string name="redirect_error_msg_pattern">Erreur de redirection de requête : \nHTTP Status Code (%1$d)</string>
-    <string name="http_error_msg_pattern">Message d\'erreur HTTP (%1$s)</string>
-    <string name="unexpected_response_error_msg_pattern">Réponse inattendue : \nHTTP Status Code (%1$d)</string>
-    <string name="connection_error_msg_pattern">Impossible de se connecter au serveur</string>
+
+
+
     <string name="preference_corrupt_please_re_type_pattern">"La préférence %1$s est irrécupérable et a été fixée par défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l'application"</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données en cache?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>

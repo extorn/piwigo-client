@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -26,14 +25,15 @@ import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.HttpResponseException;
 import cz.msebera.android.httpclient.util.ByteArrayBuffer;
-import delit.libs.util.UriUtils;
+import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.util.UriUtils;
 
 /**
  * Created by gareth on 25/06/17.
@@ -87,7 +87,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
 
 
         InputStream is = entity.getContent();
-        OutputStream os = null;
+        OutputStream os;
         BufferedOutputStream bos = null;
         BufferedInputStream bis = null;
         boolean isSuccess = false;
@@ -167,7 +167,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
             if (isCancelCallAsap()) {
                 DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), outputFileUri);
                 if(docFile != null && !docFile.delete()) {
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to delete partially downloaded file");
+                    Logging.log(Log.ERROR, TAG, "Unable to delete partially downloaded file");
                 }
             }
         }

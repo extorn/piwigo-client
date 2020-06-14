@@ -28,7 +28,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_above="@id/exo_controller_placeholder"
         android:orientation="vertical"
         android:background="@drawable/drawable_scrim_ultra_heavy">
 

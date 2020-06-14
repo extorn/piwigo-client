@@ -21,7 +21,6 @@ package delit.piwigoclient.business.video;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.C;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
@@ -42,6 +41,7 @@ import cz.msebera.android.httpclient.ConnectionClosedException;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
+import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 
@@ -206,20 +206,20 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 cacheListener.onRangeAdded(cacheMetaData, existingRange.getLower(), existingRange.getUpper(), downloadedBytesSinceLastReport);
             }
         } catch (SocketException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             Log.d(TAG, "Sinking Socket exception");
         } catch (ClosedChannelException e) {
-            Crashlytics.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
+            Logging.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
         } catch (ConnectionClosedException e) {
-            Crashlytics.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
+            Logging.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (logEnabled && BuildConfig.DEBUG) {
                 Log.e(TAG, "Unrecoverable error reading data from http response", e);
             }
             throw e;
         } catch (Throwable e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (logEnabled && BuildConfig.DEBUG) {
                 Log.e(TAG, "Unrecoverable error reading data from http response", e);
             }
@@ -246,7 +246,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 firstContentByte = 0;
                 lastContentByte = totalFileContentBytes - 1;
             } catch (NumberFormatException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
                 }
@@ -287,7 +287,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     Log.d(TAG, "total file bytes " + totalFileContentBytes);
                     cacheMetaData.setTotalBytes(totalFileContentBytes);
                 } catch (NumberFormatException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
                     }

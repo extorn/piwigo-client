@@ -11,21 +11,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.TouchObservingRelativeLayout;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.business.GalleryBrowsingPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -107,6 +105,8 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     private static class ReloadTagSlideshowModelAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>,
             AbstractSlideshowFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
 
+        private static final long serialVersionUID = -6583690122415893790L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
             boolean updated = false;
@@ -120,7 +120,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
             }
             if(!updated) {
                 //Something wierd is going on - this should never happen
-                Crashlytics.log(Log.ERROR, slideshowFragment.getLogTag(), "Closing tag slideshow - tag was not available after refreshing session");
+                Logging.log(Log.ERROR, slideshowFragment.getLogTag(), "Closing tag slideshow - tag was not available after refreshing session");
                 slideshowFragment.getParentFragmentManager().popBackStack();
                 return false;
             }

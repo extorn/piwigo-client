@@ -25,7 +25,7 @@ public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
     }
 
     @Override
-    public Context getContext() {
+    public Context getAppContext() {
         return getParent();
     }
 
@@ -65,7 +65,7 @@ public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final BlockingUserInteractionQuestion event) {
-        QueuedQuestionMessage message = new QueuedQuestionMessage(R.string.alert_question_title, getContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter(this, event));
+        QueuedQuestionMessage message = new QueuedQuestionMessage(R.string.alert_question_title, getAppContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter(this, event));
         showMessageImmediatelyIfPossible(message);
     }
 

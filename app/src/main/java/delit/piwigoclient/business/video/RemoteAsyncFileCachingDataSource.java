@@ -7,7 +7,6 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -31,14 +30,15 @@ import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicHeaderElement;
 import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
-import delit.libs.util.UriUtils;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
+import delit.piwigoclient.util.UriUtils;
 
 import static com.google.android.exoplayer2.C.LENGTH_UNSET;
 import static com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSourceException.TYPE_CLOSE;
@@ -101,7 +101,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             cacheMetaData = loadCacheMetaData(cacheMetaData, context, remoteFileLocation);
             return cacheMetaData;
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new HttpDataSourceException("Error loading cache", e, dataSpec, HttpDataSourceException.TYPE_OPEN);
         }
     }
@@ -259,6 +259,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     }
 
     public static class HttpIOException extends IOException {
+        private static final long serialVersionUID = -6054733448482594260L;
         private int statusCode;
         private byte[] responseData;
         private String uri;
@@ -339,10 +340,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             bytesAvailableToRead = invokeNewCallToServer(dataSpec.position);
 
         } catch (FileNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new HttpDataSourceException("cache data file doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new HttpDataSourceException("error reading from cache data file (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
         }
         try {
@@ -354,7 +355,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 throw new EOFException();
             }
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new HttpDataSourceException(e, dataSpec, TYPE_OPEN);
         }
         readFromFilePosition = dataSpec.position;
@@ -453,7 +454,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                                 }
                                 invokeNewCallToServer(currentPosition);
                             } catch (IOException e) {
-                                Crashlytics.logException(e);
+                                Logging.recordException(e);
                                 throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
                             }
                         }
@@ -476,7 +477,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                             try {
                                 invokeNewCallToServer(currentPosition);
                             } catch (IOException e) {
-                                Crashlytics.logException(e);
+                                Logging.recordException(e);
                                 throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
                             }
                         }
@@ -515,9 +516,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                         }
                         bytesRead = cachedDataReadChannel.read(buff, readFromFilePosition);
                     } catch(ClosedByInterruptException e) {
-                        Crashlytics.log(Log.DEBUG, TAG, "Read failed - request cancelled by user");
+                        Logging.log(Log.DEBUG, TAG, "Read failed - request cancelled by user");
                     } catch (Throwable th) {
-                        Crashlytics.logException(th);
+                        Logging.recordException(th);
                         if (logEnabled && BuildConfig.DEBUG) {
                             Log.e(TAG, "Error locking channel that is probably closed", th);
                         }
@@ -537,10 +538,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                     }
                 }
             } catch (IOException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 throw new HttpDataSourceException(e, dataSpec, TYPE_READ);
             } catch (Throwable th) {
-                Crashlytics.logException(th);
+                Logging.recordException(th);
                 throw new HttpDataSourceException("Something weird went wrong", new IOException(th), dataSpec, TYPE_READ);
             }
 
@@ -587,7 +588,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 localCachedDataFile.close();
             }
         } catch (IOException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw new HttpDataSourceException(e, dataSpec, TYPE_CLOSE);
         } finally {
             localCachedDataFile = null;
@@ -613,7 +614,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             try {
                 invokeNewCallToServer(currentPosition);
             } catch (IOException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e);
                 }

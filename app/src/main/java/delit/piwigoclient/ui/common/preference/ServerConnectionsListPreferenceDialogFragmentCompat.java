@@ -16,6 +16,8 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -158,7 +160,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     }
 
     @Override
-    public androidx.preference.Preference findPreference(CharSequence key) {
+    public androidx.preference.Preference findPreference(@NotNull CharSequence key) {
         return getPreference();
     }
 
@@ -171,7 +173,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         return fragment;
     }
 
-    private class ServerConnectionProfilesListAdapter extends MultiSourceListAdapter<ServerConnectionsListPreference.ServerConnection, BaseRecyclerViewAdapterPreferences> {
+    private static class ServerConnectionProfilesListAdapter extends MultiSourceListAdapter<ServerConnectionsListPreference.ServerConnection, BaseRecyclerViewAdapterPreferences> {
 
         public ServerConnectionProfilesListAdapter(ArrayList<ServerConnectionsListPreference.ServerConnection> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
             super(availableItems, adapterPrefs);

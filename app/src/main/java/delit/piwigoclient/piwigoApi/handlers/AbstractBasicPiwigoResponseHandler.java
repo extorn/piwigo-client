@@ -8,7 +8,6 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,14 +28,15 @@ import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import cz.msebera.android.httpclient.message.BasicHeaderElement;
 import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
+import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.Worker;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 
@@ -111,7 +111,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 try {
                     this.notifyAll();
                 } catch (IllegalMonitorStateException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(getTag(), "unable to notify threads waiting on this object", e);
                     }
@@ -153,7 +153,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         try {
             onSuccess(statusCode, headers, responseBody, triedLoggingInAgain, isResponseCached(headers));
         } catch(RuntimeException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             throw e;
         }
     }
@@ -289,7 +289,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             try {
                 tryingAgain = onFailure(getRequestURIAsStr(), statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
             } catch(RuntimeException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 throw e;
             }
             if(!tryingAgain) {
@@ -445,7 +445,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                requestHandle = runCall(client, this, forceResponseRevalidation || forceLogin);
             }
         } catch (RuntimeException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (client == null) {
                 String errorMsg = getContext().getString(R.string.error_building_http_engine);
                 if (BuildConfig.DEBUG) {
@@ -530,7 +530,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             loopcount++;
         } while (!exit && loopcount < 15); // loop count should never be hit but is a sanity check to stop hanging
         if (loopcount == 15) {
-            Crashlytics.log(Log.ERROR, "Handler", "Insane looping while trying to get new login!");
+            Logging.log(Log.ERROR, "Handler", "Insane looping while trying to get new login!");
         }
 
         return handler.isSuccess();

@@ -23,7 +23,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,6 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -47,6 +47,7 @@ import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
+import delit.piwigoclient.ui.file.DocumentFileFilter;
 import delit.piwigoclient.ui.file.SimpleDocumentFileFilter;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
@@ -328,7 +329,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
-        thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFilesToHashMap());
+        thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFileUrisAndHashcodes());
         // technically this is called after the job has already started, but the user doesn't need to know that.
         if(thisUploadJob.getFilesForUpload().size() > 0) {
             EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.hasBeenRunBefore()));
@@ -463,7 +464,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 return compressVideos && MimeTypeFilter.matches(f.getType(), "video/*");
             }
         }.withFileExtIn(fileExtsToUpload).withMaxSizeBytes(maxFileSizeMb * 1024 * 1024);
-        List<DocumentFile> matchingFiles = IOUtils.filterDocumentFiles(localFolderToMonitor.listFiles(), filter);
+        List<DocumentFile> matchingFiles = DocumentFileFilter.filterDocumentFiles(localFolderToMonitor.listFiles(), filter);
         if (matchingFiles.isEmpty()) {
             return null;
         }
@@ -580,7 +581,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             private boolean processEvent(Uri watchedUri, Uri eventSourceUri, int eventId) {
                 DocumentFile file = DocumentFile.fromSingleUri(getContext(), eventSourceUri);
                 if(file == null) {
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to retrieve DocumentFile for uri " + eventSourceUri);
+                    Logging.log(Log.ERROR, TAG, "Unable to retrieve DocumentFile for uri " + eventSourceUri);
                     return false;
                 }
                 long len = file.length();

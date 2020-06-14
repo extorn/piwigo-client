@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_delete">Eliminar</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="undefined_error_msg">Error indefinido</string>
+    <string name="resource_unavailable_error_msg_pattern">No se pudo acceder al recurso solicitado. \ NCódigo de estado HTTP (%1$d)</string>
+    <string name="server_error_msg_pattern">Algo salió mal en el servidor o entre el servidor y su dispositivo. \ NCódigo de estado HTTP (%1$d)</string>
+    <string name="redirect_error_msg_pattern">Error de redireccionamiento de solicitud: \ nHTTP Status Code (%1$d)</string>
+    <string name="http_error_msg_pattern">Mensaje de error HTTP (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Respuesta inesperada: \ nHTTP Status Code (%1$d)</string>
+    <string name="certificate_chain_not_verifiable_error">La cadena de certificados no se pudo verificar utilizando los certificados en este dispositivo.</string>
+    <string name="certificate_chain_not_verifiable_error_detail">La cadena de certificados no se pudo verificar utilizando los certificados en este dispositivo. Para resolver esto, permita que esta aplicación mantenga una lista de certificados confiables (dentro de la configuración de conexión de esta aplicación).</string>
+    <string name="connection_error_msg_pattern">No se puede conectar al servidor</string>
+</resources>

@@ -6,8 +6,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -21,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
 import delit.libs.ui.SafeAsyncTask;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
@@ -28,7 +28,6 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 
 import static android.os.AsyncTask.Status.FINISHED;
 
@@ -127,7 +126,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 //                HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
 //            }
         } catch (RuntimeException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             handler.sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
         }
 
@@ -148,7 +147,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
             Log.d(tag, "Worker returning : " + result);
             return result;
         } catch (RuntimeException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "ASync code crashed unexpectedly", e);
             }
@@ -169,7 +168,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 //        Thread.currentThread().setName(handler.getClass().getSimpleName());
 
         if (BuildConfig.DEBUG) {
-            Crashlytics.log(Log.ERROR, tag, "Running worker for handler " + getOwner().getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+            Logging.log(Log.ERROR, tag, "Running worker for handler " + getOwner().getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
         }
 
         AbstractPiwigoDirectResponseHandler handler = getOwner();

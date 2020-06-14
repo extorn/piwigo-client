@@ -63,13 +63,13 @@
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="materialAlertDialogTitlePanelStyle">@style/App.MaterialAlertDialog.MaterialComponents.Title.Panel</item>
         <!-- TODO why isn't the parent ThemeOverlay.MaterialComponents.MaterialAlertDialog ???-->
-        <!-- Use the edit color scheme (to force it on other themed pages) -->
+        <!-- Use the edit colors scheme (to force it on other themed pages) -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
         <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
     </style>
     <style name="ThemeOverlay.App.AlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <!-- TODO why isn't the parentThemeOverlay.MaterialComponents.Dialog.Alert ??? -->
-        <!-- Use the edit color scheme (to force it on other themed pages) -->
+        <!-- Use the edit colors scheme (to force it on other themed pages) -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
         <!--<item name="materialThemeOverlay">@style/ThemeOverlay.App.EditPages</item>-->
     </style>
@@ -79,7 +79,7 @@
     <!-- NOTE THAT I'm NOT USING THIS AS A TRUE FIELD - Hence the text is small not medium - Don't change without creating new style -->
     <style name="Widget.MaterialComponents.CompoundButton.CheckBox.EditField" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="android:textAppearance">?android:textAppearanceSmall</item>
+        <item name="android:textAppearance">?textAppearanceBody1</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">5dp</item>
@@ -92,9 +92,11 @@
 
 
     <!-- password field visibility toggle button style -->
-    <style name="Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+    <style name="App.Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/none</item> <!-- needed for pre lollipop -->
+        <item name="paddingStart">0dp</item>
         <item name="android:button">@drawable/none</item> <!-- just a null drawable - never shown -->
         <item name="android:drawableEnd">@drawable/visibility_checkbox</item>
     </style>
@@ -102,10 +104,10 @@
     <!-- Accented Favorite (heart) icon style button -->
     <style name="Widget.CompoundButton.CheckBox.Favorite.Accented" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:button">@drawable/favorite_checkbox</item> <!-- heart style icon -->
-        <item name="buttonTint">?attr/colorSecondary</item> <!-- color the button icon -->
+        <item name="buttonTint">?attr/colorSecondary</item> <!-- colors the button icon -->
     </style>
 
-    <!-- icon only style button tinted in the accent color -->
+    <!-- icon only style button tinted in the accent colors -->
     <style name="Widget.Button.OutlinedButton.IconOnly.Accented" parent="Widget.Button.OutlinedButton.IconOnly">
         <item name="iconTint">?attr/colorSecondary</item>
     </style>
@@ -117,12 +119,15 @@
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingRight">12dp</item>f
         <item name="android:minWidth">48dp</item>
         <item name="android:minHeight">48dp</item>
         <item name="android:maxWidth">48dp</item>
         <item name="iconTint">?editTextColor</item> <!-- shows grayed if disabled -->
-        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
     </style>
 
     <style name="Custom.TextAppearance.MaterialComponents.Body1.Clickable" parent="TextAppearance.MaterialComponents.Body1">
@@ -134,7 +139,7 @@
     </style>
 
 
-    <!-- TODO think about whether I want to use this to tint all checkboxes in accent color -->
+    <!-- TODO think about whether I want to use this to tint all checkboxes in accent colors -->
     <style name="App.Widget.CompoundButton.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:textColor">@color/edit_text_color_selector</item>
         <item name="buttonTint">@color/checkbox_color_tint</item>
@@ -143,7 +148,7 @@
     <!-- TODO probably not needed - check download dialog -->
     <style name="App.Widget.CompoundButton.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <!--<item name="buttonTint">@color/checkbox_color_tint</item>-->
+        <!--<item name="buttonTint">@colors/checkbox_color_tint</item>-->
     </style>
 
     <!-- TODO this is v specific - maybe just create a specific style for the item -->
@@ -183,7 +188,7 @@
     </style>
     <!-- items in the dropdown 'popup' when a spinner is clicked on -->
     <!--<style name="App.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
-        &lt;!&ndash;<item name="android:background">@color/background_floating</item>
+        &lt;!&ndash;<item name="android:background">@colors/background_floating</item>
         <item name="android:textAppearance">?textAppearanceBody1</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
@@ -201,7 +206,7 @@
     </style>
 
     <style name="App.Widget.Snackbar" parent="Widget.MaterialComponents.Snackbar">
-        <!-- need this to be transparent to prevent corners showing with the theme background color -->
+        <!-- need this to be transparent to prevent corners showing with the theme background colors -->
         <item name="android:theme">@style/ThemeOverlay.App.EditPages</item>
         <item name="android:background">@color/transparent</item>
         <item name="strokeWidth">0dp</item>

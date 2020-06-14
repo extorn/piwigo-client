@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -19,6 +18,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.User;
 
@@ -77,7 +77,7 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
                 try {
                     lastVisitDate = piwigoDateFormat.parse(lastVisitDateStr);
                 } catch (ParseException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + lastVisitDateStr);
                 }
             }

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import androidx.core.content.MimeTypeFilter;
 
-import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
@@ -14,14 +13,15 @@ import org.greenrobot.eventbus.Subscribe;
 import java.net.URI;
 
 import cz.msebera.android.httpclient.Header;
-import delit.libs.util.UriUtils;
+import delit.libs.core.util.Logging;
+import delit.libs.http.cache.CachingAsyncHttpClient;
+import delit.libs.http.cache.RequestHandle;
 import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.util.UriUtils;
 
 /**
  * Created by gareth on 25/06/17.
@@ -81,8 +81,8 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
             try {
                 URI.create(uri);
             } catch(IllegalArgumentException e) {
-                Crashlytics.log(Log.WARN, TAG, "IllegalUriFixed : " + uri);
-                Crashlytics.logException(e);
+                Logging.log(Log.WARN, TAG, "IllegalUriFixed : " + uri);
+                Logging.recordException(e);
                 uri = UriUtils.encodeUriSegments(Uri.parse(uri));
             }
         }

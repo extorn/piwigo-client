@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import delit.libs.core.util.Logging;
 
 /**
  * Created by gareth on 06/04/18.
@@ -28,7 +28,7 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
         super(in);
         containerDetails = in.readParcelable(getClass().getClassLoader());
         if (containerDetails == null) {
-            Crashlytics.log(Log.WARN, TAG, "Resource container details was loaded as null for item of type " + getItemType());
+            Logging.log(Log.WARN, TAG, "Resource container details was loaded as null for item of type " + getItemType());
         }
     }
 
@@ -37,7 +37,7 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
         super.writeToParcel(dest, flags);
         dest.writeParcelable(containerDetails, flags);
         if (containerDetails == null) {
-            Crashlytics.log(Log.WARN, TAG, "Resource container details was saved as null for item of type " + getItemType());
+            Logging.log(Log.WARN, TAG, "Resource container details was saved as null for item of type " + getItemType());
         }
     }
 

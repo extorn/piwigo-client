@@ -3,7 +3,6 @@ package delit.piwigoclient.ui.preferences;
 import java.util.List;
 
 import delit.piwigoclient.R;
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
 
 public class PreferencesFragment extends CommonPreferencesFragment {
 

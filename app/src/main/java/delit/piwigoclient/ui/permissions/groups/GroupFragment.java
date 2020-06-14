@@ -295,6 +295,8 @@ public class GroupFragment extends MyFragment<GroupFragment> {
 
     private static class GroupFragmentAction extends UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse> {
 
+        private static final long serialVersionUID = -995890744697815413L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
             HashSet<Group> groups = response.getGroups();
@@ -341,7 +343,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         ArrayList<Username> currentSelection = getLatestGroupMembers();
 
         HashSet<Long> preselectedUsernames = buildPreselectedUserIds(currentSelection);
-        UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, fieldsEditable, new HashSet<Long>(0), preselectedUsernames);
+        UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, fieldsEditable, new HashSet<>(0), preselectedUsernames);
         selectUsersActionId = usernameSelectionNeededEvent.getActionId();
         EventBus.getDefault().post(usernameSelectionNeededEvent);
     }
@@ -416,6 +418,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     }
 
     private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupFragment>> {
+        private static final long serialVersionUID = 8225464061348626385L;
         private final Group group;
 
         OnDeleteGroupAction(FragmentUIHelper<GroupFragment> uiHelper, Group group) {

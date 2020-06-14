@@ -35,41 +35,48 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/button_action_bar"
-        android:layout_above="@+id/list_adView"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_above="@+id/list_adView"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp">
 
-    <Button
-        android:id="@+id/list_action_cancel_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:text="@string/button_cancel"
-        style="?materialButtonOutlinedStyle"/>
+        <Button
+            android:id="@+id/list_action_cancel_button"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_cancel"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/list_action_toggle_all_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/button_all"
-        style="?materialButtonOutlinedStyle"/>
+        <Button
+            android:id="@+id/list_action_toggle_all_button"
+            style="?materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_all"
+            android:visibility="visible"
+            app:layout_constraintStart_toEndOf="@id/list_action_cancel_button"
+            app:layout_constraintEnd_toStartOf="@id/list_action_save_button"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/list_action_save_button"
-        android:visibility="visible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="@string/list_ok_button"/>
+        <Button
+            android:id="@+id/list_action_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/list_ok_button"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

@@ -47,20 +47,14 @@ public class AppSettingsRepository {
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insert(@NonNull UriPermissionUse uriPermissionUse) {
-        AppSettingsDatabase.databaseWriteExecutor.execute(() -> {
-            uriPermissionUseDao.insertAll(uriPermissionUse);
-        });
+        AppSettingsDatabase.databaseWriteExecutor.execute(() -> uriPermissionUseDao.insertAll(uriPermissionUse));
     }
 
     public void delete(@NonNull UriPermissionUse uriPermissionUse) {
-        AppSettingsDatabase.databaseWriteExecutor.execute(() -> {
-            uriPermissionUseDao.delete(uriPermissionUse);
-        });
+        AppSettingsDatabase.databaseWriteExecutor.execute(() -> uriPermissionUseDao.delete(uriPermissionUse));
     }
 
     public void deleteAllForUri(@NonNull Uri uri) {
-        AppSettingsDatabase.databaseWriteExecutor.execute(() -> {
-            uriPermissionUseDao.deleteAll(uri.toString());
-        });
+        AppSettingsDatabase.databaseWriteExecutor.execute(() -> uriPermissionUseDao.deleteAll(uri.toString()));
     }
 }

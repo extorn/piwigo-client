@@ -32,8 +32,7 @@
     <string name="alert_error_no_app_available_to_rate_app">没有应用程序可以评价这个应用程序。谢谢你的尝试。</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。未授予所需权限。</string>
     <string name="button_retry">重试</string>
-    <string name="button_cancel">取消</string>
-    <string name="button_delete">删除</string>
+
     <string name="button_unlink">UNLINK</string>
     <string name="button_untag">删除标签</string>
     <string name="button_close">关</string>
@@ -449,15 +448,11 @@
     <string name="default_str">默认</string>
     <string name="copied_to_clipboard">复制到剪贴板</string>
     <string name="alert_plugin_required_pattern">需要%1$s服务器插件 - 版本%2$s或更新版本</string>
-    <string name="certificate_chain_not_verifiable_error">无法使用此设备上的证书验证证书链。</string>
-    <string name="certificate_chain_not_verifiable_error_detail">无法使用此设备上的证书验证证书链。要解决此问题，请允许此应用维护受信任证书列表（在此应用连接设置中）。</string>
-    <string name="undefined_error_msg">未定义的错误</string>
-    <string name="resource_unavailable_error_msg_pattern">无法访问请求的资源。\n \nHTHTTP状态代码（%1$d）</string>
-    <string name="server_error_msg_pattern">服务器或服务器与设备之间出现问题。\n \nHTHTTP状态代码（%1$d）</string>
-    <string name="redirect_error_msg_pattern">请求重定向错误：\nHTTP状态代码（%1$d）</string>
+
+
     <string name="http_error_msg_pattern">HTTP错误消息（%1$s）</string>
     <string name="unexpected_response_error_msg_pattern">意外响应：\nHTTP状态代码（%1$d）</string>
-    <string name="connection_error_msg_pattern">无法连接到服务器</string>
+
     <string name="preference_corrupt_please_re_type_pattern">“偏好%1$s无法恢复，默认为%2$s。请在应用设置中重置此值”</string>
     <string name="switch_to_cached_mode">服务器目前不可用。使用缓存数据？</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>

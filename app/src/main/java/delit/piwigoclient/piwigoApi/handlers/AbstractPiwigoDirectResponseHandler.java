@@ -29,7 +29,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     }
 
     public static synchronized long getNextMessageId() {
-        long id = -1;
+        long id;
         do {
             id = nextMessageId.incrementAndGet();
             if (id < 0) {

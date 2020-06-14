@@ -148,9 +148,8 @@
 ###-keep interface android.support.v7.internal.** { public *; }
 ###-keep class android.support.v7.** { public *; }
 
--keep class com.google.firebase.** { public *; }
--keep class com.crashlytics.** { *; } # faster builds - don't obfuscate crashlytics
--dontwarn com.crashlytics.** # faster builds - don't warn for crashlytics
+-keep class com.google.firebase.crashlytics.** { *; } # faster builds - don't obfuscate crashlytics
+-dontwarn com.google.firebase.crashlytics.** # faster builds - don't obfuscate crashlytics
 -keep class io.fabric.sdk.android.services.** { public *; }
 -keep class io.fabric.sdk.android.Kit { public *; }
 -keep class io.fabric.sdk.android.Logger { public *; }

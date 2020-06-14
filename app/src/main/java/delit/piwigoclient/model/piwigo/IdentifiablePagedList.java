@@ -35,13 +35,13 @@ public abstract class IdentifiablePagedList<T extends Identifiable&Parcelable> e
         if(getItemCount() == 0) {
             return -1;
         }
-        List<T> sortedItems = new ArrayList<T>(getItems());
+        List<T> sortedItems = new ArrayList<>(getItems());
         Collections.sort(sortedItems, new Comparator<T>() {
             @Override
             public int compare(T o1, T o2) {
                 long x = o1.getId();
                 long y = o2.getId();
-                return (x < y) ? -1 : ((x == y) ? 0 : 1);
+                return Long.compare(x, y);
             }
         });
         long id = sortedItems.get(0).getId() - 1;

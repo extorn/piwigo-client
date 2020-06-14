@@ -94,7 +94,7 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
         @Override
         public int getPagesOfPhotos(int pageSize) {
             int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
-            return pages < 0 ? 0 : pages;
+            return Math.max(pages, 0);
         }
     }
 }

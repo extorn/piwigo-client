@@ -4,11 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -38,7 +37,7 @@ public class PreferenceMigrator240 extends PreferenceMigrator {
                     }
                     actor.remove(editor, context);
                     actor.writeStringSet(editor, context, cleanedValues);
-                    Crashlytics.log(Log.DEBUG, getLogTag(), "Upgraded media extensions preference from string to Set<String>");
+                    Logging.log(Log.DEBUG, getLogTag(), "Upgraded media extensions preference from string to Set<String>");
                 } catch (ClassCastException e) {
                     // will occur if the user has previously migrated preferences at version 222!
                 }

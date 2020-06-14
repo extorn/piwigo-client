@@ -524,7 +524,7 @@ public class TouchImageView extends AppCompatImageView {
             setScaleType(scaleType);
         }
         resetZoom();
-        scaleImage(scale, viewWidth / 2, viewHeight / 2, true);
+        scaleImage(scale, ((float)viewWidth) / 2, ((float)viewHeight) / 2, true);
         matrix.getValues(m);
         m[Matrix.MTRANS_X] = -((focusX * getImageWidth()) - (viewWidth * 0.5f));
         m[Matrix.MTRANS_Y] = -((focusY * getImageHeight()) - (viewHeight * 0.5f));
@@ -560,7 +560,7 @@ public class TouchImageView extends AppCompatImageView {
         int drawableWidth = getDrawableWidth(drawable);
         int drawableHeight = getDrawableHeight(drawable);
 
-        PointF point = transformCoordTouchToBitmap(viewWidth / 2, viewHeight / 2, true);
+        PointF point = transformCoordTouchToBitmap(((float)viewWidth) / 2, ((float)viewHeight) / 2, true);
         point.x /= drawableWidth;
         point.y /= drawableHeight;
         return point;
@@ -887,10 +887,10 @@ public class TouchImageView extends AppCompatImageView {
      *
      * @param mode
      * @param size
-     * @param drawableWidth
+     * @param drawableSize
      * @return
      */
-    private int setViewSize(int mode, int size, int drawableWidth) {
+    private int setViewSize(int mode, int size, int drawableSize) {
         int viewSize;
         switch (mode) {
             case MeasureSpec.EXACTLY:
@@ -898,11 +898,11 @@ public class TouchImageView extends AppCompatImageView {
                 break;
 
             case MeasureSpec.AT_MOST:
-                viewSize = Math.min(drawableWidth, size);
+                viewSize = Math.min(drawableSize, size);
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                viewSize = drawableWidth;
+                viewSize = drawableSize;
                 break;
 
             default:
@@ -1187,7 +1187,7 @@ public class TouchImageView extends AppCompatImageView {
             }
 
             if (animateToZoomBoundary) {
-                DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, viewWidth / 2, viewHeight / 2, true);
+                DoubleTapZoom doubleTap = new DoubleTapZoom(targetZoom, ((float)viewWidth) / 2, ((float)viewHeight) / 2, true);
                 compatPostOnAnimation(doubleTap);
             }
         }
@@ -1249,7 +1249,7 @@ public class TouchImageView extends AppCompatImageView {
             // Used for translating image during scaling
             //
             startTouch = transformCoordBitmapToTouch(bitmapX, bitmapY);
-            endTouch = new PointF(viewWidth / 2, viewHeight / 2);
+            endTouch = new PointF(((float)viewWidth) / 2, ((float)viewHeight) / 2);
         }
 
         @Override
@@ -1413,7 +1413,7 @@ public class TouchImageView extends AppCompatImageView {
                 minY = maxY = startY;
             }
 
-            scroller.fling(startX, startY, (int) velocityX, (int) velocityY, minX, maxX, minY, maxY);
+            scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);
             currX = startX;
             currY = startY;
         }
@@ -1457,7 +1457,7 @@ public class TouchImageView extends AppCompatImageView {
     }
 
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    private class CompatScroller {
+    private static class CompatScroller {
         Scroller scroller;
         OverScroller overScroller;
 
@@ -1501,7 +1501,7 @@ public class TouchImageView extends AppCompatImageView {
         }
     }
 
-    private class ZoomVariables {
+    private static class ZoomVariables {
         float scale;
         float focusX;
         float focusY;

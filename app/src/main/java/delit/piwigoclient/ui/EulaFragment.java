@@ -62,18 +62,8 @@ public class EulaFragment extends MyFragment<EulaFragment> {
         } else {
             cancelButton.setVisibility(View.VISIBLE);
             agreeButton.setVisibility(View.VISIBLE);
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDontAgreeToEula();
-                }
-            });
-            agreeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onAgreeToEula();
-                }
-            });
+            cancelButton.setOnClickListener(v -> onDontAgreeToEula());
+            agreeButton.setOnClickListener(v -> onAgreeToEula());
         }
 
         final TextView email = view.findViewById(R.id.eula_admin_email);

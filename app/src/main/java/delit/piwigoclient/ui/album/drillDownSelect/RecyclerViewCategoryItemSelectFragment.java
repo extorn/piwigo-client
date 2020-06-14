@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,6 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.piwigoclient.R;
@@ -113,7 +113,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<Long, Parcelable>(), getClass().getClassLoader());
+            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<>(), getClass().getClassLoader());
         }
 
         startedActionAtTime = System.currentTimeMillis();
@@ -137,7 +137,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             newItemButton.setOnClickListener(v1 -> {
                 CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
                 if (listAdapter == null) {
-                    Crashlytics.log(Log.ERROR, TAG, "List adapter is null - weird");
+                    Logging.log(Log.ERROR, TAG, "List adapter is null - weird");
                 } else {
                     CategoryItem selectedAlbum = listAdapter.getActiveItem();
                     if (selectedAlbum != null) {
@@ -176,7 +176,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if(getListAdapter() == null) {
 
-            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter<>(), getViewPrefs());
+            final CategoryItemRecyclerViewAdapter viewAdapter = new CategoryItemRecyclerViewAdapter(rootAlbum, navListener, new CategoryItemRecyclerViewAdapter.MultiSelectStatusAdapter<CategoryItem>(), getViewPrefs());
             if (activeCategory != null) {
                 viewAdapter.setActiveItem(activeCategory);
             } else {
@@ -268,7 +268,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             boolean selectedIdsAreValid = false;
             if(!selectedItems.isEmpty()) {
                 CategoryItem selectedItem = selectedItems.iterator().next();
-                Long activeId = Long.valueOf(listAdapter.getActiveItem().getId()); // need this to be a long as it is comparing with a Long!
+                Long activeId = listAdapter.getActiveItem().getId(); // need this to be a long as it is comparing with a Long!
                 if((activeId.equals(selectedItem.getParentId())
                     || activeId.equals(selectedItem.getId()))) {
                     // do nothing.
@@ -370,7 +370,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                             if (getList().getLayoutManager() != null) {
                                 getList().getLayoutManager().onRestoreInstanceState(item.getValue());
                             } else {
-                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                                Logging.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
                             }
                             iter.remove();
                             while (iter.hasNext()) {

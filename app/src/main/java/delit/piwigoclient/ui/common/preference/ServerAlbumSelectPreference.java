@@ -8,8 +8,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.crashlytics.android.Crashlytics;
-
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
@@ -17,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.core.util.Logging;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -116,7 +115,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         if(isTrackingEvent(event)) {
             HashSet<CategoryItem> selectedItems = event.getSelectedItems();
             if(selectedItems.size() > 1) {
-                Crashlytics.log(Log.ERROR, TAG, "more than one album selected (using first)");
+                Logging.log(Log.ERROR, TAG, "more than one album selected (using first)");
             }
             if(selectedItems.size() > 0) {
                 CategoryItem selectedVal = selectedItems.iterator().next();
@@ -156,7 +155,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         public static ServerAlbumDetails fromEncodedPersistenceString(String value) {
             if(value != null) {
                 String[] pieces = value.split(";(?<!\\\\)");
-                long albumId = Long.valueOf(pieces[0]);
+                long albumId = Long.parseLong(pieces[0]);
                 String albumName = unescapeSemiColons(pieces[1]);
                 String albumPath;
                 List<Long> parentage = null;
@@ -191,7 +190,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         }
 
         private static String escapeSemiColons(String val) {
-            return val.replaceAll(";", "\\;");
+            return val.replace(";", "\\;");
         }
 
         @NonNull
@@ -201,7 +200,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         }
 
         private static String unescapeSemiColons(String val) {
-            return val.replaceAll("\\;", ";");
+            return val.replace("\\;", ";");
         }
 
         public String escapeSemiColons() {

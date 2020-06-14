@@ -17,6 +17,7 @@
 // blob: fc8ad9cd390c5c311f015d3b7c1359e4d295bc52
 // modified: change TIMEOUT_MS from 500 to 10000
 package delit.piwigoclient.business.video.compression;
+
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
@@ -51,7 +52,7 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     private EGLSurface mEGLSurface = EGL14.EGL_NO_SURFACE;
     private SurfaceTexture mSurfaceTexture;
     private Surface mSurface;
-    private Object mFrameSyncObject = new Object();     // guards mFrameAvailable
+    private final Object mFrameSyncObject = new Object();     // guards mFrameAvailable
     private boolean mFrameAvailable;
     private TextureRender mTextureRender;
     /**

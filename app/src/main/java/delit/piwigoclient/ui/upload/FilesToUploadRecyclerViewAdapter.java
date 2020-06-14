@@ -20,8 +20,9 @@ import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.button.MaterialButton;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.IOUtils;
@@ -153,7 +155,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             // theoretically this shouldn't happen I think
             holder.imageLoader.setFileToLoad(null);
             holder.itemHeading.setVisibility(View.INVISIBLE);
-            Crashlytics.log(Log.ERROR, TAG, "file to upload cannot be rendered as is null");
+            Logging.log(Log.ERROR, TAG, "file to upload cannot be rendered as is null");
         }
     }
 
@@ -268,7 +270,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         private Uri uri;
         private String dataHashcode = null;
         private long dataLength = -1;
-        private String filename = null;
+        private String filename;
         private UploadProgressInfo uploadProgress;
 
         public UploadDataItem(Uri uri, String filename, String mimeType) {
@@ -472,7 +474,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingCompressed);
             if (uploadDataItem == null) {
                 String filename = fileBeingCompressed == null ? null : fileBeingCompressed.toString();
-                Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                Logging.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
             } else {
                 UploadProgressInfo progress = uploadDataItem.uploadProgress;
                 if (progress != null) {
@@ -486,7 +488,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingUploaded);
             if (uploadDataItem == null) {
                 String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
-                Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                Logging.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
             } else {
                 UploadProgressInfo progress = uploadDataItem.uploadProgress;
                 if (progress != null) {
@@ -499,7 +501,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                         progress.uploadProgress = percentageComplete;
                     } else {
                         String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
-                        Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                        Logging.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
                     }
                 }
             }
@@ -565,7 +567,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         void onRemove(FilesToUploadRecyclerViewAdapter adapter, Uri itemToRemove, boolean longClick);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements PicassoLoader.PictureItemImageLoaderListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements PicassoLoader.PictureItemImageLoaderListener {
         public final View mView;
         private final ProgressIndicator progressBar;
         private final TextView fileNameField;
@@ -609,6 +611,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             fileForUploadImageView.setBackgroundColor(ContextCompat.getColor(fileForUploadImageView.getContext(), R.color.color_scrim_heavy));
         }
 
+        @NotNull
         @Override
         public String toString() {
             return super.toString() + " '" + mItem.uri + "'";
@@ -641,7 +644,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                     viewHolder.imageLoader.load();
                 }
             } catch (IllegalStateException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 // image loader not configured yet...
             }
             return true;

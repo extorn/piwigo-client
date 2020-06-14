@@ -37,7 +37,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.libs.ui.view.recycler.SimpleFragmentPagerAdapter;
 import delit.piwigoclient.R;
@@ -76,6 +75,8 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.activity_preferences, container, false);
 

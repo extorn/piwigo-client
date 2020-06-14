@@ -2,8 +2,10 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.IntRange;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,7 +114,9 @@ public class PiwigoTags extends IdentifiablePagedList<Tag> {
         getItems().addAll(tags);
     }
 
-    private static class TagComparator implements Comparator<Tag> {
+    private static class TagComparator implements Comparator<Tag>, Serializable {
+
+        private static final long serialVersionUID = -3433690704683890667L;
 
         @Override
         public int compare(Tag o1, Tag o2) {

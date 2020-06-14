@@ -12,7 +12,6 @@ import android.view.View;
 
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -24,6 +23,7 @@ import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -35,11 +35,13 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import delit.libs.ui.util.SecurePrefsUtil;
+import delit.libs.core.util.Logging;
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.events.RewardUpdateEvent;
+import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 import static android.view.View.VISIBLE;
 
@@ -105,7 +107,7 @@ public class AdsManager {
                     String host = URI.create(serverAddress).getHost();
                     showAds = BuildConfig.DEBUG || !"sail2port.ddns.net".equals(host);
                 } catch (IllegalArgumentException e) {
-                    Crashlytics.log(Log.DEBUG, TAG, "Error parsing URI - adverts enabled");
+                    Logging.log(Log.DEBUG, TAG, "Error parsing URI - adverts enabled");
                     showAds = true;
                 }
             }
@@ -161,7 +163,7 @@ public class AdsManager {
         c.set(Calendar.DAY_OF_MONTH, 1); // 1st
 
         if (Calendar.getInstance().getTime().after(c.getTime()) && showAds && !advertsDisabled && ad != null) {
-            if (ad.isLoaded() && currentTime - lastShowedAdvert > minDelayBetweenAds) {
+            if (ad.isLoaded() && (currentTime - lastShowedAdvert) > minDelayBetweenAds) {
                 lastShowedAdvert = currentTime;
                 return true;
             } else if (!ad.isLoaded() && !ad.isLoading()) {
@@ -212,7 +214,17 @@ public class AdsManager {
         }
 
         private void loadAdvert() {
-            advertView.loadAd(new AdRequest.Builder().build());
+            try {
+                advertView.loadAd(new AdRequest.Builder().build());
+            } catch(NullPointerException e) {
+                if(BuildConfig.DEBUG) {
+                    FirebaseCrashlytics.getInstance().recordException(e);
+                    String adName = DisplayUtils.getResourceName(advertView.getContext(), advertView.getId());
+                    FirebaseCrashlytics.getInstance().log("Advert was unable to load : " + adName);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         @Override
@@ -221,10 +233,10 @@ public class AdsManager {
                 retries++;
             }
             if (retries < 3) {
-                Crashlytics.log(Log.DEBUG, "BannerAd", "advert load failed, retrying");
+                Logging.log(Log.DEBUG, "BannerAd", "advert load failed, retrying");
                 loadAdvert();
             } else {
-                Crashlytics.log(Log.DEBUG, "BannerAd", "Gave up trying to load advert after 3 attempts");
+                Logging.log(Log.DEBUG, "BannerAd", "Gave up trying to load advert after 3 attempts");
                 advertView.setVisibility(View.GONE);
                 advertLoadFailures++;
                 lastAdLoadFailed = true;
@@ -266,16 +278,16 @@ public class AdsManager {
         private final SecurePrefsUtil prefUtil;
         private final long rewardCountUpdateFrequency;
 
-        public OnRewardEarnedListener(Context context, long rewardCountUpdateFrequency) {
+        public OnRewardEarnedListener(Context context, long rewardCountUpdateFrequency, String appId) {
             this.context = context;
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            prefUtil = SecurePrefsUtil.getInstance(context);
+            prefUtil = SecurePrefsUtil.getInstance(context, appId);
             this.rewardCountUpdateFrequency = rewardCountUpdateFrequency;
         }
 
         public void onRewardEarned(RewardItem rewardItem, long adDisplayTimeMaximum) {
 
-            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), null);
+            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(context, sharedPreferences, context.getString(R.string.preference_advert_free_time_key), null);
             BigInteger endsAt = BigInteger.valueOf(System.currentTimeMillis());
             if (oldVal != null) {
                 endsAt = endsAt.max(new BigInteger(oldVal));
@@ -385,10 +397,10 @@ public class AdsManager {
                 retries++;
             }
             if (retries < 3) {
-                Crashlytics.log(Log.DEBUG, "RewardVidAd", "advert load failed, retrying");
+                Logging.log(Log.DEBUG, "RewardVidAd", "advert load failed, retrying");
                 loadAdvert();
             } else {
-                Crashlytics.log(Log.DEBUG, "RewardVidAd", "Gave up trying to load advert after 3 attempts");
+                Logging.log(Log.DEBUG, "RewardVidAd", "Gave up trying to load advert after 3 attempts");
                 advertLoadFailures++;
                 retries = 0;
             }
@@ -402,12 +414,9 @@ public class AdsManager {
         void loadAdvert() {
             if (!rewardedVideoAd.isLoaded() || !isLoading) {
                 if (Looper.myLooper() != Looper.getMainLooper()) {
-                    h.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // always load adverts on the main thread!
-                            loadAdvert();
-                        }
+                    h.post(() -> {
+                        // always load adverts on the main thread!
+                        loadAdvert();
                     });
                     return;
                 }
@@ -499,8 +508,8 @@ public class AdsManager {
                 return false;
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(c);
-            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(prefs, prefKey, null);
+            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(c, BuildConfig.APPLICATION_ID);
+            byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(c, prefs, prefKey, null);
             boolean showAds = true;
             long timeRemainingWithoutAds = 0;
             if (oldVal != null) {
@@ -520,7 +529,7 @@ public class AdsManager {
         }
     }
 
-    class MyAdListener extends AdListener {
+    static class MyAdListener extends AdListener {
 
         private final InterstitialAd ad;
         private final Context context;
@@ -568,10 +577,10 @@ public class AdsManager {
                 retries++;
             }
             if (retries < 3) {
-                Crashlytics.log(Log.DEBUG, "InterstitialAd", "advert load failed, retrying");
+                Logging.log(Log.DEBUG, "InterstitialAd", "advert load failed, retrying");
                 loadAdvert();
             } else {
-                Crashlytics.log(Log.DEBUG, "InterstitialAd", "Gave up trying to load advert after 3 attempts");
+                Logging.log(Log.DEBUG, "InterstitialAd", "Gave up trying to load advert after 3 attempts");
                 advertLoadFailures++;
                 retries = 0;
             }

@@ -6,9 +6,7 @@ import android.util.Log;
 
 import androidx.preference.Preference;
 
-import com.crashlytics.android.Crashlytics;
-
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -68,12 +66,14 @@ public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPrefere
     }
 
     private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<UploadPreferenceFragment>, UploadPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+        private static final long serialVersionUID = 3098362061442927769L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<UploadPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             if (sessionDetails == null) {
-                Crashlytics.log(Log.ERROR, TAG, "Session details null after login success - weird");
+                Logging.log(Log.ERROR, TAG, "Session details null after login success - weird");
             } else if (sessionDetails.isPiwigoClientCleanUploadsAvailable()) {
                 uiHelper.invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction());
             } else {
@@ -84,9 +84,11 @@ public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPrefere
     }
 
     private static class FailedUploadCleanAction extends UIHelper.Action<FragmentUIHelper<UploadPreferenceFragment>, UploadPreferenceFragment, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse> {
+        private static final long serialVersionUID = 3425056927476869426L;
+
         @Override
         public boolean onSuccess(FragmentUIHelper<UploadPreferenceFragment> uiHelper, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse response) {
-            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.cleared_failed_uploads_from_server_pattern, response.getFilesCleaned()));
+            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getAppContext().getString(R.string.cleared_failed_uploads_from_server_pattern, response.getFilesCleaned()));
             return super.onSuccess(uiHelper, response);
         }
 

@@ -121,7 +121,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
         return loadControlPauseListener;
     }
 
-    private class CustomDatasourceLoadControlPauseListener implements PausableLoadControl.Listener {
+    private static class CustomDatasourceLoadControlPauseListener implements PausableLoadControl.Listener {
         HttpDataSource dataSource;
 
         public void setDataSource(HttpDataSource dataSource) {

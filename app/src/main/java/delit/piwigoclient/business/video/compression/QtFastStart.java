@@ -324,18 +324,24 @@ public class QtFastStart {
     }
 
     public static class QtFastStartException extends Exception {
+        private static final long serialVersionUID = 8477984426447592317L;
+
         private QtFastStartException(String detailMessage) {
             super(detailMessage);
         }
     }
 
     public static class MalformedFileException extends QtFastStartException {
+        private static final long serialVersionUID = -1344249926141951471L;
+
         private MalformedFileException(String detailMessage) {
             super(detailMessage);
         }
     }
 
     public static class UnsupportedFileException extends QtFastStartException {
+        private static final long serialVersionUID = 6996326155290001L;
+
         private UnsupportedFileException(String detailMessage) {
             super(detailMessage);
         }

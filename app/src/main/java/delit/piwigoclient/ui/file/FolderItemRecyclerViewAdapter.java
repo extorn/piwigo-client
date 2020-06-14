@@ -19,12 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
-
-import com.crashlytics.android.Crashlytics;
-import com.drew.lang.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +39,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
@@ -91,7 +90,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         navigationListener.onPostFolderOpened(oldFolder, activeFolder);
     }
 
-    public class SavedState {
+    public static class SavedState {
         private boolean restored = false;
         private TreeMap<String, String> currentVisibleDocumentFileExts;
         private List<FolderItem> currentFullContent;
@@ -162,7 +161,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     protected List<FolderItem> getNewDisplayContentInternal(DocumentFile newContent) {
 
-        List<FolderItem> currentDisplayContent = null;
+        List<FolderItem> currentDisplayContent;
         activeFolder = newContent;
         getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
         // load all the children.
@@ -386,10 +385,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             case VIEW_TYPE_FILE:
             case VIEW_TYPE_FILE_IMAGE:
                 return LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.layout_actionable_triselect_list_item_large_icon, parent, false);
+                        .inflate(delit.libs.R.layout.layout_actionable_triselect_list_item_large_icon, parent, false);
             case VIEW_TYPE_FOLDER:
                 return LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.layout_actionable_triselect_list_item_icon, parent, false);
+                        .inflate(delit.libs.R.layout.layout_actionable_triselect_list_item_icon, parent, false);
         }
 
     }
@@ -706,7 +705,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
          * @param context
          * @return may be null (pre lollipop always null! :-( )
          */
-        public @Nullable DocumentFile getDocumentFile(Context context) {
+        public @Nullable
+        DocumentFile getDocumentFile(Context context) {
             if(itemDocFile != null) {
                 return itemDocFile;
             }
@@ -897,7 +897,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
-            itemHeading = itemView.findViewById(R.id.list_item_heading);
+            itemHeading = itemView.findViewById(delit.libs.R.id.list_item_heading);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
             final ViewTreeObserver.OnPreDrawListener predrawListener = () -> {
                 if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
@@ -948,7 +948,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
             super.cacheViewFieldsAndConfigure(adapterPrefs);
 
-            iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
+            iconView = itemView.findViewById(delit.libs.R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("folder item thumb");
             iconViewLoader = new ResizingPicassoLoader<>(getIconView(), this, 0, 0);
         }
@@ -1003,7 +1003,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         protected void onCancelledSafely() {
             getOwner().isBusy = false;
-            Crashlytics.log(Log.WARN, TAG, "Async Task cancelled");
+            Logging.log(Log.WARN, TAG, "Async Task cancelled");
         }
     }
 
@@ -1084,7 +1084,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         protected void onCancelledSafely() {
             super.onCancelledSafely();
             getOwner().isBusy = false;
-            Crashlytics.log(Log.WARN, TAG, "Async Task cancelled");
+            Logging.log(Log.WARN, TAG, "Async Task cancelled");
         }
     }
 }

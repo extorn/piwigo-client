@@ -12,7 +12,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 
-import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 

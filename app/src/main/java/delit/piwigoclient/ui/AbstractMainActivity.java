@@ -35,14 +35,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -54,6 +55,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomToolbar;
@@ -231,28 +233,25 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ViewCompat.setOnApplyWindowInsetsListener(drawer, new OnApplyWindowInsetsListener() {
-                @Override
-                public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-                    if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
-                        insets.replaceSystemWindowInsets(
-                                insets.getStableInsetLeft(),
-                                0,
-                                insets.getStableInsetRight(),
-                                0);
-                        insets.consumeStableInsets();
-                        //TODO forcing the top margin like this is really not a great idea. Find a better way.
-                        ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
-                    } else {
-                        if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
-                            int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
-                            if (topMargin == 0) {
-                                ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
-                            }
+            ViewCompat.setOnApplyWindowInsetsListener(drawer, (v, insets) -> {
+                if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
+                    insets.replaceSystemWindowInsets(
+                            insets.getStableInsetLeft(),
+                            0,
+                            insets.getStableInsetRight(),
+                            0);
+                    insets.consumeStableInsets();
+                    //TODO forcing the top margin like this is really not a great idea. Find a better way.
+                    ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
+                } else {
+                    if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
+                        int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
+                        if (topMargin == 0) {
+                            ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
                         }
                     }
-                    return insets;
                 }
+                return insets;
             });
         }
 
@@ -384,7 +383,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         if (!hasAgreedToEula()) {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
             return true;
@@ -405,6 +404,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     public static Intent buildShowGalleryIntent(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, null, context.getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
         return intent;
     }
@@ -424,16 +424,18 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     public static Intent buildShowTopTipsIntent(UploadActivity context) {
         Intent intent = new Intent("delit.piwigoclient.VIEW_TOP_TIPS", null, context.getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
 
     private void showPreferences() {
         try {
             Intent intent = PreferencesActivity.buildIntent(this);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
 //        PreferencesFragment fragment = new PreferencesFragment();
 //        showFragmentNow(fragment);
@@ -475,8 +477,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 try {
                     processNextQueuedDownloadEvent();
                 } catch(Exception e) {
-                    Crashlytics.logException(e);
-                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), Integer.MIN_VALUE, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<?>>(getUiHelper()){});
+                    Logging.recordException(e);
+                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), Integer.MIN_VALUE, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<?>>(getUiHelper()){
+                        private static final long serialVersionUID = -5095860316323377780L;
+                    });
                     activeDownloads.remove(0);
                 }
             } else {
@@ -509,7 +513,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     fileDetail.setDownloadedFile(destFile.getUri());
                     processDownloadEvent(event);
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    Logging.recordException(e);
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
                 }
             } else {
@@ -599,7 +603,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if(BuildConfig.DEBUG) {
             Log.e(TAG, "Downloaded File - Generating Thumbnail for " + downloadedFile);
         }
-        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getContext()).load(downloadedFile).resize(256,256).centerInside().into(new DownloadTarget(uiHelper, downloadedFile));
+        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getAppContext()).load(downloadedFile).resize(256,256).centerInside().into(new DownloadTarget(uiHelper, downloadedFile));
     }
 
     private void shareFilesWithOtherApps(Context context, final Set<Uri> filesToShare) {
@@ -718,7 +722,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         private Context getContext() {
-            return uiHelper.getContext();
+            return uiHelper.getAppContext();
         }
 
         @Override
@@ -866,7 +870,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         try {
             startActivity(UploadActivity.buildIntent(this, currentAlbum.toStub()));
         } catch(ActivityNotFoundException e) {
-            Crashlytics.logException(e);
+            Logging.recordException(e);
         }
     }
 
@@ -912,9 +916,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         if (hasFocus) {
             DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
-            Crashlytics.log(Log.ERROR, TAG, "hiding status bar!");
+            Logging.log(Log.ERROR, TAG, "hiding status bar!");
         } else {
-            Crashlytics.log(Log.ERROR, TAG, "showing status bar!");
+            Logging.log(Log.ERROR, TAG, "showing status bar!");
         }
 
 //        v.requestApplyInsets(); // is this needed
@@ -929,6 +933,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
+        private static final long serialVersionUID = 7822802682401888932L;
+        private static final long serialVersionUID = 7822802682401888932L;
         private final DownloadFileRequestEvent downloadEvent;
 
         public DownloadAction(DownloadFileRequestEvent event) {
@@ -981,7 +987,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
 
         private void onGetResourceCancelled(UIHelper uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
-            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.alert_image_download_cancelled_message));
+            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getAppContext().getString(R.string.alert_image_download_cancelled_message));
         }
 
         private static class CancelDownloadListener implements View.OnClickListener {
@@ -1130,7 +1136,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Crashlytics.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
+        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
         checkLicenceIfNeeded();
 
         DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
@@ -1149,7 +1155,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.addToBackStack(f.getClass().getName());
         tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
-        Crashlytics.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
+        Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -1218,10 +1224,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                         m.invoke(this, params);
                         break;
                     } catch (IllegalAccessException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                         throw new RuntimeException("Error running post login action ", e);
                     } catch (InvocationTargetException e) {
-                        Crashlytics.logException(e);
+                        Logging.recordException(e);
                         throw new RuntimeException("Error running post login action ", e);
                     }
                 }
@@ -1255,7 +1261,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     public void onEvent(PiwigoLoginSuccessEvent event) {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        Crashlytics.setString("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
+        FirebaseCrashlytics.getInstance().setCustomKey("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
 
 
         MainActivityDrawerNavigationView navigationView = findViewById(R.id.nav_view);

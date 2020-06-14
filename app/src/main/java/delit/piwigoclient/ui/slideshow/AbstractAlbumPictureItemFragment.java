@@ -101,12 +101,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         imageLoadErrorView = container.findViewById(R.id.image_load_error);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (loader != null && !loader.isImageLoaded()) {
-                    loader.loadNoCache();
-                }
+        imageView.setOnClickListener(v -> {
+            if (loader != null && !loader.isImageLoaded()) {
+                loader.loadNoCache();
             }
         });
 
@@ -126,13 +123,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(AlbumViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
         imageView.setRotateImageToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
-        imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
-            @Override
-            public void onMove() {
-                getOverlaysVisibilityControl().runWithDelay(imageView);
-            }
-
-//            @Override
+        //            @Override
 //            public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
 //                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
 //                    ToolbarEvent toolbarEvent = new ToolbarEvent();
@@ -147,7 +138,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 //                    }
 //                }
 //            }
-        });
+        imageView.setOnTouchImageViewListener(() -> getOverlaysVisibilityControl().runWithDelay(imageView));
 
         return imageView;
     }
@@ -165,13 +156,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 //        imageView.setScaleType(ImageView.ScaleType.MATRIX);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                getOverlaysVisibilityControl().runWithDelay(imageView);
-                return false;
-            }
+        imageView.setOnTouchListener((v, event) -> {
+            getOverlaysVisibilityControl().runWithDelay(imageView);
+            return false;
         });
 
         return imageView;
@@ -230,12 +217,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         super.doOnceOnPageSelectedAndAdded();
         boolean showFileSizeShowingMessage = AlbumViewPreferences.isShowFileSizeShowingMessage(prefs, requireContext());
         if (fileSizeToShow != null && showFileSizeShowingMessage) {
-            getUiHelper().doOnce("currentImageSizeDisplayed", fileSizeToShow, new Runnable() {
-                @Override
-                public void run() {
-                    getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_images_of_size, fileSizeToShow));
-                }
-            });
+            getUiHelper().doOnce("currentImageSizeDisplayed", fileSizeToShow, () -> getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_showing_images_of_size, fileSizeToShow)));
         }
     }
 
@@ -243,33 +225,28 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     protected void configureItemContent(@Nullable View itemContent, final PictureResourceItem model, @Nullable Bundle savedInstanceState) {
         super.configureItemContent(itemContent, model, savedInstanceState);
 
-        imageView.setOnLongClickListener(new View.OnLongClickListener() {
-
-
-            @Override
-            public boolean onLongClick(View v) {
-                final SelectImageRenderDetailsDialog dialogFactory = new SelectImageRenderDetailsDialog(getContext());
-                AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), model, new SelectImageRenderDetailsDialog.RenderDetailSelectListener() {
-                    @Override
-                    public void onSelection(String selectedUrl, float rotateDegrees, float maxZoom) {
-                        currentImageUrlDisplayed = selectedUrl;
-                        char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
-                        String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
-                        loader.setUriToLoad(uriToLoad);
-                        if (0 != Float.compare(rotateDegrees, 0f)) {
-                            loader.setRotation(rotateDegrees);
-                        } else {
-                            loader.setRotation(0f);
-                        }
-                        loader.load();
-                        if(imageView instanceof TouchImageView) {
-                            ((TouchImageView)imageView).setMaxZoom(maxZoom);
-                        }
+        imageView.setOnLongClickListener(v -> {
+            final SelectImageRenderDetailsDialog dialogFactory = new SelectImageRenderDetailsDialog(getContext());
+            AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), model, new SelectImageRenderDetailsDialog.RenderDetailSelectListener() {
+                @Override
+                public void onSelection(String selectedUrl, float rotateDegrees, float maxZoom) {
+                    currentImageUrlDisplayed = selectedUrl;
+                    char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
+                    String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
+                    loader.setUriToLoad(uriToLoad);
+                    if (0 != Float.compare(rotateDegrees, 0f)) {
+                        loader.setRotation(rotateDegrees);
+                    } else {
+                        loader.setRotation(0f);
                     }
-                });
-                dialog.show();
-                return true;
-            }
+                    loader.load();
+                    if(imageView instanceof TouchImageView) {
+                        ((TouchImageView)imageView).setMaxZoom(maxZoom);
+                    }
+                }
+            });
+            dialog.show();
+            return true;
         });
 
         // Load the content into the screen.
@@ -342,10 +319,14 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 AbstractBaseResourceItem.ResourceFile resourceFile = getModel().getResourceFileWithUri(getCurrentImageUrlDisplayed());
                 AlertDialog dialog = dialogFactory.buildDialog(resourceFile.getName(), getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
+                    private static final long serialVersionUID = -2904423848050523923L;
+
                     @Override
                     public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                         if(filesUnavailableToDownload.size() > 0) {
                             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                private static final long serialVersionUID = 1083163567307597434L;
+
                                 @Override
                                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                     doDownloadAction(items, selectedPiwigoFilesizeName, false);
@@ -361,6 +342,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                     public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                         if(filesUnavailableToDownload.size() > 0) {
                             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
+                                private static final long serialVersionUID = -7827362664960685261L;
+
                                 @Override
                                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                     doDownloadAction(items, selectedPiwigoFilesizeName, true);

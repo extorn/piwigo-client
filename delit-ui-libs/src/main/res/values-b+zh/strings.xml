@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_cancel">取消</string>
+    <string name="button_delete">删除</string>
+    <string name="undefined_error_msg">未定义的错误</string>
+    <string name="resource_unavailable_error_msg_pattern">无法访问请求的资源。\n \nHTHTTP状态代码（%1$d）</string>
+    <string name="server_error_msg_pattern">服务器或服务器与设备之间出现问题。\n \nHTHTTP状态代码（%1$d）</string>
+    <string name="redirect_error_msg_pattern">请求重定向错误：\nHTTP状态代码（%1$d）</string>
+    <string name="http_error_msg_pattern">HTTP Error Message (%1$s)</string>
+    <string name="unexpected_response_error_msg_pattern">Unexpected response : \nHTTP Status Code (%1$d)</string>
+    <string name="certificate_chain_not_verifiable_error">无法使用此设备上的证书验证证书链。</string>
+    <string name="certificate_chain_not_verifiable_error_detail">无法使用此设备上的证书验证证书链。要解决此问题，请允许此应用维护受信任证书列表（在此应用连接设置中）。</string>
+    <string name="connection_error_msg_pattern">无法连接到服务器</string>
+</resources>

@@ -143,11 +143,11 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
      */
     public static final int DEFAULT_SCRUBBER_DRAGGED_SIZE_DP = 16;
     /**
-     * Default color for the played portion of the time bar.
+     * Default colors for the played portion of the time bar.
      */
     public static final int DEFAULT_PLAYED_COLOR = 0xFFFFFFFF;
     /**
-     * Default color for ad markers.
+     * Default colors for ad markers.
      */
     public static final int DEFAULT_AD_MARKER_COLOR = 0xB2FFFF00;
 
@@ -354,9 +354,9 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     }
 
     /**
-     * Sets the color for the portion of the time bar representing media before the playback position.
+     * Sets the colors for the portion of the time bar representing media before the playback position.
      *
-     * @param playedColor The color for the portion of the time bar representing media before the
+     * @param playedColor The colors for the portion of the time bar representing media before the
      *                    playback position.
      */
     public void setPlayedColor(@ColorInt int playedColor) {
@@ -365,9 +365,9 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     }
 
     /**
-     * Sets the color for the scrubber handle.
+     * Sets the colors for the scrubber handle.
      *
-     * @param scrubberColor The color for the scrubber handle.
+     * @param scrubberColor The colors for the scrubber handle.
      */
     public void setScrubberColor(@ColorInt int scrubberColor) {
         scrubberPaint.setColor(scrubberColor);
@@ -375,10 +375,10 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     }
 
     /**
-     * Sets the color for the portion of the time bar after the current played position up to the
+     * Sets the colors for the portion of the time bar after the current played position up to the
      * current buffered position.
      *
-     * @param bufferedColor The color for the portion of the time bar after the current played
+     * @param bufferedColor The colors for the portion of the time bar after the current played
      *                      position up to the current buffered position.
      */
     public void setBufferedColor(@ColorInt int bufferedColor) {
@@ -387,9 +387,9 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     }
 
     /**
-     * Sets the color for the portion of the time bar after the current played position.
+     * Sets the colors for the portion of the time bar after the current played position.
      *
-     * @param unplayedColor The color for the portion of the time bar after the current played
+     * @param unplayedColor The colors for the portion of the time bar after the current played
      *                      position.
      */
     public void setUnplayedColor(@ColorInt int unplayedColor) {
@@ -398,9 +398,9 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     }
 
     /**
-     * Sets the color for unplayed ad markers.
+     * Sets the colors for unplayed ad markers.
      *
-     * @param adMarkerColor The color for unplayed ad markers.
+     * @param adMarkerColor The colors for unplayed ad markers.
      */
     public void setAdMarkerColor(@ColorInt int adMarkerColor) {
         adMarkerPaint.setColor(adMarkerColor);
@@ -408,9 +408,9 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     }
 
     /**
-     * Sets the color for played ad markers.
+     * Sets the colors for played ad markers.
      *
-     * @param playedAdMarkerColor The color for played ad markers.
+     * @param playedAdMarkerColor The colors for played ad markers.
      */
     public void setPlayedAdMarkerColor(@ColorInt int playedAdMarkerColor) {
         playedAdMarkerPaint.setColor(playedAdMarkerColor);
@@ -515,7 +515,7 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
                 if (scrubbing) {
                     if (y < fineScrubYThreshold) {
                         int relativeX = x - lastCoarseScrubXPosition;
-                        positionScrubber(lastCoarseScrubXPosition + relativeX / FINE_SCRUB_RATIO);
+                        positionScrubber(lastCoarseScrubXPosition + (((float)relativeX) / FINE_SCRUB_RATIO));
                     } else {
                         lastCoarseScrubXPosition = x;
                         positionScrubber(x);

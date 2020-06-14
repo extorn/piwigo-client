@@ -14,12 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
@@ -33,7 +32,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
-    private transient List<CategoryItem> currentDisplayContent;
+    private List<CategoryItem> currentDisplayContent;
     private CategoryItem overallRoot;
     private CategoryItem activeItem;
     private NavigationListener navigationListener;
@@ -80,7 +79,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 //        getSelectedItemIds().clear();
         if (activeItem != null) {
             List<CategoryItem> folderContent = activeItem.getChildAlbums();
-            currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList<CategoryItem>(0);
+            currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList<>(0);
         } else {
             currentDisplayContent = new ArrayList<>(0);
         }
@@ -253,7 +252,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
                     iconViewLoader.load();
                 }
             } catch (IllegalStateException e) {
-                Crashlytics.logException(e);
+                Logging.recordException(e);
                 // image loader not configured yet...
             }
             return true;
@@ -288,7 +287,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
                 ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.DST); //IGNORE THE TINT - Use the image as is.
                 geticonViewLoader().setUriToLoad(newItem.getThumbnailUrl());
             } else {
-                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); // SRC_ATOP: use color of the tint to shade the non transparent parts of the image
+                ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); // SRC_ATOP: use colors of the tint to shade the non transparent parts of the image
                 geticonViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             }
         }
@@ -308,7 +307,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
                 colorList = ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.app_secondary));//ColorStateList.valueOf(DisplayUtils.getColor(getContext(), R.attr.colorPrimary));
             }
             ImageViewCompat.setImageTintList(getIconView(), colorList);
-            ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); //SRC_ATOP: use color of the tint to shade the non transparent parts of the image
+            ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); //SRC_ATOP: use colors of the tint to shade the non transparent parts of the image
 
 
             getIconView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -325,7 +324,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    protected abstract class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
+    protected abstract static class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
 

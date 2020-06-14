@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,15 +21,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.material.navigation.NavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.SecurePrefsUtil;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.libs.util.ProjectUtils;
@@ -110,12 +110,7 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
 
         final TextView email = headerView.findViewById(R.id.admin_email);
 
-        email.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendEmail(((TextView) v).getText().toString());
-            }
-        });
+        email.setOnClickListener(v -> sendEmail(((TextView) v).getText().toString()));
 
         currentUsernameField = headerView.findViewById(R.id.current_user_name);
         currentServerField = headerView.findViewById(R.id.current_server);
@@ -255,7 +250,6 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
         if (sessionDetails != null) {
             username = sessionDetails.getUsername();
         } else {
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
             username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
         uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new OnUnlockAction(uiHelper));
@@ -266,6 +260,8 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
     }
 
     private static class OnUnlockAction extends UIHelper.QuestionResultAdapter {
+        private static final long serialVersionUID = 5971284425196833117L;
+
         public OnUnlockAction(UIHelper uiHelper) {
             super(uiHelper);
         }
@@ -290,7 +286,7 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
                     String password = passwordEdit.getText().toString();
                     EventBus.getDefault().post(new UnlockAppEvent(password));
                 } else {
-                    Crashlytics.log("unable to find password field on dialog");
+                    Logging.log(Log.ERROR, TAG, "unable to find password field on dialog");
                 }
             }
         }
@@ -338,6 +334,8 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
     }
 
     private static class OnAppLockAction extends UIHelper.QuestionResultAdapter {
+        private static final long serialVersionUID = 790733381088119050L;
+
         public OnAppLockAction(UIHelper uiHelper) {
             super(uiHelper);
         }
@@ -352,6 +350,8 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
 
     private static class OnLogoutAction extends UIHelper.Action<UIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
 
+        private static final long serialVersionUID = -8193202526077904310L;
+
         @Override
         public boolean onSuccess(UIHelper<MainActivityDrawerNavigationView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
@@ -363,13 +363,15 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
         @Override
         public boolean onFailure(UIHelper<MainActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
+            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getAppContext());
             onSuccess(uiHelper, null);
             return false;
         }
     }
 
     private static class OnLoginAction extends UIHelper.Action<UIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
+
+        private static final long serialVersionUID = -672337878074631707L;
 
         @Override
         public boolean onFailure(UIHelper<MainActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
@@ -383,9 +385,9 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
             uiHelper.getParent().markRefreshSessionComplete();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+                String msg = uiHelper.getAppContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
                 if (sessionDetails.getAvailableImageSizes().size() == 0) {
-                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
+                    msg += '\n' + uiHelper.getAppContext().getString(R.string.alert_message_no_available_image_sizes);
                     uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
                 } else {
                     uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
@@ -398,6 +400,8 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
 
     private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<UIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
 
+        private static final long serialVersionUID = -1532333438753689481L;
+
         @Override
         public boolean onFailure(UIHelper<MainActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().markRefreshSessionComplete();
@@ -407,12 +411,12 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
         @Override
         public boolean onSuccess(UIHelper<MainActivityDrawerNavigationView> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getContext());
+            String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getAppContext());
             if ((serverUri == null || serverUri.trim().isEmpty())) {
-                uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getContext().getString(R.string.alert_warning_no_server_url_specified));
+                uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getAppContext().getString(R.string.alert_warning_no_server_url_specified));
                 uiHelper.getParent().markRefreshSessionComplete();
             } else {
-                uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
             }
             return false; // don't run standard listener code
         }
@@ -466,6 +470,7 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
 
     private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<MainActivityDrawerNavigationView>> {
 
+        private static final long serialVersionUID = -3103982793170701729L;
         private final boolean networkAccessDesired;
 
         public ConfigureNetworkAccessQuestionResult(ViewGroupUIHelper<MainActivityDrawerNavigationView> uiHelper, boolean networkAccessDesired) {
@@ -482,14 +487,14 @@ public class MainActivityDrawerNavigationView extends NavigationView implements 
                 if (sessionDetails != null) {
                     sessionDetails.setCached(!networkAccessDesired);
                     if (networkAccessDesired) {
-                        PiwigoSessionDetails.logout(connectionPrefs, getUiHelper().getContext());
-                        String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getContext());
-                        getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                        PiwigoSessionDetails.logout(connectionPrefs, getUiHelper().getAppContext());
+                        String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getAppContext());
+                        getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
                     }
                     getUiHelper().getParent().setMenuVisibilityToMatchSessionState();
                 } else if (!networkAccessDesired) {
-                    String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getContext());
-                    getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction());
+                    String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getAppContext());
+                    getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction());
                 }
             }
         }

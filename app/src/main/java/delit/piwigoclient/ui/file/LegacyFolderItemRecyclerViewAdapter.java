@@ -18,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.File;
@@ -33,6 +32,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.LegacyParcelUtils;
 import delit.libs.ui.util.MediaScanner;
 import delit.libs.ui.util.ParcelUtils;
@@ -55,7 +55,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
     private static final String TAG = "LegacyFolderItemRVA";
     private final MediaScanner mediaScanner;
-    private transient List<LegacyFolderItem> currentDisplayContent;
+    private List<LegacyFolderItem> currentDisplayContent;
     private File activeFolder;
     private Comparator<? super LegacyFolderItem> fileComparator;
     private NavigationListener navigationListener;
@@ -77,7 +77,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
                 try {
                     pos = getItemPositionForFile(LegacyIOUtils.getFile(selectedItem));
                 } catch (IOException e) {
-                    Crashlytics.log(Log.ERROR,TAG, "Non file Uri got in somehow : " + selectedItem);
+                    Logging.log(Log.ERROR,TAG, "Non file Uri got in somehow : " + selectedItem);
                     throw new IllegalStateException("Non file Uri got in somehow");
                 }
                 if (pos >= 0) {
@@ -470,7 +470,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItems().contains(newItem.getFile()));
+            getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
         }
 
@@ -556,7 +556,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         }
     }
 
-    protected abstract class LegacyFolderItemViewHolder extends BaseViewHolder<FolderItemViewAdapterPreferences, LegacyFolderItem> implements PicassoLoader.PictureItemImageLoaderListener {
+    protected abstract static class LegacyFolderItemViewHolder extends BaseViewHolder<FolderItemViewAdapterPreferences, LegacyFolderItem> implements PicassoLoader.PictureItemImageLoaderListener {
 
         private ImageView iconView;
         private ResizingPicassoLoader<ImageView> iconViewLoader;
