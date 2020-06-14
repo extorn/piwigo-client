@@ -252,7 +252,6 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
     private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupsListFragment>> {
 
         private static final long serialVersionUID = -3012489537598738626L;
-        private static final long serialVersionUID = -3012489537598738626L;
         private final Group group;
 
         public OnDeleteGroupAction(FragmentUIHelper<GroupsListFragment> uiHelper, Group group) {

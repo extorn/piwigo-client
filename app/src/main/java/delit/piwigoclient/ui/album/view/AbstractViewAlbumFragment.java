@@ -2272,7 +2272,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final class BulkImagePermissionsListener extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
 
         private static final long serialVersionUID = -3165723064989982868L;
-        private static final long serialVersionUID = -3165723064989982868L;
         private final HashSet<Long> imageIds;
         private Spinner privacyLevelSpinner;
 

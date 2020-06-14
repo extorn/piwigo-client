@@ -257,7 +257,6 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
     private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UsersListFragment>> {
 
         private static final long serialVersionUID = -1211270836306032852L;
-        private static final long serialVersionUID = -1211270836306032852L;
         private final User user;
 
         public OnDeleteUserAction(FragmentUIHelper<UsersListFragment> uiHelper, User user) {

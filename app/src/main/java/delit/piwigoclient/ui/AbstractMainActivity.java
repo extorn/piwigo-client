@@ -934,7 +934,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
         private static final long serialVersionUID = 7822802682401888932L;
-        private static final long serialVersionUID = 7822802682401888932L;
         private final DownloadFileRequestEvent downloadEvent;
 
         public DownloadAction(DownloadFileRequestEvent event) {
