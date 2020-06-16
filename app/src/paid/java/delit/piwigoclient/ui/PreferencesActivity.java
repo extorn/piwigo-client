@@ -31,8 +31,11 @@ public class PreferencesActivity extends AbstractPreferencesActivity {
     private static final String TAG = "PrefAct";
 
     public static Intent buildIntent(Context context) {
-        Intent i = new Intent(context.getApplicationContext(), PreferencesActivity.class);
-        return i;
+        //Intent intent = new Intent(Intent.ACTION_APPLICATION_PREFERENCES, null, context.getApplicationContext(), PreferencesActivity.class);
+        Intent intent = new Intent(context.getApplicationContext(), PreferencesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
     }
 
     @Override
@@ -78,27 +81,5 @@ public class PreferencesActivity extends AbstractPreferencesActivity {
         prefs.withInitialSelection(event.getInitialSelection());
         RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            return; // don't mess with the status bar
-        }
-
-        View v = getWindow().getDecorView();
-        v.setFitsSystemWindows(!hasFocus);
-
-        if (hasFocus) {
-            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
-            Logging.log(Log.ERROR, TAG, "hiding status bar!");
-        } else {
-            Logging.log(Log.ERROR, TAG, "showing status bar!");
-        }
-
-        v.requestApplyInsets();
-        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 }

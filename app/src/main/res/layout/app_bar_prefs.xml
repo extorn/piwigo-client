@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.UploadActivity">
+    tools:context=".ui.PreferencesActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -31,6 +31,6 @@
     <include
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/main_view"
-        layout="@layout/content_upload"/>
+        layout="@layout/content_prefs"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

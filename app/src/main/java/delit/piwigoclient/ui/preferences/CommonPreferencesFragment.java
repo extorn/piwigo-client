@@ -78,7 +78,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.activity_preferences, container, false);
+        View view = inflater.inflate(R.layout.fragment_preferences_view_all, container, false);
 
         AdView adView = view.findViewById(R.id.prefs_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {

@@ -176,12 +176,6 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updatePageTitle();
-    }
-
-    @Override
     public void onResume() {
         Logging.log(Log.VERBOSE,TAG, "onResume : " + getClass().getName());
         super.onResume();
@@ -204,6 +198,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     protected void updatePageTitle() {
         ToolbarEvent event = new ToolbarEvent();
+        event.setActivity(getActivity());
         event.setTitle(buildPageHeading());
         EventBus.getDefault().post(event);
     }

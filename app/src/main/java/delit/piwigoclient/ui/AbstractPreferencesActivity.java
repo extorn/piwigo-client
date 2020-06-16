@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.appbar.AppBarLayout;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -21,6 +25,7 @@ import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPrefer
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
@@ -29,6 +34,9 @@ import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 public abstract class AbstractPreferencesActivity extends MyActivity {
 
     private static final String TAG = "PrefAct";
+    private Toolbar toolbar;
+    private AppBarLayout appBar;
+
 
     public AbstractPreferencesActivity() {
         super(R.layout.activity_preferences);
@@ -37,6 +45,15 @@ public abstract class AbstractPreferencesActivity extends MyActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.preferences_overall_heading);
+        setSupportActionBar(toolbar);
+        appBar = findViewById(R.id.appbar);
+
+
+
+
         showFragmentNow(new PreferencesFragment());
     }
 
@@ -52,6 +69,28 @@ public abstract class AbstractPreferencesActivity extends MyActivity {
         if(BuildConfig.DEBUG) {
             BundleUtils.logSize("Current Preferences Activity", outState);
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return; // don't mess with the status bar
+        }
+
+        View v = getWindow().getDecorView();
+        v.setFitsSystemWindows(!hasFocus);
+
+        if (hasFocus) {
+            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
+            Logging.log(Log.ERROR, TAG, "hiding status bar!");
+        } else {
+            Logging.log(Log.ERROR, TAG, "showing status bar!");
+        }
+
+        v.requestApplyInsets();
+        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -79,25 +118,22 @@ public abstract class AbstractPreferencesActivity extends MyActivity {
         showFragmentNow(f);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            return; // don't mess with the status bar
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ToolbarEvent event) {
+        if(!this.equals(event.getActivity())) {
+            return;
         }
-
-        View v = getWindow().getDecorView();
-        v.setFitsSystemWindows(!hasFocus);
-
-        if (hasFocus) {
-            DisplayUtils.setUiFlags(this, AppPreferences.isAlwaysShowNavButtons(prefs, this), AppPreferences.isAlwaysShowStatusBar(prefs, this));
-            Logging.log(Log.ERROR, TAG, "hiding status bar!");
-        } else {
-            Logging.log(Log.ERROR, TAG, "showing status bar!");
+        if(toolbar == null) {
+            Log.e(TAG, "Cannot set title. Toolbar not initialised yet");
+            return;
         }
-
-        v.requestApplyInsets();
-        EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
+        toolbar.setTitle(event.getTitle());
+        if(event.isExpandToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
+        } else if(event.isContractToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
+        }
+        appBar.setEnabled(event.getTitle()!= null);
     }
 }

@@ -501,37 +501,6 @@ public class UploadActivity extends MyActivity {
     }
 
     private void handleSentImage(Uri sharedUri, String mimeType, ArrayList<Uri> filesToUpload) {
-//        DocumentFile documentFile = DocumentFile.fromSingleUri(this, imageUri);
-//        //TODO check stuff manually here. Maybe need to do something sensible - perhaps don't need local copy now!
-//        Uri sharedFile = IOUtils.saveUriToDevice(this, imageUri, mimeType, BasePiwigoUploadService.getTmpUploadFolder(this));
-//
-//        if (sharedFile == null) {
-//            if (MimeTypeFilter.matches(mimeType,"video/*")) {
-//                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.unable_to_handle_shared_uri_missing_content_description_information);
-////                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-////                    try {
-////                        MediaExtractor mExtractor = new MediaExtractor();
-////                        mExtractor.setDataSource(sharedFile.getAbsolutePath());
-////                        PersistableBundle mediaMetrics = mExtractor.getMetrics();
-////                        String containerFomat = mediaMetrics.getString(MediaExtractor.MetricsConstants.FORMAT);
-//////                        String containerMimeType = mediaMetrics.getString(MediaExtractor.MetricsConstants.MIME_TYPE);
-////                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + "." + containerFomat);
-////                        sharedFile.renameTo(renamedTo);
-////                        sharedFile = renamedTo;
-////
-////                    } catch (IOException e) {
-////                        Logging.log(Log.ERROR, TAG, "Error retrieving correct file extension for shared media file!");
-////                    }
-////                } else {
-////                    if(mimeType.equals("video/mpeg")) {
-////                        // guess
-////                        File renamedTo = new File(sharedFile.getParent(), sharedFile.getName() + ".mp4");
-////                        sharedFile.renameTo(renamedTo);
-////                        sharedFile = renamedTo;
-////                    }
-////                }
-//            }
-//        }
         filesToUpload.add(sharedUri);
     }
 
@@ -590,6 +559,9 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ToolbarEvent event) {
+        if(!this.equals(event.getActivity())) {
+            return;
+        }
         if(toolbar == null) {
             Log.e(TAG, "Cannot set title. Toolbar not initialised yet");
             return;

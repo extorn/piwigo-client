@@ -153,7 +153,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //            getSupportFragmentManager().enableDebugLogging(true);
 //        }
         super.onSaveInstanceState(outState);
-        LoaderManager.getInstance(this).getLoader(0);
+        LoaderManager.getInstance(this).getLoader(0); //TODO is this needed?
         outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putParcelable(STATE_BASKET, basket);
         outState.putParcelableArrayList(STATE_ACTIVE_DOWNLOADS, activeDownloads);
@@ -387,15 +387,10 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     private void showPreferences() {
         try {
-            Intent intent = PreferencesActivity.buildIntent(this);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            startActivity(PreferencesActivity.buildIntent(this));
         } catch(ActivityNotFoundException e) {
             Logging.recordException(e);
         }
-//        PreferencesFragment fragment = new PreferencesFragment();
-//        showFragmentNow(fragment);
     }
 
     private void showEula() {
@@ -1168,6 +1163,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ToolbarEvent event) {
+        if(!this.equals(event.getActivity())) {
+            return;
+        }
         if(event.getSpannableTitle() != null) {
             toolbar.setSpannableTitle(event.getSpannableTitle());
         } else {
