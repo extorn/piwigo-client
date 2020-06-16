@@ -75,23 +75,36 @@ public class DisplayUtils {
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
+    /**
+     * This is used on old versions of android only - probably pre lollipop
+     * @param context
+     * @param color
+     */
     public static void setOverscrollGlowColor(@NonNull Context context, @ColorInt int color) {
         @DrawableRes int glowDrawableId = context.getResources().getIdentifier("overscroll_glow", "drawable", "android");
-        Drawable androidGlow = ContextCompat.getDrawable(context, glowDrawableId);
-        androidGlow = DrawableCompat.wrap(androidGlow);
+        if(glowDrawableId != Resources.ID_NULL) {
+            Drawable androidGlow = ContextCompat.getDrawable(context, glowDrawableId);
+            androidGlow = DrawableCompat.wrap(androidGlow);
 //        DrawableCompat.setTint(androidGlow, color);
-        DrawableCompat.setTintList(androidGlow, ColorStateList.valueOf(color));
-        DrawableCompat.setTintMode(androidGlow, PorterDuff.Mode.SRC_ATOP);
+            DrawableCompat.setTintList(androidGlow, ColorStateList.valueOf(color));
+            DrawableCompat.setTintMode(androidGlow, PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
+    /**
+     * This is used on old versions of android only - probably pre lollipop
+     * @param context
+     * @param color
+     */
     public static void setOverscrollEdgeColor(@NonNull Context context, @ColorInt int color) {
         @DrawableRes int overscrollEdgeDrawableId = context.getResources().getIdentifier("overscroll_edge", "drawable", "android");
-        Drawable androidOverscrollEdge = ContextCompat.getDrawable(context, overscrollEdgeDrawableId);
-        androidOverscrollEdge = DrawableCompat.wrap(androidOverscrollEdge);
+        if(overscrollEdgeDrawableId != Resources.ID_NULL) {
+            Drawable androidOverscrollEdge = ContextCompat.getDrawable(context, overscrollEdgeDrawableId);
+            androidOverscrollEdge = DrawableCompat.wrap(androidOverscrollEdge);
 //        DrawableCompat.setTint(androidOverscrollEdge, color);
-        DrawableCompat.setTintList(androidOverscrollEdge, ColorStateList.valueOf(color));
-        DrawableCompat.setTintMode(androidOverscrollEdge, PorterDuff.Mode.SRC_ATOP);
-
+            DrawableCompat.setTintList(androidOverscrollEdge, ColorStateList.valueOf(color));
+            DrawableCompat.setTintMode(androidOverscrollEdge, PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
     public static int pxToDp(Context context, int px) {
