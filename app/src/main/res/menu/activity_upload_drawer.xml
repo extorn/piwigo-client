@@ -3,6 +3,16 @@
     <group android:checkableBehavior="none">
 
         <item
+            android:id="@+id/nav_online_mode"
+            android:icon="@drawable/ic_airplanemode_inactive_black_24dp"
+            android:title="@string/online_mode_menu_title" />
+
+        <item
+            android:id="@+id/nav_offline_mode"
+            android:icon="@drawable/ic_airplanemode_active_black_24dp"
+            android:title="@string/offline_mode_menu_title" />
+
+        <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/gallery_menu_title" />

@@ -19,7 +19,6 @@
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             style="?toolbarStyle"/>
-        <!--app:layout_scrollFlags="scroll|enterAlways"-->
 
         <delit.libs.ui.view.ProgressIndicator
             android:id="@+id/progressIndicator"

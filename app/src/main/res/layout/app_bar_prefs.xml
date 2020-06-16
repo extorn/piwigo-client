@@ -13,10 +13,11 @@
         app:layout_behavior="delit.piwigoclient.ui.CustomAppBarLayoutBehaviour"
         style="?appBarLayoutStyle">
 
-        <com.google.android.material.appbar.MaterialToolbar
+        <delit.libs.ui.view.CustomToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             style="?toolbarStyle"/>
 
         <delit.libs.ui.view.ProgressIndicator

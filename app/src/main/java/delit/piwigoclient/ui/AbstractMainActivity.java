@@ -192,54 +192,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         setSupportActionBar(toolbar);
         appBar = findViewById(R.id.appbar);
-        /*
-        Floating action button (all screens!) - if wanted
 
-        ExtendedFloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(pkg View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.makeSnackbar(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
-
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ViewCompat.setOnApplyWindowInsetsListener(drawer, (v, insets) -> {
-                if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
-                    insets.replaceSystemWindowInsets(
-                            insets.getStableInsetLeft(),
-                            0,
-                            insets.getStableInsetRight(),
-                            0);
-                    insets.consumeStableInsets();
-                    //TODO forcing the top margin like this is really not a great idea. Find a better way.
-                    ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
-                } else {
-                    if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
-                        int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
-                        if (topMargin == 0) {
-                            ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
-                        }
-                    }
-                }
-                return insets;
-            });
-        }
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                ((MainActivityDrawerNavigationView) drawerView).onDrawerOpened();
-            }
-        };
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
+        DrawerLayout drawer = configureDrawer(toolbar);
         if (!hasAgreedToEula()) {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         } else {

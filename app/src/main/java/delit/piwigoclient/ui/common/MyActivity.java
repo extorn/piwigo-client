@@ -16,16 +16,22 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.os.ConfigurationCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -57,6 +63,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.events.ShowMessageEvent;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.CustomToolbar;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -66,6 +73,7 @@ import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.FileSelectActivity;
+import delit.piwigoclient.ui.MainActivityDrawerNavigationView;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
@@ -140,17 +148,22 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     }
 
     protected void doDefaultBackOperation() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            // pop the current fragment off
-            getSupportFragmentManager().popBackStack();
-            // get the next fragment
-            int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
-            // if there are no fragments left, do default back operation (i.e. close app)
-            if (i < 0) {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer != null && drawer.isDrawerOpen(drawer)) {
+            drawer.closeDrawer(drawer);
+        } else {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                // pop the current fragment off
+                getSupportFragmentManager().popBackStack();
+                // get the next fragment
+                int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
+                // if there are no fragments left, do default back operation (i.e. close app)
+                if (i < 0) {
+                    super.onBackPressed();
+                }
+            } else {
                 super.onBackPressed();
             }
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -201,6 +214,45 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             inflator = inflator.cloneInContext(this);
         }
         return inflator;
+    }
+
+    protected DrawerLayout configureDrawer(CustomToolbar toolbar) {
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ViewCompat.setOnApplyWindowInsetsListener(drawer, (v, insets) -> {
+                if (!AppPreferences.isAlwaysShowStatusBar(prefs, v.getContext())) {
+                    insets.replaceSystemWindowInsets(
+                            insets.getStableInsetLeft(),
+                            0,
+                            insets.getStableInsetRight(),
+                            0);
+                    insets.consumeStableInsets();
+                    //TODO forcing the top margin like this is really not a great idea. Find a better way.
+                    ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = 0;
+                } else {
+                    if (!AppPreferences.isAlwaysShowNavButtons(prefs, v.getContext())) {
+                        int topMargin = ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin;
+                        if (topMargin == 0) {
+                            ((FrameLayout.LayoutParams) v.getLayoutParams()).topMargin = insets.getSystemWindowInsetTop();
+                        }
+                    }
+                }
+                return insets;
+            });
+        }
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                ((DrawerNavigationView) drawerView).onDrawerOpened();
+            }
+        };
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        return drawer;
     }
 
     @Override

@@ -14,6 +14,7 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.MimeTypeFilter;
@@ -36,6 +37,7 @@ import java.util.Map;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.CustomToolbar;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -82,7 +84,7 @@ public class UploadActivity extends MyActivity {
     private static final String INTENT_DATA_CURRENT_ALBUM = "currentAlbum";
     private final HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
-    private Toolbar toolbar;
+    private CustomToolbar toolbar;
     private AppBarLayout appBar;
     private Intent lastIntent;
     private boolean startedFresh;
@@ -153,12 +155,6 @@ public class UploadActivity extends MyActivity {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
 
-//            DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//
-//            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-//                drawer.setFitsSystemWindows(true);
-//            }
-
         toolbar = findViewById(R.id.toolbar);
         appBar = findViewById(R.id.appbar);
         if(BuildConfig.DEBUG) {
@@ -167,6 +163,8 @@ public class UploadActivity extends MyActivity {
             toolbar.setTitle(R.string.upload_page_title);
         }
         setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = configureDrawer(toolbar);
 
         startedFresh = savedInstanceState == null;
 
