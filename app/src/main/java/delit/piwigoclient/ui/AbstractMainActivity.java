@@ -413,9 +413,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             if (fileDetail.getLocalFileToCopy() != null) {
                 // copy this local download cache to the destination.
                 try {
-                    DocumentFile destFile = getDestinationFile(IOUtils.getMimeType(this, fileDetail.getDownloadedFile()), fileDetail.getOutputFilename());
+                    String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getRemoteUri()));
+                    DocumentFile destFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
                     IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
                     fileDetail.setDownloadedFile(destFile.getUri());
+                    notifyUserFileDownloadComplete(getUiHelper(), destFile.getUri());
                     processDownloadEvent(event);
                 } catch (IOException e) {
                     Logging.recordException(e);
@@ -508,7 +510,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if(BuildConfig.DEBUG) {
             Log.e(TAG, "Downloaded File - Generating Thumbnail for " + downloadedFile);
         }
-        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getAppContext()).load(downloadedFile).resize(256,256).centerInside().into(new DownloadTarget(uiHelper, downloadedFile));
+        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getAppContext()).load(downloadedFile).error(R.drawable.ic_file_gray_24dp).resize(256,256).centerInside().into(new DownloadTarget(uiHelper, downloadedFile));
     }
 
     private void shareFilesWithOtherApps(Context context, final Set<Uri> filesToShare) {

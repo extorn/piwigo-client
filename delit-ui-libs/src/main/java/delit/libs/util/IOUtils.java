@@ -1003,6 +1003,10 @@ public class IOUtils {
 
     public static void addFileToMediaStore(Context context, Uri fileUri) {
         ContentValues values = new ContentValues();
+        if(!"file".equals(fileUri.getScheme())) {
+            // Only raw files can be added (the others either already are, or aren't local).
+            return;
+        }
         String mimeType = IOUtils.getMimeType(context, fileUri);
         boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
         boolean isAudio = MimeTypeFilter.matches(mimeType, "audio/*");
@@ -1019,8 +1023,14 @@ public class IOUtils {
             values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
             values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
             values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
-            Uri uri = context.getContentResolver().insert(mediaStoreUri, values);
-            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            try {
+                Uri uri = context.getContentResolver().insert(mediaStoreUri, values);
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+            } catch(IllegalArgumentException e) {
+                // Ignore as its probably that it just isn't a raw file
+
+            }
+
         }
     }
 }
