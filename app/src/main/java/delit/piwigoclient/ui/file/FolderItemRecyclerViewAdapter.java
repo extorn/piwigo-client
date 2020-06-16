@@ -134,7 +134,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             initialSelectionIds = new HashSet<>(initialSelectionItems.size());
             for (Uri selectedItem : initialSelectionItems) {
                 if(!"file".equals(selectedItem.getScheme())) {
-                    int pos = getItemPositionForDocumentFile(DocumentFile.fromTreeUri(context, selectedItem));
+                    int pos = getItemPositionForDocumentFile(context, DocumentFile.fromTreeUri(context, selectedItem));
                     if (pos >= 0) {
                         initialSelectionIds.add(getItemId(pos));
                     }
@@ -404,10 +404,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         //TODO allow blank "folder" spacer items to correct the visual display.
     }
 
-    private int getItemPositionForDocumentFile(DocumentFile f) {
+    private int getItemPositionForDocumentFile(Context context, DocumentFile f) {
         if(currentDisplayContent != null) {
             for (int i = 0; i < currentDisplayContent.size(); i++) {
-                if (currentDisplayContent.get(i).getDocumentFile(getContext()).getUri().equals(f.getUri())) {
+                if (currentDisplayContent.get(i).getDocumentFile(context).getUri().equals(f.getUri())) {
                     return i;
                 }
             }
@@ -445,14 +445,14 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     protected void addItemToInternalStore(FolderItem item) {
-        addFolderItemToInternalStore(item);
-        afterAddingFolderItemsToInternalStore();
+        addFolderItemToInternalStore(getContext(), item);
+        afterAddingFolderItemsToInternalStore(getContext());
     }
 
 
-    private void afterAddingFolderItemsToInternalStore() {
+    private void afterAddingFolderItemsToInternalStore(Context context) {
         if(activeFolder == null) {
-            navigationListener.onPreFolderOpened(null, getItems());
+            navigationListener.onPreFolderOpened(null, getItems(context));
             activeTask = new UpdateContentListAndSortContentAfterAdd(this).execute();
         }
     }
@@ -474,8 +474,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return currentVisibleDocumentFileExts;
     }
 
-    private void addFolderItemToInternalStore(FolderItem item) {
-        DocumentFile docFile = item.getDocumentFile(getContext());
+    private void addFolderItemToInternalStore(Context context, FolderItem item) {
+        DocumentFile docFile = item.getDocumentFile(context);
         if (!docFile.exists()) {
             throw new IllegalStateException("Cannot add DocumentFile to display that does not yet exist");
         }
@@ -508,22 +508,22 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return activeRootUri;
     }
 
-    public void addItems(List<FolderItem> folderItems) {
+    public void addItems(Context context, List<FolderItem> folderItems) {
         if(folderItems != null) {
             for (FolderItem item : folderItems) {
-                addFolderItemToInternalStore(item);
+                addFolderItemToInternalStore(context, item);
             }
-            afterAddingFolderItemsToInternalStore();
+            afterAddingFolderItemsToInternalStore(context);
         }
     }
 
-    public DocumentFile[] getItems() {
+    public DocumentFile[] getItems(Context context) {
         if(currentDisplayContent == null) {
             return null;
         }
         List<DocumentFile> docFiles = new ArrayList<>(currentDisplayContent.size());
         for(FolderItem item : currentDisplayContent) {
-            docFiles.add(item.getDocumentFile(getContext()));
+            docFiles.add(item.getDocumentFile(context));
         }
         return docFiles.toArray(new DocumentFile[0]);
     }

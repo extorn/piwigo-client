@@ -674,7 +674,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 FolderItemRecyclerViewAdapter.FolderItem item = folderItems.get(0);
                 getOwner().addRootFolder(item.getDocumentFile());
             } else {
-                getOwner().getListAdapter().addItems(folderItems);
+                getOwner().getListAdapter().addItems(getContext(), folderItems);
                 getOwner().selectAllItems();
             }
         }
