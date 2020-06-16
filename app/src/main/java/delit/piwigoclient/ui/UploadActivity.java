@@ -20,7 +20,6 @@ import androidx.core.content.MimeTypeFilter;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -88,6 +87,10 @@ public class UploadActivity extends MyActivity {
     private Intent lastIntent;
     private boolean startedFresh;
 
+    public UploadActivity() {
+        super(R.layout.activity_upload);
+    }
+
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
         Intent intent = new Intent("delit.piwigoclient.MANUAL_UPLOAD", null, context.getApplicationContext(), UploadActivity.class);
@@ -129,6 +132,7 @@ public class UploadActivity extends MyActivity {
         checkForSentFiles(lastIntent);
     }
 
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -148,8 +152,6 @@ public class UploadActivity extends MyActivity {
         } else {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
-
-        setContentView(R.layout.activity_upload);
 
 //            DrawerLayout drawer = findViewById(R.id.drawer_layout);
 //
@@ -312,16 +314,6 @@ public class UploadActivity extends MyActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
-        if (fragment instanceof UploadFragment && fragment.isAdded()) {
-            finish();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
@@ -341,30 +333,6 @@ public class UploadActivity extends MyActivity {
 
         v.requestApplyInsets();
         EventBus.getDefault().post(new StatusBarChangeEvent(!hasFocus));
-    }
-
-    void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
-
-        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
-        getUiHelper().setTrackingRequest(trackingRequestId);
-
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction(getUiHelper(), trackingRequestId));
-    }
-
-    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
-        private static final long serialVersionUID = 8370875759830585817L;
-        private final int trackingRequestId;
-
-        public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
-            super(uiHelper);
-            this.trackingRequestId = trackingRequestId;
-        }
-
-        @Override
-        public void onDismiss(AlertDialog dialog) {
-            //exit the app.
-            EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
-        }
     }
 
     @Subscribe
@@ -390,7 +358,7 @@ public class UploadActivity extends MyActivity {
 
         if (isCurrentUserAuthorisedToUpload(sessionDetails)) {
             Fragment f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
-            removeFragmentsFromHistory(UploadFragment.class, true);
+            removeFragmentsFromHistory(UploadFragment.class);
             showFragmentNow(f);
         }
     }
@@ -649,47 +617,6 @@ public class UploadActivity extends MyActivity {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             }
         }
-    }
-
-//    private void showFragmentNow(Fragment f) {
-//        showFragmentNow(f, true);
-//    }
-//
-//    private void showFragmentNow(Fragment f, boolean addToBackstack) {
-//        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-//        if(addToBackstack) {
-//            tx.addToBackStack(null);
-//        }
-//        tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
-//
-//        addUploadingAsFieldsIfAppropriate();
-//    }
-
-    private void showFragmentNow(Fragment f) {
-        showFragmentNow(f, false);
-    }
-
-    private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
-
-        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
-        checkLicenceIfNeeded();
-
-        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
-
-        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
-        String lastFragmentName = "";
-        if (lastFragment != null) {
-            lastFragmentName = lastFragment.getTag();
-        }
-        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
-            getSupportFragmentManager().popBackStackImmediate();
-        }
-        //TODO I've added code that clears stack when showing root album... is this "good enough"?
-        //TODO - trying to prevent adding duplicates here. not sure it works right.
-//        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
     }
 
     @Override

@@ -43,7 +43,6 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.PasswordInputToggle;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -78,6 +77,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -801,7 +801,9 @@ public class UserFragment extends MyFragment<UserFragment> {
     private synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumPermissionsField.getAdapter();
         if (adapter == null) {
-            BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
+            AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
+            adapterPreferences.setFlattenAlbumHierarchy(true);
+            adapterPreferences.setShowThumbnails(false);
             adapterPreferences.selectable(true, false);
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, indirectAlbumPermissions, adapterPreferences);

@@ -12,10 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -28,9 +25,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.OtherPreferences;
-import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.MyActivity;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
@@ -50,9 +45,12 @@ public class FileSelectActivity extends MyActivity {
     private static final String TAG = "FileSelAct";
 
     public static final String INTENT_SELECTED_FILES = "FileSelectActivity.selectedFiles";
-//    public static final String INTENT_SOURCE_EVENT_ID = "FileSelectActivity.sourceEventId";
     public static final String ACTION_TIME_MILLIS = "FileSelectActivity.actionTimeMillis";
     public static String INTENT_DATA = "configData";
+
+    public FileSelectActivity() {
+        super(R.layout.activity_file_select);
+    }
 
     @Override
     public void onStart() {
@@ -61,7 +59,6 @@ public class FileSelectActivity extends MyActivity {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
         }
     }
-
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -72,7 +69,6 @@ public class FileSelectActivity extends MyActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         if(BuildConfig.DEBUG) {
             BundleUtils.logSize("Current File Select Activity", outState);
         }
@@ -85,7 +81,6 @@ public class FileSelectActivity extends MyActivity {
         if (!hasAgreedToEula()) {
             finish();
         } else {
-            setContentView(R.layout.activity_file_select);
             if (savedInstanceState == null) {
                 showFileSelectFragment();
             }
@@ -95,19 +90,6 @@ public class FileSelectActivity extends MyActivity {
     @Override
     protected String getDesiredLanguage(Context context) {
         return AppPreferences.getDesiredLanguage(getSharedPrefs(context), context);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.app_content);
-        if (fragment instanceof BackButtonHandler && fragment.isAdded()) {
-            boolean sinkEvent = ((BackButtonHandler) fragment).onBackButton();
-            if (!sinkEvent) {
-                finish();
-            }
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -149,8 +131,6 @@ public class FileSelectActivity extends MyActivity {
         folderItemSelectPrefs.setInitialSelection(event.getInitialSelection());
         folderItemSelectPrefs.withShowFilenames(OtherPreferences.isShowFilenames(getSharedPrefs(), getApplicationContext()));
 
-        removeFragmentsFromHistory(RecyclerViewDocumentFileFolderItemSelectFragment.class, true);
-
         int uniqueEventId = TrackableRequestEvent.getNextEventId();
 
         Fragment fragment;
@@ -165,7 +145,7 @@ public class FileSelectActivity extends MyActivity {
         }
 
         setTrackedIntent(uniqueEventId, event.getActionId());
-        showFragmentNow(fragment);
+        showFragmentNow(fragment, false);
     }
 
     private boolean isShowUriBasedFileSelection() {
@@ -181,54 +161,6 @@ public class FileSelectActivity extends MyActivity {
             }
         }
         return event;
-    }
-
-    private void showFragmentNow(Fragment f) {
-        showFragmentNow(f, false);
-    }
-
-
-    private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
-
-        checkLicenceIfNeeded();
-
-        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.app_content);
-        String lastFragmentName = "";
-        if (lastFragment != null) {
-            lastFragmentName = lastFragment.getTag();
-        }
-        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
-            getSupportFragmentManager().popBackStackImmediate();
-        }
-        //TODO I've added code that clears stack when showing root album... is this "good enough"?
-        //TODO - trying to prevent adding duplicates here. not sure it works right.
-//        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.app_content, f, f.getClass().getName()).commit();
-    }
-
-    private void createAndShowDialogWithExitOnClose(@StringRes int titleId, @StringRes  int messageId) {
-
-        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
-        getUiHelper().setTrackingRequest(trackingRequestId);
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction(getUiHelper(), trackingRequestId));
-    }
-
-    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
-        private static final long serialVersionUID = -8487168389408332682L;
-        private final int trackingRequestId;
-
-        public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
-            super(uiHelper);
-            this.trackingRequestId = trackingRequestId;
-        }
-
-        @Override
-        public void onDismiss(AlertDialog dialog) {
-            //exit the app.
-            EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

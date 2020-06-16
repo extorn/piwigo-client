@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.common.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import androidx.preference.PreferenceManager;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.libs.core.util.Logging;
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -83,13 +85,24 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Override
     public Context getContext() {
         Context context = super.getContext();
-        if(theme == Resources.ID_NULL) {
+        /*if(theme == Resources.ID_NULL) {
             return context;
-        }
+        }*/
         if(context == null) {
             return context;
         }
-        return new ContextThemeWrapper(context, theme);
+        if(theme == Resources.ID_NULL) {
+            theme = DisplayUtils.getThemeId(context);
+        }
+        if(theme != Resources.ID_NULL || !(context instanceof ContextThemeWrapper)) {
+            context = new ContextThemeWrapper(context, theme);
+        }
+        // set the glow on overscroll for recycler view etc.
+        //TODO this isn't used in the album view or preferences  :-(
+
+        DisplayUtils.setOverscrollEdgeColor(context, DisplayUtils.getColor(context, R.attr.colorPrimary));
+        DisplayUtils.setOverscrollGlowColor(context, DisplayUtils.getColor(context, R.attr.colorPrimary));
+        return context;
     }
 
     @NonNull
@@ -163,18 +176,22 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updatePageTitle();
+    }
+
+    @Override
     public void onResume() {
         Logging.log(Log.VERBOSE,TAG, "onResume : " + getClass().getName());
         super.onResume();
-
         updatePageTitle();
-
 
         // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
         if ((getFragmentManager() != null && getFragmentManager().isDestroyed()) || getActivity().isFinishing()) {
             return;
         }
-
+        uiHelper.swapToNewContext(getContext());
         uiHelper.registerToActiveServiceCalls();
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();

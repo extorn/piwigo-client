@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -31,14 +30,14 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteE
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
+public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableItems;
     private HashSet<Long> indirectSelection;
 
-    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
@@ -63,8 +62,8 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected AlbumSelectionListAdapterPreferences createEmptyPrefs() {
+        return new AlbumSelectionListAdapterPreferences();
     }
 
     @Override
@@ -125,7 +124,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
     protected void rerunRetrievalForFailedPages() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), !getViewPrefs().isFlattenAlbumHierarchy()));
         } else if (getListAdapter() == null) {
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();

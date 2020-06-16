@@ -13,6 +13,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 /**
  * Created by gareth on 31/08/17.
@@ -31,9 +32,9 @@ public class SelectAlbumDialog {
     }
 
     public AlertDialog buildDialog(ArrayList<CategoryItemStub> albumNames, CategoryItem parentAlbum, final DialogInterface.OnClickListener positiveActionListener) {
-        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences();
         viewPrefs.selectable(false, false);
-        viewPrefs.withShowHierachy();
+        viewPrefs.setFlattenAlbumHierarchy(true);
         availableGalleries = new AvailableAlbumsListAdapter(viewPrefs, parentAlbum, context);
 
         this.availableGalleries.clear();

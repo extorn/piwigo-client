@@ -42,8 +42,9 @@ public class Md5SumUtils {
             try(FileChannel channel = new FileInputStream(pfd.getFileDescriptor()).getChannel()) {
                 ByteBuffer bb = ByteBuffer.allocateDirect(8192);
                 while (channel.read(bb) >= 0) {
-                    bb.flip();
+                    bb.flip(); // ready buffer for reading
                     digest.update(bb);
+                    bb.flip(); // ready buffer for writing
                 }
 
                 byte[] md5sum = digest.digest();

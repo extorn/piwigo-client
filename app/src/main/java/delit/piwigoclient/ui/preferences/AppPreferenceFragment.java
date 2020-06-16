@@ -19,7 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -72,25 +72,26 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
         });
         ListPreference desiredLanguagePref = (ListPreference) findPreference(R.string.preference_app_desired_language_key);
         List<Locale> localeOptions = ProjectUtils.listLocalesWithUniqueTranslationOf(getContext(), R.string.album_create_failed);
-        List<String> entries = new ArrayList<>(localeOptions.size());
-        List<String> values = new ArrayList<>(localeOptions.size());
+        LinkedHashMap<String, String> entries = new LinkedHashMap<>(localeOptions.size());
         for (Locale l : localeOptions) {
-            entries.add(l.getDisplayName(l));
-            values.add(l.toString());
+            String newLocaleName = l.getDisplayName(l);
+            String newLocale = l.toString();
+            String currentLocaleValue = entries.get(newLocaleName);
+            if(currentLocaleValue == null || newLocale.length() < currentLocaleValue.length()) {
+                entries.put(newLocaleName, newLocale);
+            }
         }
-        desiredLanguagePref.setEntries(CollectionUtils.asStringArray(entries));
-        desiredLanguagePref.setEntryValues(CollectionUtils.asStringArray(values));
-        desiredLanguagePref.setDefaultValue(values.get(0));
+        desiredLanguagePref.setEntries(CollectionUtils.asStringArray(entries.keySet()));
+        desiredLanguagePref.setEntryValues(CollectionUtils.asStringArray(entries.values()));
+        desiredLanguagePref.setDefaultValue(desiredLanguagePref.getEntryValues()[0].toString());
         if(desiredLanguagePref.getValue() == null) {
-            desiredLanguagePref.setValue(values.get(0));
+            desiredLanguagePref.setValue(desiredLanguagePref.getEntryValues()[0].toString());
         }
         desiredLanguagePref.setOnPreferenceChangeListener((preference, newValue) -> {
             Locale newVal = new Locale((String) newValue);
-
             DisplayUtils.updateContext(getContext(), newVal);
-//                getActivity().recreate(); (don't do this as the preference may not be saved)
-
             DisplayUtils.postOnUiThread(() -> {
+                // Need to  do this as the preference value has not be saved until after the method returns true.
                 Activity activity = getActivity();
                 if (activity != null) {
                     activity.recreate();
@@ -107,7 +108,6 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
         });
 
         Preference button = findPreference(R.string.preference_gallery_clearMemoryCache_key);
-        button.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
         button.setOnPreferenceClickListener(preference -> {
             PicassoFactory.getInstance().clearPicassoCache(getContext(), true);
             getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
@@ -116,7 +116,6 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
         });
 
         Preference videoCacheFlushButton = findPreference(R.string.preference_gallery_clearVideoCache_key);
-        setVideoCacheButtonText(videoCacheFlushButton);
         videoCacheFlushButton.setOnPreferenceClickListener(preference -> {
             try {
                 CacheUtils.clearVideoCache(getContext());
@@ -129,12 +128,21 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
             return true;
 
         });
+    }
 
+    private void setInMemoryCacheButtonText(Preference button) {
+        button.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
     }
 
 
     @Override
     protected void onBindPreferences() {
+
+        Preference button = findPreference(R.string.preference_gallery_clearMemoryCache_key);
+        setInMemoryCacheButtonText(button);
+        Preference videoCacheFlushButton = findPreference(R.string.preference_gallery_clearVideoCache_key);
+        setVideoCacheButtonText(videoCacheFlushButton);
+
         Preference videoCacheEnabledPref = findPreference(R.string.preference_video_cache_enabled_key);
         videoCacheEnabledPref.setOnPreferenceChangeListener(videoCacheEnabledPrefListener);
         videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey(), R.bool.preference_video_cache_enabled_default));

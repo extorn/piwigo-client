@@ -2160,7 +2160,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 Logging.log(Log.ERROR, TAG, "album tree retrieved, but albumTreeRoot is null");
             }
 
-            // now reopent the model
+            // now reopen the model
             uiHelper.getParent().onReopenModelRetrieved(response.getAlbumTreeRoot(), response.getDeepestAlbumOnDesiredPath());
             return true; // to close the progress indicator
         }

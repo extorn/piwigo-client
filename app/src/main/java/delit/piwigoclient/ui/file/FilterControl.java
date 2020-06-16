@@ -100,19 +100,19 @@ public class FilterControl extends FlowLayout {
                 if (!checked) {
                     filterShown = true;
                     if(listener != null) {
-                        listener.onFilterUnchecked(fileExt);
+                        listener.onFilterUnchecked(getContext(), fileExt);
                     }
                 } else {
                     filterHidden = true;
                     if(listener != null) {
-                        listener.onFilterChecked(fileExt);
+                        listener.onFilterChecked(getContext(), fileExt);
                     }
                 }
                 fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
             }
             if (notifyOnFiltersChanged && (filterShown || filterHidden)) {
                 if(listener != null) {
-                    listener.onFiltersChanged(filterHidden, filterShown);
+                    listener.onFiltersChanged(getContext(), filterHidden, filterShown);
                 }
             }
         }
@@ -129,16 +129,16 @@ public class FilterControl extends FlowLayout {
             if(isChecked) {
                 selectedVisibleFileExts.add(fileExt);
                 if(listener != null) {
-                    listener.onFilterChecked(fileExt);
+                    listener.onFilterChecked(getContext(), fileExt);
                 }
             } else {
                 selectedVisibleFileExts.remove(fileExt);
                 if(listener != null) {
-                    listener.onFilterUnchecked(fileExt);
+                    listener.onFilterUnchecked(getContext(), fileExt);
                 }
             }
             if(listener != null) {
-                listener.onFiltersChanged(!isChecked, isChecked);
+                listener.onFiltersChanged(getContext(), !isChecked, isChecked);
             }
         });
         return fileExtControl;
@@ -238,10 +238,10 @@ public class FilterControl extends FlowLayout {
     }
 
     public interface FilterListener {
-        void onFilterUnchecked(String fileExt);
+        void onFilterUnchecked(Context context, String fileExt);
 
-        void onFilterChecked(String fileExt);
+        void onFilterChecked(Context context, String fileExt);
 
-        void onFiltersChanged(boolean filterHidden, boolean filterShown);
+        void onFiltersChanged(Context context, boolean filterHidden, boolean filterShown);
     }
 }

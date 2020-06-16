@@ -115,7 +115,7 @@ public class ProgressIndicator extends FrameLayout {
         if(progressBar.getSecondaryProgress() != secondaryProgress) {
             progressBar.setSecondaryProgress(secondaryProgress);
         }
-        if(progressBar.getProgress() != secondaryProgress) {
+        if(progressBar.getProgress() != progress) {
             progressBar.setProgress(progress);
         }
     }

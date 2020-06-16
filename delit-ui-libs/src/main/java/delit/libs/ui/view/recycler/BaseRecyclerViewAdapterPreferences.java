@@ -2,6 +2,8 @@ package delit.libs.ui.view.recycler;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+
 public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapterPreferences> {
     private boolean allowItemSelection;
     private boolean initialSelectionLocked;
@@ -39,7 +41,7 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
         return this;
     }
 
-    public Bundle storeToBundle(Bundle parent) {
+    public Bundle storeToBundle(@NonNull Bundle bundle) {
         Bundle b = new Bundle();
         b.putBoolean("allowItemSelection", allowItemSelection);
         b.putBoolean("initialSelectionLocked", initialSelectionLocked);
@@ -48,8 +50,8 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
         b.putBoolean("allowItemAddition", allowItemAddition);
         b.putBoolean("enabled", enabled);
         b.putBoolean("readonly", readonly);
-        parent.putBundle("BaseRecyclerViewAdapterPreferences", b);
-        return parent;
+        bundle.putBundle("BaseRecyclerViewAdapterPreferences", b);
+        return bundle;
     }
 
     public BaseRecyclerViewAdapterPreferences loadFromBundle(Bundle parent) {

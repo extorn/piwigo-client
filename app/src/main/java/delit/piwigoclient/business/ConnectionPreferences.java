@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -293,6 +295,7 @@ public class ConnectionPreferences {
             int prefKey;
             String profileId;
             private SecurePrefsUtil securePrefUtil;
+            private static final String TAG  = "PrefActor";
 
             public PreferenceActor(String profileId) {
                 this.profileId = profileId;
@@ -315,6 +318,10 @@ public class ConnectionPreferences {
             }
 
             public SharedPreferences.Editor writeString(SharedPreferences.Editor editor, Context context, String newValue) {
+                if(prefKey == R.string.preference_piwigo_playable_media_extensions_key) {
+                    //TODO remove this once I find what is inserting a string into this key!
+                    throw new RuntimeException();
+                }
                 editor.putString(getPrefKeyInProfile(context, prefKey), newValue);
                 return editor;
             }
@@ -328,7 +335,13 @@ public class ConnectionPreferences {
             }
 
             public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {
-                return prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
+                try {
+                    return prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
+                } catch(ClassCastException e) {
+                    String value = prefs.getString(getPrefKeyInProfile(context, prefKey), null);
+                    Logging.log(Log.ERROR, TAG, "Expected a string set for pref "+prefKey+" but was string : " + value);
+                    throw e;
+                }
             }
 
             public String readString(SharedPreferences prefs, Context context, String defaultVal) {

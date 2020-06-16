@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.file;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
@@ -548,19 +549,19 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
 
         @Override
-        public void onFilterUnchecked(String fileExt) {
+        public void onFilterUnchecked(Context context, String fileExt) {
             SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
             visibleFileTypes.remove(fileExt);
         }
 
         @Override
-        public void onFilterChecked(String fileExt) {
+        public void onFilterChecked(Context context, String fileExt) {
             SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
             visibleFileTypes.add(fileExt);
         }
 
         @Override
-        public void onFiltersChanged(boolean filterHidden, boolean filterShown) {
+        public void onFiltersChanged(Context context, boolean filterHidden, boolean filterShown) {
             listAdapter.refreshContentView();
         }
     }

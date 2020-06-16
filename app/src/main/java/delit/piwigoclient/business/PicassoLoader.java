@@ -421,7 +421,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         return uriToLoad;
     }
 
-    protected T getLoadInto() {
+    public T getLoadInto() {
         return loadInto;
     }
 

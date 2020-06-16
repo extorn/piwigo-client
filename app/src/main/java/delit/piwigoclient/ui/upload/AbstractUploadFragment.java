@@ -94,7 +94,6 @@ import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -109,6 +108,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -340,9 +340,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         mViewPager = view.findViewById(R.id.sliding_views_tab_content);
 //        mViewPager.setCurrentItem(TAB_IDX_FILES);
 
-        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences();
         viewPrefs.selectable(false, false);
-        viewPrefs.withShowHierachy();
+        viewPrefs.setFlattenAlbumHierarchy(true);
 
         selectedGalleryTextView = view.findViewById(R.id.selected_gallery);
         selectedGalleryTextView.setOnClickListener(v -> onSelectedGalleryTextViewClick());

@@ -25,17 +25,18 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 /**
  * Created by gareth on 26/05/17.
  */
 //TODO - Migrate to using ASAP - ListViewLongSelectableSetSelectFragment
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences> {
+public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableAlbums;
 
-    public static AlbumSelectFragment newInstance(AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
@@ -43,8 +44,8 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     }
 
     @Override
-    protected AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences createEmptyPrefs() {
-        return new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+    protected AlbumSelectionListAdapterPreferences createEmptyPrefs() {
+        return new AlbumSelectionListAdapterPreferences();
     }
 
     @Override

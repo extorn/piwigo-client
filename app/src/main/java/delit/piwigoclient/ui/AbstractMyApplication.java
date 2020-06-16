@@ -139,12 +139,13 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         }
 
 
+
         super.onCreate();
         // ensure it's available for any users of it
         resources = getResources();
 
         //Fabric.with(this, new FirebaseCrashlytics.getInstance().Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
-        MediaScanner.instance(getApplicationContext());
+
         PicassoFactory.initialise();
 
         upgradeAnyPreferencesIfRequired();
@@ -179,13 +180,6 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             b.putInt("active_uploads", activeUploadJobCount);
             FirebaseAnalytics.getInstance(this).logEvent("tmp_upload_folder_size", b);
         }
-    }
-
-
-    @Override
-    public void onTerminate() {
-        MediaScanner.instance(getApplicationContext()).close();
-        super.onTerminate();
     }
 
     protected abstract void onAppCreate();

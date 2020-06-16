@@ -25,14 +25,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -84,7 +81,6 @@ import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
-import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
@@ -114,6 +110,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -134,7 +131,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
-    private static final String MEDIA_SCANNER_TASK_ID_DOWNLOADED_FILE = "id_downloadedFile";
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
@@ -146,28 +142,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private final ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
     private final ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
 
-    public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
-        final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_view, fragment, tag)
-                .addToBackStack(tag)
-                .commit();
-
-        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                int nowCount = fragmentManager.getBackStackEntryCount();
-                if (newBackStackLength != nowCount) {
-                    // we don't really care if going back or forward. we already performed the logic here.
-                    fragmentManager.removeOnBackStackChangedListener(this);
-
-                    if (newBackStackLength > nowCount) { // user pressed back
-                        fragmentManager.popBackStackImmediate();
-                    }
-                }
-            }
-        });
+    public AbstractMainActivity() {
+        super(R.layout.activity_main);
     }
 
     @Override
@@ -210,8 +186,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 activeDownloads.addAll(readVal);
             }
         }
-
-        setContentView(R.layout.activity_main);
 
 
         toolbar = findViewById(R.id.toolbar);
@@ -341,13 +315,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             // pop the current fragment off, close app if it is the last one
             boolean blockDefaultBackOperation = false;
             if (backstackCount == 1) {
-                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
+                Fragment currentFragment = getActiveFragment();
                 if (currentFragment instanceof ViewAlbumFragment && currentAlbum != null && !currentAlbum.isRoot()) {
                     // get the next album to show
                     CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
                     if (nextAlbumToShow != null) {
-                        // remove this fragment (so we don't have an illogical fragment back-stack - child album first)
-                        removeFragmentsFromHistory(ViewAlbumFragment.class, true);
                         // open this fragment again, but with new album
                         showGallery(nextAlbumToShow);
                         blockDefaultBackOperation = true;
@@ -357,21 +329,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             if (!blockDefaultBackOperation) {
                 doDefaultBackOperation();
             }
-        }
-    }
-
-    private void doDefaultBackOperation() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            // pop the current fragment off
-            getSupportFragmentManager().popBackStack();
-            // get the next fragment
-            int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
-            // if there are no fragments left, do default back operation (i.e. close app)
-            if (i < 0) {
-                super.onBackPressed();
-            }
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -451,20 +408,19 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         boolean restore = false;
         if (gallery != null && gallery.isRoot()) {
             // check if we've shown any albums before. If so, pop everything off the stack.
-            if (!removeFragmentsFromHistory(ViewAlbumFragment.class, true)) {
+            if (null == getSupportFragmentManager().findFragmentByTag(ViewAlbumFragment.class.getName())) {
                 // we're opening the activity freshly.
 
                 // check for reopen details and use them instead if possible.
                 if (AbstractViewAlbumFragment.canHandleReopenAction(getUiHelper())) {
                     restore = true;
                 }
-
             }
         }
         if (restore) {
-            showFragmentNow(new ViewAlbumFragment(), true);
+            showFragmentNow(new ViewAlbumFragment(), !gallery.isRoot());
         } else {
-            showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
+            showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot());
         }
         AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate();
     }
@@ -886,11 +842,14 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     protected abstract void showTags();
 
     private void showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(true, false);
+        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
+        adapterPreferences.setFlattenAlbumHierarchy(true);
+        adapterPreferences.setShowThumbnails(false); // thumbnails aren't supported for category item stubs.
+        adapterPreferences.selectable(true, false);
         if (!allowEdit) {
-            prefs.readonly();
+            adapterPreferences.readonly();
         }
-        delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, prefs, actionId, indirectAlbumPermissions, directAlbumPermissions);
+        delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, adapterPreferences, actionId, indirectAlbumPermissions, directAlbumPermissions);
         showFragmentNow(fragment);
     }
 
@@ -1124,37 +1083,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         showFragmentNow(fragment);
     }
 
-    private void showAlbumSelectionFragment(int actionId, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs, HashSet<Long> currentSelection) {
+    private void showAlbumSelectionFragment(int actionId, AlbumSelectionListAdapterPreferences prefs, HashSet<Long> currentSelection) {
         AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(prefs, actionId, currentSelection);
         showFragmentNow(fragment);
-    }
-
-    protected void showFragmentNow(Fragment f) {
-        showFragmentNow(f, false);
-    }
-
-    private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
-
-        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
-        checkLicenceIfNeeded();
-
-        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
-
-        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
-        String lastFragmentName = "";
-        if (lastFragment != null) {
-            lastFragmentName = lastFragment.getTag();
-        }
-        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
-            getSupportFragmentManager().popBackStackImmediate();
-        }
-        //TODO I've added code that clears stack when showing root album... is this "good enough"?
-        //TODO - trying to prevent adding duplicates here. not sure it works right.
-//        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
-        Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -1304,13 +1235,14 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumSelectionNeededEvent event) {
-        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
-        prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        prefs.withShowHierachy();
+        AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
+        adapterPreferences.setFlattenAlbumHierarchy(false);
+        adapterPreferences.setShowThumbnails(true);
+        adapterPreferences.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
-            prefs.readonly();
+            adapterPreferences.readonly();
         }
-        showAlbumSelectionFragment(event.getActionId(), prefs, event.getInitialSelection());
+        showAlbumSelectionFragment(event.getActionId(), adapterPreferences, event.getInitialSelection());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

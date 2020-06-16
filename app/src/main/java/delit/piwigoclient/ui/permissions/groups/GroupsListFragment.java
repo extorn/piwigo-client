@@ -159,7 +159,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new GroupRecyclerViewAdapter(requireContext(), groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
+        viewAdapter = new GroupRecyclerViewAdapter(getContext(), groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
 
             @Override
             public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Group item) {

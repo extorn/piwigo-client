@@ -91,32 +91,22 @@
         ads:adUnitId="@string/ad_id_selectlist_banner">
     </com.google.android.gms.ads.AdView>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/pageContent1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/button_action_bar"
-        android:layout_below="@id/heading_bar"
-        android:layout_alignWithParentIfMissing="true"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
     <ListView
         android:id="@+id/list"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_above="@id/button_action_bar"
+        android:layout_below="@id/heading_bar"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:nestedScrollingEnabled="true"
         android:layout_marginBottom="5dp"
         />
 
-    </androidx.core.widget.NestedScrollView>
-
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/list_retryAction_actionButton"
         android:layout_centerHorizontal="true"
-        android:layout_alignTop="@id/pageContent1"
+        android:layout_alignTop="@id/list"
         android:layout_margin="10dp"
         android:clickable="true"
         android:visibility="gone"

@@ -8,22 +8,27 @@ import android.content.SharedPreferences;
 import android.content.UriPermission;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.os.ConfigurationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -64,9 +69,11 @@ import delit.piwigoclient.ui.FileSelectActivity;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
+import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 /**
@@ -89,6 +96,10 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     private LicenceCheckingHelper licencingHelper;
     private AdsManager.RewardCountDownAction rewardsCountdownAction;
     private String initialisedWithLanguage;
+
+    public MyActivity(@LayoutRes int contentView) {
+        super(contentView);
+    }
 
 //    private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -121,6 +132,26 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
+    }
+
+    @Override
+    public void onBackPressed() {
+        doDefaultBackOperation();
+    }
+
+    protected void doDefaultBackOperation() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            // pop the current fragment off
+            getSupportFragmentManager().popBackStack();
+            // get the next fragment
+            int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
+            // if there are no fragments left, do default back operation (i.e. close app)
+            if (i < 0) {
+                super.onBackPressed();
+            }
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -162,10 +193,21 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         super.onStop();
     }
 
+    @NonNull
+    @Override
+    public LayoutInflater getLayoutInflater() {
+        LayoutInflater inflator = super.getLayoutInflater();
+        if(!(inflator.getContext() instanceof ContextThemeWrapper)) {
+            inflator = inflator.cloneInContext(this);
+        }
+        return inflator;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+//        setTheme(R.style.Theme_App);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ActivityManager.TaskDescription taskDesc;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -181,15 +223,15 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         }
         rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        initialisedWithLanguage = AppPreferences.getDesiredLanguage(getSharedPrefs(), this);
+        initialisedWithLanguage  = AppPreferences.getDesiredLanguage(getSharedPrefs(), this);
 
         if (BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
             licencingHelper = new LicenceCheckingHelper();
             licencingHelper.onCreate(this);
         }
-
         try {
             super.onCreate(savedInstanceState);
+
         } catch (RuntimeException e) {
             String error = "Unknown";
             if (e.getCause() != null) {
@@ -298,6 +340,14 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         if (rewardsCountdownAction != null) {
             rewardsCountdownAction.stop();
         }
+    }
+
+    protected void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
+
+        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
+        getUiHelper().setTrackingRequest(trackingRequestId);
+
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction(getUiHelper(), trackingRequestId));
     }
 
     protected void onAppResumed() {
@@ -432,7 +482,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         super.onDetachedFromWindow();
     }
 
-    protected boolean removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass, boolean includeMidSessionLogins) {
+    protected boolean removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass) {
         boolean found = false;
         int i = 0;
         int popToStateId = -1;
@@ -441,19 +491,42 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             if (fragmentClass.getName().equals(entry.getName())) {
                 found = true;
                 popToStateId = entry.getId();
-                if (i > 0) {
-                    // if the previous item was a login action - force that off the stack too.
-                    entry = getSupportFragmentManager().getBackStackEntryAt(i - 1);
-                    popToStateId = entry.getId();
-                }
-            } else {
-                i++;
             }
+            i++;
         }
         if (found) {
-            getSupportFragmentManager().popBackStack(popToStateId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager().popBackStackImmediate(popToStateId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         return found;
+    }
+
+    protected void showFragmentNow(Fragment f) {
+        showFragmentNow(f, false);
+    }
+
+    protected void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
+
+        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
+        checkLicenceIfNeeded();
+
+        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
+
+        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
+        String lastFragmentName = "";
+        if (lastFragment != null) {
+            lastFragmentName = lastFragment.getTag();
+        }
+
+        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+
+        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+        tx.addToBackStack(f.getClass().getName());
+        tx.replace(R.id.main_view, f, f.getClass().getName());
+        tx.commit();
+
+        Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
     }
 
     protected void checkLicenceIfNeeded() {
@@ -528,5 +601,21 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ShowMessageEvent event) {
         getUiHelper().showOrQueueDialogMessage(event.getTitleResId(), event.getMessage());
+    }
+
+    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
+        private static final long serialVersionUID = 8370875759830585817L;
+        private final int trackingRequestId;
+
+        public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
+            super(uiHelper);
+            this.trackingRequestId = trackingRequestId;
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            //exit the app.
+            EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+        }
     }
 }

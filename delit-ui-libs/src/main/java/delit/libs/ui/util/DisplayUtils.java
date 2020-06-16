@@ -7,11 +7,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -36,11 +38,15 @@ import android.widget.AdapterView;
 
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -53,6 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
 
 /**
@@ -66,6 +73,25 @@ public class DisplayUtils {
     public static int dpToPx(Context context, int dp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    public static void setOverscrollGlowColor(@NonNull Context context, @ColorInt int color) {
+        @DrawableRes int glowDrawableId = context.getResources().getIdentifier("overscroll_glow", "drawable", "android");
+        Drawable androidGlow = ContextCompat.getDrawable(context, glowDrawableId);
+        androidGlow = DrawableCompat.wrap(androidGlow);
+//        DrawableCompat.setTint(androidGlow, color);
+        DrawableCompat.setTintList(androidGlow, ColorStateList.valueOf(color));
+        DrawableCompat.setTintMode(androidGlow, PorterDuff.Mode.SRC_ATOP);
+    }
+
+    public static void setOverscrollEdgeColor(@NonNull Context context, @ColorInt int color) {
+        @DrawableRes int overscrollEdgeDrawableId = context.getResources().getIdentifier("overscroll_edge", "drawable", "android");
+        Drawable androidOverscrollEdge = ContextCompat.getDrawable(context, overscrollEdgeDrawableId);
+        androidOverscrollEdge = DrawableCompat.wrap(androidOverscrollEdge);
+//        DrawableCompat.setTint(androidOverscrollEdge, color);
+        DrawableCompat.setTintList(androidOverscrollEdge, ColorStateList.valueOf(color));
+        DrawableCompat.setTintMode(androidOverscrollEdge, PorterDuff.Mode.SRC_ATOP);
+
     }
 
     public static int pxToDp(Context context, int px) {
@@ -100,6 +126,14 @@ public class DisplayUtils {
      * @return
      */
     public static String getThemeName(Context context) {
+        @StyleRes int id = getThemeId(context);
+        if(id == View.NO_ID) {
+            return "Unknown";
+        }
+        return getResourceName(context, getThemeId(context));
+    }
+
+    public static @StyleRes int getThemeId(Context context) {
         int themeResId = 0;
         try {
             if(context instanceof ContextThemeWrapper) {
@@ -107,14 +141,14 @@ public class DisplayUtils {
                 Method method = clazz.getMethod("getThemeResId");
                 method.setAccessible(true);
                 themeResId = (Integer) method.invoke(context);
-                return getResourceName(context, themeResId);
+                return themeResId;
             } else if(context instanceof ContextWrapper) {
                 Class<?> clazz = ContextWrapper.class;
                 //noinspection JavaReflectionMemberAccess
                 Method method = clazz.getMethod("getThemeResId");
                 method.setAccessible(true);
                 themeResId = (Integer) method.invoke(context);
-                return getResourceName(context, themeResId);
+                return themeResId;
             }
         } catch (NoSuchMethodException e) {
             Log.e(TAG, "Failed to get theme resource ID", e);
@@ -125,7 +159,7 @@ public class DisplayUtils {
         } catch (InvocationTargetException e) {
             Log.e(TAG, "Failed to get theme resource ID", e);
         }
-        return "Unknown";
+        return View.NO_ID;
     }
 
     public static int getCurrentScreenOrientation(Context context) {
@@ -452,6 +486,9 @@ public class DisplayUtils {
     public static @ColorInt int getColor(@NonNull Context context, @AttrRes int attrResId) {
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
+        if(BuildConfig.DEBUG) {
+            Log.i(TAG, "Loading color from theme : " + getThemeName(context));
+        }
         theme.resolveAttribute(attrResId, typedValue, true);
         @ColorInt int color;
         if(typedValue.type >= TypedValue.TYPE_FIRST_COLOR_INT && typedValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {

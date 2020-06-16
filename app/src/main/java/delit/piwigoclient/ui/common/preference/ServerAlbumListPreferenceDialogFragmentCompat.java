@@ -40,6 +40,7 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     // state persistent values
@@ -229,9 +230,9 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
 
     void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
 
-        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences();
         viewPrefs.selectable(false, false);
-        viewPrefs.withShowHierachy();
+        viewPrefs.setFlattenAlbumHierarchy(true);
         AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, getContext());
         adapter.addAll(albumNames);
         if (!viewPrefs.isAllowRootAlbumSelection()) {

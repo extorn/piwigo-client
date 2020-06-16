@@ -95,16 +95,17 @@
     <style name="App.Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="buttonCompat">@drawable/none</item> <!-- needed for pre lollipop -->
-        <item name="paddingStart">0dp</item>
-        <item name="android:button">@drawable/none</item> <!-- just a null drawable - never shown -->
-        <item name="android:drawableEnd">@drawable/visibility_checkbox</item>
+        <item name="buttonCompat">@drawable/visibility_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/visibility_checkbox</item> <!-- just a null drawable - never shown -->
     </style>
 
     <!-- Accented Favorite (heart) icon style button -->
     <style name="Widget.CompoundButton.CheckBox.Favorite.Accented" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/favorite_checkbox</item> <!-- heart style icon -->
         <item name="buttonTint">?attr/colorSecondary</item> <!-- colors the button icon -->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/favorite_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/favorite_checkbox</item> <!-- heart style icon -->
     </style>
 
     <!-- icon only style button tinted in the accent colors -->

@@ -71,6 +71,12 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         return fragment;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        MediaScanner.instance(getContext()).close();
+    }
+
     public static Bundle buildArgsBundle(FolderItemViewAdapterPreferences prefs, int actionId) {
         return LongSelectableSetSelectFragment.buildArgsBundle(prefs, actionId, null);
     }
@@ -97,6 +103,12 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
         BundleUtils.putFile(outState, ACTIVE_FOLDER, getListAdapter().getActiveFolder());
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
         BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        MediaScanner.instance(getContext());
+        super.onAttach(context);
     }
 
     @Nullable
@@ -246,7 +258,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
 
-            fileExtFilters.setListener(new FileExtFilterControlListener(getContext(), getListAdapter()));
+            fileExtFilters.setListener(new FileExtFilterControlListener(getListAdapter()));
 
             // update the adapter content
             File newFolder = activeFolder;
@@ -396,32 +408,26 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
     private static class FileExtFilterControlListener implements FilterControl.FilterListener {
 
         private final LegacyFolderItemRecyclerViewAdapter listAdapter;
-        private final WeakReference<Context> contextRef;
 
-        public FileExtFilterControlListener(Context context, LegacyFolderItemRecyclerViewAdapter adapter) {
+        public FileExtFilterControlListener(@NonNull LegacyFolderItemRecyclerViewAdapter adapter) {
             this.listAdapter = adapter;
-            this.contextRef = new WeakReference<>(context);
-        }
-
-        private @NonNull Context getContext() {
-            return Objects.requireNonNull(contextRef.get());
         }
 
         @Override
-        public void onFilterUnchecked(String fileExt) {
+        public void onFilterUnchecked(Context context, String fileExt) {
             SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
             visibleFileTypes.remove(fileExt);
         }
 
         @Override
-        public void onFilterChecked(String fileExt) {
+        public void onFilterChecked(Context context, String fileExt) {
             SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
             visibleFileTypes.add(fileExt);
         }
 
         @Override
-        public void onFiltersChanged(boolean filterHidden, boolean filterShown) {
-            listAdapter.rebuildContentView(getContext());
+        public void onFiltersChanged(Context context, boolean filterHidden, boolean filterShown) {
+            listAdapter.rebuildContentView(context);
         }
     }
 

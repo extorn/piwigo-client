@@ -30,7 +30,6 @@ import java.util.Set;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -65,6 +64,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
+import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -659,7 +659,9 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     private void populateAlbumPermissionsList() {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumAccessRightsField.getAdapter();
         if (adapter == null) {
-            BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
+            AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
+            adapterPreferences.setFlattenAlbumHierarchy(true);
+            adapterPreferences.setShowThumbnails(false);
             adapterPreferences.selectable(true, false);
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(availableGalleries, adapterPreferences);

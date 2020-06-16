@@ -159,11 +159,11 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
 
-        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(recyclerView.getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new UserRecyclerViewAdapter(recyclerView.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusAdapter<User>() {
+        viewAdapter = new UserRecyclerViewAdapter(getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusAdapter<User>() {
 
             @Override
             public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, User u) {

@@ -6,9 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -33,12 +30,14 @@ public abstract class AbstractPreferencesActivity extends MyActivity {
 
     private static final String TAG = "PrefAct";
 
+    public AbstractPreferencesActivity() {
+        super(R.layout.activity_preferences);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preferences);
-            showFragmentNow(new PreferencesFragment());
-        //getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).commit();
+        showFragmentNow(new PreferencesFragment());
     }
 
     @Override
@@ -78,52 +77,6 @@ public abstract class AbstractPreferencesActivity extends MyActivity {
         prefs.withInitialSelection(event.getInitialSelection());
         RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
-    }
-
-    protected void showFragmentNow(Fragment f) {
-        showFragmentNow(f, false);
-    }
-
-    private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
-
-        Logging.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
-        checkLicenceIfNeeded();
-
-        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
-
-        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
-        String lastFragmentName = "";
-        if (lastFragment != null) {
-            lastFragmentName = lastFragment.getTag();
-        }
-        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
-            getSupportFragmentManager().popBackStackImmediate();
-        }
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
-        Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            // pop the current fragment off
-            getSupportFragmentManager().popBackStack();
-            // get the next fragment
-            int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
-            // if there are no fragments left, do default back operation (i.e. close app)
-            if (i < 0) {
-                super.onBackPressed();
-            }
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     @Override

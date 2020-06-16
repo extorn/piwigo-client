@@ -103,7 +103,7 @@
     <!-- list of connection profiles to select from -->
     <string name="preference_piwigo_connection_profile_list_key" translatable="false">preference_select_piwigo_connection_profile</string>
 
-
+    <string name="preference_piwigo_connections_key" translatable="false">preference_piwigo_connections</string>
     <string name="preference_piwigo_server_address_key" translatable="false">piwigo_server_address</string>
     <string name="preference_piwigo_server_address_title">Server Address</string>
     <string name="preference_piwigo_server_address_summary">%1$s</string>
