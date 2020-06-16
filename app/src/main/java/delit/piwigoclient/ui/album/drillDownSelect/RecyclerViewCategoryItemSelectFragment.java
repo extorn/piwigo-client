@@ -202,7 +202,11 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     private void loadData() {
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey(), prefs, getContext());
+        loadDataForAlbum(CategoryItem.ROOT_ALBUM);
+    }
+
+    private void loadDataForAlbum(CategoryItem album) {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey(), prefs, requireContext());
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
 
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
@@ -210,18 +214,18 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
-            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
+            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
 
-            handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
+            handler = new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
-            CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true);
+            CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(album.getId(), true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else {
-            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
-            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
+            String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
         }
@@ -364,11 +368,14 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                 if(folderChanged && listViewStates != null) {
                     Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
                     Map.Entry<Long, Parcelable> item;
+                    boolean listContentLoaded = false;
                     while (iter.hasNext()) {
                         item = iter.next();
                         if (item.getKey().equals(pathItem.getId())) {
                             if (getList().getLayoutManager() != null) {
-                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                                Parcelable state = item.getValue();
+                                getList().getLayoutManager().onRestoreInstanceState(state);
+                                listContentLoaded = state != null;
                             } else {
                                 Logging.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
                             }
@@ -378,6 +385,9 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                                 iter.remove();
                             }
                         }
+                    }
+                    if(!listContentLoaded) {
+                        loadDataForAlbum(getListAdapter().getActiveItem());
                     }
                 }
             }
