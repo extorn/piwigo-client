@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.UriPermission;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -73,7 +71,6 @@ import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.FileSelectActivity;
-import delit.piwigoclient.ui.MainActivityDrawerNavigationView;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
@@ -149,8 +146,8 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
 
     protected void doDefaultBackOperation() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer != null && drawer.isDrawerOpen(drawer)) {
-            drawer.closeDrawer(drawer);
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 // pop the current fragment off

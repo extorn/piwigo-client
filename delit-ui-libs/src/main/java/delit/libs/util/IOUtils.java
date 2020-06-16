@@ -19,6 +19,7 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.BufferedInputStream;
@@ -1002,10 +1003,24 @@ public class IOUtils {
 
     public static void addFileToMediaStore(Context context, Uri fileUri) {
         ContentValues values = new ContentValues();
-        values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
-        values.put(MediaStore.MediaColumns.MIME_TYPE, IOUtils.getMimeType(context, fileUri));
-        values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
-        Uri uri = context.getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
-        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+        String mimeType = IOUtils.getMimeType(context, fileUri);
+        boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
+        boolean isAudio = MimeTypeFilter.matches(mimeType, "audio/*");
+        boolean isImage = MimeTypeFilter.matches(mimeType, "image/*");
+        Uri mediaStoreUri = null;
+        if(isVideo) {
+            mediaStoreUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else if(isAudio) {
+            mediaStoreUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        } else if(isImage) {
+            mediaStoreUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+        if(mediaStoreUri != null) {
+            values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
+            values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
+            values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
+            Uri uri = context.getContentResolver().insert(mediaStoreUri, values);
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+        }
     }
 }
