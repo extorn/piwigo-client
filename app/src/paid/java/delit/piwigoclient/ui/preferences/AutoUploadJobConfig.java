@@ -15,7 +15,6 @@ import androidx.documentfile.provider.DocumentFile;
 import com.google.android.exoplayer2.util.MimeTypes;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
@@ -268,15 +268,42 @@ public class AutoUploadJobConfig implements Parcelable {
         return null;
     }
 
-    public static class PriorUploads implements Serializable {
+    public static class PriorUploads implements Parcelable {
 
-        private static final long serialVersionUID = -1292778740052847415L;
         private int jobId;
         private final HashMap<Uri, String> fileUrisAndHashcodes = new HashMap<>();
 
         public PriorUploads(int jobId) {
             this.jobId = jobId;
         }
+
+        protected PriorUploads(Parcel in) {
+            jobId = in.readInt();
+            ParcelUtils.readMap(in, fileUrisAndHashcodes, Uri.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(jobId);
+            ParcelUtils.writeMap(dest, fileUrisAndHashcodes);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<PriorUploads> CREATOR = new Creator<PriorUploads>() {
+            @Override
+            public PriorUploads createFromParcel(Parcel in) {
+                return new PriorUploads(in);
+            }
+
+            @Override
+            public PriorUploads[] newArray(int size) {
+                return new PriorUploads[size];
+            }
+        };
 
         public Map<Uri, String> getFileUrisAndHashcodes() {
             return Collections.unmodifiableMap(fileUrisAndHashcodes);
@@ -295,10 +322,10 @@ public class AutoUploadJobConfig implements Parcelable {
         public void saveToFile(Context c) {
             DocumentFile folder = getFolder(c);
             DocumentFile child = folder.findFile(""+jobId);
-            if(!child.exists()) {
+            if(child == null) {
                 child = folder.createFile(MimeTypes.BASE_TYPE_APPLICATION, ""+jobId);
             }
-            IOUtils.saveObjectToDocumentFile(c, child, this);
+            IOUtils.saveParcelableToDocumentFile(c, child, this);
         }
 
         public static PriorUploads loadFromFile(Context c, int jobId) {
@@ -307,7 +334,7 @@ public class AutoUploadJobConfig implements Parcelable {
             if(child == null) {
                 return new PriorUploads(jobId);
             } else {
-                PriorUploads uploadedFiles = IOUtils.readObjectFromDocumentFile(c.getContentResolver(), child);
+                PriorUploads uploadedFiles = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), child, PriorUploads.class);
                 if(uploadedFiles == null) {
                     return new PriorUploads(jobId);
                 } else if(uploadedFiles.jobId != jobId) {

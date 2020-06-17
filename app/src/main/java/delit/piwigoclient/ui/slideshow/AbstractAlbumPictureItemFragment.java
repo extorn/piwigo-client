@@ -126,7 +126,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         //            @Override
 //            public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
 //                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
-//                    ToolbarEvent toolbarEvent = new ToolbarEvent();
+//                    ToolbarEvent toolbarEvent = new ToolbarEvent(getActivity());
 //                    if(deltaY > 0) {
 //                        toolbarEvent.setTitle(getModel().getName());
 //                        toolbarEvent.setExpandToolbarView(true);

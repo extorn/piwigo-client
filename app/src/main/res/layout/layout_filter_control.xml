@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <CheckBox
+        android:id="@+id/content_filter_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="@string/content_filter"
+        android:layout_toStartOf="@id/toggle_all_button"
+        style="?layoutExpansionToggleStyle"/>
+    <Button
+        android:id="@+id/toggle_all_button"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="@string/button_all"
+        style="?materialButtonOutlinedStyle"/>
+    <delit.libs.ui.view.FlowLayout
+        android:id="@+id/filters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/content_filter_label"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp">
+    </delit.libs.ui.view.FlowLayout>
+</RelativeLayout>

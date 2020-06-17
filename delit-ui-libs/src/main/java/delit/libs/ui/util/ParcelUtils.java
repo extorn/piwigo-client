@@ -297,12 +297,8 @@ public class ParcelUtils {
 
     public static void writeParcel(ObjectOutputStream os, Parcel p) throws IOException {
         byte[] data = p.marshall();
-        if(data.length < 0) {
-            Logging.log(Log.ERROR, TAG, "Parcel size was unexpectedly negative while writing data");
-        } else {
-            os.write(data.length);
-            os.write(data);
-        }
+        os.writeInt(data.length);
+        os.write(data);
     }
 
     public static Parcel readParcel(byte[] data) {

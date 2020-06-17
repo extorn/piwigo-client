@@ -34,8 +34,8 @@ public class Md5SumUtils {
             throw new Md5SumException("Exception while getting digest", e);
         }
 
-        try {
-            ParcelFileDescriptor pfd = contentResolver.openFileDescriptor(uri, "r");
+        try(ParcelFileDescriptor pfd = contentResolver.openFileDescriptor(uri, "r")) {
+
             if(pfd == null) {
                 throw new FileNotFoundException("File descriptor unavailable (file likely doesn't exist");
             }
@@ -54,9 +54,6 @@ public class Md5SumUtils {
                 output = String.format("%32s", output).replace(' ', '0');
                 return output;
 
-            } catch (IOException e) {
-                Logging.recordException(e);
-                throw new Md5SumException("Unable to process file for MD5", e);
             }
 
 
@@ -64,6 +61,9 @@ public class Md5SumUtils {
             Logging.recordException(e);
             Log.e(TAG, "Exception while getting FileInputStream", e);
             throw new Md5SumException("Exception while getting FileInputStream", e);
+        } catch (IOException e) {
+            Logging.recordException(e);
+            throw new Md5SumException("Unable to process file for MD5", e);
         }
     }
 

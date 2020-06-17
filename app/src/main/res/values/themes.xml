@@ -114,6 +114,7 @@
         <item name="materialButtonIconAccentedStyle">@style/Widget.Button.OutlinedButton.IconOnly.Accented</item>
         <item name="checkboxFavoriteAccentedStyle">@style/Widget.CompoundButton.CheckBox.Favorite.Accented</item>
         <item name="visibilityToggleStyle">@style/App.Widget.CompoundButton.CheckBox.Visibility</item>
+        <item name="layoutExpansionToggleStyle">@style/App.Widget.CompoundButton.CheckBox.LayoutExpansion</item>
         <item name="editableFieldCheckBox">@style/Widget.MaterialComponents.CompoundButton.CheckBox.EditField</item>
         <!--New material inputs (not used yet) <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Custom</item>-->
         <!-- edit text fields throughout the app -->

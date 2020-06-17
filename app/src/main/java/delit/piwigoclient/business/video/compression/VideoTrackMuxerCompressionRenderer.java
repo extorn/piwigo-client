@@ -699,6 +699,12 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     @Override
     public MediaClock getMediaClock() {
         return this;
+        // the below doesn't work - i think because the audio renderer is enabled after the video one. :-(
+//        if (mediaMuxerControl.isHasAudio()) {
+//            return null; // don't act like a clock
+//        } else {
+//            return this;
+//        }
     }
 
     @Override //MediaClock

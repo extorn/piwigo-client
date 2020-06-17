@@ -480,7 +480,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context, getPrefs()), filesToUpload, category,
                 jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId(), jobConfig.isDeleteFilesAfterUpload(context));
-        uploadJob.withContext(this);
+
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());
         if (uploadJob.getConnectionPrefs().isOfflineMode(getPrefs(), context)) {
@@ -490,7 +490,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         uploadJob.setVideoCompressionParams(jobConfig.getVideoCompressionParams(context));
         uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(context));
-        return uploadJob;
+        return uploadJob.withContext(context);
     }
 
     @Override

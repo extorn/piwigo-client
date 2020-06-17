@@ -113,13 +113,11 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
                 "&redirect=" +
                 redirectTo;
         lastConn.setRequestMethod("POST");
-        OutputStream os = lastConn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(os, IOUtils.getUtf8Charset()));
-        writer.write(postBody);
-        writer.flush();
-        writer.close();
-        os.close();
+        try(OutputStream os = lastConn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, IOUtils.getUtf8Charset()))) {
+            writer.write(postBody);
+            writer.flush();
+        }
 
         int httpStatusCode = lastConn.getResponseCode();
         lastConn.disconnect();

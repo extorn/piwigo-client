@@ -106,6 +106,12 @@ public class ExoPlayerCompression {
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
+            if(error.getRendererException() instanceof CompressionSuccessException) {
+                return;// ignore this error.
+                /* It's caused by the renderers ending in such a way that the system clock takes over as the
+                   the playback position and thus the player gets into a very tight loop from which it cannot escape.
+                 */
+            }
             listenerWrapper.onCompressionError(mediaMuxerControl.getInputFile(), mediaMuxerControl.getOutputFile(), error);
         }
 
@@ -133,8 +139,6 @@ public class ExoPlayerCompression {
             if(filePath == null) {
                 throw new IOException("Uri to make streamable does not represent a local file : " + fileUri);
             }
-            File fileAsFile = new File(filePath);
-            File tmpFile = new File(fileAsFile.getParentFile(), fileAsFile.getName() + ".streaming.mp4");
 
             // TODO use the exoplayer functions to move the MOOV atom to the front.
 //            DefaultDataSourceFactory factory = new DefaultDataSourceFactory();
@@ -143,15 +147,8 @@ public class ExoPlayerCompression {
 //            new DataSpec(fileUri)
 
             boolean wroteFastStartFile = MyFastStart.fastStart(context, fileUri);
-            if (wroteFastStartFile) {
-                boolean deletedOriginal = fileAsFile.delete();
-                if (!deletedOriginal) {
-                    Logging.log(Log.ERROR, TAG, "Error deleting streaming input file");
-                }
-                boolean renamed = tmpFile.renameTo(new File(tmpFile.getParentFile(), fileAsFile.getName()));
-                if (!renamed) {
-                    Logging.log(Log.ERROR, TAG, "Error renaming streaming output file");
-                }
+            if (!wroteFastStartFile) {
+                Logging.log(Log.ERROR, TAG, "Error renaming streaming output file");
             }
         } catch (IOException e) {
             Logging.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
@@ -389,7 +386,11 @@ public class ExoPlayerCompression {
             return getOutputFileExt(null);
         }
 
-
+        /**
+         * @throws IllegalStateException if no acceptable file extension could be found.
+         * @param acceptableFileExts
+         * @return
+         */
         public String getOutputFileExt(Set<String> acceptableFileExts) {
             if(isAddAudioTrack() && isAddVideoTrack()) {
                 String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
@@ -412,7 +413,11 @@ public class ExoPlayerCompression {
                     return ext;
                 }
             }
-            throw new IllegalStateException("No valid output MIME Type specified");
+            String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
+            if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
+                return ext;
+            }
+            throw new IllegalStateException("No valid output file extension could be found acceptable to the server");
         }
 
         /**

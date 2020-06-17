@@ -826,7 +826,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void setTitleBar() {
-        /*ToolbarEvent event = new ToolbarEvent();
+        /*ToolbarEvent event = new ToolbarEvent(getActivity());
         event.setTitle(model.getName());
         EventBus.getDefault().post(event);*/
     }

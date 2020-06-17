@@ -95,11 +95,9 @@
 
                 <CheckBox
                     android:id="@+id/toggle_visibility"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_alignBaseline="@+id/user_password_field"
                     android:layout_alignParentEnd="true"
-                    android:button="@drawable/visibility_checkbox"/>
+                    style="?visibilityToggleStyle"/>
 
             </RelativeLayout>
 

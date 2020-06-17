@@ -176,19 +176,16 @@ public class CacheUtils {
     }
 
     public static void saveCachedContent(CachedContent cacheFileContent) throws IOException {
-        ObjectOutputStream oos = null;
-        try {
-            if (!cacheFileContent.getPersistTo().exists()) {
-                cacheFileContent.getPersistTo().getParentFile().mkdirs();
-                cacheFileContent.getPersistTo().createNewFile();
+
+        if (!cacheFileContent.getPersistTo().exists()) {
+            boolean created = cacheFileContent.getPersistTo().createNewFile();
+            if(!created) {
+                Logging.log(Log.ERROR, TAG, "Tried to create cache file, but it already exists - threading issue?");
             }
-            oos = new ObjectOutputStream(new FileOutputStream(cacheFileContent.getPersistTo()));
+        }
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(cacheFileContent.getPersistTo()))) {
             oos.writeObject(cacheFileContent);
             oos.flush();
-        } finally {
-            if (oos != null) {
-                oos.close();
-            }
         }
     }
 

@@ -123,17 +123,6 @@ public class X509Utils {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error saving keystore : " + keystoreDestId, e);
             }
-        } finally {
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (IOException e) {
-                    Logging.recordException(e);
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Error closing keystore after save : " + keystoreDestId, e);
-                    }
-                }
-            }
         }
     }
 
@@ -145,10 +134,10 @@ public class X509Utils {
                 Logging.log(Log.ERROR, TAG, "Error saving keystore (folder couldn't be created) : " + keystoreFilename);
             }
         }
-        try {
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(appDataDir, keystoreFilename)));
+        try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(appDataDir, keystoreFilename)))) {
+
             saveKeystore(keystoreFilename, keystore, bos, keystorePassword);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
@@ -363,27 +352,20 @@ public class X509Utils {
     }
 
     public static Collection<X509Certificate> loadCertificatesFromUri(Context context, Uri uri) {
-        BufferedInputStream bis = null;
-        try {
-            bis = new BufferedInputStream(context.getContentResolver().openInputStream(uri));
-            return loadCertificatesFromStream(bis, uri);
-        } catch (FileNotFoundException e) {
+
+        try(InputStream is = context.getContentResolver().openInputStream(uri)){
+            if(is == null) {
+                throw new IOException("unable to open input stream to uri " + uri);
+            }
+            try (BufferedInputStream bis = new BufferedInputStream(is)) {
+                return loadCertificatesFromStream(bis, uri);
+            }
+        } catch (IOException e) {
             Logging.recordException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
             throw new CertificateLoadException(uri.getPath(), "Error reading certificate file stream", e);
-        } finally {
-            if (bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException e) {
-                    Logging.recordException(e);
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Error closing certificate file stream", e);
-                    }
-                }
-            }
         }
     }
 

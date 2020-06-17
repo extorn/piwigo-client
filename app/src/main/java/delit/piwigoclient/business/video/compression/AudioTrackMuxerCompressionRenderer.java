@@ -85,15 +85,18 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 
     @Override
     protected boolean allowPassthrough(String mimeType) {
-        boolean passthrough = super.allowPassthrough(mimeType);
-        passthrough = compressionSettings.getBitRate() == ExoPlayerCompression.AudioCompressionParameters.AUDIO_PASSTHROUGH_BITRATE || "audio/raw".equals(mimeType); // this means that the data is not run through a decoder by the super class.
+        //boolean passthrough = super.allowPassthrough(mimeType);
+        boolean passthrough = compressionSettings.getBitRate() == ExoPlayerCompression.AudioCompressionParameters.AUDIO_PASSTHROUGH_BITRATE || "audio/raw".equals(mimeType); // this means that the data is not run through a decoder by the super class.
         return passthrough;
     }
 
     @Override
     public MediaClock getMediaClock() {
+        // The video renderer needs a clock in case not decoding audio track.
+        // The system clock is not suitable for use for encoding since it causes data to be lost.
+        // Ideally, both would return null and I'd provide a different one based on the mediamuxer I think.
         if (mediaMuxerControl.isHasVideo()) {
-            return null; // don't act like a clock! It causes data to be skipped.
+            return null; // don't act like a clock.
         } else {
             return super.getMediaClock();
         }
@@ -141,6 +144,17 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
             audioFormatOutputMime = MediaFormat.MIMETYPE_AUDIO_AAC;
         }
         return audioFormatOutputMime;
+    }
+
+    @Override
+    protected void renderToEndOfStream() throws ExoPlaybackException {
+        try {
+            super.renderToEndOfStream();
+        } catch(RuntimeException e) {
+            if(e.getMessage().equals(CompressionAudioSink.SUCCESS_ERROR_CODE)) {
+                throw ExoPlaybackException.createForRenderer(new CompressionSuccessException(),getIndex());
+            }
+        }
     }
 
     private int getLikelyBitrate(MediaFormat inputMediaFormat) {

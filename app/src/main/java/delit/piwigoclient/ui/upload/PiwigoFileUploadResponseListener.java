@@ -8,12 +8,12 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
-public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoResponseListener {
+public abstract class PiwigoFileUploadResponseListener<T> extends BasicPiwigoResponseListener<T> {
 
     private final Context context;
 
     public PiwigoFileUploadResponseListener(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();// use app context so it doesn't matter if it leaks.
     }
 
     @Override

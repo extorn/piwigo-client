@@ -70,6 +70,8 @@ public class NavBarHeaderView extends FrameLayout {
                 listener.withUiHelper(this, uiHelper);
                 uiHelper.setPiwigoResponseListener(listener);
             }
+        } else {
+            uiHelper.swapToNewContext(getContext());
         }
         if (!isInEditMode()) {
             uiHelper.registerToActiveServiceCalls();

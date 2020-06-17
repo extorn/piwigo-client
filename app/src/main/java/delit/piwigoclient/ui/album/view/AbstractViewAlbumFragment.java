@@ -1184,7 +1184,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     @Override
     protected void updatePageTitle() {
-        ToolbarEvent event = new ToolbarEvent();
+        ToolbarEvent event = new ToolbarEvent(getActivity());
         event.setTitle(buildPageHeading());
         if(event.getTitle().startsWith("... / ")) {
             SpannableString spannableTitle = new SpannableString(event.getTitle());

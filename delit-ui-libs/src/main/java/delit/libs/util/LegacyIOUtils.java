@@ -148,23 +148,12 @@ public class LegacyIOUtils {
             return false;
         }
 
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));
+        try(ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)))) {
             oos.writeObject(o);
             oos.flush();
         } catch (IOException e) {
             Logging.log(Log.ERROR, TAG, "Error writing Object to disk : " + tmpFile.getAbsolutePath());
             Logging.recordException(e);
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error closing stream when writing Object to disk : " + tmpFile.getAbsolutePath());
-                    Logging.recordException(e);
-                }
-            }
         }
         boolean canWrite = true;
         if (destinationFile.exists()) {

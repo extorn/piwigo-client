@@ -11,6 +11,10 @@ public class ToolbarEvent {
     private boolean contractToolbarView;
     private FragmentActivity activity;
 
+    public ToolbarEvent(FragmentActivity activity) {
+        this.activity = activity;
+    }
+
     public void setExpandToolbarView(boolean expandToolbarView) {
         this.expandToolbarView = expandToolbarView;
         this.contractToolbarView = false;
@@ -49,10 +53,6 @@ public class ToolbarEvent {
 
     public SpannableString getSpannableTitle() {
         return spannableTitle;
-    }
-
-    public void setActivity(FragmentActivity activity) {
-        this.activity = activity;
     }
 
     public FragmentActivity getActivity() {

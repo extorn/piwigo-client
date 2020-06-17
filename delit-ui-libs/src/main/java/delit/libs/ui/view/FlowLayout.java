@@ -70,6 +70,9 @@ public class FlowLayout extends ViewGroup {
         int spacing = 0;
 
         final int count = getChildCount();
+
+        int linesOfComponents = 1;
+
         for (int i = 0; i < count; i++)
         {
             View child = getChildAt(i);
@@ -85,6 +88,7 @@ public class FlowLayout extends ViewGroup {
 
             if (growHeight && (breakLine || ((currentWidth + child.getMeasuredWidth()) > widthLimit)))
             {
+                linesOfComponents++;
                 newLine = true;
                 currentHeight += maxChildHeight + mVerticalSpacing;
 

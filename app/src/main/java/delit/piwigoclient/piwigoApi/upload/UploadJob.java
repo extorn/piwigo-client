@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -129,8 +128,9 @@ public class UploadJob implements Parcelable {
         }
     };
 
-    public void withContext(Context context) {
+    public UploadJob withContext(Context context) {
         contextRef = new WeakReference<>(context);
+        return this;
     }
 
     public int getUploadProgress() {
@@ -483,14 +483,18 @@ public class UploadJob implements Parcelable {
     }
 
     public synchronized ArrayList<Uri> getFilesNotYetUploaded() {
+        return getFilesNotYetUploaded(getContext());
+    }
+
+    public synchronized ArrayList<Uri> getFilesNotYetUploaded(Context context) {
         ArrayList<Uri> filesToUpload = new ArrayList<>(filesForUpload);
         filesToUpload.removeAll(getFilesProcessedToEnd());
-        Iterator<Uri> filesToUploadIter = filesToUpload.iterator();
-        while(filesToUploadIter.hasNext()) {
-            Uri f = filesToUploadIter.next();
-            DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), f);
-            if(docFile != null && docFile.isDirectory()) {
-                filesToUploadIter.remove();
+        Iterator<Uri> filesToUploadIterator = filesToUpload.iterator();
+        while(filesToUploadIterator.hasNext()) {
+            Uri f = filesToUploadIterator.next();
+            DocumentFile docFile = DocumentFile.fromSingleUri(context, f);
+            if(docFile != null && (docFile.isDirectory() || !docFile.isFile())) {
+                filesToUploadIterator.remove();
             }
         }
         return filesToUpload;
@@ -613,13 +617,17 @@ public class UploadJob implements Parcelable {
         return MimeTypeFilter.matches(mimeType,"image/*");
     }
 
-    public DocumentFile addCompressedFile(Context c, Uri rawFileForUpload, String compressedMimeType) {
-        String rawUploadFilename = IOUtils.getFilename(c, rawFileForUpload);
-        String updatedFilename = LegacyIOUtils.changeFileExt(new File(rawUploadFilename), MimeTypeMap.getSingleton().getExtensionFromMimeType(compressedMimeType)).getName();
-        DocumentFile compressedFile = getCompressedFilesFolder(c).createFile(compressedMimeType, updatedFilename);
+    public DocumentFile buildCompressedFile(@NonNull Context context, Uri baseFile, String mimeType) {
+        String uploadFileDisplayName = IOUtils.getFilename(context, baseFile);
+        uploadFileDisplayName = IOUtils.getFileNameWithoutExt(uploadFileDisplayName);
+        DocumentFile compressedFile = getCompressedFilesFolder(context).createFile(mimeType, uploadFileDisplayName);
         if (compressedFilesMap == null) {
             compressedFilesMap = new HashMap<>();
         }
+        return compressedFile;
+    }
+
+    public DocumentFile addCompressedFile(Uri rawFileForUpload, DocumentFile compressedFile) {
         compressedFilesMap.put(rawFileForUpload, compressedFile.getUri());
         return compressedFile;
     }

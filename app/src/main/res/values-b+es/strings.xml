@@ -510,5 +510,7 @@
     <string name="adding_files">Agregar archivos</string>
     <string name="calculating_file_checksums">Cálculo de sumas de verificación de archivos</string>
     <string name="alert_error_starting_download">Error al iniciar la descarga del archivo</string>
+    <string name="progress_importing_files">Importar archivos</string>
+    <string name="content_filter">Filtro de contenido</string>
 
 </resources>

@@ -639,7 +639,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     public void onEvent(FileSelectionCompleteEvent event) {
         if (isTrackingRequest(event.getActionId())) {
             EventBus.getDefault().removeStickyEvent(event);
-            onCertificatesSelected(event.getSelectedFolderItemsAsFiles(getContext()));
+            onCertificatesSelected(event.getSelectedFolderItemsAsFiles());
         }
     }
 

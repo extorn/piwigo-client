@@ -48,7 +48,7 @@ import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
-import delit.libs.ui.view.ProgressIndicator;
+import delit.libs.ui.view.ProgressListener;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
@@ -75,7 +75,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private FolderItemRecyclerViewAdapter.NavigationListener navListener;
     private SortedMap<DocumentFile, List<Object>> listViewStates; // one state for each level within the list (created and deleted on demand)
     private AppSettingsViewModel appSettingsViewModel;
-    private ProgressIndicator progressIndicator;
     private FilterControl fileExtFilters;
 
     public static RecyclerViewDocumentFileFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
@@ -153,9 +152,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         startedActionAtTime = System.currentTimeMillis();
 
-        progressIndicator = v.findViewById(R.id.progress_indicator);
-        progressIndicator.setVisibility(View.GONE);
-
         folderRootFolderSpinner = ViewCompat.requireViewById(v, R.id.folder_root_spinner);
         folderRootFolderSpinner.setOnItemSelectedListener(new RootFolderSelectionListener());
 
@@ -211,17 +207,17 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         @Override
         public void onTaskProgress(double percentageComplete) {
-            progressIndicator.showProgressIndicator(getString(R.string.progress_loading_folder_content), (int) Math.rint(percentageComplete* 100));
+            getUiHelper().showProgressIndicator(getString(R.string.progress_loading_folder_content), (int) Math.rint(percentageComplete* 100));
         }
 
         @Override
         public void onTaskStarted() {
-            progressIndicator.setVisibility(View.VISIBLE);
+            getUiHelper().showProgressIndicator(getString(R.string.progress_loading_folder_content), 0);
         }
 
         @Override
         public void onTaskFinished() {
-            progressIndicator.setVisibility(View.GONE);
+            getUiHelper().hideProgressIndicator();
         }
     }
 
@@ -241,7 +237,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
             fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
-            fileExtFilters.selectAll(false);
+            fileExtFilters.selectAll(true);
         }
     }
 
@@ -350,7 +346,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private List<FolderItemRecyclerViewAdapter.FolderItem> processOpenDocuments(Intent resultData) {
+    private List<FolderItemRecyclerViewAdapter.FolderItem> processOpenDocuments(Intent resultData, ProgressListener listener) {
         ClipData clipData = resultData.getClipData();
         List<FolderItemRecyclerViewAdapter.FolderItem> itemsShared = new ArrayList<>();
         if(clipData != null) {
@@ -364,10 +360,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(itemUri);
                 item.cacheDocFileFields(getContext());
                 itemsShared.add(item);
+                listener.onProgress((int) (100 * Math.rint((float)i) / items));
             }
 
         } else if(resultData.getData() != null) {
             FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(resultData.getData());
+            item.cacheDocFileFields(getContext());
             itemsShared.add(item);
         } else {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
@@ -375,7 +373,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         return itemsShared;
     }
 
-    private List<FolderItemRecyclerViewAdapter.FolderItem> processOpenDocumentTree(Intent resultData) {
+    private List<FolderItemRecyclerViewAdapter.FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
         if (resultData.getData() == null) {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             return null;
@@ -392,8 +390,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
                     folderItem.cacheDocFileFields(requireContext());
                     itemsShared.add(folderItem);
+                    listener.onProgress(100);
                 } else {
-                    itemsShared = processOpenDocuments(resultData);
+                    itemsShared = processOpenDocuments(resultData, listener);
                 }
             } catch(IllegalArgumentException e) {
                 // this is most likely because it is not a folder.
@@ -406,6 +405,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
                 folderItem.cacheDocFileFields(requireContext());
                 itemsShared.add(folderItem);
+                listener.onProgress(100);
             }
             return itemsShared;
         }
@@ -437,7 +437,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if(getListAdapter() == null) {
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(requireContext(), navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
             viewAdapter.setTaskListener(new FolderItemTaskListener());
 
             if (!viewAdapter.isItemSelectionAllowed()) {
@@ -649,7 +649,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, Intent, Object, List<FolderItemRecyclerViewAdapter.FolderItem>> {
+    private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, Intent, Integer, List<FolderItemRecyclerViewAdapter.FolderItem>> implements ProgressListener {
 
 
         public SharedFilesIntentProcessingTask(RecyclerViewDocumentFileFolderItemSelectFragment parent) {
@@ -658,13 +658,25 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
 
         @Override
+        protected void onPreExecuteSafely() {
+            super.onPreExecuteSafely();
+            getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),0);
+        }
+
+        @Override
         protected List<FolderItemRecyclerViewAdapter.FolderItem> doInBackgroundSafely(Intent[] objects) {
             Intent intent = objects[0];
             if (intent.getClipData() != null) {
-                return getOwner().processOpenDocuments(intent);
+                return getOwner().processOpenDocuments(intent, this);
             } else {
-                return getOwner().processOpenDocumentTree(intent);
+                return getOwner().processOpenDocumentTree(intent, this);
             }
+        }
+
+        @Override
+        protected void onProgressUpdateSafely(Integer... progress) {
+            super.onProgressUpdateSafely(progress);
+            getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),progress[0]);
         }
 
         @Override
@@ -674,9 +686,15 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 FolderItemRecyclerViewAdapter.FolderItem item = folderItems.get(0);
                 getOwner().addRootFolder(item.getDocumentFile());
             } else {
-                getOwner().getListAdapter().addItems(getContext(), folderItems);
+                getOwner().getListAdapter().addItems(folderItems);
                 getOwner().selectAllItems();
             }
+            getOwner().getUiHelper().hideProgressIndicator();
+        }
+
+        @Override
+        public void onProgress(int percent) {
+            publishProgress(percent);
         }
     }
 
@@ -702,9 +720,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         if (item.getKey().getUri().equals(pathItemFile.getUri())) {
                             loadedFromMemory = true;
                             if (getList().getLayoutManager() != null) {
-                                getList().getLayoutManager().onRestoreInstanceState((Parcelable) item.getValue().get(1));
                                 FolderItemRecyclerViewAdapter adapter = (FolderItemRecyclerViewAdapter) getList().getAdapter();
                                 Objects.requireNonNull(adapter).restoreState((FolderItemRecyclerViewAdapter.SavedState) item.getValue().get(0));
+                                getList().getLayoutManager().onRestoreInstanceState((Parcelable) item.getValue().get(1));
 
                             } else {
                                 Logging.log(Log.WARN, TAG, "Unable to update list as layout manager is null");

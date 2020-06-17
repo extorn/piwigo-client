@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    tools:context=".ui.PreferencesActivity"
-    android:theme="@style/Theme.App.EditPages">
+    tools:context=".ui.PreferencesActivity">
 
     <include
         layout="@layout/app_bar_prefs"
@@ -22,6 +21,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/activity_prefs_drawer"/>
+        app:menu="@menu/activity_prefs_drawer"
+        android:theme="@style/Theme.App.EditPages"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

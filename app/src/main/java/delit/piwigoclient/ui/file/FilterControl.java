@@ -7,6 +7,10 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,28 +25,83 @@ import java.util.SortedSet;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.FlowLayout;
+import delit.libs.util.CollectionUtils;
+import delit.piwigoclient.R;
 
-public class FilterControl extends FlowLayout {
+public class FilterControl extends FrameLayout {
 
-    private Set<String> allPossiblyVisibleFileExts;
+    private Set<String> allPossiblyVisibleFileExts; //TODO this isn't needed in this component. Its functionality bleed from file select frag I think.
     private Set<String> currentlyVisibleFileExts;
     private Set<String> selectedVisibleFileExts;
     private FilterListener listener;
+    private ViewGroup fileExtFilters;
+    private CheckBox showFiltersToggle;
+    private Button toggleAll;
+    private boolean selectToggle;
 
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        addDemoData();
+        init(context);
     }
 
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        addDemoData();
+        init(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init(context);
+    }
+
+    private void init(Context context) {
+        View content = inflate(context, R.layout.layout_filter_control, null);
+        addView(content);
+        showFiltersToggle = findViewById(R.id.content_filter_label);
+        showFiltersToggle.setChecked(true);
+        showFiltersToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    fileExtFilters.setVisibility(View.VISIBLE);
+                } else {
+                    fileExtFilters.setVisibility(View.GONE);
+                }
+            }
+        });
+        fileExtFilters = findViewById(R.id.filters);
+        toggleAll = findViewById(R.id.toggle_all_button);
+        toggleAll.setOnClickListener(v -> onToggleAllSelection());
+        setToggleSelectionButtonText();
         addDemoData();
+    }
+
+    private void onToggleAllSelection() {
+        if (!selectToggle) {
+            selectAllFilters();
+            selectToggle = true;
+        } else {
+            selectNoFilters();
+            selectToggle = false;
+        }
+        setToggleSelectionButtonText();
+    }
+
+    private void selectNoFilters() {
+        selectNone();
+    }
+
+    private void selectAllFilters() {
+        selectAll();
+    }
+
+    private void setToggleSelectionButtonText() {
+        if (selectToggle) {
+            toggleAll.setText(getContext().getString(R.string.button_none));
+        } else {
+            toggleAll.setText(getContext().getString(R.string.button_all));
+        }
     }
 
     private void addDemoData() {
@@ -71,11 +130,20 @@ public class FilterControl extends FlowLayout {
         selectAll(true);
     }
     public void selectAll(boolean notifyListenersOfFilterStatusChange) {
-        if(allPossiblyVisibleFileExts != null) {
-            selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
-        } else {
+        if(selectedVisibleFileExts == null) {
             selectedVisibleFileExts = new HashSet<>();
         }
+        selectedVisibleFileExts.addAll(currentlyVisibleFileExts);
+        if(allPossiblyVisibleFileExts != null) {
+            selectedVisibleFileExts.addAll(allPossiblyVisibleFileExts);
+        }
+        buildFileExtFilterControls(notifyListenersOfFilterStatusChange);
+    }
+    public void selectNone() {
+        selectNone(true);
+    }
+    public void selectNone(boolean notifyListenersOfFilterStatusChange) {
+        selectedVisibleFileExts = new HashSet<>();
         buildFileExtFilterControls(notifyListenersOfFilterStatusChange);
     }
 
@@ -85,15 +153,15 @@ public class FilterControl extends FlowLayout {
         if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
             selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
         }
-        ViewGroup fileExtFilters = this;
 
         // clear all the existing filters
         fileExtFilters.removeAllViews();
-
+        boolean allSelected = false;
         // for each file type visible, show a checkbox and set it according to out local model
         if (currentlyVisibleFileExts != null && selectedVisibleFileExts != null) {
             boolean filterHidden = false;
             boolean filterShown = false;
+            allSelected = CollectionUtils.equals(currentlyVisibleFileExts, selectedVisibleFileExts);
             for (String fileExt : currentlyVisibleFileExts) {
                 FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
                 boolean checked = selectedVisibleFileExts.contains(fileExt);
@@ -116,6 +184,13 @@ public class FilterControl extends FlowLayout {
                 }
             }
         }
+
+        boolean filtersVisible = (currentlyVisibleFileExts != null && !currentlyVisibleFileExts.isEmpty());
+        showFiltersToggle.setChecked(showFiltersToggle.isChecked() && filtersVisible);
+        showFiltersToggle.setEnabled(filtersVisible);
+        toggleAll.setEnabled(filtersVisible);
+        selectToggle = allSelected;
+        setToggleSelectionButtonText();
     }
 
     private View createFileExtFilterControl(String fileExt, boolean checked) {
@@ -179,9 +254,6 @@ public class FilterControl extends FlowLayout {
         this.currentlyVisibleFileExts = visibleFileExts;
     }
 
-    public void clearAll() {
-        removeAllViews();
-    }
 
     public void setSelectedFilters(SortedSet<String> visibleFileTypes) {
         if(selectedVisibleFileExts == null) {
@@ -232,9 +304,11 @@ public class FilterControl extends FlowLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        for(int i = 0; i < this.getChildCount(); i++) {
-            getChildAt(i).setEnabled(enabled);
+        for(int i = 0; i < fileExtFilters.getChildCount(); i++) {
+            fileExtFilters.getChildAt(i).setEnabled(enabled);
         }
+        toggleAll.setEnabled(enabled && fileExtFilters.getChildCount() > 0);
+        showFiltersToggle.setEnabled(enabled && fileExtFilters.getChildCount() > 0);
     }
 
     public interface FilterListener {

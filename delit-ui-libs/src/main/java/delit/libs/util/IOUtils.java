@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidClassException;
@@ -66,17 +67,16 @@ public class IOUtils {
     private static final String TAG = "IOUtils";
 
     public static void write(InputStream src, OutputStream dst) throws IOException {
-        BufferedInputStream inStream = new BufferedInputStream(src);
-        byte[] buf = new byte[10240];
-        int read = -1;
-        do {
-            read = inStream.read(buf, 0, buf.length);
-            if (read > 0) {
-                dst.write(buf, 0, read);
-            }
-        } while (read >= 0);
-        inStream.close();
-        dst.close();
+        try(BufferedInputStream inStream = new BufferedInputStream(src); BufferedOutputStream outStream = new BufferedOutputStream(dst);) {
+            byte[] buf = new byte[10240];
+            int read = -1;
+            do {
+                read = inStream.read(buf, 0, buf.length);
+                if (read > 0) {
+                    outStream.write(buf, 0, read);
+                }
+            } while (read >= 0);
+        }
     }
 
     public static long getFolderSize(DocumentFile directory, boolean recursive) {
@@ -94,20 +94,16 @@ public class IOUtils {
 
     public static <T extends Parcelable> T readParcelableFromDocumentFile(ContentResolver contentResolver, DocumentFile sourceFile, Class<T> parcelableClass) {
         boolean deleteFileNow = false;
-        ObjectInputStream ois = null;
-        InputStream is = null;
-        try {
-
-            is = contentResolver.openInputStream(sourceFile.getUri());
+        try(InputStream is = contentResolver.openInputStream(sourceFile.getUri());) {
             if(is == null) {
                 throw new IllegalArgumentException("Unable to open input stream to uri : " + sourceFile.getUri());
             }
-            ois = new ObjectInputStream(new BufferedInputStream(is));
-            Parcel p = ParcelUtils.readParcel(ois);
-            T item = ParcelUtils.readParcelable(p, parcelableClass);
-            p.recycle();
-            return item;
-
+            try(ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is))) {
+                Parcel p = ParcelUtils.readParcel(ois);
+                T item = ParcelUtils.readParcelable(p, parcelableClass);
+                p.recycle();
+                return item;
+            }
         } catch (FileNotFoundException e) {
             Logging.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getUri());
             Logging.recordException(e);
@@ -142,48 +138,23 @@ public class IOUtils {
                 Log.e(TAG, "Error reading object from disk", e);
             }
             deleteFileNow = true;
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getUri());
-                    Logging.recordException(e);
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Error closing stream when reading object from disk", e);
-                    }
-                }
-            } else if(is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getUri());
-                    Logging.recordException(e);
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Error closing stream when reading object from disk", e);
-                    }
-                }
-            }
-            if (deleteFileNow) {
-                sourceFile.delete();
-            }
+        }
+        if (deleteFileNow) {
+            sourceFile.delete();
         }
         return null;
     }
 
     public static <T extends Serializable> T readObjectFromDocumentFile(ContentResolver contentResolver, DocumentFile sourceFile) {
         boolean deleteFileNow = false;
-        ObjectInputStream ois = null;
-        try {
-
-            InputStream is = contentResolver.openInputStream(sourceFile.getUri());
+        try(InputStream is = contentResolver.openInputStream(sourceFile.getUri())) {
             if(is == null) {
                 throw new IllegalArgumentException("Unable to open input stream to uri : " + sourceFile.getUri());
             }
-            ois = new ObjectInputStream(new BufferedInputStream(is));
-            Object o = ois.readObject();
-            return (T) o;
-
+            try(ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is))) {
+                Object o = ois.readObject();
+                return (T) o;
+            }
         } catch (FileNotFoundException e) {
             Logging.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getUri());
             Logging.recordException(e);
@@ -217,21 +188,9 @@ public class IOUtils {
                 Log.e(TAG, "Error reading object from disk", e);
             }
             deleteFileNow = true;
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error loading class fromm file : " + sourceFile.getUri());
-                    Logging.recordException(e);
-                    if (BuildConfig.DEBUG) {
-                        Log.d(TAG, "Error closing stream when reading object from disk", e);
-                    }
-                }
-            }
-            if (deleteFileNow) {
-                sourceFile.delete();
-            }
+        }
+        if (deleteFileNow) {
+            sourceFile.delete();
         }
         return null;
     }
@@ -262,37 +221,19 @@ public class IOUtils {
             return false;
         }
 
-        ObjectOutputStream oos = null;
-        OutputStream os = null;
-        try {
-            os = context.getContentResolver().openOutputStream(tmpFile.getUri());
-            oos = new ObjectOutputStream(new BufferedOutputStream(os));
+        try(OutputStream os = context.getContentResolver().openOutputStream(tmpFile.getUri())) {
+            try(ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(os))) {
 
-            Parcel p = Parcel.obtain();
-            ParcelUtils.writeParcelable(p, parcelable);
-            ParcelUtils.writeParcel(oos, p);
-            p.recycle();
-            oos.flush();
+                Parcel p = Parcel.obtain();
+                ParcelUtils.writeParcelable(p, parcelable);
+                ParcelUtils.writeParcel(oos, p);
+                oos.flush();
+                p.recycle();
 
+            }
         } catch (IOException e) {
             Logging.log(Log.ERROR, TAG, "Error writing Object to disk : " + tmpFile.getUri());
             Logging.recordException(e);
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error closing stream when writing Object to disk : " + tmpFile.getUri());
-                    Logging.recordException(e);
-                }
-            } else if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error closing stream when writing Object to disk : " + tmpFile.getUri());
-                    Logging.recordException(e);
-                }
-            }
         }
         boolean canWrite = true;
         if (destinationFile.exists()) {
@@ -337,32 +278,17 @@ public class IOUtils {
             return false;
         }
 
-        ObjectOutputStream oos = null;
-        OutputStream os = null;
-        try {
-            os = context.getContentResolver().openOutputStream(tmpFile.getUri());
-            oos = new ObjectOutputStream(new BufferedOutputStream(os));
-            oos.writeObject(o);
-            oos.flush();
+        try(OutputStream os = context.getContentResolver().openOutputStream(tmpFile.getUri())) {
+            if(os == null) {
+                throw new IOException("Error ");
+            }
+            try(ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(os))) {
+                oos.writeObject(o);
+                oos.flush();
+            }
         } catch (IOException e) {
             Logging.log(Log.ERROR, TAG, "Error writing Object to disk : " + tmpFile.getUri());
             Logging.recordException(e);
-        } finally {
-            if (oos != null) {
-                try {
-                    oos.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error closing stream when writing Object to disk : " + tmpFile.getUri());
-                    Logging.recordException(e);
-                }
-            } else if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    Logging.log(Log.ERROR, TAG, "Error closing stream when writing Object to disk : " + tmpFile.getUri());
-                    Logging.recordException(e);
-                }
-            }
         }
         boolean canWrite = true;
         if (destinationFile.exists()) {
@@ -737,40 +663,18 @@ public class IOUtils {
      * @param copyTo
      * @return null if operation failed
      */
-    public static @Nullable Uri copyDocumentUriDataToUri(Context context, Uri copyFrom, @NonNull Uri copyTo) throws IOException {
+    public static Uri copyDocumentUriDataToUri(@NonNull Context context, @NonNull Uri copyFrom, @NonNull Uri copyTo) throws IOException {
 
-        BufferedInputStream bis = null;
-        BufferedOutputStream bos = null;
-        try {
-            InputStream is = context.getContentResolver().openInputStream(copyFrom);
-            if(is == null) {
-                throw new IllegalStateException("Unable to open input stream to uri " + copyFrom);
+        try(FileInputStream is = new FileInputStream(context.getContentResolver().openFileDescriptor(copyFrom, "r").getFileDescriptor());
+            FileOutputStream os = new FileOutputStream(context.getContentResolver().openFileDescriptor(copyTo, "rwt").getFileDescriptor())) {
+
+            try(FileChannel inChannel = is.getChannel();
+                FileChannel outChannel = os.getChannel()) {
+                outChannel.transferFrom(inChannel, 0, inChannel.size());
+                return copyTo;
             }
-            bis = new BufferedInputStream(is);
-            OutputStream os = context.getContentResolver().openOutputStream(copyTo);
-            if(os == null) {
-                throw new IllegalStateException("Unable to open output stream to uri " + copyTo);
-            }
-            bos = new BufferedOutputStream(os);
-            IOUtils.write(bis, bos);
-            return copyTo;
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            if(bos != null) {
-                try {
-                    bos.close();
-                } catch (IOException e) {
-                    Logging.recordException(e);
-                }
-            }
-            if(bis != null) {
-                try {
-                    bis.close();
-                } catch (IOException e) {
-                    Logging.recordException(e);
-                }
-            }
+        } catch(NullPointerException e) {
+            throw new IllegalStateException("Unable to open input or output stream from uri " + copyFrom + " to uri " + copyTo);
         }
     }
 
@@ -920,7 +824,7 @@ public class IOUtils {
 
         try(ParcelFileDescriptor pfdOut = context.getContentResolver().openFileDescriptor(toUri,"rwt")) {
             FileDescriptor fdOut = pfdOut.getFileDescriptor();
-            try(FileChannel fcOut = new FileInputStream(fdOut).getChannel(); FileChannel fcIn = new FileInputStream(tmpFile).getChannel()) {
+            try(FileChannel fcOut = new FileOutputStream(fdOut).getChannel(); FileChannel fcIn = new FileInputStream(tmpFile).getChannel()) {
                 fcOut.transferFrom(fcIn, 0, fcIn.size());
             }
         } catch (FileNotFoundException e) {
@@ -944,19 +848,19 @@ public class IOUtils {
         }
 
         // Maybe was shared and isn't available as a document file. Open and use a file descriptor.
-        ParcelFileDescriptor fd = null;
+        ParcelFileDescriptor pfd = null;
         try {
-            fd = context.getContentResolver().openFileDescriptor(uri, "r");
-            if(fd != null) {
-                return fd.getStatSize();
+            pfd = context.getContentResolver().openFileDescriptor(uri, "r");
+            if(pfd != null) {
+                return pfd.getStatSize();
             }
             return -1;
         } catch (FileNotFoundException e) {
             return -1;
         } finally {
-            if(fd != null) {
+            if(pfd != null) {
                 try {
-                    fd.close();
+                    pfd.close();
                 } catch (IOException e) {
                     Logging.recordException(e);
                 }
@@ -965,8 +869,8 @@ public class IOUtils {
     }
 
     public static long getLastModifiedTime(@NonNull Context context, @NonNull Uri uri) {
-        if(uri.getScheme().equals("file")) {
-            File f = new File(uri.getPath());
+        if("file".equals(uri.getScheme())) {
+            File f = new File(Objects.requireNonNull(uri.getPath()));
             return f.lastModified();
         }
         try (Cursor c = context.getContentResolver().query(uri, null, null, null, null)) {

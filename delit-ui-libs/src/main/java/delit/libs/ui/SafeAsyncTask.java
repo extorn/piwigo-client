@@ -109,4 +109,6 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
             throw e;
         }
     }
+
+
 }

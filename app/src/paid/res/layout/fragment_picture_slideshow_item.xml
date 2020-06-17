@@ -151,8 +151,6 @@
             <CheckBox
                 android:id="@+id/slideshow_image_favorite"
                 style="?checkboxFavoriteAccentedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_below="@+id/slideshow_image_average_ratingBar"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="16dp"

@@ -31,6 +31,7 @@ import static android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM;
 public class CompressionAudioSink implements AudioSink {
     private static final long ENCODER_CODEC_INPUT_TIMEOUT_IN_MS = 10000;
     private static final long ENCODER_CODEC_OUTPUT_TIMEOUT_IN_MS = 200;
+    public static final String SUCCESS_ERROR_CODE = "1234567890";
     private final ExoPlayerCompression.AudioCompressionParameters compressionSettings;
 
     private static final boolean VERBOSE_LOGGING = true;
@@ -222,8 +223,11 @@ public class CompressionAudioSink implements AudioSink {
     @Override
     public void playToEndOfStream() throws WriteException {
         if(isEnded()) {
-            if(VERBOSE_LOGGING) {
-                Log.d(TAG, "Renderer is still running after ending - very odd");
+            if(mediaMuxerControl.isFinished()) {
+                if(VERBOSE_LOGGING) {
+                    Log.d(TAG, "Renderer is still running after ending - terminating by throwing exception");
+                    throw new RuntimeException(SUCCESS_ERROR_CODE);
+                }
             }
             return;
         }

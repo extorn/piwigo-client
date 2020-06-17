@@ -71,6 +71,11 @@ import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.FileSelectActivity;
+import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
@@ -666,5 +671,59 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             //exit the app.
             EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(BackgroundUploadThreadTerminatedEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
+        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_stopped));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(BackgroundUploadThreadStartedEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
+        getUiHelper().showShortMsg(R.string.alert_auto_upload_service_started);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(BackgroundUploadStartedEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
+        String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(prefs, getApplicationContext());
+        if(event.isJobBeingRerun()) {
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_restarted, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
+        } else {
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_started, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(BackgroundUploadStoppedEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
+        String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(prefs, getApplicationContext());
+        if(event.getUploadJob().isFinished()) {
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_success, uploadingToServer));
+        } else {
+            if(event.getUploadJob().getFilesNotYetUploaded(this).size() < event.getUploadJob().getFilesForUpload().size()) {
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_partial_success, uploadingToServer));
+            } else {
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_failure, uploadingToServer));
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(BackgroundUploadThreadCheckingForTasksEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
+        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_checking_for_tasks));
     }
 }

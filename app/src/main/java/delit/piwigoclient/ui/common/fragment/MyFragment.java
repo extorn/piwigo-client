@@ -197,8 +197,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     }
 
     protected void updatePageTitle() {
-        ToolbarEvent event = new ToolbarEvent();
-        event.setActivity(getActivity());
+        ToolbarEvent event = new ToolbarEvent(getActivity());
         event.setTitle(buildPageHeading());
         EventBus.getDefault().post(event);
     }

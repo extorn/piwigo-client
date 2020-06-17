@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.events.trackable;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 
@@ -58,10 +57,10 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
         return selectedFolderItems;
     }
 
-    public ArrayList<DocumentFile> getSelectedFolderItemsAsFiles(Context context) {
+    public ArrayList<DocumentFile> getSelectedFolderItemsAsFiles() {
         ArrayList<DocumentFile> selectedFiles = new ArrayList<>(selectedFolderItems.size());
         for (FolderItemRecyclerViewAdapter.FolderItem item : selectedFolderItems) {
-            selectedFiles.add(item.getDocumentFile(context));
+            selectedFiles.add(item.getDocumentFile());
         }
         return selectedFiles;
     }
