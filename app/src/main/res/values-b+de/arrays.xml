@@ -17,6 +17,7 @@
         <item>auf dem Bildschirm zentrieren</item>
     </string-array>
     <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0bps ( --X )</item>
         <item>sehr niedrig (0,025 b/Pixel*Frame)</item>
         <item>niedriger (0,05 b/Pixel*Frame)</item>
         <item>niedrig (0,1 b/Pixel*Frame)</item>

@@ -26,6 +26,7 @@
         <EditText
             android:id="@+id/createGallery_parentGallery"
             tools:text="some gallery name"
+            android:inputType="none"
             android:importantForAutofill="no"
             style="?editableFieldText"/>
 

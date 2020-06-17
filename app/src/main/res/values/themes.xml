@@ -29,13 +29,13 @@
         <item name="colorControlHighlight">@color/ripple_light</item>
     </style>
 
+    <style name="Theme.App.Base" parent="Theme.App.Core">
+        <!-- allow extension in later versions -->
+    </style>
 
     <!-- this defines how things are laid out -->
-    <style name="Theme.App.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.App.Core" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
-
-        <!-- needed for older versions (pre lollipop - don't know why - it's inferring that the Light theme is in use) -->
-        <item name="android:colorEdgeEffect">?attr/colorSecondary</item>
         <item name="colorAccent">?colorSecondary</item>
         <item name="scrimBackground">@color/color_scrim_light</item>  <!-- what uses this? its material -->
         <item name="scrimHeavy">@color/color_scrim_heavy</item>

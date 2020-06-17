@@ -159,7 +159,7 @@
     <string name="preference_gallery_clearMemoryCache_summary">Удаляет все изображения, кэшированные в памяти</string>
     <string name="preference_gallery_clearVideoCache_title">Очистить кэш видео</string>
     <string name="preference_gallery_clearVideoCache_summary">Удаляет все видео, кэшированные на диск</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Удаляет все% 1 $ .2fMB видео, кэшированных на диск</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Удаляет все %1$.2fMB видео, кэшированных на диск</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Максимальный возраст последних предметов (дней)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d дней</string>
     <!-- Data Upload page -->

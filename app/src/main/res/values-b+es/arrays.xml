@@ -2,6 +2,7 @@
 <resources>
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0bps ( --X )</item>
         <item>muy bajo (0,025 b / píxeles * fotograma)</item>
         <item>inferior (0,05 b / píxeles * fotograma)</item>
         <item>bajo (0.1 b / píxeles * fotograma)</item>
@@ -133,11 +134,6 @@
              - Envíenme un correo electrónico (hay un enlace de correo electrónico en la barra de navegación) para solicitar las cosas que necesita o desea que esta aplicación aún no haga "</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <!--
-        Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
-        Add option to show password field contents in preferences (new preference type?)
-        investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
-        -->
         <item>1.4.0.65</item>
         <item>"Cambios:
              - Se corrigió el problema del tema restante para los diálogos

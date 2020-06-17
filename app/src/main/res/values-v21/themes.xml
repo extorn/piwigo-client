@@ -11,6 +11,11 @@
         <item name="android:windowTitleBackgroundStyle">@style/App.WindowTitleBackground.Material</item>
     </style>
 
+    <style name="Theme.App.Base" parent="Theme.App.Core">
+        <!-- allow extension in later versions -->
+        <item name="android:colorEdgeEffect">?attr/colorSecondary</item>
+    </style>
+
     <style name="App.WindowTitleBackground.Material" parent="Base.DialogWindowTitleBackground.AppCompat">
 
     </style>
