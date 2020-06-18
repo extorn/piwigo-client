@@ -511,8 +511,8 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="folder_extstorage">Stockage externe</string>
     <string name="folder_extstorage_device_pattern">Stockage externe %1$d</string>
     <string name="folder_default">Par défaut</string>
-    <string name="button_all">Tout cocher</string>
-    <string name="button_none">Désélectionner tout</string>
+    <string name="button_all">Afficher tout</string>
+    <string name="button_none">Cacher tout</string>
     <string name="button_reset">Remise à zéro</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">La surveillance du réseau devrait être autorisée pour une utilisation efficace du WIFI en téléchargeant seulement</string>
     <string name="inaccessible_remote_folder">** privé **</string>

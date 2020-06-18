@@ -508,8 +508,8 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="folder_extstorage">Внешнее хранилище</string>
     <string name="folder_extstorage_device_pattern">Внешнее хранилище %1$d</string>
     <string name="folder_default">По умолчанию</string>
-    <string name="button_all">Проверить все</string>
-    <string name="button_none">Снять все</string>
+    <string name="button_all">Показать все</string>
+    <string name="button_none">Скрыть все</string>
     <string name="button_reset">Сброс</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Мониторинг сети должен быть разрешен для эффективного использования только загрузки WIFI</string>
     <string name="inaccessible_remote_folder">** частный **</string>

@@ -375,8 +375,8 @@
     <string name="folder_extstorage">Almacenamiento externo</string>
     <string name="folder_extstorage_device_pattern">Almacenamiento externo%1$d</string>
     <string name="folder_default">Defecto</string>
-    <string name="button_all">Comprobar todo</string>
-    <string name="button_none">Desmarcar todo</string>
+    <string name="button_all">Mostrar todo</string>
+    <string name="button_none">Ocultar todo</string>
     <string name="button_reset">Reiniciar</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Se debe permitir el monitoreo de la red para un uso eficiente de la carga de WIFI solamente</string>
     <string name="inaccessible_remote_folder">** privado **</string>

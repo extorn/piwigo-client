@@ -506,8 +506,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="folder_extstorage">Externer Speicher</string>
     <string name="folder_extstorage_device_pattern">Externer Speicher %1$d</string>
     <string name="folder_default">Standard</string>
-    <string name="button_all">Alles prüfen</string>
-    <string name="button_none">Keine prüfen</string>
+    <string name="button_all">Zeige alles</string>
+    <string name="button_none">Versteck alles</string>
     <string name="button_reset">Zurücksetzen</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Netzwerküberwachung sollte nur für die effiziente Nutzung von WIFI erlaubt sein.</string>
     <string name="inaccessible_remote_folder">** privat **</string>

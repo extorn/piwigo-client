@@ -378,8 +378,8 @@
     <string name="folder_extstorage">外部存储</string>
     <string name="folder_extstorage_device_pattern">外部存储%1$d</string>
     <string name="folder_default">默认</string>
-    <string name="button_all">选择所有</string>
-    <string name="button_none">取消所有</string>
+    <string name="button_all">显示所有</string>
+    <string name="button_none">全部藏起来</string>
     <string name="button_reset">重启</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">应允许网络监控，以便有效使用仅上传的WIFI</string>
     <string name="inaccessible_remote_folder">** 私人的 **</string>

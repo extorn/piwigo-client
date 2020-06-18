@@ -237,6 +237,7 @@
     </style>
 
     <style name="App.Widget.MaterialComponents.AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.PrimarySurface">
+        <item name="android:theme">@style/Theme.App</item>
     </style>
 
     <style name="App.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
