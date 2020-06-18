@@ -119,14 +119,27 @@ public class NavBarHeaderView extends FrameLayout {
         currentUsernameField = content.findViewById(R.id.current_user_name);
         currentServerField = content.findViewById(R.id.current_server);
         //TODO is this next line really needed?
-        content.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.side_nav_bar));
+        content.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.side_nav_bar));
 
         updateServerConnectionDetails();
     }
 
     @Override
-    public Parcelable onSaveInstanceState() {
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
         EventBus.getDefault().unregister(this);
+        super.onDetachedFromWindow();
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
         uiHelper.deregisterFromActiveServiceCalls();
         BaseSavedState outState = (BaseSavedState) super.onSaveInstanceState();
         SavedState myState = new SavedState(outState);
@@ -140,36 +153,6 @@ public class NavBarHeaderView extends FrameLayout {
         SavedState myState = (SavedState) savedState;
         uiHelper.onRestoreSavedInstanceState(myState.uiHelperState);
         super.onRestoreInstanceState(((SavedState) savedState).getSuperState());
-    }
-
-    private static class SavedState extends BaseSavedState {
-        Bundle uiHelperState;
-
-        SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        SavedState(Parcel in) {
-            super(in);
-            uiHelperState = in.readBundle();
-        }
-
-        @Override
-        public void writeToParcel(Parcel out, int flags) {
-            super.writeToParcel(out, flags);
-            out.writeBundle(uiHelperState);
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
-
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
     }
 
     private void sendEmail(String email) {
@@ -229,6 +212,35 @@ public class NavBarHeaderView extends FrameLayout {
             runHttpClientCleanup(connectionPrefs);
         } else {
             new OnHttpConnectionsCleanedAction().onSuccess(uiHelper, null);
+        }
+    }
+
+    private static class SavedState extends BaseSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
+        Bundle uiHelperState;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        SavedState(Parcel in) {
+            super(in);
+            uiHelperState = in.readBundle();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeBundle(uiHelperState);
         }
     }
 

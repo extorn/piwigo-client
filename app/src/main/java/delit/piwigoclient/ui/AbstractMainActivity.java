@@ -99,7 +99,6 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
-import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
@@ -1133,12 +1132,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             appBar.setExpanded(false, event.getTitle()!= null);
         }
         appBar.setEnabled(event.getTitle()!= null);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(ThemeAlteredEvent event) {
-        MainActivityDrawerNavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.updateTheme();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
