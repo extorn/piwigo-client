@@ -155,9 +155,7 @@ public abstract class UIHelper<T> {
             closeAllDialogs();
         } catch (RuntimeException e) {
             Logging.recordException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "unable to flush old dialogs", e);
-            }
+            Logging.log(Log.ERROR, TAG, "unable to flush old dialogs");
         }
         this.appContext = newAppCtx;
         setupDialogBoxes();

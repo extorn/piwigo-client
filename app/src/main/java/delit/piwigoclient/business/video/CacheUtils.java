@@ -76,7 +76,7 @@ public class CacheUtils {
         if (deleteQuietly(cacheDir)) {
             cacheDir.mkdir();
         } else {
-            Log.e(TAG, "Error deleting video cache. Delete failed");
+            Logging.log(Log.ERROR, TAG, "Error deleting video cache. Delete failed");
         }
 //        for(File f : cacheDir.listFiles()) {
 //            if(f.isDirectory()) {
@@ -97,7 +97,7 @@ public class CacheUtils {
                     Logging.log(Log.ERROR, TAG, "Error deleting corrupt file : " + f.getAbsolutePath());
                 }
             }
-            Log.e(TAG, "Unable to load cached content from file " + f);
+            Logging.log(Log.ERROR, TAG, "Unable to load cached content from file " + f);
         }
         return cachedContent;
     }
@@ -165,11 +165,7 @@ public class CacheUtils {
             if (!deleted) {
                 // something went wrong...
                 //TODO think of some thing to do in this instance...
-                if (BuildConfig.DEBUG) {
-                    Log.e("VideoCacheUtils", "Error, Unable to delete cache item");
-                } else {
-                    Logging.log(Log.ERROR, "VideoCacheUtils", "Error, Unable to delete cache item");
-                }
+                Logging.log(Log.ERROR, "VideoCacheUtils", "Error, Unable to delete cache item");
             }
         }
 

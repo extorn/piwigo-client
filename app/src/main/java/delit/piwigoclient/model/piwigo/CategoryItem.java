@@ -244,9 +244,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
 
     private CategoryItem locateChildAlbum(List<Long> parentageChain, int idx) {
         if (parentageChain.size() <= idx) {
-            if (BuildConfig.DEBUG) {
-                Log.e("catItem", "Idx out of bounds for parentage chain : " + Arrays.toString(parentageChain.toArray()) + " idx : " + idx);
-            }
+            Logging.log(Log.ERROR, "catItem", "Idx out of bounds for parentage chain : " + Arrays.toString(parentageChain.toArray()) + " idx : " + idx);
             return null;
         }
         if (getId() != parentageChain.get(idx)) {

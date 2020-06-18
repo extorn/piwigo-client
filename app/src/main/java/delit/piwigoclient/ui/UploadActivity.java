@@ -559,7 +559,7 @@ public class UploadActivity extends MyActivity {
             return;
         }
         if(toolbar == null) {
-            Log.e(TAG, "Cannot set title. Toolbar not initialised yet");
+            Logging.log(Log.ERROR, TAG, "Cannot set title. Toolbar not initialised yet");
             return;
         }
         toolbar.setTitle(event.getTitle());
@@ -601,7 +601,6 @@ public class UploadActivity extends MyActivity {
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
                 if (((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails() != null) {
-                    Log.e("UploadActivity", "Retrieved user login success response");
                     getParent().showUploadFragment(((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
                 } else {
                     getParent().createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);

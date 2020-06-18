@@ -608,12 +608,12 @@ public class UploadJob implements Parcelable {
     }
 
     public boolean isVideo(@NonNull Uri file) {
-        String mimeType = getContext().getContentResolver().getType(file);
+        String mimeType = IOUtils.getMimeType(getContext(), file);
         return MimeTypeFilter.matches(mimeType,"video/*");
     }
 
     public boolean isPhoto(@NonNull Uri file) {
-        String mimeType = getContext().getContentResolver().getType(file);
+        String mimeType = IOUtils.getMimeType(getContext(), file);
         return MimeTypeFilter.matches(mimeType,"image/*");
     }
 

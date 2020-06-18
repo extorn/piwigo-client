@@ -123,15 +123,11 @@ public class LicenseChecker implements ServiceConnection {
             throw new RuntimeException(e);
         } catch (Base64DecoderException e) {
             Logging.recordException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Could not decode from Base64.");
-            }
+            Logging.log(Log.ERROR, TAG, "Could not decode from Base64.");
             throw new IllegalArgumentException(e);
         } catch (InvalidKeySpecException e) {
             Logging.recordException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Invalid key specification.");
-            }
+            Logging.log(Log.ERROR, TAG, "Invalid key specification.");
             throw new IllegalArgumentException(e);
         }
 

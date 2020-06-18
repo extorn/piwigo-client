@@ -107,9 +107,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<AlbumSel
             }
         } catch (ClassCastException e) {
             Logging.recordException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e("AvailableAlbumsListAd", "You must supply a resource ID for a TextView");
-            }
+            Logging.log(Log.ERROR, "AvailableAlbumsListAd", "You must supply a resource ID for a TextView");
             throw new IllegalStateException(
                     "AvailableAlbumsListAdapter requires the resource ID to be a TextView", e);
         }

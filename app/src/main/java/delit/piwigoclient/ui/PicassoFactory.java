@@ -156,13 +156,6 @@ public class PicassoFactory {
         public boolean canHandleRequest(Request data) {
             MimeTypeMap map = MimeTypeMap.getSingleton();
             String mimeType = IOUtils.getMimeType(context, data.uri);
-            if(mimeType == null) {
-                String ext = MimeTypeMap.getFileExtensionFromUrl(data.uri.getPath());
-                if (ext.length() == 0) {
-                    ext = IOUtils.getFileExt(context, data.uri);
-                }
-                mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-            }
             return MimeTypeFilter.matches(mimeType, "video/*");
         }
 

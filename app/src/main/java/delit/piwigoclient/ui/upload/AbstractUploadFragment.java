@@ -831,7 +831,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if ((sessionDetails == null || (!sessionDetails.isAdminUser() && !sessionDetails.isUseCommunityPlugin())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getParentFragmentManager().popBackStack();
-            Log.e(TAG, "Unable to view upload fragment - removing from activity");
+            Logging.log(Log.ERROR, TAG, "Unable to view upload fragment - removing from activity");
         }
     }
 

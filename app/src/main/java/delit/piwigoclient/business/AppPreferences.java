@@ -9,6 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.core.os.ConfigurationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
+import java.io.File;
+
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 
 public class AppPreferences {
@@ -20,7 +23,13 @@ public class AppPreferences {
 
         String folder = prefs.getString(context.getString(R.string.preference_app_default_download_folder_key), null);
         if(folder != null) {
-            DocumentFile docFile = DocumentFile.fromTreeUri(context, Uri.parse(folder));
+            Uri uri = Uri.parse(folder);
+            DocumentFile docFile;
+            if("file".equals(uri.getScheme())) {
+                docFile = DocumentFile.fromFile(new File(uri.getPath()));
+            } else {
+                docFile = DocumentFile.fromTreeUri(context, uri);
+            }
             if(docFile != null && docFile.exists()) {
                 return docFile;
             }

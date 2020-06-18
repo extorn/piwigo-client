@@ -193,10 +193,8 @@ Logging.recordException(e);
             // Check for presence of HEADER. This serves as a final integrity check, for cases
             // where the block size is correct during decryption.
             if (!sane) {
-                if(BuildConfig.DEBUG) {
-                    Log.w(TAG, "Unable to decrypt - Header not found (invalid data or key)" + ":" +
+                Logging.log(Log.WARN, TAG, "Unable to decrypt - Header not found (invalid data or key)" + ":" +
                             obfuscated + "\n" + HEADER + key + " not found in " + new String(decrypted, UTF8));
-                }
                 throw new ValidationException("Unable to decrypt - HEADER not found (invalid data or key)" + ":" + obfuscated);
             }
 
