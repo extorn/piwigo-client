@@ -406,8 +406,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getRemoteUri()));
                     DocumentFile destFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
                     IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
-                    fileDetail.setDownloadedFile(destFile.getUri());
-                    notifyUserFileDownloadComplete(getUiHelper(), destFile.getUri());
+                    Uri mediaStoreUri = IOUtils.addFileToMediaStore(this, destFile.getUri());
+                    fileDetail.setDownloadedFile(mediaStoreUri);
+                    notifyUserFileDownloadComplete(getUiHelper(), mediaStoreUri);
                     processDownloadEvent(event);
                 } catch (IOException e) {
                     Logging.recordException(e);
@@ -482,10 +483,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     public void onFileDownloadEventProcessed(DownloadFileRequestEvent event) {
         //DownloadFileRequestEvent event =
         removeActionDownloadEvent(); // we've got the event, so ignore the return
-        for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
-            // add the file details to the media store :-)
-            IOUtils.addFileToMediaStore(this, fileDetail.getDownloadedFile());
-        }
         if (event.isShareDownloadedWithAppSelector()) {
             Set<Uri> destinationFiles = new HashSet<>(event.getFileDetails().size());
             for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
@@ -879,9 +876,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-            downloadEvent.markDownloaded(response.getUrl(), response.getLocalFileUri());
-            uiHelper.getParent().notifyUserFileDownloadComplete(uiHelper, response.getLocalFileUri());
+            Uri mediaStoreUri = IOUtils.addFileToMediaStore(uiHelper.getAppContext(), response.getLocalFileUri());
+            downloadEvent.markDownloaded(response.getUrl(), mediaStoreUri);
+            uiHelper.getParent().notifyUserFileDownloadComplete(uiHelper, mediaStoreUri);
             uiHelper.getParent().processDownloadEvent(downloadEvent);
+
         }
 
 

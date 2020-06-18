@@ -348,8 +348,28 @@ public class IOUtils {
         return fileExt;
     }
 
-    public static String getMimeType(@NonNull Context context, Uri uri) {
-        return context.getContentResolver().getType(uri);
+    /**
+     * Bomb proof get MimeType. (I hope)
+     * @param context
+     * @param uri any uri to a resource (file or otherwise)
+     * @return mime type for the uri
+     */
+    public static @Nullable String getMimeType(@NonNull Context context, @NonNull Uri uri) {
+        String mimeType = context.getContentResolver().getType(uri);
+        if(mimeType == null) {
+            String fileExt = null;
+            if("file".equals(uri.getScheme())) {
+                String path = uri.getPath();
+                if(path != null) {
+                    fileExt = IOUtils.getFileExt(new File(path).getName());
+                }
+            }
+            if(fileExt == null) {
+                fileExt = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+            }
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+        }
+        return mimeType;
     }
 
     public static String bytesToNormalizedText(long sizeInBytes) {
@@ -905,11 +925,11 @@ public class IOUtils {
         return 0 < context.getContentResolver().delete(uri, null, null);
     }
 
-    public static void addFileToMediaStore(Context context, Uri fileUri) {
+    public static Uri addFileToMediaStore(Context context, Uri fileUri) {
         ContentValues values = new ContentValues();
         if(!"file".equals(fileUri.getScheme())) {
             // Only raw files can be added (the others either already are, or aren't local).
-            return;
+            return fileUri;
         }
         String mimeType = IOUtils.getMimeType(context, fileUri);
         boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
@@ -930,11 +950,12 @@ public class IOUtils {
             try {
                 Uri uri = context.getContentResolver().insert(mediaStoreUri, values);
                 context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                return uri;
             } catch(IllegalArgumentException e) {
                 // Ignore as its probably that it just isn't a raw file
 
             }
-
         }
+        return fileUri;
     }
 }
