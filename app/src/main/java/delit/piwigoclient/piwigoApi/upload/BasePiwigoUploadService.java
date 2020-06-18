@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -443,7 +442,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             notificationBuilder.setCategory("service");
         } else {
             notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black_24dp);
-            notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
+            notificationBuilder.setCategory(NotificationCompat.CATEGORY_SERVICE);
         }
         notificationBuilder.setAutoCancel(true);
 //        .setTicker(getText(R.string.ticker_text))
@@ -452,7 +451,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createNotificationChannelIfNeeded() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
         int importance = NotificationManager.IMPORTANCE_LOW; // no noise for low.
         if (channel == null || channel.getImportance() != importance) {

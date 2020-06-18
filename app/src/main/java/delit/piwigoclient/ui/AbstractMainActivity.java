@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
@@ -125,6 +124,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
+    private static final String NOTIFICATION_GROUP_DOWNLOADS = "Downloads";
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
@@ -394,7 +394,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     private DocumentFile getDestinationFile(@NonNull String mimeType, @NonNull String outputFilename) {
-        return AppPreferences.getAppDownloadFolder(getSharedPrefs(), this).createFile(mimeType, outputFilename);
+        return AppPreferences.getAppDownloadFolder(getSharedPrefs(), this).createFile(mimeType, IOUtils.getFileNameWithoutExt(outputFilename));
     }
 
     private void processDownloadEvent(DownloadFileRequestEvent event) {
@@ -435,50 +435,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //        super.onDetach();
 //    }
 //
-//    private static class DownloadAction implements Parcelable {
-//        private long activeDownloadActionId;
-//        private boolean shareDownloadedResource;
-//
-//        public DownloadAction(long activeDownloadActionId, boolean shareDownloadedResource) {
-//            this.activeDownloadActionId = activeDownloadActionId;
-//            this.shareDownloadedResource = shareDownloadedResource;
-//        }
-//
-//        public DownloadAction(Parcel in) {
-//            activeDownloadActionId = in.readLong();
-//            shareDownloadedResource = ParcelUtils.readBool(in);
-//        }
-//
-//        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
-//            public DownloadAction createFromParcel(Parcel in) {
-//                return new DownloadAction(in);
-//            }
-//
-//            public DownloadAction[] newArray(int size) {
-//                return new DownloadAction[size];
-//            }
-//        };
-//
-//        @Override
-//        public int describeContents() {
-//            return 0;
-//        }
-//
-//        public long getActiveDownloadActionId() {
-//            return activeDownloadActionId;
-//        }
-//
-//        public boolean isShareDownloadedResource() {
-//            return shareDownloadedResource;
-//        }
-//
-//        @Override
-//        public void writeToParcel(Parcel dest, int flags) {
-//            dest.writeLong(activeDownloadActionId);
-//            ParcelUtils.writeBool(dest, shareDownloadedResource);
-//        }
-//    }
-
 
     public void onFileDownloadEventProcessed(DownloadFileRequestEvent event) {
         //DownloadFileRequestEvent event =
@@ -489,6 +445,19 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 destinationFiles.add(fileDetail.getDownloadedFile());
             }
             shareFilesWithOtherApps(this, destinationFiles);
+        } else {
+            // Don't do this because it will clear the individual notifications.
+//            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, getUiHelper().getDefaultNotificationChannelId())
+//                    //                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+//                    .setSmallIcon(R.drawable.ic_star_yellow_24dp)
+//                    .setCategory(NotificationCompat.CATEGORY_EVENT)
+//                    .setContentTitle(this.getString(R.string.notification_download_event))
+//                    .setContentText(getString(R.string.alert_image_download_complete_message))
+//                    .setGroup(NOTIFICATION_GROUP_DOWNLOADS)
+//                    .setGroupSummary(true)
+//                    .setAutoCancel(true);
+//            getUiHelper().showNotification(TAG, DownloadTarget.notificationId.getAndIncrement(), mBuilder.build());
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
         }
     }
 
@@ -605,7 +574,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     private static class DownloadTarget implements Target {
 
-        private static final AtomicInteger notificationId = new AtomicInteger(100);
+        protected static final AtomicInteger notificationId = new AtomicInteger(100);
 
         private final UIHelper uiHelper;
         private final Uri downloadedFile;
@@ -656,21 +625,20 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     notificationIntent, 0);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), uiHelper.getDefaultNotificationChannelId())
-                    //                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setCategory(NotificationCompat.CATEGORY_EVENT)
                     .setLargeIcon(bitmap)
                     .setContentTitle(getContext().getString(R.string.notification_download_event))
                     .setContentText(IOUtils.getFilename(getContext(), downloadedFile))
                     .setContentIntent(pendingIntent)
-                    .setGroup("Downloads")
+                    .setGroup(NOTIFICATION_GROUP_DOWNLOADS)
+                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
                     .setAutoCancel(true);
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 // this is not a vector graphic
                 mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
-                mBuilder.setCategory("event");
             } else {
                 mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-                mBuilder.setCategory(Notification.CATEGORY_EVENT);
             }
 
             uiHelper.showNotification(TAG, notificationId.getAndIncrement(), mBuilder.build());

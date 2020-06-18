@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.common;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ClipData;
@@ -35,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
@@ -122,9 +122,9 @@ public abstract class UIHelper<T> {
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
     private int permissionsNeededReason;
-    private NotificationManager notificationManager;
-    ProgressIndicator progressIndicator;
-    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap();
+    private NotificationManagerCompat notificationManager;
+    private ProgressIndicator progressIndicator;
+    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap<>();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this.appContext = context.getApplicationContext();
@@ -163,14 +163,21 @@ public abstract class UIHelper<T> {
     }
 
     private void setupNotificationsManager() {
-        notificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = NotificationManagerCompat.from(getAppContext());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String name = appContext.getString(R.string.app_name);
-            NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
+            NotificationChannel channel = notificationManager.getNotificationChannel(getLowImportanceNotificationChannelId());
             int importance = NotificationManager.IMPORTANCE_LOW; // no noise for low.
             if (channel == null || channel.getImportance() != importance) {
-                channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
+                channel = new NotificationChannel(getLowImportanceNotificationChannelId(), name, importance);
+                notificationManager.createNotificationChannel(channel);
+            }
+
+            channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
+            importance = NotificationManager.IMPORTANCE_DEFAULT; // noise
+            if (channel == null || channel.getImportance() != importance) {
+                channel = new NotificationChannel(getLowImportanceNotificationChannelId(), name, importance);
                 notificationManager.createNotificationChannel(channel);
             }
         }
@@ -185,12 +192,16 @@ public abstract class UIHelper<T> {
         notificationManager.cancel(source, notificationId);
     }
 
-    public void showNotification(String source, int notificationId, Notification notification) {
+    public void showNotification(String source, int notificationId, android.app.Notification notification) {
         // Builds the notification and issues it.
         if(BuildConfig.DEBUG) {
             Log.d(TAG, "Posting notification : " + notificationId + " " + notification);
         }
         notificationManager.notify(source, notificationId, notification);
+    }
+
+    public String getLowImportanceNotificationChannelId() {
+        return appContext.getString(R.string.app_name) + "_Misc_Low";
     }
 
     public String getDefaultNotificationChannelId() {
@@ -309,23 +320,25 @@ public abstract class UIHelper<T> {
                     return false;
                 }
                 ClipboardManager clipboardService = (ClipboardManager) v.getContext().getSystemService(CLIPBOARD_SERVICE);
-                clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
-                dismissHandled = true;
-                snackbar.dismiss();
-                CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(v, R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
-                snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                    @Override
-                    public void onViewAttachedToWindow(View v) {
-                        //do nothing.
-                    }
+                if(clipboardService != null) {
+                    clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
+                    dismissHandled = true;
+                    snackbar.dismiss();
+                    CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(v, R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
+                    snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                        @Override
+                        public void onViewAttachedToWindow(View v) {
+                            //do nothing.
+                        }
 
-                    @Override
-                    public void onViewDetachedFromWindow(View v) {
-                        toastShowing = false;
-                        showQueuedMsg();
-                    }
-                });
-                snackbarNotification.show();
+                        @Override
+                        public void onViewDetachedFromWindow(View v) {
+                            toastShowing = false;
+                            showQueuedMsg();
+                        }
+                    });
+                    snackbarNotification.show();
+                }
                 return false;
             }
         });

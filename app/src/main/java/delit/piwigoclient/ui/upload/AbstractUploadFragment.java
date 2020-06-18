@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.upload;
 
 import android.Manifest;
-import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -1183,7 +1182,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     private void notifyUserUploadStatus(Context ctx, String message) {
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, getUiHelper().getDefaultNotificationChannelId())
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, getUiHelper().getLowImportanceNotificationChannelId())
                 .setContentTitle(ctx.getString(R.string.notification_upload_event))
                 .setContentText(message)
                 .setAutoCancel(true);
@@ -1194,7 +1193,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             mBuilder.setCategory("progress");
         } else {
             mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-            mBuilder.setCategory(Notification.CATEGORY_PROGRESS);
+            mBuilder.setCategory(NotificationCompat.CATEGORY_PROGRESS);
         }
 
 

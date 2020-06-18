@@ -264,18 +264,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
 
 
-        if(isOnInitialCreate()) {
-            albumAccessRightsField.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    if (top != oldTop) {
-                        NestedScrollView scrollview = v.getRootView().findViewById(R.id.group_edit_scrollview);
-                        scrollview.fullScroll(View.FOCUS_UP);
-                        v.removeOnLayoutChangeListener(this);
-                    }
-                }
-            });
-        }
+        albumAccessRightsField.addOnLayoutChangeListener(new LayoutChangeListener());
 
         return v;
     }
@@ -710,6 +699,17 @@ public class GroupFragment extends MyFragment<GroupFragment> {
                 getParent().onGroupPermissionsRemoved((GroupPermissionsRemovedResponseHandler.PiwigoGroupPermissionsRemovedResponse) response);
             }
             //TODO check I'm handling all data flow streams for adding and updating an existing group... including sending that refreshed gorup back to previous groups list screen.
+        }
+    }
+
+    private static class LayoutChangeListener implements View.OnLayoutChangeListener {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            if (top != oldTop) {
+                NestedScrollView scrollview = v.getRootView().findViewById(R.id.group_edit_scrollview);
+                scrollview.fullScroll(View.FOCUS_UP);
+                v.removeOnLayoutChangeListener(this);
+            }
         }
     }
 }

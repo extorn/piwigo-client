@@ -932,6 +932,33 @@ public class IOUtils {
             return fileUri;
         }
         String mimeType = IOUtils.getMimeType(context, fileUri);
+        Uri mediaStoreUri = IOUtils.selectExternalMediaStoreContentProviderUriForFile(mimeType);
+
+        if(mediaStoreUri != null) {
+            values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
+            values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
+            values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
+            try {
+                Uri uri = context.getContentResolver().insert(mediaStoreUri, values);
+                if(uri != null) {
+                    // let everyone know that the file has been added.
+                    context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                } else {
+                    uri = IOUtils.getMediaStoreUriForFile(mediaStoreUri, context, fileUri);
+                }
+                if(uri == null) {
+                    Logging.log(Log.ERROR, TAG, "MediaStore Uri is null for uri : " + fileUri);
+                }
+                return uri;
+            } catch(IllegalArgumentException e) {
+                Logging.recordException(e); // shouldn't ever occur, but, just in case.
+            }
+        }
+        return fileUri;
+    }
+
+    private static @Nullable Uri selectExternalMediaStoreContentProviderUriForFile(@Nullable String mimeType) {
+
         boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
         boolean isAudio = MimeTypeFilter.matches(mimeType, "audio/*");
         boolean isImage = MimeTypeFilter.matches(mimeType, "image/*");
@@ -943,19 +970,26 @@ public class IOUtils {
         } else if(isImage) {
             mediaStoreUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         }
-        if(mediaStoreUri != null) {
-            values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
-            values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
-            values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
-            try {
-                Uri uri = context.getContentResolver().insert(mediaStoreUri, values);
-                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
-                return uri;
-            } catch(IllegalArgumentException e) {
-                // Ignore as its probably that it just isn't a raw file
+        return mediaStoreUri;
+    }
 
+    /**
+     *
+     * @param mediaStoreUri mediastore to query (e.g. MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+     * @param context
+     * @param fileUri file uri to locate in the media store
+     * @return null if not present in the media store. (in which case it can be added).
+     */
+    private static @Nullable Uri getMediaStoreUriForFile(@NonNull Uri mediaStoreUri, @NonNull Context context, @NonNull Uri fileUri) {
+        String[] what = new String[]{ MediaStore.MediaColumns._ID};
+        String where = MediaStore.MediaColumns.DATA + "='"+fileUri.getPath()+ "'";
+        try(Cursor c = context.getContentResolver().query(mediaStoreUri, what ,where, null, null)) {
+            if(c != null) {
+                c.moveToFirst();
+                int id = c.getInt(c.getColumnIndex(MediaStore.Images.ImageColumns._ID));
+                return Uri.withAppendedPath(mediaStoreUri, String.valueOf(id));
             }
         }
-        return fileUri;
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 
@@ -192,8 +193,10 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         if (filenameRoot == null) {
             filenameRoot = filenameInUrl.substring(0, filenameInUrl.lastIndexOf('.'));
         } else {
-            if (filenameRoot.endsWith(ext)) {
-                filenameRoot = resourceName.substring(0, resourceName.lastIndexOf(ext));
+            // do this in a while loop to strip multiple extensions off due to faulty uploads!
+            filenameRoot = resourceName;
+            while(filenameRoot.endsWith(ext)) {
+                filenameRoot = filenameRoot.substring(0, filenameRoot.lastIndexOf(ext));
             }
         }
         String filePiwigoSizeName = selectedItem.getName();

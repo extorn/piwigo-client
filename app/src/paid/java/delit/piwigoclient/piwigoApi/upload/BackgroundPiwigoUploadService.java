@@ -203,7 +203,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, CustomContentObserver> runningObservers, BackgroundPiwigoFileUploadResponseListener jobListener) {
-        updateNotificationText(getString(R.string.notification_text_background_upload_polling), false);
+        updateNotificationText(getString(R.string.notification_text_background_upload_polling), true);
         UploadJob unfinishedJob;
         do {
             // if there's an old incomplete job, try and finish that first.

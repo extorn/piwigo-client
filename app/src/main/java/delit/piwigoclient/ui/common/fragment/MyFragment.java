@@ -50,7 +50,6 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     private FragmentUIHelper<T> uiHelper;
     private String piwigoSessionToken;
     private String piwigoServerConnected;
-    private boolean onInitialCreate;
     private @StyleRes int theme = Resources.ID_NULL;
     private boolean coreComponentsInitialised;
 
@@ -76,7 +75,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        onInitialCreate = true;
+        initialiseCoreComponents(savedInstanceState);
         super.onCreate(savedInstanceState);
     }
 
@@ -166,12 +165,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Override
     public void onPause() {
         Logging.log(Log.VERBOSE,TAG, "onPause : " + getClass().getName());
-        onInitialCreate = false;
         super.onPause();
-    }
-
-    public boolean isOnInitialCreate() {
-        return onInitialCreate;
     }
 
     @Override
@@ -211,7 +205,6 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initialiseCoreComponents(savedInstanceState);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

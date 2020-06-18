@@ -401,18 +401,7 @@ public class UserFragment extends MyFragment<UserFragment> {
             }
         }
 
-        if(isOnInitialCreate()) {
-            albumPermissionsField.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    if (top != oldTop) {
-                        NestedScrollView scrollview = v.getRootView().findViewById(R.id.user_edit_scrollview);
-                        scrollview.fullScroll(View.FOCUS_UP);
-                        v.removeOnLayoutChangeListener(this);
-                    }
-                }
-            });
-        }
+        albumPermissionsField.addOnLayoutChangeListener(new LayoutChangeListener());
 
 
         return v;
@@ -867,6 +856,17 @@ public class UserFragment extends MyFragment<UserFragment> {
                 getParent().onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
             } else if (response instanceof GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) {
                 getParent().onGroupMembershipAlbumPermissionsRetrieved((GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) response);
+            }
+        }
+    }
+
+    private static class LayoutChangeListener implements View.OnLayoutChangeListener {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            if (top != oldTop) {
+                NestedScrollView scrollview = v.getRootView().findViewById(R.id.user_edit_scrollview);
+                scrollview.fullScroll(View.FOCUS_UP);
+                v.removeOnLayoutChangeListener(this);
             }
         }
     }
