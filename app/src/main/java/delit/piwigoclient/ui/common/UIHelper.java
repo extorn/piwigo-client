@@ -142,7 +142,15 @@ public abstract class UIHelper<T> {
         }
     }
 
+    /**
+     * Now I'm using app context here, this is pointless I think.
+     * @param context
+     */
     public void swapToNewContext(Context context) {
+        Context newAppCtx = context.getApplicationContext();
+        if(ObjectUtils.areEqual(appContext, newAppCtx)) {
+            return;
+        }
         try {
             closeAllDialogs();
         } catch (RuntimeException e) {
@@ -151,7 +159,7 @@ public abstract class UIHelper<T> {
                 Log.e(TAG, "unable to flush old dialogs", e);
             }
         }
-        this.appContext = context;
+        this.appContext = newAppCtx;
         setupDialogBoxes();
         setupNotificationsManager();
     }

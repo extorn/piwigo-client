@@ -3,7 +3,6 @@ package delit.piwigoclient.ui.common.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -182,10 +181,9 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         updatePageTitle();
 
         // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
-        if ((getFragmentManager() != null && getFragmentManager().isDestroyed()) || getActivity().isFinishing()) {
-            return;
+        if (getParentFragmentManager().isDestroyed() || getActivity() == null || getActivity().isFinishing()) {
+            return;//TODO this 'safety block' is probably obsolete.
         }
-        uiHelper.swapToNewContext(getContext());
         uiHelper.registerToActiveServiceCalls();
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();

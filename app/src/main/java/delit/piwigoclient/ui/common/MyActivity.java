@@ -332,22 +332,11 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             if (googleApi.isUserResolvableError(result)) {
                 Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
                 d.setOnDismissListener(dialog -> {
-                    if (!BuildConfig.DEBUG) {
-                        finish();
-                    }
+                    finish();
                 });
                 d.show();
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<T>>(getUiHelper()) {
-                    private static final long serialVersionUID = 3716587979356224753L;
-
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                        if (!BuildConfig.DEBUG) {
-                            finish();
-                        }
-                    }
-                });
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ExitOnCloseAction<T>(getUiHelper()));
             }
         }
     }
@@ -459,12 +448,6 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         String language = getDesiredLanguage(context); // Helper method to get saved language from SharedPreferences
         Locale newLocale = new Locale(language);
         return DisplayUtils.updateContext(context, newLocale);
-    }
-
-    protected boolean hasAgreedToEula() {
-        int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
-        int currentEulaVersion = getResources().getInteger(R.integer.eula_version);
-        return agreedEulaVersion >= currentEulaVersion;
     }
 
     @Override
@@ -719,11 +702,30 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         }
     }
 
+    protected boolean hasNotAcceptedEula() {
+        int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
+        int currentEulaVersion = getResources().getInteger(R.integer.eula_version);
+        return agreedEulaVersion < currentEulaVersion;
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(BackgroundUploadThreadCheckingForTasksEvent event) {
         if (event.isHandled()) {
             return;
         }
         getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_checking_for_tasks));
+    }
+
+    private static class ExitOnCloseAction<T extends MyActivity<T>> extends UIHelper.QuestionResultAdapter<ActivityUIHelper<T>> {
+        private static final long serialVersionUID = 3716587979356224753L;
+
+        public ExitOnCloseAction(ActivityUIHelper<T> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            getUiHelper().getParent().finish();
+        }
     }
 }

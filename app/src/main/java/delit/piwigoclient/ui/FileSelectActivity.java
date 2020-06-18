@@ -78,7 +78,7 @@ public class FileSelectActivity extends MyActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!hasAgreedToEula()) {
+        if (hasNotAcceptedEula()) {
             finish();
         } else {
             if (savedInstanceState == null) {

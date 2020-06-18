@@ -17,19 +17,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.FrameLayout;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -116,7 +112,6 @@ import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
 import delit.piwigoclient.ui.permissions.users.UserFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsersListFragment;
-import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
 import hotchemi.android.rate.MyAppRate;
@@ -193,7 +188,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         appBar = findViewById(R.id.appbar);
 
         DrawerLayout drawer = configureDrawer(toolbar);
-        if (!hasAgreedToEula()) {
+        if (hasNotAcceptedEula()) {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         } else {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -217,7 +212,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
 
         if (!actionHandled && savedInstanceState == null) {
-            if (!hasAgreedToEula()) {
+            if (hasNotAcceptedEula()) {
                 showEula();
             } else if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
                 showPreferences();
@@ -251,11 +246,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         int backstackCount = getSupportFragmentManager().getBackStackEntryCount();
 
-        boolean preferencesShowing;
-        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
-        preferencesShowing = myFragment != null && myFragment.isVisible();
-
-        if (!hasAgreedToEula() && !preferencesShowing) {
+        if (hasNotAcceptedEula()) {
             // exit immediately.
             finish();
             return;
@@ -294,7 +285,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Override
     public boolean onOptionsItemSelected(@NotNull MenuItem item) {
-        if (!hasAgreedToEula()) {
+        if (hasNotAcceptedEula()) {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
             return true;
         }

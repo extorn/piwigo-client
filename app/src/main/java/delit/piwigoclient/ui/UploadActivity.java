@@ -14,9 +14,7 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.MimeTypeFilter;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -170,7 +168,7 @@ public class UploadActivity extends MyActivity {
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         boolean canContinue = true;
-        if(!hasAgreedToEula()) {
+        if(hasNotAcceptedEula()) {
             Log.e(TAG, "User agreement to EULA could not be found");
             canContinue = false;
         }

@@ -77,6 +77,7 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
             uiHelper.registerToActiveServiceCalls();
         }
         EventBus.getDefault().register(this);
+
     }
 
     protected ViewGroupUIHelper getUiHelper() {

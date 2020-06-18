@@ -262,6 +262,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
 
     protected void loadModelFromArguments() {
+        Log.e(TAG, "Loading model from args");
         Bundle args = getArguments();
         if(args != null) {
             albumDetails = args.getParcelable(ARG_ALBUM);
@@ -274,6 +275,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         galleryModel.setContainerDetails(albumDetails);
         galleryIsDirty = true;
+        Log.e(TAG, "Loading model from args: finished");
     }
 
     protected void onReopenModelRetrieved(CategoryItem rootAlbum, CategoryItem album) {
