@@ -120,6 +120,8 @@ public class NavBarHeaderView extends FrameLayout {
         currentServerField = content.findViewById(R.id.current_server);
         //TODO is this next line really needed?
         content.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.side_nav_bar));
+
+        updateServerConnectionDetails();
     }
 
     @Override
