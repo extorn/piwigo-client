@@ -40,7 +40,7 @@ public class ConnectionPreferences {
     }
 
     public static Set<String> getConnectionProfileList(SharedPreferences prefs, Context context) {
-        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<>(0));
+        return new HashSet<>(prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<>(0)));
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
@@ -336,7 +336,7 @@ public class ConnectionPreferences {
 
             public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {
                 try {
-                    return prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
+                    return new HashSet<>(prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal));
                 } catch(ClassCastException e) {
                     String value = prefs.getString(getPrefKeyInProfile(context, prefKey), null);
                     Logging.log(Log.ERROR, TAG, "Expected a string set for pref "+prefKey+" but was string : " + value);
@@ -408,7 +408,11 @@ public class ConnectionPreferences {
             }
 
             public SharedPreferences.Editor writeStringSet(SharedPreferences.Editor editor, Context context, Set<String> newValue) {
-                editor.putStringSet(getPrefKeyInProfile(context, prefKey), newValue);
+                if(newValue != null) {
+                    editor.putStringSet(getPrefKeyInProfile(context, prefKey), new HashSet<>(newValue));
+                } else {
+                    editor.remove(getPrefKeyInProfile(context, prefKey));
+                }
                 return editor;
             }
 

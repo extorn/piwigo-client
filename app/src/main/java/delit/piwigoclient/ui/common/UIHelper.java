@@ -857,7 +857,7 @@ public abstract class UIHelper<T> {
         if (event.isHandled()) {
             return;
         }
-        final Set<String> preNotifiedCerts = prefs.getStringSet(appContext.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>());
+        final Set<String> preNotifiedCerts = new HashSet<>(prefs.getStringSet(appContext.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>()));
         if (preNotifiedCerts.containsAll(event.getUntrustedCerts().keySet())) {
             // already dealt with this
             return;
@@ -1047,12 +1047,13 @@ public abstract class UIHelper<T> {
     }
 
     public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {
-        Set<String> hintsShown = getPrefs().getStringSet(appContext.getString(R.string.usage_hints_shown_list_key), new HashSet<>());
+        String hintsKey = appContext.getString(R.string.usage_hints_shown_list_key);
+        Set<String> hintsShown = new HashSet<>(getPrefs().getStringSet(hintsKey, new HashSet<>()));
         if (hintsShown.add(tag + '_' + hintId)) {
             int userHintDuration = Toast.LENGTH_LONG; //TODO use custom toast impl so I can set other duration perhaps. - AppPreferences.getUserHintDuration(getPrefs(), context);
             TransientMsgUtils.makeDetailedToast(appContext, R.string.usage_hint_title, appContext.getString(hintStrResId), userHintDuration).show();
             SharedPreferences.Editor editor = getPrefs().edit();
-            editor.putStringSet(appContext.getString(R.string.usage_hints_shown_list_key), hintsShown);
+            editor.putStringSet(hintsKey, hintsShown);
             editor.apply();
         }
     }
@@ -1111,7 +1112,7 @@ public abstract class UIHelper<T> {
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
 
-                final Set<String> preNotifiedCerts = getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>());
+                final Set<String> preNotifiedCerts = new HashSet<>(getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>()));
                 if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
                     // already dealt with this
                     return;

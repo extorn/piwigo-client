@@ -149,7 +149,7 @@ public class AutoUploadJobConfig implements Parcelable {
     public @NonNull
     Set<String> getStringSetValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultId) {
         TreeSet<String> defaultVal = new TreeSet<>(CollectionUtils.stringsFromCsvList(c.getString(prefDefaultId)));
-        return getJobPreferences(c).getStringSet(c.getString(prefKeyId), defaultVal);
+        return new TreeSet<>(getJobPreferences(c).getStringSet(c.getString(prefKeyId), defaultVal));
     }
 
     public ConnectionPreferences.ProfilePreferences getConnectionPrefs(Context c, SharedPreferences overallAppPrefs) {

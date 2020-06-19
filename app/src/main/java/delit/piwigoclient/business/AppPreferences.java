@@ -63,7 +63,7 @@ public class AppPreferences {
 
     public static void clearListOfShownHints(SharedPreferences prefs, Context context) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putStringSet(context.getString(R.string.usage_hints_shown_list_key), null);
+        editor.remove(context.getString(R.string.usage_hints_shown_list_key));
         editor.apply();
     }
 

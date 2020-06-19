@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -69,12 +70,17 @@ public abstract class PreferenceMigrator implements Comparable<PreferenceMigrato
         String prefKey = context.getString(prefId);
         if(prefs.contains(prefKey)) {
             Set<String> value = prefs.getStringSet(prefKey, null); // default value is NEVER used
+            if(value != null) {
+                value = new HashSet<>(value);
+            }
             Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, context);
+            Set<String> finalValue = value;
             for (String profileId : connectionProfiles) {
+
                 upgradeConnectionProfilePreference(context, profileId, prefId, actor -> {
 
                     if(!actor.isForActiveProfile()) { // because its already in the active profile.
-                        actor.writeStringSet(editor, context, value);
+                        actor.writeStringSet(editor, context, finalValue);
                     }
                 });
             }

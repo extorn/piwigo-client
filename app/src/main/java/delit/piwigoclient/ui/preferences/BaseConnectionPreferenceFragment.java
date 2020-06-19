@@ -176,7 +176,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
                 Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
                 if (removedCertThumbprints.size() > 0) {
-                    Set<String> preProcessedCerts = getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>(newAliases.size()));
+                    Set<String> preProcessedCerts = new HashSet<>(getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>(newAliases.size())));
                     for (String removedThumbprint : removedCertThumbprints) {
                         preProcessedCerts.remove(removedThumbprint);
                     }
