@@ -62,7 +62,7 @@ public abstract class TaskProgressTracker implements ProgressListener {
         }
         if(endProgress < 0 || endProgress > 100) {
             if(Math.round(endProgress) == 100) {
-                startProgress = 100;
+                endProgress = 100;
             } else {
                 throw new IllegalArgumentException("end progress must be between 0 and 100 : " + endProgress);
             }
