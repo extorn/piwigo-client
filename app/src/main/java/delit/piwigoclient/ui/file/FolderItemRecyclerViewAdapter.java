@@ -277,15 +277,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     private List<FolderItem> buildDisplayContent(Context context, @NonNull List<DocumentFile> folderContent) {
 
-        ArrayList<FolderItem> displayContent = new ArrayList<>();
-        boolean preCacheName = getAdapterPrefs().getFileSortOrder() == ALPHABETICAL;
-        boolean preCacheLastModified = !preCacheName;
+        ArrayList<FolderItem> displayContent = new ArrayList<>(folderContent.size());
         int itemCount = folderContent.size();
         for (int i = 0; i < itemCount; i++) {
             DocumentFile f = folderContent.get(i);
             FolderItem folderItem = new FolderItem(activeRootUri, f);
             folderItem.cacheFields(context);
-            displayContent.add(folderItem);
+            if(folderItem.isFolder() || folderItem.getLastModified() > 0) { // Hide system files.
+                displayContent.add(folderItem);
+            }
             if (Thread.currentThread().isInterrupted()) {
                 return null;
             }
@@ -329,11 +329,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 case ALPHABETICAL:
                     return ObjectUtils.compare(o1.getName(), o2.getName());
                 case FolderItemViewAdapterPreferences.LAST_MODIFIED_DATE:
-                    if (o1.lastModified() == o2.lastModified()) {
+                    if (o1.getLastModified() == o2.getLastModified()) {
                         return ObjectUtils.compare(o1.getName(), o2.getName());
                     } else {
                         // this is reversed order
-                        return o1.lastModified() < o2.lastModified() ? -1 : 1;
+                        return o1.getLastModified() < o2.getLastModified() ? -1 : 1;
                     }
                 default:
                     return 0;
@@ -628,7 +628,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return isFile;
         }
 
-        public long lastModified() {
+        public long getLastModified() {
             if(!isFieldsCached()) {
                 throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
