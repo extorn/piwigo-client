@@ -162,7 +162,9 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
         }
         ArrayList<LegacyFolderItem> displayContent = new ArrayList<>();
         for (File f : folderContent) {
-            displayContent.add(new LegacyFolderItem(f));
+            if(f.isDirectory() || f.lastModified() > 0) { // Hide system files.
+                    displayContent.add(new LegacyFolderItem(f));
+            }
         }
         return displayContent;
     }
@@ -334,7 +336,12 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
             }
             String fileExt = IOUtils.getFileExt(fi.file.getName());
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
-            currentVisibleDocumentFileExts.put(fileExt, mimeType);
+            /*if(mimeType == null) {
+                mimeType = "<NA>";
+            }*///TODO maybe do something about these special files in the future.
+            if(mimeType != null && fileExt != null) {
+                currentVisibleDocumentFileExts.put(fileExt, mimeType);
+            }
             if(Thread.currentThread().isInterrupted()) {
                 return null;
             }
