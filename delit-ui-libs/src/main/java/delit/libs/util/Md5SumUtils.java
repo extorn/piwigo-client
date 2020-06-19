@@ -51,8 +51,8 @@ public class Md5SumUtils {
             long totalBytes = pfd.getStatSize();
             long processedBytes = 0;
             int bytesSinceProgressReport = 0;
-            int lastProgressReport = 0;
-            int reportEveryBytes = 1024; // report progress once per Mb only
+            int lastProgressReport = 0; // a % between 0 and 100
+            int reportEveryBytes = 512 * 1024; // report progress once 512Kb as a maximum frequency
             try(FileChannel channel = new FileInputStream(pfd.getFileDescriptor()).getChannel()) {
                 ByteBuffer bb = ByteBuffer.allocateDirect(65536);//64Kb
                 double onePercentOfBytes = ((double)totalBytes)/100;
@@ -65,7 +65,7 @@ public class Md5SumUtils {
                     if(reportEveryBytes <= bytesSinceProgressReport && progress > lastProgressReport) {
                         bytesSinceProgressReport = 0;
                         lastProgressReport = progress;
-                        progressListener.onProgress(progress);
+                        progressListener.onProgress(progress); // only gets called if the progress has changed
                     }
                     bb.flip(); // ready buffer for writing
                 }
