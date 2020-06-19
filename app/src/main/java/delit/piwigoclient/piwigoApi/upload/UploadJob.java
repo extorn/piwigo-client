@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import java.io.File;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;

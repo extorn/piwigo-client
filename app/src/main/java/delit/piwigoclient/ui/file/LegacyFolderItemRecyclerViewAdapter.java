@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -472,6 +471,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
+            getIconViewLoader().load();
         }
 
         @Override
@@ -479,7 +479,6 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             getIconView().setColorFilter(ContextCompat.getColor(itemView.getContext(),R.color.app_secondary), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
-            getIconViewLoader().load();
         }
     }
 
@@ -493,6 +492,7 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
 
         @Override
         public void fillValues(LegacyFolderItem newItem, boolean allowItemDeletion) {
+
             setItem(newItem);
 
             long bytes = newItem.getFile().length();
@@ -517,10 +517,8 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
                 getIconViewLoader().setUriToLoad(itemUri.toString());
             } else {
                 getIconViewLoader().setFileToLoad(newItem.getFile());
-            }/*TODO why was this else statement needed?
-             else {
-                getIconViewLoader().setResourceToLoad(R.drawable.ic_file_gray_24dp);
-            }*/
+            }
+            getIconViewLoader().load();
         }
 
         @Override
@@ -528,31 +526,6 @@ public class LegacyFolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             itemHeading = itemView.findViewById(R.id.list_item_heading);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
-            final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
-
-                        int imgSize = getIconView().getMeasuredWidth();
-                        getIconViewLoader().setResizeTo(imgSize, imgSize);
-                        getIconViewLoader().load();
-                    }
-                    return true;
-                }
-            };
-            getIconView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                @Override
-                public void onViewAttachedToWindow(View v) {
-                    getIconView().getViewTreeObserver().addOnPreDrawListener(predrawListener);
-                }
-
-                @Override
-                public void onViewDetachedFromWindow(View v) {
-                    getIconView().getViewTreeObserver().removeOnPreDrawListener(predrawListener);
-                }
-            });
-//            getIconViewLoader().setResourceToLoad(R.drawable.ic_file_black_24dp);
-//            getIconViewLoader().load();
         }
     }
 

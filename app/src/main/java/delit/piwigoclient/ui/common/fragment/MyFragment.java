@@ -75,7 +75,6 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        initialiseCoreComponents(savedInstanceState);
         super.onCreate(savedInstanceState);
     }
 
@@ -141,8 +140,8 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         super.onAttach(context);
     }
 
-    protected FragmentUIHelper<T> buildUIHelper(Context context) {
-        return new FragmentUIHelper<>((T) this, prefs, context);
+    protected FragmentUIHelper<T> buildUIHelper(Context context, @NonNull View attachedView) {
+        return new FragmentUIHelper<>((T) this, prefs, context, attachedView);
     }
 
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
@@ -205,6 +204,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        initialiseCoreComponents(savedInstanceState, container);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -213,18 +213,18 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         // do this here in case the onCreateView isn't called in a derived class
-        initialiseCoreComponents(savedInstanceState);
+        initialiseCoreComponents(savedInstanceState, view);
         super.onViewCreated(view, savedInstanceState);
         uiHelper.registerToActiveServiceCalls();
     }
 
-    private void initialiseCoreComponents(Bundle savedInstanceState) {
+    private void initialiseCoreComponents(Bundle savedInstanceState, View attachedView) {
         if(coreComponentsInitialised) {
             return;
         }
         coreComponentsInitialised = true;
         if (uiHelper == null) {
-            uiHelper = buildUIHelper(getContext());
+            uiHelper = buildUIHelper(getContext(), attachedView);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);

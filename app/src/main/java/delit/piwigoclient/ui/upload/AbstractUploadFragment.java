@@ -20,7 +20,6 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,9 +48,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,11 +57,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimeZone;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.TaskProgressTracker;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.list.BiArrayAdapter;
@@ -185,33 +182,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         super.onViewStateRestored(savedInstanceState);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
-        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
-        if (getArguments() != null) {
-            uploadToAlbum = getArguments().getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
-            if (uploadToAlbum == null) {
-                uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
-                SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-                if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
-                    ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
-                    if(!albumPath.isEmpty()) {
-                        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
-                        AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
-                        getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
-                    }
-                }
-            }
-            externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
-        }
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         if (externallyTriggeredSelectFilesActionId == stickyEvent.getActionId() || getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
-            new SharedFilesIntentProcessingTask(this).execute(stickyEvent);
+                EventBus.getDefault().removeStickyEvent(stickyEvent);
+                new SharedFilesIntentProcessingTask(this).execute(stickyEvent);
         }
     }
 
@@ -219,7 +195,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         SharedFilesIntentProcessingTask(AbstractUploadFragment parent) {
             super(parent);
-            withContext(parent.requireContext());
+            withContext(parent.requireContext().getApplicationContext());
         }
 
         @Override
@@ -230,27 +206,32 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         @Override
         protected List<FilesToUploadRecyclerViewAdapter.UploadDataItem> doInBackgroundSafely(FileSelectionCompleteEvent[] objects) {
-
+            TaskProgressTracker mainTaskProgressListener = new TaskProgressTracker() {
+                @Override
+                protected void reportProgress(int newOverallProgress) {
+                    getOwner().overallUploadProgressBar.post(() -> getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress));
+                }
+            };
             FileSelectionCompleteEvent event = objects[0];
+            int itemCount = event.getSelectedFolderItems().size();
+
             ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
             if (PiwigoSessionDetails.getInstance(activeProfile) != null) {
-                EventBus.getDefault().removeStickyEvent(event);
 
                 Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
-                int itemCount = event.getSelectedFolderItems().size();
                 Iterator<FolderItemRecyclerViewAdapter.FolderItem> iter = event.getSelectedFolderItems().iterator();
                 Set<String> unsupportedExts = new HashSet<>();
                 int currentItem = 0;
+
+                // Initialise phase 1 (0% -15% - split between number of files to process)
+                mainTaskProgressListener.withStage(0, 15, itemCount);
+
                 while (iter.hasNext()) {
                     currentItem++;
                     FolderItemRecyclerViewAdapter.FolderItem f = iter.next();
-                    if(f.getDocumentFile() == null) {
-                        try {
-                            f.getExt();
-                        } catch (IllegalStateException e) {
-                            if(!f.withMediaStoreCachedFields(getContext())) {
-                                f.cacheDocFileFields(getContext());
-                            }
+                    if(!f.isFieldsCached()) {
+                        if(!f.cacheFields(getContext())) {
+                            Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + f.getContentUri());
                         }
                     }
                     if (!allowedFileTypes.contains(f.getExt())) {
@@ -260,32 +241,45 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                             unsupportedExts.add(f.getExt());
                         }
                     }
-                    int currentProgress = (int)Math.round(((0.5 * currentItem) / itemCount) * 100);
-                    getOwner().overallUploadProgressBar.post(() -> getOwner().overallUploadProgressBar.showProgressIndicator(R.string.adding_files, currentProgress));
+                    //mainTaskProgressListener.onProgress((currentItem*100)/itemCount);
+                    mainTaskProgressListener.onTick(currentItem);
                 }
                 if (!unsupportedExts.isEmpty()) {
                     getOwner().getUiHelper().showDetailedMsg(R.string.alert_information, getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts)));
                 }
             }
 
-            int itemCount = event.getSelectedFolderItems().size();
-            int currentItem = 0;
+            long totalImportedFileBytes = 0;
+            for (FolderItemRecyclerViewAdapter.FolderItem item : event.getSelectedFolderItems()) {
+                totalImportedFileBytes += item.getFileLength();
+            }
+
+            // At this point, firstMainTaskProgressListener is initialise phase 2 (15% -100% - same number of files to process)
+            mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(), 100, itemCount);
+            double thisStageAsPercOfTotal = (100 * mainTaskProgressListener.getMainTaskProgressPerPercentOfThisTask());
+
             ArrayList<FilesToUploadRecyclerViewAdapter.UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
+
             for (FolderItemRecyclerViewAdapter.FolderItem f : event.getSelectedFolderItems()) {
-                currentItem++;
+                double sizeOfThisFileAsPercentageOfThoseToProcess = (100.0 * f.getFileLength()) / totalImportedFileBytes;
+                double progressForThisItem = sizeOfThisFileAsPercentageOfThoseToProcess * thisStageAsPercOfTotal;
+
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
                 }
                 FilesToUploadRecyclerViewAdapter.UploadDataItem item = new FilesToUploadRecyclerViewAdapter.UploadDataItem(f.getContentUri(), f.getName(), f.getMime());
                 try {
-                    item.calculateDataHashCode(getContext());
+
+                    double fromProgress = mainTaskProgressListener.getLastReportedProgress(); // gets current progress
+                    double toProgress = fromProgress + progressForThisItem;
+                    mainTaskProgressListener.withStage(fromProgress, toProgress, 1);
+                    item.calculateDataHashCode(getContext(), mainTaskProgressListener);
                     uploadDataItems.add(item);
                 } catch (Md5SumUtils.Md5SumException e) {
                     Logging.recordException(e);
                 }
-                int currentProgress = (int)Math.round((0.5 + ((0.5 * currentItem) / itemCount)) * 100);
-                getOwner().overallUploadProgressBar.post(() -> getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, currentProgress));
             }
+            mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(),100).onProgress(100);
             getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
             return uploadDataItems;
         }
@@ -296,6 +290,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getOwner().mViewPager.setCurrentItem(TAB_IDX_FILES);
             getOwner().updateFilesForUploadList(folderItems);
         }
+
     }
 
     private void addUploadingAsFieldsIfAppropriate(View v) {
@@ -322,10 +317,19 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
+        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
+
+        invokeCallToRetrieveUploadDestination();
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
@@ -531,6 +535,25 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         return view;
+    }
+
+    private void invokeCallToRetrieveUploadDestination() {
+        if (getArguments() != null) {
+            uploadToAlbum = getArguments().getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
+            if (uploadToAlbum == null) {
+                uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
+                SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
+                if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
+                    ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                    if(!albumPath.isEmpty()) {
+                        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
+                        AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
+                        getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
+                    }
+                }
+            }
+            externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
+        }
     }
 
     private void injectCompressionControlsIntoView() {
@@ -1355,87 +1378,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class DebugCompressionListener implements ExoPlayerCompression.CompressionListener {
-        private final UIHelper uiHelper;
-        private final SimpleDateFormat strFormat;
-        private long startCompressionAt;
-        private View linkedView;
-
-        {
-            strFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-            strFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        }
-
-        public DebugCompressionListener(UIHelper uiHelper, View linkedView) {
-            this.uiHelper = uiHelper;
-            this.linkedView = linkedView;
-        }
-
-        @Override
-        public void onCompressionStarted(Uri inputFile, Uri outputFile) {
-            DisplayUtils.runOnUiThread(() -> {
-                uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression started");
-                startCompressionAt = System.currentTimeMillis();
-                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
-                fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
-                linkedView.setEnabled(false);
-            });
-
-        }
-
-        @Override
-        public void onCompressionError(Uri inputFile, Uri outputFile, Exception e) {
-            DisplayUtils.runOnUiThread(() -> {
-                uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression failed");
-                linkedView.setEnabled(true);
-                Logging.log(Log.ERROR, TAG, "Video Compression failed");
-                Logging.recordException(e);
-                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
-                fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
-                IOUtils.delete(uiHelper.getAppContext(), outputFile);
-            });
-
-        }
-
-        @Override
-        public void onCompressionComplete(Uri inputFile, Uri outputFile) {
-            DisplayUtils.runOnUiThread(() -> {
-                uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression finished");
-                linkedView.setEnabled(true);
-                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
-                fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
-                IOUtils.addFileToMediaStore(uiHelper.getAppContext(), outputFile);
-            });
-        }
-
-        @Override
-        public void onCompressionProgress(Uri inputFile, Uri outputFile, final double compressionProgress, final long mediaDurationMs) {
-            if (!DisplayUtils.isRunningOnUIThread()) {
-                DisplayUtils.runOnUiThread(() -> onCompressionProgress(inputFile, outputFile, compressionProgress, mediaDurationMs));
-                return;
-            }
-            AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
-            FilesToUploadRecyclerViewAdapter adapter = fragment.getFilesForUploadViewAdapter();
-            if(adapter != null) {
-                adapter.updateCompressionProgress(inputFile, outputFile, (int) Math.rint(compressionProgress));
-            }
-            long currentTime = System.currentTimeMillis();
-            long elapsedTime = currentTime - startCompressionAt;
-            long estimateTotalCompressionTime = Math.round(100 * (elapsedTime / compressionProgress));
-            long endCompressionAtEstimate = startCompressionAt + estimateTotalCompressionTime;
-            Date endCompressionAt = new Date(endCompressionAtEstimate);
-            String remainingTimeStr = strFormat.format(new Date(endCompressionAtEstimate - currentTime));
-            String elapsedCompressionTimeStr = strFormat.format(new Date(elapsedTime));
-
-            if (mediaDurationMs > 0) {
-                double timeProcessed = mediaDurationMs * (compressionProgress / 100);
-                double compressionRate = timeProcessed / elapsedTime;
-                uiHelper.showDetailedMsg(R.string.alert_information, String.format(Locale.getDefault(), "Video Compression\nrate: %5$.02fx\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr, compressionRate), Toast.LENGTH_SHORT, 1);
-            } else {
-                uiHelper.showDetailedMsg(R.string.alert_information, String.format(Locale.getDefault(), "Video Compression\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr), Toast.LENGTH_SHORT, 1);
-            }
-        }
-    }
 
     private static class UnacceptableFilesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
 
@@ -1818,4 +1760,5 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
         }
     }
+
 }

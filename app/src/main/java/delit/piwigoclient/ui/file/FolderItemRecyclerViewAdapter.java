@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -543,6 +542,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         private String ext;
         private String mime;
         private long fileLength;
+        private int fieldsLoadedFrom = NONE;
+        private final static int NONE = 0;
+        private final static int DOCFILE = 1;
+        private final static int FILE = 2;
+        private final static int MEDIASTORE = 3;
 
         public FolderItem(Uri itemUri) {
             this.itemUri = itemUri;
@@ -615,71 +619,43 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         };
 
         public boolean isFolder() {
-            if(isFolder == null) {
-                if(itemDocFile == null) {
-                    throw new IllegalStateException("document file not available to allow field retrieval");
-                } else {
-                    this.isFolder = itemDocFile.isDirectory();
-                }
+            if(!isFieldsCached()) {
+                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
             return isFolder;
         }
 
         public boolean isFile() {
-            if(isFile == null) {
-                if(itemDocFile == null) {
-                    throw new IllegalStateException("document file not available to allow field retrieval");
-                } else {
-                    this.isFile = itemDocFile.isFile();
-                }
+            if(!isFieldsCached()) {
+                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
             return isFile;
         }
 
         public long lastModified() {
-            if(lastModified < 0) {
-                if(itemDocFile == null) {
-                    throw new IllegalStateException("document file not available to allow field retrieval");
-                } else {
-                    this.lastModified = itemDocFile.lastModified();
-                }
+            if(!isFieldsCached()) {
+                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
             return lastModified;
         }
 
         public String getMime() {
-            if(mime == null) {
-                if(itemDocFile == null) {
-                    throw new IllegalStateException("document file not available to allow field retrieval");
-                } else {
-                    this.mime = itemDocFile.getType();
-                }
+            if(!isFieldsCached()) {
+                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
             return mime;
         }
 
         public String getExt() {
-            if(ext == null) {
-                if(itemDocFile == null) {
-                    throw new IllegalStateException("document file not available to allow field retrieval");
-                } else {
-                    if(isFolder()||!isFile()) {
-                        return ext;
-                    } else {
-                        ext = IOUtils.getFileExt(this.name != null ? this.name : this.itemUri.getPath(), mime);
-                    }
-                }
+            if(!isFieldsCached()) {
+                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
             return ext;
         }
 
         public String getName() {
-            if(name == null) {
-                if(itemDocFile == null) {
-                    throw new IllegalStateException("document file not available to allow field retrieval");
-                } else {
-                    this.name = itemDocFile.getName();
-                }
+            if(!isFieldsCached()) {
+                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
             return name;
         }
@@ -714,32 +690,37 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return itemDocFile;
         }
 
-        public @Nullable DocumentFile cacheDocFileFields(Context context) {
+        private boolean cacheDocFileFields(Context context) {
             if(null != getDocumentFile(context)) {
-                isFile();
-                isFolder();
-                lastModified();
-                getMime();
-                getName();
-                getExt();
-                getFileLength();
+                isFolder = itemDocFile.isDirectory();
+                isFile = itemDocFile.isFile();
+                name = itemDocFile.getName();
+                ext = IOUtils.getFileExt(name);
+                mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                lastModified = itemDocFile.lastModified();
+                fileLength = itemDocFile.length();
+                fieldsLoadedFrom = DOCFILE;
+                return true;
             }
-            return itemDocFile;
+            return false;
         }
 
         public long getFileLength() {
-            if(itemDocFile == null) {
-                throw new IllegalStateException("document file not available to allow field retrieval");
-            } else {
-                this.fileLength = itemDocFile.length();
+            if(!isFieldsCached()) {
+                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
             }
             return fileLength;
         }
 
-        public void withLegacyCachedFields() throws IOException {
-            File f = LegacyIOUtils.getFile(itemUri);
+        private boolean withLegacyCachedFields() {
+            File f;
+            try {
+                f = LegacyIOUtils.getFile(itemUri);
+            } catch (IOException e) {
+                return false;
+            }
             if(f == null) {
-                throw new IOException("Uri is not a file");
+                return false;
             }
             isFolder = f.isDirectory();
             isFile = f.isFile();
@@ -748,9 +729,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
             lastModified = f.lastModified();
             fileLength = f.length();
+            fieldsLoadedFrom = FILE;
+            return true;
         }
 
-        public boolean withMediaStoreCachedFields(Context context) {
+        public boolean isFieldsCached() {
+            return fieldsLoadedFrom != NONE;
+        }
+
+        private boolean withMediaStoreCachedFields(Context context) {
             String[] projection = new String[]{MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE, MediaStore.MediaColumns.DATE_MODIFIED};
             try (Cursor c = context.getContentResolver().query(itemUri, projection, null,null, null)) {
                 if (c != null) {
@@ -762,10 +749,30 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                     lastModified = c.getLong(c.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED));
                     isFile = true;
                     isFolder = false;
+                    fieldsLoadedFrom = MEDIASTORE;
                     return true;
                 }
             }
             return false;
+        }
+
+        /**
+         *
+         * @param context
+         * @return true if the fields were cached somehow.
+         */
+        public boolean cacheFields(Context context) {
+            boolean cached = false;
+            if("file".equals(itemUri.getScheme())) {
+                cached = withLegacyCachedFields();
+            }
+            if(!cached) {
+                cached = cacheDocFileFields(context);
+            }
+            if(!cached) {
+                cached = withMediaStoreCachedFields(context);
+            }
+            return cached;
         }
     }
 
@@ -833,13 +840,14 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         public void fillValues(FolderItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getTxtTitle().setVisibility(View.VISIBLE);
-            getTxtTitle().setText(IOUtils.getFilename(newItem.getDocumentFile()));
+            getTxtTitle().setText(newItem.getName());
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
+            getIconViewLoader().load();
         }
 
         @Override
@@ -847,7 +855,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             getIconView().setColorFilter(ContextCompat.getColor(itemView.getContext(),R.color.app_secondary), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
-            getIconViewLoader().load();
         }
     }
 
@@ -886,6 +893,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             } else {
                 getIconViewLoader().setResourceToLoad(R.drawable.ic_file_gray_24dp);
             }
+            getIconViewLoader().load();
         }
 
         @Override
@@ -893,28 +901,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             itemHeading = itemView.findViewById(delit.libs.R.id.list_item_heading);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
-            final ViewTreeObserver.OnPreDrawListener predrawListener = () -> {
-                if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
-
-                    int imgSize = getIconView().getMeasuredWidth();
-                    getIconViewLoader().setResizeTo(imgSize, imgSize);
-                    getIconViewLoader().load();
-                }
-                return true;
-            };
-            getIconView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                @Override
-                public void onViewAttachedToWindow(View v) {
-                    getIconView().getViewTreeObserver().addOnPreDrawListener(predrawListener);
-                }
-
-                @Override
-                public void onViewDetachedFromWindow(View v) {
-                    getIconView().getViewTreeObserver().removeOnPreDrawListener(predrawListener);
-                }
-            });
-//            getIconViewLoader().setResourceToLoad(R.drawable.ic_file_black_24dp);
-//            getIconViewLoader().load();
         }
     }
 

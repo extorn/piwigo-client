@@ -85,7 +85,6 @@ public class UploadActivity extends MyActivity {
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
     private Intent lastIntent;
-    private boolean startedFresh;
 
     public UploadActivity() {
         super(R.layout.activity_upload);
@@ -162,9 +161,6 @@ public class UploadActivity extends MyActivity {
         }
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = configureDrawer(toolbar);
-
-        startedFresh = savedInstanceState == null;
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         boolean canContinue = true;
@@ -179,8 +175,7 @@ public class UploadActivity extends MyActivity {
         if (!canContinue) {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
-
-            if (startedFresh) { // the fragment will be created automatically from the fragment manager state if there is state :-)
+            if (savedInstanceState == null) { // the fragment will be created automatically from the fragment manager state if there is state :-)
                 showUploadFragment(connectionPrefs);
             }
         }
@@ -448,6 +443,7 @@ public class UploadActivity extends MyActivity {
             try {
                 ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
                 filesToUpload = handleSendMultipleImages(intent, imageUris);
+                intent.removeExtra(Intent.EXTRA_STREAM);
             } catch(ClassCastException e) {
                 Uri sharedUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 filesToUpload = new ArrayList<>(1);

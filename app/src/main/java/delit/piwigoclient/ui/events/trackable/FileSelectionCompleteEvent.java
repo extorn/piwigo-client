@@ -1,15 +1,12 @@
 package delit.piwigoclient.ui.events.trackable;
 
 import android.net.Uri;
-import android.os.Build;
 
 import androidx.documentfile.provider.DocumentFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import delit.libs.core.util.Logging;
 import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 
 /**
@@ -30,15 +27,6 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
     public FileSelectionCompleteEvent withFiles(Collection<Uri> uris) {
         for (Uri uri : uris) {
             FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(uri);
-            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                try {
-                    if("file".equals(uri.getScheme())) {
-                        item.withLegacyCachedFields();
-                    }
-                } catch (IOException e) {
-                    Logging.recordException(e);
-                }
-            }
             selectedFolderItems.add(item);
         }
         return this;

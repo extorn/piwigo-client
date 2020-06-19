@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +32,7 @@ import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.util.ProgressListener;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
@@ -49,17 +49,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     private static final String TAG = "F2UAdapter";
     public static final int VIEW_TYPE_LIST = 0;
     public static final int VIEW_TYPE_GRID = 1;
-    public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
-    public static final int SCALING_QUALITY_VHIGH = 960;
-    public static final int SCALING_QUALITY_HIGH = 480;
-    public static final int SCALING_QUALITY_MEDIUM = 240;
-    public static final int SCALING_QUALITY_LOW = 120;
-    public static final int SCALING_QUALITY_VLOW = 60;
-    public static final String MEDIA_SCANNER_TASK_ID_FILES_FOR_UPLOAD = "id_filesForUpload";
 
     private UploadDataItemModel uploadDataItemsModel;
     private final RemoveListener listener;
-    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
     private int viewType = VIEW_TYPE_LIST;
 
     public FilesToUploadRecyclerViewAdapter(ArrayList<DocumentFile> filesToUpload, RemoveListener listener) {
@@ -133,7 +125,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
             // store a reference to the item in this recyclable holder.
             holder.mItem = uploadDataItem;
-
         }
 
         // configure the filename field
@@ -151,6 +142,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             }
             holder.imageLoader.setUriToLoad(item.uri.toString());
             holder.itemHeading.setVisibility(View.VISIBLE);
+            holder.imageLoader.load();
         } else {
             // theoretically this shouldn't happen I think
             holder.imageLoader.setFileToLoad(null);
@@ -176,12 +168,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         final ViewHolder viewHolder = new ViewHolder(view);
 
-        viewHolder.fileForUploadImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!viewHolder.imageLoader.isImageLoaded()) {
-                    viewHolder.imageLoader.loadNoCache();
-                }
+        viewHolder.fileForUploadImageView.setOnClickListener(v -> {
+            if (!viewHolder.imageLoader.isImageLoaded()) {
+                viewHolder.imageLoader.loadNoCache();
             }
         });
 
@@ -190,10 +179,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             onDeleteButtonClicked(viewHolder, true);
             return true;
         });
-
-        final ViewTreeObserver.OnPreDrawListener predrawListener = new UploadItemPreDrawListener(viewHolder, scalingQuality);
-        viewHolder.fileForUploadImageView.addOnAttachStateChangeListener(new ImageViewAttachListener(viewHolder.fileForUploadImageView, predrawListener));
-
         return viewHolder;
     }
 
@@ -319,8 +304,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             }
         };
 
-        public void calculateDataHashCode(Context context) throws Md5SumUtils.Md5SumException {
-            dataHashcode = Md5SumUtils.calculateMD5(context.getContentResolver(), uri);
+        public void calculateDataHashCode(Context context, ProgressListener progressListener) throws Md5SumUtils.Md5SumException {
+            dataHashcode = Md5SumUtils.calculateMD5(context.getContentResolver(), uri, progressListener);
         }
 
         private static long getNextUid() {
@@ -615,59 +600,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         @Override
         public String toString() {
             return super.toString() + " '" + mItem.uri + "'";
-        }
-    }
-
-    private static class UploadItemPreDrawListener implements ViewTreeObserver.OnPreDrawListener {
-
-        private final ViewHolder viewHolder;
-        private final int scalingQuality;
-
-        public UploadItemPreDrawListener(ViewHolder viewHolder, int scalingQuality) {
-            this.viewHolder = viewHolder;
-            this.scalingQuality = scalingQuality;
-        }
-
-        @Override
-        public boolean onPreDraw() {
-            try {
-                if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading() && !viewHolder.imageLoader.isImageUnavailable()) {
-                    int imgSize = scalingQuality;
-                    if (imgSize == Integer.MAX_VALUE) {
-                        imgSize = viewHolder.fileForUploadImageView.getMeasuredWidth();
-                    } else {
-                        // need that math.max to ensure that the image size remains positive
-                        //FIXME How can this ever be called before the ImageView object has a size?
-                        imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(scalingQuality, viewHolder.fileForUploadImageView.getMeasuredWidth()));
-                    }
-                    viewHolder.imageLoader.setResizeTo(imgSize, imgSize);
-                    viewHolder.imageLoader.load();
-                }
-            } catch (IllegalStateException e) {
-                Logging.recordException(e);
-                // image loader not configured yet...
-            }
-            return true;
-        }
-    }
-
-    private static class ImageViewAttachListener implements View.OnAttachStateChangeListener {
-        private final ViewTreeObserver.OnPreDrawListener predrawListener;
-        private final AppCompatImageView imageView;
-
-        public ImageViewAttachListener(AppCompatImageView imageView, ViewTreeObserver.OnPreDrawListener predrawListener) {
-            this.imageView = imageView;
-            this.predrawListener = predrawListener;
-        }
-
-        @Override
-        public void onViewAttachedToWindow(View v) {
-            imageView.getViewTreeObserver().addOnPreDrawListener(predrawListener);
-        }
-
-        @Override
-        public void onViewDetachedFromWindow(View v) {
-            imageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
         }
     }
 }

@@ -20,8 +20,8 @@ import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
  */
 
 public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
-    public ActivityUIHelper(T parent, SharedPreferences prefs) {
-        super(parent, prefs, parent);
+    public ActivityUIHelper(T parent, SharedPreferences prefs, View attachedView) {
+        super(parent, prefs, parent, attachedView);
     }
 
     @Override

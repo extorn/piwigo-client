@@ -123,16 +123,21 @@ public abstract class UIHelper<T> {
     private BasicPiwigoResponseListener piwigoResponseListener;
     private int permissionsNeededReason;
     private NotificationManagerCompat notificationManager;
-    private ProgressIndicator progressIndicator;
+    private WeakReference<ProgressIndicator> progressIndicator;
     private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap<>();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
+        this(parent, prefs, context, DisplayUtils.getActivity(context).getWindow().getDecorView());
+    }
+
+    public UIHelper(T parent, SharedPreferences prefs, Context context, @Nullable View attachedView) {
         this.appContext = context.getApplicationContext();
         this.prefs = prefs;
         this.parent = new WeakReference<>(parent);
         if(canShowDialog()) {
             setupDialogBoxes();
         }
+        loadProgressIndicatorIfPossible(attachedView);
         setupNotificationsManager();
     }
 
@@ -159,6 +164,7 @@ public abstract class UIHelper<T> {
         }
         this.appContext = newAppCtx;
         setupDialogBoxes();
+        loadProgressIndicatorIfPossible(getParentView());
         setupNotificationsManager();
     }
 
@@ -369,23 +375,19 @@ public abstract class UIHelper<T> {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
+
+
     private  boolean isProgressIndicatorVisible() {
-        if(progressIndicator == null) {
-            loadProgressIndicatorIfPossible();
-        }
+        ProgressIndicator progressIndicator = getProgressIndicator();
         return progressIndicator != null && progressIndicator.getVisibility() == View.VISIBLE;
     }
 
-    private void loadProgressIndicatorIfPossible() {
-        try {
-            View view = getParentView();
-            if(view != null) {
-                progressIndicator = ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator);
-            } else {
-                throw new IllegalArgumentException("To get log statement");
-            }
-        } catch (IllegalArgumentException e) {
+    private void loadProgressIndicatorIfPossible(View view) {
+        if(view != null) {
+            progressIndicator = new WeakReference<>(ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator));
+        } else {
             if (BuildConfig.DEBUG) {
+                Logging.recordException(new Exception().fillInStackTrace());
                 Logging.log(Log.ERROR, TAG, "Progress indicator not available in " + getParent().getClass().getName());
             }
         }
@@ -443,7 +445,6 @@ public abstract class UIHelper<T> {
 
     private void setupDialogBoxes() {
         buildAlertDialog();
-        loadProgressIndicatorIfPossible();
     }
 
     protected void buildAlertDialog() {
@@ -762,6 +763,7 @@ public abstract class UIHelper<T> {
     }
 
     public void showProgressIndicator(final String titleString, final int progress) {
+        ProgressIndicator progressIndicator = getProgressIndicator();
         if (progressIndicator == null) {
             Logging.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
@@ -775,7 +777,7 @@ public abstract class UIHelper<T> {
     }
 
     public void showProgressIndicator() {
-
+        ProgressIndicator progressIndicator = getProgressIndicator();
         if (progressIndicator == null) {
             Logging.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
@@ -794,6 +796,7 @@ public abstract class UIHelper<T> {
     }
 
     public void hideProgressIndicator() {
+        ProgressIndicator progressIndicator = getProgressIndicator();
         if(progressIndicator != null) {
             if (DisplayUtils.isRunningOnUIThread()) {
                 progressIndicator.setVisibility(View.GONE);
@@ -1035,9 +1038,12 @@ public abstract class UIHelper<T> {
 
     public ProgressIndicator getProgressIndicator() {
         if(progressIndicator == null) {
-            loadProgressIndicatorIfPossible();
+            loadProgressIndicatorIfPossible(getParentView());
         }
-        return progressIndicator;
+        if(progressIndicator == null) {
+            return null;
+        }
+        return progressIndicator.get();
     }
 
     public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {

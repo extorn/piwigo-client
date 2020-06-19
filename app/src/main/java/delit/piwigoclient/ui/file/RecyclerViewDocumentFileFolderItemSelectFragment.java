@@ -46,9 +46,9 @@ import java.util.TreeMap;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.ProgressListener;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
-import delit.libs.ui.view.ProgressListener;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
@@ -56,6 +56,7 @@ import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.ui.common.BackButtonHandler;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
@@ -203,21 +204,27 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         super.onDestroyView();
     }
 
-    private class FolderItemTaskListener implements TaskProgressListener {
+    private static class FolderItemTaskListener implements TaskProgressListener {
+
+        private UIHelper uiHelper;
+
+        public FolderItemTaskListener(UIHelper uiHelper) {
+            this.uiHelper = uiHelper;
+        }
 
         @Override
         public void onTaskProgress(double percentageComplete) {
-            getUiHelper().showProgressIndicator(getString(R.string.progress_loading_folder_content), (int) Math.rint(percentageComplete* 100));
+            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), (int) Math.rint(percentageComplete* 100));
         }
 
         @Override
         public void onTaskStarted() {
-            getUiHelper().showProgressIndicator(getString(R.string.progress_loading_folder_content), 0);
+            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), 0);
         }
 
         @Override
         public void onTaskFinished() {
-            getUiHelper().hideProgressIndicator();
+            uiHelper.hideProgressIndicator();
         }
     }
 
@@ -358,14 +365,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
 
                 FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(itemUri);
-                item.cacheDocFileFields(getContext());
+                item.cacheFields(getContext());
                 itemsShared.add(item);
                 listener.onProgress((int) (100 * Math.rint((float)i) / items));
             }
 
         } else if(resultData.getData() != null) {
             FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(resultData.getData());
-            item.cacheDocFileFields(getContext());
+            item.cacheFields(getContext());
             itemsShared.add(item);
         } else {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
@@ -388,7 +395,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
                     FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
-                    folderItem.cacheDocFileFields(requireContext());
+                    folderItem.cacheFields(requireContext());
                     itemsShared.add(folderItem);
                     listener.onProgress(100);
                 } else {
@@ -403,7 +410,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
 
                 FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
-                folderItem.cacheDocFileFields(requireContext());
+                folderItem.cacheFields(requireContext());
                 itemsShared.add(folderItem);
                 listener.onProgress(100);
             }
@@ -438,7 +445,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
             final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
-            viewAdapter.setTaskListener(new FolderItemTaskListener());
+            viewAdapter.setTaskListener(new FolderItemTaskListener(getUiHelper()));
 
             if (!viewAdapter.isItemSelectionAllowed()) {
                 viewAdapter.toggleItemSelection();

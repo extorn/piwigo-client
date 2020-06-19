@@ -59,27 +59,6 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         super.setNavigationItemSelectedListener(this);
     }
 
-    @Override
-    public void inflateMenu(int resId) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
-        if (uiHelper == null) {
-            if (!isInEditMode()) {
-                // don't do this if showing in the IDE.
-                uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
-                BasicPiwigoResponseListener listener = buildPiwigoListener();
-                listener.withUiHelper(this, uiHelper);
-                uiHelper.setPiwigoResponseListener(listener);
-            }
-        }
-        super.inflateMenu(resId);
-        setMenuVisibilityToMatchSessionState();
-        if (!isInEditMode()) {
-            uiHelper.registerToActiveServiceCalls();
-        }
-        EventBus.getDefault().register(this);
-
-    }
-
     protected ViewGroupUIHelper getUiHelper() {
         return uiHelper;
     }
@@ -167,16 +146,18 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
 
     @Override
     public Parcelable onSaveInstanceState() {
-        uiHelper.deregisterFromActiveServiceCalls();
         SavedState outstate = (SavedState) super.onSaveInstanceState();
         SavedState myState = new SavedState(outstate);
         myState.menuState = new Bundle();
-        uiHelper.onSaveInstanceState(myState.menuState);
+        if(uiHelper != null) {
+            uiHelper.onSaveInstanceState(myState.menuState);
+        }
         return myState;
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable savedState) {
+        createUiHelperIfNeeded();
         SavedState myState = (SavedState) savedState;
         uiHelper.onRestoreSavedInstanceState(myState.menuState);
         super.onRestoreInstanceState(((SavedState) savedState).getSuperState());
@@ -185,14 +166,33 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        createUiHelperIfNeeded();
+
+        setMenuVisibilityToMatchSessionState();
+        uiHelper.registerToActiveServiceCalls();
+
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
+        }
+    }
+
+    private void createUiHelperIfNeeded() {
+        if (uiHelper == null) {
+            prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+            // don't do this if showing in the IDE.
+            uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
+            BasicPiwigoResponseListener listener = buildPiwigoListener();
+            listener.withUiHelper(this, uiHelper);
+            uiHelper.setPiwigoResponseListener(listener);
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         EventBus.getDefault().unregister(this);
+        if(uiHelper != null) {
+            uiHelper.deregisterFromActiveServiceCalls();
+        }
         super.onDetachedFromWindow();
     }
 

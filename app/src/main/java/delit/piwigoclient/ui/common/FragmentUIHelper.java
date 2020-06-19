@@ -16,8 +16,8 @@ public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
     private boolean blockDialogsFromShowing = false;
 
 
-    public FragmentUIHelper(T parent, SharedPreferences prefs, Context context) {
-        super(parent, prefs, context);
+    public FragmentUIHelper(T parent, SharedPreferences prefs, Context context, View attachedView) {
+        super(parent, prefs, context, attachedView);
     }
 
     @Override

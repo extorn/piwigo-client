@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import delit.libs.core.util.Logging;
+import delit.libs.ui.util.ProgressListener;
 
 /**
  * Created by gareth on 17/05/17.
@@ -25,7 +28,13 @@ public class Md5SumUtils {
     private static final String TAG = "Md5Sum";
 
     public static String calculateMD5(ContentResolver contentResolver, Uri uri) throws RuntimeException, Md5SumException {
+        // send in a no-op listener
+        return calculateMD5(contentResolver, uri, percent -> {});
+    }
+
+    public static String calculateMD5(@NonNull ContentResolver contentResolver, @NonNull Uri uri, @NonNull ProgressListener progressListener) throws RuntimeException, Md5SumException {
         MessageDigest digest;
+        progressListener.onProgress(0);
         try {
             digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
@@ -39,11 +48,25 @@ public class Md5SumUtils {
             if(pfd == null) {
                 throw new FileNotFoundException("File descriptor unavailable (file likely doesn't exist) : " + uri);
             }
+            long totalBytes = pfd.getStatSize();
+            long processedBytes = 0;
+            int bytesSinceProgressReport = 0;
+            int lastProgressReport = 0;
+            int reportEveryBytes = 1024; // report progress once per Mb only
             try(FileChannel channel = new FileInputStream(pfd.getFileDescriptor()).getChannel()) {
-                ByteBuffer bb = ByteBuffer.allocateDirect(8192);
+                ByteBuffer bb = ByteBuffer.allocateDirect(65536);//64Kb
+                double onePercentOfBytes = ((double)totalBytes)/100;
                 while (channel.read(bb) >= 0) {
                     bb.flip(); // ready buffer for reading
+                    bytesSinceProgressReport += bb.remaining();
+                    processedBytes += bb.remaining();
                     digest.update(bb);
+                    int progress = (int)Math.rint(0.95 * (((double)processedBytes) / onePercentOfBytes));
+                    if(reportEveryBytes <= bytesSinceProgressReport && progress > lastProgressReport) {
+                        bytesSinceProgressReport = 0;
+                        lastProgressReport = progress;
+                        progressListener.onProgress(progress);
+                    }
                     bb.flip(); // ready buffer for writing
                 }
 
@@ -52,6 +75,7 @@ public class Md5SumUtils {
                 String output = bigInt.toString(16);
                 // Fill to 32 chars
                 output = String.format("%32s", output).replace(' ', '0');
+                progressListener.onProgress(100);
                 return output;
 
             }

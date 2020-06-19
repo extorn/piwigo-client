@@ -41,7 +41,6 @@ public class NavBarHeaderView extends FrameLayout {
     private TextView currentUsernameField;
     private TextView currentServerField;
     private ViewGroupUIHelper uiHelper;
-    private SharedPreferences prefs;
 
     public NavBarHeaderView(Context context) {
         super(context);
@@ -58,23 +57,25 @@ public class NavBarHeaderView extends FrameLayout {
         init(context, attrs, defStyleAttr);
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    private void configureUiHelper() {
+        createUiHelperIfNeeded();
+
+        uiHelper.registerToActiveServiceCalls();
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    private void createUiHelperIfNeeded() {
         if (uiHelper == null) {
-            prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
-            if (!isInEditMode()) {
-                // don't do this if showing in the IDE.
-                uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
-                BasicPiwigoResponseListener listener = new BasicPiwigoResponseListener();
-                listener.withUiHelper(this, uiHelper);
-                uiHelper.setPiwigoResponseListener(listener);
-            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+            // don't do this if showing in the IDE.
+            uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
+            BasicPiwigoResponseListener listener = new BasicPiwigoResponseListener();
+            listener.withUiHelper(this, uiHelper);
+            uiHelper.setPiwigoResponseListener(listener);
         }
-        if (!isInEditMode()) {
-            uiHelper.registerToActiveServiceCalls();
-        }
-        EventBus.getDefault().register(this);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -125,29 +126,32 @@ public class NavBarHeaderView extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
+        configureUiHelper();
     }
 
     @Override
     protected void onDetachedFromWindow() {
+        if(uiHelper != null) {
+            uiHelper.deregisterFromActiveServiceCalls();
+        }
         EventBus.getDefault().unregister(this);
         super.onDetachedFromWindow();
     }
 
     @Override
     public Parcelable onSaveInstanceState() {
-        uiHelper.deregisterFromActiveServiceCalls();
         BaseSavedState outState = (BaseSavedState) super.onSaveInstanceState();
         SavedState myState = new SavedState(outState);
         myState.uiHelperState = new Bundle();
-        uiHelper.onSaveInstanceState(myState.uiHelperState);
+        if(uiHelper != null) {
+            uiHelper.onSaveInstanceState(myState.uiHelperState);
+        }
         return myState;
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable savedState) {
+        createUiHelperIfNeeded();
         SavedState myState = (SavedState) savedState;
         uiHelper.onRestoreSavedInstanceState(myState.uiHelperState);
         super.onRestoreInstanceState(((SavedState) savedState).getSuperState());

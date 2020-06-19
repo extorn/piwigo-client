@@ -6,7 +6,6 @@ import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import androidx.annotation.ColorInt;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
@@ -233,32 +231,6 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    private static class PredrawListener implements ViewTreeObserver.OnPreDrawListener {
-        private final ResizingPicassoLoader iconViewLoader;
-        private final ImageView iconView;
-
-        public PredrawListener(ImageView iconView, ResizingPicassoLoader iconViewLoader) {
-            this.iconView = iconView;
-            this.iconViewLoader = iconViewLoader;
-        }
-
-        @Override
-        public boolean onPreDraw() {
-            try {
-                if (!iconViewLoader.isImageLoaded() && !iconViewLoader.isImageLoading() && !iconViewLoader.isImageUnavailable()) {
-
-                    int imgSize = iconView.getMeasuredWidth();
-                    iconViewLoader.setResizeTo(imgSize, imgSize);
-                    iconViewLoader.load();
-                }
-            } catch (IllegalStateException e) {
-                Logging.recordException(e);
-                // image loader not configured yet...
-            }
-            return true;
-        }
-    }
-
     protected class SimpleCategoryItemViewHolder extends CategoryItemViewHolder {
 
         public SimpleCategoryItemViewHolder(View view) {
@@ -290,13 +262,13 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
                 ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); // SRC_ATOP: use colors of the tint to shade the non transparent parts of the image
                 geticonViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             }
+            geticonViewLoader().load();
         }
 
         @Override
         public void cacheViewFieldsAndConfigure(CategoryItemViewAdapterPreferences adapterPrefs) {
             super.cacheViewFieldsAndConfigure(adapterPrefs);
             geticonViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
-            final ViewTreeObserver.OnPreDrawListener predrawListener = new PredrawListener(getIconView(), geticonViewLoader());
 
             // default to setting a tint (we'll apply it if needed depending on image shown)
             ColorStateList colorList;
@@ -309,18 +281,6 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             ImageViewCompat.setImageTintList(getIconView(), colorList);
             ImageViewCompat.setImageTintMode(getIconView(), PorterDuff.Mode.SRC_ATOP); //SRC_ATOP: use colors of the tint to shade the non transparent parts of the image
 
-
-            getIconView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                @Override
-                public void onViewAttachedToWindow(View v) {
-                    getIconView().getViewTreeObserver().addOnPreDrawListener(predrawListener);
-                }
-
-                @Override
-                public void onViewDetachedFromWindow(View v) {
-                    getIconView().getViewTreeObserver().removeOnPreDrawListener(predrawListener);
-                }
-            });
         }
     }
 

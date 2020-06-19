@@ -296,8 +296,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         }
 
         if (uiHelper == null) {
-            //TODO move this to after the view is created so that the UI helper progress indicator can init if needed!
-            uiHelper = new ActivityUIHelper<>((T)this, prefs);
+            uiHelper = new ActivityUIHelper<>((T)this, prefs, getWindow().getDecorView());
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);

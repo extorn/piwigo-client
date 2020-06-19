@@ -2,8 +2,6 @@ package delit.piwigoclient.ui.album.view;
 
 import android.graphics.Color;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,7 +10,6 @@ import androidx.core.content.ContextCompat;
 
 import org.jetbrains.annotations.NotNull;
 
-import delit.libs.core.util.Logging;
 import delit.libs.ui.view.SquareLinearLayout;
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
@@ -23,7 +20,6 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
-import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences.SCALING_QUALITY_VLOW;
 
 public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, P extends AlbumItemViewHolder<S, Q, P, M>, M extends ResourceContainer<? extends S, GalleryItem>> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> implements PicassoLoader.PictureItemImageLoaderListener {
     protected final int viewType;
@@ -32,7 +28,7 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
     public TextView mDescView;
     public ImageView mRecentlyAlteredMarkerView;
     protected SquareLinearLayout mImageContainer;
-    protected ResizingPicassoLoader imageLoader;
+    protected ResizingPicassoLoader<ImageView> imageLoader;
     protected AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter;
     protected View mItemContainer;
 
@@ -79,54 +75,12 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
         mRecentlyAlteredMarkerView = itemView.findViewById(R.id.newly_altered_marker_image);
         mImageContainer = itemView.findViewById(R.id.thumbnail_container);
         mItemContainer = itemView.findViewById(R.id.item_container);
-
-        final ViewTreeObserver.OnPreDrawListener predrawListener;
-        predrawListener = configureNonMasonryThumbnailLoader(mImageView);
-        mImageView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-                mImageView.getViewTreeObserver().addOnPreDrawListener(predrawListener);
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                mImageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
-            }
-        });
+        imageLoader = new ResizingPicassoLoader<>(mImageView, this, 0, 0);
+        imageLoader.load();
         mImageView.setContentDescription("resource thumb");
         mImageView.setOnClickListener(getItemActionListener());
         mImageView.setOnLongClickListener(getItemActionListener());
 
-    }
-
-    protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(final ImageView target) {
-        imageLoader = new ResizingPicassoLoader(target, this, 0, 0);
-        return () -> {
-            try {
-                if(!imageLoader.hasResourceToLoad()) {
-                    return true;
-                }
-                int requiredSize = ((ViewGroup)target.getParent()).getMeasuredHeight();
-                imageLoader.setResizeTo(requiredSize, requiredSize);
-                if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading() && !imageLoader.isImageUnavailable()) {
-
-                    int desiredScalingQuality = parentAdapter.getAdapterPrefs().getScalingQuality();
-                    int imgSize = desiredScalingQuality;
-                    if (imgSize == Integer.MAX_VALUE) {
-                        imgSize = target.getMeasuredWidth();
-                    } else {
-                        // need that math.max to ensure that the image size remains positive
-                        imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(desiredScalingQuality, target.getMeasuredWidth()));
-                    }
-                    imageLoader.setResizeTo(imgSize, imgSize);
-                    imageLoader.load();
-                }
-            } catch (IllegalStateException e) {
-                Logging.recordException(e);
-                // image loader not configured yet...
-            }
-            return true;
-        };
     }
 
     @NotNull

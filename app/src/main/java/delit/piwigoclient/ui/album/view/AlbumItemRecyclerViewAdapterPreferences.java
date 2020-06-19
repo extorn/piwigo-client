@@ -8,13 +8,6 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
 public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
-    public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
-    public static final int SCALING_QUALITY_VHIGH = 960;
-    public static final int SCALING_QUALITY_HIGH = 480;
-    public static final int SCALING_QUALITY_MEDIUM = 240;
-    public static final int SCALING_QUALITY_LOW = 120;
-    public static final int SCALING_QUALITY_VLOW = 60;
-    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
     private Date recentlyAlteredThresholdDate;
     private String preferredThumbnailSize;
     private String preferredAlbumThumbnailSize;
@@ -96,10 +89,6 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
 
     public float getAlbumWidthInches() {
         return albumWidthInches;
-    }
-
-    public int getScalingQuality() {
-        return scalingQuality;
     }
 
     public boolean isShowAlbumThumbnailsZoomed() {

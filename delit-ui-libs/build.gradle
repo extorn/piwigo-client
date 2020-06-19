@@ -34,4 +34,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.4.3'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation project(path: ':delit-core-libs')
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.mockito:mockito-core:3.3.3'
 }

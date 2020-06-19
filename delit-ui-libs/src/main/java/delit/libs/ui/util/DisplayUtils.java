@@ -39,13 +39,11 @@ import android.widget.AdapterView;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.os.LocaleListCompat;
 import androidx.fragment.app.Fragment;
@@ -538,6 +536,27 @@ public class DisplayUtils {
             drawable.draw(canvas);
         }
         return bitmap;
+    }
+
+    public static Activity getActivity(Context context)
+    {
+        if (context == null)
+        {
+            return null;
+        }
+        else if (context instanceof ContextWrapper)
+        {
+            if (context instanceof Activity)
+            {
+                return (Activity) context;
+            }
+            else
+            {
+                return getActivity(((ContextWrapper) context).getBaseContext());
+            }
+        }
+
+        return null;
     }
 
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {

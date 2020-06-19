@@ -69,19 +69,19 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        initialiseCoreComponents(savedInstanceState);
+        initialiseCoreComponents(savedInstanceState, container);
         return v;
     }
 
-    private void initialiseCoreComponents(Bundle savedInstanceState) {
+    private void initialiseCoreComponents(Bundle savedInstanceState, View attachedView) {
         if(initialisedCoreComponents) {
             return;
         }
         initialisedCoreComponents = true;
         if (uiHelper == null) {
-            uiHelper = new FragmentUIHelper<>((T) this, getPrefs(), getContext());
+            uiHelper = new FragmentUIHelper<T>((T)this, getPrefs(), getContext(), attachedView);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
@@ -140,9 +140,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // do this here in case the onCreateView isn't called in a derived class
-        initialiseCoreComponents(savedInstanceState);
-        super.onViewCreated(view, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState); // this binds all the preferences
         if (savedInstanceState != null) {
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
             pagerIndex = savedInstanceState.getInt(STATE_PAGER_INDEX_POS);

@@ -1,4 +1,4 @@
-package delit.libs.ui.view;
+package delit.libs.ui.util;
 
 public interface ProgressListener {
     void onProgress(int percent);

@@ -173,9 +173,6 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
     }
 
     public final void load() {
-        if (listener != null) {
-            listener.onBeforeImageLoad(this);
-        }
         load(false);
     }
 
@@ -188,9 +185,6 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
     }
 
     public void loadNoCache() {
-        if (listener != null) {
-            listener.onBeforeImageLoad(this);
-        }
         load(true);
     }
 
@@ -222,7 +216,10 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         }
     }
 
-    protected final void load(final boolean forceServerRequest) {
+    protected void load(final boolean forceServerRequest) {
+        if (listener != null) {
+            listener.onBeforeImageLoad(this);
+        }
         synchronized (this) {
             if (imageLoading) {
                 return;

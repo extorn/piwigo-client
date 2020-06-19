@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +19,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -321,11 +318,6 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        return super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
     }
 
     @Override
