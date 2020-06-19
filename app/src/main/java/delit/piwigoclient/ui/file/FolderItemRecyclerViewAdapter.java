@@ -147,14 +147,14 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         this.taskListener = taskListener;
     }
 
-    protected void updateContent(DocumentFile newContent, boolean force) {
+    protected void updateContent(Context context, DocumentFile newContent, boolean force) {
         if(isBusy) {
             activeTask.cancel(true);
         }
-        activeTask = new UpdateFolderContentTask(this, newContent, force).execute();
+        activeTask = new UpdateFolderContentTask(this, newContent, force).withContext(context).execute();
     }
 
-    protected List<FolderItem> getNewDisplayContentInternal(DocumentFile newContent) {
+    protected List<FolderItem> getNewDisplayContentInternal(Context context, DocumentFile newContent) {
 
         List<FolderItem> currentDisplayContent;
         activeFolder = newContent;
@@ -165,7 +165,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             List<DocumentFile> folderContent;
             folderContent = new ArrayList<>(activeFolder.listFiles().length);
             Collections.addAll(folderContent, activeFolder.listFiles());
-            currentDisplayContent = buildDisplayContent(folderContent);
+            currentDisplayContent = buildDisplayContent(context, folderContent);
         } else {
             currentDisplayContent = new ArrayList<>();
             // null used to mean no folder to show, but now means items without a folder shown so we leave the content intact.
@@ -240,15 +240,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    public void refreshContentView() {
-        updateContent(activeFolder, false);
+    public void refreshContentView(Context context) {
+        updateContent(context, activeFolder, false);
     }
 
-    public void rebuildContentView() {
-        updateContent(activeFolder, true);
+    public void rebuildContentView(Context context) {
+        updateContent(context, activeFolder, true);
     }
 
-    public void resetRoot(DocumentFile activeRootFile) {
+    public void resetRoot(Context context, DocumentFile activeRootFile) {
         if(isBusy) {
             activeTask.cancel(true);
         }
@@ -258,24 +258,24 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             this.activeRootUri = IOUtils.getTreeUri(activeRootFile.getUri());
         }
         clear();
-        changeFolderViewed(activeRootFile);
+        changeFolderViewed(context, activeRootFile);
     }
 
-    public void updateContentAndRoot(@NonNull DocumentFile activeRootFile, @NonNull DocumentFile newFolder) {
+    public void updateContentAndRoot(Context context, @NonNull DocumentFile activeRootFile, @NonNull DocumentFile newFolder) {
         if(isBusy) {
             activeTask.cancel(true);
         }
         this.activeRootUri = IOUtils.getTreeUri(activeRootFile.getUri());
         clear();
-        changeFolderViewed(newFolder);
+        changeFolderViewed(context, newFolder);
     }
 
-    public boolean changeFolderViewed(DocumentFile newContent) {
-        updateContent(newContent, false);
+    public boolean changeFolderViewed(Context context, DocumentFile newContent) {
+        updateContent(context, newContent, false);
         return true;
     }
 
-    private List<FolderItem> buildDisplayContent(@NonNull List<DocumentFile> folderContent) {
+    private List<FolderItem> buildDisplayContent(Context context, @NonNull List<DocumentFile> folderContent) {
 
         ArrayList<FolderItem> displayContent = new ArrayList<>();
         boolean preCacheName = getAdapterPrefs().getFileSortOrder() == ALPHABETICAL;
@@ -283,7 +283,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         int itemCount = folderContent.size();
         for (int i = 0; i < itemCount; i++) {
             DocumentFile f = folderContent.get(i);
-            displayContent.add(new FolderItem(activeRootUri, f, preCacheName, preCacheLastModified));
+            FolderItem folderItem = new FolderItem(activeRootUri, f);
+            folderItem.cacheFields(context);
+            displayContent.add(folderItem);
             if (Thread.currentThread().isInterrupted()) {
                 return null;
             }
@@ -553,16 +555,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             uid = uidGen.getAndIncrement();
         }
 
-        public FolderItem(Uri rootUri, DocumentFile itemDocFile, boolean preCacheName, boolean preCacheLastModified) {
+        public FolderItem(Uri rootUri, DocumentFile itemDocFile) {
             this.itemDocFile = itemDocFile;
             this.rootUri = rootUri;
             this.itemUri = itemDocFile.getUri(); // used for persistence
-            if(preCacheLastModified) {
-                this.lastModified = itemDocFile.lastModified();
-            }
-            if(preCacheName) {
-                this.name = IOUtils.getFilename(itemDocFile);
-            }
             this.isFolder = itemDocFile.isDirectory();
             this.isFile = itemDocFile.isFile();
             this.mime = (isFolder||!isFile)?null:itemDocFile.getType();
@@ -812,7 +808,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             }
             if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
                 FolderItem folderItem = getViewHolder().getItem();
-                changeFolderViewed(folderItem.getDocumentFile());
+                changeFolderViewed(v.getContext(), folderItem.getDocumentFile());
             } else if (getAdapterPrefs().isAllowFileSelection()) {
                 super.onClick(v);
             }
@@ -1034,7 +1030,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         protected List<FolderItem>[] doInBackgroundSafely(Object[] objects) {
             List<FolderItem> fullContent = getOwner().currentFullContent;
             if(!refreshingExistingFolder || force) {
-                fullContent = getOwner().getNewDisplayContentInternal(newContent);
+                fullContent = getOwner().getNewDisplayContentInternal(getContext(), newContent);
             }
             List<FolderItem> filteredContent = fullContent;
             if(fullContent != null) {

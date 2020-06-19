@@ -19,6 +19,11 @@ public abstract class TaskProgressTracker implements ProgressListener {
     }
 
     protected TaskProgressTracker(double reportAtIncrement) {
+        if(Math.round(reportAtIncrement) == 100) {
+            reportAtIncrement = 100;
+        } else if(Math.round(reportAtIncrement) == 0) {
+            reportAtIncrement = 0;
+        }
         if(reportAtIncrement < 0 || reportAtIncrement > 100) {
             throw new IllegalArgumentException("report increment must be between 0 and 100");
         }
@@ -49,10 +54,18 @@ public abstract class TaskProgressTracker implements ProgressListener {
      */
     public TaskProgressTracker withStage(double startProgress, double endProgress, int ticksInTask) {
         if(startProgress < 0 || startProgress > 100) {
-            throw new IllegalArgumentException("start progress must be between 0 and 100 : " + startProgress);
+            if(Math.round(startProgress) == 0) {
+                startProgress = 0;
+            } else {
+                throw new IllegalArgumentException("start progress must be between 0 and 100 : " + startProgress);
+            }
         }
         if(endProgress < 0 || endProgress > 100) {
-            throw new IllegalArgumentException("end progress must be between 0 and 100 : " + endProgress);
+            if(Math.round(endProgress) == 100) {
+                startProgress = 100;
+            } else {
+                throw new IllegalArgumentException("end progress must be between 0 and 100 : " + endProgress);
+            }
         }
         if(startProgress >= endProgress) {
             throw new IllegalArgumentException("end progress must be more than start progress: " + startProgress + " - " + endProgress);

@@ -15,7 +15,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
@@ -96,7 +100,6 @@ public class ConnectionPreferences {
 
         private static final long serialVersionUID = -839430660180276975L;
         private final String prefix;
-        private transient PreferenceActor prefActor;
         private boolean asGuest;
 
         protected ProfilePreferences(Parcel in) {
@@ -117,10 +120,7 @@ public class ConnectionPreferences {
         };
 
         public PreferenceActor getPrefActor() {
-            if(prefActor == null) {
-                prefActor = new PreferenceActor(this.prefix);
-            }
-            return prefActor;
+            return new PreferenceActor(this.prefix);
         }
 
         private ProfilePreferences(String prefix) {
@@ -292,8 +292,8 @@ public class ConnectionPreferences {
         }
 
         public static class PreferenceActor {
-            int prefKey;
-            String profileId;
+            private int prefKey;
+            private String profileId;
             private SecurePrefsUtil securePrefUtil;
             private static final String TAG  = "PrefActor";
 

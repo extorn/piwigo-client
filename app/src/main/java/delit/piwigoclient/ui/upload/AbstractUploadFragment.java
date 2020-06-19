@@ -279,7 +279,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     Logging.recordException(e);
                 }
             }
-            mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(),100).onProgress(100);
+            if(mainTaskProgressListener.getLastReportedProgress() < 100) {
+                mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(), 100).onProgress(100);
+            }
             getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
             return uploadDataItems;
         }

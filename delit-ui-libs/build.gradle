@@ -36,4 +36,5 @@ dependencies {
     implementation project(path: ':delit-core-libs')
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:3.3.3'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }

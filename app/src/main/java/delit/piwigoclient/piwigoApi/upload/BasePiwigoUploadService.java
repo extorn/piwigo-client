@@ -215,6 +215,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.getJobId() == jobId) {
+                    uploadJob.withContext(context);
                     return uploadJob;
                 }
             }
@@ -227,6 +228,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             job = null;
         }
         if (job != null) {
+            job.withContext(context);
             synchronized (activeUploadJobs) {
                 activeUploadJobs.add(job);
             }

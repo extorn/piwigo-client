@@ -394,7 +394,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 if(docFile != null) {
                     final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
-                    FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
+                    FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
                     folderItem.cacheFields(requireContext());
                     itemsShared.add(folderItem);
                     listener.onProgress(100);
@@ -409,7 +409,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 appSettingsViewModel.takePersistableUriPermissions(requireContext(), permittedUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
 
 
-                FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile, true, true);
+                FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
                 folderItem.cacheFields(requireContext());
                 itemsShared.add(folderItem);
                 listener.onProgress(100);
@@ -429,7 +429,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if (parent == null) {
             return false;
         } else {
-            getListAdapter().changeFolderViewed(parent);
+            getListAdapter().changeFolderViewed(getContext(), parent);
             return true;
         }
     }
@@ -519,7 +519,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             selectedItems = new HashSet<>(1);
             if(listAdapter.getActiveFolder() != null) {
-                selectedItems.add(new FolderItemRecyclerViewAdapter.FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder(), true, true));
+                FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder());
+                folderItem.cacheFields(getContext());
+                selectedItems.add(folderItem);
             }
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
@@ -569,7 +571,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         @Override
         public void onFiltersChanged(Context context, boolean filterHidden, boolean filterShown) {
-            listAdapter.refreshContentView();
+            listAdapter.refreshContentView(context);
         }
     }
 
@@ -627,17 +629,17 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         try {
                             if (currentRoot == null && getViewPrefs().getInitialFolder() != null) {
                                 DocumentFile file = IOUtils.getTreeLinkedDocFile(getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
-                                getListAdapter().updateContentAndRoot(newRoot, file);
+                                getListAdapter().updateContentAndRoot(getContext(), newRoot, file);
                             } else {
-                                getListAdapter().resetRoot(newRoot);
+                                getListAdapter().resetRoot(getContext(), newRoot);
                             }
                         } catch(IllegalStateException e) {
-                            getListAdapter().resetRoot(newRoot); // just use the current root and ignore the initial folder.
+                            getListAdapter().resetRoot(getContext(), newRoot); // just use the current root and ignore the initial folder.
                         }
                         deselectAllItems();
                     } else {
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
-                        getListAdapter().resetRoot(newRoot);
+                        getListAdapter().resetRoot(getContext(), newRoot);
                         deselectAllItems();
                         fileExtFilters.setEnabled(false);
                         retrieveFilesFromSystemPicker(getViewPrefs().getInitialFolder());
@@ -646,7 +648,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             } else {
                 // just show the empty view.
                 getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
-                getListAdapter().resetRoot(null);
+                getListAdapter().resetRoot(getContext(), null);
                 deselectAllItems();
             }
         }
@@ -716,7 +718,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         @Override
         public void onBreadcrumbClicked(DocumentFile pathItemFile) {
             if(getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
-                getListAdapter().rebuildContentView();
+                getListAdapter().rebuildContentView(getContext());
             } else {
                 boolean loadedFromMemory = false;
                 if(listViewStates != null) {
@@ -745,7 +747,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     }
                 }
                 if(!loadedFromMemory) {
-                    getListAdapter().changeFolderViewed(pathItemFile);
+                    getListAdapter().changeFolderViewed(getContext(), pathItemFile);
                 }
             }
         }
