@@ -112,12 +112,12 @@
     </style>
 
     <!-- icon only style button tinted in the accent colors -->
-    <style name="Widget.Button.OutlinedButton.IconOnly.Accented" parent="Widget.Button.OutlinedButton.IconOnly">
+    <style name="App.Widget.Button.OutlinedButton.IconOnly.Accented" parent="App.Widget.Button.OutlinedButton.IconOnly">
         <item name="iconTint">?attr/colorSecondary</item>
     </style>
 
     <!-- icon only style button -->
-    <style name="Widget.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="App.Widget.Button.OutlinedButton.IconOnly" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:insetTop">0dp</item>

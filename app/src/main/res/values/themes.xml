@@ -110,8 +110,8 @@
         <item name="editableFieldTextClickable">@style/App.Widget.EditText.FieldEntry.Clickable</item>
         <item name="clickableTextViewStyleBody1">@style/App.Widget.MaterialComponents.TextView.Clickable.Body1</item>
         <item name="clickableTextViewStyleBody2">@style/App.Widget.MaterialComponents.TextView.Clickable.Body2</item>
-        <item name="materialButtonIconStyle">@style/Widget.Button.OutlinedButton.IconOnly</item>
-        <item name="materialButtonIconAccentedStyle">@style/Widget.Button.OutlinedButton.IconOnly.Accented</item>
+        <item name="materialButtonIconStyle">@style/App.Widget.Button.OutlinedButton.IconOnly</item>
+        <item name="materialButtonIconAccentedStyle">@style/App.Widget.Button.OutlinedButton.IconOnly.Accented</item>
         <item name="checkboxFavoriteAccentedStyle">@style/Widget.CompoundButton.CheckBox.Favorite.Accented</item>
         <item name="visibilityToggleStyle">@style/App.Widget.CompoundButton.CheckBox.Visibility</item>
         <item name="layoutExpansionToggleStyle">@style/App.Widget.CompoundButton.CheckBox.LayoutExpansion</item>

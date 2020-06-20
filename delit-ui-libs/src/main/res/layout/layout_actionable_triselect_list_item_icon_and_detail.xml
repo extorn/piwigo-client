@@ -14,55 +14,68 @@
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/list_item_icon_thumbnail"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="12dp"
-                android:layout_centerVertical="true"
-                android:contentDescription="icon"
+                android:layout_marginBottom="12dp"
                 android:scaleType="fitCenter"
-                tools:srcCompat="@drawable/ic_file_black_24dp"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.2"
+                tools:src="@drawable/ic_file_black_24dp" />
 
             <TextView
-                android:id="@+id/list_item_name"
-                android:layout_toEndOf="@id/list_item_icon_thumbnail"
-                android:layout_width="wrap_content"
+                android:id="@+id/resource_name"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:minLines="1"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                tools:text="File name"
-                android:textAppearance="?textAppearanceBody2" />
+                android:paddingStart="3dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="3dp"
+                android:paddingBottom="0dp"
+                app:layout_constrainedHeight="true"
+                android:textAppearance="?textAppearanceBody2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/list_item_icon_thumbnail"
+                app:layout_constraintTop_toTopOf="@id/list_item_icon_thumbnail"
+                tools:text="Album Name. This one is really long asdfaf dsa fsf da fdsa fdsaf dsf ds fdsaf dsf dsaf dfads fds afdsf adsf a fs asdf sda sa dfd fad adsf dsafdfdafdfadfdsfafda!" />
 
             <TextView
                 android:id="@+id/list_item_details"
-                android:layout_below="@+id/list_item_name"
-                android:layout_toEndOf="@id/list_item_icon_thumbnail"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="5dp"
-                tools:text="File details"
-                android:textAppearance="?textAppearanceBody1" />
+                android:paddingStart="3dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="3dp"
+                android:paddingBottom="0dp"
+                android:textAppearance="?textAppearanceBody1"
+                app:layout_constrainedHeight="true"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/list_item_icon_thumbnail"
+                app:layout_constraintTop_toBottomOf="@id/resource_name"
+                app:layout_constraintVertical_bias="0"
+                tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description. What do you think?" />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
     <delit.libs.ui.view.button.MaterialCheckboxTriState
