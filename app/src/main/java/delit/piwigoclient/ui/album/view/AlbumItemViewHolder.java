@@ -27,7 +27,6 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
     public TextView mNameView;
     public TextView mDescView;
     public ImageView mRecentlyAlteredMarkerView;
-    protected SquareLinearLayout mImageContainer;
     protected ResizingPicassoLoader<ImageView> imageLoader;
     protected AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter;
     protected View mItemContainer;
@@ -73,7 +72,6 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
         mDescView = itemView.findViewById(R.id.resource_description);
         mImageView = itemView.findViewById(R.id.resource_thumbnail);
         mRecentlyAlteredMarkerView = itemView.findViewById(R.id.newly_altered_marker_image);
-        mImageContainer = itemView.findViewById(R.id.thumbnail_container);
         mItemContainer = itemView.findViewById(R.id.item_container);
         imageLoader = new ResizingPicassoLoader<>(mImageView, this, 0, 0);
         imageLoader.load();
