@@ -14,66 +14,61 @@
         ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/ad_id_album_banner"/>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/album_header_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/gallery_adView"
-        android:layout_toStartOf="@+id/show_information_action_button"
-        android:visibility="invisible"
-        tools:visibility="visible">
-
+        android:layout_alignWithParentIfMissing="true"
+        android:visibility="visible"
+        android:paddingBottom="4dp">
 
         <TextView
             android:id="@+id/gallery_details_name_header"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="?textAppearanceHeadline5"
             app:layout_constraintBottom_toTopOf="@id/gallery_details_description_header"
+            app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Gallery name" />
 
         <TextView
             android:id="@+id/gallery_details_description_header"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
             android:textAppearance="?textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/gallery_details_name_header"
             tools:text="Gallery Description" />
 
+        <Button
+            android:id="@+id/show_information_action_button"
+            style="?materialButtonIconAccentedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            app:icon="@drawable/ic_info_black_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/show_information_action_button"
-        style="?materialButtonIconAccentedStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@id/gallery_adView"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"
-        tools:visibility="visible"
-        android:visibility="gone"
-        app:icon="@drawable/ic_info_black_24dp" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/gallery_retryAction_actionButton"
-        android:layout_centerHorizontal="true"
-        android:layout_alignTop="@+id/gallery_list"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:fabSize="mini"
-        app:icon="@drawable/ic_refresh_black_24dp"
-        style="?extendedFloatingActionButtonStyle" />
 
 
     <TextView
@@ -87,6 +82,17 @@
         android:visibility="gone"
         tools:text="A Reason that this gallery is empty or which calls need repeating"
         tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/gallery_retryAction_actionButton"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/gallery_list"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:fabSize="mini"
+        app:icon="@drawable/ic_refresh_black_24dp"
+        style="?extendedFloatingActionButtonStyle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gallery_list"
