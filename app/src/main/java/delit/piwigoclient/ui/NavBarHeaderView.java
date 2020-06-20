@@ -47,6 +47,7 @@ public class NavBarHeaderView extends FrameLayout {
         init(context, null, 0);
     }
 
+
     public NavBarHeaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, 0);
@@ -119,14 +120,13 @@ public class NavBarHeaderView extends FrameLayout {
         currentServerField = content.findViewById(R.id.current_server);
         //TODO is this next line really needed?
         content.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.side_nav_bar));
-
-        updateServerConnectionDetails();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         configureUiHelper();
+        updateServerConnectionDetails();
     }
 
     @Override
