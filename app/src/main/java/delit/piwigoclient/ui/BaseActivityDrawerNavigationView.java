@@ -94,6 +94,11 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final PiwigoLoginSuccessEvent event) {
+        setMenuVisibilityToMatchSessionState();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UnlockAppEvent event) {
         String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
         if (savedPassword.equals(event.getPassword())) {
@@ -189,7 +194,9 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
 
     @Override
     protected void onDetachedFromWindow() {
-        EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
         if(uiHelper != null) {
             uiHelper.deregisterFromActiveServiceCalls();
         }

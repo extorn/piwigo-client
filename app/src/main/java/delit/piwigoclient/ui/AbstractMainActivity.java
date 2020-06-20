@@ -1098,9 +1098,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         FirebaseCrashlytics.getInstance().setCustomKey("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
 
-
-        MainActivityDrawerNavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setMenuVisibilityToMatchSessionState();
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
             showGallery(CategoryItem.ROOT_ALBUM);
