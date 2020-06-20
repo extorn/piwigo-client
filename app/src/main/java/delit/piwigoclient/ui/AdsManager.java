@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -156,13 +157,14 @@ public class AdsManager {
     }
 
     private synchronized boolean acceptableToShowAdvert(InterstitialAd ad, long minDelayBetweenAds) {
-        long currentTime = System.currentTimeMillis();
-        Calendar c = GregorianCalendar.getInstance();
-        c.set(Calendar.YEAR, 2020); // this year
-        c.set(Calendar.MONTH, 5);//June
-        c.set(Calendar.DAY_OF_MONTH, 1); // 1st
 
-        if (Calendar.getInstance().getTime().after(c.getTime()) && showAds && !advertsDisabled && ad != null) {
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            return false;
+        }
+
+        long currentTime = System.currentTimeMillis();
+
+        if (showAds && !advertsDisabled && ad != null) {
             if (ad.isLoaded() && (currentTime - lastShowedAdvert) > minDelayBetweenAds) {
                 lastShowedAdvert = currentTime;
                 return true;
