@@ -61,7 +61,7 @@
             style="?materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_all"
+            android:text="@string/button_select_all"
             android:visibility="visible"
             app:layout_constraintStart_toEndOf="@id/list_action_cancel_button"
             app:layout_constraintEnd_toStartOf="@id/list_action_save_button"
