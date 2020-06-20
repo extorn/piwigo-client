@@ -33,9 +33,9 @@ public class CollectionUtils {
 
         String itemVal;
         for (Object item : items) {
-            itemVal = item.toString();
+            itemVal = item == null ? null : item.toString();
             sb.append(itemVal);
-            if(itemVal.contains(delimiter)) {
+            if(itemVal != null && itemVal.contains(delimiter)) {
                 Logging.log(Log.ERROR, TAG, "generated CSV list is corrupt as value contained a delimiter : " + itemVal);
             }
             sb.append(delimiter);

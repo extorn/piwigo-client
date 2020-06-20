@@ -246,6 +246,11 @@ public abstract class UIHelper<T> {
     }
 
     private synchronized void showDetailedMsg(QueuedSimpleMessage newItem) {
+        if(!DisplayUtils.isRunningOnUIThread()) {
+            // make certain this isn't called on a background thread.
+            DisplayUtils.postOnUiThread(() -> {showDetailedMsg(newItem);});
+            return;
+        }
         if(!toastShowing) {
             // do this here in case the queue is already full (will only occur if there is a bug in the display logic really).
             showQueuedMsg();
