@@ -19,7 +19,7 @@ import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
  * Created by gareth on 17/10/17.
  */
 
-public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
+public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
     public ActivityUIHelper(T parent, SharedPreferences prefs, View attachedView) {
         super(parent, prefs, parent, attachedView);
     }

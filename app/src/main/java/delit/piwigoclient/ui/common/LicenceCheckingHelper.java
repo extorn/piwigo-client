@@ -37,10 +37,10 @@ public class LicenceCheckingHelper {
     private LicenseChecker mChecker;
     // A handler on the UI thread.
     private Handler mHandler;
-    private MyActivity activity;
+    private BaseMyActivity activity;
     private Date lastChecked;
 
-    public void onCreate(MyActivity activity) {
+    public void onCreate(BaseMyActivity activity) {
 
         this.activity = activity;
 

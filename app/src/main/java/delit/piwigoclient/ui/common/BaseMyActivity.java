@@ -69,13 +69,7 @@ import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.FileSelectActivity;
-import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
-import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
-import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
-import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
-import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
@@ -90,12 +84,11 @@ import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActivity {
+public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCompatActivity {
 
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String TAG = "MyActivity";
-    protected static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
     private static final String STATE_TRACKED_ACTION_TO_INTENTS_MAP = "trackedActionIntentsMap";
     protected SharedPreferences prefs;
     private static int activitiesResumed = 0;
@@ -104,10 +97,10 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     private HashMap<Long, Integer> trackedActionIntentsMap = new HashMap<>(3);
     private ActivityUIHelper<T> uiHelper;
     private LicenceCheckingHelper licencingHelper;
-    private AdsManager.RewardCountDownAction rewardsCountdownAction;
+
     private String initialisedWithLanguage;
 
-    public MyActivity(@LayoutRes int contentView) {
+    public BaseMyActivity(@LayoutRes int contentView) {
         super(contentView);
     }
 
@@ -275,7 +268,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
             }*/
 
         }
-        rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
+
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         initialisedWithLanguage  = AppPreferences.getDesiredLanguage(getSharedPrefs(), this);
 
@@ -378,11 +371,6 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         });
     }
 
-    protected void onAppPaused() {
-        if (rewardsCountdownAction != null) {
-            rewardsCountdownAction.stop();
-        }
-    }
 
     protected void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
 
@@ -390,10 +378,6 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         getUiHelper().setTrackingRequest(trackingRequestId);
 
         getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction(getUiHelper(), trackingRequestId));
-    }
-
-    protected void onAppResumed() {
-        rewardsCountdownAction.start();
     }
 
     @Override
@@ -412,6 +396,10 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         uiHelper.deregisterFromActiveServiceCalls();
         super.onPause();
     }
+
+    protected void onAppPaused() {}
+
+    protected void onAppResumed() {}
 
     @Override
     public void onResume() {
@@ -593,11 +581,6 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         uiHelper.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
-//    @Subscribe
-//    public void onEvent(PermissionsWantedRequestEvent event) {
-//        ActivityCompat.requestPermissions(this, event.getPermissionsNeeded(), event.getActionId());
-//    }
-
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserNotUniqueWarningEvent event) {
         Bundle b = new Bundle();
@@ -655,51 +638,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(BackgroundUploadThreadTerminatedEvent event) {
-        if (event.isHandled()) {
-            return;
-        }
-        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_stopped));
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(BackgroundUploadThreadStartedEvent event) {
-        if (event.isHandled()) {
-            return;
-        }
-        getUiHelper().showShortMsg(R.string.alert_auto_upload_service_started);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(BackgroundUploadStartedEvent event) {
-        if (event.isHandled()) {
-            return;
-        }
-        String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(prefs, getApplicationContext());
-        if(event.isJobBeingRerun()) {
-            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_restarted, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
-        } else {
-            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_started, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(BackgroundUploadStoppedEvent event) {
-        if (event.isHandled()) {
-            return;
-        }
-        String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(prefs, getApplicationContext());
-        if(event.getUploadJob().isFinished()) {
-            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_success, uploadingToServer));
-        } else {
-            if(event.getUploadJob().getFilesNotYetUploaded(this).size() < event.getUploadJob().getFilesForUpload().size()) {
-                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_partial_success, uploadingToServer));
-            } else {
-                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_failure, uploadingToServer));
-            }
-        }
-    }
 
     protected boolean hasNotAcceptedEula() {
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
@@ -707,15 +646,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         return agreedEulaVersion < currentEulaVersion;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(BackgroundUploadThreadCheckingForTasksEvent event) {
-        if (event.isHandled()) {
-            return;
-        }
-        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_checking_for_tasks));
-    }
-
-    private static class ExitOnCloseAction<T extends MyActivity<T>> extends UIHelper.QuestionResultAdapter<ActivityUIHelper<T>> {
+    private static class ExitOnCloseAction<T extends BaseMyActivity<T>> extends UIHelper.QuestionResultAdapter<ActivityUIHelper<T>> {
         private static final long serialVersionUID = 3716587979356224753L;
 
         public ExitOnCloseAction(ActivityUIHelper<T> uiHelper) {
