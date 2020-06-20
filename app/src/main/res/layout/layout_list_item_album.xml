@@ -9,104 +9,89 @@
     android:layout_marginTop="16dp"
     app:cardBackgroundColor="@color/color_album_item_background">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/item_container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <delit.libs.ui.view.SquareLinearLayout
-        android:id="@+id/image_container"
-        android:layout_width="133dp"
-        android:layout_height="118dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_weight="0.3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_height="120dp"
-        tools:layout_width="120dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/resource_thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="0dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="28dp"
             android:scaleType="fitCenter"
-            tools:layout_height="120dp"
-            tools:layout_width="120dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.3"
             tools:src="@drawable/ic_broken_image_black_240dp" />
-    </delit.libs.ui.view.SquareLinearLayout>
 
-    <ImageView
-        android:id="@+id/newly_altered_marker_image"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_margin="2dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_star_yellow_24dp" />
+        <ImageView
+            android:id="@+id/newly_altered_marker_image"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="2dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_star_yellow_24dp" />
 
-    <TextView
-        android:id="@+id/resource_name"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:minLines="1"
-        android:paddingStart="3dp"
-        android:paddingTop="3dp"
-        android:paddingEnd="3dp"
-        android:paddingBottom="0dp"
-        android:textAppearance="?textAppearanceHeadline5"
-        app:layout_constraintBottom_toTopOf="@+id/resource_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="0.7"
-        app:layout_constraintStart_toEndOf="@+id/image_container"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Album Name" />
+        <TextView
+            android:id="@+id/resource_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="3dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="3dp"
+            android:paddingBottom="0dp"
+            android:textAppearance="?textAppearanceHeadline5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintTop_toTopOf="@id/resource_thumbnail"
+            tools:text="Album Name. This one is really long!" />
 
-    <TextView
-        android:id="@+id/resource_description"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:minLines="2"
-        android:paddingStart="3dp"
-        android:paddingTop="3dp"
-        android:paddingEnd="3dp"
-        android:paddingBottom="0dp"
-        android:textAppearance="?textAppearanceBody2"
-        app:layout_constraintBottom_toTopOf="@+id/album_photoCount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="0.7"
-        app:layout_constraintStart_toEndOf="@+id/image_container"
-        app:layout_constraintTop_toBottomOf="@id/resource_name"
-        tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description" />
+        <TextView
+            android:id="@+id/resource_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:paddingStart="3dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="3dp"
+            android:paddingBottom="0dp"
+            android:textAppearance="?textAppearanceBody2"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toTopOf="@+id/album_photoCount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintTop_toBottomOf="@id/resource_name"
+            tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description. What do you think?" />
 
-    <TextView
-        android:id="@+id/album_photoCount"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:paddingStart="11dp"
-        android:layout_marginTop="3dp"
-        android:paddingEnd="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@drawable/drawable_scrim_heavy"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:minLines="1"
-        app:layout_constraintHorizontal_weight="0.7"
-        app:layout_constraintStart_toEndOf="@+id/image_container"
-        android:textAppearance="?textAppearanceBody2"
-        tools:text="215 photos" />
+        <TextView
+            android:id="@+id/album_photoCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/drawable_scrim_heavy"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:minLines="1"
+            android:paddingStart="11dp"
+            android:paddingEnd="5dp"
+            android:textAppearance="?textAppearanceBody2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            tools:text="215 photos" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
