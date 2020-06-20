@@ -448,6 +448,7 @@ public abstract class UIHelper<T> {
     }
 
     protected void buildAlertDialog() {
+
         ContextThemeWrapper dialogContext = new ContextThemeWrapper(getParentView().getContext(), R.style.Theme_App_EditPages);
             MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(dialogContext);
         builder1.setCancelable(true);
@@ -1073,6 +1074,14 @@ public abstract class UIHelper<T> {
                 action.run();
             }
         }
+    }
+
+    public String getString(@StringRes int stringRes) {
+        return getAppContext().getString(stringRes);
+    }
+
+    public String getString(@StringRes int stringPatternRes, Object ... args) {
+        return getAppContext().getString(stringPatternRes, args);
     }
 
     public interface QuestionResultListener<S extends UIHelper> extends Serializable {
