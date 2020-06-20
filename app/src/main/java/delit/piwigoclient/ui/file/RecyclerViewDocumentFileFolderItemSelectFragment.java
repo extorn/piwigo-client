@@ -299,7 +299,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             getUiHelper().setTrackingRequest(eventId);
             startActivityForResult(openDocTreeIntent, eventId);
         } catch(ActivityNotFoundException e) {
-            getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.no_suitable_activity_found);
+            getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.alert_error_no_app_available_to_handle_action);
             getUiHelper().isTrackingRequest(eventId); // clear the tracked id
         }
     }
@@ -335,7 +335,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             getUiHelper().setTrackingRequest(eventId);
             startActivityForResult(chooserIntent, eventId);
         } catch(ActivityNotFoundException e) {
-            getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.no_suitable_activity_found);
+            getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.alert_error_no_app_available_to_handle_action);
             getUiHelper().isTrackingRequest(eventId); // clear the tracked id
         }
     }
