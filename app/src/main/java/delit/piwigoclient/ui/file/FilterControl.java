@@ -133,6 +133,9 @@ public class FilterControl extends FrameLayout {
         if(selectedVisibleFileExts == null) {
             selectedVisibleFileExts = new HashSet<>();
         }
+        if(currentlyVisibleFileExts == null) {
+            currentlyVisibleFileExts = new HashSet<>();
+        }
         selectedVisibleFileExts.addAll(currentlyVisibleFileExts);
         if(allPossiblyVisibleFileExts != null) {
             selectedVisibleFileExts.addAll(allPossiblyVisibleFileExts);
@@ -204,11 +207,19 @@ public class FilterControl extends FrameLayout {
             if(isChecked) {
                 selectedVisibleFileExts.add(fileExt);
                 if(listener != null) {
+                    if(CollectionUtils.equals(currentlyVisibleFileExts, selectedVisibleFileExts)) {
+                        selectToggle = true; // all selected
+                        setToggleSelectionButtonText();
+                    }
                     listener.onFilterChecked(getContext(), fileExt);
                 }
             } else {
                 selectedVisibleFileExts.remove(fileExt);
                 if(listener != null) {
+                    if(selectedVisibleFileExts.size() == 0) {
+                        selectToggle = false; // all selected
+                        setToggleSelectionButtonText();
+                    }
                     listener.onFilterUnchecked(getContext(), fileExt);
                 }
             }

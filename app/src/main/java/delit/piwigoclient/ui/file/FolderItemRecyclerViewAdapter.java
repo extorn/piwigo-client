@@ -484,7 +484,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             // this is used when loading items from the system picker into this, using this as a bucket.
             currentDisplayContent = new ArrayList<>();
         }
-
+        if(currentFullContent == null) {
+            currentFullContent = new ArrayList<>();
+        }
+        currentFullContent.add(item);
         currentDisplayContent.add(item);
     }
 

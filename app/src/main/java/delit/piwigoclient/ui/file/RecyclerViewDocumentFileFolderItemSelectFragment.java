@@ -305,6 +305,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     }
 
     private void retrieveFilesFromSystemPicker(@Nullable Uri uri) {
+        // change the selected root to be blank again (do it now as it takes a while)
+        folderRootFolderSpinner.setSelection(0);
+
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_MIME_TYPES, CollectionUtils.asStringArray(getViewPrefs().getVisibleMimeTypes()));
@@ -646,10 +649,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     }
                 });
             } else {
-                // just show the empty view.
-                getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
-                getListAdapter().resetRoot(getContext(), null);
-                deselectAllItems();
+                // just show the empty view (if we're not already).
+                if(getListAdapter().getActiveFolder() != null) {
+                    getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
+                    getListAdapter().resetRoot(getContext(), null);
+                    deselectAllItems();
+                }
             }
         }
 
@@ -699,6 +704,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 getOwner().selectAllItems();
             }
             getOwner().getUiHelper().hideProgressIndicator();
+            getOwner().fileExtFilters.setEnabled(true);
         }
 
         @Override
