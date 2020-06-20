@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/item_overlay_details_panel"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/fragment_slideshow_item">
+
+    <ImageView
+        android:id="@+id/image_load_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/slideshow_image_favorite"
+        app:layout_constraintTop_toBottomOf="@+id/slideshow_image_average_ratingBar"
+        app:layout_constraintTop_toTopOf="@+id/slideshow_image_favorite"
+        app:srcCompat="@drawable/ic_file_gray_24dp"
+        tools:visibility="visible" />
+
+    <RatingBar
+        android:id="@+id/slideshow_image_average_ratingBar"
+        style="?ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_alignWithParentIfMissing="true"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:progressTint="@color/rating_indicator"
+        android:stepSize="0.1"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/slideshow_resource_item_x_of_y_text"
+        tools:progress="50"
+        tools:targetApi="lollipop"
+        tools:visibility="visible" />
+
+    <RatingBar
+        android:id="@+id/slideshow_image_ratingBar"
+        style="?ratingBarStyleIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="4dp"
+        android:isIndicator="false"
+        android:numStars="5"
+        android:stepSize="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slideshow_image_details_rating_label"
+        tools:progress="50" />
+
+
+    <TextView
+        android:id="@+id/slideshow_image_details_rating_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/slideshow_image_ratingBar"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/upload_file_rating"
+        android:textAppearance="?textAppearanceBody2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slideshow_resource_action_use_for_album_thumbnail" />
+
+
+    <TextView
+        android:id="@+id/slideshow_resource_item_x_of_y_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        android:shadowColor="?attr/colorPrimary"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="6"
+        android:textAlignment="viewEnd"
+        android:textAppearance="?textAppearanceBody2"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/slideshow_resource_action_use_for_album_thumbnail"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="x/y" />
+
+    <Button
+        android:id="@+id/show_information_action_button"
+        style="?materialButtonIconAccentedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:icon="@drawable/ic_info_black_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slideshow_image_ratingBar" />
+
+    <TextView
+        android:id="@+id/slideshow_resource_item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_goneMarginEnd="8dp"
+        android:shadowColor="?attr/colorPrimary"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="6"
+        android:textAppearance="?textAppearanceHeadline5"
+        app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/slideshow_image_ratingBar"
+        tools:text="Image 20121.jpg" />
+
+    <TextView
+        android:id="@+id/slideshow_resource_item_desc_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:shadowColor="@color/app_primary"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="6"
+        android:textAppearance="?textAppearanceBody2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/show_information_action_button"
+
+        tools:text="The image here is a really dull image showing lots of squares on circles of nothing particular" />
+
+
+    <CheckBox
+        android:id="@+id/slideshow_image_favorite"
+        style="?checkboxFavoriteAccentedStyle"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/slideshow_image_average_ratingBar"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
+        style="?materialButtonIconAccentedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/ic_wallpaper_black_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
