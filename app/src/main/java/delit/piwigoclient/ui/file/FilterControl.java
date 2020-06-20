@@ -98,9 +98,9 @@ public class FilterControl extends FrameLayout {
 
     private void setToggleSelectionButtonText() {
         if (selectToggle) {
-            toggleAll.setText(getContext().getString(R.string.button_none));
+            toggleAll.setText(getContext().getString(R.string.button_show_none));
         } else {
-            toggleAll.setText(getContext().getString(R.string.button_all));
+            toggleAll.setText(getContext().getString(R.string.button_show_all));
         }
     }
 
