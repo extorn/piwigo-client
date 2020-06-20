@@ -49,6 +49,7 @@
     <string name="alert_success">SUCCESS!</string>
     <string name="alert_partial_success">INCOMPLETE</string>
     <string name="alert_error">Error</string>
+    <string name="alert_error_no_app_available_to_handle_action">No app could be found to handle this action.</string>
     <string name="alert_error_no_app_available_to_rate_app">No app could be found to rate this app. Thanks for trying though.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Download cancelled. Required permissions are not granted.</string>
     <string name="button_retry">Retry</string>
@@ -886,8 +887,10 @@ SOFTWARE.
     <string name="folder_extstorage">External Storage</string>
     <string name="folder_extstorage_device_pattern">External Storage %1$d</string>
     <string name="folder_default">Default</string>
-    <string name="button_all">Show All</string>
-    <string name="button_none">Hide All</string>
+    <string name="button_show_all">Show All</string>
+    <string name="button_select_all">Select All</string>
+    <string name="button_show_none">Hide All</string>
+    <string name="button_select_none">Select None</string>
     <string name="button_reset">Reset</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficient use of WIFI only uploading</string>
     <string name="inaccessible_remote_folder">** private **</string>

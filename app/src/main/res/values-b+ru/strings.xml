@@ -29,6 +29,7 @@
     <string name="alert_success">УСПЕХ!</string>
     <string name="alert_partial_success">НЕПОЛНАЯ</string>
     <string name="alert_error">ошибка</string>
+    <string name="alert_error_no_app_available_to_handle_action">Не удалось найти приложение для обработки этого действия.</string>
     <string name="alert_error_no_app_available_to_rate_app">Не удалось найти приложение для оценки этого приложения. Спасибо за попытку, хотя.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Загрузка отменена. Требуемые разрешения не предоставляются.</string>
     <string name="button_retry">Retry</string>
@@ -508,8 +509,10 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="folder_extstorage">Внешнее хранилище</string>
     <string name="folder_extstorage_device_pattern">Внешнее хранилище %1$d</string>
     <string name="folder_default">По умолчанию</string>
-    <string name="button_all">Показать все</string>
-    <string name="button_none">Скрыть все</string>
+    <string name="button_show_all">Показать все</string>
+    <string name="button_select_all">Выбрать все</string>
+    <string name="button_show_none">Скрыть все</string>
+    <string name="button_select_none">Выберите нет</string>
     <string name="button_reset">Сброс</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Мониторинг сети должен быть разрешен для эффективного использования только загрузки WIFI</string>
     <string name="inaccessible_remote_folder">** частный **</string>

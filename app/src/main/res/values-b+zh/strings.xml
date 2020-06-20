@@ -29,6 +29,7 @@
     <string name="alert_success">成功！</string>
     <string name="alert_partial_success">不完整</string>
     <string name="alert_error">错误</string>
+    <string name="alert_error_no_app_available_to_handle_action">找不到任何应用程序可以处理此操作。</string>
     <string name="alert_error_no_app_available_to_rate_app">没有应用程序可以评价这个应用程序。谢谢你的尝试。</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。未授予所需权限。</string>
     <string name="button_retry">重试</string>
@@ -378,8 +379,10 @@
     <string name="folder_extstorage">外部存储</string>
     <string name="folder_extstorage_device_pattern">外部存储%1$d</string>
     <string name="folder_default">默认</string>
-    <string name="button_all">显示所有</string>
-    <string name="button_none">全部藏起来</string>
+    <string name="button_show_all">显示所有</string>
+    <string name="button_select_all">全选</string>
+    <string name="button_show_none">全部藏起来</string>
+    <string name="button_select_none">选择无</string>
     <string name="button_reset">重启</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">应允许网络监控，以便有效使用仅上传的WIFI</string>
     <string name="inaccessible_remote_folder">** 私人的 **</string>

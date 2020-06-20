@@ -230,10 +230,10 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
             if (initialSelection != null) {
                 toggleAllSelectionButton.setText(getString(R.string.button_reset));
             } else {
-                toggleAllSelectionButton.setText(getString(R.string.button_none));
+                toggleAllSelectionButton.setText(getString(R.string.button_select_none));
             }
         } else {
-            toggleAllSelectionButton.setText(getString(R.string.button_all));
+            toggleAllSelectionButton.setText(getString(R.string.button_select_all));
         }
     }
 

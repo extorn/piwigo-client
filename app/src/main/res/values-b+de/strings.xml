@@ -27,6 +27,7 @@
     <string name="alert_success">ERFOLG!</string>
     <string name="alert_partial_success">UNVOLLSTÄNDIG</string>
     <string name="alert_error">Fehler</string>
+    <string name="alert_error_no_app_available_to_handle_action">Es konnte keine App gefunden werden, die diese Aktion ausführt.</string>
     <string name="alert_error_no_app_available_to_rate_app">Es konnte keine App gefunden werden, um diese App zu bewerten. Danke für den Versuch.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Download abgebrochen. Erforderliche Berechtigungen werden nicht erteilt.</string>
     <string name="button_retry">Wiederholen</string>
@@ -506,8 +507,10 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="folder_extstorage">Externer Speicher</string>
     <string name="folder_extstorage_device_pattern">Externer Speicher %1$d</string>
     <string name="folder_default">Standard</string>
-    <string name="button_all">Zeige alles</string>
-    <string name="button_none">Versteck alles</string>
+    <string name="button_show_all">Zeige alles</string>
+    <string name="button_select_all">Alles auswählen</string>
+    <string name="button_show_none">Versteck alles</string>
+    <string name="button_select_none">Nichts ausgewählt</string>
     <string name="button_reset">Zurücksetzen</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Netzwerküberwachung sollte nur für die effiziente Nutzung von WIFI erlaubt sein.</string>
     <string name="inaccessible_remote_folder">** privat **</string>

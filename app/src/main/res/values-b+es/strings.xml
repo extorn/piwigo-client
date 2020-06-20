@@ -27,6 +27,7 @@
     <string name="alert_success">¡ÉXITO!</string>
     <string name="alert_partial_success">INCOMPLETO</string>
     <string name="alert_error">Error</string>
+    <string name="alert_error_no_app_available_to_handle_action">No se pudo encontrar ninguna aplicación para manejar esta acción.</string>
     <string name="alert_error_no_app_available_to_rate_app">No se pudo encontrar ninguna aplicación para calificar esta aplicación. Gracias por intentarlo sin embargo.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Descarga cancelada No se otorgan los permisos requeridos.</string>
     <string name="button_retry">Procesar de nuevo</string>
@@ -375,8 +376,10 @@
     <string name="folder_extstorage">Almacenamiento externo</string>
     <string name="folder_extstorage_device_pattern">Almacenamiento externo%1$d</string>
     <string name="folder_default">Defecto</string>
-    <string name="button_all">Mostrar todo</string>
-    <string name="button_none">Ocultar todo</string>
+    <string name="button_show_all">Mostrar todo</string>
+    <string name="button_select_all">Seleccionar todo</string>
+    <string name="button_show_none">Ocultar todo</string>
+    <string name="button_select_none">No seleccionar ninguno</string>
     <string name="button_reset">Reiniciar</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Se debe permitir el monitoreo de la red para un uso eficiente de la carga de WIFI solamente</string>
     <string name="inaccessible_remote_folder">** privado **</string>
