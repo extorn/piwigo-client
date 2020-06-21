@@ -559,6 +559,31 @@ public class DisplayUtils {
         return null;
     }
 
+    public static final int PORTRAIT = 0;
+    public static final int LANDSCAPE = 1;
+
+    public static int getAspect(View view) {
+        int w = view.getWidth();
+        int h = view.getHeight();
+
+        int aspect = PORTRAIT;
+        if(w >= h) {
+            aspect = LANDSCAPE;
+        }
+        return aspect;
+    }
+
+    public static int getAspect(Bitmap bitmap) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+
+        int aspect = PORTRAIT;
+        if(w >= h) {
+            aspect = LANDSCAPE;
+        }
+        return aspect;
+    }
+
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {
 
         private View decorView;
