@@ -440,7 +440,9 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
     @Override
     protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        uiHelper.onSaveInstanceState(outState);
+        if(uiHelper != null) {
+            uiHelper.onSaveInstanceState(outState);
+        }
         BundleUtils.writeMap(outState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, trackedActionIntentsMap);
     }
 

@@ -128,7 +128,9 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Logging.log(Log.VERBOSE,TAG, "onSaveInstanceState : " + getClass().getName());
-        uiHelper.onSaveInstanceState(outState);
+        if(uiHelper != null) {
+            uiHelper.onSaveInstanceState(outState);
+        }
         outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
         outState.putString(STATE_ACTIVE_SERVER_CONNECTION, piwigoServerConnected);
     }
