@@ -3,12 +3,14 @@ package delit.piwigoclient.ui.file;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -232,5 +234,19 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
 
     public void setSelectedUriPermissionFlags(int selectedUriPermissionFlags) {
         this.selectedUriPermissionFlags = selectedUriPermissionFlags;
+    }
+
+    public SortedSet<String> getFileTypesForVisibleMimes() {
+        TreeSet<String> fileExts = new TreeSet<>();
+        if(visibleMimeTypes == null) {
+            return fileExts;
+        }
+        for(String mime : visibleMimeTypes) {
+            String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime);
+            if(ext != null) {
+                fileExts.add(ext);
+            }
+        }
+        return fileExts;
     }
 }

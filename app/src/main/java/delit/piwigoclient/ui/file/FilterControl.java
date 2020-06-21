@@ -30,14 +30,15 @@ import delit.piwigoclient.R;
 
 public class FilterControl extends FrameLayout {
 
-    private Set<String> allPossiblyVisibleFileExts; //TODO this isn't needed in this component. Its functionality bleed from file select frag I think.
-    private Set<String> currentlyVisibleFileExts;
-    private Set<String> selectedVisibleFileExts;
+    private Set<String> allFilters; //TODO this isn't needed in this component. Its functionality bleed from file select frag I think.
+    private Set<String> activeFilters;
+    private Set<String> selectedFilters;
     private FilterListener listener;
-    private ViewGroup fileExtFilters;
+    private ViewGroup filtersViewGroup;
     private CheckBox showFiltersToggle;
     private Button toggleAll;
-    private boolean selectToggle;
+    private boolean allSelected;
+    private boolean showInactiveFilters = true;
 
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -64,26 +65,30 @@ public class FilterControl extends FrameLayout {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    fileExtFilters.setVisibility(View.VISIBLE);
+                    filtersViewGroup.setVisibility(View.VISIBLE);
                 } else {
-                    fileExtFilters.setVisibility(View.GONE);
+                    filtersViewGroup.setVisibility(View.GONE);
                 }
             }
         });
-        fileExtFilters = findViewById(R.id.filters);
+        filtersViewGroup = findViewById(R.id.filters);
         toggleAll = findViewById(R.id.toggle_all_button);
         toggleAll.setOnClickListener(v -> onToggleAllSelection());
         setToggleSelectionButtonText();
         addDemoData();
     }
 
+    public void setShowInactiveFilters(boolean showInactiveFilters) {
+        this.showInactiveFilters = showInactiveFilters;
+    }
+
     private void onToggleAllSelection() {
-        if (!selectToggle) {
+        if (!CollectionUtils.equals(activeFilters, selectedFilters)) {
             selectAllFilters();
-            selectToggle = true;
+            allSelected = true;
         } else {
             selectNoFilters();
-            selectToggle = false;
+            allSelected = false;
         }
         setToggleSelectionButtonText();
     }
@@ -97,7 +102,7 @@ public class FilterControl extends FrameLayout {
     }
 
     private void setToggleSelectionButtonText() {
-        if (selectToggle) {
+        if (CollectionUtils.equals(activeFilters, selectedFilters)) {
             toggleAll.setText(getContext().getString(R.string.button_show_none));
         } else {
             toggleAll.setText(getContext().getString(R.string.button_show_all));
@@ -108,18 +113,18 @@ public class FilterControl extends FrameLayout {
         if (!isInEditMode()) {
             return;
         }
-        allPossiblyVisibleFileExts = new HashSet<>();
-        allPossiblyVisibleFileExts.add("jpg");
-        allPossiblyVisibleFileExts.add("bmp");
-        allPossiblyVisibleFileExts.add("wav");
-        allPossiblyVisibleFileExts.add("raw");
-        allPossiblyVisibleFileExts.add("mp4");
-        currentlyVisibleFileExts = new HashSet<>();
-        currentlyVisibleFileExts.addAll(allPossiblyVisibleFileExts);
-        selectedVisibleFileExts = new HashSet<>();
-        selectedVisibleFileExts.add("mp4");
-        selectedVisibleFileExts.add("jpg");
-        buildFileExtFilterControls(false);
+        allFilters = new HashSet<>();
+        allFilters.add("jpg");
+        allFilters.add("bmp");
+        allFilters.add("wav");
+        allFilters.add("raw");
+        allFilters.add("mp4");
+        activeFilters = new HashSet<>();
+        activeFilters.addAll(allFilters);
+        selectedFilters = new HashSet<>();
+        selectedFilters.add("mp4");
+        selectedFilters.add("jpg");
+        buildFilterViews(false);
     }
 
     public void setListener(FilterListener listener) {
@@ -130,56 +135,66 @@ public class FilterControl extends FrameLayout {
         selectAll(true);
     }
     public void selectAll(boolean notifyListenersOfFilterStatusChange) {
-        if(selectedVisibleFileExts == null) {
-            selectedVisibleFileExts = new HashSet<>();
+        if(selectedFilters == null) {
+            selectedFilters = new HashSet<>();
         }
-        if(currentlyVisibleFileExts == null) {
-            currentlyVisibleFileExts = new HashSet<>();
+        if(activeFilters == null) {
+            activeFilters = new HashSet<>();
         }
-        selectedVisibleFileExts.addAll(currentlyVisibleFileExts);
-        if(allPossiblyVisibleFileExts != null) {
-            selectedVisibleFileExts.addAll(allPossiblyVisibleFileExts);
-        }
-        buildFileExtFilterControls(notifyListenersOfFilterStatusChange);
+        selectedFilters.addAll(activeFilters);
+//        if(allFilters != null) {
+//            selectedFilters.addAll(allFilters);
+//        }
+        buildFilterViews(notifyListenersOfFilterStatusChange);
     }
     public void selectNone() {
         selectNone(true);
     }
     public void selectNone(boolean notifyListenersOfFilterStatusChange) {
-        selectedVisibleFileExts = new HashSet<>();
-        buildFileExtFilterControls(notifyListenersOfFilterStatusChange);
+        selectedFilters = new HashSet<>();
+        buildFilterViews(notifyListenersOfFilterStatusChange);
     }
 
-    public void buildFileExtFilterControls(boolean notifyOnFiltersChanged) {
+    public void buildFilterViews(boolean notifyOnFiltersChanged) {
 
         // initialise local cached set of selected items
-        if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
-            selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
-        }
+        if (selectedFilters == null && activeFilters != null) {
+            selectedFilters = new HashSet<>(activeFilters);
+        }//TODO shouldn't this be all the active filters not all filters?!
 
         // clear all the existing filters
-        fileExtFilters.removeAllViews();
+        filtersViewGroup.removeAllViews();
         boolean allSelected = false;
+        int lastActiveFilterIdx = 0;
         // for each file type visible, show a checkbox and set it according to out local model
-        if (currentlyVisibleFileExts != null && selectedVisibleFileExts != null) {
+        if (activeFilters != null && selectedFilters != null) {
             boolean filterHidden = false;
             boolean filterShown = false;
-            allSelected = CollectionUtils.equals(currentlyVisibleFileExts, selectedVisibleFileExts);
-            for (String fileExt : currentlyVisibleFileExts) {
+            allSelected = CollectionUtils.equals(activeFilters, selectedFilters);
+            for (String filterText : allFilters) {
+                boolean isInactive = !activeFilters.contains(filterText);
+                if(!showInactiveFilters && isInactive) {
+                    continue;
+                }
                 FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
-                boolean checked = selectedVisibleFileExts.contains(fileExt);
+                boolean checked = selectedFilters.contains(filterText);
                 if (!checked) {
                     filterShown = true;
                     if(listener != null) {
-                        listener.onFilterUnchecked(getContext(), fileExt);
+                        listener.onFilterUnchecked(getContext(), filterText);
                     }
                 } else {
                     filterHidden = true;
                     if(listener != null) {
-                        listener.onFilterChecked(getContext(), fileExt);
+                        listener.onFilterChecked(getContext(), filterText);
                     }
                 }
-                fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
+                View filterView = createFilterView(filterText, checked, !isInactive);
+                if(isInactive) {
+                    filtersViewGroup.addView(filterView, layoutParams);
+                } else {
+                    filtersViewGroup.addView(filterView, lastActiveFilterIdx++, layoutParams);
+                }
             }
             if (notifyOnFiltersChanged && (filterShown || filterHidden)) {
                 if(listener != null) {
@@ -188,36 +203,36 @@ public class FilterControl extends FrameLayout {
             }
         }
 
-        boolean filtersVisible = (currentlyVisibleFileExts != null && !currentlyVisibleFileExts.isEmpty());
+        boolean filtersVisible = (activeFilters != null && !activeFilters.isEmpty());
         showFiltersToggle.setChecked(showFiltersToggle.isChecked() && filtersVisible);
         showFiltersToggle.setEnabled(filtersVisible);
         toggleAll.setEnabled(filtersVisible);
-        selectToggle = allSelected;
+        this.allSelected = allSelected;
         setToggleSelectionButtonText();
     }
 
-    private View createFileExtFilterControl(String fileExt, boolean checked) {
+    private View createFilterView(String fileExt, boolean checked, boolean isActive) {
         MaterialCheckBox fileExtControl = new MaterialCheckBox(getContext());
         int paddingPx = DisplayUtils.dpToPx(getContext(), 5);
         fileExtControl.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
         fileExtControl.setText(fileExt);
-        fileExtControl.setEnabled(isEnabled());
+        fileExtControl.setEnabled(isEnabled() && isActive);
         fileExtControl.setChecked(checked);
         fileExtControl.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
-                selectedVisibleFileExts.add(fileExt);
+                selectedFilters.add(fileExt);
                 if(listener != null) {
-                    if(CollectionUtils.equals(currentlyVisibleFileExts, selectedVisibleFileExts)) {
-                        selectToggle = true; // all selected
+                    if(CollectionUtils.equals(activeFilters, selectedFilters)) {
+                        allSelected = true; // all selected
                         setToggleSelectionButtonText();
                     }
                     listener.onFilterChecked(getContext(), fileExt);
                 }
             } else {
-                selectedVisibleFileExts.remove(fileExt);
+                selectedFilters.remove(fileExt);
                 if(listener != null) {
-                    if(selectedVisibleFileExts.size() == 0) {
-                        selectToggle = false; // all selected
+                    if(selectedFilters.size() == 0) {
+                        allSelected = false; // all selected
                         setToggleSelectionButtonText();
                     }
                     listener.onFilterUnchecked(getContext(), fileExt);
@@ -235,51 +250,51 @@ public class FilterControl extends FrameLayout {
     protected Parcelable onSaveInstanceState() {
         final FilterControl.SavedState ss =
                 new FilterControl.SavedState(super.onSaveInstanceState());
-        ss.allPossiblyVisibleFileExts = allPossiblyVisibleFileExts;
-        ss.selectedVisibleFileExts = selectedVisibleFileExts;
+        ss.allFilters = allFilters;
+        ss.checkedFilters = selectedFilters;
         return ss;
     }
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
         FilterControl.SavedState ss = (FilterControl.SavedState) state;
-        allPossiblyVisibleFileExts = ss.allPossiblyVisibleFileExts;
-        selectedVisibleFileExts = ss.selectedVisibleFileExts;
+        allFilters = ss.allFilters;
+        selectedFilters = ss.checkedFilters;
         super.onRestoreInstanceState(ss.getSuperState());
     }
 
     public void showAll() {
-        currentlyVisibleFileExts = null;
-        buildFileExtFilterControls(true);
+        activeFilters = null;
+        buildFilterViews(true);
     }
 
-    public Set<String> getAllPossibleFilters() {
-        return allPossiblyVisibleFileExts;
+    public Set<String> getAllFilters() {
+        return allFilters;
     }
 
-    public void setAllPossibleFilters(HashSet<String> allFilters) {
-        this.allPossiblyVisibleFileExts = allFilters;
+    public void setAllFilters(SortedSet<String> allFilters) {
+        this.allFilters = allFilters;
     }
 
-    public void setVisibleFilters(SortedSet<String> visibleFileExts) {
-        this.currentlyVisibleFileExts = visibleFileExts;
+    public void setActiveFilters(SortedSet<String> activeFilters) {
+        this.activeFilters = activeFilters;
     }
 
 
-    public void setSelectedFilters(SortedSet<String> visibleFileTypes) {
-        if(selectedVisibleFileExts == null) {
-            selectedVisibleFileExts = new HashSet<>(visibleFileTypes);
+    public void setCheckedFilters(SortedSet<String> checkedFilters) {
+        if(this.selectedFilters == null) {
+            this.selectedFilters = new HashSet<>(checkedFilters);
         } else {
-            selectedVisibleFileExts.clear();
-            selectedVisibleFileExts.addAll(visibleFileTypes);
+            this.selectedFilters.clear();
+            this.selectedFilters.addAll(checkedFilters);
         }
-        buildFileExtFilterControls(true);
+        buildFilterViews(true);
     }
 
     static class SavedState extends BaseSavedState {
-        Set<String> allPossiblyVisibleFileExts;
-        Set<String> selectedVisibleFileExts;
-        Set<String> currentlyVisibleFileExts;
+        Set<String> allFilters;
+        Set<String> checkedFilters;
+        Set<String> activeFilters;
 
         SavedState(Parcelable superState) {
             super(superState);
@@ -287,17 +302,17 @@ public class FilterControl extends FrameLayout {
 
         SavedState(Parcel in) {
             super(in);
-            allPossiblyVisibleFileExts = ParcelUtils.readStringSet(in);
-            selectedVisibleFileExts = ParcelUtils.readStringSet(in);
-            currentlyVisibleFileExts = ParcelUtils.readStringSet(in);
+            allFilters = ParcelUtils.readStringSet(in);
+            checkedFilters = ParcelUtils.readStringSet(in);
+            activeFilters = ParcelUtils.readStringSet(in);
         }
 
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
-            ParcelUtils.writeStringSet(out, allPossiblyVisibleFileExts);
-            ParcelUtils.writeStringSet(out, selectedVisibleFileExts);
-            ParcelUtils.writeStringSet(out, currentlyVisibleFileExts);
+            ParcelUtils.writeStringSet(out, allFilters);
+            ParcelUtils.writeStringSet(out, checkedFilters);
+            ParcelUtils.writeStringSet(out, activeFilters);
         }
 
         public static final Parcelable.Creator<FilterControl.SavedState> CREATOR =
@@ -315,17 +330,17 @@ public class FilterControl extends FrameLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        for(int i = 0; i < fileExtFilters.getChildCount(); i++) {
-            fileExtFilters.getChildAt(i).setEnabled(enabled);
+        for(int i = 0; i < filtersViewGroup.getChildCount(); i++) {
+            filtersViewGroup.getChildAt(i).setEnabled(enabled);
         }
-        toggleAll.setEnabled(enabled && fileExtFilters.getChildCount() > 0);
-        showFiltersToggle.setEnabled(enabled && fileExtFilters.getChildCount() > 0);
+        toggleAll.setEnabled(enabled && filtersViewGroup.getChildCount() > 0);
+        showFiltersToggle.setEnabled(enabled && filtersViewGroup.getChildCount() > 0);
     }
 
     public interface FilterListener {
-        void onFilterUnchecked(Context context, String fileExt);
+        void onFilterUnchecked(Context context, String filter);
 
-        void onFilterChecked(Context context, String fileExt);
+        void onFilterChecked(Context context, String filter);
 
         void onFiltersChanged(Context context, boolean filterHidden, boolean filterShown);
     }

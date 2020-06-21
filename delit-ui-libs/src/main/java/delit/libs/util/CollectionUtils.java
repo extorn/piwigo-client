@@ -122,9 +122,11 @@ public class CollectionUtils {
     }
 
     public static <T extends Collection<?>, S extends Collection<?>> boolean equals(T collectionA, S collectionB) {
-        return collectionA.size() == collectionB.size()
-                && collectionA.containsAll(collectionB)
-                && collectionB.containsAll(collectionA);
+        return (collectionA == null && collectionB == null)
+                || (collectionA != null && collectionB != null
+                        && collectionA.size() == collectionB.size()
+                        && collectionA.containsAll(collectionB)
+                        && collectionB.containsAll(collectionA));
     }
 
     public static <X extends Map<K, V>, K, V> void addToMapNullSafe(X memberSaveActionIds, Map<K, V> newValues) {

@@ -285,7 +285,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             DocumentFile f = folderContent.get(i);
             FolderItem folderItem = new FolderItem(activeRootUri, f);
             folderItem.cacheFields(context);
-            if(folderItem.isFolder() || (folderItem.getLastModified() > 0 && MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null)) { // Hide system files.
+            if(folderItem.isFolder() || (folderItem.getLastModified() > 0 /*&& MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null*/)) { // 0 length check hides system files.
                 displayContent.add(folderItem);
             }
             if (Thread.currentThread().isInterrupted()) {

@@ -25,7 +25,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
@@ -180,7 +180,7 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
             buildBreadcrumbs(newFolder);
             getListAdapter().setInitiallySelectedItems(); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
-            fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
+            fileExtFilters.setActiveFilters(getListAdapter().getFileExtsInCurrentFolder());
             fileExtFilters.selectAll();
 
 //            DisplayUtils.postOnUiThread(() -> progressIndicator.hideProgressIndicator());
@@ -200,16 +200,16 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
 
     private void updateListOfFileExtensionsForAllVisibleFiles(Map<String,String> folderContentFileExtToMimeMap) {
         if (getViewPrefs().getVisibleFileTypes() != null) {
-            if(fileExtFilters.getAllPossibleFilters() == null) {
-                fileExtFilters.setAllPossibleFilters(new HashSet<>(getViewPrefs().getVisibleFileTypes()));
+            if(fileExtFilters.getAllFilters() == null) {
+                fileExtFilters.setAllFilters(new TreeSet<>(getViewPrefs().getVisibleFileTypes()));
             }
         }
-        if (fileExtFilters.getAllPossibleFilters() != null) {
+        if (fileExtFilters.getAllFilters() != null) {
 
             SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(folderContentFileExtToMimeMap);
             if (fileExtsInFolderMatchingMimeTypesWanted != null) {
                 // add any extra that have come from mime types now visible in this folder.
-                fileExtFilters.getAllPossibleFilters().addAll(fileExtsInFolderMatchingMimeTypesWanted);
+                fileExtFilters.getAllFilters().addAll(fileExtsInFolderMatchingMimeTypesWanted);
             }
         }
     }
@@ -480,8 +480,8 @@ public class LegacyRecyclerViewFolderItemSelectFragment extends RecyclerViewLong
                 //progressIndicator.hideProgressIndicator();
             } else {
                 // just show the empty view.
-                if(fileExtFilters.getAllPossibleFilters() != null) {
-                    getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
+                if(fileExtFilters.getAllFilters() != null) {
+                    getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
                 }
                 getListAdapter().changeFolderViewed(getContext(), null);
                 deselectAllItems();

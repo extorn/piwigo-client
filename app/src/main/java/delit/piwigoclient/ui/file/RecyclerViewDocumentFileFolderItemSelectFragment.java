@@ -243,7 +243,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             buildBreadcrumbs(newFolder);
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
-            fileExtFilters.setVisibleFilters(getListAdapter().getFileExtsInCurrentFolder());
+            fileExtFilters.setActiveFilters(getListAdapter().getFileExtsInCurrentFolder());
             fileExtFilters.selectAll(true);
         }
     }
@@ -267,9 +267,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     }
 
     private void updateListOfFileExtensionsForAllVisibleFiles(Map<String,String> folderContentFileExtToMimeMap) {
-        if (getViewPrefs().getVisibleFileTypes() != null) {
+        fileExtFilters.setAllFilters(getViewPrefs().getFileTypesForVisibleMimes());
+
+        /*if (getViewPrefs().getVisibleFileTypes() != null) {
             if(fileExtFilters.getAllPossibleFilters() == null) {
-                fileExtFilters.setAllPossibleFilters(new HashSet<>(getViewPrefs().getVisibleFileTypes()));
+                fileExtFilters.setAllPossibleFilters(new TreeSet<>(getViewPrefs().getVisibleFileTypes()));
             }
         }
         if (fileExtFilters.getAllPossibleFilters() != null) {
@@ -279,7 +281,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 // add any extra that have come from mime types now visible in this folder.
                 fileExtFilters.getAllPossibleFilters().addAll(fileExtsInFolderMatchingMimeTypesWanted);
             }
-        }
+        }*/
     }
 
     private void buildBreadcrumbs(DocumentFile newFolder) {
@@ -627,7 +629,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     DocumentFile newRoot = adapter.getItemValue(position);
                     if(newRoot != null) {
                         fileExtFilters.setEnabled(true);
-                        getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
+                        getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
                         DocumentFile currentRoot = getListAdapter().getActiveFolder();
                         try {
                             if (currentRoot == null && getViewPrefs().getInitialFolder() != null) {
@@ -641,7 +643,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         }
                         deselectAllItems();
                     } else {
-                        getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
+                        getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
                         getListAdapter().resetRoot(getContext(), newRoot);
                         deselectAllItems();
                         fileExtFilters.setEnabled(false);
@@ -651,7 +653,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             } else {
                 // just show the empty view (if we're not already).
                 if(getListAdapter().getActiveFolder() != null) {
-                    getViewPrefs().withVisibleContent(fileExtFilters.getAllPossibleFilters(), getViewPrefs().getFileSortOrder());
+                    getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
                     getListAdapter().resetRoot(getContext(), null);
                     deselectAllItems();
                 }
