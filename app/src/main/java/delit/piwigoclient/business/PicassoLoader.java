@@ -1,6 +1,8 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -8,6 +10,7 @@ import android.util.SparseIntArray;
 import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -17,6 +20,7 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
 import java.io.File;
@@ -27,6 +31,7 @@ import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -65,6 +70,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
     private boolean usePlaceholderIfNothingToLoad;
     private final SparseIntArray errorDrawables = new SparseIntArray();
     private CustomResponseException lastResponseException;
+    private PostProcessorTarget postProcessor;
 
 
     public PicassoLoader(T loadInto) {
@@ -264,7 +270,11 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
             //                }
             registerUriLoadListener();
-            loader.into(loadInto, this);
+            if(postProcessor != null) {
+                loader.into(postProcessor);
+            } else {
+                loader.into(loadInto, this);
+            }
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, "exiting picasso loader - runLoad");
             }
@@ -283,7 +293,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             if (!imageLoading) {
                 return;
             }
-            if (loadInto != null) {
+            if(postProcessor != null) {
+                PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(postProcessor);
+            } else if (loadInto != null) {
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
             }
             imageLoading = false;
@@ -457,6 +469,19 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         }
     }
 
+    public boolean isRotateToFitScreen() {
+        return postProcessor instanceof MatchScreenAspectRatioPostProcessorTarget;
+    }
+
+    public void rotateToFitScreen(boolean fitScreen) {
+        if(fitScreen) {
+            postProcessor = new MatchScreenAspectRatioPostProcessorTarget(this);
+            if(loadInto != null) {
+                postProcessor.setPostProcessTarget(loadInto);
+            }
+        }
+    }
+
     public interface PictureItemImageLoaderListener<T extends ImageView> {
         void onBeforeImageLoad(PicassoLoader<T> loader);
 
@@ -525,6 +550,93 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         @Override
         protected void onCancelledSafely() {
             error = null;
+        }
+    }
+
+    private static class MatchScreenAspectRatioPostProcessorTarget extends PostProcessorTarget {
+        public MatchScreenAspectRatioPostProcessorTarget(Callback callback) {
+            super(callback);
+        }
+
+        @Override
+        protected Bitmap postProcess(Bitmap bitmap) {
+
+            int appAspect = DisplayUtils.getAspect(getImageView().getRootView());
+            int imageAspect = DisplayUtils.getAspect(bitmap);
+            if(appAspect != imageAspect) {
+                /*Matrix matrix = new Matrix();
+                matrix.postRotate(90);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
+                Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+                //NOTE: we can't recycle the original bitmap as it's cached in picasso.*/
+
+//                return super.postProcess(rotatedBitmap);
+            }
+            return super.postProcess(bitmap);
+
+        }
+    }
+
+    private static class PostProcessorTarget implements Target {
+        private ImageView imageView;
+        private Callback callback;
+
+        protected ImageView getImageView() {
+            return imageView;
+        }
+
+        public PostProcessorTarget(Callback callback) {
+            this.callback = callback;
+        }
+
+        public PostProcessorTarget(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        public void setPostProcessTarget(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            /*imageView.setImageBitmap(postProcess(bitmap));
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+            imageView.getImageMatrix().set(matrix);*/
+            if(callback != null) {
+                callback.onSuccess();
+            }
+        }
+
+        protected Bitmap postProcess(Bitmap bitmap) {
+            return bitmap;
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            imageView.setImageDrawable(errorDrawable);
+            if(callback != null) {
+                callback.onError();
+            }
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            imageView.setImageDrawable(placeHolderDrawable);
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if(obj instanceof PostProcessorTarget) {
+                PostProcessorTarget other = (PostProcessorTarget) obj;
+                return ObjectUtils.areEqual(imageView, other.imageView);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode() + (imageView == null ? 0 : (3 * imageView.hashCode()));
         }
     }
 }
