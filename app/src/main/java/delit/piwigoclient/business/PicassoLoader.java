@@ -501,13 +501,21 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
 
         @Override
         protected void onPostExecuteSafely(GifDrawable drawable) {
+            PicassoLoader loader;
+            try {
+                loader = getOwner(); // NPE if null
+            } catch(NullPointerException e) {
+                // no longer on screen. ignore error.
+                return;
+            }
             if (drawable != null) {
-                getOwner().getLoadInto().setImageDrawable(drawable);
-                getOwner().onSuccess();
+                loader.getLoadInto().setImageDrawable(drawable);
+                loader.onSuccess();
+
             } else {
                 Logging.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
-                getOwner().getLoadInto().setImageResource(getOwner().getErrorResourceId());
-                getOwner().onError();
+                loader.getLoadInto().setImageResource(loader.getErrorResourceId());
+                loader.onError();
                 if (error != null) {
                     Logging.recordException(error);
                 }
