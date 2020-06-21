@@ -134,6 +134,24 @@
              - Envíenme un correo electrónico (hay un enlace de correo electrónico en la barra de navegación) para solicitar las cosas que necesita o desea que esta aplicación aún no haga "</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.66</item>
+        <item>"Cambios:
+                - Gran reescritura de todo el código relacionado con el tema para simplificar y corregir radicalmente los colores en las versiones de Android
+                - Cambió el tema a uno de día / noche para que sea configurable por el usuario (en la noche, ninguna pantalla tiene fondo blanco).
+                - Soporte agregado para Uri y almacenamiento con alcance:
+                    - comparte archivos fácilmente
+                    - seleccione archivos usando el selector de archivos del sistema o en la aplicación uno
+                    - Eliminar archivos después de cargar ahora está funcionando nuevamente
+                    - los archivos de verificación son únicos antes de cargarlos; ahora es más difícil, por lo que lleva un poco más de tiempo
+                    - El selector de archivos en la aplicación es relativamente lento para cargar carpetas que contienen muchos archivos - limitaciones en las API de Android en la actualidad
+                - al comprimir videos, puede quitar la transmisión de audio o video si desea crear un archivo m4a o m4v (se agregó la extensión de archivo mp4 si eso es todo lo que permite su servidor).
+                - Menú de cajones disponible desde la pantalla de carga para permitirle saltar a la galería o la configuración
+                - La aplicación está lista para la implementación de código para advertirle mientras selecciona fotos de las que ha cargado anteriormente.
+               Arreglo del fallo:
+                - La página de carga retiene los archivos al agregar nuevos archivos desde el selector del sistema o la navegación a la galería principal
+                - El código de compresión de video ha sido revisado radicalmente. No debería congelarse y renunciar a ningún video ahora. (Avísame si lo hace)
+                - Reescribe grandes áreas para eliminar posibles pérdidas de memoria
+                - Debería ser mucho menos propenso a fallar en versiones antiguas de Android (pre Lollipop)"</item>
         <item>1.4.0.65</item>
         <item>"Cambios:
              - Se corrigió el problema del tema restante para los diálogos

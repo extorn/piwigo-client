@@ -124,6 +124,24 @@
             - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht tut"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.66</item>
+        <item>"Änderungen:
+                - Umfassende Neufassung des gesamten themenbezogenen Codes, um die Farben in allen Android-Versionen radikal zu vereinfachen und zu korrigieren
+                - Das Thema wurde in ein Tag / Nacht-Thema geändert, sodass es vom Benutzer konfiguriert werden kann (in der Nacht haben keine Bildschirme einen weißen Hintergrund).
+                - Unterstützung für Uri und Speicher mit Gültigkeitsbereich hinzugefügt:
+                    - Dateien einfach teilen
+                    - Wählen Sie Dateien mit der Systemdatei-Auswahl oder der In-App-Datei aus
+                    - Das Löschen von Dateien nach dem Hochladen funktioniert jetzt wieder
+                    - Überprüfen Sie, ob die Dateien vor dem Hochladen eindeutig sind. - Dies ist jetzt schwieriger und dauert etwas länger
+                    - Der In-App-Datei-Selektor lädt Ordner mit vielen Dateien relativ langsam - Einschränkungen in Android-APIs derzeit
+                - Beim Komprimieren von Videos können Sie den Audio- oder Videostream entfernen, wenn Sie eine m4a- oder m4v-Datei erstellen möchten (MP4-Dateierweiterung hinzugefügt, wenn Ihr Server dies nur zulässt).
+                - Schubladenmenü auf dem Upload-Bildschirm verfügbar, damit Sie zur Galerie oder zu den Einstellungen springen können
+                - Die App ist bereit für die Implementierung von Code, um Sie zu warnen, während Sie Fotos von denen auswählen, die Sie zuvor hochgeladen haben.
+               Fehlerbehebung:
+                - Auf der Upload-Seite bleiben Dateien erhalten, wenn neue Dateien aus der Systemauswahl und / oder Navigation in die Hauptgalerie hinzugefügt werden
+                - Der Videokomprimierungscode wurde grundlegend überarbeitet. Es sollte jetzt nicht einfrieren und keine Videos mehr aufgeben. (Lass es mich wissen, wenn es so ist)
+                - Schreiben Sie große Bereiche neu, um mögliche Speicherlecks zu beseitigen
+                - Sollte auf alten Android-Versionen (vor Lollipop) viel weniger zum Absturz neigen."</item>
         <item>1.4.0.65</item>
         <item>"Änderungen:
              - Das verbleibende Themenproblem für Dialoge wurde behoben

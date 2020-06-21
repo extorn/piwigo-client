@@ -134,6 +134,24 @@
             - S'il vous plaît écrivez-moi (il y a un lien de courrier électronique dans la barre de navigation) pour demander des choses dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.66</item>
+        <item>"Changements:
+                - Réécriture majeure de tout le code lié au thème pour simplifier et corriger radicalement les couleurs dans les versions Android
+                - Changement du thème en jour / nuit afin qu'il soit configurable par l'utilisateur (la nuit, aucun écran n'a de fond blanc).
+                - prise en charge supplémentaire pour Uri et le stockage étendu:
+                    - partager des fichiers facilement
+                    - sélectionner des fichiers à l'aide du sélecteur de fichiers système ou de celui de l'application
+                    - la suppression des fichiers après le téléchargement fonctionne à nouveau
+                    - vérifier que les fichiers sont uniques avant le téléchargement - c'est maintenant plus difficile, donc cela prend un peu plus de temps
+                    - Le sélecteur de fichiers dans l'application est relativement lent à charger des dossiers contenant beaucoup de fichiers - limitations dans les API Android à l'heure actuelle
+                - lors de la compression de vidéos, vous pouvez supprimer le flux audio ou vidéo si vous souhaitez créer un fichier m4a ou m4v (extension de fichier mp4 ajoutée si c'est tout ce que votre serveur permet).
+                - Menu de tiroir disponible à partir de l'écran de téléchargement pour vous permettre de passer à la galerie ou aux paramètres
+                - L'application est prête pour la mise en œuvre du code pour vous avertir lors de la sélection des photos de celles que vous avez téléchargées précédemment.
+               Correction d'un bug:
+                - La page de téléchargement conserve les fichiers lors de l'ajout de nouveaux fichiers à partir du sélecteur de système et / ou de la navigation dans la galerie principale
+                - Le code de compression vidéo a été radicalement révisé. Il ne devrait pas geler et abandonner les vidéos maintenant. (Faites-moi savoir si c'est le cas)
+                - Réécriture de grandes zones pour éliminer les fuites de mémoire potentielles
+                - Devrait être beaucoup moins enclin à planter sur les anciennes versions d'Android (pré Lollipop)"</item>
         <item>1.4.0.65</item>
         <item>"Changements:
              - Correction du problème de thème restant pour les dialogues

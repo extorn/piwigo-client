@@ -276,6 +276,7 @@
                     - The in app file selector is relatively slow to load folders containing lots of files - limitations in android APIs at present
                 - when compressing videos, you can strip the audio or video stream off if wanted to create an m4a or m4v file (mp4 file extension added if that's all your server allows).
                 - Drawer menu available from the upload screen to allow you to jump to gallery, or settings
+                - The app is ready for implementation of code to warn you while selecting photos of ones you've uploaded previously.
                Bugfix:
                 - Upload page retains files when adding new files from system selector and or navigation to in the main gallery
                 - The video compression code has been radically overhauled. It shouldn't freeze and give up on any videos now. (Let me know if it does)
