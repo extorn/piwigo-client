@@ -42,6 +42,7 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
+import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.ObjectUtils;
@@ -279,11 +280,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
         ArrayList<FolderItem> displayContent = new ArrayList<>(folderContent.size());
         int itemCount = folderContent.size();
+        String[] permissableMimeTypes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
         for (int i = 0; i < itemCount; i++) {
             DocumentFile f = folderContent.get(i);
             FolderItem folderItem = new FolderItem(activeRootUri, f);
             folderItem.cacheFields(context);
-            if(folderItem.isFolder() || folderItem.getLastModified() > 0) { // Hide system files.
+            if(folderItem.isFolder() || (folderItem.getLastModified() > 0 && MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null)) { // Hide system files.
                 displayContent.add(folderItem);
             }
             if (Thread.currentThread().isInterrupted()) {
@@ -584,6 +586,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             ext = in.readString();
             mime = in.readString();
             fileLength = in.readLong();
+            fieldsLoadedFrom = in.readInt();
         }
 
         @Override
@@ -598,6 +601,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             dest.writeString(ext);
             dest.writeString(mime);
             dest.writeLong(fileLength);
+            dest.writeInt(fieldsLoadedFrom);
         }
 
         @Override
