@@ -141,7 +141,7 @@ dependencies {
     // third party libraries
     //    compile 'com.squareup.okhttp:okhttp:1.6.0'
     //    compile 'com.squareup.okhttp:okhttp-urlconnection:1.6.0'
-//    implementation 'com.github.MikeOrtiz:TouchImageView:2.2.0' // am extending this file locally.
+    implementation 'com.github.MikeOrtiz:TouchImageView:3.0.1' // am extending this file locally (check if my functionality is now in the release v)
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'org.greenrobot:eventbus:3.1.1'
@@ -161,19 +161,13 @@ dependencies {
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.1.0'
     // parse and edit exif and IPTC etc information
-    implementation 'com.drewnoakes:metadata-extractor:2.13.0' //- use this once they have increased the version number to remove awt dependency https://github.com/drewnoakes/metadata-extractor
+    implementation 'com.drewnoakes:metadata-extractor:2.14.0'
+    //- use this once they have increased the version number to remove awt dependency https://github.com/drewnoakes/metadata-extractor
 
     // custom tab support
     implementation 'androidx.browser:browser:1.2.0'
     //EXIF Support
     implementation 'androidx.exifinterface:exifinterface:1.2.0'
-    // Core libraries (v4)
-    //implementation 'androidx.legacy:legacy-support-v4:1.0.0' // needed for v7 libs since 27.1.1
-    //implementation 'com.android.support:support-core-ui:27.1.1'
-//    implementation 'com.android.support:support-core-utils:27.1.1'
-//    implementation 'com.android.support:support-fragment:27.1.1'
-//    implementation 'com.android.support:support-media-compat:27.1.1'
-//    implementation 'com.android.support:support-compat:27.1.1'
     // v7 appcompat stuff
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
@@ -204,8 +198,8 @@ dependencies {
     implementation 'net.ypresto.qtfaststartjava:qtfaststart:0.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
-    implementation 'id.zelory:compressor:2.1.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'id.zelory:compressor:2.1.0' //3.0.0 is kotlin. Need to learn that to use it!
+    api 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation project(path: ':delit-core-libs')// image compression library apache2
 
