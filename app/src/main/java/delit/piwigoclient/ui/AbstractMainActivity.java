@@ -54,6 +54,7 @@ import delit.libs.ui.view.CustomToolbar;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.IOUtils;
+import delit.libs.util.ObjectUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -661,6 +662,19 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             }
         }
 
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if(obj instanceof DownloadTarget) {
+                DownloadTarget other = (DownloadTarget) obj;
+                return downloadedFile.equals(other.downloadedFile);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return downloadedFile.hashCode();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
