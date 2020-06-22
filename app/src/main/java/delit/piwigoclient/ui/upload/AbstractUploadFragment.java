@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +63,7 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.util.TaskProgressTracker;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.ProgressIndicator;
@@ -1282,8 +1285,36 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     }
 
-    private static class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> {
-        private static final long serialVersionUID = -6619401114043943514L;
+    private static class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> implements Parcelable {
+
+        public LoadAlbumTreeAction() {
+        }
+
+        protected LoadAlbumTreeAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<LoadAlbumTreeAction> CREATOR = new Creator<LoadAlbumTreeAction>() {
+            @Override
+            public LoadAlbumTreeAction createFromParcel(Parcel in) {
+                return new LoadAlbumTreeAction(in);
+            }
+
+            @Override
+            public LoadAlbumTreeAction[] newArray(int size) {
+                return new LoadAlbumTreeAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
@@ -1310,8 +1341,34 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return uploadFilesNowButton;
     }
 
-    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
-        private static final long serialVersionUID = 7834616791801869130L;
+    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> implements Parcelable {
+        OnLoginAction(){}
+
+        protected OnLoginAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
+            @Override
+            public OnLoginAction createFromParcel(Parcel in) {
+                return new OnLoginAction(in);
+            }
+
+            @Override
+            public OnLoginAction[] newArray(int size) {
+                return new OnLoginAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
@@ -1328,12 +1385,37 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-        private static final long serialVersionUID = -160459487188984144L;
+    private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment> implements Parcelable {
 
         DeleteAllFilesSelectedAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
             super(uiHelper);
         }
+
+        protected DeleteAllFilesSelectedAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<DeleteAllFilesSelectedAction> CREATOR = new Creator<DeleteAllFilesSelectedAction>() {
+            @Override
+            public DeleteAllFilesSelectedAction createFromParcel(Parcel in) {
+                return new DeleteAllFilesSelectedAction(in);
+            }
+
+            @Override
+            public DeleteAllFilesSelectedAction[] newArray(int size) {
+                return new DeleteAllFilesSelectedAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1350,15 +1432,41 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-
-        private static final long serialVersionUID = -5416665561415768505L;
+    private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment> implements Parcelable {
         private final Uri itemToRemove;
 
         PartialUploadFileAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Uri itemToRemove) {
             super(uiHelper);
             this.itemToRemove = itemToRemove;
         }
+
+        protected PartialUploadFileAction(Parcel in) {
+            super(in);
+            itemToRemove = in.readParcelable(Uri.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(itemToRemove, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<PartialUploadFileAction> CREATOR = new Creator<PartialUploadFileAction>() {
+            @Override
+            public PartialUploadFileAction createFromParcel(Parcel in) {
+                return new PartialUploadFileAction(in);
+            }
+
+            @Override
+            public PartialUploadFileAction[] newArray(int size) {
+                return new PartialUploadFileAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1381,15 +1489,41 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
 
-    private static class UnacceptableFilesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-
-        private static final long serialVersionUID = -6658551916072891874L;
+    private static class UnacceptableFilesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment> implements Parcelable {
         private final Set<String> unacceptableFileExts;
 
         UnacceptableFilesAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<String> unacceptableFileExts) {
             super(uiHelper);
             this.unacceptableFileExts = unacceptableFileExts;
         }
+
+        protected UnacceptableFilesAction(Parcel in) {
+            super(in);
+            unacceptableFileExts = ParcelUtils.readStringSet(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeStringSet(dest, unacceptableFileExts);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UnacceptableFilesAction> CREATOR = new Creator<UnacceptableFilesAction>() {
+            @Override
+            public UnacceptableFilesAction createFromParcel(Parcel in) {
+                return new UnacceptableFilesAction(in);
+            }
+
+            @Override
+            public UnacceptableFilesAction[] newArray(int size) {
+                return new UnacceptableFilesAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1413,14 +1547,42 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-        private static final long serialVersionUID = 7104690861610172716L;
-        private Set<Uri> filesToDelete;
+    private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>,AbstractUploadFragment> implements Parcelable {
+
+        private final Set<Uri> filesToDelete;
 
         public FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<Uri> filesForReview) {
             super(uiHelper);
             this.filesToDelete = filesForReview;
         }
+
+        protected FileSizeExceededAction(Parcel in) {
+            super(in);
+            filesToDelete = ParcelUtils.readHashSet(in, Uri.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeSet(dest, filesToDelete);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<FileSizeExceededAction> CREATOR = new Creator<FileSizeExceededAction>() {
+            @Override
+            public FileSizeExceededAction createFromParcel(Parcel in) {
+                return new FileSizeExceededAction(in);
+            }
+
+            @Override
+            public FileSizeExceededAction[] newArray(int size) {
+                return new FileSizeExceededAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1437,12 +1599,37 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
-        private static final long serialVersionUID = 9093460171761189408L;
+    private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment> implements Parcelable {
 
         OnDeleteJobQuestionAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
             super(uiHelper);
         }
+
+        protected OnDeleteJobQuestionAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteJobQuestionAction> CREATOR = new Creator<OnDeleteJobQuestionAction>() {
+            @Override
+            public OnDeleteJobQuestionAction createFromParcel(Parcel in) {
+                return new OnDeleteJobQuestionAction(in);
+            }
+
+            @Override
+            public OnDeleteJobQuestionAction[] newArray(int size) {
+                return new OnDeleteJobQuestionAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1465,8 +1652,35 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class OnGetSubAlbumNamesAction extends UIHelper.Action<FragmentUIHelper<UploadFragment>, UploadFragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> {
-        private static final long serialVersionUID = -2486104874719308423L;
+    private static class OnGetSubAlbumNamesAction extends UIHelper.Action<FragmentUIHelper<UploadFragment>, UploadFragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> implements Parcelable {
+
+        OnGetSubAlbumNamesAction(){}
+
+        protected OnGetSubAlbumNamesAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnGetSubAlbumNamesAction> CREATOR = new Creator<OnGetSubAlbumNamesAction>() {
+            @Override
+            public OnGetSubAlbumNamesAction createFromParcel(Parcel in) {
+                return new OnGetSubAlbumNamesAction(in);
+            }
+
+            @Override
+            public OnGetSubAlbumNamesAction[] newArray(int size) {
+                return new OnGetSubAlbumNamesAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<UploadFragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {

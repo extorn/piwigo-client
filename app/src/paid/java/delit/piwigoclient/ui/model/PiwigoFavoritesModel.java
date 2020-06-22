@@ -26,4 +26,5 @@ public class PiwigoFavoritesModel extends ViewModelContainer {
     public ResourceContainer getModel() {
         return getPiwigoFavorites().getValue();
     }
+
 }

@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -254,15 +256,42 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UsersListFragment>> {
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UsersListFragment>,UsersListFragment> implements Parcelable {
 
-        private static final long serialVersionUID = -1211270836306032852L;
         private final User user;
 
         public OnDeleteUserAction(FragmentUIHelper<UsersListFragment> uiHelper, User user) {
             super(uiHelper);
             this.user = user;
         }
+
+        protected OnDeleteUserAction(Parcel in) {
+            super(in);
+            user = in.readParcelable(User.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(user, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteUserAction> CREATOR = new Creator<OnDeleteUserAction>() {
+            @Override
+            public OnDeleteUserAction createFromParcel(Parcel in) {
+                return new OnDeleteUserAction(in);
+            }
+
+            @Override
+            public OnDeleteUserAction[] newArray(int size) {
+                return new OnDeleteUserAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

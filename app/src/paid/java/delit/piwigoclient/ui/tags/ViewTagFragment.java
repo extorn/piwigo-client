@@ -596,12 +596,37 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>> {
-        private static final long serialVersionUID = -8756018849954088911L;
+    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>,ViewTagFragment> implements Parcelable {
 
         public OnDeleteTagsAction(FragmentUIHelper<ViewTagFragment> uiHelper) {
             super(uiHelper);
         }
+
+        protected OnDeleteTagsAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteTagsAction> CREATOR = new Creator<OnDeleteTagsAction>() {
+            @Override
+            public OnDeleteTagsAction createFromParcel(Parcel in) {
+                return new OnDeleteTagsAction(in);
+            }
+
+            @Override
+            public OnDeleteTagsAction[] newArray(int size) {
+                return new OnDeleteTagsAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -659,17 +684,46 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>> {
+    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>, ViewTagFragment> implements Parcelable {
 
-        private static final long serialVersionUID = 5113293632575048821L;
-        private HashSet<Long> selectedItemIds;
-        private HashSet<? extends ResourceItem> selectedItems;
+        private final HashSet<Long> selectedItemIds;
+        private final HashSet<? extends ResourceItem> selectedItems;
 
         public OnDeleteTagsForeverAction(FragmentUIHelper<ViewTagFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
         }
+
+        protected OnDeleteTagsForeverAction(Parcel in) {
+            super(in);
+            selectedItemIds = ParcelUtils.readLongSet(in);
+            selectedItems = ParcelUtils.readHashSet(in, ResourceItem.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeLongSet(dest, selectedItemIds);
+            ParcelUtils.writeSet(dest, selectedItems);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteTagsForeverAction> CREATOR = new Creator<OnDeleteTagsForeverAction>() {
+            @Override
+            public OnDeleteTagsForeverAction createFromParcel(Parcel in) {
+                return new OnDeleteTagsForeverAction(in);
+            }
+
+            @Override
+            public OnDeleteTagsForeverAction[] newArray(int size) {
+                return new OnDeleteTagsForeverAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -805,9 +859,35 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    static class TagLoadedAction extends UIHelper.Action<FragmentUIHelper<ViewTagFragment>, ViewTagFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
+    static class TagLoadedAction extends UIHelper.Action<FragmentUIHelper<ViewTagFragment>, ViewTagFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> implements Parcelable {
 
-        private static final long serialVersionUID = 891254249084729586L;
+        TagLoadedAction(){}
+
+        protected TagLoadedAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<TagLoadedAction> CREATOR = new Creator<TagLoadedAction>() {
+            @Override
+            public TagLoadedAction createFromParcel(Parcel in) {
+                return new TagLoadedAction(in);
+            }
+
+            @Override
+            public TagLoadedAction[] newArray(int size) {
+                return new TagLoadedAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<ViewTagFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {

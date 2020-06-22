@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -140,10 +143,10 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
 
         if (allowTagEdit) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(model));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler<>(model));
         }
         if(allowFullEdit) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(model, !allowTagEdit));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(model, !allowTagEdit));
         }
     }
 
@@ -172,7 +175,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.onImageDeleted(deletedItems);
     }
 
-    @Nullable
+    @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
@@ -273,7 +276,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private class PaidPiwigoResponseListener extends CustomPiwigoResponseListener {
+    private static class PaidPiwigoResponseListener extends CustomPiwigoResponseListener<SlideshowItemFragment<PictureResourceItem>, PictureResourceItem> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -286,9 +289,9 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                 if(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).hasError()) {
                     showOrQueueMessage(R.string.alert_error, ((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getError());
                 } else {
-                    onResourceTagsUpdated(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
+                    getParent().onResourceTagsUpdated(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
                 }
-                onGalleryItemActionFinished();
+                getParent().onGalleryItemActionFinished();
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
@@ -301,7 +304,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     private abstract static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<FragmentUIHelper<SlideshowItemFragment<T>>, SlideshowItemFragment<T>, S> {
 
-        private static final long serialVersionUID = -5856082027415983416L;
+        FavoriteAction(){}
 
         protected abstract boolean getValueOnSucess();
 
@@ -318,8 +321,33 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> {
-        private static final long serialVersionUID = -6126841919397104419L;
+    private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> implements Parcelable {
+
+        FavoriteRemoveAction(){}
+
+        protected FavoriteRemoveAction(Parcel in) {
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<FavoriteRemoveAction> CREATOR = new Creator<FavoriteRemoveAction>() {
+            @Override
+            public FavoriteRemoveAction createFromParcel(Parcel in) {
+                return new FavoriteRemoveAction(in);
+            }
+
+            @Override
+            public FavoriteRemoveAction[] newArray(int size) {
+                return new FavoriteRemoveAction[size];
+            }
+        };
 
         @Override
         protected boolean getValueOnSucess() {
@@ -335,8 +363,33 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {
-        private static final long serialVersionUID = 2666244883152710932L;
+    private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> implements Parcelable {
+
+        FavoriteAddAction(){}
+
+        protected FavoriteAddAction(Parcel in) {
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<FavoriteAddAction> CREATOR = new Creator<FavoriteAddAction>() {
+            @Override
+            public FavoriteAddAction createFromParcel(Parcel in) {
+                return new FavoriteAddAction(in);
+            }
+
+            @Override
+            public FavoriteAddAction[] newArray(int size) {
+                return new FavoriteAddAction[size];
+            }
+        };
 
         @Override
         protected boolean getValueOnSucess() {

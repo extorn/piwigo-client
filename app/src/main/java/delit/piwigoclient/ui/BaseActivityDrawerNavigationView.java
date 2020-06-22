@@ -3,6 +3,7 @@ package delit.piwigoclient.ui;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -210,12 +211,37 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         EventBus.getDefault().post(new AppUnlockedEvent());
     }
 
-    private static class OnAppLockAction extends UIHelper.QuestionResultAdapter {
-        private static final long serialVersionUID = 790733381088119050L;
+    private static class OnAppLockAction extends UIHelper.QuestionResultAdapter implements Parcelable {
 
         public OnAppLockAction(UIHelper uiHelper) {
             super(uiHelper);
         }
+
+        protected OnAppLockAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnAppLockAction> CREATOR = new Creator<OnAppLockAction>() {
+            @Override
+            public OnAppLockAction createFromParcel(Parcel in) {
+                return new OnAppLockAction(in);
+            }
+
+            @Override
+            public OnAppLockAction[] newArray(int size) {
+                return new OnAppLockAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -225,15 +251,42 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<MainActivityDrawerNavigationView>> {
+    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView> implements Parcelable {
 
-        private static final long serialVersionUID = -3103982793170701729L;
         private final boolean networkAccessDesired;
 
         public ConfigureNetworkAccessQuestionResult(ViewGroupUIHelper<MainActivityDrawerNavigationView> uiHelper, boolean networkAccessDesired) {
             super(uiHelper);
             this.networkAccessDesired = networkAccessDesired;
         }
+
+        protected ConfigureNetworkAccessQuestionResult(Parcel in) {
+            super(in);
+            networkAccessDesired = in.readByte() != 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeByte((byte) (networkAccessDesired ? 1 : 0));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ConfigureNetworkAccessQuestionResult> CREATOR = new Creator<ConfigureNetworkAccessQuestionResult>() {
+            @Override
+            public ConfigureNetworkAccessQuestionResult createFromParcel(Parcel in) {
+                return new ConfigureNetworkAccessQuestionResult(in);
+            }
+
+            @Override
+            public ConfigureNetworkAccessQuestionResult[] newArray(int size) {
+                return new ConfigureNetworkAccessQuestionResult[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -257,9 +310,35 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<UIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction extends UIHelper.Action<UIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> implements Parcelable {
 
-        private static final long serialVersionUID = -672337878074631707L;
+        protected OnLoginAction(){}
+
+        protected OnLoginAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
+            @Override
+            public OnLoginAction createFromParcel(Parcel in) {
+                return new OnLoginAction(in);
+            }
+
+            @Override
+            public OnLoginAction[] newArray(int size) {
+                return new OnLoginAction[size];
+            }
+        };
 
         @Override
         public boolean onFailure(UIHelper<MainActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
@@ -286,12 +365,37 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    private static class OnUnlockAction extends UIHelper.QuestionResultAdapter {
-        private static final long serialVersionUID = 5971284425196833117L;
+    private static class OnUnlockAction extends UIHelper.QuestionResultAdapter implements Parcelable {
 
         public OnUnlockAction(UIHelper uiHelper) {
             super(uiHelper);
         }
+
+        protected OnUnlockAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnUnlockAction> CREATOR = new Creator<OnUnlockAction>() {
+            @Override
+            public OnUnlockAction createFromParcel(Parcel in) {
+                return new OnUnlockAction(in);
+            }
+
+            @Override
+            public OnUnlockAction[] newArray(int size) {
+                return new OnUnlockAction[size];
+            }
+        };
 
         @Override
         public void onShow(AlertDialog alertDialog) {
@@ -319,14 +423,14 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    protected class CustomPiwigoListener extends BasicPiwigoResponseListener<BaseActivityDrawerNavigationView> {
+    protected static class CustomPiwigoListener extends BasicPiwigoResponseListener<BaseActivityDrawerNavigationView> {
         @Override
         public void onBeforeHandlePiwigoResponseInListener(PiwigoResponseBufferingHandler.Response response) {
             // invokeAndWait the chained call before hiding the progress dialog to avoid flicker.
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
                 LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
                 if (PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
-                    onLoginAfterAppUnlockEvent(rsp.getOldCredentials());
+                    getParent().onLoginAfterAppUnlockEvent(rsp.getOldCredentials());
                 }
             }
         }

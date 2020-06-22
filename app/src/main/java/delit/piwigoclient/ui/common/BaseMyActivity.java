@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -549,7 +551,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
 
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.main_view, f, f.getClass().getName());
+        tx.add(R.id.main_view, f, f.getClass().getName()); // don't use replace because that causes the view to be recreated each time from scratch
         tx.commit();
 
         Logging.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
@@ -624,14 +626,41 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         getUiHelper().showOrQueueDialogMessage(event.getTitleResId(), event.getMessage());
     }
 
-    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter {
-        private static final long serialVersionUID = 8370875759830585817L;
+    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter implements Parcelable {
         private final int trackingRequestId;
 
         public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
             super(uiHelper);
             this.trackingRequestId = trackingRequestId;
         }
+
+        protected OnStopActivityAction(Parcel in) {
+            super(in);
+            trackingRequestId = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeInt(trackingRequestId);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnStopActivityAction> CREATOR = new Creator<OnStopActivityAction>() {
+            @Override
+            public OnStopActivityAction createFromParcel(Parcel in) {
+                return new OnStopActivityAction(in);
+            }
+
+            @Override
+            public OnStopActivityAction[] newArray(int size) {
+                return new OnStopActivityAction[size];
+            }
+        };
 
         @Override
         public void onDismiss(AlertDialog dialog) {
@@ -648,16 +677,41 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         return agreedEulaVersion < currentEulaVersion;
     }
 
-    private static class ExitOnCloseAction<T extends BaseMyActivity<T>> extends UIHelper.QuestionResultAdapter<ActivityUIHelper<T>> {
-        private static final long serialVersionUID = 3716587979356224753L;
+    private static class ExitOnCloseAction<T extends BaseMyActivity<T>> extends UIHelper.QuestionResultAdapter<ActivityUIHelper<T>,T> implements Parcelable {
 
         public ExitOnCloseAction(ActivityUIHelper<T> uiHelper) {
             super(uiHelper);
         }
 
+        protected ExitOnCloseAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ExitOnCloseAction> CREATOR = new Creator<ExitOnCloseAction>() {
+            @Override
+            public ExitOnCloseAction createFromParcel(Parcel in) {
+                return new ExitOnCloseAction(in);
+            }
+
+            @Override
+            public ExitOnCloseAction[] newArray(int size) {
+                return new ExitOnCloseAction[size];
+            }
+        };
+
         @Override
         public void onDismiss(AlertDialog dialog) {
-            getUiHelper().getParent().finish();
+            getParent().finish();
         }
     }
 }

@@ -556,16 +556,45 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewFavoritesFragment>> {
-        private static final long serialVersionUID = -1305038324634310698L;
-        private HashSet<Long> selectedItemIds;
-        private HashSet<ResourceItem> selectedItems;
+    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewFavoritesFragment>,ViewFavoritesFragment> implements Parcelable {
+        private final HashSet<Long> selectedItemIds;
+        private final HashSet<ResourceItem> selectedItems;
 
         public OnDeleteFavoritesAction(FragmentUIHelper<ViewFavoritesFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
         }
+
+        protected OnDeleteFavoritesAction(Parcel in) {
+            super(in);
+            selectedItemIds = ParcelUtils.readLongSet(in);
+            selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeLongSet(dest, selectedItemIds);
+            ParcelUtils.writeSet(dest, selectedItems);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteFavoritesAction> CREATOR = new Creator<OnDeleteFavoritesAction>() {
+            @Override
+            public OnDeleteFavoritesAction createFromParcel(Parcel in) {
+                return new OnDeleteFavoritesAction(in);
+            }
+
+            @Override
+            public OnDeleteFavoritesAction[] newArray(int size) {
+                return new OnDeleteFavoritesAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -620,9 +649,8 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         }
     }
 
-    private static class OnDeleteFavoritesForeverAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteFavoritesForeverAction extends UIHelper.QuestionResultAdapter implements Parcelable {
 
-        private static final long serialVersionUID = 6920921489446041130L;
         private final HashSet<Long> selectedItemIds;
         private final HashSet<? extends ResourceItem> selectedItems;
 
@@ -631,6 +659,36 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
         }
+
+        protected OnDeleteFavoritesForeverAction(Parcel in) {
+            super(in);
+            selectedItemIds = ParcelUtils.readLongSet(in);
+            selectedItems = ParcelUtils.readHashSet(in, ResourceItem.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeLongSet(dest, selectedItemIds);
+            ParcelUtils.writeSet(dest, selectedItems);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteFavoritesForeverAction> CREATOR = new Creator<OnDeleteFavoritesForeverAction>() {
+            @Override
+            public OnDeleteFavoritesForeverAction createFromParcel(Parcel in) {
+                return new OnDeleteFavoritesForeverAction(in);
+            }
+
+            @Override
+            public OnDeleteFavoritesForeverAction[] newArray(int size) {
+                return new OnDeleteFavoritesForeverAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

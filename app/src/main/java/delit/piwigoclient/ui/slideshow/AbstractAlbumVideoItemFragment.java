@@ -7,6 +7,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -383,22 +385,12 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                     //Granted
                     DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
                     AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
-
-                        private static final long serialVersionUID = -8359660259637468002L;
-
                         @Override
                         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
-                                    private static final long serialVersionUID = 601237549701440365L;
-
-                                    @Override
-                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                        doDownloadAction(items, selectedPiwigoFilesizeName, false);
-                                    }
-                                });
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new SelectionContainsUnsuitableFilesQuestionResult(getUiHelper(), items, selectedPiwigoFilesizeName));
                             } else {
-                                doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                                new BaseDownloadQuestionResult<AbstractAlbumVideoItemFragment>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
                             }
 
                         }
@@ -406,36 +398,10 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                         @Override
                         public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
-                                    private static final long serialVersionUID = -5425847829422082992L;
-
-                                    @Override
-                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                        doDownloadAction(items, selectedPiwigoFilesizeName, true);
-                                    }
-                                });
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new OnFilesUnavailableToDownloadQuestionResult(getUiHelper(), items, selectedPiwigoFilesizeName));
                             } else {
-                                doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                                new BaseDownloadQuestionResult<AbstractAlbumVideoItemFragment>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
                             }
-                        }
-
-                        private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareWithOtherAppsAfterDownload) {
-                            ResourceItem item = items.iterator().next();
-                            DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareWithOtherAppsAfterDownload);
-                            if(item instanceof VideoResourceItem) {
-                                File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
-                                if(localCache != null) {
-                                    String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
-                                    String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
-                                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
-                                }
-                            } else {
-                                String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
-                                String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
-                                evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
-                            }
-                            EventBus.getDefault().post(evt);
-                            EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
                         }
 
                         @Override
@@ -685,13 +651,37 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         }
     }
 
-    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractAlbumVideoItemFragment>> {
-
-        private static final long serialVersionUID = 5223240592825893152L;
+    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractAlbumVideoItemFragment>,AbstractAlbumVideoItemFragment> implements Parcelable {
 
         public ClearCachedContentAction(FragmentUIHelper<AbstractAlbumVideoItemFragment> uiHelper) {
             super(uiHelper);
         }
+
+        protected ClearCachedContentAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ClearCachedContentAction> CREATOR = new Creator<ClearCachedContentAction>() {
+            @Override
+            public ClearCachedContentAction createFromParcel(Parcel in) {
+                return new ClearCachedContentAction(in);
+            }
+
+            @Override
+            public ClearCachedContentAction[] newArray(int size) {
+                return new ClearCachedContentAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -737,4 +727,26 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
             }
         }
     }
+
+    private class OnFilesUnavailableToDownloadQuestionResult extends BaseDownloadQuestionResult {
+
+
+        private final Set<ResourceItem> items;
+        private final String selectedPiwigoFilesizeName;
+
+
+
+        public OnFilesUnavailableToDownloadQuestionResult(FragmentUIHelper<AbstractAlbumVideoItemFragment> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+            super(uiHelper);
+            this.items = items;
+            this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            doDownloadAction(items, selectedPiwigoFilesizeName, true);
+        }
+    }
+
+
 }

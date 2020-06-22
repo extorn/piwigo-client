@@ -53,6 +53,7 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
+import delit.piwigoclient.ui.slideshow.AbstractSlideshowItemFragment;
 import delit.piwigoclient.ui.slideshow.DownloadSelectionMultiItemDialog;
 
 public class ViewAlbumFragment extends AbstractViewAlbumFragment {
@@ -115,58 +116,22 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                     DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
                     AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
 
-                        private static final long serialVersionUID = -8248892484373261149L;
-
                         @Override
                         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
-                                    private static final long serialVersionUID = -354483518422514618L;
-
-                                    @Override
-                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                        doDownloadAction(items, selectedPiwigoFilesizeName, false);
-                                    }
-                                });
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult(getUiHelper(), items, selectedPiwigoFilesizeName));
                             } else {
-                                doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
                             }
                         }
 
                         @Override
                         public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
-
                             if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
-                                    private static final long serialVersionUID = -6076782335293766632L;
-
-                                    @Override
-                                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                        doDownloadAction(items, selectedPiwigoFilesizeName, true);
-                                    }
-                                });
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<>(getUiHelper(), items, selectedPiwigoFilesizeName));
                             } else {
-                                doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
                             }
-                        }
-
-                        private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareFilesWithOtherApps) {
-                            DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareFilesWithOtherApps);
-                            for(ResourceItem item : items) {
-                                if(item instanceof VideoResourceItem) {
-                                    File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
-                                    if(localCache != null) {
-                                        String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
-                                        String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
-                                        evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
-                                    }
-                                } else {
-                                    String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
-                                    String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
-                                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
-                                }
-                            }
-                            EventBus.getDefault().post(evt);
                         }
 
                         @Override
@@ -312,7 +277,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         return new ViewAlbumPiwigoResponseListener();
     }
 
-    protected class ViewAlbumPiwigoResponseListener extends CustomPiwigoResponseListener {
+    protected static class ViewAlbumPiwigoResponseListener extends CustomPiwigoResponseListener<ViewAlbumFragment> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             super.onAfterHandlePiwigoResponse(response);

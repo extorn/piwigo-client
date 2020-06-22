@@ -46,7 +46,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.security.KeyStore;
@@ -845,16 +844,7 @@ public abstract class UIHelper<T> {
             return;
         }
         String msg = getAppContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority());
-        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new QuestionResultAdapter<UIHelper<T>>(this) {
-            private static final long serialVersionUID = -6680041203346385823L;
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.FALSE.equals(positiveAnswer)) {
-                    ConnectionPreferences.getActiveProfile().setWarnInternalUriExposed(getUiHelper().getPrefs(), getUiHelper().getAppContext(), false);
-                }
-            }
-        });
+        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new UnexpectedUriQuestionResult<>(this));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -897,7 +887,7 @@ public abstract class UIHelper<T> {
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction(this, event.getUntrustedCerts()));
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction<>(this, event.getUntrustedCerts()));
     }
 
     public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
@@ -1089,7 +1079,7 @@ public abstract class UIHelper<T> {
         return getAppContext().getString(stringPatternRes, args);
     }
 
-    public interface QuestionResultListener<S extends UIHelper> extends Serializable {
+    public interface QuestionResultListener<S extends UIHelper<T>, T> extends Parcelable {
         void onDismiss(AlertDialog dialog);
 
         void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
@@ -1099,6 +1089,8 @@ public abstract class UIHelper<T> {
         void onShow(AlertDialog alertDialog);
 
         void setUiHelper(S uiHelper);
+
+        T getParent();
 
         void chainResult(QuestionResultListener listener);
 
@@ -1113,14 +1105,42 @@ public abstract class UIHelper<T> {
         actionOnServerCallComplete.put(msgId, loginAction);
     }
 
-    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter<UIHelper<?>> {
-        private static final long serialVersionUID = -4223182596585364032L;
+    private static class NewUnTrustedCaCertificateReceivedAction<T> extends UIHelper.QuestionResultAdapter<UIHelper<T>,T> implements Parcelable {
+
         private final HashMap<String, X509Certificate> untrustedCerts;
 
-        public NewUnTrustedCaCertificateReceivedAction(UIHelper<?> uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
+        public NewUnTrustedCaCertificateReceivedAction(UIHelper<T> uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
             super(uiHelper);
             this.untrustedCerts = untrustedCerts;
         }
+
+        protected NewUnTrustedCaCertificateReceivedAction(Parcel in) {
+            super(in);
+            untrustedCerts = ParcelUtils.readMap(in, X509Certificate.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            ParcelUtils.writeMap(dest, untrustedCerts);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<NewUnTrustedCaCertificateReceivedAction> CREATOR = new Creator<NewUnTrustedCaCertificateReceivedAction>() {
+            @Override
+            public NewUnTrustedCaCertificateReceivedAction createFromParcel(Parcel in) {
+                return new NewUnTrustedCaCertificateReceivedAction(in);
+            }
+
+            @Override
+            public NewUnTrustedCaCertificateReceivedAction[] newArray(int size) {
+                return new NewUnTrustedCaCertificateReceivedAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1160,15 +1180,44 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static abstract class QuestionResultAdapter<Q extends UIHelper<?>> implements QuestionResultListener<Q> {
+    public static class QuestionResultAdapter<Q extends UIHelper<T>,T> implements QuestionResultListener<Q,T>, Parcelable {
 
-        private static final long serialVersionUID = 3153522325208957555L;
         private QuestionResultListener chainedListener;
 
-        private transient Q uiHelper;
+        private Q uiHelper;
 
         public QuestionResultAdapter(Q uiHelper) {
             this.uiHelper = uiHelper;
+        }
+
+        protected QuestionResultAdapter(Parcel in) {
+            chainedListener = in.readParcelable(QuestionResultListener.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeParcelable(chainedListener, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<QuestionResultAdapter> CREATOR = new Creator<QuestionResultAdapter>() {
+            @Override
+            public QuestionResultAdapter createFromParcel(Parcel in) {
+                return new QuestionResultAdapter(in);
+            }
+
+            @Override
+            public QuestionResultAdapter[] newArray(int size) {
+                return new QuestionResultAdapter[size];
+            }
+        };
+
+        public T getParent() {
+            return getUiHelper().getParent();
         }
 
         public Q getUiHelper() {
@@ -1214,6 +1263,7 @@ public abstract class UIHelper<T> {
         public void chainResult(QuestionResultListener listener) {
             chainedListener = listener;
         }
+
     }
 
     private static class QueuedSimpleMessage implements Parcelable {
@@ -1314,9 +1364,9 @@ public abstract class UIHelper<T> {
             ParcelUtils.writeBool(dest, cancellable);
             dest.writeString(detail);
             try {
-                dest.writeSerializable(listener);
+                dest.writeParcelable(listener, 0);
             } catch(RuntimeException e) {
-                dest.writeSerializable(null); // so we can still read the non serializable object in (as null)
+                dest.writeParcelable(null, 0); // so we can still read the non parcelable object in (as null)
             }
             ParcelUtils.writeBool(dest, listener != null); // has listener
         }
@@ -1608,9 +1658,26 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action<P extends UIHelper<T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
+    public static class Action<P extends UIHelper<T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Parcelable {
 
-        private static final long serialVersionUID = 2261489527794881333L;
+
+        protected Action(Parcel in) {
+        }
+
+        public static final Creator<Action> CREATOR = new Creator<Action>() {
+            @Override
+            public Action createFromParcel(Parcel in) {
+                return new Action(in);
+            }
+
+            @Override
+            public Action[] newArray(int size) {
+                return new Action[size];
+            }
+        };
+
+        public Action() {
+        }
 
         protected T getActionParent(P uiHelper) {
             return uiHelper.getParent();
@@ -1627,6 +1694,56 @@ public abstract class UIHelper<T> {
 
         public boolean onFailure(P uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             return true;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+        }
+    }
+
+    private static class UnexpectedUriQuestionResult<Q extends UIHelper<T>,T>  extends QuestionResultAdapter<Q,T>implements Parcelable {
+
+
+        public UnexpectedUriQuestionResult(Q uiHelper) {
+            super(uiHelper);
+        }
+
+        protected UnexpectedUriQuestionResult(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UnexpectedUriQuestionResult> CREATOR = new Creator<UnexpectedUriQuestionResult>() {
+            @Override
+            public UnexpectedUriQuestionResult createFromParcel(Parcel in) {
+                return new UnexpectedUriQuestionResult(in);
+            }
+
+            @Override
+            public UnexpectedUriQuestionResult[] newArray(int size) {
+                return new UnexpectedUriQuestionResult[size];
+            }
+        };
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.FALSE.equals(positiveAnswer)) {
+                ConnectionPreferences.getActiveProfile().setWarnInternalUriExposed(getUiHelper().getPrefs(), getUiHelper().getAppContext(), false);
+            }
         }
     }
 }

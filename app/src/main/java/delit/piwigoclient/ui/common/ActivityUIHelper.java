@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
@@ -69,14 +71,41 @@ public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
         showMessageImmediatelyIfPossible(message);
     }
 
-    private static class BlockingUserInteractionQuestionResultAdapter<T extends ActivityUIHelper<?>> extends QuestionResultAdapter<T> {
-        private static final long serialVersionUID = 1572120510497547224L;
+    private static class BlockingUserInteractionQuestionResultAdapter<T extends ActivityUIHelper<Q>,Q extends MyActivity<Q>> extends QuestionResultAdapter<T,Q> implements Parcelable {
         private final BlockingUserInteractionQuestion event;
 
         public BlockingUserInteractionQuestionResultAdapter(T uiHelper, BlockingUserInteractionQuestion event) {
             super(uiHelper);
             this.event = event;
         }
+
+        protected BlockingUserInteractionQuestionResultAdapter(Parcel in) {
+            super(in);
+            event = in.readParcelable(BlockingUserInteractionQuestion.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(event, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<BlockingUserInteractionQuestionResultAdapter> CREATOR = new Creator<BlockingUserInteractionQuestionResultAdapter>() {
+            @Override
+            public BlockingUserInteractionQuestionResultAdapter createFromParcel(Parcel in) {
+                return new BlockingUserInteractionQuestionResultAdapter(in);
+            }
+
+            @Override
+            public BlockingUserInteractionQuestionResultAdapter[] newArray(int size) {
+                return new BlockingUserInteractionQuestionResultAdapter[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

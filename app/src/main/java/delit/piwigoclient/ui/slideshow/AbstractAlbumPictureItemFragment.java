@@ -9,6 +9,8 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ import java.io.File;
 import java.util.Set;
 
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -40,6 +43,7 @@ import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
@@ -96,7 +100,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView = createImageViewer();
 
         loader = new PicassoLoader<>(imageView, this);
-        //loader.rotateToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
+        loader.rotateToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
         loader.setUsePlaceholderIfError(true);
 
         imageLoadErrorView = container.findViewById(R.id.image_load_error);
@@ -122,7 +126,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(AlbumViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
-        imageView.setRotateImageToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
+        //imageView.setRotateImageToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
 
         imageView.setOnTouchImageViewListener(() -> getOverlaysVisibilityControl().runWithDelay(imageView));
 
@@ -303,78 +307,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 //Granted
                 DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
                 AbstractBaseResourceItem.ResourceFile resourceFile = getModel().getResourceFileWithUri(getCurrentImageUrlDisplayed());
-                AlertDialog dialog = dialogFactory.buildDialog(resourceFile.getName(), getModel(), new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
-
-                    private static final long serialVersionUID = -2904423848050523923L;
-
-                    @Override
-                    public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
-                        if(filesUnavailableToDownload.size() > 0) {
-                            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
-                                private static final long serialVersionUID = 1083163567307597434L;
-
-                                @Override
-                                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                    doDownloadAction(items, selectedPiwigoFilesizeName, false);
-                                }
-                            });
-                        } else {
-                            doDownloadAction(items, selectedPiwigoFilesizeName, false);
-                        }
-
-                    }
-
-                    @Override
-                    public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
-                        if(filesUnavailableToDownload.size() > 0) {
-                            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelper.QuestionResultAdapter(getUiHelper()) {
-                                private static final long serialVersionUID = -7827362664960685261L;
-
-                                @Override
-                                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                                    doDownloadAction(items, selectedPiwigoFilesizeName, true);
-                                }
-                            });
-                        } else {
-                            doDownloadAction(items, selectedPiwigoFilesizeName, true);
-                        }
-                    }
-
-                    private void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareWithOtherAppsAfterDownload) {
-                        ResourceItem item = items.iterator().next();
-                        DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareWithOtherAppsAfterDownload);
-                        if(item instanceof VideoResourceItem) {
-                            File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
-                            if(localCache != null) {
-                                String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
-                                String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
-                                evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
-                            }
-                        } else {
-                            String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
-                            String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
-                            evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
-                        }
-                        EventBus.getDefault().post(evt);
-                        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
-                    }
-
-                    @Override
-                    public void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-                        ResourceItem item = items.iterator().next();
-                        String resourceName = item.getName();
-                        ResourceItem.ResourceFile resourceFile = item.getFile(selectedPiwigoFilesizeName);
-                        Uri uri = Uri.parse(item.getFileUrl(resourceFile.getName()));
-                        ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                        if(mgr != null) {
-                            ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
-                            mgr.setPrimaryClip(clipData);
-                        } else {
-                            FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
-                        }
-                        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
-                    }
-                });
+                AlertDialog dialog = dialogFactory.buildDialog(resourceFile.getName(), getModel(), new MyDownloadSelectionMultiItemListener());
                 dialog.show();
 
             } else {
@@ -400,5 +333,158 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         currentImageUrlDisplayed = null;
         //Enable the next line to cancel download of the image if not yet complete. This is very wasteful of network traffic though possibly essential for memory.
         loader.cancelImageLoadIfRunning();
+    }
+
+    private class MyDownloadSelectionMultiItemListener implements DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener {
+
+        @Override
+        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+            if(filesUnavailableToDownload.size() > 0) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new MyFilesUnavailableQuestionResultAdapter<AbstractAlbumPictureItemFragment>(getUiHelper(), items, selectedPiwigoFilesizeName));
+            } else {
+                doDownloadAction(items, selectedPiwigoFilesizeName, false);
+            }
+
+        }
+
+        @Override
+        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+            if(filesUnavailableToDownload.size() > 0) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(getUiHelper(), items, selectedPiwigoFilesizeName));
+            } else {
+                doDownloadAction(items, selectedPiwigoFilesizeName, true);
+            }
+        }
+
+        @Override
+        public void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+            ResourceItem item = items.iterator().next();
+            String resourceName = item.getName();
+            ResourceItem.ResourceFile resourceFile = item.getFile(selectedPiwigoFilesizeName);
+            Uri uri = Uri.parse(item.getFileUrl(resourceFile.getName()));
+            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            if(mgr != null) {
+                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
+                mgr.setPrimaryClip(clipData);
+            } else {
+                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+            }
+            EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
+        }
+
+
+
+    }
+
+    private static class UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter extends UIHelper.QuestionResultAdapter<UIHelper<AbstractAlbumPictureItemFragment>,AbstractAlbumPictureItemFragment> implements Parcelable {
+
+        private final Set<ResourceItem> items;
+        private final String selectedPiwigoFilesizeName;
+
+        public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(FragmentUIHelper<AbstractAlbumPictureItemFragment> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+            super(uiHelper);
+            this.items = items;
+            this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;
+        }
+
+        protected UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(Parcel in) {
+            super(in);
+            selectedPiwigoFilesizeName = in.readString();
+            items = ParcelUtils.readHashSet(in, ResourceItem.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(selectedPiwigoFilesizeName);
+            ParcelUtils.writeSet(dest, items);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter> CREATOR = new Creator<UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter>() {
+            @Override
+            public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter createFromParcel(Parcel in) {
+                return new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(in);
+            }
+
+            @Override
+            public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter[] newArray(int size) {
+                return new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter[size];
+            }
+        };
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            getParent().doDownloadAction(items, selectedPiwigoFilesizeName, true);
+        }
+    }
+
+    private static class MyFilesUnavailableQuestionResultAdapter<T extends AbstractAlbumPictureItemFragment> extends UIHelper.QuestionResultAdapter<UIHelper<T>, T> implements Parcelable {
+        private final Set<ResourceItem> items;
+        private final String selectedPiwigoFilesizeName;
+
+        public MyFilesUnavailableQuestionResultAdapter(UIHelper<T> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+            super(uiHelper);
+            this.items = items;
+            this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;
+        }
+
+        protected MyFilesUnavailableQuestionResultAdapter(Parcel in) {
+            super(in);
+            selectedPiwigoFilesizeName = in.readString();
+            items = ParcelUtils.readHashSet(in, ResourceItem.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(selectedPiwigoFilesizeName);
+            ParcelUtils.writeSet(dest, items);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<MyFilesUnavailableQuestionResultAdapter> CREATOR = new Creator<MyFilesUnavailableQuestionResultAdapter>() {
+            @Override
+            public MyFilesUnavailableQuestionResultAdapter createFromParcel(Parcel in) {
+                return new MyFilesUnavailableQuestionResultAdapter(in);
+            }
+
+            @Override
+            public MyFilesUnavailableQuestionResultAdapter[] newArray(int size) {
+                return new MyFilesUnavailableQuestionResultAdapter[size];
+            }
+        };
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            getUiHelper().getParent().doDownloadAction(items, selectedPiwigoFilesizeName, false);
+        }
+    }
+
+    public void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareWithOtherAppsAfterDownload) {
+        ResourceItem item = items.iterator().next();
+        DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareWithOtherAppsAfterDownload);
+        if(item instanceof VideoResourceItem) {
+            File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
+            if(localCache != null) {
+                String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
+                String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
+                evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
+            }
+        } else {
+            String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
+            String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
+            evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
+        }
+        EventBus.getDefault().post(evt);
+        EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
     }
 }

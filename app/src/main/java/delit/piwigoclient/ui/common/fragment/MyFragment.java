@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -248,15 +250,42 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         this.theme = theme;
     }
 
-    private static class AdLoadErrorDialogListener<T extends MyFragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>> {
+    private static class AdLoadErrorDialogListener<T extends MyFragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>,T> implements Parcelable {
 
-        private static final long serialVersionUID = -3304262607116424453L;
         private long shownAt;
-        private transient LifecycleObserver observer;
+        private LifecycleObserver observer;
 
         public AdLoadErrorDialogListener(FragmentUIHelper<T> uiHelper) {
             super(uiHelper);
         }
+
+        protected AdLoadErrorDialogListener(Parcel in) {
+            super(in);
+            shownAt = in.readLong();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeLong(shownAt);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<AdLoadErrorDialogListener> CREATOR = new Creator<AdLoadErrorDialogListener>() {
+            @Override
+            public AdLoadErrorDialogListener createFromParcel(Parcel in) {
+                return new AdLoadErrorDialogListener(in);
+            }
+
+            @Override
+            public AdLoadErrorDialogListener[] newArray(int size) {
+                return new AdLoadErrorDialogListener[size];
+            }
+        };
 
         @Override
         public void onShow(AlertDialog alertDialog) {
@@ -267,9 +296,11 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
                     shownAt = System.currentTimeMillis();
                 }
             };
-            FragmentActivity activity = getUiHelper().getParent().getActivity();
-            activity.getLifecycle().addObserver(observer);
-            shownAt = System.currentTimeMillis();
+            FragmentActivity activity = getParent().getActivity();
+            if(activity != null) {
+                activity.getLifecycle().addObserver(observer);
+                shownAt = System.currentTimeMillis();
+            }
         }
 
         @Override

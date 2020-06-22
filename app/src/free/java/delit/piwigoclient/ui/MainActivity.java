@@ -1,6 +1,8 @@
 package delit.piwigoclient.ui;
 
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -55,19 +57,43 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
         }
     }
 
-    private void showRewardVideo() {
+    protected void showRewardVideo() {
         if (!rewardedVideoAd.show()) {
             getUiHelper().showShortMsg(R.string.reward_video_not_yet_loaded);
         }
     }
 
-    private static class BuyAdvertFreeTimeQuestionListener<T extends ActivityUIHelper<MainActivity>> extends UIHelper.QuestionResultAdapter<T> {
-
-        private static final long serialVersionUID = -7607548650662570371L;
+    private static class BuyAdvertFreeTimeQuestionListener<T extends ActivityUIHelper<R>,R extends MainActivity> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
 
         public BuyAdvertFreeTimeQuestionListener(T uiHelper) {
             super(uiHelper);
         }
+
+        protected BuyAdvertFreeTimeQuestionListener(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<BuyAdvertFreeTimeQuestionListener> CREATOR = new Creator<BuyAdvertFreeTimeQuestionListener>() {
+            @Override
+            public BuyAdvertFreeTimeQuestionListener createFromParcel(Parcel in) {
+                return new BuyAdvertFreeTimeQuestionListener(in);
+            }
+
+            @Override
+            public BuyAdvertFreeTimeQuestionListener[] newArray(int size) {
+                return new BuyAdvertFreeTimeQuestionListener[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

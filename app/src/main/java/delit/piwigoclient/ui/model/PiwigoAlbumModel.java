@@ -29,4 +29,5 @@ public class PiwigoAlbumModel extends ViewModelContainer {
     public <T extends ResourceContainer> T getModel() {
         return (T) getPiwigoAlbum().getValue();
     }
+
 }

@@ -11,6 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +40,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
-    private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
+    private ArrayList<Parcelable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
@@ -374,9 +375,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     processNextQueuedDownloadEvent();
                 } catch(Exception e) {
                     Logging.recordException(e);
-                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), Integer.MIN_VALUE, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<?>>(getUiHelper()){
-                        private static final long serialVersionUID = -5095860316323377780L;
-                    });
+                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), Integer.MIN_VALUE, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity>(getUiHelper()));
                     activeDownloads.remove(0);
                 }
             } else {
@@ -811,14 +810,42 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         showFragmentNow(fragment);
     }
 
-    private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> {
-        private static final long serialVersionUID = 7822802682401888932L;
+    private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> implements Parcelable {
+
         private final DownloadFileRequestEvent downloadEvent;
 
         public DownloadAction(DownloadFileRequestEvent event) {
             super();
             downloadEvent = event;
         }
+
+        protected DownloadAction(Parcel in) {
+            super(in);
+            downloadEvent = in.readParcelable(DownloadFileRequestEvent.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(downloadEvent, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
+            @Override
+            public DownloadAction createFromParcel(Parcel in) {
+                return new DownloadAction(in);
+            }
+
+            @Override
+            public DownloadAction[] newArray(int size) {
+                return new DownloadAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.Response response) {

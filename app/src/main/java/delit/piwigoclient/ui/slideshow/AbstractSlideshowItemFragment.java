@@ -6,8 +6,11 @@ import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +29,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
@@ -35,6 +39,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -50,6 +55,7 @@ import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -57,6 +63,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -74,6 +81,7 @@ import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
+import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
@@ -335,7 +343,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         resourceDescTitleView.setText(model.getDescription());
     }
 
-    @Nullable
+    @NonNull
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -475,7 +483,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    protected View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+    protected View createItemContent(LayoutInflater inflater, @NonNull final ViewGroup container, @Nullable Bundle savedInstanceState) {
         return null;
     }
 
@@ -705,11 +713,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void onDeleteItem(final T model) {
         String message = getString(R.string.alert_confirm_really_delete_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteItemAction(getUiHelper()) {
-
-
-            private static final long serialVersionUID = -3461890984976190060L;
-        });
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteItemAction(getUiHelper()));
     }
 
     protected MaterialButton getEditButton() {
@@ -720,12 +724,37 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return tagsField;
     }
 
-    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
-        private static final long serialVersionUID = 2083670793785701410L;
+    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>, AbstractSlideshowItemFragment> implements Parcelable {
 
         public UseAsAlbumThumbnailForParentAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
             super(uiHelper);
         }
+
+        protected UseAsAlbumThumbnailForParentAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UseAsAlbumThumbnailForParentAction> CREATOR = new Creator<UseAsAlbumThumbnailForParentAction>() {
+            @Override
+            public UseAsAlbumThumbnailForParentAction createFromParcel(Parcel in) {
+                return new UseAsAlbumThumbnailForParentAction(in);
+            }
+
+            @Override
+            public UseAsAlbumThumbnailForParentAction[] newArray(int size) {
+                return new UseAsAlbumThumbnailForParentAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -875,12 +904,37 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    private static class OnDeleteItemAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
-        private static final long serialVersionUID = -5420355636254441168L;
+    private static class OnDeleteItemAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>, AbstractSlideshowItemFragment> implements Parcelable {
 
         public OnDeleteItemAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
             super(uiHelper);
         }
+
+        protected OnDeleteItemAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteItemAction> CREATOR = new Creator<OnDeleteItemAction>() {
+            @Override
+            public OnDeleteItemAction createFromParcel(Parcel in) {
+                return new OnDeleteItemAction(in);
+            }
+
+            @Override
+            public OnDeleteItemAction[] newArray(int size) {
+                return new OnDeleteItemAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1084,6 +1138,75 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 getParent().onAlbumThumbnailUpdated((AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
             }
             getParent().onGalleryItemActionFinished();
+        }
+    }
+
+    public static class BaseDownloadQuestionResult<T extends Fragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>, T> implements Parcelable {
+
+        public BaseDownloadQuestionResult(FragmentUIHelper<T> uiHelper) {
+            super(uiHelper);
+        }
+
+        protected BaseDownloadQuestionResult(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<BaseDownloadQuestionResult> CREATOR = new Creator<BaseDownloadQuestionResult>() {
+            @Override
+            public BaseDownloadQuestionResult createFromParcel(Parcel in) {
+                return new BaseDownloadQuestionResult(in);
+            }
+
+            @Override
+            public BaseDownloadQuestionResult[] newArray(int size) {
+                return new BaseDownloadQuestionResult[size];
+            }
+        };
+
+        public void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareWithOtherAppsAfterDownload) {
+            ResourceItem item = items.iterator().next();
+            DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareWithOtherAppsAfterDownload);
+            if (item instanceof VideoResourceItem) {
+                File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
+                if (localCache != null) {
+                    String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
+                    String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
+                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
+                }
+            } else {
+                String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
+                String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
+                evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
+            }
+            EventBus.getDefault().post(evt);
+            EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
+        }
+    }
+
+    public static class SelectionContainsUnsuitableFilesQuestionResult<T extends Fragment> extends BaseDownloadQuestionResult<T> {
+
+        private final Set<ResourceItem> items;
+        private final String selectedPiwigoFilesizeName;
+
+        public SelectionContainsUnsuitableFilesQuestionResult(FragmentUIHelper<T> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+            super(uiHelper);
+            this.items = items;
+            this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            doDownloadAction(items, selectedPiwigoFilesizeName, false);
         }
     }
 

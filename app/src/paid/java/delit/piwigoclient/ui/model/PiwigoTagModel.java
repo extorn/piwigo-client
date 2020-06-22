@@ -34,4 +34,5 @@ public class PiwigoTagModel extends ViewModelContainer {
     public ResourceContainer getModel() {
         return getPiwigoTag().getValue();
     }
+
 }

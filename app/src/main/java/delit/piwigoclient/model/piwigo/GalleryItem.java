@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,7 +19,7 @@ import delit.libs.ui.util.ParcelUtils;
 /**
  * An item representing a piece of content.
  */
-public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable, Serializable {
+public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable {
 
     private static final String TAG = "GalleryItem";
     public static final int CATEGORY_TYPE = 0;
@@ -31,7 +30,6 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     public static final int ADVERT_TYPE = 5;
 
     public static final GalleryItem PICTURE_HEADING = new GalleryItem(Long.MIN_VALUE + 2, null, null, null, null) {
-        private static final long serialVersionUID = -3300433372729664480L;
 
         @Override
         public int getType() {
@@ -43,7 +41,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
             return "PicturesHeading";
         }
     };
-    private static final long serialVersionUID = -8486162043348525674L;
+
     private long id; // this is final... except blank category items need to alter it
     private String name;
     private String description;

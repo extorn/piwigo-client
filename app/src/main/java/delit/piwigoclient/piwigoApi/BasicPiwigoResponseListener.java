@@ -2,6 +2,8 @@ package delit.piwigoclient.piwigoApi;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,10 +94,11 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
         }
     }
 
-    private static class ErrorRetryQuestionResultHandler extends UIHelper.QuestionResultAdapter {
-        private static final long serialVersionUID = 8909950575242139703L;
-        private final transient AbstractPiwigoDirectResponseHandler handler;
-        private final transient PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse;
+    private static class ErrorRetryQuestionResultHandler extends UIHelper.QuestionResultAdapter implements Parcelable {
+        //TODO These items are not really sensible to cache if the app is serialized as such. Instead we check if they're null and don't try to use them.
+        // Find some way of dealing with this situation in a more pleasant way.
+        private final AbstractPiwigoDirectResponseHandler handler;
+        private final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse;
         private final long handlerId;
 
         public ErrorRetryQuestionResultHandler(UIHelper uiHelper, AbstractPiwigoDirectResponseHandler handler, PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, long handlerId) {
@@ -105,9 +108,39 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
             this.errorResponse = errorResponse;
         }
 
+        protected ErrorRetryQuestionResultHandler(Parcel in) {
+            super(in);
+            handlerId = in.readLong();
+            handler = null;
+            errorResponse = null;
+
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeLong(handlerId);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ErrorRetryQuestionResultHandler> CREATOR = new Creator<ErrorRetryQuestionResultHandler>() {
+            @Override
+            public ErrorRetryQuestionResultHandler createFromParcel(Parcel in) {
+                return new ErrorRetryQuestionResultHandler(in);
+            }
+
+            @Override
+            public ErrorRetryQuestionResultHandler[] newArray(int size) {
+                return new ErrorRetryQuestionResultHandler[size];
+            }
+        };
+
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            //TODO fix NPE exception - will occur here because handler and errorResponse are both transient as non serializable.
             if (Boolean.TRUE.equals(positiveAnswer)) {
                 if (handler == null) {
                     Logging.log(Log.ERROR, TAG, "attempt to process alert message for handler after app pause resume (handler is now not available)");

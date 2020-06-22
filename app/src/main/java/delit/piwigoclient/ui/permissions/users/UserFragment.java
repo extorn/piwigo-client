@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.permissions.users;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -427,9 +428,35 @@ public class UserFragment extends MyFragment<UserFragment> {
         return currentIndirectAlbumPermissions;
     }
 
-    private static class UserFragmentAction extends UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> {
+    private static class UserFragmentAction extends UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> implements Parcelable {
 
-        private static final long serialVersionUID = -7852950121330647215L;
+        protected UserFragmentAction() {}
+
+        protected UserFragmentAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<UserFragmentAction> CREATOR = new Creator<UserFragmentAction>() {
+            @Override
+            public UserFragmentAction createFromParcel(Parcel in) {
+                return new UserFragmentAction(in);
+            }
+
+            @Override
+            public UserFragmentAction[] newArray(int size) {
+                return new UserFragmentAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
@@ -551,15 +578,42 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>> {
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>, UserFragment> implements Parcelable {
 
-        private static final long serialVersionUID = 4075391810293832237L;
-        private transient User user; // user is not serializable.
+        private User user;
 
         public OnDeleteUserAction(FragmentUIHelper<UserFragment> uiHelper, User user) {
             super(uiHelper);
             this.user = user;
         }
+
+        protected OnDeleteUserAction(Parcel in) {
+            super(in);
+            user = in.readParcelable(User.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(user, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteUserAction> CREATOR = new Creator<OnDeleteUserAction>() {
+            @Override
+            public OnDeleteUserAction createFromParcel(Parcel in) {
+                return new OnDeleteUserAction(in);
+            }
+
+            @Override
+            public OnDeleteUserAction[] newArray(int size) {
+                return new OnDeleteUserAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -568,21 +622,6 @@ public class UserFragment extends MyFragment<UserFragment> {
                 fragment.deleteUserNow(user);
             }
         }
-
-        private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-            out.defaultWriteObject();
-            Parcel p = Parcel.obtain();
-            p.writeValue(user);
-            ParcelUtils.writeParcel(out, p);
-        }
-
-        private void readObject(java.io.ObjectInputStream in)
-                throws IOException, ClassNotFoundException {
-            in.defaultReadObject();
-            Parcel p = ParcelUtils.readParcel(in);
-            user = ParcelUtils.readValue(p, User.class.getClassLoader(), User.class);
-        }
-
     }
 
     private void deleteUserNow(User thisItem) {

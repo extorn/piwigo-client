@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 
@@ -193,16 +194,7 @@ public class UploadActivity extends MyActivity {
                 });
                 d.show();
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new UIHelper.QuestionResultAdapter<ActivityUIHelper<UploadActivity>>(getUiHelper()) {
-                    private static final long serialVersionUID = -3252380962165832098L;
-
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                        if (!BuildConfig.DEBUG) {
-                            finish();
-                        }
-                    }
-                });
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ActivityUIHelperUploadActivityQuestionResultAdapter(getUiHelper()));
             }
         }
     }
@@ -603,6 +595,21 @@ public class UploadActivity extends MyActivity {
                 }
             } else {
                 super.onAfterHandlePiwigoResponse(response);
+            }
+        }
+    }
+
+    private static class ActivityUIHelperUploadActivityQuestionResultAdapter extends UIHelper.QuestionResultAdapter<ActivityUIHelper<UploadActivity>, UploadActivity> implements Parcelable {
+
+
+        public ActivityUIHelperUploadActivityQuestionResultAdapter(ActivityUIHelper<UploadActivity> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            if (!BuildConfig.DEBUG) {
+                getParent().finish();
             }
         }
     }

@@ -1,13 +1,13 @@
 package delit.piwigoclient.ui.events;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.StringRes;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.Serializable;
-
-public class BlockingUserInteractionQuestion implements Serializable {
-    private static final long serialVersionUID = -7244312957666580899L;
+public class BlockingUserInteractionQuestion implements Parcelable {
     public final @StringRes
     int questionStringId;
     private Boolean userResponse;
@@ -15,6 +15,35 @@ public class BlockingUserInteractionQuestion implements Serializable {
     public BlockingUserInteractionQuestion(@StringRes int questionStringId) {
         this.questionStringId = questionStringId;
     }
+
+    protected BlockingUserInteractionQuestion(Parcel in) {
+        questionStringId = in.readInt();
+        byte tmpUserResponse = in.readByte();
+        userResponse = tmpUserResponse == 0 ? null : tmpUserResponse == 1;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(questionStringId);
+        dest.writeByte((byte) (userResponse == null ? 0 : userResponse ? 1 : 2));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<BlockingUserInteractionQuestion> CREATOR = new Creator<BlockingUserInteractionQuestion>() {
+        @Override
+        public BlockingUserInteractionQuestion createFromParcel(Parcel in) {
+            return new BlockingUserInteractionQuestion(in);
+        }
+
+        @Override
+        public BlockingUserInteractionQuestion[] newArray(int size) {
+            return new BlockingUserInteractionQuestion[size];
+        }
+    };
 
     public void askQuestion() {
         EventBus.getDefault().post(this);

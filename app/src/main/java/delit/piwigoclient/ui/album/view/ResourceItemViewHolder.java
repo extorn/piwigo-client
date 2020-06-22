@@ -46,7 +46,7 @@ public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
 
     private void setTypeIndicatorStatus(GalleryItem newItem) {
         if (newItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            PicassoLoader picasso = new PicassoLoader(mTypeIndicatorImg);
+            PicassoLoader picasso = new PicassoLoader<>(mTypeIndicatorImg);
             picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
             picasso.load();
             mTypeIndicatorImg.setVisibility(View.VISIBLE);

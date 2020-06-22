@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -84,14 +86,42 @@ public class LicenceCheckingHelper {
         doCheck();
     }
 
-    private static class LicenceCheckAction<T extends ActivityUIHelper<? extends MyActivity<?>>> extends UIHelper.QuestionResultAdapter<T> {
-        private static final long serialVersionUID = 9060842177348571227L;
+    private static class LicenceCheckAction<T extends ActivityUIHelper<R>,R extends MyActivity<R>> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
+
         private final boolean allowRetry;
 
         public LicenceCheckAction(T uiHelper, boolean allowRetry) {
             super(uiHelper);
             this.allowRetry = allowRetry;
         }
+
+        protected LicenceCheckAction(Parcel in) {
+            super(in);
+            allowRetry = in.readByte() != 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeByte((byte) (allowRetry ? 1 : 0));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<LicenceCheckAction> CREATOR = new Creator<LicenceCheckAction>() {
+            @Override
+            public LicenceCheckAction createFromParcel(Parcel in) {
+                return new LicenceCheckAction(in);
+            }
+
+            @Override
+            public LicenceCheckAction[] newArray(int size) {
+                return new LicenceCheckAction[size];
+            }
+        };
 
         @Override
         public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {

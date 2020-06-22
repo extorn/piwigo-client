@@ -14,7 +14,6 @@ import androidx.appcompat.view.ContextThemeWrapper;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -231,7 +230,7 @@ public class DownloadSelectionMultiItemDialog {
         downloadSelectionListener.onCopyLink(context, items, selectedPiwigoFilesizeName);
     }
 
-    public interface DownloadSelectionMultiItemListener extends Serializable {
+    public interface DownloadSelectionMultiItemListener {
         void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload);
         void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload);
         void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName);

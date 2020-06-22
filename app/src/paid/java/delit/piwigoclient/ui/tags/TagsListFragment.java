@@ -3,6 +3,8 @@ package delit.piwigoclient.ui.tags;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -303,21 +305,45 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
 
     public void onDeleteTag(final Tag thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_tag);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem) {
-
-
-            private static final long serialVersionUID = 7194893076945270189L;
-        });
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem));
     }
 
-    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment>> {
-        private static final long serialVersionUID = -7336385030782357194L;
+    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment>, TagsListFragment> implements Parcelable {
+
         private final Tag tag;
 
         public OnDeleteTagAction(FragmentUIHelper<TagsListFragment> uiHelper, Tag tag) {
             super(uiHelper);
             this.tag = tag;
         }
+
+        protected OnDeleteTagAction(Parcel in) {
+            super(in);
+            tag = in.readParcelable(Tag.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(tag, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteTagAction> CREATOR = new Creator<OnDeleteTagAction>() {
+            @Override
+            public OnDeleteTagAction createFromParcel(Parcel in) {
+                return new OnDeleteTagAction(in);
+            }
+
+            @Override
+            public OnDeleteTagAction[] newArray(int size) {
+                return new OnDeleteTagAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

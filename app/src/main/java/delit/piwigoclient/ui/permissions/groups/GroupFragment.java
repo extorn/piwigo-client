@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -282,9 +284,37 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
     }
 
-    private static class GroupFragmentAction extends UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse> {
+    private static class GroupFragmentAction extends UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse> implements Parcelable {
 
-        private static final long serialVersionUID = -995890744697815413L;
+        protected GroupFragmentAction(){
+            super();
+        }
+
+        protected GroupFragmentAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<GroupFragmentAction> CREATOR = new Creator<GroupFragmentAction>() {
+            @Override
+            public GroupFragmentAction createFromParcel(Parcel in) {
+                return new GroupFragmentAction(in);
+            }
+
+            @Override
+            public GroupFragmentAction[] newArray(int size) {
+                return new GroupFragmentAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
@@ -406,14 +436,42 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), group));
     }
 
-    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupFragment>> {
-        private static final long serialVersionUID = 8225464061348626385L;
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupFragment>,GroupFragment> implements Parcelable {
+
         private final Group group;
 
         OnDeleteGroupAction(FragmentUIHelper<GroupFragment> uiHelper, Group group) {
             super(uiHelper);
             this.group = group;
         }
+
+        protected OnDeleteGroupAction(Parcel in) {
+            super(in);
+            group = in.readParcelable(Group.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(group, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteGroupAction> CREATOR = new Creator<OnDeleteGroupAction>() {
+            @Override
+            public OnDeleteGroupAction createFromParcel(Parcel in) {
+                return new OnDeleteGroupAction(in);
+            }
+
+            @Override
+            public OnDeleteGroupAction[] newArray(int size) {
+                return new OnDeleteGroupAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

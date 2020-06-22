@@ -3,13 +3,11 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -24,7 +22,6 @@ import delit.libs.ui.util.ParcelUtils;
  */
 public abstract class AbstractBaseResourceItem extends GalleryItem {
     private static final String TAG = "AbstractBaseResItem";
-    private static final long serialVersionUID = -1612104465750824315L;
     private float myRating = 0;
     private float averageRating = 0;
     private int ratingsGiven = 0;
@@ -285,9 +282,8 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return uri;
     }
 
-    public static class ResourceFile implements Comparable<ResourceFile>, Parcelable, Serializable {
+    public static class ResourceFile implements Comparable<ResourceFile>, Parcelable {
 
-        private static final long serialVersionUID = 2807336261739692481L;
         private static final String TAG = "ResourceFile";
         public static final String ORIGINAL = "original";
         public static final String BEST_FIT = "best-fit";

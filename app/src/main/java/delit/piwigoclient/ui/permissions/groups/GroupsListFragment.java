@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -249,15 +251,42 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
         }
     }
 
-    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupsListFragment>> {
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupsListFragment>,GroupsListFragment> implements Parcelable {
 
-        private static final long serialVersionUID = -3012489537598738626L;
         private final Group group;
 
         public OnDeleteGroupAction(FragmentUIHelper<GroupsListFragment> uiHelper, Group group) {
             super(uiHelper);
             this.group = group;
         }
+
+        protected OnDeleteGroupAction(Parcel in) {
+            super(in);
+            group = in.readParcelable(Group.class.getClassLoader());
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeParcelable(group, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnDeleteGroupAction> CREATOR = new Creator<OnDeleteGroupAction>() {
+            @Override
+            public OnDeleteGroupAction createFromParcel(Parcel in) {
+                return new OnDeleteGroupAction(in);
+            }
+
+            @Override
+            public OnDeleteGroupAction[] newArray(int size) {
+                return new OnDeleteGroupAction[size];
+            }
+        };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
