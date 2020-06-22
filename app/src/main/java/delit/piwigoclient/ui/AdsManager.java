@@ -8,9 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdListener;
@@ -31,9 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.net.URI;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import delit.libs.core.util.Logging;
@@ -41,6 +42,9 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.RewardUpdateEvent;
 import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
@@ -63,6 +67,8 @@ public class AdsManager {
     private SharedPreferences prefs;
     private static int advertLoadFailures = 0;
     private boolean advertsDisabled;
+    private boolean interstitialShowing;
+    private Boolean lastAdPaid;
 
     private AdsManager() {
     }
@@ -165,7 +171,7 @@ public class AdsManager {
         long currentTime = System.currentTimeMillis();
 
         if (showAds && !advertsDisabled && ad != null) {
-            if (ad.isLoaded() && (currentTime - lastShowedAdvert) > minDelayBetweenAds) {
+            if (ad.isLoaded() && (null == lastAdPaid || !lastAdPaid || (currentTime - lastShowedAdvert) > minDelayBetweenAds)) {
                 lastShowedAdvert = currentTime;
                 return true;
             } else if (!ad.isLoaded() && !ad.isLoading()) {
@@ -175,22 +181,43 @@ public class AdsManager {
         return false;
     }
 
-    public boolean showFileToUploadAdvertIfAppropriate() {
+    public boolean showFileToUploadAdvertIfAppropriate(Context context) {
         if (acceptableToShowAdvert(selectFileToUploadAd, 24 * 60 * 60000)) {
-            selectFileToUploadAd.show();
+            showInterstitialAd(context, selectFileToUploadAd);
             // show every 24 hours
             return true;
         }
         return false;
     }
 
-    public boolean showAlbumBrowsingAdvertIfAppropriate() {
+    private void showInterstitialAd(Context context, InterstitialAd ad) {
+        interstitialShowing = true;
+        albumBrowsingAd.show();
+        albumBrowsingAd.setOnPaidEventListener(adValue -> lastAdPaid = true);
+        albumBrowsingAd.setAdListener(new InterstitialAdListener(context));
+    }
+
+    public boolean isInterstitialShowing() {
+        return interstitialShowing;
+    }
+
+    public boolean isLastAdShownAndUnpaid() {
+        return lastAdPaid != null && !lastAdPaid;
+    }
+
+    public boolean showAlbumBrowsingAdvertIfAppropriate(Context context) {
         if (acceptableToShowAdvert(albumBrowsingAd, 24 * 60 * 60000)) {
-            albumBrowsingAd.show();
+            showInterstitialAd(context, albumBrowsingAd);
             // show every 24 hours
             return true;
         }
         return false;
+    }
+
+    public void showPleadingMessageIfNeeded(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+        if(AdsManager.getInstance().isLastAdShownAndUnpaid()) {
+            uiHelper.showOrQueueDialogQuestion(R.string.alert_warning, uiHelper.getString(R.string.alert_advert_importance_message), View.NO_ID, R.string.button_ok, new AdvertPleadingListener(uiHelper));
+        }
     }
 
     public static class MyBannerAdListener extends AdListener {
@@ -294,8 +321,9 @@ public class AdsManager {
             if (oldVal != null) {
                 endsAt = endsAt.max(new BigInteger(oldVal));
             }
-            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTimeMaximum * 5); // time declared in advert portal for each advert vs 5 * time ad watched for
-            rewardTime = Math.min(rewardTime, 300000); // 5 minutes absolute maximum!
+            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTimeMaximum * 10); // time declared in advert portal for each advert vs 10 * time ad watched for
+            rewardTime = Math.min(rewardTime, 720000); // 12 minutes absolute maximum!
+            rewardTime = Math.max(rewardTime, 360000); // 6 minutes absolute minimum!
             endsAt = endsAt.add(BigInteger.valueOf(rewardTime));
 
             long totalRewardTime = endsAt.longValue() - System.currentTimeMillis();
@@ -591,6 +619,75 @@ public class AdsManager {
         public void addAdCloseAction(Intent intent, int actionId) {
             onCloseIntent = intent;
             onCloseActionId = actionId;
+        }
+    }
+
+    private static class AdvertPleadingListener extends delit.piwigoclient.ui.common.UIHelper.QuestionResultAdapter implements Parcelable {
+        public AdvertPleadingListener(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        protected AdvertPleadingListener(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<AdvertPleadingListener> CREATOR = new Creator<AdvertPleadingListener>() {
+            @Override
+            public AdvertPleadingListener createFromParcel(Parcel in) {
+                return new AdvertPleadingListener(in);
+            }
+
+            @Override
+            public AdvertPleadingListener[] newArray(int size) {
+                return new AdvertPleadingListener[size];
+            }
+        };
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            FirebaseAnalytics.getInstance(dialog.getContext()).logEvent("ad_warning_shown", null);
+        }
+    }
+
+    private class InterstitialAdListener extends AdListener {
+
+        private final WeakReference<Context> contextRef;
+        long startedAt = System.currentTimeMillis();
+
+        private InterstitialAdListener(Context context) {
+            this.contextRef = new WeakReference<>(context);
+        }
+
+        @Override
+        public void onAdImpression() {
+            super.onAdImpression();
+            lastAdPaid = false;
+        }
+
+        @Override
+        public void onAdClosed() {
+            super.onAdClosed();
+            if(lastAdPaid == null || !lastAdPaid) {
+                long adShowingFor = System.currentTimeMillis() - startedAt;
+                if (adShowingFor > 5000) {
+                    lastAdPaid = Boolean.TRUE;
+                    Context context = contextRef.get();
+                    if(context != null) {
+                        FirebaseAnalytics.getInstance(context).logEvent("ad_watched_minimum", null);
+                    }
+                }
+            }
+            interstitialShowing = false;
         }
     }
 }

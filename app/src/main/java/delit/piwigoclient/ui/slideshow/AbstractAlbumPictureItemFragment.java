@@ -335,6 +335,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         loader.cancelImageLoadIfRunning();
     }
 
+    @Override
+    public void onDestroy() {
+        getUiHelper().setPiwigoResponseListener(null);// clear the reference to ensure no leaks.
+        super.onDestroy();
+    }
+
     private class MyDownloadSelectionMultiItemListener implements DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener {
 
         @Override

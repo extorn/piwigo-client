@@ -1035,5 +1035,6 @@ SOFTWARE.
     <string name="alert_error_starting_download">Error starting file download</string>
     <string name="progress_importing_files">Importing Files</string>
     <string name="content_filter">Content Filter</string>
+    <string name="alert_advert_importance_message">The revenue from adverts is important to me. I\'m sorry they frustrate you (they do me too), but if you watch them, they will keep appearing until you watch one. To avoid this problem, please watch them until they offer the option to close. Alternateively, purchase the paid version of this app. Many thanks for your support.</string>
 
 </resources>

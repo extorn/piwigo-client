@@ -515,5 +515,6 @@
     <string name="alert_error_starting_download">Error al iniciar la descarga del archivo</string>
     <string name="progress_importing_files">Importar archivos</string>
     <string name="content_filter">Filtro de contenido</string>
+    <string name="alert_advert_importance_message">Los ingresos de los anuncios son importantes para mí. Lamento que te frustren (a mí también), pero si los ves, seguirán apareciendo hasta que veas uno. Para evitar este problema, mírelos hasta que ofrezcan la opción de cerrar. Alternativamente, compre la versión paga de esta aplicación. Muchas gracias por su apoyo.</string>
 
 </resources>

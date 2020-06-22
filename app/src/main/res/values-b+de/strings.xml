@@ -645,6 +645,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_starting_download">Fehler beim Starten des Dateidownloads</string>
     <string name="progress_importing_files">Dateien importieren</string>
     <string name="content_filter">Inhaltsfilter</string>
+    <string name="alert_advert_importance_message">Die Einnahmen aus Werbung sind mir wichtig. Es tut mir leid, dass sie dich frustrieren (sie tun es auch), aber wenn du sie siehst, werden sie so lange erscheinen, bis du eine siehst. Um dieses Problem zu vermeiden, beobachten Sie sie bitte, bis sie die Option zum Schließen anbieten. Alternativ können Sie die kostenpflichtige Version dieser App erwerben. Vielen Dank für Ihre Unterstützung.</string>
 
 </resources>
 

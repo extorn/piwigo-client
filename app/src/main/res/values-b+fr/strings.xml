@@ -652,5 +652,6 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_error_starting_download">Erreur lors du démarrage du téléchargement du fichier</string>
     <string name="progress_importing_files">Importation de fichiers</string>
     <string name="content_filter">Filtre de contenu</string>
+    <string name="alert_advert_importance_message">Les revenus publicitaires sont importants pour moi. Je suis désolé qu\'ils vous frustrent (ils me font aussi), mais si vous les regardez, ils continueront à apparaître jusqu\'à ce que vous en regardiez un. Pour éviter ce problème, veuillez les regarder jusqu\'à ce qu\'ils offrent la possibilité de fermer. Alternativement, achetez la version payante de cette application. Merci beaucoup pour votre soutien.</string>
 
 </resources>

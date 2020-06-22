@@ -521,5 +521,6 @@
     <string name="alert_error_starting_download">开始下载文件时出错</string>
     <string name="progress_importing_files">导入文件</string>
     <string name="content_filter">内容过滤</string>
+    <string name="alert_advert_importance_message">广告收入对我来说很重要。 很抱歉，它们使您感到沮丧（他们也对我如此），但是如果您观看它们，它们将一直出现直到您观看一个。 为避免此问题，请注意它们，直到它们提供关闭选项为止。 或者，购买此应用程序的付费版本。 非常感谢您的支持。</string>
 
 </resources>

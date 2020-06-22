@@ -471,7 +471,7 @@ public abstract class UIHelper<T> {
         alertDialog.setTitle(nextMessage.getTitleId());
         alertDialog.setMessage(nextMessage.getMessage());
 
-        if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
+        if (nextMessage.getLayoutId() != View.NO_ID) {
             LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
             final ViewGroup dialogView = (ViewGroup) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
@@ -486,7 +486,7 @@ public abstract class UIHelper<T> {
             alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, appContext.getString(nextMessage.getNeutralButtonTextId()), (dialog, which) -> nextMessage.getListener().onResult(alertDialog, null));
         }
         dismissListener.setListener(nextMessage.getListener());
-        dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != Integer.MIN_VALUE);
+        dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != View.NO_ID);
 
         try {
             alertDialog.show();
@@ -503,7 +503,7 @@ public abstract class UIHelper<T> {
         alertDialog.setTitle(nextMessage.getTitleId());
         alertDialog.setMessage(nextMessage.getMessage());
 
-        if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
+        if (nextMessage.getLayoutId() != View.NO_ID) {
             LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
             final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
@@ -942,7 +942,7 @@ public abstract class UIHelper<T> {
     }
 
     public void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
+        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
     }
 
     public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
@@ -1475,7 +1475,7 @@ public abstract class UIHelper<T> {
             if (detail != null && !detail.trim().isEmpty()) {
                 return R.layout.layout_dialog_detailed;
             } else {
-                return Integer.MIN_VALUE;
+                return View.NO_ID;
             }
         }
     }
@@ -1514,26 +1514,26 @@ public abstract class UIHelper<T> {
         };
 
         public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, listener);
+            this(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, listener);
         }
 
         public QueuedQuestionMessage(int titleId, String message, String detail, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, detail, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, listener);
+            this(titleId, message, detail, View.NO_ID, positiveButtonTextId, negativeButtonTextId, listener);
         }
 
         public QueuedQuestionMessage(int titleId, String message, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, Integer.MIN_VALUE, listener);
+            this(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, View.NO_ID, listener);
         }
 
         public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
-            this(titleId, message, detail, layoutId, positiveButtonTextId, negativeButtonTextId, Integer.MIN_VALUE, listener);
+            this(titleId, message, detail, layoutId, positiveButtonTextId, negativeButtonTextId, View.NO_ID, listener);
         }
 
         public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, int neutralButtonTextId, QuestionResultListener listener) {
 
             super(titleId, message, detail, positiveButtonTextId, false, listener);
             this.negativeButtonTextId = negativeButtonTextId;
-            if(detail != null && !detail.trim().isEmpty() && layoutId == Integer.MIN_VALUE) {
+            if(detail != null && !detail.trim().isEmpty() && layoutId == View.NO_ID) {
                 this.layoutId = R.layout.layout_dialog_detailed;
             } else {
                 this.layoutId = layoutId;
@@ -1542,11 +1542,11 @@ public abstract class UIHelper<T> {
         }
 
         public boolean isShowNegativeButton() {
-            return negativeButtonTextId != Integer.MIN_VALUE;
+            return negativeButtonTextId != View.NO_ID;
         }
 
         public boolean isShowNeutralButton() {
-            return neutralButtonTextId != Integer.MIN_VALUE;
+            return neutralButtonTextId != View.NO_ID;
         }
 
         public int getNeutralButtonTextId() {

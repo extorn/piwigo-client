@@ -55,7 +55,6 @@ import delit.libs.ui.view.CustomToolbar;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.IOUtils;
-import delit.libs.util.ObjectUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -266,6 +265,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     // get the next album to show
                     CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
                     if (nextAlbumToShow != null) {
+                        getSupportFragmentManager().popBackStack();
                         // open this fragment again, but with new album
                         showGallery(nextAlbumToShow);
                         blockDefaultBackOperation = true;
@@ -363,7 +363,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         } else {
             showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot());
         }
-        AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate();
+        AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -375,7 +375,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     processNextQueuedDownloadEvent();
                 } catch(Exception e) {
                     Logging.recordException(e);
-                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), Integer.MIN_VALUE, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity>(getUiHelper()));
+                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), View.NO_ID, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity>(getUiHelper()));
                     activeDownloads.remove(0);
                 }
             } else {
