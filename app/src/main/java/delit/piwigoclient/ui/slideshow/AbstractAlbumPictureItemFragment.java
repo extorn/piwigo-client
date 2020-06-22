@@ -96,7 +96,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView = createImageViewer();
 
         loader = new PicassoLoader<>(imageView, this);
-        loader.rotateToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
+        //loader.rotateToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
         loader.setUsePlaceholderIfError(true);
 
         imageLoadErrorView = container.findViewById(R.id.image_load_error);
