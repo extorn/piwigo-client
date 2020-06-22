@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -97,6 +96,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView = createImageViewer();
 
         loader = new PicassoLoader<>(imageView, this);
+        loader.rotateToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
         loader.setUsePlaceholderIfError(true);
 
         imageLoadErrorView = container.findViewById(R.id.image_load_error);
@@ -123,21 +123,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(AlbumViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
         imageView.setRotateImageToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
-        //            @Override
-//            public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
-//                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
-//                    ToolbarEvent toolbarEvent = new ToolbarEvent(getActivity());
-//                    if(deltaY > 0) {
-//                        toolbarEvent.setTitle(getModel().getName());
-//                        toolbarEvent.setExpandToolbarView(true);
-//                        EventBus.getDefault().post(toolbarEvent);
-//                    } else {
-//                        toolbarEvent.setTitle(getModel().getName());
-//                        toolbarEvent.setContractToolbarView(true);
-//                        EventBus.getDefault().post(toolbarEvent);
-//                    }
-//                }
-//            }
+
         imageView.setOnTouchImageViewListener(() -> getOverlaysVisibilityControl().runWithDelay(imageView));
 
         return imageView;
