@@ -17,7 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -649,7 +649,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         }
 
         @Override
-        public int compareTo(@NotNull Sample o) {
+        public int compareTo(@NonNull Sample o) {
 
             int comparison = compareToBufferPresentationTime(o);
             if (comparison == 0) {

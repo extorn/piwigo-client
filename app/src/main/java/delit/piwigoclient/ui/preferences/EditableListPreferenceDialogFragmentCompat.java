@@ -28,7 +28,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -185,7 +185,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     }
 
     @Override
-    public <T extends Preference> T findPreference(@NotNull CharSequence key) {
+    public <T extends Preference> T findPreference(@NonNull CharSequence key) {
         return (T) getPreference();
     }
 

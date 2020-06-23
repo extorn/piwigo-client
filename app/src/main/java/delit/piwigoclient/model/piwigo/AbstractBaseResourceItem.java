@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -407,7 +407,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             return getName(id);
         }
 
-        @NotNull
+        @NonNull
         @Override
         public String toString() {
             if(width < Integer.MAX_VALUE && height < Integer.MAX_VALUE) {

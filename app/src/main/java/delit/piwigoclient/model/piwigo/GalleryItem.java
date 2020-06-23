@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,7 +131,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         return (int) id;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         return String.valueOf(id);

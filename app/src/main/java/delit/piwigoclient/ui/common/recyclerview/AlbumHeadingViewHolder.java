@@ -3,7 +3,7 @@ package delit.piwigoclient.ui.common.recyclerview;
 import android.view.View;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -62,7 +62,7 @@ public class AlbumHeadingViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     public void onRecycled() {
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         return "Header Item";

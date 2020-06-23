@@ -16,7 +16,7 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -160,7 +160,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     }
 
     @Override
-    public androidx.preference.Preference findPreference(@NotNull CharSequence key) {
+    public androidx.preference.Preference findPreference(@NonNull CharSequence key) {
         return getPreference();
     }
 

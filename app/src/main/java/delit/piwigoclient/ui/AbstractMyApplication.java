@@ -18,7 +18,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     protected abstract String getDesiredLanguage(Context context);
 
     @Override
-    public void onConfigurationChanged(@NotNull Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
 //        Locale.setDefault(newConfig.locale);
@@ -184,32 +184,32 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     protected abstract void onAppCreate();
 
     @Override
-    public void onActivityCreated(@NotNull Activity activity, Bundle savedInstanceState) {
+    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
     }
 
     @Override
-    public void onActivityStarted(@NotNull Activity activity) {
+    public void onActivityStarted(@NonNull Activity activity) {
 
     }
 
     @Override
-    public void onActivityResumed(@NotNull Activity activity) {
+    public void onActivityResumed(@NonNull Activity activity) {
     }
 
     @Override
-    public void onActivityPaused(@NotNull Activity activity) {
+    public void onActivityPaused(@NonNull Activity activity) {
     }
 
     @Override
-    public void onActivityStopped(@NotNull Activity activity) {
+    public void onActivityStopped(@NonNull Activity activity) {
     }
 
     @Override
-    public void onActivitySaveInstanceState(@NotNull Activity activity, @NotNull Bundle outState) {
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
     }
 
     @Override
-    public void onActivityDestroyed(@NotNull Activity activity) {
+    public void onActivityDestroyed(@NonNull Activity activity) {
     }
 
     @Override

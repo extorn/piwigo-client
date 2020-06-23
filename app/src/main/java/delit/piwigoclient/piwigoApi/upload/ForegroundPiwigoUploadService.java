@@ -10,7 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 
@@ -62,7 +62,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     }
 
     @Override
-    protected void onHandleWork(@NotNull Intent intent) {
+    protected void onHandleWork(@NonNull Intent intent) {
 
         try {
             if(BuildConfig.DEBUG) {

@@ -32,7 +32,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -100,7 +100,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private ProgressIndicator progressIndicator;
 
     @Override
-    public <T extends Preference> T findPreference(@NotNull CharSequence key) {
+    public <T extends Preference> T findPreference(@NonNull CharSequence key) {
         return (T)getPreference();
     }
 

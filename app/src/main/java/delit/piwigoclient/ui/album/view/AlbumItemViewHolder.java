@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
@@ -80,7 +80,7 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
 
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         return super.toString() + " '" + mNameView.getText() + "'";

@@ -17,7 +17,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.Locale;
 
@@ -89,7 +89,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         String language = AppPreferences.getDesiredLanguage(PreferenceManager.getDefaultSharedPreferences(context), requireContext());
         Locale newLocale = new Locale(language);
@@ -132,7 +132,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
     }
 
     @Override
-    public void onSaveInstanceState(@NotNull Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if(uiHelper != null) {
             uiHelper.onSaveInstanceState(outState);

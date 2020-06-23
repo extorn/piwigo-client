@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -132,7 +132,7 @@ public class ConnectionPreferences {
             return new ProfilePreferences(prefix, true);
         }
 
-        @NotNull
+        @NonNull
         @Override
         public String toString() {
             return prefix + " " + asGuest;

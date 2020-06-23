@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -178,7 +178,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         return super.hashCode();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public String toString() {
         return getName();
@@ -337,7 +337,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         return childAlbums.size();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public CategoryItem clone() {
         Parcel p = Parcel.obtain();

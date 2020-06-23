@@ -9,7 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
 
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 public class CustomAppBarLayoutBehaviour extends AppBarLayout.Behavior {
     public CustomAppBarLayoutBehaviour(Context context, AttributeSet attrs) {
@@ -23,7 +23,7 @@ public class CustomAppBarLayoutBehaviour extends AppBarLayout.Behavior {
     }
 
     @Override
-    public boolean onStartNestedScroll(@NotNull CoordinatorLayout parent, AppBarLayout child, @NotNull View directTargetChild, View target, int nestedScrollAxes, int type) {
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout parent, AppBarLayout child, @NonNull View directTargetChild, View target, int nestedScrollAxes, int type) {
         return child.isEnabled() && super.onStartNestedScroll(parent, child, directTargetChild, target, nestedScrollAxes, type);
     }
 }
