@@ -39,7 +39,7 @@ public class AboutFragment extends MyFragment<AboutFragment> {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
 
         AdView adView = view.findViewById(R.id.about_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);

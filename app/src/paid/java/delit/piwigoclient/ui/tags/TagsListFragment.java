@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -129,7 +130,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -251,7 +252,11 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     }
 
     private void addNewTag() {
-        final View v = getLayoutInflater().inflate(R.layout.dialog_layout_create_tag,null);
+
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(getContext(), R.style.Theme_App_EditPages));
+
+        final View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_layout_create_tag,null);
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -268,7 +273,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             }
         };
 
-        addNewTagDialog = new MaterialAlertDialogBuilder(getContext()).setView(v)
+        addNewTagDialog = builder.setView(v)
                 .setNegativeButton(R.string.button_cancel, listener)
                 .setPositiveButton(R.string.button_ok, listener)
                 .show();

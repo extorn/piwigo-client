@@ -50,7 +50,7 @@ public class LicencesFragment extends MyFragment<LicencesFragment> {
         });
 
         AdView adView = view.findViewById(R.id.licences_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);

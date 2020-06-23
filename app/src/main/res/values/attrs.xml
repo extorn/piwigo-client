@@ -24,21 +24,6 @@
     <attr format="color" name="appScrimColor"/>
     <attr format="color" name="colorAlbumItemBackground"/>
 
-
-
-    <!-- Declare custom theme attributes that allow changing which styles are
-         used for button bars depending on the API privacyLevel.
-         ?android:attr/buttonBarStyle is pkg as of API 11 so this is
-         necessary to support previous API levels. -->
-
-
-
-
-    <declare-styleable name="ButtonBarContainerTheme">
-        <attr name="metaButtonBarStyle" format="reference" />
-        <attr name="metaButtonBarButtonStyle" format="reference" />
-    </declare-styleable>
-
     <declare-styleable name="CustomExoPlayerTimeBar">
         <attr name="locally_cached_color" format="color"/>
         <attr name="unplayed_color" format="color"/>

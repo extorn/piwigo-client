@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="privacy_policy_uri" translatable="false">https://api-8938561204297001672-604498.firebaseapp.com/paid/data-use/index.html</string>
     <string name="notification_title_background_upload_service">Background Piwigo Upload Service</string>
     <string name="notification_text_background_upload_running">Running upload job</string>
     <string name="notification_text_background_upload_sleeping">Sleeping. Next run at %1$tR</string>

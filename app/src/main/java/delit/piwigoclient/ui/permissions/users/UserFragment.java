@@ -29,7 +29,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +40,6 @@ import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.PasswordInputToggle;
 import delit.libs.util.CollectionUtils;
@@ -282,7 +280,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         View v = inflater.inflate(R.layout.fragment_user, container, false);
 
         AdView adView = v.findViewById(R.id.user_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);

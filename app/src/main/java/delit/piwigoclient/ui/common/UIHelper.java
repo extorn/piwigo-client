@@ -452,9 +452,7 @@ public abstract class UIHelper<T> {
     }
 
     protected void buildAlertDialog() {
-
-        ContextThemeWrapper dialogContext = new ContextThemeWrapper(getParentView().getContext(), R.style.Theme_App_EditPages);
-            MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(dialogContext);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(getParentView().getContext(), R.style.Theme_App_EditPages));
         builder1.setCancelable(true);
         dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);
@@ -717,7 +715,7 @@ public abstract class UIHelper<T> {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                final MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(this.appContext);
+                final MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(appContext, R.style.Theme_App_EditPages));
                 alert.setTitle(appContext.getString(R.string.alert_title_permissions_needed));
                 alert.setMessage(event.getJustification());
 

@@ -588,7 +588,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 if(!autoTweakPreference) {
                     // clear the existing session - it's not valid any more.
                     logoutSession();
-                    AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
+                    AdsManager.getInstance(getContext()).updateShowAdvertsSetting(getContext().getApplicationContext());
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                         getListView().getAdapter().notifyDataSetChanged();
                     }

@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.dialogs;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.ContextThemeWrapper;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -40,8 +41,7 @@ public class SelectAlbumDialog {
         this.availableGalleries.clear();
         this.availableGalleries.addAll(albumNames);
 
-        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
-        builder1.setCancelable(true);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
         builder1.setTitle(R.string.alert_title_select_album);
 //        builder1.setMessage(R.string.alert_message_select_album);
         int selectedPosition = availableGalleries.getPosition(defaultSelectedAlbumId);

@@ -653,5 +653,13 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="progress_importing_files">Importation de fichiers</string>
     <string name="content_filter">Filtre de contenu</string>
     <string name="alert_advert_importance_message">Les revenus publicitaires sont importants pour moi. Je suis désolé qu\'ils vous frustrent (ils me font aussi), mais si vous les regardez, ils continueront à apparaître jusqu\'à ce que vous en regardiez un. Pour éviter ce problème, veuillez les regarder jusqu\'à ce qu\'ils offrent la possibilité de fermer. Alternativement, achetez la version payante de cette application. Merci beaucoup pour votre soutien.</string>
+    <string name="eula_privacy_title">intimité</string>
+    <string name="privacy_policy_label">Our privacy policy</string>
+    <string name="title_advert_consent">Your Privacy</string>
+    <string name="personalised_adverts_label">Would you like adverts to be personalised</string>
+    <string name="personalised_adverts_field">Show personalised adverts</string>
+    <string name="open_link">Open web page</string>
+    <string name="no_adverts_label">Prefer an advert free version of this app?</string>
+    <string name="view_the_paid_version">Take me to the advert free version</string>
 
 </resources>

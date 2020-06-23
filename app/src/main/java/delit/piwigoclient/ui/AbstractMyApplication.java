@@ -28,7 +28,6 @@ import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.MediaScanner;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.ProjectUtils;
@@ -151,7 +150,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         upgradeAnyPreferencesIfRequired();
         sanityCheckTheTempUploadFolder();
 
-        AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
+        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
 
         onAppCreate();

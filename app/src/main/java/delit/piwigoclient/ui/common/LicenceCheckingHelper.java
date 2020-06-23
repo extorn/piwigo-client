@@ -199,7 +199,7 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            AdsManager.getInstance().setAppLicensed(true);
+            AdsManager.getInstance(activity).setAppLicensed(true);
             // Should allow user access.
 //            displayResult(activity.getString(R.string.allow));
         }
@@ -209,7 +209,7 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            AdsManager.getInstance().setAppLicensed(false);
+            AdsManager.getInstance(activity).setAppLicensed(false);
             if (policyReason == Policy.NOT_LICENSED) {
                 PreferenceUtils.wipeAppPreferences(activity);
             }

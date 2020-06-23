@@ -183,7 +183,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
 
         adView = view.findViewById(R.id.slideshow_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()
                 && (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT
                 || largeEnoughScreenSizeForAdvert)) {
             adView.loadAd(new AdRequest.Builder().build());

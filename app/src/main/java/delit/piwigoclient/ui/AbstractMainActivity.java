@@ -363,7 +363,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         } else {
             showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot());
         }
-        AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate(this);
+        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -715,12 +715,19 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             case R.id.nav_eula:
                 showEula();
                 break;
+            case R.id.nav_privacy:
+                showPrivacy();
+                break;
             default:
                 onNavigationItemSelected(event, id);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    protected void showPrivacy() {
+        AdsManager.getInstance(this).showPrivacyForm(this);
     }
 
     protected void onNavigationItemSelected(NavigationItemSelectEvent event, @IdRes int itemId) {
@@ -1145,7 +1152,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         } else {
             //TODO notify all pages that need it that they need to be reloaded - i.e. flush them out of the fragment manager or send an event forcing reload.
         }
-        AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
+        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
         VersionCompatability.INSTANCE.runTests();
 
         boolean showUserWarning = OtherPreferences.getAndUpdateLastWarnedAboutVersionOrFeatures(prefs, this);

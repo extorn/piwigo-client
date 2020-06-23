@@ -179,7 +179,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         View v = inflater.inflate(R.layout.fragment_group, container, false);
 
         AdView adView = v.findViewById(R.id.group_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);

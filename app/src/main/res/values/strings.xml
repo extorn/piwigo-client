@@ -1036,5 +1036,13 @@ SOFTWARE.
     <string name="progress_importing_files">Importing Files</string>
     <string name="content_filter">Content Filter</string>
     <string name="alert_advert_importance_message">The revenue from adverts is important to me. I\'m sorry they frustrate you (they do me too), but if you watch them, they will keep appearing until you watch one. To avoid this problem, please watch them until they offer the option to close. Alternateively, purchase the paid version of this app. Many thanks for your support.</string>
+    <string name="eula_privacy_title">Privacy</string>
+    <string name="privacy_policy_label">Our privacy policy</string>
+    <string name="title_advert_consent">Your Privacy</string>
+    <string name="personalised_adverts_label">Would you like adverts to be personalised</string>
+    <string name="personalised_adverts_field">Show personalised adverts</string>
+    <string name="open_link">Open web page</string>
+    <string name="no_adverts_label">Prefer an advert free version of this app?</string>
+    <string name="view_the_paid_version">Take me to the advert free version</string>
 
 </resources>

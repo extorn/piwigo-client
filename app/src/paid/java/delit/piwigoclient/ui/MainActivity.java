@@ -85,6 +85,10 @@ public class MainActivity extends AbstractMainActivity {
         showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection(), event.getNewUnsavedTags());
     }
 
+    protected void showPrivacy() {
+        getUIHelper().showOfQueueDialogMessage();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ViewTagEvent event) {
         ViewTagFragment fragment = ViewTagFragment.newInstance(event.getTag());

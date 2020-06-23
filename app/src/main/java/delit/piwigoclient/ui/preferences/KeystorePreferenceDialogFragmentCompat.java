@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,7 +141,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_recycler_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -183,16 +184,13 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     }
 
     private void buildAndShowAlertErrorLoadingFilesDialog(String errorMessage) {
-        alertDialog = new MaterialAlertDialogBuilder(getContext())
+        alertDialog = new MaterialAlertDialogBuilder(new ContextThemeWrapper(getContext(), R.style.Theme_App_EditPages))
                 .setTitle(R.string.alert_error)
                 .setMessage(errorMessage)
-                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        alertDialog.dismiss();
-                        keystoreLoadOperationResult.removeUnrecoverableErrors();
-                        processRecoverableErrors(((AlertDialog)dialog).getContext());
-                    }
+                .setPositiveButton(R.string.button_ok, (dialog, which) -> {
+                    alertDialog.dismiss();
+                    keystoreLoadOperationResult.removeUnrecoverableErrors();
+                    processRecoverableErrors(((AlertDialog)dialog).getContext());
                 })
                 .show();
     }
@@ -226,13 +224,24 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             return;
         }
 
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
+                builder.setTitle(R.string.alert_information)
+                .setPositiveButton(R.string.button_ok, (dialog, which) -> {
+                    EditText passwordEditText = alertDialog.findViewById(R.id.keystore_password_editText);
+                    char[] pass = new char[passwordEditText.getText().length()];
+                    passwordEditText.getText().getChars(0, passwordEditText.getText().length(), pass, 0);
+                    alertDialog.dismiss();
+                    keystoreLoadOperationResult.addPasswordForRerun(recoverableError, pass);
+                    processRecoverableErrors(((AlertDialog)dialog).getContext());
+                });
+
         View v = null;
         if (recoverableError instanceof KeyStoreOperationException) {
             // request keystore password
-            v = LayoutInflater.from(context).inflate(R.layout.layout_keystore_password_entry, null);
+            v = LayoutInflater.from(builder.getContext()).inflate(R.layout.layout_keystore_password_entry, null);
         } else if (recoverableError instanceof KeyStoreContentException) {
             // request keystore alias key password
-            v = LayoutInflater.from(context).inflate(R.layout.layout_keystore_key_password_entry, null);
+            v = LayoutInflater.from(builder.getContext()).inflate(R.layout.layout_keystore_key_password_entry, null);
 
             KeyStoreContentException e = (KeyStoreContentException) recoverableError;
 
@@ -250,21 +259,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         String filename = new File(recoverableError.getDataSource()).getName();
         filenameEditText.setText(filename);
 
-        alertDialog = new MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.alert_information)
-                .setView(v)
-                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText passwordEditText = alertDialog.findViewById(R.id.keystore_password_editText);
-                        char[] pass = new char[passwordEditText.getText().length()];
-                        passwordEditText.getText().getChars(0, passwordEditText.getText().length(), pass, 0);
-                        alertDialog.dismiss();
-                        keystoreLoadOperationResult.addPasswordForRerun(recoverableError, pass);
-                        processRecoverableErrors(((AlertDialog)dialog).getContext());
-                    }
-                })
-                .show();
+        builder.setView(v);
+        alertDialog = builder.show();
     }
 
     public static DialogFragment newInstance(String key) {

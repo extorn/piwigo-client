@@ -516,5 +516,13 @@
     <string name="progress_importing_files">Importar archivos</string>
     <string name="content_filter">Filtro de contenido</string>
     <string name="alert_advert_importance_message">Los ingresos de los anuncios son importantes para mí. Lamento que te frustren (a mí también), pero si los ves, seguirán apareciendo hasta que veas uno. Para evitar este problema, mírelos hasta que ofrezcan la opción de cerrar. Alternativamente, compre la versión paga de esta aplicación. Muchas gracias por su apoyo.</string>
+    <string name="eula_privacy_title">intimidad</string>
+    <string name="privacy_policy_label">Our privacy policy</string>
+    <string name="title_advert_consent">Your Privacy</string>
+    <string name="personalised_adverts_label">Would you like adverts to be personalised</string>
+    <string name="personalised_adverts_field">Show personalised adverts</string>
+    <string name="open_link">Open web page</string>
+    <string name="no_adverts_label">Prefer an advert free version of this app?</string>
+    <string name="view_the_paid_version">Take me to the advert free version</string>
 
 </resources>

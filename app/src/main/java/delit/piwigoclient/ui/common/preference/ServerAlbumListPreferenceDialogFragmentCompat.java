@@ -75,7 +75,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
 
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);

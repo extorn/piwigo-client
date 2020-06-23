@@ -67,6 +67,11 @@
             android:title="@string/eula_menu_title" />
 
         <item
+            android:id="@+id/nav_privacy"
+            android:icon="@drawable/ic_lock_black_24dp"
+            android:title="@string/eula_privacy_title" />
+
+        <item
             android:id="@+id/nav_lock"
             android:icon="@drawable/ic_lock_black_24dp"
             android:title="@string/lock_menu_title" />

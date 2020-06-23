@@ -41,7 +41,7 @@ public class TopTipsFragment extends MyFragment<TopTipsFragment> {
         plannedReleases.setAdapter(adapter);
 
         AdView adView = view.findViewById(R.id.toptips_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);

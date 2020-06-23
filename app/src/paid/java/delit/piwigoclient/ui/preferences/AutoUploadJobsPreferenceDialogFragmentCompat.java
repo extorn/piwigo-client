@@ -132,7 +132,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         View view = LayoutInflater.from(context).inflate(R.layout.layout_fullsize_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);

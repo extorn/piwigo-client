@@ -62,7 +62,7 @@ public class DownloadSelectionMultiItemDialog {
     public AlertDialog buildDialog(String defaultSelectedFilesizeName, Set<ResourceItem> itemsSelectedForDownload, final DownloadSelectionMultiItemListener downloadSelectionListener) {
         this.downloadSelectionListener = downloadSelectionListener;
 
-        final MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(getContext());
+        final MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(getContext(), R.style.Theme_App_EditPages));
         builder1.setTitle(R.string.alert_image_download_title);
         builder1.setView(R.layout.layout_dialog_download_file);
         builder1.setNegativeButton(R.string.button_cancel, (dialog, which) -> {});

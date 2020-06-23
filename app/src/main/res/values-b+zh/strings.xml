@@ -522,5 +522,13 @@
     <string name="progress_importing_files">导入文件</string>
     <string name="content_filter">内容过滤</string>
     <string name="alert_advert_importance_message">广告收入对我来说很重要。 很抱歉，它们使您感到沮丧（他们也对我如此），但是如果您观看它们，它们将一直出现直到您观看一个。 为避免此问题，请注意它们，直到它们提供关闭选项为止。 或者，购买此应用程序的付费版本。 非常感谢您的支持。</string>
+    <string name="eula_privacy_title">隐私</string>
+    <string name="privacy_policy_label">Our privacy policy</string>
+    <string name="title_advert_consent">Your Privacy</string>
+    <string name="personalised_adverts_label">Would you like adverts to be personalised</string>
+    <string name="personalised_adverts_field">Show personalised adverts</string>
+    <string name="open_link">Open web page</string>
+    <string name="no_adverts_label">Prefer an advert free version of this app?</string>
+    <string name="view_the_paid_version">Take me to the advert free version</string>
 
 </resources>

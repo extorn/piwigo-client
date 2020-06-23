@@ -35,11 +35,11 @@ class SelectImageRenderDetailsDialog {
     }
 
     public AlertDialog buildDialog(String currentImageUrlDisplayed, final PictureResourceItem model, final RenderDetailSelectListener listener) {
-        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(context);
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(context, R.style.Theme_App_EditPages));
         builder1.setTitle(R.string.alert_image_show_image_title);
         adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, model);
 
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_dialog_zoom_control, null, false);
+        View view = LayoutInflater.from(builder1.getContext()).inflate(R.layout.layout_dialog_zoom_control, null, false);
 
         imageRotation = view.findViewById(R.id.imageRotationField);
 

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         View view = getLayoutInflater().inflate(R.layout.layout_fullsize_recycler_list, null);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -139,8 +140,8 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     private void showEditBox(Context context, final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
-        MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext());
-        View view = getLayoutInflater().inflate(R.layout.layout_dialog_item_edit, null);
+        MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
+        View view = LayoutInflater.from(b.getContext()).inflate(R.layout.layout_dialog_item_edit, null);
         b.setView(view);
         MaterialTextView titleView = view.findViewById(R.id.title);
         if (editingExistingValue) {
@@ -235,7 +236,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     protected void onChangeItem(String oldValue, String newValue) {
 
         if (entriesList.contains(newValue)) {
-            MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext());
+            MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(new ContextThemeWrapper(requireContext(), R.style.Theme_App_EditPages));
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
@@ -258,7 +259,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     protected void onAddNewItemToList(String newItem) {
         if (entriesList.contains(newItem)) {
-            MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(requireContext());
+            MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(new ContextThemeWrapper(requireContext(), R.style.Theme_App_EditPages));
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();

@@ -340,7 +340,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
 
         AdView adView = view.findViewById(R.id.upload_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(GONE);
@@ -1084,7 +1084,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         } else {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
         }
-        AdsManager.getInstance().showFileToUploadAdvertIfAppropriate(getContext());
+        AdsManager.getInstance(getContext()).showFileToUploadAdvertIfAppropriate(getContext());
     }
 
     @Override

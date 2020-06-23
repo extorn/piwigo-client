@@ -646,6 +646,14 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="progress_importing_files">Dateien importieren</string>
     <string name="content_filter">Inhaltsfilter</string>
     <string name="alert_advert_importance_message">Die Einnahmen aus Werbung sind mir wichtig. Es tut mir leid, dass sie dich frustrieren (sie tun es auch), aber wenn du sie siehst, werden sie so lange erscheinen, bis du eine siehst. Um dieses Problem zu vermeiden, beobachten Sie sie bitte, bis sie die Option zum Schließen anbieten. Alternativ können Sie die kostenpflichtige Version dieser App erwerben. Vielen Dank für Ihre Unterstützung.</string>
+    <string name="eula_privacy_title">Privatsphäre</string>
+    <string name="privacy_policy_label">Our privacy policy</string>
+    <string name="title_advert_consent">Your Privacy</string>
+    <string name="personalised_adverts_label">Would you like adverts to be personalised</string>
+    <string name="personalised_adverts_field">Show personalised adverts</string>
+    <string name="open_link">Open web page</string>
+    <string name="no_adverts_label">Prefer an advert free version of this app?</string>
+    <string name="view_the_paid_version">Take me to the advert free version</string>
 
 </resources>
 

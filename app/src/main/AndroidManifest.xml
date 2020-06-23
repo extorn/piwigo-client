@@ -54,7 +54,15 @@
                 android:name="firebase_crashlytics_collection_enabled"
                 android:value="false" />
         -->
-
+        <!-- log performance details -->
+        <!--
+        <meta-data
+              android:name="firebase_performance_logcat_enabled"
+              android:value="true" />
+          -->
+        <meta-data
+            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+            android:value="true"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-1408465472557768~4878187139"/>

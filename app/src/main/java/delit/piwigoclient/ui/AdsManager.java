@@ -1,9 +1,12 @@
 package delit.piwigoclient.ui;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,11 +14,23 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceManager;
 
+import com.google.ads.consent.ConsentForm;
+import com.google.ads.consent.ConsentFormListener;
+import com.google.ads.consent.ConsentInfoUpdateListener;
+import com.google.ads.consent.ConsentInformation;
+import com.google.ads.consent.ConsentStatus;
+import com.google.ads.consent.DebugGeography;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -26,6 +41,9 @@ import com.google.android.gms.ads.reward.AdMetadataListener;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
@@ -33,9 +51,12 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
@@ -69,11 +90,12 @@ public class AdsManager {
     private boolean advertsDisabled;
     private boolean interstitialShowing;
     private Boolean lastAdPaid;
+    private WeakReference<ConsentForm> euConsentFormRef;
 
     private AdsManager() {
     }
 
-    public synchronized static AdsManager getInstance() {
+    public synchronized static AdsManager getInstance(Context context) {
         if (instance == null) {
             instance = new AdsManager();
         }
@@ -98,7 +120,7 @@ public class AdsManager {
     public MyRewardedAdControl getRewardedVideoAd(Activity activity, OnRewardEarnedListener onRewardListener) {
         // Use an activity context to get the rewarded video instance.
         RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(activity);
-        MyRewardedAdControl listener = new MyRewardedAdControl(activity.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
+        MyRewardedAdControl listener = new MyRewardedAdControl(activity, activity.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
         rewardedVideoAd.setRewardedVideoAdListener(listener);
         listener.loadAdvert();
         return listener;
@@ -122,32 +144,59 @@ public class AdsManager {
 
         if (!appLicensed && showAds && selectFileToUploadAd == null) {
             MobileAds.initialize(context, initializationStatus -> {
-                if(BuildConfig.DEBUG) {
-                    // Only treat devices as test devices if app is in debug mode
-                    List<String> testDeviceIds = Collections.singletonList("91A207EEC1618AE36FFA9D797319F482");
-                    RequestConfiguration configuration =
-                            new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-                    MobileAds.setRequestConfiguration(configuration);
+                AdsManager adsMgr = AdsManager.getInstance(context);
+                if(adsMgr.isAdvertConsentRequired(context)) {
+                    adsMgr.buildAdvertConsentForm(context);
+                } else {
+                    initialiseAllAdverts(context);
                 }
-                selectFileToUploadAd = new InterstitialAd(context);
-                selectFileToUploadAd.setAdUnitId(context.getString(R.string.ad_id_uploads_interstitial));
-                selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
-                selectFileToUploadAd.setAdListener(new MyAdListener(context, selectFileToUploadAd));
-
-                albumBrowsingAd = new InterstitialAd(context);
-                albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
-                albumBrowsingAd.loadAd(new AdRequest.Builder().build());
-                albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
             });
 
         } else if (showAds) {
             if (!selectFileToUploadAd.isLoading() && !selectFileToUploadAd.isLoaded()) {
-                selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
+                selectFileToUploadAd.loadAd(buildAdRequest(context));
             }
             if (!albumBrowsingAd.isLoading() && !albumBrowsingAd.isLoaded()) {
-                albumBrowsingAd.loadAd(new AdRequest.Builder().build());
+                albumBrowsingAd.loadAd(buildAdRequest(context));
             }
         }
+
+        updateConsentInformation(getConsentInformation(context));
+    }
+
+    private void updateConsentInformation(ConsentInformation consentInformation) {
+        String[] publisherIds = {"pub-1408465472557768"};
+        consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
+            @Override
+            public void onConsentInfoUpdated(ConsentStatus consentStatus) {
+                // User's consent status successfully updated.
+            }
+
+            @Override
+            public void onFailedToUpdateConsentInfo(String errorDescription) {
+                // User's consent status failed to update.
+                Logging.log(Log.ERROR, TAG, "ConsentUpdateFailed: "+errorDescription);
+            }
+        });
+    }
+
+    private void initialiseAllAdverts(Context context) {
+        if(BuildConfig.DEBUG) {
+            // Only treat devices as test devices if app is in debug mode
+            List<String> testDeviceIds = Collections.singletonList("91A207EEC1618AE36FFA9D797319F482");
+            RequestConfiguration configuration =
+                    new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+            MobileAds.setRequestConfiguration(configuration);
+        }
+        selectFileToUploadAd = new InterstitialAd(context);
+        selectFileToUploadAd.setAdUnitId(context.getString(R.string.ad_id_uploads_interstitial));
+        selectFileToUploadAd.loadAd(buildAdRequest(context));
+        selectFileToUploadAd.setAdListener(new MyAdListener(context, selectFileToUploadAd));
+
+        albumBrowsingAd = new InterstitialAd(context);
+        albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
+        albumBrowsingAd.loadAd(buildAdRequest(context));
+        albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
     }
 
     public boolean hasAdvertLoadProblem(Context c) {
@@ -162,7 +211,7 @@ public class AdsManager {
         return showAds && !advertsDisabled;
     }
 
-    private synchronized boolean acceptableToShowAdvert(InterstitialAd ad, long minDelayBetweenAds) {
+    private synchronized boolean acceptableToShowAdvert(Context context, InterstitialAd ad, long minDelayBetweenAds) {
 
         if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             return false;
@@ -175,14 +224,14 @@ public class AdsManager {
                 lastShowedAdvert = currentTime;
                 return true;
             } else if (!ad.isLoaded() && !ad.isLoading()) {
-                ad.loadAd(new AdRequest.Builder().build());
+                ad.loadAd(buildAdRequest(context));
             }
         }
         return false;
     }
 
     public boolean showFileToUploadAdvertIfAppropriate(Context context) {
-        if (acceptableToShowAdvert(selectFileToUploadAd, 24 * 60 * 60000)) {
+        if (acceptableToShowAdvert(context, selectFileToUploadAd, 24 * 60 * 60000)) {
             showInterstitialAd(context, selectFileToUploadAd);
             // show every 24 hours
             return true;
@@ -206,7 +255,7 @@ public class AdsManager {
     }
 
     public boolean showAlbumBrowsingAdvertIfAppropriate(Context context) {
-        if (acceptableToShowAdvert(albumBrowsingAd, 24 * 60 * 60000)) {
+        if (acceptableToShowAdvert(context, albumBrowsingAd, 24 * 60 * 60000)) {
             showInterstitialAd(context, albumBrowsingAd);
             // show every 24 hours
             return true;
@@ -215,9 +264,13 @@ public class AdsManager {
     }
 
     public void showPleadingMessageIfNeeded(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
-        if(AdsManager.getInstance().isLastAdShownAndUnpaid()) {
+        if(AdsManager.getInstance(uiHelper.getAppContext()).isLastAdShownAndUnpaid()) {
             uiHelper.showOrQueueDialogQuestion(R.string.alert_warning, uiHelper.getString(R.string.alert_advert_importance_message), View.NO_ID, R.string.button_ok, new AdvertPleadingListener(uiHelper));
         }
+    }
+
+    public void showPrivacyForm(Context context) {
+        buildAdvertConsentForm(context);
     }
 
     public static class MyBannerAdListener extends AdListener {
@@ -238,13 +291,13 @@ public class AdsManager {
             advertView.setVisibility(VISIBLE);
             advertView.setAdListener(this);
             if (!advertView.isLoading()) {
-                loadAdvert();
+                loadAdvert(advertView.getContext());
             }
         }
 
-        private void loadAdvert() {
+        private void loadAdvert(Context context) {
             try {
-                advertView.loadAd(new AdRequest.Builder().build());
+                advertView.loadAd(AdsManager.getInstance(context).buildAdRequest(context));
             } catch(NullPointerException e) {
                 if(BuildConfig.DEBUG) {
                     FirebaseCrashlytics.getInstance().recordException(e);
@@ -263,7 +316,7 @@ public class AdsManager {
             }
             if (retries < 3) {
                 Logging.log(Log.DEBUG, "BannerAd", "advert load failed, retrying");
-                loadAdvert();
+                loadAdvert(advertView.getContext());
             } else {
                 Logging.log(Log.DEBUG, "BannerAd", "Gave up trying to load advert after 3 attempts");
                 advertView.setVisibility(View.GONE);
@@ -294,7 +347,7 @@ public class AdsManager {
             }
             if (!advertView.isLoading() && advertView.getVisibility() == View.VISIBLE && adExpired) {
                 retries = 0;
-                loadAdvert();
+                loadAdvert(advertView.getContext());
             }
         }
     }
@@ -344,13 +397,15 @@ public class AdsManager {
         private final String advertId;
         private final RewardedVideoAd rewardedVideoAd;
         private final OnRewardEarnedListener listener;
+        private final Context appCtx;
         private int retries;
         private boolean isLoading;
         private long adDisplayAt;
         private Handler h;
         private long adDisplayedFor;
 
-        public MyRewardedAdControl(String advertId, RewardedVideoAd rewardedVideoAd, OnRewardEarnedListener listener) {
+        public MyRewardedAdControl(Context context, String advertId, RewardedVideoAd rewardedVideoAd, OnRewardEarnedListener listener) {
+            this.appCtx = context.getApplicationContext();
             this.rewardedVideoAd = rewardedVideoAd;
             rewardedVideoAd.setAdMetadataListener(this);
             if (BuildConfig.DEBUG) {
@@ -452,8 +507,7 @@ public class AdsManager {
                 }
 
                 isLoading = true;
-                rewardedVideoAd.loadAd(advertId,
-                        new AdRequest.Builder().build());
+                rewardedVideoAd.loadAd(advertId, AdsManager.getInstance(appCtx).buildAdRequest(appCtx));
             }
         }
     }
@@ -554,7 +608,7 @@ public class AdsManager {
                 }
             }
             EventBus.getDefault().post(new RewardUpdateEvent(timeRemainingWithoutAds));
-            AdsManager.getInstance().setAdvertsDisabled(!showAds);
+            AdsManager.getInstance(c).setAdvertsDisabled(!showAds);
             return !stoppedEarly && !showAds;
         }
     }
@@ -584,7 +638,7 @@ public class AdsManager {
             Runnable myRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    ad.loadAd(new AdRequest.Builder().build());
+                    ad.loadAd(AdsManager.getInstance(context).buildAdRequest(context));
                 }
             };
             mainHandler.post(myRunnable);
@@ -659,6 +713,74 @@ public class AdsManager {
         }
     }
 
+    private static class MyConsentFormListener extends ConsentFormListener {
+        private final Context context;
+
+        public MyConsentFormListener(Context context) {
+            this.context = context;
+        }
+        @Override
+        public void onConsentFormOpened() {
+            // Consent form was displayed.
+
+        }
+
+        @Override
+        public void onConsentFormClosed(ConsentStatus consentStatus, Boolean userPrefersAdFree) {
+            // Consent form was closed.
+            if(userPrefersAdFree) {
+                AdsManager.getInstance(context).openPlayStoreForPaidApp(context);
+            }
+            AdsManager.getInstance(context).markReducedDataProcessingFlag(ConsentStatus.PERSONALIZED != consentStatus);
+            AdsManager.getInstance(context).getConsentInformation(context).setConsentStatus(consentStatus);
+
+            AdsManager.getInstance(context).initialiseAllAdverts(context);
+        }
+
+        @Override
+        public void onConsentFormError(String errorDescription) {
+            Logging.log(Log.ERROR,TAG, errorDescription);
+        }
+    }
+
+    private void openPlayStoreForPaidApp(Context context) {
+        final String appPackageName = context.getPackageName() + ".paid";
+        try {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
+
+    private boolean isSendReducedDataProcessingFlag() {
+        return prefs.getInt("gad_rdp", 0) == 1;
+    }
+
+    private void markReducedDataProcessingFlag(boolean enabled) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("gad_rdp", enabled ? 1 : 0);
+        editor.commit();
+    }
+
+    //TODO Use this adrequest for all adverts.
+    //TODO work out what to do with the IABUSPrivacy_String consent!
+    private AdRequest buildAdRequest(Context context) {
+        ConsentStatus consentStatus = getConsentInformation(context).getConsentStatus();
+        Bundle networkExtrasBundle = new Bundle();
+        if(consentStatus == ConsentStatus.PERSONALIZED) {
+            networkExtrasBundle.putString("npa", "0");
+        } else /*if(consentStatus == ConsentStatus.NON_PERSONALIZED) */{
+            // default to non personalized if no consent available.
+            networkExtrasBundle.putString("npa", "1");
+        }
+        networkExtrasBundle.putInt("rdp", isSendReducedDataProcessingFlag() ? 1 : 0);
+        
+        //networkExtrasBundle.putString("IABUSPrivacy_String","1YN"); //1YN is a sample - not real - find real code as per user selection
+        return new AdRequest.Builder()
+                .addNetworkExtrasBundle(AdMobAdapter.class, networkExtrasBundle)
+                .build();
+    }
+
     private class InterstitialAdListener extends AdListener {
 
         private final WeakReference<Context> contextRef;
@@ -689,5 +811,88 @@ public class AdsManager {
             }
             interstitialShowing = false;
         }
+    }
+
+    private boolean isAdvertConsentRequired(Context context) {
+        ConsentInformation consentInformation = getConsentInformation(context);
+        return consentInformation.isRequestLocationInEeaOrUnknown()
+            && consentInformation.getConsentStatus() == ConsentStatus.UNKNOWN;
+    }
+
+    private void buildAdvertConsentForm(Context context) {
+        ConsentInformation consentInformation = getConsentInformation(context);
+
+        if(!consentInformation.isRequestLocationInEeaOrUnknown()) {
+            buildNoEuConsentForm(context);
+            return;
+        }
+        buildEuConsentForm(context);
+    }
+
+    private ConsentInformation getConsentInformation(Context context) {
+        ConsentInformation consentInformation = ConsentInformation.getInstance(context);
+        if(BuildConfig.DEBUG) {
+            ConsentInformation.getInstance(context).addTestDevice("91A207EEC1618AE36FFA9D797319F482"); //Nexus6 device.
+            consentInformation.setDebugGeography(DebugGeography.DEBUG_GEOGRAPHY_EEA);
+        }
+        return consentInformation;
+    }
+
+    private void buildNoEuConsentForm(Context context) {
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
+        View view = LayoutInflater.from(dialogBuilder.getContext()).inflate(R.layout.layout_dialog_advert_consent_non_eu, null);
+        SwitchMaterial personalisedAdsField = view.findViewById(R.id.personalised_adverts_field);
+        personalisedAdsField.setChecked(isSendReducedDataProcessingFlag());
+        TextView privacyField = view.findViewById(R.id.privacy_policy);
+        TextView noAdvertsField = view.findViewById(R.id.no_adverts_field);
+        noAdvertsField.setOnClickListener(v -> openPlayStoreForPaidApp(v.getContext()));
+        privacyField.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = Uri.parse(v.getContext().getString(R.string.privacy_policy_uri));
+            intent.setDataAndType(uri, "text/html");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            v.getContext().startActivity(Intent.createChooser(intent, v.getContext().getString(R.string.open_link)));
+        });
+
+        dialogBuilder.setView(view);
+
+        // Set up the buttons
+        dialogBuilder.setPositiveButton(R.string.button_save, (dialog, which) -> {
+                SwitchMaterial field = Objects.requireNonNull(((AlertDialog) dialog).getWindow()).getDecorView().findViewById(R.id.personalised_adverts_field);
+                dialog.cancel();
+                AdsManager.getInstance(context).markReducedDataProcessingFlag(!field.isChecked());
+                getConsentInformation(context).setConsentStatus(field.isChecked()?ConsentStatus.PERSONALIZED:ConsentStatus.NON_PERSONALIZED);
+            });
+        dialogBuilder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
+
+        dialogBuilder.show();
+
+    }
+
+    private void buildEuConsentForm(Context context) {
+        URL privacyUrl = null;
+        try {
+            privacyUrl = new URL(context.getString(R.string.privacy_policy_uri));
+        } catch (MalformedURLException e) {
+            Logging.log(Log.ERROR, TAG, "Unable to build uri from privacy uri");
+            Logging.recordException(e);
+        }
+        MyConsentFormListener listener = new MyConsentFormListener(context) {
+            @Override
+            public void onConsentFormLoaded() {
+                showEuConsentForm();
+            }
+        };
+        ConsentForm euConsentForm = new ConsentForm.Builder(context, privacyUrl)
+                .withListener(listener)
+                .withPersonalizedAdsOption()
+                .withNonPersonalizedAdsOption()
+                .withAdFreeOption()
+                .build();
+        euConsentFormRef = new WeakReference<>(euConsentForm);
+    }
+
+    private void showEuConsentForm() {
+        euConsentFormRef.get().show();
     }
 }

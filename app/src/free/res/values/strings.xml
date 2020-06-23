@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hint_slideshow_free_view_1">Automatic drive of the slideshow (progression through images) is available in the paid version</string>
+    <string name="privacy_policy_uri" translatable="false">https://api-8938561204297001672-604498.firebaseapp.com/free/data-use/index.html</string>
 </resources>

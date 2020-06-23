@@ -566,7 +566,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
 
         AdView adView = view.findViewById(R.id.gallery_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.setVisibility(VISIBLE);
             new AdsManager.MyBannerAdListener(adView);
         } else {
@@ -1232,7 +1232,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     public void onResume() {
         super.onResume();
 
-        AdsManager.getInstance().showPleadingMessageIfNeeded(getUiHelper());
+        AdsManager.getInstance(getContext()).showPleadingMessageIfNeeded(getUiHelper());
 
 
         if (galleryListView == null) {

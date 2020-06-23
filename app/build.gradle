@@ -4,6 +4,9 @@ apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
+//apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
+//apply plugin: 'com.google.gms.google-services'
+
 
 
 android {
@@ -171,7 +174,9 @@ dependencies {
     // v7 appcompat stuff
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
+    implementation 'com.google.android.gms:play-services-ads:19.2.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.ads.consent:consent-library:1.0.6'
     implementation 'androidx.preference:preference:1.1.1' //1.1.0 - DO NOT JUST USE - Lots of code changes needed!
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     // v14 stuff
@@ -208,6 +213,3 @@ dependencies {
     //implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.31'
     // example of use: adb logcat -s TooLargeTool
 }
-
-//apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
-apply plugin: 'com.google.gms.google-services'

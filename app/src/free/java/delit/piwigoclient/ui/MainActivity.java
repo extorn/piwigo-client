@@ -22,7 +22,7 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        rewardedVideoAd = AdsManager.getInstance().getRewardedVideoAd(this, new AdsManager.OnRewardEarnedListener(this, REWARD_COUNT_UPDATE_FREQUENCY, BuildConfig.APPLICATION_ID));
+        rewardedVideoAd = AdsManager.getInstance(this).getRewardedVideoAd(this, new AdsManager.OnRewardEarnedListener(this, REWARD_COUNT_UPDATE_FREQUENCY, BuildConfig.APPLICATION_ID));
         super.onCreate(savedInstanceState);
     }
 

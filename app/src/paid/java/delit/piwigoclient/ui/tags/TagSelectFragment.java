@@ -200,12 +200,14 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void addNewTag() {
-        final View v = getLayoutInflater().inflate(R.layout.dialog_layout_create_tag,null);
+
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(getContext(), R.style.Theme_App_EditPages));
+
+        final View v = LayoutInflater.from(dialogBuilder.getContext()).inflate(R.layout.dialog_layout_create_tag,null);
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
+        dialogBuilder.setView(v);
 
-
-        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext()).setView(v)
-                .setNegativeButton(R.string.button_cancel, null);
+        dialogBuilder.setNegativeButton(R.string.button_cancel, null);
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if(sessionDetails != null && sessionDetails.isUseUserTagPluginForSearch()) {
             dialogBuilder.setNeutralButton(R.string.button_search, null);
