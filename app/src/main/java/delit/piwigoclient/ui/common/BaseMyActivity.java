@@ -71,7 +71,6 @@ import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.FileSelectActivity;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;

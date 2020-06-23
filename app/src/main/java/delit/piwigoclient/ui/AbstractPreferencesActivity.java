@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.IdRes;
-import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.appbar.AppBarLayout;

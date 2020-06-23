@@ -11,7 +11,6 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 
-import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 
 public class AppPreferences {

@@ -19,7 +19,6 @@ import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.LegacyIOUtils;
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 

@@ -17,7 +17,6 @@ import java.util.List;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
-import delit.piwigoclient.BuildConfig;
 
 /**
  * An item representing a piece of content.

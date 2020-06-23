@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat;
 
 import org.jetbrains.annotations.NotNull;
 
-import delit.libs.ui.view.SquareLinearLayout;
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
