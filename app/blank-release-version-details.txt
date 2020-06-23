@@ -1,42 +1,72 @@
 
 <en-GB>
 Changes:
-- Corrected remaining theme issue for dialogs
-Bugfix:
-- Server Uri path fragment incorrectly converted to lowercase resulting in 404 error
+- Major rewrite of all the theme related code to radically simplify and correct colors across android versions
+- Changed the theme to a day/night one so it is user configurable (in night, no screens have white background).
+- added support for Uri and scoped storage:
+- share files easily
+- select files using the system file selector or the in app one
+- deleting files after upload is now working again
+- check files are unique prior to upload - this is now harder, so it takes a little l...
 </en-GB>
 
 <de-DE>
 Änderungen:
-- Das verbleibende Themenproblem für Dialoge wurde behoben
-Bug-Fix:
-- Das Server-Uri-Pfadfragment wurde fälschlicherweise in Kleinbuchstaben konvertiert, was zu einem 404-Fehler führte
+- Umfassende Neufassung des gesamten themenbezogenen Codes, um die Farben in allen Android-Versionen radikal zu vereinfachen und zu korrigieren
+- Das Thema wurde in ein Tag / Nacht-Thema geändert, sodass es vom Benutzer konfiguriert werden kann (in der Nacht haben keine Bildschirme einen weißen Hintergrund).
+- Unterstützung für Uri und Speicher mit Gültigkeitsbereich hinzugefügt:
+- Dateien einfach teilen
+- Wählen Sie Dateien mit der Systemdatei-Auswahl oder der In-App-Datei aus
+- ...
 </de-DE>
 
 <fr-FR>
 Changements:
-- Correction du problème de thème restant pour les dialogues
-Correction d'un bug:
-- Le fragment de chemin Uri du serveur est incorrectement converti en minuscule, ce qui entraîne une erreur 404
+- Réécriture majeure de tout le code lié au thème pour simplifier et corriger radicalement les couleurs dans les versions Android
+- Changement du thème en jour / nuit afin qu'il soit configurable par l'utilisateur (la nuit, aucun écran n'a de fond blanc).
+- prise en charge supplémentaire pour Uri et le stockage étendu:
+- partager des fichiers facilement
+- sélectionner des fichiers à l'aide du sélecteur de fichiers système ou de celui de l'application
+- la suppression des fichiers...
 </fr-FR>
 
 <es-ES>
 Cambios:
-- Se corrigió el problema del tema restante para los diálogos
-Arreglo del fallo:
-- El fragmento de ruta Uri del servidor se convirtió incorrectamente a minúsculas, lo que resultó en un error 404
+- Gran reescritura de todo el código relacionado con el tema para simplificar y corregir radicalmente los colores en las versiones de Android
+- Cambió el tema a uno de día / noche para que sea configurable por el usuario (en la noche, ninguna pantalla tiene fondo blanco).
+- Soporte agregado para Uri y almacenamiento con alcance:
+- comparte archivos fácilmente
+- seleccione archivos usando el selector de archivos del sistema o en la aplicación uno
+- Eliminar archivos después de cargar ...
 </es-ES>
 
 <zh-CN>
 变化：
--修正了对话框的剩余主题问题
-错误修正：
--服务器Uri路径片段错误地转换为小写，导致404错误
+-对所有与主题相关的代码进行重大重写，以从根本上简化和纠正android版本中的颜色
+-将主题更改为白天/夜晚，以便用户可以配置（在晚上，没有屏幕显示白色背景）。
+-增加了对Uri和范围存储的支持：
+-轻松共享文件
+-使用系统文件选择器或应用程序内的一个选择文件
+-上传后删除文件现在可以再次使用
+-检查文件在上传之前是唯一的-现在比较难，因此需要更长的时间
+-应用内文件选择器加载包含大量文件的文件夹相对较慢-当前android API的局限性
+-压缩视频时，如果要创建m4a或m4v文件，则可以剥离音频或视频流（如果服务器允许，则添加mp4文件扩展名）。
+-上载屏幕上的抽屉菜单可让您跳至图库或设置
+-该应用已准备好执行代码，以在选择您之前上传的照片时警告您。
+ 错误修正：
+-当从系统选择器和/或导航到主库中添加新文件时，上传页面会保留文件
+-视频压缩代码已彻底修改。现在不应该冻结并放弃任何视频。 （让我知道是否可以）
+-重写大区域以消除潜在的内存泄漏
+-在旧版本的Android（不支持Lollipop）上更不应该崩溃
 </zh-CN>
 
 <ru-RU>
 Изменения:
-- Исправлена оставшаяся проблема темы для диалогов
-Исправлена ошибка:
-- Фрагмент пути URI сервера неправильно преобразован в нижний регистр, что приводит к ошибке 404
+- Основные переписать весь код, связанный с темой, чтобы радикально упростить и исправить цвета в версиях Android
+- Изменена тема на дневную / ночную, так что она настраивается пользователем (ночью нет экранов с белым фоном).
+- добавлена ​​поддержка Uri и области хранения:
+- легко обмениваться файлами
+- выбрать файлы с помощью системного селектора файлов или в приложении
+- удаление файлов после загрузки теперь снова работает
+- проверить файлы уникальны перед загрузкой - теперь это ...
 </ru-RU>
