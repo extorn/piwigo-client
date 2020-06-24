@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
 <item android:id="@android:id/background">
-    <shape>
+    <shape android:useLevel="true">
         <gradient
             android:startColor="@color/transparent"
             android:endColor="@color/transparent"
@@ -13,7 +13,7 @@
 
 <item android:id="@android:id/secondaryProgress">
     <clip>
-        <shape>
+        <shape android:useLevel="true">
             <gradient
                 android:startColor="@color/app_secondary_variant"
                 android:endColor="@color/app_secondary_variant"
@@ -23,7 +23,7 @@
 </item>
 <item android:id="@android:id/progress">
     <clip>
-        <shape>
+        <shape android:useLevel="true">
             <gradient
                 android:startColor="@color/app_secondary"
                 android:endColor="@color/app_secondary"

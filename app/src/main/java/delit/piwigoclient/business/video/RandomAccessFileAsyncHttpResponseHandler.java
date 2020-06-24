@@ -184,7 +184,6 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     } else {
                         existingRange = cacheMetaData.addRange(newRangeLowerBound, newRangeUpperBound);
                     }
-                    //TODO enable this line when download is working okay.
                     CacheUtils.saveCachedContent(cacheMetaData);
                     long now = System.currentTimeMillis();
                     if (now - lastSentNotification > 1000) {

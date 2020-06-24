@@ -219,38 +219,6 @@ public class DisplayUtils {
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
-    public static int getCurrentNavigationBarHeight(Context context) {
-        Point navbarSize = getNavigationBarSize(context);
-        return Math.min(navbarSize.x, navbarSize.y);
-        //TODO why is this all wrong?
-//        int screenMode = DisplayUtils.getCurrentScreenOrientation(context);
-//        int navBarHeight = 0;
-//        switch(screenMode) {
-//            case Configuration.ORIENTATION_SQUARE:
-//                navBarHeight = Math.min(navbarSize.x, navbarSize.y);
-//                break;
-//            case Configuration.ORIENTATION_UNDEFINED:
-//                navBarHeight = Math.min(navbarSize.x, navbarSize.y);
-//                break;
-//            case Configuration.ORIENTATION_LANDSCAPE:
-//                navBarHeight = navbarSize.x;
-//                break;
-//            case Configuration.ORIENTATION_PORTRAIT:
-//                navBarHeight = navbarSize.y;
-//                break;
-//            default:
-//                navBarHeight = Math.min(navbarSize.x, navbarSize.y);
-//        }
-//        return navBarHeight;
-    }
-
-    public static Point getNavigationBarSize(Context context) {
-        Point appUsableSize = getAppUsableScreenSize(context);
-        Point realScreenSize = getRealScreenSize(context);
-
-        return new Point(realScreenSize.x - appUsableSize.x, realScreenSize.y - appUsableSize.y);
-    }
-
     public static Point getAppUsableScreenSize(Context context) {
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();

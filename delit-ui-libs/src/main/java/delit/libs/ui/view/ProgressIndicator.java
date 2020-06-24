@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import delit.libs.R;
 
 public class ProgressIndicator extends FrameLayout {
+    private static final String TAG = "ProgressInd";
     private Button actionButton;
     private TextView descriptionField;
     private ProgressBar progressBar;
@@ -124,6 +125,10 @@ public class ProgressIndicator extends FrameLayout {
 
         progressBar.setIndeterminate(progress < 0);
         progressBar.setProgress(progress);
+        progressBar.requestLayout();
     }
 
+    public boolean isVisible() {
+        return getVisibility() == VISIBLE;
+    }
 }

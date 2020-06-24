@@ -10,6 +10,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -990,7 +991,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    private static class UpdateFolderContentTask extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Object,Object,List<FolderItem>[]> {
+    private static class UpdateFolderContentTask extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Object,Object,Pair<List<FolderItem>,List<FolderItem>>> {
 
         private static final String TAG = "UpdateFolderContentTask";
         private final DocumentFile newContent;
@@ -1034,7 +1035,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         @Override
-        protected List<FolderItem>[] doInBackgroundSafely(Object[] objects) {
+        protected Pair<List<FolderItem>,List<FolderItem>> doInBackgroundSafely(Object[] objects) {
             List<FolderItem> fullContent = getOwner().currentFullContent;
             if(!refreshingExistingFolder || force) {
                 fullContent = getOwner().getNewDisplayContentInternal(getContext(), newContent);
@@ -1043,16 +1044,19 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             if(fullContent != null) {
                 filteredContent = getOwner().getFilteredListOfContent(fullContent);
             }
-            return new List[]{fullContent, filteredContent};
+            return new Pair<>(fullContent, filteredContent);
         }
 
         @Override
-        protected void onPostExecuteSafely(List<FolderItem>[] result) {
+        protected void onPostExecuteSafely(Pair<List<FolderItem>,List<FolderItem>> result) {
             if(result != null) {
                 // result only null if the task was cancelled.
-                getOwner().currentFullContent = result[0];
-                getOwner().currentDisplayContent = result[1];
-                getOwner().notifyDataSetChanged();
+                getOwner().currentFullContent = result.first;
+                List<FolderItem> newFilteredContent = result.second;
+                if(!CollectionUtils.equals(getOwner().currentDisplayContent, newFilteredContent)) {
+                    getOwner().currentDisplayContent = newFilteredContent;
+                    getOwner().notifyDataSetChanged();
+                }
                 if (!refreshingExistingFolder) {
                     getOwner().navigationListener.onPostFolderOpened(oldFolder, newContent);
                 }
