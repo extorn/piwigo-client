@@ -85,7 +85,12 @@ public class AdsManager {
     private boolean advertsDisabled;
     private boolean interstitialShowing;
     private Boolean lastAdPaid;
-    private WeakReference<ConsentForm> euConsentFormRef;
+    private ConsentForm euConsentForm;
+    private MyRewardedAdControl rewardVideoAd;
+    private static final int STOPPED = -1;
+    private static final int INITIALISING = 0;
+    private static final int STARTED = 1;
+    private int status = STOPPED;
 
     private AdsManager() {
     }
@@ -112,16 +117,17 @@ public class AdsManager {
         this.advertsDisabled = advertsDisabled;
     }
 
-    public MyRewardedAdControl getRewardedVideoAd(Activity activity, OnRewardEarnedListener onRewardListener) {
+    public MyRewardedAdControl getRewardedVideoAd(Context context, OnRewardEarnedListener onRewardListener) {
         // Use an activity context to get the rewarded video instance.
-        RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(activity);
-        MyRewardedAdControl listener = new MyRewardedAdControl(activity, activity.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
+        RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(context);
+        MyRewardedAdControl listener = new MyRewardedAdControl(context, context.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
         rewardedVideoAd.setRewardedVideoAdListener(listener);
         listener.loadAdvert();
         return listener;
     }
 
     public synchronized void updateShowAdvertsSetting(Context context) {
+
         String serverAddress = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
         showAds = !BuildConfig.PAID_VERSION;
         if (showAds) {
@@ -137,7 +143,8 @@ public class AdsManager {
             }
         }
 
-        if (!appLicensed && showAds && selectFileToUploadAd == null) {
+        if (!appLicensed && showAds && status == STOPPED) {
+            status = INITIALISING;
             MobileAds.initialize(context, initializationStatus -> {
                 AdsManager adsMgr = AdsManager.getInstance(context);
                 if(adsMgr.isAdvertConsentRequired(context)) {
@@ -147,7 +154,7 @@ public class AdsManager {
                 }
             });
 
-        } else if (showAds) {
+        } else if (showAds && status == STARTED) {
             if (!selectFileToUploadAd.isLoading() && !selectFileToUploadAd.isLoaded()) {
                 selectFileToUploadAd.loadAd(buildAdRequest(context));
             }
@@ -192,6 +199,7 @@ public class AdsManager {
         albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
         albumBrowsingAd.loadAd(buildAdRequest(context));
         albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
+        status = STARTED;
     }
 
     public boolean hasAdvertLoadProblem(Context c) {
@@ -203,7 +211,7 @@ public class AdsManager {
     }
 
     public boolean shouldShowAdverts() {
-        return showAds && !advertsDisabled;
+        return status == STARTED && showAds && !advertsDisabled;
     }
 
     private synchronized boolean acceptableToShowAdvert(Context context, InterstitialAd ad, long minDelayBetweenAds) {
@@ -266,6 +274,45 @@ public class AdsManager {
 
     public void showPrivacyForm(Context context) {
         buildAdvertConsentForm(context);
+    }
+
+    public void createRewardedVideoAd(Activity activity, long updateFrequency) {
+        if(status != STARTED) {
+            return;
+        }
+        rewardVideoAd = getRewardedVideoAd(activity, new AdsManager.OnRewardEarnedListener(activity, updateFrequency, BuildConfig.APPLICATION_ID));
+    }
+
+    public void pauseRewardVideoAd(Context context) {
+        if(rewardVideoAd == null) {
+            return;
+        }
+        rewardVideoAd.pause(context);
+    }
+
+    public void resumeRewardVideoAd(Context context) {
+        if(rewardVideoAd == null) {
+            return;
+        }
+        rewardVideoAd.resume(context);
+    }
+
+    public void destroyRewardVideoAd(Context context) {
+        if(rewardVideoAd == null) {
+            return;
+        }
+        rewardVideoAd.destroy(context);
+    }
+
+    public boolean hasRewardVideoAd(Context context) {
+        return rewardVideoAd != null;
+    }
+
+    public boolean showRewardVideoAd(Context context) {
+        if(rewardVideoAd == null) {
+            return false;
+        }
+        return rewardVideoAd.show();
     }
 
     public static class MyBannerAdListener extends AdListener {
@@ -884,10 +931,10 @@ public class AdsManager {
                 .withNonPersonalizedAdsOption()
                 .withAdFreeOption()
                 .build();
-        euConsentFormRef = new WeakReference<>(euConsentForm);
+        this.euConsentForm = euConsentForm;
     }
 
     private void showEuConsentForm() {
-        euConsentFormRef.get().show();
+        euConsentForm.show();
     }
 }

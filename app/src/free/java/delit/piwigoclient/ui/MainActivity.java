@@ -18,11 +18,8 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 
 public class MainActivity extends AbstractMainActivity<MainActivity> {
 
-    private AdsManager.MyRewardedAdControl rewardedVideoAd;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        rewardedVideoAd = AdsManager.getInstance(this).getRewardedVideoAd(this, new AdsManager.OnRewardEarnedListener(this, REWARD_COUNT_UPDATE_FREQUENCY, BuildConfig.APPLICATION_ID));
         super.onCreate(savedInstanceState);
     }
 
@@ -33,19 +30,21 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
 
     @Override
     protected void onPause() {
-        rewardedVideoAd.pause(this);
+        AdsManager.getInstance(this).pauseRewardVideoAd(this);
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        rewardedVideoAd.resume(this);
+        AdsManager.getInstance(this).resumeRewardVideoAd(this);
         super.onResume();
+        // try and load a reward ad here - the ad service may have finished initialising now.
+        AdsManager.getInstance(this).createRewardedVideoAd(this, REWARD_COUNT_UPDATE_FREQUENCY);
     }
 
     @Override
     protected void onDestroy() {
-        rewardedVideoAd.destroy(this);
+        AdsManager.getInstance(this).destroyRewardVideoAd(this);
         super.onDestroy();
     }
 
@@ -58,8 +57,11 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
     }
 
     protected void showRewardVideo() {
-        if (!rewardedVideoAd.show()) {
+        if (!AdsManager.getInstance(this).showRewardVideoAd(this)) {
             getUiHelper().showShortMsg(R.string.reward_video_not_yet_loaded);
+            if(!AdsManager.getInstance(this).hasRewardVideoAd(this)) {
+                AdsManager.getInstance(this).createRewardedVideoAd(this, REWARD_COUNT_UPDATE_FREQUENCY);
+            }
         }
     }
 

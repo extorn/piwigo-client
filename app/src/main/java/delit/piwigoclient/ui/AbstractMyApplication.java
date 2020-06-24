@@ -137,25 +137,21 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             return;
         }
 
-
-
         super.onCreate();
         // ensure it's available for any users of it
         resources = getResources();
 
-        //Fabric.with(this, new FirebaseCrashlytics.getInstance().Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
-
         PicassoFactory.initialise();
+        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
+        registerActivityLifecycleCallbacks(this);
+        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
+        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
 
         upgradeAnyPreferencesIfRequired();
         sanityCheckTheTempUploadFolder();
 
-        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
-        registerActivityLifecycleCallbacks(this);
-
         onAppCreate();
-        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
-        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
+
 //        TooLargeTool.startLogging(this);
     }
 

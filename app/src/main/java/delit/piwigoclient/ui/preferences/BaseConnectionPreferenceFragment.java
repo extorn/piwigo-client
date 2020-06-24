@@ -559,7 +559,6 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             boolean autoTweakPreference = false;
 
             if (!initialising) {
-
                 SwitchPreference p = (SwitchPreference) findPreference(R.string.preference_server_connection_force_https_key);
                 if (isHttp) {
                     p.setEnabled(false);
