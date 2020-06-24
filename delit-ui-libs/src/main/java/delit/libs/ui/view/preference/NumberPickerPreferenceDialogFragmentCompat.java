@@ -96,12 +96,16 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
     protected void onBindDialogView(View view) {
         Logging.log(Log.DEBUG, TAG, "Binding data for preference : " + getPreference().getKey());
         super.onBindDialogView(view);
-        view.requestFocus();
+        Logging.log(Log.DEBUG, TAG, "Binding data for preference (applying values from state) : " + getPreference().getKey() + " : " + minValue + "-" + maxValue);
         NumberPicker picker = (NumberPicker) view;
         picker.setMinValue(minValue);
         picker.setMaxValue(maxValue);
         picker.setWrapSelectorWheel(wrapSelectionWheel);
+        Logging.log(Log.DEBUG, TAG, "Binding data for preference (setting value) : " + getPreference().getKey() + " : " + selectedValue);
         picker.setValue(selectedValue);
+        Logging.log(Log.DEBUG, TAG, "Binding data for preference (requesting focus) : " + getPreference().getKey());
+        view.requestFocus();
+        Logging.log(Log.DEBUG, TAG, "Binding data for preference (complete) : " + getPreference().getKey());
     }
 
     public static DialogFragment newInstance(String key) {
