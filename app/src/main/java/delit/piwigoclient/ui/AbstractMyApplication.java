@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.multidex.MultiDexApplication;
@@ -17,8 +18,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -142,7 +141,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         resources = getResources();
 
         PicassoFactory.initialise();
-        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
+//        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);

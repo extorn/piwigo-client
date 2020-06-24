@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,9 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.ads.consent.AdProvider;
 import com.google.ads.consent.ConsentForm;
 import com.google.ads.consent.ConsentFormListener;
 import com.google.ads.consent.ConsentInfoUpdateListener;
@@ -46,15 +49,14 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.list.BaseRecyclerAdapter;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -145,15 +147,7 @@ public class AdsManager {
 
         if (!appLicensed && showAds && status == STOPPED) {
             status = INITIALISING;
-            MobileAds.initialize(context, initializationStatus -> {
-                AdsManager adsMgr = AdsManager.getInstance(context);
-                if(adsMgr.isAdvertConsentRequired(context)) {
-                    adsMgr.buildAdvertConsentForm(context);
-                } else {
-                    initialiseAllAdverts(context);
-                }
-            });
-
+            getConsentInformationAndInitialiseAdverts(context);
         } else if (showAds && status == STARTED) {
             if (!selectFileToUploadAd.isLoading() && !selectFileToUploadAd.isLoaded()) {
                 selectFileToUploadAd.loadAd(buildAdRequest(context));
@@ -182,7 +176,14 @@ public class AdsManager {
         });
     }
 
+    private void initAdService(Context context) {
+        MobileAds.initialize(context, initializationStatus -> {
+            initialiseAllAdverts(context);
+        });
+    }
+
     private void initialiseAllAdverts(Context context) {
+
         if(BuildConfig.DEBUG) {
             // Only treat devices as test devices if app is in debug mode
             List<String> testDeviceIds = Collections.singletonList("91A207EEC1618AE36FFA9D797319F482");
@@ -215,10 +216,6 @@ public class AdsManager {
     }
 
     private synchronized boolean acceptableToShowAdvert(Context context, InterstitialAd ad, long minDelayBetweenAds) {
-
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
-            return false;
-        }
 
         long currentTime = System.currentTimeMillis();
 
@@ -267,13 +264,22 @@ public class AdsManager {
     }
 
     public void showPleadingMessageIfNeeded(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
-        if(AdsManager.getInstance(uiHelper.getAppContext()).isLastAdShownAndUnpaid()) {
+        if(isLastAdShownAndUnpaid()) {
             uiHelper.showOrQueueDialogQuestion(R.string.alert_warning, uiHelper.getString(R.string.alert_advert_importance_message), View.NO_ID, R.string.button_ok, new AdvertPleadingListener(uiHelper));
         }
     }
 
     public void showPrivacyForm(Context context) {
-        buildAdvertConsentForm(context);
+        showConsentForm(context);
+    }
+
+    private void showConsentForm(Context context) {
+        ConsentInformation consentInfo = getConsentInformation(context);
+        if(consentInfo.isRequestLocationInEeaOrUnknown()) {
+            buildEuConsentForm(context, consentInfo.getAdProviders());
+        } else {
+            buildNonEuConsentForm(context, consentInfo.getAdProviders());
+        }
     }
 
     public void createRewardedVideoAd(Activity activity, long updateFrequency) {
@@ -677,12 +683,7 @@ public class AdsManager {
                 onCloseActionId = -1;
             }
             Handler mainHandler = new Handler(context.getMainLooper());
-            Runnable myRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    ad.loadAd(AdsManager.getInstance(context).buildAdRequest(context));
-                }
-            };
+            Runnable myRunnable = () -> ad.loadAd(AdsManager.getInstance(context).buildAdRequest(context));
             mainHandler.post(myRunnable);
 
         }
@@ -761,15 +762,22 @@ public class AdsManager {
         public MyConsentFormListener(Context context) {
             this.context = context;
         }
+
+        @Override
+        public void onConsentFormLoaded() {
+            AdsManager.getInstance(context).showEuConsentForm();
+        }
+
         @Override
         public void onConsentFormOpened() {
             // Consent form was displayed.
-
+            Logging.log(Log.DEBUG,TAG, "EU Consent form opened");
         }
 
         @Override
         public void onConsentFormClosed(ConsentStatus consentStatus, Boolean userPrefersAdFree) {
             // Consent form was closed.
+            Logging.log(Log.DEBUG,TAG, "EU Consent form closed");
             if(userPrefersAdFree) {
                 AdsManager.getInstance(context).openPlayStoreForPaidApp(context);
             }
@@ -781,7 +789,7 @@ public class AdsManager {
 
         @Override
         public void onConsentFormError(String errorDescription) {
-            Logging.log(Log.ERROR,TAG, errorDescription);
+            Logging.log(Log.DEBUG,TAG, "EU Consent form error : " + errorDescription);
         }
     }
 
@@ -855,32 +863,48 @@ public class AdsManager {
         }
     }
 
-    private boolean isAdvertConsentRequired(Context context) {
-        ConsentInformation consentInformation = getConsentInformation(context);
-        return consentInformation.isRequestLocationInEeaOrUnknown()
-            && consentInformation.getConsentStatus() == ConsentStatus.UNKNOWN;
-    }
-
-    private void buildAdvertConsentForm(Context context) {
-        ConsentInformation consentInformation = getConsentInformation(context);
-
-        if(!consentInformation.isRequestLocationInEeaOrUnknown()) {
-            buildNoEuConsentForm(context);
-            return;
-        }
-        buildEuConsentForm(context);
-    }
-
     private ConsentInformation getConsentInformation(Context context) {
         ConsentInformation consentInformation = ConsentInformation.getInstance(context);
         if(BuildConfig.DEBUG) {
-            ConsentInformation.getInstance(context).addTestDevice("91A207EEC1618AE36FFA9D797319F482"); //Nexus6 device.
+            consentInformation.addTestDevice("91A207EEC1618AE36FFA9D797319F482"); //Nexus6 device.
+            consentInformation.addTestDevice(AdRequest.DEVICE_ID_EMULATOR); //Emulators
             consentInformation.setDebugGeography(DebugGeography.DEBUG_GEOGRAPHY_EEA);
         }
         return consentInformation;
     }
 
-    private void buildNoEuConsentForm(Context context) {
+    private void getConsentInformationAndInitialiseAdverts(Context context) {
+        ConsentInformation consentInformation = getConsentInformation(context);
+        List<AdProvider> adProviders = consentInformation.getAdProviders();
+            String[] publisherIds = {"pub-1408465472557768"};
+        consentInformation.requestConsentInfoUpdate(publisherIds, new ConsentInfoUpdateListener() {
+            @Override
+            public void onConsentInfoUpdated(ConsentStatus consentStatus) {
+                // User's consent status successfully updated.
+                if (ConsentInformation.getInstance(context).isRequestLocationInEeaOrUnknown()) {
+                    switch (consentStatus) {
+                        case UNKNOWN:
+                            buildEuConsentForm(context, adProviders);
+                            break;
+                        case PERSONALIZED:
+                            initAdService(context);
+                            break;
+                        case NON_PERSONALIZED:
+                            initAdService(context);
+                            break;
+                    }
+                } else {
+                    buildNonEuConsentForm(context, adProviders);
+                }
+            }
+            @Override
+            public void onFailedToUpdateConsentInfo(String errorDescription) {
+                // User's consent status failed to update.
+            }
+        });
+    }
+
+    private void buildNonEuConsentForm(Context context, List<AdProvider> adProviders) {
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
         View view = LayoutInflater.from(dialogBuilder.getContext()).inflate(R.layout.layout_dialog_advert_consent_non_eu, null);
         SwitchMaterial personalisedAdsField = view.findViewById(R.id.personalised_adverts_field);
@@ -895,6 +919,10 @@ public class AdsManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             v.getContext().startActivity(Intent.createChooser(intent, v.getContext().getString(R.string.open_link)));
         });
+        RecyclerView adProvidersListView = view.findViewById(R.id.ad_providers_list);
+        adProvidersListView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        RecyclerView.Adapter adProvidersAdapter = new AdProviderAdapter(view.getContext(), adProviders);
+        adProvidersListView.setAdapter(adProvidersAdapter);
 
         dialogBuilder.setView(view);
 
@@ -903,15 +931,23 @@ public class AdsManager {
                 SwitchMaterial field = Objects.requireNonNull(((AlertDialog) dialog).getWindow()).getDecorView().findViewById(R.id.personalised_adverts_field);
                 dialog.cancel();
                 AdsManager.getInstance(context).markReducedDataProcessingFlag(!field.isChecked());
-                getConsentInformation(context).setConsentStatus(field.isChecked()?ConsentStatus.PERSONALIZED:ConsentStatus.NON_PERSONALIZED);
+                updateConsentInformation(context, field.isChecked()?ConsentStatus.PERSONALIZED:ConsentStatus.NON_PERSONALIZED);
             });
-        dialogBuilder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
-
+        // don't allow the user to cancel as we need this set up before we can begin serving adverts.
+        //dialogBuilder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
+        dialogBuilder.setCancelable(false);
         dialogBuilder.show();
 
     }
 
-    private void buildEuConsentForm(Context context) {
+    private void updateConsentInformation(Context context, ConsentStatus consentStatus) {
+        getConsentInformation(context).setConsentStatus(consentStatus);
+        initialiseAllAdverts(context);
+    }
+
+    private void buildEuConsentForm(Context context, List<AdProvider> adProviders) {
+        buildNonEuConsentForm(context, adProviders);
+        /* This doesn't work - I don't think google intended this as anything other than perhaps an example for testing.
         URL privacyUrl = null;
         try {
             privacyUrl = new URL(context.getString(R.string.privacy_policy_uri));
@@ -919,22 +955,54 @@ public class AdsManager {
             Logging.log(Log.ERROR, TAG, "Unable to build uri from privacy uri");
             Logging.recordException(e);
         }
-        MyConsentFormListener listener = new MyConsentFormListener(context) {
-            @Override
-            public void onConsentFormLoaded() {
-                showEuConsentForm();
-            }
-        };
-        ConsentForm euConsentForm = new ConsentForm.Builder(context, privacyUrl)
+        MyConsentFormListener listener = new MyConsentFormListener(context);
+        this.euConsentForm = new ConsentForm.Builder(context, privacyUrl)
                 .withListener(listener)
                 .withPersonalizedAdsOption()
                 .withNonPersonalizedAdsOption()
                 .withAdFreeOption()
-                .build();
-        this.euConsentForm = euConsentForm;
+                .build();*/
     }
 
     private void showEuConsentForm() {
         euConsentForm.show();
+    }
+
+    private static class AdProviderAdapter extends BaseRecyclerAdapter<AdProvider, AdProviderViewHolder> {
+        public AdProviderAdapter(Context context, List<AdProvider> items) {
+            super(context, items, android.R.layout.simple_list_item_1);
+        }
+
+        @Override
+        protected AdProviderViewHolder buildViewHolder(View view) {
+            return new AdProviderViewHolder(view);
+        }
+
+        @Override
+        protected void onBindViewHolder(AdProviderViewHolder viewHolder, AdProvider item) {
+            viewHolder.itemNameField.setText(item.getName());
+            viewHolder.itemNameField.setTextColor(DisplayUtils.getColor(viewHolder.itemNameField.getContext(), R.attr.colorSecondary));
+            viewHolder.itemNameField.setTag(item.getPrivacyPolicyUrlString());
+        }
+    }
+
+    private static class AdProviderViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView itemNameField;
+
+        public AdProviderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemNameField = itemView.findViewById(android.R.id.text1);
+            itemNameField.setOnClickListener(v -> openUrlLink(v.getContext(), v.getTag().toString()));
+        }
+
+        private void openUrlLink(Context context, String urlLink) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = Uri.parse(urlLink);
+            intent.setDataAndType(uri, "text/html");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            context.startActivity(Intent.createChooser(intent, context.getString(R.string.open_link)));
+        }
     }
 }

@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Context;
@@ -21,8 +20,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.appbar.AppBarLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -178,23 +175,6 @@ public class UploadActivity extends MyActivity {
         } else {
             if (savedInstanceState == null) { // the fragment will be created automatically from the fragment manager state if there is state :-)
                 showUploadFragment(connectionPrefs);
-            }
-        }
-
-
-        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
-        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        if (!BuildConfig.DEBUG && result != ConnectionResult.SUCCESS) {
-            if (googleApi.isUserResolvableError(result)) {
-                Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
-                d.setOnDismissListener(dialog -> {
-                    if (!BuildConfig.DEBUG) {
-                        finish();
-                    }
-                });
-                d.show();
-            } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ActivityUIHelperUploadActivityQuestionResultAdapter(getUiHelper()));
             }
         }
     }

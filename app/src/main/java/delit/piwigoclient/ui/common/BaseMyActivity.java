@@ -49,7 +49,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,6 +100,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
     private LicenceCheckingHelper licencingHelper;
 
     private String initialisedWithLanguage;
+    private boolean isAttachedToWindow;
 
     public BaseMyActivity(@LayoutRes int contentView) {
         super(contentView);
@@ -318,11 +318,24 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         checkPrerequisites();
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        getUiHelper().showQueuedMsg(); // show any queued toast messages.
+    }
 
     private void checkPrerequisites() {
         GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
         int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
-        if (!BuildConfig.DEBUG && result != ConnectionResult.SUCCESS) {
+        if (result != ConnectionResult.SUCCESS) {
+            if(BuildConfig.DEBUG) {
+                if(result == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {
+                    getUiHelper().showDetailedMsg(R.string.alert_warning, "Google Play services need updating. Version inadequate.");
+                } else {
+                    getUiHelper().showDetailedMsg(R.string.alert_warning, "Google Play services error : " + result);
+                }
+                return;
+            }
             if (googleApi.isUserResolvableError(result)) {
                 Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
                 d.setOnDismissListener(dialog -> {
@@ -505,6 +518,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
 
     @Override
     public void onDetachedFromWindow() {
+        isAttachedToWindow = false;
         uiHelper.deregisterFromActiveServiceCalls();
         uiHelper.closeAllDialogs();
         super.onDetachedFromWindow();
@@ -624,6 +638,16 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ShowMessageEvent event) {
         getUiHelper().showOrQueueDialogMessage(event.getTitleResId(), event.getMessage());
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        isAttachedToWindow = true;
+    }
+
+    public boolean isAttachedToWindow() {
+        return isAttachedToWindow;
     }
 
     private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter implements Parcelable {

@@ -23,6 +23,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends BaseMyActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
+        AdsManager.getInstance(this).updateShowAdvertsSetting(this);
     }
 
     @Override

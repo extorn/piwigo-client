@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -33,7 +32,10 @@ public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
 
     @Override
     protected boolean canShowDialog() {
-        return super.canShowDialog() && ViewCompat.isAttachedToWindow(getParentView()) && !getParent().isFinishing();
+        boolean canShow = super.canShowDialog();
+        canShow &= getParent().isAttachedToWindow();
+        canShow &= !getParent().isFinishing();
+        return canShow;
     }
 
     @Override
@@ -43,8 +45,9 @@ public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
             return null;
         }
         View v = parent.getWindow().getDecorView().findViewById(android.R.id.content);
-        View iv = v.findViewById(R.id.main_view);
-        return iv != null ? iv : v;
+//        View iv = v.findViewById(R.id.main_view);
+//        return iv != null ? iv : v;
+        return v;
     }
 
     @Override

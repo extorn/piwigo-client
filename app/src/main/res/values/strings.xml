@@ -1039,10 +1039,11 @@ SOFTWARE.
     <string name="eula_privacy_title">Privacy</string>
     <string name="privacy_policy_label">Our privacy policy</string>
     <string name="title_advert_consent">Your Privacy</string>
-    <string name="personalised_adverts_label">Would you like adverts to be personalised</string>
+    <string name="personalised_adverts_label">Would you like adverts to be personalised?</string>
     <string name="personalised_adverts_field">Show personalised adverts</string>
     <string name="open_link">Open web page</string>
     <string name="no_adverts_label">Prefer an advert free version of this app?</string>
     <string name="view_the_paid_version">Take me to the advert free version</string>
+    <string name="advert_providers">Advert Providers in use</string>
 
 </resources>

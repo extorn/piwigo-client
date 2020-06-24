@@ -69,4 +69,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/no_adverts_label"/>
 
+    <TextView
+        android:id="@+id/advert_providers_label"
+        style="?editableFieldLabel"
+        android:labelFor="@+id/advert_providers_field"
+        android:text="@string/advert_providers"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/no_adverts_field"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ad_providers_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/advert_providers_label"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

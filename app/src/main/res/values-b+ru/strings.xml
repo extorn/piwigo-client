@@ -651,12 +651,13 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="content_filter">Фильтр содержимого</string>
     <string name="alert_advert_importance_message">Доход от рекламы важен для меня. Мне жаль, что они вас расстраивают (они меня тоже), но если вы смотрите их, они будут появляться, пока вы не посмотрите один. Чтобы избежать этой проблемы, пожалуйста, смотрите их, пока они не предложат вариант закрытия. В качестве альтернативы приобретите платную версию этого приложения. Большое спасибо за вашу поддержку.</string>
     <string name="eula_privacy_title">Конфиденциальность</string>
-    <string name="privacy_policy_label">Our privacy policy</string>
-    <string name="title_advert_consent">Your Privacy</string>
-    <string name="personalised_adverts_label">Would you like adverts to be personalised</string>
-    <string name="personalised_adverts_field">Show personalised adverts</string>
-    <string name="open_link">Open web page</string>
-    <string name="no_adverts_label">Prefer an advert free version of this app?</string>
-    <string name="view_the_paid_version">Take me to the advert free version</string>
+    <string name="privacy_policy_label">Наша политика конфиденциальности</string>
+    <string name="title_advert_consent">Ваша конфиденциальность</string>
+    <string name="personalised_adverts_label">Хотите, чтобы объявления были персонализированы?</string>
+    <string name="personalised_adverts_field">Показать персонализированные объявления</string>
+    <string name="open_link">Открыть веб-страницу</string>
+    <string name="no_adverts_label">Предпочитаете бесплатную версию этого приложения?</string>
+    <string name="view_the_paid_version">Возьми меня на объявление бесплатной версии</string>
+    <string name="advert_providers">Поставщики рекламы в использовании</string>
 
 </resources>
