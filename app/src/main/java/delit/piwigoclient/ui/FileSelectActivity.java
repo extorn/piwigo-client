@@ -33,7 +33,6 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
-import delit.piwigoclient.ui.file.LegacyRecyclerViewFolderItemSelectFragment;
 import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
 
 /**
@@ -55,8 +54,9 @@ public class FileSelectActivity extends MyActivity {
     @Override
     public void onStart() {
         super.onStart();
-        if (!isShowUriBasedFileSelection()) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+
         }
     }
 
@@ -134,22 +134,14 @@ public class FileSelectActivity extends MyActivity {
         int uniqueEventId = TrackableRequestEvent.getNextEventId();
 
         Fragment fragment;
-        if (isShowUriBasedFileSelection()) {
-            Uri uri = folderItemSelectPrefs.getInitialFolder();
-            if (uri != null && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && "file".equals(uri.getScheme())) {
-                folderItemSelectPrefs.withInitialFolder(null);
-            }
-            fragment = RecyclerViewDocumentFileFolderItemSelectFragment.newInstance(folderItemSelectPrefs, uniqueEventId);
-        } else {
-            fragment = LegacyRecyclerViewFolderItemSelectFragment.newInstance(folderItemSelectPrefs, uniqueEventId);
+        Uri uri = folderItemSelectPrefs.getInitialFolder();
+        if (uri != null && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q && "file".equals(uri.getScheme())) {
+            folderItemSelectPrefs.withInitialFolder(null);
         }
+        fragment = RecyclerViewDocumentFileFolderItemSelectFragment.newInstance(folderItemSelectPrefs, uniqueEventId);
 
         setTrackedIntent(uniqueEventId, event.getActionId());
         showFragmentNow(fragment, false);
-    }
-
-    private boolean isShowUriBasedFileSelection() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     private FileSelectionNeededEvent getFileSelectionNeededEvent() {

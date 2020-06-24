@@ -779,8 +779,11 @@ public class IOUtils {
      * @param initialFolder
      * @return
      */
-    @RequiresApi(api = KITKAT)
     public static @Nullable DocumentFile getDocumentFileForUriLinkedToAnAccessibleRoot(Context context, Uri initialFolder) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            // All files are accessible.
+            return LegacyIOUtils.getDocFile(initialFolder);
+        }
         List<UriPermission> persistedPermissions = context.getContentResolver().getPersistedUriPermissions();
         DocumentFile match = null;
         for(UriPermission perm : persistedPermissions) {

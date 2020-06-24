@@ -9,6 +9,7 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,11 +29,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.material.button.MaterialButton;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -51,6 +56,7 @@ import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.database.AppSettingsViewModel;
@@ -65,7 +71,7 @@ import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 import static android.view.View.GONE;
 
-@RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
     private static final String TAG = "RVFolderSelFrg";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
@@ -267,21 +273,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     }
 
     private void updateListOfFileExtensionsForAllVisibleFiles(Map<String,String> folderContentFileExtToMimeMap) {
-        fileExtFilters.setAllFilters(getViewPrefs().getFileTypesForVisibleMimes());
-
-        /*if (getViewPrefs().getVisibleFileTypes() != null) {
-            if(fileExtFilters.getAllPossibleFilters() == null) {
-                fileExtFilters.setAllPossibleFilters(new TreeSet<>(getViewPrefs().getVisibleFileTypes()));
-            }
-        }
-        if (fileExtFilters.getAllPossibleFilters() != null) {
-
-            SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(folderContentFileExtToMimeMap);
-            if (fileExtsInFolderMatchingMimeTypesWanted != null) {
-                // add any extra that have come from mime types now visible in this folder.
-                fileExtFilters.getAllPossibleFilters().addAll(fileExtsInFolderMatchingMimeTypesWanted);
-            }
-        }*/
+        SortedSet<String> fileExts = getViewPrefs().getFileTypesForVisibleMimes();
+        fileExts.addAll(folderContentFileExtToMimeMap.keySet()); // need to do this because some mime types have multiple possible file exts.
+        fileExtFilters.setAllFilters(fileExts);
     }
 
     private void buildBreadcrumbs(DocumentFile newFolder) {
@@ -367,7 +361,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 Uri itemUri = clipData.getItemAt(i).getUri();
 
                 final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+                }
+
 
                 FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(itemUri);
                 item.cacheFields(getContext());
@@ -398,7 +395,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 DocumentFile docFile = DocumentFile.fromTreeUri(requireContext(), permittedUri);
                 if(docFile != null) {
                     final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
+                    }
                     FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
                     folderItem.cacheFields(requireContext());
                     itemsShared.add(folderItem);
@@ -410,9 +409,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 // this is most likely because it is not a folder.
                 DocumentFile docFile = DocumentFile.fromSingleUri(requireContext(), permittedUri);
 
-                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                appSettingsViewModel.takePersistableUriPermissions(requireContext(), permittedUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
-
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    appSettingsViewModel.takePersistableUriPermissions(requireContext(), permittedUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+                }
 
                 FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
                 folderItem.cacheFields(requireContext());
@@ -465,7 +465,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
             fileExtFilters.setListener(new FileExtFilterControlListener(getListAdapter()));
 
-
             DocumentFile initialFolder = IOUtils.getDocumentFileForUriLinkedToAnAccessibleRoot(requireContext(), getViewPrefs().getInitialFolder());
             if (initialFolder != null) {
                 // We still have access to the given Uri somehow.
@@ -495,25 +494,100 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
     private DocumentFileArrayAdapter buildFolderRootsAdapter() {
         //TODO get the list of app registered permissions and use that as the basis rather than all of them which includes files etc.
-        List<UriPermission> permissions = requireContext().getContentResolver().getPersistedUriPermissions();
-        Map<String, DocumentFile> roots = new LinkedHashMap<>();
-        roots.put("", null);
-        roots.put(getString(R.string.system_file_selector_label), null);
-        for(UriPermission perm : permissions) {
-            if(perm.isWritePermission()) {
-                try {
-                    DocumentFile documentFile = DocumentFile.fromTreeUri(requireContext(), perm.getUri());
-                    roots.put(documentFile == null ? "???" : IOUtils.getFilename(documentFile), documentFile);
-                } catch(IllegalArgumentException e) {
-                    // it's a file not a folder. Ignore the error.
-                }
-
-            }
+        Map<String, DocumentFile> roots = null;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            roots = buildDocFilesRootsMap();
+        } else {
+            roots = buildDocFilesRootsMapPreKitKat();
         }
 
         DocumentFileArrayAdapter adapter = new DocumentFileArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, roots);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         return adapter;
+    }
+
+    private String getLabelForExtStorageLegacy(File location, String defaultName) {
+        File f = location;
+        List<String> pathHierarchy = new ArrayList<>();
+        while(f != null && !f.getName().equals("mnt")) {
+            pathHierarchy.add(f.getName());
+            f = f.getParentFile();
+        }
+        Collections.reverse(pathHierarchy);
+        StringBuilder sb = new StringBuilder();
+        return CollectionUtils.toCsvList(pathHierarchy, "/");
+    }
+
+    private Map<String, DocumentFile> buildDocFilesRootsMapPreKitKat() {
+        List<String> rootLabels = ArrayUtils.toArrayList(new String[]{getString(R.string.folder_root_root), getString(R.string.folder_root_userdata), getString(R.string.folder_extstorage)});
+
+        List<File> rootPaths = ArrayUtils.toArrayList(new File[]{Environment.getRootDirectory(), Environment.getDataDirectory(), Environment.getExternalStorageDirectory()});
+        List<String> sdCardPaths = LegacyIOUtils.getSdCardPaths(getContext(), true);
+        if(sdCardPaths != null) {
+            int extStorageDeviceId = 1;
+            for(String path : sdCardPaths) {
+                File f = new File(path);
+                File[] locations = f.listFiles();
+                if(locations != null && locations.length > 0) {
+                    for (File location : locations) {
+                        File[] folderContent = location.listFiles();
+                        if (location.isDirectory() && !rootPaths.contains(location) && folderContent != null && folderContent.length > 0) {
+                            rootLabels.add(getLabelForExtStorageLegacy(location, getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId)));
+                            rootPaths.add(location);
+                            extStorageDeviceId++;
+                        }
+                    }
+                } else {
+                    File[] folderContent = f.listFiles();
+                    if (!rootPaths.contains(f)  && folderContent != null && folderContent.length > 0) {
+                        rootLabels.add(getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId));
+                        rootPaths.add(f);
+                        extStorageDeviceId++;
+                    }
+                }
+            }
+        }
+
+        File initialFolder = null;
+        try {
+            initialFolder = LegacyIOUtils.getFile(getViewPrefs().getInitialFolder());
+        } catch (IOException e) {
+            Logging.recordException(e);
+        }
+        if (initialFolder != null && !rootPaths.contains(initialFolder)) {
+            rootPaths.add(0, initialFolder);
+            rootLabels.add(0, getString(R.string.folder_default));
+        }
+
+        rootLabels.add(0, "");
+        rootPaths.add(0, null);
+
+        Map<String, DocumentFile> roots = new LinkedHashMap<>();
+
+        for(int i = 0; i < rootLabels.size(); i++) {
+            roots.put(rootLabels.get(i), LegacyIOUtils.getDocFile(rootPaths.get(i)));
+        }
+        return roots;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private Map<String, DocumentFile> buildDocFilesRootsMap() {
+        List<UriPermission> permissions = requireContext().getContentResolver().getPersistedUriPermissions();
+        Map<String, DocumentFile> roots = new LinkedHashMap<>();
+        roots.put("", null);
+        roots.put(getString(R.string.system_file_selector_label), null);
+        for (UriPermission perm : permissions) {
+            if (perm.isWritePermission()) {
+                try {
+                    DocumentFile documentFile = DocumentFile.fromTreeUri(requireContext(), perm.getUri());
+                    roots.put(documentFile == null ? "???" : IOUtils.getFilename(documentFile), documentFile);
+                } catch (IllegalArgumentException e) {
+                    // it's a file not a folder. Ignore the error.
+                }
+
+            }
+        }
+        return roots;
     }
 
 
@@ -725,6 +799,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private class DocumentFileNavigationListener implements AbstractBreadcrumbsView.NavigationListener<DocumentFile> {
         @Override
         public void onBreadcrumbClicked(DocumentFile pathItemFile) {
+            if(getListAdapter().getActiveFolder() == null) {
+                return; // UI out of sync. Do nothing and be patient.
+            }
             if(getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
                 getListAdapter().rebuildContentView(getContext());
             } else {

@@ -11,6 +11,7 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.EnvironmentCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -256,5 +257,21 @@ public class LegacyIOUtils {
         if(result.isEmpty())
             return null;
         return result;
+    }
+
+    public static @Nullable DocumentFile getDocFile(@Nullable Uri initialFolder) {
+        try {
+            return getDocFile(getFile(initialFolder));
+        } catch (IOException e) {
+            Logging.recordException(e);
+        }
+        return null;
+    }
+
+    public static @Nullable DocumentFile getDocFile(@Nullable File file) {
+        if(file != null) {
+            return DocumentFile.fromFile(file);
+        }
+        return null;
     }
 }
