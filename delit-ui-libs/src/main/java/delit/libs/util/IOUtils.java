@@ -612,6 +612,9 @@ public class IOUtils {
                 throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
             }
         }
+        if("file".equals(itemUri.getScheme())) {
+            return LegacyIOUtils.getDocFile(itemUri);
+        }
 
 //        String start = rootUri.getLastPathSegment();
         String childPathSegment = itemPath.get(itemPath.size() -1);

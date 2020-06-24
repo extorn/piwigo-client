@@ -108,8 +108,6 @@ public class AppSettingsViewModel extends AndroidViewModel {
     //TODO need to use this kind of thing to ensure we ask user to add permissions back for URis that they removed permissions for in the system UI
     private boolean hasRequiredPermissionsForUri(Uri uri) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Uri rootUri = null;
-
             List<UriPermission> perms = getApplication().getContentResolver().getPersistedUriPermissions();
             for (UriPermission perm : perms) {
                 DocumentFile treeLinkedDocFile = IOUtils.getTreeLinkedDocFile(getApplication(), perm.getUri(), uri);

@@ -178,13 +178,6 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return wantedExts;
     }
 
-    public DocumentFile getInitialFolderAsLinkedDocumentFile(@NonNull Context context, @NonNull Uri rootUriWithPerms) {
-        if(initialFolder == null) {
-            return DocumentFile.fromTreeUri(context, rootUriWithPerms);
-        }
-        return IOUtils.getTreeLinkedDocFile(context, rootUriWithPerms, initialFolder);
-    }
-
     public SortedSet<Uri> getInitialSelection() {
         return initialSelection;
     }

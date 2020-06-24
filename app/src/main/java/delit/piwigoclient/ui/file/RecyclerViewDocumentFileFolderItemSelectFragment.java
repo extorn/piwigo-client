@@ -559,14 +559,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             rootLabels.add(0, getString(R.string.folder_default));
         }
 
-        rootLabels.add(0, "");
-        rootPaths.add(0, null);
-
         Map<String, DocumentFile> roots = new LinkedHashMap<>();
-
+        roots.put("", null); // default option (for nothing selected).
         for(int i = 0; i < rootLabels.size(); i++) {
             roots.put(rootLabels.get(i), LegacyIOUtils.getDocFile(rootPaths.get(i)));
         }
+        roots.put(getString(R.string.system_file_selector_label), null); // allow other apps to handle file selection
         return roots;
     }
 
@@ -575,7 +573,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         List<UriPermission> permissions = requireContext().getContentResolver().getPersistedUriPermissions();
         Map<String, DocumentFile> roots = new LinkedHashMap<>();
         roots.put("", null);
-        roots.put(getString(R.string.system_file_selector_label), null);
         for (UriPermission perm : permissions) {
             if (perm.isWritePermission()) {
                 try {
@@ -587,6 +584,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
             }
         }
+        roots.put(getString(R.string.system_file_selector_label), null);
         return roots;
     }
 

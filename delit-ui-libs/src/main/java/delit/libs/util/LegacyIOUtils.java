@@ -259,9 +259,9 @@ public class LegacyIOUtils {
         return result;
     }
 
-    public static @Nullable DocumentFile getDocFile(@Nullable Uri initialFolder) {
+    public static @Nullable DocumentFile getDocFile(@Nullable Uri uri) {
         try {
-            return getDocFile(getFile(initialFolder));
+            return getDocFile(getFile(uri));
         } catch (IOException e) {
             Logging.recordException(e);
         }
