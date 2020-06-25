@@ -12,6 +12,10 @@ public class Logging {
         isDebug = debug;
     }
 
+    public static void log(int logLevel, String tag, String format, Object ... args) {
+        log(logLevel, tag, String.format(format, args));
+    }
+
     public static void log(int logLevel, String tag, String message) {
         if(isDebug) {
             switch(logLevel) {

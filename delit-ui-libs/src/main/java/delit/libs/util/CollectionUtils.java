@@ -178,4 +178,16 @@ public class CollectionUtils {
         }
         return sb.toString();
     }
+
+    public static <T,S extends T, F extends Collection<T>, D extends Collection<S>> D copyAllOfType(F source, D destination, Class<S> resourceItemClass) {
+        if(source == null || source.isEmpty()) {
+            return destination;
+        }
+        for(T item : source) {
+            if(resourceItemClass.isInstance(item)) {
+                destination.add(resourceItemClass.cast(item));
+            }
+        }
+        return destination;
+    }
 }
