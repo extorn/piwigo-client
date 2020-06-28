@@ -1,5 +1,4 @@
 include ':app'
 include ':google-licencing-library'
-//includeBuild '../metadata-extractor'
 include ':delit-ui-libs'
 include ':delit-core-libs'
