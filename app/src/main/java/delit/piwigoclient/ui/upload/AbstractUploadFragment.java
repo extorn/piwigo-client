@@ -1373,13 +1373,18 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             AbstractUploadFragment fragment = uiHelper.getParent();
-            fragment.getFileSelectButton().setEnabled(true);
-            ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
-            String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
-            fragment.getUploadableFilesView().setText(fileTypesStr);
-            FileSelectionCompleteEvent evt = EventBus.getDefault().getStickyEvent(FileSelectionCompleteEvent.class);
-            if (evt != null) {
-                fragment.onEvent(evt);
+            if(fragment != null) {
+                MaterialButton button = fragment.getFileSelectButton();
+                if(button != null) { // will be null if fragment not visible or initialising perhaps.
+                    button.setEnabled(true);
+                }
+                ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+                String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
+                fragment.getUploadableFilesView().setText(fileTypesStr);
+                FileSelectionCompleteEvent evt = EventBus.getDefault().getStickyEvent(FileSelectionCompleteEvent.class);
+                if (evt != null) {
+                    fragment.onEvent(evt);
+                }
             }
             return super.onSuccess(uiHelper, response);
         }
