@@ -2527,8 +2527,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public void onDismiss(AlertDialog dialog) {
             super.onDismiss(dialog);
-            //TODO getFragmentManager means this fragment needs to be serialised!
-            getUiHelper().getParent().getParentFragmentManager().popBackStack();
+            try {
+                getUiHelper().getParent().getParentFragmentManager().popBackStack();
+            } catch(IllegalStateException e) {
+                Logging.log(Log.ERROR, TAG, "Unable to pop fragment as it is no longer visible!");
+            }
         }
     }
 
