@@ -769,13 +769,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         @Override
         protected void onPostExecuteSafely(List<FolderItemRecyclerViewAdapter.FolderItem> folderItems) {
-
-            if(folderItems.size() == 1 && folderItems.get(0).isFolder()) {
-                FolderItemRecyclerViewAdapter.FolderItem item = folderItems.get(0);
-                getOwner().addRootFolder(item.getDocumentFile());
-            } else {
-                getOwner().getListAdapter().addItems(folderItems);
-                getOwner().selectAllItems();
+            if(folderItems != null) {
+                if (folderItems.size() == 1 && folderItems.get(0).isFolder()) {
+                    FolderItemRecyclerViewAdapter.FolderItem item = folderItems.get(0);
+                    getOwner().addRootFolder(item.getDocumentFile());
+                } else {
+                    getOwner().getListAdapter().addItems(folderItems);
+                    getOwner().selectAllItems();
+                }
             }
             getOwner().getUiHelper().hideProgressIndicator();
             getOwner().fileExtFilters.setEnabled(true);

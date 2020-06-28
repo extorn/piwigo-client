@@ -109,18 +109,23 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     @Override
     public Class<? extends P> getFragmentType(int position) {
         int slideshowIdx = galleryResourceItems.get(position);
-        GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
-        if (galleryItem instanceof PictureResourceItem) {
-            if("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
-                return (Class<? extends P>) AlbumGifPictureItemFragment.class;
-            } else {
-                return (Class<? extends P>) AlbumPictureItemFragment.class;
+        try {
+            GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
+            if (galleryItem instanceof PictureResourceItem) {
+                if ("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
+                    return (Class<? extends P>) AlbumGifPictureItemFragment.class;
+                } else {
+                    return (Class<? extends P>) AlbumPictureItemFragment.class;
+                }
+            } else if (galleryItem instanceof VideoResourceItem) {
+                return (Class<? extends P>) AlbumVideoItemFragment.class;
             }
-        } else if (galleryItem instanceof VideoResourceItem) {
-            return (Class<? extends P>) AlbumVideoItemFragment.class;
+            //TODO check what causes this - probably deleting all items and trying to show a header!
+            throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + galleryItem.getClass().getName() + ")");
+        } catch(IndexOutOfBoundsException e) {
+            Logging.log(Log.ERROR, TAG, "The gallery has %1$d items. Requested item that isn't present.", gallery.getItemCount());
         }
-        //TODO check what causes this - probably deleting all items and trying to show a header!
-        throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + galleryItem.getClass().getName() + ")");
+        throw new IllegalArgumentException("Unsupported slideshow item type at slideshow position " + position + " and slideshow idx " + slideshowIdx + " with gallery of size " + gallery.getItemCount());
     }
 
     @Override

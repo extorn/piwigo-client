@@ -124,8 +124,8 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         }
         try {
             return super.getItemByIdx(adjustedIdx);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            String errorMsg = "error getting spansize for position " + idx + ", adjusted to " + adjustedIdx + ".\n"
+        } catch (RuntimeException e) {
+            String errorMsg = "error getting item at position " + idx + ", adjusted to " + adjustedIdx + ".\n"
                     + " Is reverse order : " + isRetrieveItemsInReverseOrder() + ",\n"
                     + "  model count: " + getItemCount() + ",\n"
                     + " model resource count: " + getImgResourceCount() + ",\n"

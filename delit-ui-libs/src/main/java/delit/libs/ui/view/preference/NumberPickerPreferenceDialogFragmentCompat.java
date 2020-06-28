@@ -44,10 +44,14 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
     public void onDialogClosed(boolean positiveResult) {
 
         if (positiveResult) {
+            Logging.log(Log.INFO, TAG, "Closing number picker preference dialog");
             mPicker.clearFocus();
+            Logging.log(Log.INFO, TAG, "Removed focus from picker field");
             int pickerValue = mPicker.getValue();
             getPreference().setValue(pickerValue);
+            Logging.log(Log.INFO, TAG, "Updated value of preference from picker field");
             if (getPreference().getOnPreferenceChangeListener() != null) {
+                Logging.log(Log.INFO, TAG, "Calling on pref change");
                 getPreference().getOnPreferenceChangeListener().onPreferenceChange(getPreference(), pickerValue);
             }
         }
@@ -101,11 +105,16 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
         picker.setMinValue(minValue);
         picker.setMaxValue(maxValue);
         picker.setWrapSelectorWheel(wrapSelectionWheel);
-        Logging.log(Log.DEBUG, TAG, "Binding data for preference (setting value) : " + getPreference().getKey() + " : " + selectedValue);
-        picker.setValue(selectedValue);
-        Logging.log(Log.DEBUG, TAG, "Binding data for preference (requesting focus) : " + getPreference().getKey());
-        view.requestFocus();
         Logging.log(Log.DEBUG, TAG, "Binding data for preference (complete) : " + getPreference().getKey());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Logging.log(Log.DEBUG, TAG, "Setting value for picker : " + getPreference().getKey());
+        mPicker.setValue(selectedValue);
+        Logging.log(Log.DEBUG, TAG, "Requesting focus for picker : " + getPreference().getKey());
+        mPicker.requestFocus();
     }
 
     public static DialogFragment newInstance(String key) {
