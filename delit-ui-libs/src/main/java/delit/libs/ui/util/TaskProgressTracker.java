@@ -19,7 +19,7 @@ public abstract class TaskProgressTracker implements ProgressListener {
     }
 
     protected TaskProgressTracker(double reportAtIncrement) {
-        if(Math.round(reportAtIncrement) == 100) {
+        if(Math.max(100,Math.round(reportAtIncrement)) == 100) {
             reportAtIncrement = 100;
         } else if(Math.round(reportAtIncrement) == 0) {
             reportAtIncrement = 0;
@@ -61,7 +61,7 @@ public abstract class TaskProgressTracker implements ProgressListener {
             }
         }
         if(endProgress < 0 || endProgress > 100) {
-            if(Math.round(endProgress) == 100) {
+            if(Math.max(100, Math.round(endProgress)) == 100) {
                 endProgress = 100;
             } else {
                 throw new IllegalArgumentException("end progress must be between 0 and 100 : " + endProgress);
