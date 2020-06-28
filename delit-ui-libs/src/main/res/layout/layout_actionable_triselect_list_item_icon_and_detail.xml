@@ -34,7 +34,7 @@
                 tools:src="@drawable/ic_file_black_24dp" />
 
             <TextView
-                android:id="@+id/resource_name"
+                android:id="@+id/list_item_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -70,7 +70,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/list_item_icon_thumbnail"
-                app:layout_constraintTop_toBottomOf="@id/resource_name"
+                app:layout_constraintTop_toBottomOf="@id/list_item_name"
                 app:layout_constraintVertical_bias="0"
                 tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description. What do you think?" />
 
