@@ -655,6 +655,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="no_adverts_label">Bevorzugen Sie eine werbefreie Version dieser App?</string>
     <string name="view_the_paid_version">Bring mich zur werbefreien Version</string>
     <string name="advert_providers">Anzeigenanbieter im Einsatz</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Diese Datei konnte leider nicht verwendet werden, da sie von einer App freigegeben wurde, die den angeforderten erweiterten Zugriff auf diese Datei nicht autorisiert hat und der Zugriff abgelaufen ist.</string>
 
 </resources>
 

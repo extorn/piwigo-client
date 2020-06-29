@@ -1045,5 +1045,6 @@ SOFTWARE.
     <string name="no_adverts_label">Prefer an advert free version of this app?</string>
     <string name="view_the_paid_version">Take me to the advert free version</string>
     <string name="advert_providers">Advert Providers in use</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Sorry, this file was not able to be used because it was shared by an app that did not authorise the requested extended access to this file and that access has expired.</string>
 
 </resources>

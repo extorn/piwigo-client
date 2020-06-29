@@ -531,5 +531,6 @@
     <string name="no_adverts_label">喜欢这个应用程序的免费广告版吗？</string>
     <string name="view_the_paid_version">带我去看免费广告版</string>
     <string name="advert_providers">使用中的广告提供者</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">抱歉，该文件无法使用，因为它是由未授权对该文件的扩展访问权进行授权的应用共享的。</string>
 
 </resources>

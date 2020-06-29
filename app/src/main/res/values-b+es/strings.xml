@@ -525,5 +525,6 @@
     <string name="no_adverts_label">¿Prefieres una versión sin publicidad de esta aplicación?</string>
     <string name="view_the_paid_version">Llévame a la versión gratuita de anuncios</string>
     <string name="advert_providers">Proveedores de anuncios en uso</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Lo sentimos, este archivo no se pudo usar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
 
 </resources>

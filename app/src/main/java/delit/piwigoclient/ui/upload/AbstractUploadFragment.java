@@ -237,7 +237,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                             Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + f.getContentUri());
                         }
                     }
-                    if (!allowedFileTypes.contains(f.getExt())) {
+                    //TODO check this is correct to assume that upper case extensions are okay (server isn't case sensitive!).
+                    if (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase())) {
                         String mimeType = f.getMime();
                         if (mimeType == null || !MimeTypeFilter.matches(mimeType, "video/*")) {
                             iter.remove();
@@ -280,6 +281,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     uploadDataItems.add(item);
                 } catch (Md5SumUtils.Md5SumException e) {
                     Logging.recordException(e);
+                } catch(SecurityException secException) {
+                    getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions);
                 }
             }
             if(mainTaskProgressListener.getLastReportedProgress() < 100) {
