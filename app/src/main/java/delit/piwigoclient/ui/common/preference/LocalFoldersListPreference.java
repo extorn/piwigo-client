@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.ViewModelProvider;
@@ -18,6 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.ObjectUtils;
@@ -187,6 +189,11 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void takePersistableUriPermission(Uri selectedFolder) {
         int flags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+        try {
         appSettingsViewModel.takePersistableUriPermissions(getContext(), selectedFolder, flags, getUriPermissionsKey(), getContext().getString(R.string.preference_uri_consumer_description_pattern, getTitle()));
+        } catch(SecurityException e) {
+            Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for folder URI : " + selectedFolder);
+            Logging.recordException(e);
+        }
     }
 }

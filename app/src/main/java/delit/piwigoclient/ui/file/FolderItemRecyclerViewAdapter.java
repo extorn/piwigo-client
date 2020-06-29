@@ -230,6 +230,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             if(visibleFileTypes.isEmpty()) {
                 return false;
             }
+            if(item.getExt() == null) {
+                return false;
+            }
             return visibleFileTypes.contains(item.getExt());
         }
 
