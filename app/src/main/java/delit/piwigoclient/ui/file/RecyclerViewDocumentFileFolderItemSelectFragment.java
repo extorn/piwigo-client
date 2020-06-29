@@ -356,6 +356,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         ClipData clipData = resultData.getClipData();
         List<FolderItemRecyclerViewAdapter.FolderItem> itemsShared = new ArrayList<>();
         if(clipData != null) {
+            boolean permissionsMissing = false;
             int items = clipData.getItemCount();
             for (int i = 0; i < items; i++) {
                 Uri itemUri = clipData.getItemAt(i).getUri();
@@ -363,6 +364,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     try {
+                        permissionsMissing = true;
                         appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
                     } catch(SecurityException e) {
                         Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for URI : " + itemUri);
@@ -375,6 +377,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 item.cacheFields(getContext());
                 itemsShared.add(item);
                 listener.onProgress((int) (100 * Math.rint((float)i) / items));
+            }
+            if(permissionsMissing) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getContext().getString(R.string.likely_file_unusable_shared_without_permissions));
             }
 
         } else if(resultData.getData() != null) {

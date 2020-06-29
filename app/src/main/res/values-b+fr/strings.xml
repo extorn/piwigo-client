@@ -663,5 +663,6 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="view_the_paid_version">Emmenez-moi à la version gratuite de l\'annonce</string>
     <string name="advert_providers">Fournisseurs d\'annonces en cours d\'utilisation</string>
     <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Désolé, ce fichier n\'a pas pu être utilisé car il a été partagé par une application qui n\'a pas autorisé l\'accès étendu demandé à ce fichier et cet accès a expiré.</string>
+    <string name="likely_file_unusable_shared_without_permissions">Les fichiers ajoutés ont été partagés sans l\'autorisation demandée. S\'il ne parvient pas à être ajouté pour le téléchargement, vous pouvez essayer de les partager directement depuis l\'application avec cette application plutôt que d\'y accéder via le sélecteur de fichiers de téléchargement.</string>
 
 </resources>

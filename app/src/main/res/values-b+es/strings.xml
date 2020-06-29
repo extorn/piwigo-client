@@ -526,5 +526,6 @@
     <string name="view_the_paid_version">Llévame a la versión gratuita de anuncios</string>
     <string name="advert_providers">Proveedores de anuncios en uso</string>
     <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Lo sentimos, este archivo no se pudo usar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
+    <string name="likely_file_unusable_shared_without_permissions">Los archivos agregados se han compartido sin el permiso solicitado. Si no se puede agregar para cargar, puede intentar compartirlos desde la aplicación directamente con esta aplicación en lugar de acceder a través del selector de archivos de carga.</string>
 
 </resources>
