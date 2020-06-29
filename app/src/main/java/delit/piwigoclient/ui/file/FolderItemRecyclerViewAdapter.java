@@ -703,7 +703,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 isFile = itemDocFile.isFile();
                 name = itemDocFile.getName();
                 ext = IOUtils.getFileExt(name);
-                mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext.toLowerCase());
                 lastModified = itemDocFile.lastModified();
                 fileLength = itemDocFile.length();
                 fieldsLoadedFrom = DOCFILE;
