@@ -282,7 +282,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 } catch (Md5SumUtils.Md5SumException e) {
                     Logging.recordException(e);
                 } catch(SecurityException secException) {
-                    getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions);
+                    getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions));
                 }
             }
             if(mainTaskProgressListener.getLastReportedProgress() < 100) {
