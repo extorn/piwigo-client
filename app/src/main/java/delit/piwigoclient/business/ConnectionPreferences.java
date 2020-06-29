@@ -334,9 +334,9 @@ public class ConnectionPreferences {
                 try {
                     Set<String> val = prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
                     if(val != null) {
-                        val = new HashSet<>(val);
+                        return new HashSet<>(val);
                     }
-                    return val;
+                    return new HashSet<>(); // don't ever return null
                 } catch(ClassCastException e) {
                     String value = prefs.getString(getPrefKeyInProfile(context, prefKey), null);
                     Logging.log(Log.ERROR, TAG, "Expected a string set for pref "+prefKey+" but was string : " + value);
