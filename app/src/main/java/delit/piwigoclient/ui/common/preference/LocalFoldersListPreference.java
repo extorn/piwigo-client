@@ -78,6 +78,12 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     }
 
     @Override
+    public void onDetached() {
+        super.onDetached();
+        appSettingsViewModel = null;
+    }
+
+    @Override
     public String getValue() {
         String albumUri = super.getValue();
         if(albumUri != null && !hasPermissionForUri(Uri.parse(albumUri))) {
