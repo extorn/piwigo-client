@@ -87,7 +87,7 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
     protected View onCreateDialogView(Context context) {
         mPicker = new NumberPicker(getContext());
         mPicker.setSaveFromParentEnabled(false);
-        mPicker.setSaveEnabled(false);
+        mPicker.setSaveEnabled(true);
         return mPicker;
     }
 
