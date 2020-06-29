@@ -851,7 +851,7 @@ public class AdsManager {
             super.onAdClosed();
             if(lastAdPaid == null || !lastAdPaid) {
                 long adShowingFor = System.currentTimeMillis() - startedAt;
-                if (adShowingFor > 5000) {
+                if (adShowingFor > 8000) {
                     lastAdPaid = Boolean.TRUE;
                     Context context = contextRef.get();
                     if(context != null) {
