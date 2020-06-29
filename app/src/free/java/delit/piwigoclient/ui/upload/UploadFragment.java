@@ -1,5 +1,7 @@
 package delit.piwigoclient.ui.upload;
 
+import android.net.Uri;
+
 import java.util.List;
 
 import delit.piwigoclient.R;
@@ -15,12 +17,14 @@ public class UploadFragment extends AbstractUploadFragment {
     @Override
     protected void updateFilesForUploadList(List<FilesToUploadRecyclerViewAdapter.UploadDataItem> folderItemsToBeUploaded) {
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
-        boolean maxItemCountReached = false;
-        while (folderItemsToBeUploaded.size() > 0 && folderItemsToBeUploaded.size() > 5 - adapter.getItemCount()) {
-            folderItemsToBeUploaded.remove(folderItemsToBeUploaded.size() - 1);
-            maxItemCountReached = true;
-        }
         super.updateFilesForUploadList(folderItemsToBeUploaded);
+        List<Uri> allFiles = adapter.getFiles();
+        boolean maxItemCountReached = false;
+        while(allFiles.size() > 5) {
+            maxItemCountReached = true;
+            adapter.remove(allFiles.get(allFiles.size()-1));
+        }
+
         if(maxItemCountReached) {
             getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_max_upload_file_count_reached));
         }
