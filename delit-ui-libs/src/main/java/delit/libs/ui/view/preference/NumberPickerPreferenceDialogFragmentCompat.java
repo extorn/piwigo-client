@@ -2,9 +2,15 @@ package delit.libs.ui.view.preference;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
 import androidx.annotation.NonNull;
@@ -12,6 +18,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
@@ -88,8 +97,49 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
         mPicker = new NumberPicker(getContext());
         mPicker.setSaveFromParentEnabled(false);
         mPicker.setSaveEnabled(true);
+        fixEditTextsForMarshmallow(mPicker);
         return mPicker;
     }
+
+    private void fixEditTextsForMarshmallow(View rootView) {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            ArrayList<View> views = rootView.getTouchables();
+            for (View view : views) {
+                if (view instanceof EditText) {
+                    EditText mEditText = (EditText) view;
+                    mEditText.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+                        @Override
+                        public boolean performAccessibilityAction(View host, int action, Bundle arguments) {
+
+                            if (action == AccessibilityNodeInfo.ACTION_SET_TEXT) {
+                                //do something here to make sure index out of bounds does not occur
+                                int maxLength = 0;
+                                for (InputFilter filter : mEditText.getFilters()) {
+                                    if (filter instanceof InputFilter.LengthFilter) {
+                                        maxLength = ((InputFilter.LengthFilter) filter).getMax();
+                                    }
+                                }
+
+                                Set<String> keys = arguments.keySet();
+                                for (String key : keys) {
+                                    if (arguments.get(key) instanceof CharSequence) {
+                                        if (arguments.get(key) != null) {
+                                            CharSequence arg = ((CharSequence) arguments.get(key));
+                                            arguments.putCharSequence(key, arg == null ? null : arg.subSequence(0, maxLength));
+                                            mEditText.setText(arguments.getCharSequence(key));
+                                        }
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                    });
+
+                }
+            }
+        }
+    }
+
 
     /**
      * fill created view with data
@@ -111,10 +161,20 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
     @Override
     public void onStart() {
         super.onStart();
-        Logging.log(Log.DEBUG, TAG, "Setting value for picker : " + getPreference().getKey());
-        mPicker.setValue(selectedValue);
-        Logging.log(Log.DEBUG, TAG, "Requesting focus for picker : " + getPreference().getKey());
-        mPicker.requestFocus();
+        mPicker.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                Logging.log(Log.DEBUG, TAG, "Setting value for picker ("+selectedValue+") : " + getPreference().getKey());
+                mPicker.setValue(selectedValue);
+                Logging.log(Log.DEBUG, TAG, "Requesting focus for picker : " + getPreference().getKey());
+                mPicker.requestFocus();
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+
+            }
+        });
     }
 
     public static DialogFragment newInstance(String key) {
