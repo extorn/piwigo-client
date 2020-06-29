@@ -364,9 +364,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     try {
-                        permissionsMissing = true;
                         appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
                     } catch(SecurityException e) {
+                        permissionsMissing = true;
                         Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for URI : " + itemUri);
                         Logging.recordException(e);
                     }
