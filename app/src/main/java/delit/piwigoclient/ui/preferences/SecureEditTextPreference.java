@@ -43,6 +43,9 @@ public class SecureEditTextPreference extends CustomEditTextPreference implement
 
     @Override
     public CharSequence encrypt(CharSequence value) {
+        if(value == null) {
+            return null;
+        }
         return SecurePrefsUtil.getInstance(getContext(), BuildConfig.APPLICATION_ID).encryptValue(getKey(), value.toString());
     }
 
