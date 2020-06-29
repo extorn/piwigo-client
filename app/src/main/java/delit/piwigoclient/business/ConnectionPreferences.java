@@ -332,7 +332,11 @@ public class ConnectionPreferences {
 
             public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {
                 try {
-                    return new HashSet<>(prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal));
+                    Set<String> val = prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
+                    if(val != null) {
+                        val = new HashSet<>(val);
+                    }
+                    return val;
                 } catch(ClassCastException e) {
                     String value = prefs.getString(getPrefKeyInProfile(context, prefKey), null);
                     Logging.log(Log.ERROR, TAG, "Expected a string set for pref "+prefKey+" but was string : " + value);
