@@ -379,7 +379,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 listener.onProgress((int) (100 * Math.rint((float)i) / items));
             }
             if(permissionsMissing) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getContext().getString(R.string.likely_file_unusable_shared_without_permissions));
+                DisplayUtils.postOnUiThread(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getContext().getString(R.string.likely_file_unusable_shared_without_permissions), R.string.button_ok));
             }
 
         } else if(resultData.getData() != null) {

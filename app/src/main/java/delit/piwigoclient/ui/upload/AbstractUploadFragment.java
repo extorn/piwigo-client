@@ -249,7 +249,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     mainTaskProgressListener.onTick(currentItem);
                 }
                 if (!unsupportedExts.isEmpty()) {
-                    getOwner().getUiHelper().showDetailedMsg(R.string.alert_information, getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts)));
+                    DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showDetailedMsg(R.string.alert_information, getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts))));
                 }
             }
 
