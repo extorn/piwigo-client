@@ -218,8 +218,11 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
                 // attempt to work around suspected issue with loading error drawables on android 4.4.2
                 loadInto.setImageDrawable(ResourcesCompat.getDrawable(getContext().getResources(), errDrawableId, getContext().getTheme()));
             } else {
-                RequestCreator loader = PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(errDrawableId);
-                loader.into(loadInto, null);
+                if(!imageLoaded && !imageLoading) {
+                    imageLoading = true;
+                    RequestCreator loader = PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(errDrawableId);
+                    loader.into(loadInto, null);
+                }
             }
         }
     }
