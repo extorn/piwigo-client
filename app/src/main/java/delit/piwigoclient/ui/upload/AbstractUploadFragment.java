@@ -1195,12 +1195,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
-        if (filesForUploadView != null) {
-            filesForUploadView.setAdapter(null);
-        }
-        if (privacyLevelSpinner != null) {
-            privacyLevelSpinner.setAdapter(null);
-        }
+//        if (filesForUploadView != null) {
+//            filesForUploadView.setAdapter(null);
+//        }
+//        if (privacyLevelSpinner != null) {
+//            privacyLevelSpinner.setAdapter(null);
+//        }
     }
 
     private void notifyUser(Context context, int titleId, String message) {
