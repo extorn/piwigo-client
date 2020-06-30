@@ -1,44 +1,44 @@
-Verwenden Sie diese Option, um eine PIWIGO-Fotogalerie zu durchsuchen.
+Zum Durchsuchen einer PIWIGO-Fotogalerie.
 
-HINWEIS: Die EULA muss beim Download akzeptiert werden.
+HINWEIS: EULA muss beim Herunterladen akzeptiert werden.
 
-Wenn Ihnen die App gefällt, aber nicht die Anzeigen, suchen Sie nach der kostenpflichtigen Version, die werbefrei ist und immer mehr Funktionalität bietet.
+Wenn Ihnen die App, aber nicht die Anzeigen gefallen, suchen Sie nach der kostenpflichtigen Version, die werbefrei ist und nach und nach mehr Funktionalität bietet.
 
-** Die App wird aktiv entwickelt **.
-** Wenn etwas nicht funktioniert - mailen Sie mir - es wird behoben **.
+** Die App wird aktiv entwickelt **
+** Wenn etwas nicht funktioniert - mailen Sie mir - es wird behoben **
 
 Siehe vollständige Liste der Funktionen unten.
 
-Verbindung zu Servern, die auf nicht standardmäßigen http- oder https-Ports laufen.
-Akzeptieren Sie bei Bedarf ungültige (falscher Hostname) oder selbstsignierte Serverzertifikate.
-Server Certificate Pinning wird unterstützt (Zertifikate gegen eine lokale Kopie verifizieren).
-Betrachten Sie Bilder in einer für Ihren Bildschirm optimierten Auflösung (oder wählen Sie die gewünschte Auflösung).
-Anzeigen und Zulassen des Zooms in Bilder jeder Größe, die auf dem Server verfügbar sind.
-MP4-Videos anzeigen (andere sollten auch funktionieren, aber ich habe andere Formate nicht getestet)
+Verbindung zu Servern, die auf nicht standardmäßigen http- oder https-Ports laufen
+Akzeptieren Sie ungültige (falscher Hostname) oder selbst signierte Server-Zertifikate, falls erforderlich
+Server-Zertifikat-Pinning wird unterstützt (Überprüfung von Zertifikaten gegen eine lokale Kopie)
+Betrachten Sie die Bilder in einer für Ihren Bildschirm optimierten Auflösung (oder wählen Sie die gewünschte Auflösung).
+Bilder in jeder auf dem Server verfügbaren Größe anzeigen und zoomen lassen
+MP4-Videos ansehen (andere sollten auch funktionieren, aber andere Formate habe ich nicht getestet)
 Bilder herunterladen.
-Speichern Sie vollständig heruntergeladene Videos
-Videos können optional von Diashows ausgeschlossen werden.
+Vollständig heruntergeladene Videos speichern
+Videos optional von Diavorführungen ausschließen
 Bilder bewerten und durchschnittliche Bewertungen anzeigen
-Neue Bilder oder Videos hochladen (kann optional komprimiert werden)
+Neue Bilder oder Videos hochladen (können optional komprimiert werden)
 Festlegen und Ändern von Berechtigungen, Beschreibungen und anderen Details von Alben und Dateien
-Hinzufügen oder Ändern von Alben, deren Berechtigungen, Beschreibung usw.
+Alben, ihre Berechtigungen, Beschreibung usw. hinzufügen oder ändern
 Hinzufügen, Anzeigen und Bearbeiten von Galerie-Benutzern
-Hinzufügen, Anzeigen und Bearbeiten von Galeriengruppen
+Hinzufügen, Anzeigen und Bearbeiten von Galerie-Gruppen
 Bilder innerhalb der Galerie kopieren oder verschieben
-Bilder für den Upload mit anderen Apps auswählen und mit PIWIGO teilen.
-Spezieller schreibgeschützter App-Modus verfügbar, um unerwünschte Änderungen an der Galerie zu verhindern.
-Etwas Kontrolle über das Layout der Bildschirme in der App (verwenden Sie diese, um den Bildschirm auf Ihrem Gerät anzupassen).
+Bild(er) zum Hochladen mit anderen Anwendungen auswählen und mit PIWIGO teilen
+Spezieller schreibgeschützter Modus der Anwendung verfügbar, um unerwünschte Änderungen an der Galerie zu verhindern
+Etwas Kontrolle über das Layout der Bildschirme in der App (zur Anpassung an den Bildschirm Ihres Geräts)
 
 Unterstützte Server-Plugins: Community, piwigo_privacy, videojs.
 
-Möchten Sie etwas anderes, das nicht aufgeführt ist? Probieren Sie die App aus. Wenn es nicht genau das tut, was du brauchst. Schicken Sie mir eine E-Mail über den Link in der App und ich werde mich mit dem Hinzufügen der fehlenden Funktion(en) befassen.
+Wünschen Sie etwas anderes, das nicht aufgelistet ist? Versuchen Sie die App. Wenn sie nicht genau das tut, was Sie brauchen. Schicken Sie mir eine E-Mail über den Link in der Anwendung, und ich werde versuchen, die fehlende(n) Funktion(en) hinzuzufügen.
 
 Bevorstehende Änderungen:
 
-Es ist beabsichtigt, die Benutzeroberfläche schrittweise zu verbessern, und einer der Benutzer, David Klement, hat freundlicherweise einige Vorschläge für zukünftige Bildschirmlayouts gemacht, die ich ab Version 1.3.95 verwendet habe und die zweifellos weitere Ideen enthalten werden. Die Vorschläge sind in vollem Umfang verfügbar:
+Es ist beabsichtigt, die Benutzerschnittstelle nach und nach zu verbessern, und einer der Benutzer, David Klement, hat freundlicherweise einige Vorschläge für zukünftige Bildschirm-Layouts gemacht, die ich seit Version 1.3.95 verwende und von denen ich zweifellos weitere Ideen übernehmen werde. Die Vorschläge sind in vollem Umfang verfügbar:
 https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
 
 Bekannte Einschränkungen:
 
-1. Kommentare werden derzeit nicht unterstützt - Sie können Kommentare weder sehen noch hinzufügen. Wenn dir diese fehlende Funktion wichtig ist - sprich bitte mit mir.
-2. Die Anzahl der Dateien, die einem Upload-Job hinzugefügt werden können, ist in dieser kostenlosen Version auf 5 begrenzt (verwenden Sie die kostenpflichtige Version, um diese Grenze aufzuheben).
+1. Kommentare werden derzeit nicht unterstützt - Sie können weder Kommentare sehen noch hinzufügen. Wenn diese fehlende Funktion für Sie wichtig ist - bitte sprechen Sie mit mir.
+2. Die Anzahl der Dateien, die zu einem Upload-Job hinzugefügt werden können, ist in dieser kostenlosen Version auf 5 beschränkt (benutzen Sie die kostenpflichtige Version, um diese Beschränkung aufzuheben).
