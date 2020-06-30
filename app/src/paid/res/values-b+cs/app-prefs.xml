@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+
+    <string name="preference_page_auto_upload_jobs">Automatické nahrávání</string>
+    <string name="preference_data_upload_automatic_title">Automatické nahrávání</string>
+    <string name="preference_data_upload_automatic_job_title">Úloha automatického nahrávání</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_enable_summary">Povolit nahrávání na pozadí</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatické nahrávání</string>
+    
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Automatické odesílání používejte pouze v bezdrátové síti</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Pouze bezdrátově</string>
+    
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_jobs_title">Úlohy automatického nahrávání</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">Úkoly:%1$d</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">Zobrazit stav nahrávání</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Zobrazení stavu od posledního spuštění úlohy (pokud je k dispozici)</string>
+
+    
+    <string name="preference_data_upload_automatic_job_is_valid_title">Úloha je platná</string>
+
+    
+    <string name="preference_data_upload_automatic_job_enabled_summary">Použije služba nahrávání tuto úlohu?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Job Enabled</string>
+    
+
+    <string name="preference_data_upload_automatic_job_server_title">Nahrát na server</string>
+    
+    <string name="preference_data_upload_automatic_job_server_summary">Profil:%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_server_album_title">Nahrát do alba</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">Nahrát ze složky</string>
+    
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Odstraňte úspěšně nahrané soubory</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatické mazání</string>
+    
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Nahráno Max. Velikost souboru</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+    
+    
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Přípony souborů</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Nahrajte soubory s ext%1$s</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Úroveň soukromí</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Nahrané soubory viditelné pro%1$s</string>
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatická postupnost prezentace</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Po uplynutí nastaveného času se zobrazí další obrázek nebo video</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Prodleva obrazu automatické jednotky</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisecs</string>
+    
+    
+    
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Zpoždění videa s automatickým pohonem</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisecs</string>
+    
+    
+    
+    
+</resources>

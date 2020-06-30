@@ -1,0 +1,44 @@
+Slouží k procházení PIWIGO fotogalerie.
+
+POZNÁMKA: EULA musí být přijata ke stažení.
+
+Pokud se vám aplikace líbí, ale ne inzeráty, hledejte placenou verzi, která je bezplatná pro inzerci a má postupně více funkcí.
+
+** Aplikace se aktivně vyvíjí **
+** Pokud něco nefunguje - napište mi - bude to opraveno **
+
+Úplný seznam funkcí níže.
+
+Připojte se k serverům provozovaným na nestandardních portech http nebo https
+Přijměte neplatné (špatné jméno hostitele) nebo certifikáty serveru s vlastním podpisem, pokud je to požadováno
+je podporováno připínání certifikátů serveru (ověřte certs proti lokální kopii)
+Zobrazujte obrázky v rozlišení optimalizovaném pro vaši obrazovku (nebo vyberte ten, který chcete).
+Zobrazit a povolit přiblížení obrázků libovolné velikosti dostupné na serveru
+Podívejte se na videa MP4 (ostatní by také měli fungovat, ale jiné formáty jsem netestoval)
+Stahujte obrázky.
+Uložte plně stažená videa
+Volitelně vyloučit videa z prezentací
+Ohodnoťte obrázky a zobrazte průměrné hodnocení
+Nahrajte nové obrázky nebo videa (lze libovolně komprimovat)
+Nastavení a změna oprávnění, popisu a dalších podrobností o albech a souborech
+Přidat nebo změnit alba, jejich oprávnění, popis atd
+Přidávejte, zobrazujte a upravujte uživatele galerie
+Přidat, zobrazit a upravit skupiny galerií
+Kopírování nebo přesouvání obrázků v galerii
+Vyberte obrázky k nahrání pomocí jiných aplikací a sdílejte je s PIWIGO
+K dispozici je speciální režim jen pro čtení aplikací, který zabraňuje nežádoucím změnám v galerii
+Některá kontrola nad rozvržením obrazovek v aplikaci (slouží k přizpůsobení obrazovky na vašem zařízení)
+
+Podporované serverové pluginy: komunita, piwigo_privacy, videojs.
+
+Chcete ještě něco jiného? Vyzkoušejte aplikaci. Pokud to nedělá přesně to, co potřebujete. Zašlete mi e-mail pomocí odkazu v aplikaci a podívám se na přidání chybějících funkcí.
+
+Připravované změny:
+
+Záměrem je postupné zdokonalování uživatelského rozhraní a jeden z uživatelů, David Klement, laskavě poskytl několik návrhů na další rozvržení obrazovky, které jsem začal používat od verze 1.3.95 a nepochybně vezmeme další nápady. Návrhy jsou k dispozici v plné výši:
+https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+
+Známá omezení:
+
+1. Komentáře momentálně nejsou podporovány - nemůžete vidět ani přidávat komentáře. Pokud je pro vás tato chybějící funkce důležitá - promluvte si prosím se mnou.
+2. Počet souborů, které lze přidat k úloze uploadu, je v této bezplatné verzi omezen na 5 (tento limit použijte k placené verzi)
