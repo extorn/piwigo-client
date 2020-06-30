@@ -22,8 +22,8 @@
     <string name="gallery_subcategory_summary_text_pattern">Sub-álbumes%1$d y fotos%2$d</string>
     <string name="alert_title_login">Iniciar sesión</string>
     <string name="alert_title_connectionTest">Prueba de conexión</string>
-    <string name="alert_message_success_connectionTest">Éxito \ n Tipo de usuario:%1$s.</string>
-    <string name="alert_message_no_available_image_sizes">Advertencia \ nEl servidor no informó los tamaños de imagen disponibles.</string>
+    <string name="alert_message_success_connectionTest">Éxito \n Tipo de usuario:%1$s.</string>
+    <string name="alert_message_no_available_image_sizes">Advertencia \nEl servidor no informó los tamaños de imagen disponibles.</string>
     <string name="alert_success">¡ÉXITO!</string>
     <string name="alert_partial_success">INCOMPLETO</string>
     <string name="alert_error">Error</string>
@@ -305,8 +305,8 @@
     <string name="alert_title_error_connecting_to_server">Error al conectarse al servidor</string>
     <string name="alert_warning_message_self_signed_certificates">Los certificados SSL autofirmados no deben usarse en un servidor público (en Internet); investigue en https://letsencrypt.org o similar. Esto es solo para fines de prueba.</string>
     <string name="alert_error_adding_certificate_to_truststore">Error al agregar certificado a la tienda de confianza</string>
-    <string name="alert_add_cert_to_truststore_pattern">¿Agregar cadena de certificado a la lista de CA confiables? \ N \ n</string>
-    <string name="certificate_summary_pattern">Asunto:%1$s \ n Válido:%2$s -%3$s \ n Serie:%4$s</string>
+    <string name="alert_add_cert_to_truststore_pattern">¿Agregar cadena de certificado a la lista de CA confiables? \n \n</string>
+    <string name="certificate_summary_pattern">Asunto:%1$s \n Válido:%2$s -%3$s \n Serie:%4$s</string>
     <string name="alert_http_engine_shutdown">Apagado del motor HTTP. Se reiniciará automáticamente según sea necesario.</string>
     <string name="alert_clearing_certificate_use_history">Restablecer la lista de certificados elegidos para ser confiables</string>
     <string name="alert_delete_all_files_selected_for_upload">¿Eliminar todos los archivos seleccionados para cargar?</string>
@@ -419,7 +419,7 @@
     <string name="alert_msg_piwigo_method_not_available_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor. Deshabilitar la funcionalidad afectada en la aplicación. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="removing_favorite">Eliminar favoritos</string>
     <string name="adding_favorite">Agregar favorito</string>
-    <string name="alert_error_unsupported_features_pattern">Algunas funciones que admite esta aplicación no están disponibles en su servidor. Para habilitar: \ n1. Instale el complemento PiwigoClientWsExts. \ N2. Cierre la sesión y vuelva a iniciarla en esta aplicación. \ N \ nSe le recordará en una semana.</string>
+    <string name="alert_error_unsupported_features_pattern">Algunas funciones que admite esta aplicación no están disponibles en su servidor. Para habilitar: \n1. Instale el complemento PiwigoClientWsExts. \n2. Cierre la sesión y vuelva a iniciarla en esta aplicación. \n \nSe le recordará en una semana.</string>
     <string name="tag_will_be_created_when_resource_is_saved">Uso del complemento de etiquetas de usuario para agregar una nueva etiqueta. La etiqueta solo se creará una vez que se guarde el recurso.</string>
     <string name="resource_details_updated_message">Detalles de recursos actualizados</string>
     <string name="alert_server_call_in_progress_please_wait">Llamada del servidor en curso. Espere a que esto se complete antes de volver a intentarlo.</string>

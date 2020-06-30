@@ -1,9 +1,11 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
+    
     <string name="notification_title_background_upload_service">Фоновая служба загрузки Piwigo</string>
     <string name="notification_text_background_upload_running">Запуск загрузки</string>
     <string name="notification_text_background_upload_sleeping">Спать. Следующий запуск на%1$tR</string>
-    <string name="notification_text_background_upload_polling">Опрос на файлы для загрузки.</string>
+    <string name="notification_text_background_upload_polling">Опрос для загрузки файлов.</string>
+
 
     <string name="alert_warning_auto_upload_service_stopped">Не забудьте запустить службу фоновой загрузки, если вы хотите, чтобы ваши задания запускались</string>
     <string name="alert_auto_upload_service_stopped">Служба фоновой загрузки остановлена</string>
@@ -25,8 +27,8 @@
     <string name="preference_data_upload_automatic_job_category_server_settings">Настройки сервера</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Локальные настройки</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Сжатие перед загрузкой</string>
-    <string name="ignoring_job_connection_profile_set_for_offline_access">Профиль подключения установлен в автономный режим. Игнорируя работу</string>
-    <string name="ignoring_job_local_folder_not_found">Локальная папка больше не существует. Игнорируя работу</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">Не выбраны расширения файлов для загрузки. Игнорируя работу</string>
+    <string name="ignoring_job_local_folder_not_found">Локальная папка больше не существует. Игнорирование работы</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Не выбраны расширения файлов для загрузки. Игнорирование работы</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Профиль подключения установлен в автономный режим. Игнорирование работы</string>
     <string name="slideshow_auto_drive_paused">Слайд-шоу Autodrive приостановлено до следующего слайда</string>
 </resources>
