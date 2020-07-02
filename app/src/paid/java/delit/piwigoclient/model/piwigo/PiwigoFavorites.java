@@ -2,8 +2,13 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import delit.libs.core.util.Logging;
 
 public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.FavoritesSummaryDetails, GalleryItem> implements Parcelable {
+
+    private static final String TAG = "PiwigoFavorites";
 
     public PiwigoFavorites(FavoritesSummaryDetails favoritesSummaryDetails) {
         super(favoritesSummaryDetails, "GalleryItem", favoritesSummaryDetails.getPhotoCount());
@@ -15,7 +20,9 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
 
     @Override
     public boolean setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
-        throw new UnsupportedOperationException("cannot reverse the order");
+        Logging.log(Log.ERROR, TAG, "Unable to reverse the order of the items. Why is this being attempted?");
+//        throw new UnsupportedOperationException("cannot reverse the order");
+        return false;
     }
 
     @Override
