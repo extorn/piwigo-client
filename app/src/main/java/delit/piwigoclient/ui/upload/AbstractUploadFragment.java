@@ -1154,7 +1154,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     private void updateActiveJobActionButtonsStatus() {
         if (uploadJobId != null) {
-            UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+            Context ctx = getContext();
+            if(ctx == null) {
+                Logging.log(Log.WARN, TAG, "Unable to update active job action button status as context is null");
+                return;
+            }
+            UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
             if (job != null) {
                 uploadJobStatusButton.setVisibility(VISIBLE);
                 boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully();
