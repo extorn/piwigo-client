@@ -245,7 +245,7 @@ public class ParcelUtils {
         ArrayList<S> keys = readValue(in, loader, ArrayList.class);
         ArrayList<T> values = readValue(in, loader, ArrayList.class);
         if(dest == null) {
-            dest = (V)new HashMap<S,T>(keys.size());
+            dest = (V)new HashMap<S,T>(keys != null ? keys.size() : 0);
         }
         if(keys != null && values != null) {
             for(int i = 0; i < values.size(); i++) {
