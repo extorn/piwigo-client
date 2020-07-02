@@ -109,8 +109,9 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     @Override
     public Class<? extends P> getFragmentType(int position) {
         int slideshowIdx = galleryResourceItems.get(position);
+        GalleryItem galleryItem = null;
         try {
-            GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
+            galleryItem = gallery.getItemByIdx(slideshowIdx);
             if (galleryItem instanceof PictureResourceItem) {
                 if ("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
                     return (Class<? extends P>) AlbumGifPictureItemFragment.class;
@@ -125,7 +126,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         } catch(IndexOutOfBoundsException e) {
             Logging.log(Log.ERROR, TAG, "The gallery has %1$d items. Requested item that isn't present.", gallery.getItemCount());
         }
-        throw new IllegalArgumentException("Unsupported slideshow item type at slideshow position " + position + " and slideshow idx " + slideshowIdx + " with gallery of size " + gallery.getItemCount());
+        throw new IllegalArgumentException("Unsupported slideshow item type ("+galleryItem+") at slideshow position " + position + " and slideshow idx " + slideshowIdx + " with gallery of size " + gallery.getItemCount());
     }
 
     @Override
