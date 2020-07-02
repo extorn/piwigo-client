@@ -125,7 +125,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         try {
             loadModelFromArguments();
 
-            if (resourceContainer == null) {
+            if (resourceContainer == null || resourceContainer.getItemCount() == 0) {
                 // attempt to get back to a working fragment.
                 try {
                     getParentFragmentManager().popBackStackImmediate();
