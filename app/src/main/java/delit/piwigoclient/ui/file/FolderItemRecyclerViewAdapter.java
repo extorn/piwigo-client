@@ -209,6 +209,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     private static class FolderItemFilter {
 
+        private static final String TAG = "FolderItemFilter";
         private boolean showFolderContents;
         private Set<String> visibleFileTypes;
         private String[] visibleMimeTypes;
@@ -224,6 +225,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         private boolean filenameMatches(FolderItem item) {
+            if(item == null) {
+                Logging.log(Log.WARN, TAG, "Folder adapter seems to contain a null item which is very odd");
+                return false;
+            }
             if (visibleFileTypes == null) {
                 return true;
             }
