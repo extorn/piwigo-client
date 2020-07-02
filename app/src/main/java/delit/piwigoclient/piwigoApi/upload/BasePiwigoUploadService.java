@@ -212,7 +212,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    public static UploadJob getActiveForegroundJob(Context context, long jobId) {
+    public static UploadJob getActiveForegroundJob(@NonNull Context context, long jobId) {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.getJobId() == jobId) {
@@ -274,16 +274,20 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return jobs;
     }
 
-    private static UploadJob loadForegroundJobStateFromDisk(Context c) {
+    private static @Nullable UploadJob loadForegroundJobStateFromDisk(Context c) {
 
         UploadJob loadedJobState = null;
 
-        DocumentFile sourceFile = getJobStateFile(c, false, -1);
-        if (sourceFile != null && sourceFile.exists()) {
-            loadedJobState = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), sourceFile, UploadJob.class);
-        }
-        if (loadedJobState != null) {
-            AbstractPiwigoDirectResponseHandler.blockMessageId(loadedJobState.getJobId());
+        try {
+            DocumentFile sourceFile = getJobStateFile(c, false, -1);
+            if (sourceFile != null && sourceFile.exists()) {
+                loadedJobState = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), sourceFile, UploadJob.class);
+            }
+            if (loadedJobState != null) {
+                AbstractPiwigoDirectResponseHandler.blockMessageId(loadedJobState.getJobId());
+            }
+        } catch(IllegalStateException e) {
+            // job file does not exist.
         }
         return loadedJobState;
     }
@@ -320,7 +324,15 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    private static @NonNull DocumentFile getJobStateFile(@NonNull Context c, boolean isBackgroundJob, long jobId) {
+    /**
+     *
+     * @param c
+     * @param isBackgroundJob
+     * @param jobId
+     * @return Job file if it exists - It does NOT ever create one if missing.
+     * @throws IllegalStateException if the job file does not exist.
+     */
+    private static @NonNull DocumentFile getJobStateFile(@NonNull Context c, boolean isBackgroundJob, long jobId) throws IllegalStateException {
         return getJobStateFile(c, isBackgroundJob, jobId,false);
     }
 
