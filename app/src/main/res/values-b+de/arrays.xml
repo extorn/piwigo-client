@@ -13,7 +13,7 @@
         <item>mittel (0,15 b/Pixel*Frame)</item>
         <item>hoch (0,2 b/Pixel*Frame)</item>
         <item>sehr hoch (0,25 b/Pixel*Frame)</item>
-        <item>ultrahoch (0,3 b/Pixel*Bild)</item>
+        <item>extrem hoch (0,3 b/Pixel*Bild)</item>
     </string-array>
 
     
@@ -22,8 +22,8 @@
     
 
     <string-array name="preference_album_subalbum_sort_order_items">
-        <item>Voreinstellung</item>
-        <item>Album-Name A-Z</item>
+        <item>Standardmäßig</item>
+        <item>Name des Albums A-Z</item>
         <item>Zuletzt aktualisiert</item>
     </string-array>
     
@@ -35,31 +35,31 @@
 
 
     <string-array name="preference_gallery_slideshow_image_scaletype_array">
-        <item>Voreinstellung</item>
+        <item>Standardmäßig</item>
         <item>an Bildschirmgröße anpassen</item>
         <item>Vergrößern und auf Bildschirmgröße zuschneiden</item>
-        <item>Mitte auf dem Bildschirm</item>
+        <item>auf dem Bildschirm zentrieren</item>
     </string-array>
 
     
 
     <string-array name="preference_gallery_item_slideshow_image_size_array">
-        <item>Best-Fit</item>
-        <item>Quadrat</item>
+        <item>am besten geeignet</item>
+        <item>quadratisch</item>
         <item>Daumen</item>
         <item>2klein</item>
         <item>xklein</item>
         <item>klein</item>
-        <item>mittel</item>
+        <item>Medium</item>
         <item>groß</item>
         <item>xgroß</item>
-        <item>xxvergrößern</item>
+        <item>xxgroß</item>
     </string-array>
 
     
 
     <string-array name="preference_gallery_item_thumbnail_size_array">
-        <item>Quadrat</item>
+        <item>quadratisch</item>
         <item>Daumen</item>
         <item>2klein</item>
         <item>xklein</item>
@@ -86,7 +86,7 @@
     
     <string-array name="user_types_array">
         <item>Webmaster</item>
-        <item>admin</item>
+        <item>Verwaltung</item>
         <item>normal</item>
         <item>generisch</item>
         <item>Gast</item>
@@ -123,19 +123,19 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Sie können nur die Dateien sehen, die zum Hochladen ausgewählt werden sollen und die zum Hochladen auf Ihren Server akzeptabel sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $conf['upload_form_all_types'] = true; statt false enthält"</item>
+        <item>"Sie können nur die Dateien sehen, die für den Upload ausgewählt werden sollen und die für den Upload auf Ihren Server akzeptabel sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $conf[\'upload_form_all_types\'] = true; statt false enthält"</item>
         <item>Wenn ein Upload einfach nicht erfolgreich ist, versuchen Sie, die Einstellung auf der Upload-Seite der Anwendungseinstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen.</item>
         <item>Fehler tritt immer auf, wenn versucht wird, Tags zu aktualisieren - \"Sie dürfen keine Tags löschen\" - Stellen Sie sicher, dass Benutzer Tags sowohl hinzufügen als auch löschen können (Server-Plugin-Einstellung)</item>
         <item>Tauschen Sie Dateien aus einer anderen Anwendung mit dieser Anwendung aus, um sie dem Upload-Bildschirm hinzuzufügen, damit sie auf Ihren aktuellen Server übertragen werden können.</item>
         <item>Langer Klick auf ein Bild (entweder Miniaturbild oder Diashow), das nicht geladen werden konnte, um es erneut abzurufen</item>
         <item>Langer Klick auf ein Album, um dieses Album und alle Inhalte zu löschen</item>
         <item>Langer Klick auf ein Albumbild, um eine Massenauswahl von Bildern für eine Aktion zu ermöglichen</item>
-        <item>Wenn Sie irgendein Bild in der Diashow betrachten, klicken Sie lange, um das Bild zu drehen / die angezeigte Bildgröße zu ändern / weiteres Zoomen zu ermöglichen</item>
-        <item> Sie können in ein Bild zoomen, wenn Sie es in einer Diashow betrachten, indem Sie zwei Finger auf dem Bildschirm zusammen- oder auseinanderziehen.</item>
-        <item> Wenn Sie als Administrator angemeldet sind, sollten Sie, bevor Sie Ihr Gerät einem Freund zum Betrachten Ihrer Fotos geben, die Anwendungssperre aktivieren, um unbeabsichtigte Änderungen an Ihrer Galerie zu verhindern.</item>
-        <item> Sobald Sie ein ganzes Video angesehen haben, können Sie dieses Video in Ihrem Download-Ordner speichern, wenn die lokale Dateispeicherung aktiviert ist.</item>
-        <item>Ein langer Klick auf die Schaltfläche \"Löschen\" auf einer \'Datei zum Hochladen\' löscht alle hochzuladenden Dateien (wenn der Auftrag nicht in Bearbeitung ist)</item>
-        <item>Wenn Bilder langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser Anwendung verwendete Größe generiert</item>
+        <item>Wenn Sie irgendein Bild in der Diashow betrachten, klicken Sie lange, um das gezeigte Bild zu drehen / die Bildgröße zu ändern / weiter zu zoomen</item>
+        <item>Sie können in ein Bild zoomen, wenn Sie es in einer Diashow betrachten, indem Sie zwei Finger auf dem Bildschirm zusammen- oder auseinanderziehen.</item>
+        <item>Wenn Sie als Administrator angemeldet sind, sollten Sie, bevor Sie Ihr Gerät einem Freund zum Betrachten Ihrer Fotos geben, die Anwendungssperre aktivieren, um unbeabsichtigte Änderungen an Ihrer Galerie zu verhindern.</item>
+        <item>Sobald Sie ein ganzes Video angesehen haben, können Sie dieses Video in Ihrem Download-Ordner speichern, wenn das lokale Dateicaching aktiviert ist.</item>
+        <item>Ein langer Klick auf die Schaltfläche \'Löschen\' auf einer \'Datei zum Hochladen\' löscht alle hochzuladenden Dateien (wenn der Auftrag nicht in Bearbeitung ist)</item>
+        <item>Wenn die Bilder nur langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser Anwendung verwendete Größe generiert.</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
@@ -143,7 +143,7 @@
             - behebt intermittierende, aber fehlerhafte HTTP 401-Fehler, die möglicherweise mit der zwischengespeicherten Antwort-Revalidierung zusammenhängen
             Änderungen:
          - Möglicherweise:
-            - Streichung aller oder der meisten Anzeigen zugunsten einer kostenlosen Probezeit gefolgt von einem abonnementbasierten Zahlungsmodell
+            - Streichung aller oder der meisten Anzeigen zugunsten einer kostenlosen Probezeit, gefolgt von einem abonnementbasierten Zahlungsmodell
             - Überprüfen Sie den aktuellen Anmeldestatus, um sicherzustellen, dass Album- und Bilderlisten immer korrekt sind
             - Überprüfen Sie die Unterstützung für das Hochladen auf ältere Server (z.B. piwigo.com - Version 2.8a)
             - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Erstellen von Waisenkindern)
@@ -202,8 +202,8 @@
                 - Wählen Sie die aktuell sichtbare Datei aus, wenn der Dateidownload-Dialog angezeigt wird."</item>
         <item>1.4.0.62</item>
         <item>"Fehlerbehebung:
-                - Vorzugs-Upgrade-Prozess für Leute, die eine mehrere Versionen alte Version der Anwendung auf die neueste verfügbare Version aktualisieren, behoben
-                - Job-Statusdatei hochladen und nicht speichern
+                - Vorzugs-Upgrade-Prozess korrigiert für Leute, die eine mehrere Versionen alte Version der Anwendung auf die neueste verfügbare Version upgraden
+                - Upload der Job-Statusdatei wird nicht gespeichert
                 - Upload-Auftrag (fälschlicherweise) gestartet, während das Video noch von der Gerätekamera geschrieben wird"</item>
         <item>1.4.0.61</item>
         <item>"Fehlerbehebung:
@@ -248,7 +248,7 @@
         <item>"Fehlerbehebung:
             - Abbruch eines Datei-Uploads und Verlassen der Upload-Seite vor dem Abbruch führt zum Absturz
             - Bezahlte Anwendung: Absturz bei der Verwendung von Russisch auf der Konfigurationsseite für das automatische Hochladen von Jobs
-            - bezahlte App: Das Aktualisieren der Tags-Liste für eine Ressource, bei der mindestens ein zuvor ausgewählter Tag nicht mehr existiert, führt zum Absturz (jetzt Benutzer warnen und entfernen)
+            - bezahlte App: Das Aktualisieren der Tags-Liste für eine Ressource, bei der mindestens ein zuvor ausgewählter Tag nicht mehr existiert, führt zu einem Absturz (jetzt Benutzer warnen und entfernen)
             - bezahlte App: App kann abstürzen, wenn Zielalbum für automatischen Upload-Job ausgewählt wird
             - Bezahlte Anwendung: bei Auswahl des Stammalbums als Zielalbum für den automatischen Upload wird der Name des ersten Albums als ausgewähltes Album angezeigt (fälschlicherweise)
             - bezahlte App: Hinweis: Mir ist nicht klar, dass die Auswahl des Galerie-Stammverzeichnisses als Upload-Ziel jemals sinnvoll ist, aber falls dies unter bestimmten Umständen der Fall ist, ist es erlaubt."</item>
@@ -263,11 +263,11 @@
         <item>1.4.0.50</item>
         <item>"Änderungen:
                 - Durchlassen von Audio als Komprimierungsoption erlauben
-                - Aktivierte Komprimierung für nicht 'Audio/Raw'-Mime-Audioströme
+                - Aktivierte Komprimierung für nicht \'Audio/Raw\'-Mime-Audioströme
                 - Option hinzufügen, um die Audiospur vom Video zu entfernen
                Fehlerbehebung:
                 - Stoppen Sie die Videokomprimierung, wenn das Video während der Komprimierung aus dem Upload gelöscht wird
-                - Beenden Sie das Hochladen eines Videos, wenn es während der Komprimierung aus dem Upload gelöscht wird.
+                - Stoppen Sie das Hochladen eines Videos, wenn es während der Komprimierung aus dem Upload gelöscht wird.
                 - die Upload-Fortschrittsanzeige für einzelne Dateien aufräumen"</item>
         <item>1.4.0.49</item>
         <item>"Fehlerbehebung:

@@ -37,15 +37,15 @@
     
 
     <string name="progress_clearing_failed_uploads_from_server">Vymazání všech neúspěšných nahrávání ze serveru</string>
-    <string name="cleared_failed_uploads_from_server_pattern">Vymazáno%1$d neúspěšných nahrávání ze serveru</string>
+    <string name="cleared_failed_uploads_from_server_pattern">Vymazání všech neúspěšných nahrávání ze serveru...</string>
 
     <string name="gallery_photos_summary_text_pattern">Fotky:%1$d</string>
     <string name="gallery_subcategory_summary_text_pattern">Dílčí alba%1$d a fotografie%2$d</string>
     
     <string name="alert_title_login">Přihlásit se</string>
     <string name="alert_title_connectionTest">Test připojení</string>
-    <string name="alert_message_success_connectionTest">Úspěch \nUživatelský typ:%1$s.</string>
-    <string name="alert_message_no_available_image_sizes">Varování \ Server nenahlásil dostupné velikosti obrázků.</string>
+    <string name="alert_message_success_connectionTest">Úspěch\nTyp uživatele:%1$s.</string>
+    <string name="alert_message_no_available_image_sizes">Úspěch\nTyp uživatele:%1$s....</string>
     <string name="alert_success">ÚSPĚCH!</string>
     <string name="alert_partial_success">NEÚPLNÝ</string>
     <string name="alert_error">Chyba</string>
@@ -64,37 +64,37 @@
     <string name="online_mode_menu_title">Režim online</string>
     <string name="gallery_menu_title">Galerie</string>
     <string name="upload_menu_title">nahrát</string>
-    <string name="upload_page_title">Piwigo Upload</string>
+    <string name="upload_page_title">Režim online...</string>
     <string name="gallery_to_alter_title">Nahrát do</string>
     <string name="login_button_title">Přihlásit se</string>
 
-    <string name="alert_question_enable_network_access">Povolit načítání dat ze serveru?</string>
+    <string name="alert_question_enable_network_access">Nahrát do...</string>
     <string name="alert_question_disable_network_access">Používat pouze data uložená v mezipaměti na tomto zařízení?</string>
 
-    <string name="upload_file_privacy_level_title">Úroveň ochrany souborů</string>
+    <string name="upload_file_privacy_level_title">Používat pouze data uložená v mezipaměti na tomto zařízení?...</string>
     <string name="cacheCleared_title">Mezipaměti</string>
     <string name="cacheClearingStarted_message">Vymazání mezipaměti</string>
     <string name="cacheCleared_message">Cache se uklidnila. Všechny obrázky budou staženy ze vzdáleného serveru, jakmile to bude požadováno.</string>
-    <string name="cacheClearFailed_message">Cache nelze v tuto chvíli vymazat. Pokud problém přetrvává, nahlaste chybu.</string>
-    <string name="videoCacheCleared_message">Video mezipaměť vymazána. Všechna videa budou na požádání stažena ze vzdáleného serveru.</string>
-    <string name="videoCacheClearFailed_message">Video cache nelze v tuto chvíli vymazat. Pokud problém přetrvává, nahlaste chybu.</string>
+    <string name="cacheClearFailed_message">Cache se uklidnila. Všechny obrázky budou staženy ze vzdáleného serveru, jakmile to bude požadováno....</string>
+    <string name="videoCacheCleared_message">Cache nelze v tuto chvíli vymazat. Pokud problém přetrvává, nahlaste chybu.</string>
+    <string name="videoCacheClearFailed_message">Video mezipaměť vymazána. Všechna videa budou na požádání stažena ze vzdáleného serveru.</string>
 
     <string name="title_activity_view_gallery">Zobrazit galerii</string>
-    <string name="navigation_drawer_open">Otevřete navigační šuplík</string>
+    <string name="navigation_drawer_open">Zobrazit galerii...</string>
     <string name="navigation_drawer_close">Zavřete navigační zásuvku</string>
 
-    <string name="notification_upload_paused">Nahrávání PIWIGO bylo pozastaveno</string>
+    <string name="notification_upload_paused">Zavřete navigační zásuvku...</string>
     <string name="notification_upload_resumed">Nahrávání PIWIGO bylo obnoveno</string>
 
     <string name="alert_items_for_upload_already_exist_message_pattern">Na serveru již existují soubory%1$d. Jejich oprávnění se změní tak, aby odpovídaly těm vybraným zde. V případě potřeby budou s tímto albem spojena.</string>
     <string name="alert_upload_success">Nahrávání bylo dokončeno.</string>
-    <string name="alert_upload_partial_success">Nahrávání bylo dokončeno. Soubory, které nebylo možné nahrát, zůstanou v seznamu pro opakování, pokud budou chtít. Pokud jsou některé akce neúplné, nemůžete do seznamu nahrávat nové soubory. Dokončete je kliknutím na tlačítko nahrát.</string>
-    <string name="alert_upload_failed_piwigo">Nahrávání selhalo kvůli chybě na serveru PIWIGO (%1$d:%2$s).</string>
+    <string name="alert_upload_partial_success">Nahrávání bylo dokončeno....</string>
+    <string name="alert_upload_failed_piwigo">Nahrávání bylo dokončeno. Soubory, které nebylo možné nahrát, zůstanou v seznamu pro opakování, pokud budou chtít. Pokud jsou některé akce neúplné, nemůžete do seznamu nahrávat nové soubory. Dokončete je kliknutím na tlačítko nahrát....</string>
     <string name="alert_upload_failed_webserver">Nahrávání se nezdařilo z důvodu chyby webového serveru (%1$d:%2$s).</string>
     <string name="alert_upload_failed_webresponse">Nahrávání se nezdařilo kvůli chybě při zpracování odpovědi PIWIGO. To je pravděpodobně způsobeno změnou API PIWIGO API. Nepřekonatelná odpověď:%1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Nahrání bloku pro soubor%1$s se nezdařilo. Ukončení nahrávání souboru.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Soubor%1$s již není v zařízení k dispozici. Možná byl odstraněn nebo přesunut. \n%2$s</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Při nahrávání souboru%1$s došlo k chybě. \n%2$s</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Soubor%1$s již není v zařízení k dispozici. Možná byl odstraněn nebo přesunut.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Při nahrávání souboru%1$s došlo k chybě.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Nahraný soubor%1$s je již na serveru přítomen, akce byla zrušena.</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">Chyba při přidávání nahraného souboru%1$s do alba. Opakovat?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Nahrání souboru%1$s selhalo kvůli chybě na serveru PIWIGO (%2$d:%3$s).</string>
@@ -104,24 +104,24 @@
 
     
     <string name="createGallery_pageTitle">Vytvoření alba</string>
-    <string name="createGallery_parentGalleryTitle">Rodičovské album</string>
+    <string name="createGallery_parentGalleryTitle">Vytvoření alba...</string>
     <string name="createGallery_galleryNameTitle">Název alba</string>
     <string name="createGallery_galleryDescriptionTitle">Popis</string>
     <string name="createGallery_galleryCommentsAllowed">Umožnit uživatelům přidávat komentáře</string>
     <string name="createGallery_galleryIsPrivate">Album je soukromé?</string>
     <string name="createGallery_permissions_allowedGroupsTitle">Povolené skupiny</string>
-    <string name="createGallery_permissions_allowedUsersTitle">Povolení uživatelé</string>
+    <string name="createGallery_permissions_allowedUsersTitle">Povolené skupiny...</string>
     <string name="createGallery_createGalleryButtonTitle">Vytvořit album</string>
     <string name="createGallery_alert_permissions_set_failed_gallery_deleted">Oprávnění nelze v galerii správně nastavit. Smazáno znovu. Prosím zkuste to znovu. Pokud chyba přetrvává, upozorněte na problém s touto aplikací, abychom ji mohli vylepšit, a krok proveďte ručně.</string>
 
     <string name="logging_in_to_piwigo_pattern">Přihlašování do%1$s</string>
 
-    <string name="delete_upload_job_button_title">Smazat úlohu</string>
+    <string name="delete_upload_job_button_title">Přihlašování do%1$s...</string>
     <string name="upload_files_button_title">nahrát</string>
     <string name="upload_files_finish_job_button_title">Dokončit</string>
     <string name="upload_job_status_button">Postavení</string>
     <string name="alert_really_delete_upload_job">Tímto se odstraní stav úlohy z tohoto zařízení. Budete muset ručně vyčistit všechny soubory částečně nahrané na server (nebo použít předvolby v této aplikaci - stránka nastavení nahrávání). Úlohy budou často úspěšně dokončeny, pokud je znovu obnovíte později. Jste si jisti, že chcete učinit tento drastický krok?</string>
-    <string name="loading_please_wait">Načítání prosím čekejte</string>
+    <string name="loading_please_wait">Tímto se odstraní stav úlohy z tohoto zařízení. Budete muset ručně vyčistit všechny soubory částečně nahrané na server (nebo použít předvolby v této aplikaci - stránka nastavení nahrávání). Úlohy budou často úspěšně dokončeny, pokud je znovu obnovíte později. Jste si jisti, že chcete učinit tento drastický krok?...</string>
     <string name="alert_title_server_error">Chyba serveru</string>
     <string name="alert_server_error_pattern">Server vrátil chybu HTTP:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Chyba při analýze odpovědi piwigo</string>
@@ -136,18 +136,18 @@
     <string name="slideshow_resource_action_move">Přesunout do alba</string>
     <string name="slideshow_image_details_actions">Akce</string>
     <string name="slideshow_image_details_exif">EXIF Data</string>
-    <string name="slideshow_image_details_comments">Komentáře</string>
+    <string name="slideshow_image_details_comments">EXIF Data...</string>
 
     <string name="gallery_details_updating_progress_title">Aktualizace alba</string>
     <string name="progress_resource_details_updating">Aktualizace podrobností zdroje</string>
     <string name="gallery_details_name_title">Název alba</string>
-    <string name="gallery_details_description_title">Popis alba</string>
+    <string name="gallery_details_description_title">Aktualizace podrobností zdroje...</string>
     <string name="gallery_details_save_button">Uložit</string>
     <string name="gallery_details_discard_button">Vyřadit</string>
     <string name="gallery_action_delete_progress_title">Mazání alba</string>
     <string name="gallery_action_delete_error_subcategories_present">Album, které obsahuje dílčí alba, nelze smazat. Nejprve je prosím smažte.</string>
     <string name="gallery_action_delete_error_photos_present">Album, které obsahuje fotografie nebo jiné soubory, nelze smazat. Nejprve je prosím smažte.</string>
-    <string name="notification_upload_event">Piwigo Upload</string>
+    <string name="notification_upload_event">Režim online...</string>
     <string name="progress_downloading">Stahování souboru</string>
     <string name="alert_error_unimplemented">Funkce zatím není implementována.</string>
     <string name="button_ok">dobře</string>
@@ -158,7 +158,7 @@
     <string name="alert_question_title">Otázka</string>
     <string name="alert_confirm_really_delete_from_server">Tím bude položka trvale odstraněna ze serveru. Pokračovat?</string>
     <string name="alert_confirm_really_delete_items_from_server">Tím budou položky trvale odstraněny ze serveru. Pokračovat?</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Požádali jste o smazání%1$d prostředků, které jsou sdíleny s jinými alby. Přejete si je odstranit ze všech alb (a ze serveru - natrvalo), nebo je jednoduše z tohoto alba odpojit?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Tím budou položky trvale odstraněny ze serveru. Pokračovat?...</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Požádali jste o odstranění%1$d prostředků. Přejete si je odstranit ze všech alb (a ze serveru) - natrvalo, nebo je jednoduše odpojit od této značky?</string>
     <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Požádali jste o odstranění%1$d prostředků. Chcete je odstranit ze všech alb (a ze serveru) - natrvalo? (Značky z obrázků nelze odebrat bez nainstalovaného pluginu UserTags na vašem serveru)</string>
     <string name="about_menu_title">O</string>
@@ -169,7 +169,7 @@
     <string formatted="false" name="eula">"Licenční smlouva s koncovým uživatelem (dále jen „smlouva“)
 Poslední aktualizace: 7. srpna 2018
 
-Než kliknete na „Souhlasím“, přečtěte si pozorně tuto licenční smlouvu s koncovým uživatelem („Smlouva“).
+Před kliknutím na „Souhlasím“ si prosím pozorně přečtěte tuto licenční smlouvu s koncovým uživatelem (dále jen „smlouva“).
 tlačítko, stahování nebo používání Piwigo Client („Aplikace“).
 
 Kliknutím na tlačítko „Souhlasím“, stažením nebo použitím aplikace souhlasíte s tím, že budete vázáni
@@ -192,7 +192,7 @@ Gareth Deli vám uděluje odvolatelnou, nevýhradní, nepřenosnou, omezenou lic
 stahovat, instalovat a používat aplikaci výhradně pro vaše osobní nebo komerční účely
 přísně v souladu s podmínkami této dohody.
 
-SOFTWARE JE POSKYTOVÁNY „TAK, AKO JE“, BEZ ZÁRUKY JAKÉKOLI DRUHY, VYJÁDŘENÉ NEBO IMPLIKOVANÉ, VČETNĚ, KTERÉ NEJSOU omezeny na ZÁRUKY OBCHODOVATELNOSTI, VHODNOSTI PRO URČITÝ ÚČEL A NEZÁVISLOST. V žádném případě NEPOSKYTUJÍ AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV ZA ŽÁDNÝ ZÁKAZ, POŠKOZENÍ NEBO DALŠÍ ODPOVĚDNOST, POKUD V AKCI SMLOUVY, TORTU NEBO JINÉ, VYPLÝVAJÍCÍ ZE SOFTWARU NEBO POUŽITÍ NEBO OSTATNÍCH OBCHODŮ SOFTWARE
+SOFTWARE JE POSKYTOVÁNY „TAK, AKO JE“, BEZ ZÁRUKY ŽÁDNÉHO DRUHU, VÝSLOVNÉ NEBO IMPLIKOVANÉ, VČETNĚ NEJEDNÁVANÝCH ZÁRUK OBCHODOVATELNOSTI, VHODNOSTI PRO URČITÝ ÚČEL A NEZÁVISLOST. V žádném případě NEPOSKYTUJÍ AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV ZA ŽÁDNÉ ZÁRUKY, POŠKOZENÍ NEBO OSTATNÍ ODPOVĚDNOST, ČIŽ PŘI ČINNOSTI SMLOUVY, TORTU NEBO JINÉ, VYPLÝVAJÍCÍ ZE SOFTWARU NEBO POUŽITÍ NEBO OSTATNÍCH OBCHODŮ SOFTWARE
 
 
 Omezení
@@ -212,9 +212,9 @@ Do této aplikace byla přidána integrace Firebase, která usnadňuje sledován
 
 Omezená záruka a vyloučení odpovědnosti
 
-Software je poskytován „tak, jak je“ a nabyvatel licence jej používá na vlastní nebezpečí.Gareth Deli neposkytuje žádné záruky za jeho použití, výkonnost nebo vhodnost pro určitý účel. Je vždy možné, že software obsahuje chyby (chyby) a nefunguje. Gareth Deli proto nezaručuje, že software je zcela bezchybný nebo že pracuje bez přerušení u všech počítačů a konfigurací.
+Software je poskytován „tak, jak je“ a nabyvatel licence jej používá na vlastní nebezpečí.Gareth Deli neposkytuje žádné záruky za jeho použití, výkonnost nebo vhodnost pro určitý účel. Je vždy možné, že software obsahuje chyby (chyby) a nefunguje. Gareth Deli proto nezaručuje, že software je zcela bez chyb nebo že funguje bez přerušení u všech počítačů a konfigurací.
 
-Je pouze na odpovědnosti držitele licence, aby zkontroloval, zda software vyhovuje jeho konkrétnímu účelu nebo zda splňuje jeho funkční a výkonnostní požadavky. Držitel licence je rovněž povinen otestovat, jak software pracuje na jeho zařízeních a jeho konfiguracích; před použitím softwaru v produkčním prostředí otestujte všechny případy použití a zkontrolujte, zda jsou data zpracována bez chyb a podle potřeby. To je životně důležité, pokud používáte software pro komerční účely.
+Je pouze na odpovědnosti držitele licence, aby zkontroloval, zda software vyhovuje jeho konkrétnímu účelu nebo zda splňuje jeho funkční a výkonnostní požadavky. Držitel licence je rovněž povinen otestovat, jak software pracuje na jeho zařízeních a jeho konfiguracích; před použitím softwaru v produkčních prostředích otestujte všechny případy použití a zkontrolujte, zda jsou data zpracována bez chyb a podle potřeby. To je životně důležité, pokud používáte software pro komerční účely.
 
 
 Omezení odpovědnosti
@@ -264,46 +264,62 @@ Kontaktní informace
 
 Pokud máte jakékoli dotazy týkající se této smlouvy, kontaktujte nás."
 </string>
-    <string name="about_content">"Tato aplikace byla napsána, aby mi umožnila snadnější přístup do mé fotogalerie na cestách.
+    <string name="about_content">"Gareth Deli neposkytuje žádné záruky za jeho použití, výkonnost nebo vhodnost pro určitý účel. Je vždy možné, že software obsahuje chyby (chyby) a nefunguje. Gareth Deli proto nezaručuje, že software je zcela bez chyb nebo že funguje bez přerušení u všech počítačů a konfigurací.
 
-Bude pravidelně aktualizován, aby přidal další funkce, z nichž některé jsem si myslel, jiné požadované uživateli.
-
-V srpnu 2018 se ke mně vrátil uživatel David Klement s maketami obrazovek pro profesionálnější design. Počínaje vydáním 1.3.95, začleňuji tyto myšlenky, počínaje obrazovkou pro zobrazení alba.
-Tento úplný seznam navrhovaných návrhů obrazovek je k dispozici na webových stránkách aplikace (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
-
-POZNÁMKA: Překlady jazyků se provádějí pomocí webových stránek www.Deepl.com nebo google translation translation. Pokud zjistíte zjevné chyby, dejte mi prosím vědět, abych je mohl opravit.
-
-Existují dvě verze, bezplatná verze (s reklamami) a placená verze (bez reklam). Můžete si vybrat, které z nich chcete. Momentálně nemůžete bezplatnou verzi upgradovat, nainstalovat placenou verzi a bezplatnou verzi odstranit.
-Poznámka: Verze se časem budou lišit. Většina změn bude provedena u bezplatných i placených verzí.
-
-V současné době má placená verze přidanou podporu pro značky:
-        Piwigo podporuje tagy do určité míry mimo krabici, ale plugin User Tags přidává další funkce (provedeno základní testování).
+Je pouze na odpovědnosti držitele licence, aby zkontroloval, zda software vyhovuje jeho konkrétnímu účelu nebo zda splňuje jeho funkční a výkonnostní požadavky. Držitel licence je rovněž povinen otestovat, jak software pracuje na jeho zařízeních a jeho konfiguracích; před použitím softwaru v produkčních prostředích otestujte všechny případy použití a zkontrolujte, zda jsou data zpracována bez chyb a podle potřeby. To je životně důležité, pokud používáte software pro komerční účely.
 
 
-V současné době poskytuje základní úroveň funkčnosti, která umožňuje navigaci po existující galerii, nahrávání nových fotografií a videí a vytváření nových kategorií v galerii. Některá pole mohou být jednou upravena, ale mnohá jsou stále jen pro čtení .... prozatím!
+Omezení odpovědnosti
 
-Mohu vás požádat, že pokud odinstalujete aplikaci, použijete odkaz v nabídce aplikace a pošlete mi e-mail s vysvětlením, proč aplikace nesplnila vaše potřeby, a mohu to vyřešit.
+Držitel licence odpovídá za důsledky používání softwaru a z toho vyplývající přímé a nepřímé škody, pokud je to legálně možné. Odpovědnost je omezena na kupní cenu, pokud je to legálně možné; jinak je omezeno na zákonně možné minimum.
 
-Verze serveru PIWIGO, se kterým jsem testována, je v současné době 2.10.2.
 
-Moje testovací galerie obsahuje pouze soubory JPG a MP4. Pokud váš obsahuje další, můžete se potýkat s problémy - pokud ano, řekněte mi to a upřednostním práci na těchto typech souborů.
+Údržba a podpora
 
-VAROVÁNÍ: Verze programu Piwigo pod 1.9.2 - nahrávání videí je podle mého názoru závislé na opravě # 756, která se použije na váš server.
+Gareth Deli poskytuje obecnou podporu pro aktuální verzi softwaru pouze prostřednictvím e-mailu. Starší verze nejsou podporovány.
 
-Testoval jsem kopii nainstalovaného pluginu piwigo_privacy a nainstalovaného pluginu VideoJS.
-Mám nainstalovanou kopii pluginu Extended Description, ale tato funkce bohužel zatím není prostřednictvím rozhraní PIWIGO API prozrazena.
-Chtěl bych zahrnout podporu pro „oblíbené“ fotografie, ale tato funkce se zatím nejeví jako odhalená prostřednictvím rozhraní PIWIGO API.
 
-Pokud narazíte na nějaké chyby, nahlaste mi prosím jakýkoli e-mail. Testoval jsem to na android emulátoru, telefonu Samsung a tabletu Samsung, ale je to moje první aplikace, takže jsem si jistý, že se pro někoho pokazí.
+Úpravy aplikace
 
-Velké poděkování všem, kteří mi poslali e-mail s návrhy nebo chybami. Budu se snažit řešit všechny vaše návrhy, jakmile to bude praktické.
+Gareth Deli si vyhrazuje právo dočasně nebo dočasně změnit, pozastavit nebo přerušit činnost
+natrvalo, aplikace nebo jakékoli služby, ke které se připojuje, s oznámením nebo bez něj a bez něj
+odpovědnost vůči vám.
 
-Rozhodněte se, prosím, ohlásit každé selhání, ke kterému dojde. Pokud zjistíte, že chyba přetrvává i po další aktualizaci, věnujte prosím čas e-mailu.Je pravděpodobné, že potřebuji trochu více kontextu kolem toho, co se děje těsně před tím, než dojde k chybě.
+
+Termín a ukončení
+
+Tato dohoda zůstává v platnosti, dokud není vypovězena vy nebo Gareth Deli.
+
+Gareth Deli může, podle svého výhradního uvážení, kdykoli a z jakéhokoli důvodu nebo bez důvodu,
+pozastavit nebo ukončit tuto dohodu s předchozím oznámením nebo bez něj.
+Tato dohoda skončí okamžitě, bez předchozího upozornění od Gareth Deli, v roce 2007
+v případě, že nebudete dodržovat žádné ustanovení této smlouvy. Můžete to také ukončit
+Souhlas odstraněním aplikace a všech jejích kopií z mobilního zařízení nebo z vašeho
+plocha počítače.
+Po ukončení této smlouvy ukončíte veškeré používání aplikace a vymažete všechny kopie
+aplikace z mobilního zařízení nebo z vašeho počítače.
+Oddělitelnost
+Pokud bude jakékoli ustanovení této dohody považováno za nevynutitelné nebo neplatné, bude tomu tak
+změněny a interpretovány tak, aby bylo v co největší míře dosaženo cílů takového poskytování
+podle platných právních předpisů a zbývající ustanovení zůstanou v platnosti a účinnosti.
+
+
+Změny této dohody
+
+Gareth Deli si vyhrazuje právo, podle svého výhradního uvážení, toto změnit nebo nahradit
+Dohoda kdykoli. Pokud je revize významná, oznámíme to nejméně 0 dní předem
+před nabytím účinnosti nových podmínek. To, co představuje podstatnou změnu, bude určeno naším
+výhradní uvážení.
+
+
+Kontaktní informace
+
+Pokud máte jakékoli dotazy týkající se této smlouvy, kontaktujte nás....Je pravděpodobné, že potřebuji trochu více kontextu kolem toho, co se děje těsně před tím, než dojde k chybě.
 
 Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby se frekvence uvolňovala. Níže je uveden plán a historie vydání. To se může změnit a věci se mohou zpozdit, ale můžete vidět, co je na seznamu."</string>
     <string name="licences_heading">Licence na zdroje použité v této aplikaci</string>
     
-    <string name="slideshow_image_details_name_title">Název zdroje</string>
+    <string name="slideshow_image_details_name_title">Název zdroje zdroje</string>
     <string name="slideshow_image_details_description_title">Popis zdroje</string>
     <string name="unlock_menu_title">Odemknout</string>
     <string name="lock_menu_title">Zámek</string>
@@ -319,7 +335,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="gallery_details_status_galleryIsPublic">Ne</string>
     <string name="gallery_details_status">Omezte přístup do této složky</string>
     <string name="gallery_details_allowed_groups_title">Povolené skupiny</string>
-    <string name="gallery_details_allowed_users_title">Povolení uživatelé</string>
+    <string name="gallery_details_allowed_users_title">Povolené skupiny...</string>
     <string name="click_to_view">Klikněte pro zobrazení</string>
     <string name="click_to_view_pattern">%1$d - Kliknutím zobrazíte / upravíte</string>
     <string name="alert_warning_lowMemory">Nedostatek paměti</string>
@@ -331,23 +347,23 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="action">Akce</string>
     <string name="copy_link">Kopírovat odkaz</string>
     <string name="download_file">Stáhnout soubor</string>
-    <string name="share_with_an_app">Sdílet s aplikací</string>
+    <string name="share_with_an_app">Kopírovat odkaz...</string>
     <string name="alert_image_show_image_title">Image Render Control</string>
     <string name="alert_image_show_image_message">Vyberte velikost souboru, kterou chcete zobrazit</string>
     <string name="alert_image_download_complete_message">Stahování dokončeno.</string>
     <string name="alert_error_unsupported_piwigo_version_pattern">Na serveru běží verze PIWIGO%1$s. Minimální verze testovaná v této aplikaci je%2$s. Některé funkce aplikace nemusí fungovat podle očekávání. Zkontrolujte prosím stránku s informacemi o zjištěných problémech.</string>
     <string name="notification_download_event">Soubor stažen</string>
     <string name="alert_image_download_cancelled_message">Stahování jste úspěšně zrušili</string>
-    <string name="app_licence_heading">EULA</string>
+    <string name="app_licence_heading">Stahování jste úspěšně zrušili...</string>
     <string name="button_agree">Souhlasím</string>
-    <string name="eula_menu_title">EULA</string>
+    <string name="eula_menu_title">Stahování jste úspěšně zrušili...</string>
     <string name="alert_warning">Varování</string>
     <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Velikost miniatury, kterou jste vybrali, není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek velikosti \"nejbližší shoda\".</string>
     <string name="rate_dialog_message">Pokud se vám tato aplikace líbí, bude vám vadit chvilku, abyste ji ohodnotili? Nebude to trvat déle než minutu. Děkuji za vaši podporu!</string>
     <string name="groups_menu_title">Skupiny</string>
     <string name="group_members_pattern">(%1$d členů)</string>
     <string name="alert_group_delete_success_pattern">Skupina (%1$s) byla úspěšně smazána</string>
-    <string name="alert_user_delete_success_pattern">Uživatel (%1$s) byl úspěšně smazán</string>
+    <string name="alert_user_delete_success_pattern">Skupina (%1$s) byla úspěšně smazána...</string>
     <string name="alert_group_delete_failed_pattern">Chyba při mazání skupiny (%1$s). Zkuste to prosím znovu.</string>
     <string name="alert_user_delete_failed_pattern">Chyba při mazání uživatele (%1$s). Zkuste to prosím znovu.</string>
     <string name="alert_confirm_really_delete_group">Opravdu chcete tuto skupinu smazat? Všichni uživatelé, kteří jsou jejími členy, nebudou smazáni, ale mohou ztratit přístup do oblastí galerie, které má tato skupina.</string>
@@ -388,7 +404,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="progress_loading_groups">Načítání skupin uživatelů</string>
     <string name="progress_loading_users">Načítání uživatelů</string>
     <string name="progress_loading_album_permissions">Načítání oprávnění alba</string>
-    <string name="progress_loading_group_details">Načítání podrobností skupiny</string>
+    <string name="progress_loading_group_details">Načítání oprávnění alba...</string>
     <string name="progress_delete_group">Mazání skupiny uživatelů</string>
     <string name="progress_loading_albums">Načítání alb</string>
     <string name="progress_loading_user_details">Načítání údajů o uživateli</string>
@@ -413,8 +429,8 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="group_is_default_title">Je výchozí?</string>
     <string name="progress_adding_group">Přidává se skupina</string>
     <string name="upload_unacceptable_files_prefix">Nepřijaté soubory</string>
-    <string name="alert_error_unable_to_access_local_filesystem">Bez přístupu k lokálnímu systému souborů nemůže tato akce pokračovat. Promiňte.</string>
-    <string name="alert_error_admin_user_required">Nahrát mohou pouze uživatelé administrátora, pokud není nainstalován plugin komunity. Promiňte.</string>
+    <string name="alert_error_unable_to_access_local_filesystem">Nepřijaté soubory...</string>
+    <string name="alert_error_admin_user_required">Bez přístupu k lokálnímu systému souborů nemůže tato akce pokračovat. Promiňte....</string>
     <string name="upload_username_title">Nahrát jako</string>
     <string name="certificates_heading">Certifikáty</string>
 
@@ -438,7 +454,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="slideshow_image_details_linked_albums_title">Propojená alba</string>
     <string name="list_ok_button">OK</string>
     <string name="alert_confirm_really_remove_album_permissions_pattern">Vybrali jste, abyste odebrali přístup k tomuto albu a navigovatelný přístup ke všem podřízeným albům od skupin%1$d a%2$d uživatelů. Pokračovat v této akci?</string>
-    <string name="alert_confirm_add_album_permissions_recursively_pattern">Vybrali jste, abyste přidali přístup k tomuto albu pro skupiny%1$d a%2$d uživatelů. Chcete tyto změny použít na dětská alba%3$d?</string>
+    <string name="alert_confirm_add_album_permissions_recursively_pattern">Vybrali jste, abyste odebrali přístup k tomuto albu a navigovatelný přístup ke všem podřízeným albům od skupin%1$d a%2$d uživatelů. Pokračovat v této akci?...</string>
     <string name="alert_information_own_user_readded_to_permissions_list">Vaše změny by vám zabránily v přístupu k tomuto albu. Vaše uživatelské jméno bylo přidáno do seznamu osob s výslovným povolením.</string>
     <string name="alert_information_add_album_permissions_recursively_pattern">Přidání oprávnění také k%1$d dětským albům.</string>
     <string name="alert_error_please_provide_an_album_name">Musí být uveden název tohoto alba. Přidejte jeden a zkuste to znovu.</string>
@@ -452,7 +468,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Vybraný obrázek není nativně podporován serverem, ke kterému jste připojeni. Server vrátí obrázek velikosti \"nejbližší shoda\".</string>
     <string name="logging_out_of_piwigo_pattern">Odhlášení z%1$s</string>
     <string name="loading_new_server_configuration">Načítání nové konfigurace připojení k serveru</string>
-    <string name="alert_write_permission_needed_for_caching_to_disk">Chcete-li povolit ukládání do mezipaměti na disk, je třeba udělit přístup k systému souborů. Pokud bude odmítnuto, bude ukládání do mezipaměti v paměti.</string>
+    <string name="alert_write_permission_needed_for_caching_to_disk">Chcete-li povolit ukládání do mezipaměti na disk, musí být udělen přístup pro zápis do systému souborů. Pokud bude odmítnuto, bude ukládání do mezipaměti v paměti.</string>
     <string name="error_request_timed_out">Hovor na server byl zrušen, protože dokončení trvalo příliš dlouho.</string>
     <string name="alert_information_video_caching_disabled">Ukládání do mezipaměti videí na disk je zakázáno</string>
     <string name="error_building_http_engine">Nelze vytvořit modul HTTP</string>
@@ -462,8 +478,8 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="alert_title_error_connecting_to_server">Při připojování k serveru došlo k chybě</string>
     <string name="alert_warning_message_self_signed_certificates">SSL certifikáty s vlastním podpisem by neměly být používány na veřejně orientovaném serveru (na internetu) - prozkoumejte na adrese https://letsencrypt.org nebo podobně. Toto je pouze pro účely testování.</string>
     <string name="alert_error_adding_certificate_to_truststore">Při přidávání certifikátu do úložiště důvěry došlo k chybě</string>
-    <string name="alert_add_cert_to_truststore_pattern">Přidat řetěz certifikátů do seznamu důvěryhodných CA? \n \n</string>
-    <string name="certificate_summary_pattern">Předmět:% 1 $ is \ inValid:%2$s -%3$s \nSerial:%4$s</string>
+    <string name="alert_add_cert_to_truststore_pattern">Přidat řetěz certifikátů do seznamu důvěryhodných certifikačních autorit?</string>
+    <string name="certificate_summary_pattern">Předmět:%1$s\nPlatné:%2$s -%3$s\nSériové číslo:%4$s</string>
     <string name="alert_http_engine_shutdown">Vypnutí modulu HTTP. Bude restartován automaticky podle potřeby.</string>
     
     <string name="alert_clearing_certificate_use_history">Obnovení seznamu certifikátů vybraných jako důvěryhodné</string>
@@ -481,7 +497,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="x509_cert_verified_by_field_pattern">Ověřeno:%1$s</string>
     <string name="x509_cert_valid_from_field_pattern">Platí od:%1$s</string>
     <string name="x509_cert_valid_to_field_pattern">Platné do:%1$s</string>
-    <string name="alert_warning_multiple_users_found_pattern">Bylo nalezeno%1$d dalších uživatelů, kteří sdílejí toto uživatelské jméno (%2$s). Byl vybrán nejnovější uživatel tohoto serveru Piwigo, ale není to bezpečné, pokud je možné, že budou server používat ve stejnou nebo podobnou dobu. Zvažte prosím změnu těchto uživatelských jmen, takže uživatelské jméno je jedinečný identifikátor pro danou třídu uživatele.</string>
+    <string name="alert_warning_multiple_users_found_pattern">Platné do:%1$s...</string>
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Tato oprávnění jsou potřebná pro zahájení procesu nahrávání a poté, co se obrazovka vypne, budou proces nahrávání pokračovat</string>
     <string name="alert_no_scheme_specified">Musíte předponu adresy serveru zadat buď http:// nebo https://. Nejsou podporovány žádné jiné programy. Port je volitelný, pokud je výchozí - 80 pro http nebo 443 pro https. Příklad http://piwigo.org/demo nebo http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Následující soubory%1$d překročily prahovou hodnotu varování:%2$s. Chcete je odstranit z nahrávání?</string>
@@ -523,8 +539,8 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="slideshow_image_details_tags_title">Značky</string>
     <string name="button_search">Vyhledávání</string>
 
-    <string name="file_selection_heading">Výběr souboru</string>
-    <string name="tag_heading_pattern">Značka:%1$s</string>
+    <string name="file_selection_heading">Vyhledávání...</string>
+    <string name="tag_heading_pattern">Výběr souboru</string>
     <string name="error_updating_tag_pattern">Chyba při odebírání zdroje (%1$s) ze značky:%2$s</string>
     <string name="alert_message_info_files_already_pending_approval_pattern">Soubory%1$d nebyly nahrány, protože jsou již nahrány, ale čekají na schválení správcem.</string>
     <string name="piwigo_connection_profile_heading">Profil připojení</string>
@@ -577,17 +593,17 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="alert_msg_piwigo_method_not_available_pattern">Metoda Piwigo WS%1$s již není na tomto serveru k dispozici. Zakázání ovlivněných funkcí v aplikaci. Právě jste deaktivovali nebo smazali serverový plugin?</string>
     <string name="removing_favorite">Odstraňování oblíbených položek</string>
     <string name="adding_favorite">Přidání oblíbené položky</string>
-    <string name="alert_error_unsupported_features_pattern">Některé funkce, které tato aplikace podporuje, nejsou na vašem serveru k dispozici. Povolení: \n1. Nainstalujte si doplněk PiwigoClientWsExts. \n2.Přihlaste se a znovu se přihlaste k této aplikaci. \n \nMůžete být upozorněni za týden.</string>
+    <string name="alert_error_unsupported_features_pattern">Některé funkce, které tato aplikace podporuje, nejsou na vašem serveru k dispozici. Umožnit:\n1. Nainstalujte plugin PiwigoClientWsExts.\n2.Log ven a zpět v této aplikaci.\n\nZa týden vám bude připomenuto.</string>
     <string name="tag_will_be_created_when_resource_is_saved">Pomocí pluginu User Tags přidejte novou značku. Značka bude vytvořena až po uložení zdroje.</string>
     <string name="resource_details_updated_message">Podrobnosti o zdroji byly aktualizovány</string>
     <string name="alert_server_call_in_progress_please_wait">Probíhá volání serveru. Než to zkusíte, vyčkejte prosím na dokončení.</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Na serveru existuje příliš mnoho osiřelých obrázků, aby bylo možné pokračovat v nahrávání. Než to zkusíte, vyčistěte je.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Nelze načíst seznam osiřelých obrázků. Zkuste to prosím znovu.</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Administrátor nemá přístup k očekávaným funkcím. K tomu může dojít, pokud použijete plugin pro komunitu (který předstírá stav administrátora pro uživatele, kteří nejsou administrátory), není správně nainstalován. Zkontrolujte, zda příslušný plugin správně odhaluje metody, které očekáváte od webového prohlížeče:%1$s / tools / ws.htm</string>
-    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Tato funkce není k dispozici. Nainstalujte si prosím na svůj server plugin PiwigoClientWsExts. Pokud ji již máte nainstalovanou, aktualizujte ji na nejnovější verzi.</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Tato funkce není k dispozici. Nainstalujte si prosím na svůj server plugin PiwigoClientWsExts. Pokud již máte nainstalovanou, aktualizujte ji na nejnovější verzi.</string>
     <string name="alert_user_session_no_allowed_filetypes">Server neposkytl seznam typů souborů, které lze nahrát s informacemi o relaci uživatele (obvykle se poskytuje pouze pro administrátory). Zkontrolujte, zda je server správně nakonfigurován, a zkuste to znovu. Pokud problém přetrvává, pošlete mi e-mail, aby mi pomohl diagnostikovat problém za vás.</string>
     <string name="job_not_found">Nahrát úlohu nenalezeno</string>
-    <string name="files_mid_data_transfer_title">Soubory částečně zkopírovány</string>
+    <string name="files_mid_data_transfer_title">Nahrát úlohu nenalezeno...</string>
     <string name="files_awaiting_verification_title">Soubory čekající na kontrolu integrity dat</string>
     <string name="files_awaiting_transfer_title">Soubory čekající na přenos dat</string>
     <string name="files_awaiting_configuration_title">Soubory čekající na konfiguraci</string>
@@ -630,8 +646,8 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="allow_upload_of_incompressible_videos">Pokud nelze komprimovat, nahrajte surový soubor</string>
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">Server nepřijme%1$d soubory vybrané pro upload. Pokud se jedná o videa, můžete povolit kompresi. Odebrat tyto soubory z nahrávání?</string>
     <string name="upload_status_tab_title_details">Podrobnosti</string>
-    <string name="upload_status_tab_title_errors">Chyby</string>
-    <string name="message_piwigo_server_inconsistent_results">Kontrolní součet souboru API pro volání%1$s neodpovídá, ale API volá zprávy%2$s, které se shodují. Může to být chyba na serveru PIWIGO nebo zásuvný modul, který používáte.</string>
+    <string name="upload_status_tab_title_errors">Podrobnosti...</string>
+    <string name="message_piwigo_server_inconsistent_results">Kontrolní součet souboru zpráv%1$s v protokolu Piwigo neodpovídá, ale API volá zprávy%2$s, které se shodují. Může to být chyba na serveru PIWIGO nebo zásuvný modul, který používáte.</string>
     <string name="alert_bulk_image_permissions_title">Nastavte přístupová oprávnění</string>
     <string name="alert_bulk_image_permissions_message">Nastavte úrovně oprávnění přístupu pro vybrané zdroje%1$d</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">Nelze zpracovat soubory sdílené s typem mime%1$s</string>
@@ -651,7 +667,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="alert_message_showing_image_thumbnails_of_size">Zobrazují se miniatury obrázků ze serveru o velikosti%1$s</string>
     <string name="alert_message_showing_album_thumbnails_of_size">Zobrazují se miniatury alb ze serveru o velikosti%1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Chyba při kompresi souboru pro upload%1$s. \n%2$s</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Chyba při kompresi souboru pro upload%1$s.\n%2$s</string>
     <string name="uploading_progress_bar_message">Nahrávání</string>
     <string name="compressing_progress_bar_message">Komprese</string>
     <string name="warning_missing_tags_links_removed_from_resource">Ne všechny tagy spojené s touto položkou stále existují v databázi. Odkazy na%1$d byly odstraněny</string>
@@ -665,10 +681,10 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="delete_uploaded_files_title">Odstraňte nahrané soubory</string>
     <string name="release_permissions_for_uri_pattern">Chcete uvolnit oprávnění pro tuto vybranou aplikaci pro staré vybrané Uri (%1$s)?</string>
     <string name="system_file_selector_label">výběr systémových souborů</string>
-    <string name="uri_still_needed_pattern">Litujeme, ale nemůžete odebrat oprávnění aplikace používat tento identifikátor URI. Aplikace stále potřebuje oprávnění k přístupu k tomuto URI pro: \n \n%1$s</string>
+    <string name="uri_still_needed_pattern">Litujeme, ale nemůžete odebrat oprávnění aplikace používat tento identifikátor URI. Aplikace stále potřebuje oprávnění k přístupu k tomuto URI pro:\n\n%1$s</string>
     <string name="no_suitable_activity_found">Nebyla nalezena žádná vhodná aktivita</string>
     <string name="preference_uri_consumer_description_pattern">Předvolba:%1$s</string>
-    <string name="missing_permissions_warning_message_pattern">"Od posledního otevření této aplikace byla odebrána oprávnění k souborům vyžadovaná následujícími částmi aplikace \n \n%1$s \n \nVyberte prosím nová oprávnění pro tato nastavení, aby věci fungovaly podle očekávání."</string>
+    <string name="missing_permissions_warning_message_pattern">"Od posledního otevření této aplikace byla odebrána oprávnění k souborům vyžadovaná následujícími částmi aplikace\n\n%1$s\n\nChcete-li, aby věci fungovaly podle očekávání, vyberte nová oprávnění pro tato nastavení."</string>
     <string name="folder_selection_title">Vybrat složku</string>
     <string name="files_selection_title">Vyberte Soubory</string>
     <string name="all">Všechno</string>

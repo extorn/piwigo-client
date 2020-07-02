@@ -8,9 +8,9 @@
 
 
     <string name="alert_warning_auto_upload_service_stopped">Nezapomeňte spustit službu nahrávání na pozadí, pokud chcete, aby se vaše úlohy spouštěly</string>
-    <string name="alert_auto_upload_service_stopped">Služba nahrávání na pozadí byla zastavena</string>
-    <string name="alert_auto_upload_service_started">Byla spuštěna služba nahrávání na pozadí</string>
-    <string name="alert_auto_upload_service_job_restarted">Zahájeno nahrávání dříve neúplné úlohy na server%1$s se soubory%2$d</string>
+    <string name="alert_auto_upload_service_stopped">Nezapomeňte spustit službu nahrávání na pozadí, pokud chcete, aby se vaše úlohy spouštěly...</string>
+    <string name="alert_auto_upload_service_started">Služba nahrávání na pozadí byla zastavena</string>
+    <string name="alert_auto_upload_service_job_restarted">Služba nahrávání na pozadí byla zastavena...</string>
     <string name="alert_auto_upload_service_job_started">Zahájení nahrávání úlohy na server%1$s se soubory%2$d</string>
     <string name="alert_auto_upload_service_job_finished_success">Dokončena běžící úloha odesílání na pozadí na server%1$s.</string>
     <string name="alert_auto_upload_service_job_finished_partial_success">Dokončena běžící úloha odesílání na pozadí na server%1$s. Některé soubory se nepodařilo nahrát a budou opakovány později.</string>

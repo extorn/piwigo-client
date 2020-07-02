@@ -1,75 +1,139 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <!-- Automatic Upload Jobs page -->
+    
 
-    <string name="preference_page_auto_upload_jobs">Chargement automatique</string>
-    <string name="preference_data_upload_automatic_title">Téléchargements automatique</string>
-    <string name="preference_data_upload_automatic_job_title">Téléchargement automatique du travail</string>
+    <string name="preference_page_auto_upload_jobs">Téléchargement automatique</string>
+    <string name="preference_data_upload_automatic_title">Téléchargements automatiques</string>
+    <string name="preference_data_upload_automatic_job_title">Chargement automatique d\'un travail</string>
 
-    <!-- prefs -->
+    
 
-
-    <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement de fichiers en arrière-plan</string>
+    
+    <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement en arrière-plan</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Téléchargements automatiques</string>
+    
 
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilisez uniquement le téléchargement automatique sur les réseaux sans fil</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Uniquement par voie hertzienne</string>
+    
+    
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utiliser uniquement le téléchargement automatique de fichiers sans fil</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Sans fil seulement</string>
-
-
-
-
-    <string name="preference_data_upload_automatic_upload_jobs_title">Téléchargement automatique des offres d\'emploi</string>
+    
+    <string name="preference_data_upload_automatic_upload_jobs_title">Chargement automatique d\'emplois</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Emplois</string>
 
-    <!-- boolean flag set that if false will stop the job running -->
+    
 
-    <string name="preference_data_upload_automatic_job_view_status_title">Afficher l\'état du téléchargement</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Afficher le statut de la dernière tâche exécutée (si disponible)</string>
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">Voir l\'état du téléchargement</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Voir le statut du dernier emploi (si disponible)</string>
 
-    <string name="preference_data_upload_automatic_job_is_valid_title">L\'emploi est valide</string>
+    
+    <string name="preference_data_upload_automatic_job_is_valid_title">L\'emploi est valable</string>
 
+    
+    <string name="preference_data_upload_automatic_job_enabled_summary">Le service de téléchargement utilisera-t-il cet emploi ?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Emploi activé</string>
+    
 
-    <string name="preference_data_upload_automatic_job_enabled_summary">Le service de téléchargement utilisera-t-il ce travail?</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">Activation de l\'emploi</string>
-
-
-    <string name="preference_data_upload_automatic_job_server_title">Téléchargement vers le serveur</string>
-
+    <string name="preference_data_upload_automatic_job_server_title">Téléchargement sur le serveur</string>
+    
     <string name="preference_data_upload_automatic_job_server_summary">Profil : %1$s</string>
 
-
-    <string name="preference_data_upload_automatic_job_server_album_title">Télécharger sur Album</string>
+    
+    <string name="preference_data_upload_automatic_job_server_album_title">Télécharger l\'album</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
-    <string name="preference_data_upload_automatic_job_local_folder_title">Charger à partir du dossier</string>
-
+    <string name="preference_data_upload_automatic_job_local_folder_title">Téléchargement à partir du dossier</string>
+    
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
-
+    
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Supprimer les fichiers téléchargés avec succès</string>
     <string name="preference_data_upload_automatic_job_delete_uploaded_title">Effacement automatique</string>
+    
+
+    
+    
+    
+    
 
 
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize téléchargé</string>
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Taille maximale des fichiers téléchargés</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
-
-
+    
+    
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensions de fichiers</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Télécharger des fichiers avec ext %1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Niveau de confidentialité</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléchargés visibles à %1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléchargés visibles par %1$s</string>
+    
+    
 
+    
+    
+    
+    
 
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
     <string name="preference_gallery_slideshow_auto_drive_title">Progression automatique du diaporama</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">Après l\'heure définie, l\'image ou la vidéo suivante s\'affichera</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retard d\'image de lecteur automatique</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Après l\'heure fixée, l\'image ou la vidéo suivante montrera</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retard de l\'image de conduite automatique</string>
     <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retard vidéo du lecteur automatique</string>
+    
+    
+    
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retard vidéo de la conduite automatique</string>
     <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
-
-
+    
+    
+    
+    
 </resources>

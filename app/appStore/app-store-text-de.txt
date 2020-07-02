@@ -41,4 +41,4 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 Bekannte Einschränkungen:
 
 1. Kommentare werden derzeit nicht unterstützt - Sie können weder Kommentare sehen noch hinzufügen. Wenn diese fehlende Funktion für Sie wichtig ist - bitte sprechen Sie mit mir.
-2. Die Anzahl der Dateien, die zu einem Upload-Job hinzugefügt werden können, ist in dieser kostenlosen Version auf 5 beschränkt (benutzen Sie die kostenpflichtige Version, um diese Beschränkung aufzuheben).
+2. Die Anzahl der Dateien, die zu einem Upload-Job hinzugefügt werden können, ist in dieser kostenlosen Version auf 5 beschränkt (benutzen Sie die kostenpflichtige Version, um diese Beschränkung aufzuheben)

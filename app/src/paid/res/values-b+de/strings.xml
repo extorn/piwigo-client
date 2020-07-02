@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="notification_title_background_upload_service">Piwigo Upload-Dienst im Hintergrund</string>
-    <string name="notification_text_background_upload_running">Laufender Upload-Job</string>
+    <string name="notification_title_background_upload_service">Hintergrund Piwigo Upload-Dienst</string>
+    <string name="notification_text_background_upload_running">Ausführen eines Upload-Jobs</string>
     <string name="notification_text_background_upload_sleeping">Schlafen. Nächster Lauf bei %1$tR</string>
     <string name="notification_text_background_upload_polling">Abfrage nach Dateien zum Hochladen.</string>
 
@@ -10,15 +10,15 @@
     <string name="alert_warning_auto_upload_service_stopped">Vergessen Sie nicht, den Hintergrund-Upload-Service zu starten, wenn Ihre Jobs ausgeführt werden sollen.</string>
     <string name="alert_auto_upload_service_stopped">Hintergrund-Upload-Dienst gestoppt</string>
     <string name="alert_auto_upload_service_started">Hintergrund-Upload-Dienst gestartet</string>
-    <string name="alert_auto_upload_service_job_restarted">Beginn des Hochladens eines zuvor unvollständigen Jobs auf den Server %1$s mit %2$d-Dateien</string>
+    <string name="alert_auto_upload_service_job_restarted">Mit dem Hochladen eines zuvor unvollständigen Jobs auf den Server %1$s mit %2$d-Dateien begonnen</string>
     <string name="alert_auto_upload_service_job_started">Starten des Hochladens eines Jobs auf den Server %1$s mit %2$d-Dateien</string>
-    <string name="alert_auto_upload_service_job_finished_success">Laufender Hintergrund-Upload-Job auf Server beendet %1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Laufender Hintergrund-Upload-Job auf Server %1$s abgeschlossen. Einige Dateien konnten nicht hochgeladen werden und werden später erneut getestet.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Laufender Hintergrund-Upload-Job auf Server %1$s abgeschlossen. Es konnten keine Dateien hochgeladen werden. Der Job wird später erneut versucht.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Prüfung des Hintergrund-Upload-Dienstes für Aufgaben</string>
+    <string name="alert_auto_upload_service_job_finished_success">Der Hintergrund-Upload-Job auf den Server %1$s wurde abgeschlossen.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Der Hintergrund-Upload-Job auf den Server %1$s wurde beendet. Einige Dateien konnten nicht hochgeladen werden und werden später erneut getestet.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Laufender Hintergrund-Upload-Job auf Server %1$s wurde beendet. Es konnten keine Dateien hochgeladen werden. Der Job wird später erneut versucht.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Prüfung des Hintergrund-Upload-Service für Aufgaben</string>
     <string name="progress_creating_tag">Tag erstellen</string>
     <string name="error_updating_favorites_pattern">Fehler beim Entfernen einer Ressource (%1$s) aus den Favoriten: %2$s</string>
-    <string name="favorites_content_load_failed_text">Ressourcen, die als Favorit markiert sind, konnten nicht geladen werden</string>
+    <string name="favorites_content_load_failed_text">Als Favorit markierte Ressourcen konnten nicht geladen werden</string>
     <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Sie haben beantragt, %1$d Ressourcen zu löschen. Möchten Sie diese aus allen Alben (und vom Server) löschen - dauerhaft, oder nur von diesem Favoriten verlinken?</string>
     <string name="progress_remove_favorite_resources">Ressourcen aus der Favoritenliste entfernen</string>
     <string name="favorites_empty_text">Sie haben derzeit keine Favoriten</string>
@@ -27,7 +27,7 @@
     <string name="preference_data_upload_automatic_job_category_server_settings">Server-Einstellungen</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Lokale Einstellungen</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload-Komprimierung</string>
-    <string name="ignoring_job_local_folder_not_found">Lokaler Ordner existiert nicht mehr. Job ignorieren</string>
+    <string name="ignoring_job_local_folder_not_found">Der lokale Ordner existiert nicht mehr. Job ignorieren</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Keine Dateierweiterungen zum Hochladen ausgewählt. Job ignorieren</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Verbindungsprofil auf Offline-Modus eingestellt. Job ignorieren</string>
     <string name="slideshow_auto_drive_paused">Diashow Autodrive pausiert bis zum nächsten Dia</string>

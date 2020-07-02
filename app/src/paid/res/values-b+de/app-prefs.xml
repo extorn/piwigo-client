@@ -13,23 +13,23 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Automatische Uploads</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary"> Verwenden Sie Auto Upload nur bei Wireless</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Verwenden Sie das automatische Hochladen nur bei Wireless</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Nur über Funk</string>
     
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">Jobs automatisch hochladen</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Automatisches Hochladen von Jobs</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Arbeitsplätze</string>
 
     
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">Upload-Status anzeigen</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Status vom letzten Auftragsdurchlauf anzeigen (falls verfügbar)</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Status vom letzten Joblauf anzeigen (falls verfügbar)</string>
 
     
-    <string name="preference_data_upload_automatic_job_is_valid_title">Arbeit ist gültig</string>
+    <string name="preference_data_upload_automatic_job_is_valid_title">Job ist gültig</string>
 
     
     <string name="preference_data_upload_automatic_job_enabled_summary">Wird der Upload-Dienst diese Stelle nutzen?</string>
@@ -73,7 +73,7 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Maximale Dateigröße hochgeladen</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Dateigröße hochgeladen</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
     

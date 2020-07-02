@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="checking_license">免許証の確認...</string>
+    <string name="button_quit">出口</string>
+    <string name="button_buy">アプリを購入する</string>
+    <string name="unlicensed_dialog_retry_body">アプリのライセンスが確認できません。Androidマーケットから購入してください。購入されている場合は、ネットワーク接続が可能かどうかを確認し、このライセンス確認を再試行してください。</string>
+    <string name="unlicensed_dialog_body">ライセンスの確認ができません。ネットワーク接続が可能かどうかを確認してください。</string>
+    <string name="unlicensed_dialog_title">アプリケーションがライセンスされていない</string>
+    <string name="application_error">アプリケーション・エラー: %1$d。</string>
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+
+    <string name="alert_title_permissions_needed">追加の許可が必要</string>
+    <string name="alert_write_permission_needed_for_download">ファイルをダウンロードするには、ファイルシステムへの書き込み許可が必要です。</string>
+
+    
+
+    
+
+    <string name="progress_clearing_failed_uploads_from_server">サーバーからの失敗したアップロードをクリアする</string>
+    <string name="cleared_failed_uploads_from_server_pattern">サーバからのアップロードに失敗した %1$d をクリアしました。</string>
+
+    <string name="gallery_photos_summary_text_pattern">%1$dの写真</string>
+    <string name="gallery_subcategory_summary_text_pattern">%1$d サブアルバムと %2$d 写真</string>
+    
+    <string name="alert_title_login">ログイン</string>
+    <string name="alert_title_connectionTest">接続テスト</string>
+    <string name="alert_message_success_connectionTest">成功\nユーザ・タイプ : %1$s.</string>
+    <string name="alert_message_no_available_image_sizes">警告\nサーバーは利用可能な画像サイズを報告しませんでした。</string>
+    <string name="alert_success">成功!</string>
+    <string name="alert_partial_success">インコンプリート</string>
+    <string name="alert_error">エラー</string>
+    <string name="alert_error_no_app_available_to_handle_action">このアクションを扱うアプリは見つかりませんでした。</string>
+    <string name="alert_error_no_app_available_to_rate_app">このアプリを評価するアプリは見つかりませんでした。しかし、試していただきありがとうございます。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">ダウンロードをキャンセルしました。必要なパーミッションが許可されていません。</string>
+    <string name="button_retry">再試行</string>
+
+
+    <string name="button_unlink">アンリンク</string>
+    <string name="button_untag">タグの削除</string>
+    <string name="button_close">クローズ</string>
+    <string name="tools_menu_title">ツール</string>
+    <string name="settings_menu_title">アプリの設定</string>
+    <string name="offline_mode_menu_title">オフラインモード</string>
+    <string name="online_mode_menu_title">オンラインモード</string>
+    <string name="gallery_menu_title">ギャラリー</string>
+    <string name="upload_menu_title">アップロード</string>
+    <string name="upload_page_title">Piwigoアップロード</string>
+    <string name="gallery_to_alter_title">にアップロードする</string>
+    <string name="login_button_title">ログイン</string>
+
+    <string name="alert_question_enable_network_access">サーバーからのデータ検索を許可するか？</string>
+    <string name="alert_question_disable_network_access">このデバイスにすでにキャッシュされているデータのみを使用するか?</string>
+
+    <string name="upload_file_privacy_level_title">ファイルのプライバシーレベル</string>
+    <string name="cacheCleared_title">キャッシュ</string>
+    <string name="cacheClearingStarted_message">キャッシュのクリア</string>
+    <string name="cacheCleared_message">キャッシュがクリアされました。次回のリクエスト時には、すべての画像がリモートサーバーからダウンロードされます。</string>
+    <string name="cacheClearFailed_message">この時点ではキャッシュをクリアできませんでした。問題が続く場合は、エラーを報告してください。</string>
+    <string name="videoCacheCleared_message">ビデオ キャッシュがクリアされました。次に要求されたときに、すべてのビデオがリモートサーバーからダウンロードされます。</string>
+    <string name="videoCacheClearFailed_message">この時点では、ビデオ キャッシュをクリアできませんでした。問題が続く場合は、エラーを報告してください。</string>
+
+    <string name="title_activity_view_gallery">ギャラリーを見る</string>
+    <string name="navigation_drawer_open">ナビゲーションの引き出しを開く</string>
+    <string name="navigation_drawer_close">ナビゲーションの引き出しを閉じる</string>
+
+    <string name="notification_upload_paused">PIWIGO アップロード一時停止</string>
+    <string name="notification_upload_resumed">PIWIGO アップロード再開</string>
+
+    <string name="alert_items_for_upload_already_exist_message_pattern">%1$dファイルはすでにサーバー上に存在しています。それらのパーミッションは、ここで選択したものを反映するように変更され、必要に応じて、彼らはこのアルバムにリンクされます。</string>
+    <string name="alert_upload_success">アップロードが完了しました。</string>
+    <string name="alert_upload_partial_success">アップロードが完了しました。アップロードできなかったファイルは、必要に応じて再試行するためのリストに残っています。いずれかのアクションが不完全な場合は、アップロードリストに新しいファイルを追加することはできません。それらを完了させるためにアップロードボタンをクリックします。</string>
+    <string name="alert_upload_failed_piwigo">PIWIGOサーバのエラーによりアップロードに失敗しました。</string>
+    <string name="alert_upload_failed_webserver">アップロードに失敗しました。</string>
+    <string name="alert_upload_failed_webresponse">PIWIGO応答を処理するエラーが原因でアップロードに失敗しました。PIWIGO API の変更によるものと思われます。Unparseable 応答: %1$s。</string>
+    <string name="alert_error_upload_chunk_failed_message_pattern">ファイル %1$s のチャンクのアップロードに失敗しました。ファイルのアップロードを放棄しています。</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">ファイル %1$s はデバイスで使用できなくなりました。\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">ファイル %1$s をアップロード中にエラーが発生しました。\n%2$s</string>
+    <string name="alert_error_upload_file_already_on_server_message_pattern">アップロードされたファイル %1$s はサーバ上に既に存在しますが、アクションはキャンセルされました。</string>
+    <string name="alert_error_upload_add_file_failed_message_pattern">アップロードされたファイル %1$s をアルバムに追加するときにエラーが発生しました。再試行しますか?</string>
+    <string name="alert_upload_file_failed_piwigo_message_pattern">アップロード・ファイル %1$s は、PIWIGO サーバでエラーが発生したために失敗しました (%2$d : %3$s)。</string>
+    <string name="alert_upload_file_failed_webserver_message_pattern">アップロード・ファイル %1$s は、Web サーバ・エラー (%2$d : %3$s) のために失敗しました。</string>
+    <string name="alert_upload_file_failed_webresponse_message_pattern">アップロード・ファイル %1$s は、PIWIGO 応答を処理するエラーのために失敗しました。PIWIGO API の変更によるものと思われます。パースできない応答 : %2$s。</string>
+    <string name="action_settings">設定</string>
+
+    
+    <string name="createGallery_pageTitle">アルバムの作成</string>
+    <string name="createGallery_parentGalleryTitle">親アルバム</string>
+    <string name="createGallery_galleryNameTitle">アルバム名</string>
+    <string name="createGallery_galleryDescriptionTitle">説明</string>
+    <string name="createGallery_galleryCommentsAllowed">ユーザーがコメントを追加できるようにする</string>
+    <string name="createGallery_galleryIsPrivate">アルバムは非公開ですか？</string>
+    <string name="createGallery_permissions_allowedGroupsTitle">許可されたグループ</string>
+    <string name="createGallery_permissions_allowedUsersTitle">許可されているユーザー</string>
+    <string name="createGallery_createGalleryButtonTitle">アルバムの作成</string>
+    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">ギャラリーのパーミッションを正しく設定できません。再度削除しました。再度お試しください。エラーが続く場合は、このアプリの問題を提起して改善し、手動でステップを実行してください。</string>
+
+    <string name="logging_in_to_piwigo_pattern">%1$sにログイン</string>
+
+    <string name="delete_upload_job_button_title">ジョブの削除</string>
+    <string name="upload_files_button_title">アップロード</string>
+    <string name="upload_files_finish_job_button_title">仕上げ</string>
+    <string name="upload_job_status_button">ステータス</string>
+    <string name="alert_really_delete_upload_job">これにより、このデバイスからジョブステータスが削除されます。サーバーに部分的にアップロードされたファイルを手動でクリーンアップする必要があります（または、このアプリの環境設定 - アップロード設定ページを使用してください）。後から再開すれば、ジョブは正常に完了することがよくあります。この思い切った措置を取ってもよろしいですか？</string>
+    <string name="loading_please_wait">ロード中、お待ちください</string>
+    <string name="alert_title_server_error">サーバーエラー</string>
+    <string name="alert_server_error_pattern">サーバが HTTP エラーを返しました: %1$d (%2$s)。</string>
+    <string name="alert_title_error_handling_response">piwigoのレスポンスを解析する際のエラー</string>
+    <string name="alert_error_handling_response_pattern">パーサブルではない応答。1$d (%2$s)</string>
+    <string name="none_selected">なし</string>
+    <string name="alert_title_error_too_many_users">エラー</string>
+    <string name="alert_error_too_many_users_message">ユーザーが多すぎて処理できません。ユーザーのページングを可能にするための機能強化リクエストを提出してください。</string>
+
+    <string name="slideshow_resource_action_download">ファイルのダウンロード</string>
+    <string name="slideshow_resource_action_delete">削除</string>
+    <string name="slideshow_resource_action_copy">アルバムへのコピー</string>
+    <string name="slideshow_resource_action_move">アルバムへ移動</string>
+    <string name="slideshow_image_details_actions">アクション</string>
+    <string name="slideshow_image_details_exif">EXIFデータ</string>
+    <string name="slideshow_image_details_comments">コメント</string>
+
+    <string name="gallery_details_updating_progress_title">アルバムの更新</string>
+    <string name="progress_resource_details_updating">リソースの詳細を更新する</string>
+    <string name="gallery_details_name_title">アルバム名</string>
+    <string name="gallery_details_description_title">アルバムの説明</string>
+    <string name="gallery_details_save_button">保存</string>
+    <string name="gallery_details_discard_button">廃棄</string>
+    <string name="gallery_action_delete_progress_title">アルバムの削除</string>
+    <string name="gallery_action_delete_error_subcategories_present">サブアルバムを含むアルバムを削除できません。まずはこれらを削除してください。</string>
+    <string name="gallery_action_delete_error_photos_present">写真などのファイルを含むアルバムを削除できません。まずはこれらを削除してください。</string>
+    <string name="notification_upload_event">Piwigoアップロード</string>
+    <string name="progress_downloading">ファイルのダウンロード</string>
+    <string name="alert_error_unimplemented">機能はまだ実装されていません。</string>
+    <string name="button_ok">承知しました</string>
+    <string name="button_yes">噫</string>
+    <string name="button_no">否</string>
+    <string name="button_save">保存</string>
+    <string name="alert_confirm_title">確認</string>
+    <string name="alert_question_title">質問</string>
+    <string name="alert_confirm_really_delete_from_server">これでサーバーからアイテムが永久に削除されます。続ける？</string>
+    <string name="alert_confirm_really_delete_items_from_server">サーバーからアイテムを永久に削除します。Continue?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">他のアルバムと共有されている%1$dリソースの削除を要求しました。これらをすべてのアルバム(とサーバー - 永久に)から削除するか、このアルバムからリンクを解除しますか?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">あなたは%1$dリソースの削除を要求しました。Do you wish to delete these from all albums (and the server) - permanently, or just unlink them from this tag?</string>
+    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">You\'ve requested to delete %1$d resources. これらをすべてのアルバム(とサーバー)から削除しますか? (サーバーにUserTagsプラグインがインストールされていないと、画像からタグを削除することはできません)</string>
+    <string name="about_menu_title">について</string>
+    <string name="other_licences_button_text">その他のライセンスを受けたコンポーネント</string>
+    <string name="oss_licences_menu_title">OSSライセンス</string>
+    <string name="about_heading">このアプリについて</string>
+    
+    <string formatted="false" name="eula">"エンドユーザー使用許諾契約（以下「本契約」といいます。
+最終更新しました。2018年8月7日
+
+同意する」をクリックする前に、本エンドユーザー使用許諾契約書（以下「本契約書」といいます）をよくお読みください。
+ボタンをクリックし、Piwigoクライアント（以下「本アプリ」といいます。
+
+同意する」ボタンをクリックし、アプリケーションをダウンロードまたは使用することにより、お客様は以下の事項に同意したものとみなされます。
+本契約の条件に同意してください。
+本契約の条件に同意しない場合は、「同意する」ボタンをクリックしないでください。
+アプリをダウンロードしたり、使用したりします。
+
+商業目的で使用されるサーバーにアクセスしたり、修正したりするためにこのアプリを使用することを検討している場合は、責任の制限を読み、理解することが不可欠です。
+あなたは、あなたの決定に基づいてリスクと責任を受け入れる前に、あなた自身が満足するように非本番環境のサーバーでこれをテストする必要があります。このアプリは主に以下の目的で設計されています。
+非営利目的の場合
+
+定義
+
+ライセンシー。ライセンシーとは、ライセンスされたソフトウェアを使用することを意図しているか、またはすでに合法的または違法に使用している個人または企業を指します。ライセンシー」という用語は、ソフトウェアがデフォルトで法的にライセンスされていることを意味するものではありません。
+
+
+ライセンス
+
+Gareth Deliは、お客様に取消可能、非独占的、譲渡不可、限定的なライセンスを付与します。
+個人的または商業目的に限り、アプリケーションをダウンロードし、インストールし、使用すること。
+本契約の条件に厳密に従うものとします。
+
+本ソフトウェアは「現状のまま」提供され、市販性、特定目的への適合性および非侵害性の保証を含むがこれに限定されない、明示または黙示を問わず、いかなる種類の保証も行われないものとします。いかなる場合においても、著者または著作権者は、本ソフトウェアまたは本ソフトウェアの使用または取引に起因し、または関連して発生した、契約、不法行為またはその他の方法での訴訟であるか否かを問わず、いかなる請求、損害賠償またはその他の責任を負うものではありません。
+
+
+制限事項
+
+あなたは、以下のことをしないことに同意し、他の人が以下のことをすることを許可しません。
+a) ライセンス、販売、賃貸、リース、譲渡、配布、送信、ホスト、外注、開示、またはその他の方法で以下のことを行わないことに同意します。
+アプリケーションを商業的に利用したり、第三者がアプリケーションを利用できるようにすること。
+b) 手動またはツールを使用して、アプリケーションのソースコードまたはバイトコードを逆コンパイルまたはその他の方法で表示すること。
+c) 電話やタブレットのような物理的なデバイス以外で、アンドロイドオペレーティングシステムをメインのオペレーテ ィングシステムとして使用しているもので、このアプリケーションを実行したり、実行を試みたりすること。
+d) 本アプリケーションの動作を調べる目的で、エミュレータやその他のサンドボックス環境で本アプリケーションを実行したり、実行を試みたりすること。
+e) 本アプリケーションに基づいた二次的な作品を作成すること。
+
+ユーザーデータの収集
+
+このアプリケーションにFirebaseの統合が追加されました。主な目的は、より効率的なバグ解決とアプリの利用状況を把握することです。この目的を達成するために必要な最低限のデータが収集されます。
+
+
+限定保証と免責事項
+
+The software is provided \"as is\" and the licensee uses it at his own risk. ガレスデリは、その使用、性能、特定の目的への適合性について、いかなる保証も行いません。ソフトウェアにエラー（バグ）が含まれていたり、動作しなかったりすることは常にあり得ます。したがって、Gareth Deli は、ソフトウェアが完全にエラーフリーであることや、すべてのコンピュータや構成で中断なく動作することを保証するものではありません。
+
+ソフトウェアが特定の目的に適合しているかどうか、または機能的・性能的要件を満たしているかどうかを確認するのは、もっぱらライセンシーの責任となります。また、ライセンシーは、本番環境でソフトウェアを使用する前に、ソフトウェアが自分のデバイスや構成でどのように動作するかをテストし、すべての使用例をテストし、データがエラーなく、希望通りに処理されているかをチェックする義務があります。これは、商業目的でソフトウェアを使用する場合には非常に重要です。
+
+
+責任の制限
+
+ライセンシーは、法的に可能な限り、本ソフトウェアの使用の結果、およびそれによって生じる直接的および間接的な損害に対して責任を負います。責任は、法的に可能な限り購入価格に限定され、それ以外の場合は法的に可能な最小限度に限定されます。
+
+
+メンテナンスとサポート
+
+ガレス・デリでは、メールのみで現行バージョンの一般的なサポートを提供しています。古いバージョンはサポートされていません。
+
+
+アプリケーションの変更
+
+ガレス・デリは、一時的に、または中止し、変更、中断、中止する権利を有します。
+本アプリケーションまたはそれに接続するサービスを、予告の有無にかかわらず、また予告なしに、永久的に変更すること。
+あなたへの責任
+
+
+期間と終了
+
+本契約は、お客様またはガレスデリが終了するまで有効に存続するものとします。
+
+ガレス・デリは、その単独の裁量により、いつでも、理由の如何にかかわらず、本契約を終了させることができます。
+は、事前の通知の有無にかかわらず、本契約を中断または終了させることができます。
+本契約は、ガレスデリからの事前の通知なしに、以下の条件で直ちに終了します。
+お客様が本契約のいずれかの条項に従わなかった場合。また、お客様は本契約を終了することができます。
+お客様のモバイルデバイスから、またはお客様のモバイルデバイスから、本アプリとそのすべてのコピーを削除することで、本契約に同意することができます。
+デスクトップを使用することができます。
+本契約が終了した時点で、お客様は本アプリケーションのすべての使用を停止し、すべてのコピーを削除するものとします。
+モバイルデバイスまたはデスクトップから本アプリケーションを利用することができます。
+分離可能性
+本契約のいずれかの条項が執行不能または無効であると判断された場合、その条項は以下の通りとなります。
+この規定の目的を最大限に達成するために変更され、解釈されます。
+適用される法律の下で可能であり、残りの条項は完全に有効に存続します。
+
+
+本契約の変更
+
+ガレス・デリは、その単独の裁量で、本サイトの内容を変更または交換する権利を留保しています。
+契約はいつでも可能です。改正が重要な場合は、少なくとも0日前に通知します。
+新しい条件が発効する前に 重要な変更を構成するものは、当社の
+独断でお願いします。
+
+
+連絡先
+
+本規約についてご不明な点がございましたら、お問い合わせください。"
+</string>
+    <string name="about_content">"このアプリは、移動中でもフォトギャラリーに簡単にアクセスできるように書かれています。
+
+定期的に更新され、私が考えたいくつかの機能、ユーザーからリクエストされたいくつかの機能を追加していきます。
+
+2018年8月には、ユーザーのDavid Klement氏が、よりプロフェッショナルなデザインのために画面のモックアップを持って私のところに戻ってきました。リリース1.3.95から、私はアルバムビュー画面を始めとして、それらのアイデアを取り入れてきました。
+これらの提案された画面デザインの完全なリストは、アプリのウェブサイト（https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html）で見ることができます。
+
+注: 言語翻訳は www.Deepl.com または google translate ウェブサイトを使用して行われます。もし明らかな間違いを見つけたら、私に知らせてください。
+
+無料版（広告あり）と有料版（広告なし）の2つのバージョンがあります。どちらを選ぶかは自由です。現在、無料版を「アップグレード」して、有料版をインストールし、無料版を削除することはできません。
+注：バージョンは時間の経過とともに変化します。ほとんどの変更は、無料版と有料版の両方に行われます。
+
+現在のところ、有料版ではタグのサポートが追加されています。
+        Piwigoはある程度のタグをサポートしていますが、User Tagsプラグインはより多くの機能を追加します（基本的なテストを実施しました）。
+
+
+現時点では、既存のギャラリーのナビゲーション、新しい写真や動画のアップロード、ギャラリー内での新しいカテゴリーの作成など、基本的なレベルの機能を提供しています。いくつかのフィールドは一度作成された後に修正することができますが、多くのフィールドはまだ読み取り専用です。
+
+アプリをアンインストールする場合は、アプリメニューのリンクを使用して、アプリがあなたのニーズを満たしていない理由をメールで教えてください。
+
+私がテストしているPIWIGOサーバーのバージョンは現在2.10.2です。
+
+私のテストギャラリーには、.jpgと.mp4ファイルのみが含まれています。もし、あなたのギャラリーに他のファイルが含まれている場合、問題が発生する可能性があります。
+
+警告: Piwigoのバージョンが1.9.2以下の場合、動画のアップロードは、お使いのサーバーに修正#756が適用されているかどうかにかかっていると思います。
+
+私はpiwigo_privacyプラグインのコピーをインストールし、VideoJSプラグインもインストールしてテストしています。
+Extended Descriptionプラグインのコピーもインストールしましたが、残念ながら、この機能はPIWIGO APIではまだ公開されていません。
+私は \"お気に入り \"写真のサポートを含めたいと思いますが、この機能はまだPIWIGO APIを介して公開されていないようです。
+
+バグがあったらメールで報告してください。私は、アンドロイドエミュレータ、サムスンの携帯電話とサムスンのタブレットでこれをテストしましたが、それは私の最初のアプリなので、私は物事が誰かのために間違って行くだろうと確信しているので、それは\'s私の最初のアプリです。
+
+提案やバグをメールで送ってくれた皆さん、ありがとうございました。私はあなたの提案のすべてにすぐに実用的に対処するよう努めます。
+
+発生したすべてのクラッシュを報告することを選択してください。次のアップデート後もバグが発生する場合は、時間をかけて私にメールを送ってください。バグが発生する直前に何が起こっているのか、もう少し状況を把握しておく必要がありそうです。
+
+リリースは現在、その場限りのものです。アプリが成熟するにつれてリリースの頻度は減っていくと思われます。リリーススケジュールと履歴は以下の通りです。これは変更されたり、物事が遅れたりすることもありますが、リストの中に何があるかを確認することができます。"</string>
+    <string name="licences_heading">本アプリ内で使用するリソースのライセンス</string>
+    
+    <string name="slideshow_image_details_name_title">リソース名</string>
+    <string name="slideshow_image_details_description_title">リソースの説明</string>
+    <string name="unlock_menu_title">ロックを解除する</string>
+    <string name="lock_menu_title">ロック</string>
+    <string name="button_lock">ロック</string>
+    <string name="alert_title_lock">アプリをロックしますか？</string>
+    <string name="alert_message_lock">アプリをロックすると、アプリはギャラリーへの読み取り専用アクセスを許可します。画像の評価などの変更は無効となり、アプリの設定へのアクセスは削除されます。ロックを解除するには、現在のPIWIGOユーザーパスワードを入力する必要があります。</string>
+    <string name="alert_title_unlock">アプリのロックを解除するには？</string>
+    <string name="alert_message_unlock">このアプリのすべての機能へのフルアクセスを再有効にするには、%1$sのPIWIGOパスワードを入力し、ロック解除をクリックします。</string>
+    <string name="button_unlock">ロックを解除する</string>
+    <string name="alert_app_unlocked_message">アプリのロックが解除されました</string>
+    <string name="gallery_details_status_title">個人情報の取り扱いについて</string>
+    <string name="gallery_details_status_galleryIsPrivate">噫</string>
+    <string name="gallery_details_status_galleryIsPublic">否</string>
+    <string name="gallery_details_status">このフォルダへのアクセスを制限する</string>
+    <string name="gallery_details_allowed_groups_title">許可されたグループ</string>
+    <string name="gallery_details_allowed_users_title">許可されているユーザー</string>
+    <string name="click_to_view">クリックしてご覧ください。</string>
+    <string name="click_to_view_pattern">%1$d - クリックして表示/編集する</string>
+    <string name="alert_warning_lowMemory">ローメモリ</string>
+    <string name="alert_warning_lowMemory_message">デバイスのメモリが不足しています (%1$d)。メモリ内のイメージ・キャッシュがクリアされました。</string>
+    <string name="files_for_upload_title">アップロード用ファイル</string>
+    <string name="alert_information">情報のご案内</string>
+    <string name="alert_image_download_title">ダウンロード</string>
+    <string name="alert_image_download_message">ファイルサイズを選択してください</string>
+    <string name="action">アクション</string>
+    <string name="copy_link">リンクをコピー</string>
+    <string name="download_file">ファイルのダウンロード</string>
+    <string name="share_with_an_app">アプリでシェアする</string>
+    <string name="alert_image_show_image_title">イメージレンダリングコントロール</string>
+    <string name="alert_image_show_image_message">ご覧になりたいファイルサイズを選択してください</string>
+    <string name="alert_image_download_complete_message">ダウンロードが完了しました。</string>
+    <string name="alert_error_unsupported_piwigo_version_pattern">サーバは PIWIGO バージョン %1$s を実行しています。このアプリでテストした最小バージョンは %2$s です。アプリの一部の機能が期待通りに動作しない場合があります。問題が確認された場合は、Aboutページをご確認ください。</string>
+    <string name="notification_download_event">ダウンロードしたファイル</string>
+    <string name="alert_image_download_cancelled_message">ダウンロードのキャンセルに成功しました</string>
+    <string name="app_licence_heading">使用許諾契約書</string>
+    <string name="button_agree">同意する</string>
+    <string name="eula_menu_title">使用許諾契約書</string>
+    <string name="alert_warning">警告</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">選択したサムネイルサイズは、接続先のサーバーではネイティブサポートされていません。サーバーは、\"herry match \"サイズの画像を返します。</string>
+    <string name="rate_dialog_message">このアプリを楽しんでいただけたら、評価していただけますか？1分もかかりませんよ。ご支援ありがとうございました。</string>
+    <string name="groups_menu_title">グループ</string>
+    <string name="group_members_pattern">(%1$d メンバー)</string>
+    <string name="alert_group_delete_success_pattern">グループ (%1$s) が正常に削除されました。</string>
+    <string name="alert_user_delete_success_pattern">ユーザ (%1$s) が正常に削除されました。</string>
+    <string name="alert_group_delete_failed_pattern">グループ (%1$s) を削除中にエラーが発生しました。再試行してください。</string>
+    <string name="alert_user_delete_failed_pattern">ユーザ (%1$s) を削除中にエラーが発生しました。再試行してください。</string>
+    <string name="alert_confirm_really_delete_group">このグループを削除してもよろしいですか? このグループのメンバーであるユーザは削除されませんが、このグループが持っているギャラリーの領域へのアクセスを失う可能性があります。</string>
+    <string name="alert_confirm_really_delete_user">このユーザーを削除してもよろしいですか？</string>
+    <string name="users_menu_title">ユーザー</string>
+    <string name="alert_error_unable_to_delete_yourself_pattern">ログインしているユーザーを削除することはできません。</string>
+    <string name="alert_information_coming_soon">この機能は近日公開予定です。</string>
+
+    <string name="user_username_title">ユーザー名</string>
+    <string name="user_lastvisit_title">最終訪問日</string>
+    <string name="user_groups_title">グループ会員</string>
+    <string name="user_usertype_title">ユーザータイプ</string>
+    <string name="user_user_heading">ユーザー</string>
+    <string name="group_heading">グループ</string>
+    <string name="group_name_title">名前</string>
+    <string name="group_members_title">メンバー</string>
+    <string name="user_access_rights_title">アクセス権</string>
+    <string name="group_access_rights_title">アクセス権</string>
+    <string name="groups_heading">グループ</string>
+    <string name="users_heading">利用者</string>
+    <string name="albums_heading">アルバム</string>
+    <string name="user_high_definition_title">高い定義</string>
+    <string name="user_email_title">メールアドレス</string>
+    <string name="none_value">なし</string>
+    <string name="access_rights_heading">アクセス権</string>
+    <string name="progress_loading_album_content">アルバムコンテンツの読み込み</string>
+    <string name="progress_loading_resource_details">リソースの詳細を読み込む</string>
+    <string name="progress_delete_album">アルバムやコンテンツの削除</string>
+    <string name="progress_delete_resource">リソースの削除</string>
+    <string name="progress_delete_resources">リソースの削除</string>
+    <string name="progress_unlink_resources">リソースのアンリンク</string>
+    <string name="progress_untag_resources_pattern">タグ %1$s からリソースを削除します。</string>
+    <string name="progress_copy_resources">リソースのコピー</string>
+    <string name="progress_move_resources">リソースの移動</string>
+    <string name="progress_checking_with_server">サーバーで資格情報を確認する</string>
+    <string name="progress_creating_album">アルバムの作成</string>
+    <string name="progress_setting_permissions">パーミッションの設定</string>
+    <string name="progress_loading_groups">ユーザーグループの取得</string>
+    <string name="progress_loading_users">利用者検索</string>
+    <string name="progress_loading_album_permissions">アルバムの許可を取得する</string>
+    <string name="progress_loading_group_details">グループの詳細を取得する</string>
+    <string name="progress_delete_group">ユーザーグループの削除</string>
+    <string name="progress_loading_albums">アルバムの検索</string>
+    <string name="progress_loading_user_details">ユーザーの詳細を取得する</string>
+    <string name="progress_delete_user">ユーザーの削除</string>
+    <string name="alert_read_permissions_needed_for_file_upload">ファイルを選択してアップロードするためには、ファイルシステムを読むための許可が必要です。</string>
+    <string name="alert_write_permission_needed_for_video_caching">ビデオファイルのローカルキャッシュが有効になっています。これを有効にするには、ファイルシステムへの書き込みアクセスを許可する必要があります。拒否された場合、ローカルキャッシュは無効になります。</string>
+    <string name="alert_error_tidying_video_cache">ビデオキャッシュの整理ができません。この問題が解決しない場合は、報告してください。</string>
+    <string name="alert_error_unable_to_copy_file_from_cache_pattern">キャッシュからファイルをコピーできません。%1$s</string>
+    <string name="gallery_empty_text">このアルバムは現在空です。</string>
+    <string name="alert_error_unable_to_clear_cached_content">キャッシュされたコンテンツを削除できません。</string>
+    <string name="alert_clear_cached_content">このリソースのキャッシュデータをクリアして、サーバーから強制的に再ダウンロード？</string>
+    <string name="gallery_album_content_load_failed_text">アルバムのコンテンツやパーミッションの詳細を読み込むことができません。</string>
+    <string name="gallery_permissions_load_failed_text">アルバムのコンテンツやパーミッションの詳細を読み込むことができません。</string>
+    <string name="gallery_update_failed_text">アルバムの詳細を更新できない</string>
+    <string name="progress_saving_changes">変更の保存</string>
+    <string name="user_privacy_level_title">プライバシーレベル</string>
+    <string name="progress_adding_user">ユーザーの追加</string>
+    <string name="last_visit_never">然る事ながら</string>
+    <string name="user_password_title">パスワード</string>
+    <string name="password_unchanged">********</string>
+    <string name="progress_reloading_album_permissions">アルバムアクセス権の再計算</string>
+    <string name="group_is_default_title">デフォルトは？</string>
+    <string name="progress_adding_group">グループの追加</string>
+    <string name="upload_unacceptable_files_prefix">受け入れられないファイル</string>
+    <string name="alert_error_unable_to_access_local_filesystem">ローカルファイルシステムにアクセスできないと、このアクションを実行できません。申し訳ありません。</string>
+    <string name="alert_error_admin_user_required">コミュニティプラグインがインストールされていない限り、管理者のみがアップロードできます。申し訳ありません。</string>
+    <string name="upload_username_title">アップロード</string>
+    <string name="certificates_heading">証明書</string>
+
+    <string name="alert_slideshow_out_of_sync_with_album">このスライドショーは、現在のアルバムの内容を正確に反映していません。</string>
+    <string name="alert_slideshow_out_of_sync_with_tag">このスライドショーは、現在のタグの内容を正確に反映していません。</string>
+    <string name="alert_error_app_not_yet_configured">アプリはまだ設定されておらず、PIWIGOサーバーに接続されていません。アイテムを共有しようとする前に、アプリを手動で開いて設定してください。</string>
+    <string name="error_server_configuration_invalid">受け入れられないpiwigoサーバーの詳細は、アプリの接続設定を確認してください</string>
+    <string name="alert_image_show_image_select_max_zoom">100倍ズームまで可能</string>
+    <string name="alert_image_show_image_select_rotation">画像の回転</string>
+    <string name="top_tips_menu_title">トップのヒント</string>
+    <string name="top_tips_heading">トップのヒント</string>
+    <string name="alert_error_please_select_upload_album">アップロードするアルバムを選択してください。</string>
+
+    <string name="alert_title_select_album">アルバムを選択</string>
+    <string name="alert_title_set_album_thumbnail">アルバムのサムネイルを更新しますか？</string>
+    <string name="alert_message_set_album_thumbnail">この画像にアルバムのサムネイルを更新しますか?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">アルバム(%1$s)とすべてのコンテンツを永久に削除しますか?</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">2$d枚の写真を含むアルバム(%1$s)と、さらに4$d枚の写真を含む子アルバム(%3$d)を永久に削除しますか? 他のアルバムにリンクされている写真はそこに残りますが、他のアルバムは永遠に削除されることに注意してください。この操作には元に戻す機能はありません。</string>
+    <string name="alert_confirm_copy_items_here_pattern">バスケット内の%1$d個のアイテムをここにコピーします(%2$s)？</string>
+    <string name="alert_confirm_move_items_here_pattern">バスケット内の%1$dアイテムをここに移動します(%2$s)?</string>
+    <string name="slideshow_image_details_linked_albums_title">リンクされたアルバム</string>
+    <string name="list_ok_button">宜しい</string>
+    <string name="alert_confirm_really_remove_album_permissions_pattern">このアルバムへのアクセスと、%1$dグループと%2$dユーザからのすべての子アルバムへのナビゲート可能なアクセスを削除することを選択しました。このアクションを続行しますか？</string>
+    <string name="alert_confirm_add_album_permissions_recursively_pattern">You\'ve selected to add this album to %1$d groups and %2$d users. これらの変更を%3$d子アルバムに適用しますか?</string>
+    <string name="alert_information_own_user_readded_to_permissions_list">あなたの変更により、このアルバムにアクセスできなくなりました。あなたのユーザ名が、明示的な権限を持つユーザのリストに追加されました。</string>
+    <string name="alert_information_add_album_permissions_recursively_pattern">%1$d 子アルバムにも権限を追加しています。</string>
+    <string name="alert_error_please_provide_an_album_name">このアルバムの名前を指定する必要があります。1つ追加してから、もう一度試してください。</string>
+    <string name="error_upload_file_chunk_upload_failed_after_retries">%1$d回の試行の後、ファイルのセクションのアップロードに失敗しました。アップロードが完了したら、このアップロードを再起動して再試行してください。</string>
+    <string name="error_upload_file_ext_missing_pattern">ファイル拡張子がないので、%1$sファイルをアップロードできません。</string>
+    <string name="error_upload_file_verification_failed">%1$s のアップロードでサーバ上のファイルの検証に失敗しました。</string>
+    <string name="alert_message_remove_file_server_state_incorrect">このファイルは部分的にアップロードされているので、この後にアップロードボタンを忘れずにクリックして、サーバーから破損したファイルを削除する必要があります。続ける？</string>
+    <string name="alert_message_file_upload_cancelled_pattern">ファイル(%1$s)のアップロードがキャンセルされました。</string>
+    <string name="alert_message_upload_cancelled">アップロードがキャンセルされました。</string>
+    <string name="alert_message_upload_cancelled_message">アップロードを再開したくない場合は、アップロードジョブからファイルを削除してから、アップロードをクリックしてください。アップロードジョブからファイルを削除してから、アップロードをクリックしてください。これで、サーバーからキャンセルされたアップロード状態がクリーンアップされます。</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">選択した画像サイズは、接続しているサーバーではサポートされていません。サーバは、\"mostmost match\" サイズの画像を返します。</string>
+    <string name="logging_out_of_piwigo_pattern">%1$sからのログアウト</string>
+    <string name="loading_new_server_configuration">新しいサーバー接続設定の読み込み</string>
+    <string name="alert_write_permission_needed_for_caching_to_disk">ディスクへのキャッシングを許可するには、ファイルシステムへの書き込みアクセスを許可する必要があります。拒否された場合、キャッシングはメモリ内にあることになります。</string>
+    <string name="error_request_timed_out">完了までに時間がかかりすぎたため、サーバーへの呼び出しがキャンセルされました。</string>
+    <string name="alert_information_video_caching_disabled">ディスクへの動画のキャッシングが無効</string>
+    <string name="error_building_http_engine">HTTP エンジンを構築できない</string>
+    <string name="error_unexpected_error_calling_server">サーバーの呼び出しまたはレスポンスの解析に予期しないエラーが発生しました。</string>
+    <string name="error_insufficient_permissions_for_cache_folder">キャッシュフォルダへのリードライトアクセスが必要です。アプリの設定を確認してください。</string>
+    <string name="alert_title_error_talking_to_server">サーバーとの通信エラー</string>
+    <string name="alert_title_error_connecting_to_server">サーバーへの接続エラー</string>
+    <string name="alert_warning_message_self_signed_certificates">自己署名付きSSL証明書は、（インターネット上の）公開サーバでは使用しないでください - https://letsencrypt.org などで調査してください。これはテスト目的のみです。</string>
+    <string name="alert_error_adding_certificate_to_truststore">トラストストアに証明書を追加する際のエラー</string>
+    <string name="alert_add_cert_to_truststore_pattern">信頼できるCAのリストに証明書チェーンを追加しますか？\n\n</string>
+    <string name="certificate_summary_pattern">件名: %1$s\n有効: %2$s - %3$s\nシリアル: %4$s</string>
+    <string name="alert_http_engine_shutdown">HTTPエンジンをシャットダウンします。必要に応じて自動的に再起動されます。</string>
+    
+    <string name="alert_clearing_certificate_use_history">信頼されるように選択された証明書のリストをリセットする</string>
+    <string name="alert_delete_all_files_selected_for_upload">アップロードのために選択されたファイルをすべて削除しますか？</string>
+    <string name="alert_partial_upload_deleted">部分的にサーバーに転送された後にファイルのアップロードをキャンセルすると、部分的なアップロードがサーバーに残ってしまいます。サーバー上のアップロードフォルダ（例：/var/www/piwigo/upload/buffer）を手動でクリーンアップしてスペースを節約してください。</string>
+    <string name="alert_album_created">作成されたアルバム</string>
+    <string name="album_create_failed">アルバムを作成できませんでした。</string>
+    <string name="alert_failure">失敗した場合</string>
+    <string name="album_created_but_permissions_set_failed">アルバムは作成されましたが、パーミッションを設定できませんでした。部分的に設定したアルバムを削除しようとしても失敗しました。サーバーを直接確認してください。</string>
+    <string name="filelist_item_prefix">ファイルです。</string>
+    <string name="alert_loading_certificates_from_selected_files">選択したファイルから証明書をロードしています。</string>
+    <string name="x509_key_type_field_pattern">プライベート %1$s 鍵</string>
+    <string name="x509_key_strength_field_pattern">強さ: %1$d ビット</string>
+    <string name="x509_cert_name_field_pattern">ID: %1$s</string>
+    <string name="x509_cert_verified_by_field_pattern">確認済み。%1$s</string>
+    <string name="x509_cert_valid_from_field_pattern">有効期限: %1$s</string>
+    <string name="x509_cert_valid_to_field_pattern">有効です。%1$s</string>
+    <string name="alert_warning_multiple_users_found_pattern">このユーザ名を共有しているユーザが他に %1$d 人いました (%2$s)。このPiwigoサーバーの最新のユーザーが選択されていますが、同じ時間、または似たような時間にサーバーを使用している可能性がある場合、これは安全ではありません。これらのユーザー名を変更して、ユーザー名が特定のクラスのユーザーに対して一意の識別子となるように検討してください。</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">これらのパーミッションは、アップロードプロセスを開始し、画面がオフになったらアップロードプロセスを実行し続けるために必要です。</string>
+    <string name="alert_no_scheme_specified">サーバーアドレスの前に http:// または https:// のいずれかを付ける必要があります。他のスキームはサポートされていません。ポートは、デフォルトのhttpでは80、httpsでは443の場合はオプションです。例 http://piwigo.org/demo または http://piwigo.org:80/demo</string>
+    <string name="alert_files_larger_than_upload_threshold_pattern">以下の %1$d ファイルが警告のしきい値を超えました: %2$s。これらをアップロードから削除しますか？</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">アップロード前に動画を圧縮しますか?</string>
+    <string name="alert_trusted_certificates_polling">接続時にサーバーから提供された信頼されていない証明書が表示されるので、これらを信頼ストアに追加することを選択することができます。拒否した場合、同じ証明書を再度要求されることはありません。再度プロンプトが表示される場合は、カスタムの信頼済み証明書ストアを使用するオプションの選択を解除して再選択してください。</string>
+    <string name="button_copy_link">リンクをコピー</string>
+    <string name="download_link_clipboard_data_desc">%1$s のダウンロード・リンク</string>
+    <string name="alert_http_scheme_specified">サーバーはhttpを使用しています。ユーザ名とパスワードはプレーンテキストでサーバーに送信されるので、これは良い考えではありません。サーバーをhttpsに変更することを強くお勧めします。</string>
+    <string name="gallery_admin_albums_list_load_failed_text">アルバムの完全な管理者リストの読み込みに失敗しました。</string>
+    <string name="title_adding_item">アイテムの追加</string>
+    <string name="title_editing_item">編集項目</string>
+    <string name="alert_error_item_not_unique">申し訳ありませんが、その項目は既に存在しています。</string>
+    <string name="alert_warning_no_server_url_specified">サーバーのURIが指定されていません。サーバーの場所を追加して再試行してください。</string>
+    <string name="error_heading_unloadable_certificate_files">以下の証明書ファイルをロードできませんでした。</string>
+    <string name="error_heading_unloadable_keystore_files">以下のキーストアファイルを読み込めませんでした。</string>
+    <string name="error_heading_unloadable_keystore_aliases">以下のキーストア・エイリアスをロードできませんでした。</string>
+    <string name="heading_keystore_filename">キーストア</string>
+    <string name="heading_keystore_alias">別名</string>
+    <string name="alert_title_error_upload">エラーアップロード</string>
+    <string name="alert_message_error_uploading_end">すべてのファイルのアップロードに成功した後、エラーが発生しました。アップロードを再起動して、元の場所から続行し、サーバーに残っている一時的なデータをクリアしてください。</string>
+    <string name="alert_message_error_uploading_start">すべてのファイルを正常にアップロードする前にエラーが発生しました。アップロードを再起動して接続先から続行するか、ジョブから残りのファイルを削除してから、[完了]ボタンをクリックしてサーバーに残っている一時的なデータを消去してください。</string>
+    <string name="release_history">リリース履歴</string>
+    <string name="planned_releases">リリース予定</string>
+    <string name="tags_heading">タグ</string>
+    <string name="progress_loading_tags">タグの取得</string>
+    <string name="alert_confirm_really_delete_tag">このタグを削除してもよろしいですか？このタグにリンクされているリソースは削除されませんが、この操作は永続的に行われます。</string>
+    <string name="alert_tag_delete_success_pattern">タグ (%1$s) が正常に削除されました。</string>
+    <string name="alert_tag_delete_failed_pattern">タグ (%1$s) を削除中にエラーが発生しました。再試行してください。</string>
+    <string name="tag_usage_count_pattern">(%1$d は使用しています)</string>
+    <string name="progress_loading_tag_details">タグに一致するリソースの検索</string>
+    <string name="tags_menu_title">タグ</string>
+    <string name="favorites_menu_title">お気に入り</string>
+    <string name="tag_empty_text">このタグが付いたアイテムはありません</string>
+    <string name="tag_content_load_failed_text">タグにリンクされたリソースのロードに失敗しました</string>
+    <string name="tag_heading">タグ</string>
+    <string name="tag_tagname_title">タグ名</string>
+    <string name="alert_paid_feature_only">この機能は有料アプリでのみ利用可能</string>
+    <string name="paid_feature_only">有料アプリ専用</string>
+    <string name="slideshow_image_details_tags_title">タグ</string>
+    <string name="button_search">検索</string>
+
+    <string name="file_selection_heading">ファイルの選択</string>
+    <string name="tag_heading_pattern">タグ。%1$s</string>
+    <string name="error_updating_tag_pattern">タグからリソース (%1$s) を削除するエラー: %2$s。</string>
+    <string name="alert_message_info_files_already_pending_approval_pattern">%1$d ファイルは既にアップロードされていますが、管理者の承認を待っているため、アップロードされませんでした。</string>
+    <string name="piwigo_connection_profile_heading">接続プロファイル</string>
+    <string name="folder_root_label">セレクタルート</string>
+    <string name="folder_root_root">デバイスルート</string>
+    <string name="folder_root_userdata">ユーザーデータ</string>
+    <string name="folder_extstorage">外部ストレージ</string>
+    <string name="folder_extstorage_device_pattern">外部ストレージ %1$d</string>
+    <string name="folder_default">デフォルト</string>
+    <string name="button_show_all">すべてを表示</string>
+    <string name="button_select_all">すべてを選択</string>
+    <string name="button_show_none">すべてを隠す</string>
+    <string name="button_select_none">選択しない</string>
+    <string name="button_reset">リセット</string>
+    <string name="alert_network_monitor_permission_needed_for_wifi_upload">ネットワーク監視はwifiのみのアップロードの効率的な使用を許可する必要があります。</string>
+    <string name="inaccessible_remote_folder">** プライベート</string>
+    <string name="error_unable_to_acquire_valid_session">サーバで有効なセッションを取得できない</string>
+    <string name="upload_job_is_enabled_label">有効で有効になっていますか？</string>
+    <string name="alert_unable_to_show_image_image_missing">この画像がありません。表示できません。</string>
+    <string name="notification_title_foreground_upload_service">Piwigoアップロードサービス</string>
+    <string name="notification_message_upload_service">ランニング</string>
+    <string name="slideshow_image_tab_basic_info">基本情報</string>
+    <string name="slideshow_image_tab_exif_data">EXIFデータ</string>
+    <string name="alert_bad_request_http_to_https">HTTP を使用してリソースへの不正なリクエスト。この接続プロファイルに対して、すべての HTTP URI を HTTPS に書き換えますか？後でアプリの設定で変更できます。</string>
+    <string name="alert_bad_request_follow_redirects">サーバーは302リダイレクト応答を返しました。このサーバーで以下のことを許可しますか？</string>
+    <string name="picture_resource_exif_data_unavailable">まだ利用可能な画像メタデータはありません</string>
+    <string name="video_caching_disabled_not_recommended">ビデオキャッシュを無効にするとパフォーマンスに深刻な影響を与える</string>
+    <string name="video_caching_disabled_warning">警告。ビデオキャッシュが無効になっています。オンデマンドでダウンロードしています。</string>
+    <string name="alert_error_album_no_longer_on_server">このアルバムはサーバーから読み込めませんでした。親アルバムに移動します。</string>
+    <string name="button_show_details">詳細を表示</string>
+    <string name="button_hide_details">詳細を隠す</string>
+    <string name="alert_message_max_upload_file_count_reached">アップロードするファイル数が最大に達しました。一度に多くのファイルをアップロードするには、このアプリの有料版を購入してご利用ください。</string>
+    <string name="alert_message_advert_load_error">広告の読み込みに問題があります。これらは私にとって非常に小さな収入源ではありますが重要なものを形成しているので、私にこれを報告してください。広告を完全に削除するために有料版の購入を検討してください。この画面が表示されている間、アプリは5秒間フリーズします。メッセージが非表示の場合はカウントダウンが再開されます。5秒後にこのメッセージを閉じて、通常通りアプリを使用し続けることができます。</string>
+    <string name="alert_temporary_upload_album_deleted">一時的にアップロードしたアルバムは正常に削除されました</string>
+    <string name="alert_deleting_temporary_upload_album">一時アップロードアルバムの削除</string>
+    <string name="alert_invalid_uri_pattern">無効な URI です。%1$s</string>
+    <string name="alert_invalid_uri_pattern_spaces">無効な URI です。URI の位置 %1$d にスペース文字があります。</string>
+    <string name="album_section_heading_albums">アルバム</string>
+    <string name="album_section_heading_albums_pattern">アルバム</string>
+    <string name="album_section_heading_resources">このアルバムの写真</string>
+    <string name="album_title_home">家</string>
+    <string name="upload_file_rating">私の評価</string>
+    <string name="slideshow_image_details_rating_score_title">レーティングスコア</string>
+    <string name="rating_score_pattern">%1$.2f (%2$dレート)</string>
+    <string name="connection_reset_warning_pattern">サーバは過去 %2$d 分間に %1$d 回接続を閉じました。これは、サーバ構成の問題を示している可能性があります。</string>
+    <string name="content_description_icon">アイコン</string>
+    <string name="duplicates_ignored_pattern">%1$d 重複が無視されました。</string>
+    <string name="progress_loading_session_details">セッションの詳細の読み込み</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">Piwigo WS メソッド %1$s は、このサーバで使用できなくなり、フォールバック %2$s が使用されています。サーバ・プラグインを非アクティブにしたか削除しましたか?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">Piwigo WS メソッド %1$s は、このサーバで使用できなくなりました。アプリで影響を受ける機能を無効にしています。サーバー・プラグインを無効にしたか削除しましたか?</string>
+    <string name="removing_favorite">お気に入りの削除</string>
+    <string name="adding_favorite">お気に入りの追加</string>
+    <string name="alert_error_unsupported_features_pattern">このアプリがサポートしている機能の中には、お使いのサーバーで利用できないものがあります。有効にするには\n1. PiwigoClientWsExtsプラグインをインストールします。\n2.このアプリでログアウトして、再度ログインします。\n\n1週間後にリマインドされます。</string>
+    <string name="tag_will_be_created_when_resource_is_saved">User Tags プラグインを使用して新しいタグを追加します。タグが作成されるのは、リソースが保存されてからです。</string>
+    <string name="resource_details_updated_message">リソースの詳細が更新されました</string>
+    <string name="alert_server_call_in_progress_please_wait">サーバー呼び出し中です。これが完了するまで待ってから再試行してください。</string>
+    <string name="upload_error_too_many_orphaned_files_exist_on_server">アップロードを続行するには、サーバー上に孤立した画像が多すぎます。再試行する前に、これらを整理してください。</string>
+    <string name="upload_error_orphaned_file_retrieval_failed">孤立した画像のリストを取得できません。再試行してください。</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理者ユーザーが期待される機能にアクセスできません。これは、コミュニティプラグイン（管理者以外のユーザーに管理者の状態を偽装する）を使用している場合に、正しくインストールされていない場合に発生する可能性があります。関連するプラグインが、Web ブラウザを使って期待されるメソッドを正しく公開していることを確認してください。1$s/tools/ws.htm</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">この機能は利用できません。ご利用のサーバーにPiwigoClientWsExtsプラグインをインストールしてください。すでにインストールされている場合は、最新バージョンにアップデートしてください。</string>
+    <string name="alert_user_session_no_allowed_filetypes">サーバーは、ユーザーセッション情報と一緒にアップロードできるファイルの種類のリストを提供していません（これは通常、管理者ユーザーのみに提供されます）。サーバーが正しく設定されていることを確認してから、再度お試しください。問題が解決しない場合は、私にメールを送っていただき、問題を診断させてください。</string>
+    <string name="job_not_found">アップロードジョブが見つかりません</string>
+    <string name="files_mid_data_transfer_title">部分的にコピーされたファイル</string>
+    <string name="files_awaiting_verification_title">データの整合性チェックを待っているファイル</string>
+    <string name="files_awaiting_transfer_title">データ転送待ちのファイル</string>
+    <string name="files_awaiting_configuration_title">設定待ちのファイル</string>
+    <string name="files_requiring_server_deletion_title">サーバーから削除する必要があるファイル</string>
+    <string name="files_fully_uploaded_title">完全にアップロードされたファイル</string>
+    <string name="temporary_album_needs_deleting_title">一時的なアルバムの削除が必要</string>
+    <string name="upload_job_status_heading">ジョブステータスのアップロード</string>
+    <string name="file_count_pattern">%1$d ファイル</string>
+    <string name="errors_encountered_list_title">遭遇したエラー</string>
+    <string name="upload_error_orphaned_file_retrieval_unavailable">孤児画像の存在を確認することができません。PiwigoClientWsExtsサーバプラグインのインストールを推奨</string>
+    <string name="x_of_y">%1$s / %2$s</string>
+    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">お使いのPiwigoClientWsExtsのバージョンが古くなっています。優先的にアップデートしてください。</string>
+    <string name="subalbum_detail_txt_pattern">%1$d 子アルバム</string>
+    <string name="please_read_and_agree_with_eula_first">まずはEULAの規約を読み、同意を確認してください。</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled">必要な許可が付与されませんでした。アクションはキャンセルされました。</string>
+    <string name="default_str">デフォルト</string>
+    <string name="copied_to_clipboard">クリップボードにコピー</string>
+    <string name="alert_plugin_required_pattern">%1$s サーバ・プラグインが必要 - バージョン %2$s 以降</string>
+
+
+
+
+
+
+
+
+    <string name="preference_corrupt_please_re_type_pattern">"プリファレンス %1$s は取り返しのつかない値で、デフォルトでは %2$s になっています。アプリの設定でこの値をリセットしてください。"</string>
+    <string name="switch_to_cached_mode">サーバーは現在利用できません。キャッシュされたデータを使用しますか？</string>
+    <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="compress_videos">動画を圧縮する</string>
+    <string name="compress_images">画像の圧縮</string>
+    <string name="upload_tab_title_settings">設定</string>
+    <string name="upload_tab_title_files">ファイル</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">共有ファイルを扱うことができません。ファイル名や正確なファイルタイプなどの詳細情報が欠落しています。最初にファイルをデバイスにダウンロードしてください。</string>
+    <string name="alert_internal_server_exposed_pattern">予期しない権限 %1$s が url に見つかり、%2$s に置き換えられました。サーバーが誤って設定されている可能性があります。</string>
+    <string name="buy_time_menu_title">広告を隠す</string>
+    <string name="watch_advert_to_buy_advert_free_time">広告を見て短い期間を広告なしで購入したいと思いませんか？ご希望であれば複数回やって期間を長くすることも可能です。</string>
+    <string name="reward_video_not_yet_loaded">申し訳ありませんが、特典動画はまだ読み込まれていません。後でもう一度お試しください。</string>
+    <string name="bought_time_menu_title_pattern">%1$02d:%2$02dの広告</string>
+    <string name="allow_upload_of_incompressible_videos">圧縮できない場合は、生のファイルをアップロードしてください。</string>
+    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">サーバは、アップロードに選択された %1$d ファイルを受け付けません。これらが動画の場合、圧縮を有効にすることができます。アップロードからこれらのファイルを削除しますか？</string>
+    <string name="upload_status_tab_title_details">詳細</string>
+    <string name="upload_status_tab_title_errors">エラー</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API コール %1$s はファイル・チェックサムが一致しないと報告していますが、API コール %2$s は一致していると報告しています。これは PIWIGO サーバや使用しているプラグインのバグである可能性があり、報告する価値があるかもしれません。</string>
+    <string name="alert_bulk_image_permissions_title">アクセス許可の設定</string>
+    <string name="alert_bulk_image_permissions_message">選択したリソース %1$d のアクセス権限レベルを設定します。</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">%1$s mime タイプで共有されたファイルを処理できません。</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">以下の拡張子を持つファイルはアップロードできず、削除されました。</string>
+    <string name="please_select_a_parent_album">親アルバムを選択してください</string>
+    <string name="unsupported_device">申し訳ありませんが、このデバイスはサポートされていません。Google Playサービスへのアクセスに問題があります。</string>
+    <string name="hint_album_view">画面下をタップすると、このアルバムの詳細が表示されます。</string>
+    <string name="usage_hint_title">ヒント</string>
+    <string name="hint_slideshow_base_view_1">画面下部またはリソース名をタップすると、このリソースの詳細が表示されます。</string>
+    <string name="hint_slideshow_base_view_2">リソース間を移動するには、左または右にスワイプします。</string>
+    <string name="hint_slideshow_item_view_1">レーティングは、希望するスターレーティングをタップまたはスワイプで調整することができます。即効性があります。</string>
+    <string name="hint_slideshow_paid_view_3">このリソースをお気に入りにするには、画像リソース名の右にあるハートのアイコンをタップします。</string>
+    <string name="hint_navigation_panel_1">上のアプリのアイコンをタップして強制的にサーバーをログアウトしてログインする</string>
+    <string name="user_details_not_found_on_server">サーバー上でユーザーの詳細を見つけることができません</string>
+    <string name="resource_queued_for_download">リソースはダウンロード用にキューに入れられています。キューの位置 %1$d です。</string>
+    <string name="alert_message_showing_images_of_size">サイズ %1$s のサーバからの画像の表示</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">サイズ %1$s のサーバからの画像サムネイルの表示</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">サイズ %1$s のサーバからのアルバム・サムネイルの表示</string>
+    
+    <string name="alert_error_upload_file_compression_error_message_pattern">アップロード %1$s でファイルを圧縮しているときにエラーが発生しました。\n%2$s</string>
+    <string name="uploading_progress_bar_message">アップロード</string>
+    <string name="compressing_progress_bar_message">圧縮</string>
+    <string name="warning_missing_tags_links_removed_from_resource">このアイテムにリンクされているすべてのタグがデータベースにまだ存在するわけではありません。1$dへのリンクは削除されました。</string>
+    <string name="button_stop_warning_me">Don\'t tell me again</string>
+    <string name="create_email_using_app">アプリを使ってメールを作成する</string>
+    <string name="open_files">アプリでファイルを開く</string>
+    <string name="files_unavailable_to_download_removed_pattern">選択範囲には、処理できないファイルが含まれています。これらの %1$d ファイルは無視されました。ビデオ・ファイルを共有するには、最初に完全にローカルにキャッシュされている必要があります。</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"すべての 1 回限りのユーザ・ヒントが再度表示されます。"</string>
+    
+    
+    <string name="delete_uploaded_files_title">アップロードされたファイルの削除</string>
+    <string name="release_permissions_for_uri_pattern">古い選択されたウリ(%1$s)のためにこのアプリが保持しているパーミッションを解放しますか？</string>
+    <string name="system_file_selector_label">システムファイル選択</string>
+    <string name="uri_still_needed_pattern">申し訳ありませんが、アプリがこのURIを使用するための許可を削除することはできません。アプリがこの URI にアクセスするには、この URI にアクセスする許可が必要です。\n\n%1$s</string>
+    <string name="no_suitable_activity_found">適した活動が見つかりませんでした。</string>
+    <string name="preference_uri_consumer_description_pattern">優先順位: %1$s</string>
+    <string name="missing_permissions_warning_message_pattern">"このアプリを最後に開いた時から、以下の部分で必要とされるファイルパーミッションが削除されています。\n\n%1$s\n\n期待通りに動作するように、これらの設定の新しいパーミッションを選択してください。"</string>
+    <string name="folder_selection_title">フォルダを選択</string>
+    <string name="files_selection_title">ファイルの選択</string>
+    <string name="all">すべての</string>
+    <string name="user_high_definition_field">オリジナル（フルサイズ）ファイルへのアクセスを許可</string>
+    <string name="group_is_default_field">このグループに新しいユーザーを割り当てる</string>
+    <string name="createGallery_galleryCommentsAllowed_title">ユーザーコメント</string>
+    <string name="uri_permission_justification_to_upload">サーバーへのアップロード用</string>
+    <string name="progress_loading_folder_content">フォルダの内容を読み込む</string>
+    <string name="adding_files">ファイルの追加</string>
+    <string name="calculating_file_checksums">ファイルチェックサムの計算</string>
+    <string name="alert_error_starting_download">ファイルのダウンロードを開始するエラー</string>
+    <string name="progress_importing_files">ファイルのインポート</string>
+    <string name="content_filter">コンテンツフィルタ</string>
+    <string name="alert_advert_importance_message">広告の収入が大事なんだよ。I\'m sorry they frustrate you, but if you watch them, they will keep appearing them until you watch one. この問題を避けるためには、広告を閉じるオプションが提供されるまで見てください。代わりに、このアプリの有料版を購入してください。ご協力ありがとうございました。</string>
+    <string name="eula_privacy_title">プライバシー</string>
+    <string name="privacy_policy_label">個人情報保護方針</string>
+    <string name="title_advert_consent">お客様のプライバシー</string>
+    <string name="personalised_adverts_label">個人化された広告をご希望ですか？</string>
+    <string name="personalised_adverts_field">パーソナライズされた広告を表示する</string>
+    <string name="open_link">ウェブページを開く</string>
+    <string name="no_adverts_label">このアプリの広告無料版をご希望ですか？</string>
+    <string name="view_the_paid_version">広告無料版に私を連れて行ってください</string>
+    <string name="advert_providers">使用中の広告主</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">申し訳ありませんが、このファイルは、要求された拡張アクセスを許可していないアプリによって共有され、そのアクセスは期限切れとなったため、使用することができませんでした。</string>
+    <string name="likely_file_unusable_shared_without_permissions">追加されたファイルは、要求された許可なしに共有されています。アップロードのために追加に失敗した場合は、アップロードファイルセレクターでアクセスするのではなく、このアプリで直接アプリから共有してみてください。</string>
+
+</resources>

@@ -47,8 +47,8 @@
         <item>nejlépe padnou</item>
         <item>náměstí</item>
         <item>palec</item>
-        <item>2mall</item>
-        <item>xsmall</item>
+        <item>2mil</item>
+        <item>2mil...</item>
         <item>malý</item>
         <item>střední</item>
         <item>velký</item>
@@ -61,16 +61,16 @@
     <string-array name="preference_gallery_item_thumbnail_size_array">
         <item>náměstí</item>
         <item>palec</item>
-        <item>2mall</item>
-        <item>xsmall</item>
+        <item>2mil</item>
+        <item>2mil...</item>
         <item>malý</item>
     </string-array>
 
     
     <string-array name="preference_gallery_sort_order_entries">
-        <item>ID zdroje</item>
+        <item>xxlarge...</item>
+        <item>xxlarge......</item>
         <item>Název zdroje zdroje</item>
-        <item>Název zdroje</item>
         <item>Počet zásahů</item>
         <item>Průměrné hodnocení</item>
         <item>Datum vzniku</item>
@@ -81,7 +81,7 @@
     <string-array name="server_ssl_certificate_hostname_verification_entries">
         <item>Přísný</item>
         <item>Prohlížeč kompatibilní</item>
-        <item>Vypnuto</item>
+        <item>Prohlížeč kompatibilní...</item>
     </string-array>
     
     <string-array name="user_types_array">
@@ -123,7 +123,7 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf ['upload_form_all_types'] = true; spíše než nepravdivé"</item>
+        <item>"Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé"</item>
         <item>Pokud se nahrávání nepodaří uspět, zkuste použít předvolbu na stránce pro nahrání nastavení aplikace, abyste odstranili veškerá zbývající selhání nahrávání ze serveru.</item>
         <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ \"Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání, která je připravena přejít na váš aktuální server</item>
@@ -131,10 +131,10 @@
         <item>Dlouhým kliknutím na album odstraníte dané album a veškerý obsah</item>
         <item>Dlouhým kliknutím na obrázek alba povolíte hromadný výběr obrázků pro akci</item>
         <item>Při prohlížení jakéhokoli obrázku v prezentaci dlouhým kliknutím otočíte / změníte velikost zobrazeného obrázku nebo povolíte další přiblížení</item>
-        <item>Při prohlížení v prezentaci můžete přiblížit obrázek tak, že na obrazovce nakreslíte dva prsty k sobě nebo od sebe</item>
+        <item>Při prohlížení jakéhokoli obrázku v prezentaci dlouhým kliknutím otočíte / změníte velikost zobrazeného obrázku nebo povolíte další přiblížení...</item>
         <item>Pokud jste přihlášeni jako správce, před předáním zařízení příteli k prohlížení fotografií aktivujte funkci zámku aplikace, abyste zabránili nechtěným změnám ve vaší galerii.</item>
-        <item>Po zobrazení celého videa, pokud je povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
-        <item>Chcete-li smazat všechny soubory, které mají být nahrány (když úloha právě neprobíhá), klikněte na tlačítko pro smazání souboru \ 'pro upload \'</item>
+        <item>Pokud jste přihlášeni jako správce, před předáním zařízení příteli k prohlížení fotografií aktivujte funkci zámku aplikace, abyste zabránili nechtěným změnám ve vaší galerii....</item>
+        <item>Chcete-li smazat všechny soubory, které mají být nahrány (když úloha právě neprobíhá), klikněte na tlačítko pro smazání souboru \ \'pro upload \'</item>
         <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server při nahrávání automaticky vygeneruje velikost používanou touto aplikací</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
@@ -179,12 +179,12 @@
                 - Nahrát stránku zachovává soubory při přidávání nových souborů ze systémového voliče a / nebo navigace do hlavní galerie
                 - Kód komprese videa byl radikálně přepracován. Nemělo by teď zmrznout a vzdávat se žádných videí. (Dejte mi vědět, pokud ano)
                 - Přepište velké oblasti, abyste odstranili možné úniky paměti
-                - Měl by být mnohem méně náchylný ke zhroucení na starých verzích systému Android (před lízátko)"</item>
+                - Měl by být mnohem méně náchylný ke zhroucení na starých verzích systému Android (před lollipopem)"</item>
         <item>1.4.0.65</item>
         <item>"Změny:
              - Opraveno zbývající téma téma pro dialogy
                 Oprava chyby:
-             - Fragment cesty Uri serveru je nesprávně převeden na malá písmena, což má za následek chybu 404"</item>
+             - Fragment cesty Uri serveru je nesprávně převeden na malá písmena, což vede k chybě 404"</item>
         <item>1.4.0.64</item>
         <item>"Změny:
              - Přidáno tlačítko pro zobrazení skrytého hesla v preferencích
@@ -207,9 +207,9 @@
                  - Úloha nahrávání (nesprávně) byla spuštěna, zatímco se video stále zapisuje do kamery zařízení"</item>
         <item>1.4.0.61</item>
         <item>"Oprava chyby:
-                 - Několik drobných oprav chyb
-                Změna:
-                 - Povolená podpora pro Android 11 - Prosím, dejte mi vědět, pokud již nemůžete vidět soubory k nahrání"</item>
+                 - Byl aktualizován proces upřednostňování upgradu pro lidi, kteří upgradují starou verzi několika verzí z aplikace na nejnovější dostupnou
+                 - Uložení souboru stavu úlohy se neuloží
+                 - Úloha nahrávání (nesprávně) byla spuštěna, zatímco se video stále zapisuje do kamery zařízení..."</item>
         <item>1.4.0.60</item>
         <item>"Změna:
                  - Změny na stránce předvoleb aplikace
@@ -220,7 +220,7 @@
                  - Povolit stahování nebo sdílení více souborů po jejich výběru v zobrazení alba"</item>
         <item>1.4.0.58</item>
         <item>"Změna:
-                 - Bezplatná verze: odstraněny všechny vsunuté reklamy na několik měsíců, takže je možné použít více než zkušební verzi placené verze"</item>
+                 - Povolit stahování nebo sdílení více souborů po jejich výběru v zobrazení alba..."</item>
         <item>1.4.0.57</item>
         <item>"Oprava chyby:
                  - prozatím se odhlásili z omezeného úložiště - umožňuje aplikaci znovu zobrazit soubory pro upload na Android 10"</item>
@@ -278,7 +278,7 @@
         <item>1.4.0.48</item>
         <item>"Změny:
          - Nová předvolba v nastavení galerie pro deaktivaci funkce automatického skrytí navigačního tlačítka nebo stavového řádku
-         - Uveďte, které velikosti obrázku se zobrazují pouze jednou, pokud se nezmění"
+         - Zobrazují se pouze velikosti obrázků, které se zobrazují pouze jednou, pokud se nezmění"
         </item>
         <item>1.4.0.47</item>
         <item>"Oprava chyby:
@@ -295,7 +295,7 @@
         </item>
         <item>1.4.0.45</item>
         <item>"Změny:
-             - Zvýšená libovolná aplikace podporovala maximální velikost nahraného souboru na 10 GB
+             - Zvýšená libovolná aplikace podporovala maximální velikost souboru pro upload na 10 GB
              - Aktualizované verze závislých knihoven"
         </item>
         <item>1.4.0.44</item>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+
+    <string name="preference_page_auto_upload_jobs">自動アップロード</string>
+    <string name="preference_data_upload_automatic_title">自動アップロード</string>
+    <string name="preference_data_upload_automatic_job_title">自動アップロードジョブ</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_enable_summary">背景のアップロードを有効にする</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">自動アップロード</string>
+    
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">ワイヤレスでの自動アップロードのみ使用</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">ワイヤレスのみ</string>
+    
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_jobs_title">ジョブの自動アップロード</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$dジョブ</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">アップロード状況を見る</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">最後に実行したジョブのステータスを表示（利用可能な場合</string>
+
+    
+    <string name="preference_data_upload_automatic_job_is_valid_title">仕事は有効です</string>
+
+    
+    <string name="preference_data_upload_automatic_job_enabled_summary">アップロードサービスはこのジョブを使用しますか？</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">有効なジョブ</string>
+    
+
+    <string name="preference_data_upload_automatic_job_server_title">サーバーへのアップロード</string>
+    
+    <string name="preference_data_upload_automatic_job_server_summary">プロフィール。%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_server_album_title">アルバムにアップロード</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">フォルダからのアップロード</string>
+    
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">正常にアップロードされたファイルの削除</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">自動削除</string>
+    
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">アップロードされた最大ファイルサイズ</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+    
+    
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">ファイル拡張子</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">ext %1$s でファイルをアップロードします。</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">プライバシーレベル</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">%1$s に表示されているファイルをアップロードしました。</string>
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">スライドショーの自動進行</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">設定した時間が経過すると、次の画像や動画が表示されます。</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">オートドライブイメージディレイ</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$sミリ秒</string>
+    
+    
+    
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">オートドライブビデオ遅延</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$sミリ秒</string>
+    
+    
+    
+    
+</resources>
