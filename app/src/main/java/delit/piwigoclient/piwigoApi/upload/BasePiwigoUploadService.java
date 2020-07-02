@@ -53,6 +53,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
@@ -319,12 +320,12 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    private static @Nullable DocumentFile getJobStateFile(Context c, boolean isBackgroundJob, long jobId) {
+    private static @NonNull DocumentFile getJobStateFile(@NonNull Context c, boolean isBackgroundJob, long jobId) {
         return getJobStateFile(c, isBackgroundJob, jobId,false);
     }
 
-    private static @Nullable DocumentFile getJobStateFile(Context c, boolean isBackgroundJob, long jobId, boolean createIfMissing) {
-        DocumentFile extCacheFolder = DocumentFile.fromFile(c.getExternalCacheDir());
+    private static @NonNull DocumentFile getJobStateFile(@NonNull Context c, boolean isBackgroundJob, long jobId, boolean createIfMissing) {
+        DocumentFile extCacheFolder = DocumentFile.fromFile(Objects.requireNonNull(c.getExternalCacheDir()));
         DocumentFile jobsFolder = extCacheFolder.findFile("uploadJobs");
         if(jobsFolder == null) {
             jobsFolder = extCacheFolder.createDirectory("uploadJobs");
@@ -337,12 +338,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
         DocumentFile file =  jobsFolder.findFile(filename);
         if(createIfMissing && file == null) {
-            file = jobsFolder.createFile("",filename);
+            file = Objects.requireNonNull(jobsFolder.createFile("",filename));
+        } else {
+            throw new IllegalStateException("unable to find job state file, but not allowed to create it when missing");
         }
         return file;
     }
 
-    private static void onFileDeleteFailed(String tag, DocumentFile f, String fileDesc) {
+    private static void onFileDeleteFailed(@NonNull String tag, @NonNull DocumentFile f, @NonNull String fileDesc) {
         if (f.exists()) {
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "Unable to delete " + fileDesc + " : " + f.getUri());
@@ -467,7 +470,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return getString(R.string.app_name) + "_UploadService";
     }
 
-    protected void doBeforeWork(Intent intent) {
+    protected void doBeforeWork(@NonNull Intent intent) {
         NotificationCompat.Builder notificationBuilder = buildNotification(getString(R.string.notification_message_upload_service));
         notificationBuilder.setProgress(0, 0, true);
         startForeground(getNotificationId(), notificationBuilder.build());
@@ -478,7 +481,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return prefs;
     }
 
-    protected abstract void doWork(Intent intent);
+    protected abstract void doWork(@NonNull Intent intent);
 
     protected abstract void updateListOfPreviouslyUploadedFiles(UploadJob uploadJob, HashMap<Uri, String> uploadedFileChecksums);
 
@@ -1101,7 +1104,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             Bitmap bitmap = null;
             int imgWidth;
             int imgHeight;
-            try(InputStream is = getContentResolver().openInputStream(rawImage);) {
+            try(InputStream is = getContentResolver().openInputStream(rawImage)) {
                 bitmap = BitmapFactory.decodeStream(is, null, options);
                 imgWidth = options.outWidth;
                 imgHeight = options.outHeight;
@@ -1263,7 +1266,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 Uri compressedVideoFileUri = thisUploadJob.getCompressedFile(fileForUploadUri);
 
                 if (!IOUtils.delete(this, compressedVideoFileUri)) {
-                    DocumentFile compressedVideoFile = DocumentFile.fromSingleUri(this, compressedVideoFileUri);
+                    DocumentFile compressedVideoFile = Objects.requireNonNull(DocumentFile.fromSingleUri(this, compressedVideoFileUri));
                     onFileDeleteFailed(tag, compressedVideoFile, "compressed video - post upload");
                 }
             }
