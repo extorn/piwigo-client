@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -166,7 +167,11 @@ public class AutoUploadJobConfig implements Parcelable {
         if(localFolderUri == null) {
             return null;
         }
-        return DocumentFile.fromTreeUri(c, localFolderUri);
+        try {
+            return DocumentFile.fromTreeUri(c, localFolderUri);
+        } catch(IllegalArgumentException e) {
+            return LegacyIOUtils.getDocFile(localFolderUri);
+        }
     }
 
     public String getUploadToAlbumName(Context c) {
