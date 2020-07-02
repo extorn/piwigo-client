@@ -171,11 +171,14 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
                 removingOldPermissions = false;
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                Uri selectedFolder;
+                Uri selectedFolder = null;
                 if(newValue != null) {
-                    selectedFolder = IOUtils.getTreeUri(Uri.parse((String)newValue));
-                } else {
-                    selectedFolder = null;
+                    selectedFolder = Uri.parse((String)newValue);
+                    try {
+                        selectedFolder = IOUtils.getTreeUri(selectedFolder);
+                    } catch(IllegalArgumentException e) {
+                        Logging.log(Log.WARN, TAG, "Raw file cannot be converted to tree uri. Leaving as is.");
+                    }
                 }
                 if(removingOldPermissions) {
                     Uri oldFolder = IOUtils.getLocalFileUri(oldValue);
