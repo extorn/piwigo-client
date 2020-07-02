@@ -798,6 +798,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         @Override
         protected List<FilesToUploadRecyclerViewAdapter.UploadDataItem> doInBackgroundSafely(Void... nothing) {
+            uploadJob.withContext(getUiHelper().getAppContext());
             int itemCount = uploadJob.getFilesNotYetUploaded().size();
             List<FilesToUploadRecyclerViewAdapter.UploadDataItem> itemsToBeUploaded = new ArrayList<>(itemCount);
             int currentItem = 0;
@@ -1156,8 +1157,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (uploadJobId != null) {
             Context ctx = getContext();
             if(ctx == null) {
-                Logging.log(Log.WARN, TAG, "Unable to update active job action button status as context is null");
-                return;
+                ctx = getUiHelper().getAppContext();
             }
             UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
             if (job != null) {
@@ -1979,7 +1979,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 errorMessage = ((PiwigoResponseBufferingHandler.CustomErrorResponse) error).getErrorMessage();
             }
             if (errorMessage != null) {
-                getParent().notifyUser(context, R.string.alert_error, errorMessage);
+                AbstractUploadFragment parent = getParent();
+                if (parent != null && parent.isAdded()) {
+                    parent.notifyUser(context, R.string.alert_error, errorMessage);
+                }
             }
         }
     }
