@@ -1,47 +1,47 @@
-Permet de parcourir une galerie de photos PIWIGO.
+Utilisez pour parcourir une galerie de photos PIWIGO.
 
-NOTE : le CLUF doit être accepté en téléchargement.
+REMARQUE: le CLUF doit être accepté lors du téléchargement.
 
-Cette application possède toutes les fonctionnalités de la version gratuite, ainsi que quelques autres. Pas de publicité.
+Cette application a toutes les fonctionnalités de la version gratuite avec quelques autres. Pas de publicités.
 
 ** L'application est en cours de développement actif **
-** Si quelque chose ne fonctionne pas - envoyez-moi un e-mail - ce sera réparé **
+** Si quelque chose ne fonctionne pas - envoyez-moi un e-mail - ce sera corrigé **
 
 Voir la liste complète des fonctionnalités ci-dessous.
 
-Connexion à des serveurs fonctionnant sur des ports http ou https non standard
-Accepter les certificats de serveur non valables (mauvais nom d'hôte) ou auto signés si nécessaire
-l'épinglage des certificats de serveur est pris en charge (vérifier les certificats par rapport à une copie locale)
-Visualisez les images à une résolution optimisée pour votre écran (ou sélectionnez celle que vous souhaitez).
-Vue hors ligne en lecture seule de votre serveur
-Afficher et permettre le zoom sur les images de toute taille disponibles sur le serveur
-Voir les vidéos MP4 (d'autres devraient fonctionner aussi, mais je n'ai pas testé d'autres formats)
-Télécharger les images.
-Enregistrer les vidéos entièrement téléchargées
-Possibilité d'exclure les vidéos des diaporamas
-Evaluer les images et voir les notes moyennes
-Téléchargez de nouvelles images ou vidéos (peuvent être compressées en option)
-Surveillance automatique des dossiers de l'appareil et téléchargement de fichiers en tâche de fond
-Visualiser, ajouter, modifier, supprimer des tags et des images taguées
-Définir et modifier les autorisations, la description et les autres détails des albums et des fichiers
+Connectez-vous à des serveurs fonctionnant sur des ports http ou https non standard
+Acceptez les certificats de serveur non valides (nom d'hôte incorrect) ou auto-signés si nécessaire
+l'épinglage des certificats du serveur est pris en charge (vérifiez les certificats par rapport à une copie locale)
+Affichez les images à une résolution optimisée pour votre écran (ou sélectionnez celle que vous souhaitez).
+Vue en lecture seule hors ligne de votre serveur
+Afficher et autoriser le zoom sur des images de toute taille disponible sur le serveur
+Visionnez des vidéos MP4 (d'autres devraient également fonctionner, mais je n'ai pas testé d'autres formats)
+Téléchargez des images.
+Enregistrer des vidéos entièrement téléchargées
+Exclure éventuellement des vidéos des diaporamas
+Évaluez les images et affichez les notes moyennes
+Téléchargez de nouvelles images ou vidéos (peut être éventuellement compressé)
+Surveillance automatique des dossiers de périphériques et téléchargement de fichiers dans un travail en arrière-plan
+Afficher, ajouter, modifier, supprimer des balises et des images balisées
+Définition et modification des autorisations, description et autres détails des albums et fichiers
 Ajouter ou modifier des albums, leurs autorisations, leur description, etc.
-Ajouter, consulter et modifier les utilisateurs de la galerie
-Ajouter, visualiser et modifier des groupes de galeries
-Copier ou déplacer des images dans la galerie
-Sélectionnez une ou plusieurs images à télécharger à l'aide d'autres applications et partagez-les avec PIWIGO
-Application spéciale en mode lecture seule disponible pour éviter toute altération indésirable de la galerie
-Un certain contrôle de la disposition des écrans sur l'application (à utiliser pour personnaliser l'écran de votre appareil)
+Ajouter, afficher et modifier les utilisateurs de la galerie
+Ajouter, afficher et modifier des groupes de galeries
+Copiez ou déplacez des images dans la galerie
+Sélectionnez les images à télécharger à l'aide d'autres applications et partagez-les avec PIWIGO
+Mode spécial en lecture seule pour empêcher toute modification indésirable de la galerie
+Un certain contrôle sur la disposition des écrans sur l'application (à utiliser pour personnaliser l'écran de votre appareil)
 
-Plugins de serveur pris en charge : community, piwigo_privacy, videojs, user-tags.
+Plugins de serveur pris en charge: communauté, piwigo_privacy, videojs, user-tags.
 
-Vous voulez autre chose qui n'est pas listé ? Essayez l'application. Si elle ne fait pas exactement ce dont vous avez besoin. Envoyez-moi un e-mail en utilisant le lien de l'application et je chercherai à ajouter la ou les fonctionnalités manquantes.
+Vous voulez autre chose qui ne figure pas sur la liste? Essayez l'application. S'il ne fait pas exactement ce dont vous avez besoin. Envoyez-moi un e-mail en utilisant le lien dans l'application et je chercherai à ajouter les fonctionnalités manquantes.
 
-Changements à venir :
+Modifications à venir:
 
-L'intention est d'améliorer progressivement l'interface utilisateur, et l'un des utilisateurs, David Klement, a aimablement fourni quelques suggestions pour la mise en page des écrans que j'ai commencé à utiliser à partir de la version 1.3.95 et dont je prendrai sans doute d'autres idées. Les propositions sont disponibles dans leur intégralité :
+L'intention est d'améliorer progressivement l'interface utilisateur, et l'un des utilisateurs, David Klement, a aimablement fourni quelques suggestions pour les dispositions d'écran à partir desquelles j'ai commencé à utiliser à partir de la version 1.3.95 et je prendrai sans doute plus d'idées. Les propositions sont disponibles dans leur intégralité:
 https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
 
 
-Limites connues :
+Limitations connues:
 
-1. Les commentaires ne sont actuellement pas pris en charge - vous ne pouvez ni les voir ni les ajouter. Si cette fonctionnalité manquante est importante pour vous - veuillez m'en parler.
+1. Les commentaires ne sont actuellement pas pris en charge - vous ne pouvez ni voir ni ajouter de commentaires. Si cette fonctionnalité manquante est importante pour vous, veuillez me parler.

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="checking_license">Lizenz prüfen...</string>
-    <string name="button_quit">Verlassen Sie</string>
-    <string name="button_buy">App kaufen</string>
-    <string name="unlicensed_dialog_retry_body">Es kann nicht bestätigt werden, dass die Anwendung lizenziert ist. Bitte kaufen Sie sie im Android Market. Falls ja, prüfen Sie bitte, ob eine Netzwerkverbindung verfügbar ist, und wiederholen Sie diese Lizenzprüfung.</string>
-    <string name="unlicensed_dialog_body">Lizenz kann nicht bestätigt werden. Prüfen Sie, ob eine Netzwerkverbindung verfügbar ist.</string>
+    <string name="checking_license">Lizenz prüfen…</string>
+    <string name="button_quit">Ausgang</string>
+    <string name="button_buy">Kaufe App</string>
+    <string name="unlicensed_dialog_retry_body">Es kann nicht bestätigt werden, dass die Anwendung lizenziert ist. Bitte kaufen Sie es im Android Market. Wenn ja, überprüfen Sie, ob eine Netzwerkverbindung verfügbar ist, und wiederholen Sie diese Lizenzprüfung.</string>
+    <string name="unlicensed_dialog_body">Lizenz kann nicht validiert werden. Überprüfen Sie, ob eine Netzwerkverbindung verfügbar ist.</string>
     <string name="unlicensed_dialog_title">Anwendung nicht lizenziert</string>
-    <string name="application_error">Anwendungsfehler: %1$d</string>
+    <string name="application_error">Anwendungsfehler:%1$d</string>
     
 
     
@@ -29,338 +29,338 @@
     
     
 
-    <string name="alert_title_permissions_needed">Zusätzliche Genehmigungen erforderlich</string>
-    <string name="alert_write_permission_needed_for_download">Zum Schreiben in das Dateisystem ist eine Erlaubnis erforderlich, um Dateien herunterzuladen</string>
+    <string name="alert_title_permissions_needed">Zusätzliche Berechtigungen erforderlich</string>
+    <string name="alert_write_permission_needed_for_download">Zum Schreiben in das Dateisystem ist eine Berechtigung erforderlich, um Dateien herunterladen zu können</string>
 
     
 
     
 
-    <string name="progress_clearing_failed_uploads_from_server">Löschen aller fehlgeschlagenen Uploads vom Server</string>
-    <string name="cleared_failed_uploads_from_server_pattern">Gelöscht %1$d fehlgeschlagene Uploads vom Server</string>
+    <string name="progress_clearing_failed_uploads_from_server">Löschen fehlgeschlagener Uploads vom Server</string>
+    <string name="cleared_failed_uploads_from_server_pattern">%1$d fehlgeschlagene Uploads vom Server wurden gelöscht</string>
 
     <string name="gallery_photos_summary_text_pattern">%1$d Fotos</string>
-    <string name="gallery_subcategory_summary_text_pattern">%1$d Unteralben und %2$d Fotos</string>
+    <string name="gallery_subcategory_summary_text_pattern">%1$d Unteralben und%2$d Fotos</string>
     
     <string name="alert_title_login">Anmeldung</string>
     <string name="alert_title_connectionTest">Verbindungstest</string>
-    <string name="alert_message_success_connectionTest">Erfolg\nBenutzertyp : %1$s.</string>
+    <string name="alert_message_success_connectionTest">Erfolg\nBenutzertyp:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warnung\nDer Server hat keine verfügbaren Bildgrößen gemeldet.</string>
     <string name="alert_success">ERFOLG!</string>
-    <string name="alert_partial_success">VOLLSTÄNDIGKEIT</string>
-    <string name="alert_error">Fehler</string>
-    <string name="alert_error_no_app_available_to_handle_action">Für diese Aktion konnte keine App gefunden werden.</string>
-    <string name="alert_error_no_app_available_to_rate_app">Es konnte keine App gefunden werden, die diese Aktion bewertet. Trotzdem danke für den Versuch.</string>
+    <string name="alert_partial_success">UNVOLLSTÄNDIG</string>
+    <string name="alert_error">Error</string>
+    <string name="alert_error_no_app_available_to_handle_action">Es konnte keine App gefunden werden, die diese Aktion ausführt.</string>
+    <string name="alert_error_no_app_available_to_rate_app">Es wurde keine App gefunden, um diese App zu bewerten. Danke, dass du es versucht hast.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Download abgebrochen. Erforderliche Berechtigungen werden nicht erteilt.</string>
-    <string name="button_retry">Erneut versuchen</string>
+    <string name="button_retry">Wiederholen</string>
 
 
     <string name="button_unlink">Verknüpfung aufheben</string>
     <string name="button_untag">Tag entfernen</string>
-    <string name="button_close">schließen</string>
+    <string name="button_close">Schließen</string>
     <string name="tools_menu_title">Werkzeuge</string>
-    <string name="settings_menu_title">App-Einstellungen</string>
+    <string name="settings_menu_title">App Einstellungen</string>
     <string name="offline_mode_menu_title">Offline-Modus</string>
-    <string name="online_mode_menu_title">Online-Modus</string>
+    <string name="online_mode_menu_title">Onlinemodus</string>
     <string name="gallery_menu_title">Galerie</string>
     <string name="upload_menu_title">Hochladen</string>
-    <string name="upload_page_title">Piwigo Hochladen</string>
-    <string name="gallery_to_alter_title">Hochladen auf</string>
+    <string name="upload_page_title">Piwigo Upload</string>
+    <string name="gallery_to_alter_title">Etwas hochladen auf</string>
     <string name="login_button_title">Anmeldung</string>
 
-    <string name="alert_question_enable_network_access">Datenabruf vom Server erlauben?</string>
+    <string name="alert_question_enable_network_access">Datenabruf vom Server zulassen?</string>
     <string name="alert_question_disable_network_access">Nur Daten verwenden, die bereits auf diesem Gerät zwischengespeichert sind?</string>
 
-    <string name="upload_file_privacy_level_title">Datenschutzstufe der Datei</string>
-    <string name="cacheCleared_title">Cache</string>
+    <string name="upload_file_privacy_level_title">Datenschutzstufe</string>
+    <string name="cacheCleared_title">Zwischenspeicher</string>
     <string name="cacheClearingStarted_message">Cache leeren</string>
-    <string name="cacheCleared_message">Cache gelöscht. Alle Bilder werden bei der nächsten Anfrage vom Remote-Server heruntergeladen.</string>
-    <string name="cacheClearFailed_message">Der Cache konnte zu diesem Zeitpunkt nicht geleert werden. Wenn das Problem weiterhin besteht, melden Sie bitte den Fehler.</string>
-    <string name="videoCacheCleared_message">Der Video-Cache wurde gelöscht. Alle Videos werden bei der nächsten Anforderung vom Remote-Server heruntergeladen.</string>
-    <string name="videoCacheClearFailed_message">Der Video-Cache konnte zu diesem Zeitpunkt nicht gelöscht werden. Wenn das Problem weiterhin besteht, melden Sie bitte den Fehler.</string>
+    <string name="cacheCleared_message">Cache geleert. Alle Bilder werden bei der nächsten Anforderung vom Remote-Server heruntergeladen.</string>
+    <string name="cacheClearFailed_message">Der Cache konnte zu diesem Zeitpunkt nicht gelöscht werden. Wenn das Problem weiterhin besteht, melden Sie den Fehler.</string>
+    <string name="videoCacheCleared_message">Video-Cache gelöscht. Alle Videos werden bei der nächsten Anforderung vom Remote-Server heruntergeladen.</string>
+    <string name="videoCacheClearFailed_message">Der Video-Cache konnte zu diesem Zeitpunkt nicht gelöscht werden. Wenn das Problem weiterhin besteht, melden Sie den Fehler.</string>
 
     <string name="title_activity_view_gallery">Galerie ansehen</string>
     <string name="navigation_drawer_open">Navigationsschublade öffnen</string>
     <string name="navigation_drawer_close">Navigationsschublade schließen</string>
 
-    <string name="notification_upload_paused">PIWIGO Upload angehalten</string>
-    <string name="notification_upload_resumed">PIWIGO-Upload wieder aufgenommen</string>
+    <string name="notification_upload_paused">PIWIGO-Upload angehalten</string>
+    <string name="notification_upload_resumed">PIWIGO-Upload wird fortgesetzt</string>
 
-    <string name="alert_items_for_upload_already_exist_message_pattern">%1$d-Dateien sind bereits auf dem Server vorhanden. Ihre Berechtigungen werden so geändert, dass sie den hier ausgewählten entsprechen, und sie werden bei Bedarf mit diesem Album verknüpft.</string>
+    <string name="alert_items_for_upload_already_exist_message_pattern">%1$d-Dateien sind bereits auf dem Server vorhanden. Ihre Berechtigungen werden geändert, um die hier ausgewählten zu berücksichtigen, und sie werden bei Bedarf mit diesem Album verknüpft.</string>
     <string name="alert_upload_success">Upload abgeschlossen.</string>
-    <string name="alert_upload_partial_success">Der Upload ist abgeschlossen. Dateien, die nicht hochgeladen werden konnten, bleiben in der Liste zur erneuten Prüfung, falls gewünscht. Wenn irgendwelche Aktionen unvollständig sind, können Sie keine neuen Dateien zur Upload-Liste hinzufügen. Klicken Sie auf die Schaltfläche Hochladen, um sie zu vervollständigen.</string>
-    <string name="alert_upload_failed_piwigo">Der Upload ist aufgrund eines Fehlers im PIWIGO Server fehlgeschlagen (%1$d : %2$s).</string>
-    <string name="alert_upload_failed_webserver">Der Upload ist aufgrund eines Webserver-Fehlers fehlgeschlagen (%1$d : %2$s).</string>
-    <string name="alert_upload_failed_webresponse">Der Upload schlug aufgrund eines Fehlers in der PIWIGO-Antwort fehl. Dies ist wahrscheinlich auf eine PIWIGO-API-Änderung zurückzuführen. Unverständliche Antwort : %1$s.</string>
-    <string name="alert_error_upload_chunk_failed_message_pattern">Der Upload des Chunks für die Datei %1$s ist fehlgeschlagen. Abbruch des Uploads der Datei.</string>
-    <string name="alert_error_upload_file_no_longer_available_message_pattern">Die Datei %1$s ist auf dem Gerät nicht mehr verfügbar, vielleicht wurde sie gelöscht oder verschoben.\n%2$s</string>
-    <string name="alert_error_upload_file_read_error_message_pattern">Fehler beim Hochladen der Datei %1$s.\n%2$s</string>
-    <string name="alert_error_upload_file_already_on_server_message_pattern">Hochgeladene Datei %1$s ist bereits auf dem Server vorhanden, Aktion abgebrochen.</string>
-    <string name="alert_error_upload_add_file_failed_message_pattern">Fehler beim Hinzufügen der hochgeladenen Datei %1$s zum Album. Erneut versuchen?</string>
-    <string name="alert_upload_file_failed_piwigo_message_pattern">Das Hochladen der Datei %1$s ist aufgrund eines Fehlers im PIWIGO-Server fehlgeschlagen (%2$d : %3$s).</string>
-    <string name="alert_upload_file_failed_webserver_message_pattern">Das Hochladen der Datei %1$s schlug aufgrund eines Fehlers im Webserver fehl (%2$d : %3$s).</string>
-    <string name="alert_upload_file_failed_webresponse_message_pattern">Upload-Datei %1$s schlug aufgrund eines Fehlers in der PIWIGO-Antwort fehl. Dies ist wahrscheinlich auf eine PIWIGO-API-Änderung zurückzuführen. Unverständliche Antwort : %2$s.</string>
-    <string name="action_settings">Einstellungen</string>
+    <string name="alert_upload_partial_success">Upload abgeschlossen. Dateien, die nicht hochgeladen werden konnten, bleiben in der Liste, um sie bei Bedarf erneut zu versuchen. Wenn Aktionen unvollständig sind, können Sie der Upload-Liste keine neuen Dateien hinzufügen. Klicken Sie auf die Schaltfläche zum Hochladen, um sie abzuschließen.</string>
+    <string name="alert_upload_failed_piwigo">Das Hochladen ist aufgrund eines Fehlers im PIWIGO-Server fehlgeschlagen (%1$d:%2$s).</string>
+    <string name="alert_upload_failed_webserver">Das Hochladen ist aufgrund eines Webserverfehlers fehlgeschlagen (%1$d:%2$s).</string>
+    <string name="alert_upload_failed_webresponse">Das Hochladen ist aufgrund einer Fehlerverarbeitung der PIWIGO-Antwort fehlgeschlagen. Dies ist wahrscheinlich auf eine Änderung der PIWIGO-API zurückzuführen. Nicht analysierbare Antwort:%1$s.</string>
+    <string name="alert_error_upload_chunk_failed_message_pattern">Das Hochladen des Blocks für die Datei%1$s ist fehlgeschlagen. Abbruch des Datei-Uploads.</string>
+    <string name="alert_error_upload_file_no_longer_available_message_pattern">Die Datei%1$s ist auf dem Gerät nicht mehr verfügbar. Möglicherweise wurde sie gelöscht oder verschoben.\n%2$s</string>
+    <string name="alert_error_upload_file_read_error_message_pattern">Fehler beim Hochladen der Datei%1$s.\n%2$s</string>
+    <string name="alert_error_upload_file_already_on_server_message_pattern">Die hochgeladene Datei%1$s ist bereits auf dem Server vorhanden, Aktion abgebrochen.</string>
+    <string name="alert_error_upload_add_file_failed_message_pattern">Fehler beim Hinzufügen der hochgeladenen Datei%1$s zum Album. Wiederholen?</string>
+    <string name="alert_upload_file_failed_piwigo_message_pattern">Das Hochladen der Datei%1$s ist aufgrund eines Fehlers im PIWIGO-Server fehlgeschlagen (%2$d:%3$s).</string>
+    <string name="alert_upload_file_failed_webserver_message_pattern">Das Hochladen der Datei%1$s ist aufgrund eines Webserverfehlers fehlgeschlagen (%2$d:%3$s).</string>
+    <string name="alert_upload_file_failed_webresponse_message_pattern">Das Hochladen der Datei%1$s ist aufgrund einer Fehlerverarbeitung der PIWIGO-Antwort fehlgeschlagen. Dies ist wahrscheinlich auf eine Änderung der PIWIGO-API zurückzuführen. Nicht analysierbare Antwort:%2$s.</string>
+    <string name="action_settings">die Einstellungen</string>
 
     
-    <string name="createGallery_pageTitle">Ein Album erstellen</string>
+    <string name="createGallery_pageTitle">Erstellen Sie ein Album</string>
     <string name="createGallery_parentGalleryTitle">Übergeordnetes Album</string>
-    <string name="createGallery_galleryNameTitle">Name des Albums</string>
+    <string name="createGallery_galleryNameTitle">Albumname</string>
     <string name="createGallery_galleryDescriptionTitle">Beschreibung</string>
-    <string name="createGallery_galleryCommentsAllowed">Erlauben Sie Benutzern, Kommentare hinzuzufügen</string>
+    <string name="createGallery_galleryCommentsAllowed">Benutzern erlauben, Kommentare hinzuzufügen</string>
     <string name="createGallery_galleryIsPrivate">Album ist privat?</string>
-    <string name="createGallery_permissions_allowedGroupsTitle">Erlaubte Gruppen</string>
-    <string name="createGallery_permissions_allowedUsersTitle">Erlaubte Benutzer</string>
+    <string name="createGallery_permissions_allowedGroupsTitle">Zulässige Gruppen</string>
+    <string name="createGallery_permissions_allowedUsersTitle">Zulässige Benutzer</string>
     <string name="createGallery_createGalleryButtonTitle">Album erstellen</string>
-    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">Die Berechtigungen für die Galerie konnten nicht korrekt festgelegt werden. Wieder gelöscht. Bitte versuchen Sie es erneut. Wenn der Fehler weiterhin besteht, werfen Sie ein Problem mit dieser Anwendung auf, damit wir sie verbessern können, und führen Sie den Schritt manuell durch.</string>
+    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">Berechtigungen für die Galerie können nicht korrekt festgelegt werden. Erneut gelöscht. Bitte versuche es erneut. Wenn der Fehler weiterhin besteht, werfen Sie ein Problem mit dieser App auf, damit wir es verbessern können, und führen Sie den Schritt manuell aus.</string>
 
-    <string name="logging_in_to_piwigo_pattern">Anmelden bei %1$s</string>
+    <string name="logging_in_to_piwigo_pattern">Anmelden bei%1$s</string>
 
     <string name="delete_upload_job_button_title">Job löschen</string>
     <string name="upload_files_button_title">Hochladen</string>
-    <string name="upload_files_finish_job_button_title">Beenden</string>
-    <string name="upload_job_status_button">Stand</string>
-    <string name="alert_really_delete_upload_job">Dadurch wird der Jobstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder verwenden Sie die Einstellung in dieser Anwendung - Seite Upload-Einstellungen). Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt unternehmen wollen?</string>
+    <string name="upload_files_finish_job_button_title">Fertig</string>
+    <string name="upload_job_status_button">Status</string>
+    <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Einstellungen in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden häufig erfolgreich abgeschlossen, wenn Sie sie später fortsetzen. Sind Sie sicher, dass Sie diesen drastischen Schritt unternehmen möchten?</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
-    <string name="alert_title_server_error">Server-Fehler</string>
-    <string name="alert_server_error_pattern">Server gab HTTP-Fehler zurück: %1$d (%2$s)</string>
+    <string name="alert_title_server_error">Serverfehler</string>
+    <string name="alert_server_error_pattern">Der Server hat einen HTTP-Fehler zurückgegeben:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Fehler beim Parsen der Piwigo-Antwort</string>
-    <string name="alert_error_handling_response_pattern">Unvergleichliche Reaktion: %1$d (%2$s)</string>
-    <string name="none_selected">Keine</string>
-    <string name="alert_title_error_too_many_users">Fehler</string>
-    <string name="alert_error_too_many_users_message">Zu viele Benutzer zu handhaben. Bitte reichen Sie einen Erweiterungsantrag ein, um das Paging von Benutzern zu ermöglichen.</string>
+    <string name="alert_error_handling_response_pattern">Nicht analysierbare Antwort:%1$d (%2$s)</string>
+    <string name="none_selected">Keiner</string>
+    <string name="alert_title_error_too_many_users">Error</string>
+    <string name="alert_error_too_many_users_message">Zu viele Benutzer, um damit umzugehen. Bitte senden Sie eine Erweiterungsanforderung, um das Paging von Benutzern zu ermöglichen.</string>
 
-    <string name="slideshow_resource_action_download">Datei herunterladen</string>
-    <string name="slideshow_resource_action_delete">löschen</string>
-    <string name="slideshow_resource_action_copy">In Album kopieren</string>
-    <string name="slideshow_resource_action_move">Zum Album verschieben</string>
+    <string name="slideshow_resource_action_download">Download-Datei</string>
+    <string name="slideshow_resource_action_delete">Löschen</string>
+    <string name="slideshow_resource_action_copy">Auf Album kopieren</string>
+    <string name="slideshow_resource_action_move">Zum Album wechseln</string>
     <string name="slideshow_image_details_actions">Aktionen</string>
     <string name="slideshow_image_details_exif">EXIF-Daten</string>
-    <string name="slideshow_image_details_comments">Anmerkungen</string>
+    <string name="slideshow_image_details_comments">Bemerkungen</string>
 
     <string name="gallery_details_updating_progress_title">Album aktualisieren</string>
-    <string name="progress_resource_details_updating">Aktualisierung von Ressourcendetails</string>
-    <string name="gallery_details_name_title">Name des Albums</string>
-    <string name="gallery_details_description_title">Beschreibung des Albums</string>
-    <string name="gallery_details_save_button">Speichern</string>
-    <string name="gallery_details_discard_button">verwerfen</string>
+    <string name="progress_resource_details_updating">Ressourcendetails aktualisieren</string>
+    <string name="gallery_details_name_title">Albumname</string>
+    <string name="gallery_details_description_title">Albumbeschreibung</string>
+    <string name="gallery_details_save_button">sparen</string>
+    <string name="gallery_details_discard_button">Verwerfen</string>
     <string name="gallery_action_delete_progress_title">Album löschen</string>
-    <string name="gallery_action_delete_error_subcategories_present">Es ist nicht möglich, ein Album zu löschen, das Unteralben enthält. Bitte löschen Sie diese zuerst.</string>
+    <string name="gallery_action_delete_error_subcategories_present">Ein Album mit Unteralben kann nicht gelöscht werden. Bitte löschen Sie diese zuerst.</string>
     <string name="gallery_action_delete_error_photos_present">Ein Album, das Fotos oder andere Dateien enthält, kann nicht gelöscht werden. Bitte löschen Sie diese zuerst.</string>
-    <string name="notification_upload_event">Piwigo Hochladen</string>
-    <string name="progress_downloading">Datei herunterladen</string>
+    <string name="notification_upload_event">Piwigo Upload</string>
+    <string name="progress_downloading">Datei wird heruntergeladen</string>
     <string name="alert_error_unimplemented">Funktion noch nicht implementiert.</string>
-    <string name="button_ok">Okay</string>
+    <string name="button_ok">In Ordnung</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
-    <string name="button_save">Speichern</string>
-    <string name="alert_confirm_title">Bestätigen Sie</string>
+    <string name="button_save">sparen</string>
+    <string name="alert_confirm_title">Bestätigen</string>
     <string name="alert_question_title">Frage</string>
-    <string name="alert_confirm_really_delete_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Fortfahren?</string>
-    <string name="alert_confirm_really_delete_items_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Fortfahren?</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Sie haben beantragt, %1$d Ressourcen zu löschen, die für andere Alben freigegeben sind. Möchten Sie diese aus allen Alben (und dem Server - dauerhaft) löschen oder sie nur von diesem Album trennen?</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Sie haben beantragt, %1$d Ressourcen zu löschen. Möchten Sie diese von allen Alben (und dem Server) dauerhaft löschen oder nur die Verlinkung von diesem Tag entfernen?</string>
-    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Sie haben beantragt, %1$d Ressourcen zu löschen. Wollen Sie diese von allen Alben (und dem Server) löschen - dauerhaft? (Ohne das auf Ihrem Server installierte Plugin UserTags können Sie keine Tags von Bildern entfernen)</string>
+    <string name="alert_confirm_really_delete_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Fortsetzen?</string>
+    <string name="alert_confirm_really_delete_items_from_server">Dadurch werden die Elemente dauerhaft vom Server gelöscht. Fortsetzen?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Sie haben angefordert,%1$d-Ressourcen zu löschen, die für andere Alben freigegeben sind. Möchten Sie diese aus allen Alben (und dem Server - dauerhaft) löschen oder einfach die Verknüpfung mit diesem Album aufheben?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Sie haben angefordert,%1$d Ressourcen zu löschen. Möchten Sie diese dauerhaft aus allen Alben (und dem Server) löschen oder einfach die Verknüpfung mit diesem Tag aufheben?</string>
+    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Sie haben angefordert,%1$d Ressourcen zu löschen. Möchten Sie diese dauerhaft aus allen Alben (und dem Server) löschen? (Sie können keine Tags aus Bildern entfernen, ohne dass das UserTags-Plugin auf Ihrem Server installiert ist.)</string>
     <string name="about_menu_title">Über</string>
     <string name="other_licences_button_text">Andere lizenzierte Komponenten</string>
     <string name="oss_licences_menu_title">OSS-Lizenzen</string>
     <string name="about_heading">Über diese App</string>
     
-    <string formatted="false" name="eula">"Endbenutzer-Lizenzvertrag (\"Vertrag\")
-Zuletzt aktualisiert: 7. August 2018
+    <string formatted="false" name="eula">"Endbenutzer-Lizenzvereinbarung (\"Vereinbarung\")
+Letzte Aktualisierung: 7. August 2018
 
-Bitte lesen Sie diesen Endbenutzer-Lizenzvertrag (\"Vertrag\") sorgfältig durch, bevor Sie auf \"Ich stimme zu\" klicken.
-Schaltfläche, das Herunterladen oder die Verwendung von Piwigo Client (\"Anwendung\").
+Bitte lesen Sie diese Endbenutzer-Lizenzvereinbarung (\"Vereinbarung\") sorgfältig durch, bevor Sie auf \"Ich stimme zu\" klicken.
+Schaltfläche, Piwigo Client herunterladen oder verwenden (\"Anwendung\").
 
-Indem Sie auf die Schaltfläche \"Ich stimme zu\" klicken, die Anwendung herunterladen oder benutzen, erklären Sie sich damit einverstanden, dass Sie
-durch die Bestimmungen und Bedingungen dieses Abkommens.
-Wenn Sie mit den Bedingungen dieser Vereinbarung nicht einverstanden sind, klicken Sie nicht auf die Schaltfläche \"Ich stimme zu\" und
-die Anwendung herunterladen oder verwenden.
+Wenn Sie auf die Schaltfläche \"Ich stimme zu\" klicken, die Anwendung herunterladen oder verwenden, stimmen Sie der Bindung zu
+durch die Bedingungen dieser Vereinbarung.
+Wenn Sie den Bedingungen dieser Vereinbarung nicht zustimmen, klicken Sie nicht auf die Schaltfläche \"Ich stimme zu\" und nicht
+Laden Sie die Anwendung herunter oder verwenden Sie sie.
 
-Wenn Sie erwägen, diese Anwendung zu verwenden, um auf einen für kommerzielle Zwecke genutzten Server zuzugreifen und/oder diesen zu ändern, ist es unerlässlich, dass Sie die Haftungsbeschränkungen lesen und verstehen.
-Sie müssen dies auf einem nicht produktiven Server zu Ihrer Zufriedenheit testen, bevor Sie aufgrund Ihrer Entscheidungen selbst ein Risiko und eine Haftung übernehmen. Diese Anwendung wurde in erster Linie entwickelt
-für nicht-kommerzielle Zwecke.
+Wenn Sie erwägen, mit dieser App auf einen für kommerzielle Zwecke verwendeten Server zuzugreifen oder diesen zu ändern, müssen Sie die Haftungsbeschränkungen unbedingt lesen und verstehen.
+Sie müssen dies zu Ihrer Zufriedenheit auf einem Nicht-Produktionsserver testen, bevor Sie selbst Risiken und Haftung aufgrund Ihrer Entscheidungen übernehmen. Diese App wurde in erster Linie entwickelt
+für nichtkommerzielle Zwecke.
 
 Definitionen
 
-Lizenznehmer: Der Lizenznehmer ist die Person oder Firma, die beabsichtigt, die lizenzierte Software zu benutzen oder sie bereits legal oder illegal benutzt. Der Begriff \"Lizenznehmer\" bedeutet nicht, dass die Software standardmäßig legal lizenziert ist.
+Lizenznehmer: Der Lizenznehmer ist die Person oder Firma, die beabsichtigt, die lizenzierte Software zu verwenden oder sie bereits legal oder illegal verwendet. Der Begriff „Lizenznehmer“ bedeutet nicht, dass die Software standardmäßig legal lizenziert ist.
 
 
 Lizenz
 
-Gareth Deli gewährt Ihnen eine widerrufbare, nicht-exklusive, nicht übertragbare, beschränkte Lizenz
-die Anwendung ausschließlich für Ihre persönlichen oder kommerziellen Zwecke herunterzuladen, zu installieren und zu verwenden
-in strikter Übereinstimmung mit den Bestimmungen dieses Abkommens.
+Gareth Deli gewährt Ihnen eine widerrufliche, nicht exklusive, nicht übertragbare, beschränkte Lizenz
+zum Herunterladen, Installieren und Verwenden der Anwendung ausschließlich für Ihre persönlichen oder kommerziellen Zwecke
+streng in Übereinstimmung mit den Bestimmungen dieser Vereinbarung.
 
-DIE SOFTWARE WIRD OHNE MÄNGELGEWÄHR UND OHNE JEGLICHE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG BEREITGESTELLT, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF DIE GEWÄHRLEISTUNG DER MARKTGÄNGIGKEIT, DER EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND DER NICHTVERLETZUNG VON RECHTEN DRITTER. IN KEINEM FALL SIND DIE AUTOREN ODER URHEBERRECHTSINHABER HAFTBAR FÜR ANSPRÜCHE, SCHÄDEN ODER ANDERE HAFTUNGEN, OB IN EINER VERTRAGSKLAGE, EINER UNERLAUBTEN HANDLUNG ODER ANDERWEITIG, DIE SICH AUS, AUS ODER IN VERBINDUNG MIT DER SOFTWARE ODER DER NUTZUNG ODER ANDEREN GESCHÄFTEN MIT DER SOFTWARE ERGEBEN.
-
-
-Einschränkungen
-
-Sie stimmen zu, es nicht zu tun, und Sie werden es anderen nicht erlauben:
-a) zu lizenzieren, zu verkaufen, zu vermieten, zu verpachten, abzutreten, zu verteilen, zu übertragen, zu hosten, auszulagern, offenzulegen oder anderweitig
-die Anwendung kommerziell zu verwerten oder die Anwendung Dritten zur Verfügung zu stellen.
-b) den Quellcode oder Bytecode der Anwendung entweder manuell oder mit Hilfe eines Werkzeugs dekompilieren oder anderweitig einsehen
-c) diese Anwendung in einem anderen Gerät als einem physischen Gerät vom Typ Telefon oder Tablet ausführen oder versuchen, diese Anwendung auszuführen, das das Android-Betriebssystem als Hauptbetriebssystem verwendet.
-d) diese Anwendung in einem Emulator oder einer anderen Sandbox-Umgebung auszuführen oder zu versuchen, diese Anwendung auszuführen, um ihr Verhalten zu untersuchen.
-e) abgeleitete Werke erstellen, die auf dieser Anwendung basieren.
-
-Sammlung von Benutzerdaten
-
-Die Firebase-Integration wurde dieser Anwendung hinzugefügt, um die Nachverfolgung der Nutzung der Anwendung zu erleichtern, wobei der Hauptzweck eine effizientere Fehlerbehebung und die Ermittlung der Art und Weise, wie die Anwendung genutzt wird, ist. Die zur Erreichung dieses Zwecks erforderlichen Mindestdaten werden gesammelt.
+DIE SOFTWARE WIRD \"WIE BESEHEN\" OHNE JEGLICHE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG ZUR VERFÜGUNG GESTELLT, EINSCHLIESSLICH DER GEWÄHRLEISTUNG FÜR MARKTGÄNGIGKEIT, EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND NICHTVERLETZUNG. IN KEINEM FALL HAFTEN DIE AUTOREN ODER COPYRIGHT-INHABER FÜR ANSPRÜCHE, SCHÄDEN ODER ANDERE HAFTUNGEN, OB VERTRAGS-, TORT- ODER ANDERWEITIGE MASSNAHMEN, DIE AUS, AUS ODER IM ZUSAMMENHANG MIT DER SOFTWARE ODER DER NUTZUNG ODER ANDEREN ANGEBOTE ENTSTEHEN SOFTWARE
 
 
-Beschränkte Garantie und Haftungsausschluss
+Beschränkungen
 
-Die Software wird \"as is\" zur Verfügung gestellt und der Lizenznehmer benutzt sie auf eigenes Risiko. Gareth Deli übernimmt keine Gewähr für seine Verwendung, Leistung oder Eignung für einen bestimmten Zweck. Es ist immer möglich, dass Software Fehler (Bugs) enthält und nicht funktioniert. Daher garantiert Gareth Deli nicht, dass die Software vollständig fehlerfrei ist oder dass sie ohne Unterbrechung mit allen Computern und Konfigurationen funktioniert.
+Sie stimmen zu, dies nicht zu tun, und Sie werden anderen nicht erlauben:
+a) lizenzieren, verkaufen, vermieten, leasen, abtreten, verteilen, übertragen, hosten, auslagern, offenlegen oder auf andere Weise
+die Anwendung kommerziell nutzen oder an Dritte weitergeben.
+b) Dekompilieren oder anderweitiges Anzeigen des Quellcodes oder Bytecodes der Anwendung entweder manuell oder mithilfe eines Tools
+c) Führen Sie diese Anwendung aus oder versuchen Sie, sie auf einem anderen Gerät als einem physischen Gerät vom Typ Telefon oder Tablet auszuführen, das das Android-Betriebssystem als Hauptbetriebssystem verwendet.
+d) Führen Sie diese Anwendung aus oder versuchen Sie, sie in einem Emulator oder einer anderen Sandbox-Umgebung auszuführen, um ihr Verhalten zu untersuchen.
+e) auf dieser Anwendung abgeleitete Werke erstellen.
 
-Es liegt allein in der Verantwortung des Lizenznehmers, zu prüfen, ob die Software für seinen speziellen Zweck geeignet ist oder seine Funktions- und Leistungsanforderungen erfüllt. Der Lizenznehmer ist auch verpflichtet, zu prüfen, wie die Software auf seinen Geräten und seinen Konfigurationen funktioniert; alle Anwendungsfälle zu testen und zu prüfen, ob die Daten fehlerfrei und wie gewünscht verarbeitet werden, bevor er die Software in Produktionsumgebungen einsetzt. Dies ist von entscheidender Bedeutung, wenn die Software für kommerzielle Zwecke verwendet wird.
+Benutzerdatenerfassung
+
+Diese Anwendung wurde um die Firebase-Integration erweitert, um die Nachverfolgung der Verwendung der Anwendung zu vereinfachen. Die Hauptziele sind eine effizientere Fehlerbehebung und die Ermittlung der Art und Weise, wie die App verwendet wird. Die zur Erreichung dieses Zwecks erforderlichen Mindestdaten werden erhoben.
+
+
+Eingeschränkte Garantie und Haftungsausschluss
+
+Die Software wird \"wie sie ist\" bereitgestellt und der Lizenznehmer verwendet sie auf eigenes Risiko.Gareth Deli übernimmt keine Gewähr für seine Verwendung, seine Leistung oder seine Eignung für einen bestimmten Zweck. Es ist immer möglich, dass Software Fehler enthält und nicht funktioniert. Daher garantiert Gareth Deli nicht, dass die Software vollständig fehlerfrei ist oder mit allen Computern und Konfigurationen ohne Unterbrechung funktioniert.
+
+Es liegt ausschließlich in der Verantwortung des Lizenznehmers, zu überprüfen, ob die Software seinem speziellen Zweck entspricht oder seinen Funktions- und Leistungsanforderungen entspricht. Der Lizenznehmer ist außerdem verpflichtet, die Funktionsweise der Software auf seinen Geräten und Konfigurationen zu testen. Testen Sie alle Anwendungsfälle und prüfen Sie, ob die Daten fehlerfrei und wie gewünscht verarbeitet wurden, bevor Sie die Software in Produktionsumgebungen verwenden. Dies ist von entscheidender Bedeutung, wenn die Software für kommerzielle Zwecke verwendet wird.
 
 
 Haftungsbeschränkungen
 
-Der Lizenznehmer ist für die Folgen der Benutzung der Software und die daraus resultierenden direkten und indirekten Schäden verantwortlich, soweit dies rechtlich möglich ist. Die Haftung ist, soweit gesetzlich möglich, auf den Kaufpreis beschränkt; ansonsten ist sie auf das gesetzlich mögliche Minimum beschränkt.
+Der Lizenznehmer ist für die Folgen der Nutzung der Software und die daraus resultierenden direkten und indirekten Schäden verantwortlich, soweit dies rechtlich möglich ist. Die Haftung ist auf den Kaufpreis beschränkt, soweit dies gesetzlich möglich ist; ansonsten ist es auf das gesetzlich mögliche Minimum beschränkt.
 
 
 Wartung und Support
 
-Gareth Deli bietet allgemeinen Support für die aktuelle Version der Software nur per E-Mail an. Ältere Versionen werden nicht unterstützt.
+Gareth Deli bietet allgemeinen Support für die aktuelle Version der Software nur per E-Mail. Ältere Versionen werden nicht unterstützt.
 
 
 Änderungen an der Anwendung
 
-Gareth Deli behält sich das Recht vor, Änderungen, Unterbrechungen oder
-dauerhaft, die Anwendung oder jeder Dienst, mit dem sie verbunden ist, mit oder ohne Ankündigung und ohne
+Gareth Deli behält sich das Recht vor, Änderungen oder Unterbrechungen vorübergehend oder vorübergehend vorzunehmen
+dauerhaft die Anwendung oder einen Dienst, mit dem sie verbunden ist, mit oder ohne Vorankündigung und ohne
 Haftung Ihnen gegenüber.
 
 
 Laufzeit und Kündigung
 
-Diese Vereinbarung bleibt in Kraft, bis sie von Ihnen oder Gareth Deli gekündigt wird.
+Diese Vereinbarung bleibt bis zur Kündigung durch Sie oder Gareth Deli in Kraft.
 
-Gareth Deli kann nach eigenem Ermessen jederzeit und aus beliebigen oder keinen Gründen gekündigt werden,
-diese Vereinbarung mit oder ohne vorherige Ankündigung auszusetzen oder zu beenden.
-Diese Vereinbarung endet sofort und ohne vorherige Ankündigung durch Gareth Deli in
-für den Fall, dass Sie eine Bestimmung dieses Abkommens nicht einhalten. Sie können diese Vereinbarung auch kündigen
-Zustimmung durch Löschen des Antrags und aller Kopien davon von Ihrem mobilen Gerät oder von Ihrer
-Schreibtisch.
-Bei Beendigung dieser Vereinbarung müssen Sie jegliche Nutzung der Anwendung einstellen und alle Kopien löschen.
-der Anwendung von Ihrem mobilen Gerät oder von Ihrem Desktop aus.
-Trennbarkeit
-Sollte eine Bestimmung dieses Abkommens für nicht durchsetzbar oder ungültig erachtet werden, so wird diese Bestimmung
-geändert und interpretiert werden, um die Ziele einer solchen Bereitstellung in größtmöglichem Umfang zu erreichen
-die nach dem anwendbaren Recht möglich sind, und die übrigen Bestimmungen bleiben in vollem Umfang in Kraft und wirksam.
-
-
-Änderungen dieses Abkommens
-
-Gareth Deli behält sich das Recht vor, nach alleinigem Ermessen Folgendes zu ändern oder zu ersetzen
-Zustimmung jederzeit möglich. Wenn eine Revision wesentlich ist, werden wir sie mindestens 0 Tage im Voraus ankündigen.
-bevor neue Bedingungen in Kraft treten. Was eine wesentliche Änderung darstellt, wird auf unserer
-nach eigenem Ermessen.
+Gareth Deli kann nach eigenem Ermessen jederzeit und ohne Angabe von Gründen
+diese Vereinbarung mit oder ohne vorherige Ankündigung aussetzen oder kündigen.
+Diese Vereinbarung endet ohne vorherige Ankündigung von Gareth Deli in
+für den Fall, dass Sie gegen eine Bestimmung dieser Vereinbarung verstoßen. Sie können dies auch beenden
+Zustimmung durch Löschen der Anwendung und aller Kopien davon von Ihrem Mobilgerät oder von Ihrem
+Desktop.
+Nach Beendigung dieser Vereinbarung stellen Sie die Nutzung der Anwendung ein und löschen alle Kopien
+der Anwendung von Ihrem mobilen Gerät oder von Ihrem Desktop.
+Salvatorische Klausel
+Sollte eine Bestimmung dieser Vereinbarung nicht durchsetzbar oder ungültig sein, gilt diese Bestimmung
+geändert und interpretiert, um die Ziele dieser Bestimmung weitgehend zu erreichen
+nach geltendem Recht möglich und die übrigen Bestimmungen bleiben in vollem Umfang in Kraft und wirksam.
 
 
-Kontaktinformationen
+Änderungen dieser Vereinbarung
+
+Gareth Deli behält sich das Recht vor, dies nach eigenem Ermessen zu ändern oder zu ersetzen
+Vereinbarung jederzeit. Wenn eine Überarbeitung wesentlich ist, werden wir mindestens 0 Tage im Voraus Bescheid geben
+bevor neue Bedingungen in Kraft treten. Was eine wesentliche Änderung darstellt, wird bei uns festgelegt
+Ermessen.
+
+
+Kontakt Informationen
 
 Wenn Sie Fragen zu dieser Vereinbarung haben, wenden Sie sich bitte an uns."
 </string>
-    <string name="about_content">"Diese App wurde geschrieben, um mir unterwegs den Zugang zu meiner Fotogalerie zu erleichtern.
+    <string name="about_content">"Diese App wurde geschrieben, um mir unterwegs den Zugriff auf meine Fotogalerie zu erleichtern.
 
-Sie wird regelmäßig aktualisiert werden, um weitere Funktionen hinzuzufügen, einige davon sind mir eingefallen, andere wurden von Benutzern gewünscht.
+Es wird regelmäßig aktualisiert, um weitere Funktionen hinzuzufügen, von denen ich einige gedacht habe, andere von Benutzern angefordert.
 
-Im August 2018 kam ein Benutzer, David Klement, mit Bildschirm-Mock-ups für eine professionellere Gestaltung zu mir zurück. Seit der Version 1.3.95 habe ich diese Ideen eingearbeitet, angefangen mit dem Bildschirm für die Albumansicht.
-Die vollständige Liste der vorgeschlagenen Screendesigns kann auf der App-Website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html) eingesehen werden.
+Im August 2018 kam ein Benutzer, David Klement, mit Bildschirmmodellen für ein professionelleres Design zu mir zurück. Ab Release 1.3.95 habe ich diese Ideen aufgenommen, beginnend mit dem Albumansichtsbildschirm.
+Diese vollständige Liste der vorgeschlagenen Bildschirmdesigns kann auf der App-Website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html) angezeigt werden.
 
-HINWEIS: Sprachübersetzungen werden mit www.Deepl.com oder Google Translate Websites durchgeführt. Wenn Sie offensichtliche Fehler entdecken, teilen Sie mir diese bitte mit, damit ich sie korrigieren kann.
+HINWEIS: Sprachübersetzungen werden über www.Deepl.com oder Google Übersetzer-Websites durchgeführt. Wenn Sie offensichtliche Fehler entdecken, lassen Sie es mich bitte wissen, damit ich sie korrigieren kann.
 
-Es gibt zwei Versionen, eine kostenlose Version (mit Werbung) und eine kostenpflichtige Version (ohne Werbung). Es steht Ihnen frei, die von Ihnen bevorzugte Version zu wählen. Sie können die kostenlose Version zur Zeit nicht \'upgraden\', die kostenpflichtige Version installieren und die kostenlose Version löschen.
-Hinweis: Die Versionen werden im Laufe der Zeit voneinander abweichen. Die meisten Änderungen werden sowohl an der kostenlosen als auch an der bezahlten Version vorgenommen werden.
+Es gibt zwei Versionen, eine kostenlose Version (mit Werbung) und eine kostenpflichtige Version (ohne Werbung). Sie können frei wählen, welche Sie bevorzugen. Sie können die kostenlose Version derzeit nicht aktualisieren, die kostenpflichtige Version installieren und die kostenlose Version löschen.
+Hinweis: Die Versionen weichen mit der Zeit voneinander ab. Die meisten Änderungen werden sowohl an kostenlosen als auch an kostenpflichtigen Versionen vorgenommen.
 
-Gegenwärtig bietet die kostenpflichtige Version zusätzlich Unterstützung für Tags:
-        Piwigo unterstützt Tags bis zu einem gewissen Grad out of the box, aber das User Tags-Plugin fügt weitere Funktionen hinzu (grundlegende Tests wurden durchgeführt).
+Derzeit bietet die kostenpflichtige Version Unterstützung für Tags:
+        Piwigo unterstützt Tags bis zu einem gewissen Grad, aber das User Tags-Plugin fügt weitere Funktionen hinzu (grundlegende Tests werden durchgeführt).
 
 
-Gegenwärtig bietet es eine grundlegende Funktionalitätsebene, um die Navigation in einer bestehenden Galerie, das Hochladen neuer Fotos und Videos und die Erstellung neuer Kategorien innerhalb einer Galerie zu ermöglichen. Einige Felder können nach der Erstellung geändert werden, aber viele sind immer noch schreibgeschützt.... vorerst!
+Derzeit bietet es eine grundlegende Funktionalitätsebene, mit der Sie in einer vorhandenen Galerie navigieren, neue Fotos und Videos hochladen und neue Kategorien in einer Galerie erstellen können. Einige Felder können nach dem Erstellen geändert werden, aber viele sind noch schreibgeschützt ... für jetzt!
 
-Wenn Sie die Anwendung deinstallieren, bitten wir Sie, mir über den Link im Menü der Anwendung eine E-Mail zu schicken und mir mitzuteilen, warum die Anwendung nicht Ihren Bedürfnissen entsprach, damit ich mich darum kümmern kann.
+Kann ich Sie bitten, wenn Sie die App deinstallieren, den Link im App-Menü zu verwenden, um mir per E-Mail mitzuteilen, warum die App nicht Ihren Anforderungen entspricht, damit ich dies beheben kann.
 
 Die Version des PIWIGO-Servers, gegen den ich teste, ist derzeit 2.10.2.
 
-Meine Testgalerie enthält nur .jpg- und .mp4-Dateien. Falls Ihre andere Dateien enthält, könnten Sie durchaus auf Probleme stoßen - wenn ja, teilen Sie mir dies bitte mit, und ich werde die Arbeit an diesen Dateitypen priorisieren.
+Meine Testgalerie enthält nur JPG- und MP4-Dateien. Wenn Ihre andere enthält, können Probleme auftreten. Wenn ja, sagen Sie es mir bitte, und ich werde die Arbeit an diesen Dateitypen priorisieren.
 
-WARNUNG: Versionen von Piwigo unter 1.9.2 - das Hochladen von Videos hängt meiner Meinung nach davon ab, dass Fix #756 auf Ihrem Server angewendet wird.
+WARNUNG: Versionen von Piwigo unter 1.9.2 - Das Hochladen von Videos hängt meiner Meinung nach davon ab, dass Fix Nr. 756 auf Ihren Server angewendet wird.
 
-Ich habe mit einer Kopie des piwigo_privacy-Plugins getestet und auch das VideoJS-Plugin installiert.
-Ich habe eine Kopie des Plugins \"Erweiterte Beschreibung\" installiert, aber leider ist diese Funktionalität noch nicht über die PIWIGO-API verfügbar.
-Ich würde gerne Unterstützung für \"Lieblings\"-Fotos einbauen, aber diese Funktionalität scheint noch nicht über die PIWIGO-API zur Verfügung zu stehen.
+Ich habe mit einer Kopie des installierten piwigo_privacy-Plugins und des installierten VideoJS-Plugins getestet.
+Ich habe eine Kopie des Extended Description-Plugins installiert, aber leider ist diese Funktionalität noch nicht über die PIWIGO-API verfügbar.
+Ich möchte Unterstützung für \"Lieblings\" -Fotos einschließen, aber diese Funktionalität scheint noch nicht über die PIWIGO-API verfügbar zu sein.
 
-Bitte senden Sie mir eine E-Mail, wenn Sie auf Fehler stoßen. Ich habe dies auf dem Android-Emulator, einem Samsung-Handy und einem Samsung-Tablet getestet, aber es ist meine erste App, also bin ich sicher, dass es für jemanden schief gehen wird.
+Bitte melden Sie mir eine E-Mail, wenn Sie auf Fehler stoßen. Ich habe dies auf dem Android-Emulator, einem Samsung-Handy und einem Samsung-Tablet getestet, aber es ist meine erste App, sodass ich sicher bin, dass für jemanden etwas schief gehen wird.
 
-Ein großes Dankeschön an alle, die mir Vorschläge oder Fehler per E-Mail geschickt haben. Ich werde mich bemühen, auf all Ihre Vorschläge so schnell wie möglich einzugehen.
+Ein großes Dankeschön an alle, die mir Vorschläge oder Fehler per E-Mail geschickt haben. Ich werde mich bemühen, alle Ihre Vorschläge so schnell wie möglich zu beantworten.
 
-Bitte wählen Sie, jeden Absturz zu melden, der auftritt. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu schicken. Es ist wahrscheinlich, dass ich ein bisschen mehr Kontext brauche, um das Geschehen kurz vor dem Auftreten des Fehlers zu erklären.
+Bitte melden Sie jeden auftretenden Absturz. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu senden.Es ist wahrscheinlich, dass ich etwas mehr Kontext brauche, um zu sehen, was gerade passiert, bevor der Fehler auftritt.
 
-Veröffentlichungen erfolgen im Moment auf einer Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit der Veröffentlichungen mit dem Ausreifen der Anwendung abnimmt. Der Veröffentlichungszeitplan und -verlauf ist unten dargestellt. Dies kann sich ändern und Dinge können sich verzögern, aber Sie können sehen, was auf der Liste steht."</string>
-    <string name="licences_heading">Lizenzen für innerhalb dieser App verwendete Ressourcen</string>
+Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass sich die Häufigkeit von Veröffentlichungen mit zunehmender Laufzeit der App verringert. Der Release-Zeitplan und der Verlauf werden unten angezeigt. Dies kann sich ändern und die Dinge können sich verzögern, aber Sie können sehen, was auf der Liste steht."</string>
+    <string name="licences_heading">Lizenzen für Ressourcen, die in dieser App verwendet werden</string>
     
-    <string name="slideshow_image_details_name_title">Name der Ressource</string>
-    <string name="slideshow_image_details_description_title">Beschreibung der Ressource</string>
-    <string name="unlock_menu_title">freischalten</string>
-    <string name="lock_menu_title">Sperre</string>
-    <string name="button_lock">Sperre</string>
+    <string name="slideshow_image_details_name_title">Ressourcenname</string>
+    <string name="slideshow_image_details_description_title">Ressourcenbeschreibung</string>
+    <string name="unlock_menu_title">Freischalten</string>
+    <string name="lock_menu_title">Sperren</string>
+    <string name="button_lock">Sperren</string>
     <string name="alert_title_lock">App sperren?</string>
-    <string name="alert_message_lock">Wenn Sie sich dafür entscheiden, die App zu sperren, erlaubt die App nur Lesezugriff auf die Galerie. Das Ändern von Bewertungen von Bildern usw. wird deaktiviert, und der Zugriff auf die Einstellungen der App wird entfernt. Um die Sperre aufzuheben, müssen Sie Ihr aktuelles PIWIGO-Benutzerpasswort angeben.</string>
+    <string name="alert_message_lock">Wenn Sie die App sperren, ermöglicht die App nur Lesezugriff auf die Galerie. Das Ändern der Bewertungen von Bildern usw. ist deaktiviert und der Zugriff auf die App-Einstellungen wird entfernt. Zum Entsperren müssen Sie Ihr aktuelles PIWIGO-Benutzerkennwort angeben.</string>
     <string name="alert_title_unlock">App freischalten?</string>
-    <string name="alert_message_unlock">Geben Sie das PIWIGO-Passwort für %1$s ein, um den vollen Zugang zu allen Funktionen dieser Anwendung wieder zu aktivieren und klicken Sie auf Freischalten.</string>
-    <string name="button_unlock">freischalten</string>
+    <string name="alert_message_unlock">Geben Sie das PIWIGO-Passwort für%1$s ein, um den vollständigen Zugriff auf alle Funktionen dieser App wieder zu aktivieren, und klicken Sie auf Entsperren.</string>
+    <string name="button_unlock">Freischalten</string>
     <string name="alert_app_unlocked_message">Die App wurde jetzt freigeschaltet</string>
-    <string name="gallery_details_status_title">Datenschutz-Status</string>
+    <string name="gallery_details_status_title">Datenschutzstatus</string>
     <string name="gallery_details_status_galleryIsPrivate">Ja</string>
     <string name="gallery_details_status_galleryIsPublic">Nein</string>
-    <string name="gallery_details_status">Zugriff auf diesen Ordner einschränken</string>
-    <string name="gallery_details_allowed_groups_title">Erlaubte Gruppen</string>
-    <string name="gallery_details_allowed_users_title">Erlaubte Benutzer</string>
-    <string name="click_to_view">Zur Ansicht anklicken</string>
-    <string name="click_to_view_pattern">%1$d - Klicken zum Ansehen/Bearbeiten</string>
-    <string name="alert_warning_lowMemory">Niedriger Speicher</string>
-    <string name="alert_warning_lowMemory_message">Der Speicher des Geräts geht zur Neige (%1$d). Der Bildspeicher-Cache im Speicher wurde gelöscht.</string>
+    <string name="gallery_details_status">Beschränken Sie den Zugriff auf diesen Ordner</string>
+    <string name="gallery_details_allowed_groups_title">Zulässige Gruppen</string>
+    <string name="gallery_details_allowed_users_title">Zulässige Benutzer</string>
+    <string name="click_to_view">Klicke zum Zeigen</string>
+    <string name="click_to_view_pattern">%1$d - Klicken zum Anzeigen / Bearbeiten</string>
+    <string name="alert_warning_lowMemory">Wenig Speicher</string>
+    <string name="alert_warning_lowMemory_message">Das Gerät verfügt nicht über genügend Speicher (%1$d). Der In-Memory-Image-Cache wurde gelöscht.</string>
     <string name="files_for_upload_title">Dateien zum Hochladen</string>
-    <string name="alert_information">Informationen</string>
-    <string name="alert_image_download_title">herunterladen</string>
+    <string name="alert_information">Information</string>
+    <string name="alert_image_download_title">Herunterladen</string>
     <string name="alert_image_download_message">Bitte wählen Sie eine Dateigröße</string>
     <string name="action">Aktion</string>
     <string name="copy_link">Link kopieren</string>
-    <string name="download_file">Datei herunterladen</string>
+    <string name="download_file">Download-Datei</string>
     <string name="share_with_an_app">Mit einer App teilen</string>
-    <string name="alert_image_show_image_title">Steuerung der Bildwiedergabe</string>
-    <string name="alert_image_show_image_message">Bitte wählen Sie die gewünschte Dateigröße</string>
+    <string name="alert_image_show_image_title">Bildwiedergabesteuerung</string>
+    <string name="alert_image_show_image_message">Bitte wählen Sie die Dateigröße, die Sie anzeigen möchten</string>
     <string name="alert_image_download_complete_message">Download abgeschlossen.</string>
-    <string name="alert_error_unsupported_piwigo_version_pattern">Auf dem Server läuft PIWIGO Version %1$s. Die mit dieser Anwendung getestete Mindestversion ist %2$s. Einige Funktionen in der Anwendung funktionieren möglicherweise nicht wie erwartet. Bitte überprüfen Sie die About-Seite auf alle identifizierten Probleme.</string>
-    <string name="notification_download_event">Heruntergeladene Datei</string>
+    <string name="alert_error_unsupported_piwigo_version_pattern">Auf dem Server wird PIWIGO Version%1$s ausgeführt. Die mit dieser App getestete Mindestversion ist%2$s. Einige Funktionen in der App funktionieren möglicherweise nicht wie erwartet. Bitte überprüfen Sie die Info-Seite auf festgestellte Probleme.</string>
+    <string name="notification_download_event">Datei heruntergeladen</string>
     <string name="alert_image_download_cancelled_message">Sie haben den Download erfolgreich abgebrochen</string>
     <string name="app_licence_heading">EULA</string>
-    <string name="button_agree">Ich stimme zu</string>
+    <string name="button_agree">Genau</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Warnung</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen gewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild in der Größe \"nearest match\" zurück.</string>
-    <string name="rate_dialog_message">Wenn Sie diese App gerne benutzen, würden Sie sich bitte einen Moment Zeit nehmen, um sie zu bewerten? Es wird nicht länger als eine Minute dauern. Vielen Dank für Ihre Unterstützung!</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
+    <string name="rate_dialog_message">Wenn Sie diese App gerne nutzen, würde es Ihnen etwas ausmachen, sich einen Moment Zeit zu nehmen, um sie zu bewerten? Es wird nicht länger als eine Minute dauern. Danke für deine Unterstützung!</string>
     <string name="groups_menu_title">Gruppen</string>
     <string name="group_members_pattern">(%1$d Mitglieder)</string>
     <string name="alert_group_delete_success_pattern">Gruppe (%1$s) wurde erfolgreich gelöscht</string>
     <string name="alert_user_delete_success_pattern">Benutzer (%1$s) wurde erfolgreich gelöscht</string>
-    <string name="alert_group_delete_failed_pattern">Fehler beim Löschen der Gruppe (%1$s). Bitte versuchen Sie es erneut.</string>
-    <string name="alert_user_delete_failed_pattern">Fehler beim Löschen des Benutzers (%1$s). Bitte versuchen Sie es erneut.</string>
-    <string name="alert_confirm_really_delete_group">Sind Sie sicher, dass Sie diese Gruppe löschen möchten? Alle Benutzer, die Mitglieder dieser Gruppe sind, werden nicht gelöscht, können aber den Zugang zu den Bereichen der Galerie, die diese Gruppe hat, verlieren.</string>
-    <string name="alert_confirm_really_delete_user">Sind Sie sicher, dass Sie diesen Benutzer löschen möchten?</string>
+    <string name="alert_group_delete_failed_pattern">Fehler beim Löschen der Gruppe (%1$s). Bitte erneut versuchen.</string>
+    <string name="alert_user_delete_failed_pattern">Fehler beim Löschen des Benutzers (%1$s). Bitte erneut versuchen.</string>
+    <string name="alert_confirm_really_delete_group">Möchten Sie diese Gruppe wirklich löschen? Benutzer, die Mitglieder der Gruppe sind, werden nicht gelöscht, verlieren jedoch möglicherweise den Zugriff auf die Bereiche der Galerie, über die diese Gruppe verfügt.</string>
+    <string name="alert_confirm_really_delete_user">Möchten Sie diesen Benutzer wirklich löschen?</string>
     <string name="users_menu_title">Benutzer</string>
-    <string name="alert_error_unable_to_delete_yourself_pattern">Es tut mir leid, Sie können den Benutzer, als den Sie angemeldet sind (%1$s), nicht löschen.</string>
+    <string name="alert_error_unable_to_delete_yourself_pattern">Leider können Sie den Benutzer, als den Sie angemeldet sind, nicht löschen (%1$s).</string>
     <string name="alert_information_coming_soon">Diese Funktion wird bald verfügbar sein.</string>
 
-    <string name="user_username_title">Benutzername</string>
-    <string name="user_lastvisit_title">Zuletzt besuchte Seite</string>
+    <string name="user_username_title">Nutzername</string>
+    <string name="user_lastvisit_title">Zuletzt besucht die Website</string>
     <string name="user_groups_title">Gruppenmitgliedschaft</string>
-    <string name="user_usertype_title">Benutzer-Typ</string>
-    <string name="user_user_heading">Benutzer</string>
+    <string name="user_usertype_title">Benutzertyp</string>
+    <string name="user_user_heading">Benutzerin</string>
     <string name="group_heading">Gruppe</string>
     <string name="group_name_title">Name</string>
     <string name="group_members_title">Mitglieder</string>
@@ -369,243 +369,243 @@ Veröffentlichungen erfolgen im Moment auf einer Ad-hoc-Basis. Es wird erwartet,
     <string name="groups_heading">Gruppen</string>
     <string name="users_heading">Benutzer</string>
     <string name="albums_heading">Alben</string>
-    <string name="user_high_definition_title">Hohe Auflösung</string>
-    <string name="user_email_title">E-Mail-Adresse</string>
-    <string name="none_value">Keine</string>
+    <string name="user_high_definition_title">Hochauflösend</string>
+    <string name="user_email_title">E-Mail-Addresse</string>
+    <string name="none_value">Keiner</string>
     <string name="access_rights_heading">Zugangsrechte</string>
-    <string name="progress_loading_album_content">Laden von Album-Inhalten</string>
-    <string name="progress_loading_resource_details">Laden von Ressourcendetails</string>
-    <string name="progress_delete_album">Löschen von Album und Inhalt</string>
+    <string name="progress_loading_album_content">Albuminhalt wird geladen</string>
+    <string name="progress_loading_resource_details">Ressourcendetails laden</string>
+    <string name="progress_delete_album">Album und Inhalt löschen</string>
     <string name="progress_delete_resource">Ressource löschen</string>
-    <string name="progress_delete_resources">Löschen von Ressourcen</string>
-    <string name="progress_unlink_resources">Entkopplung von Ressourcen</string>
-    <string name="progress_untag_resources_pattern">Entfernen von Ressourcen vom Tag %1$s</string>
-    <string name="progress_copy_resources">Kopieren von Ressourcen</string>
+    <string name="progress_delete_resources">Ressourcen löschen</string>
+    <string name="progress_unlink_resources">Aufheben der Verknüpfung von Ressourcen</string>
+    <string name="progress_untag_resources_pattern">Entfernen von Ressourcen aus dem Tag%1$s</string>
+    <string name="progress_copy_resources">Ressourcen kopieren</string>
     <string name="progress_move_resources">Ressourcen verschieben</string>
-    <string name="progress_checking_with_server">Überprüfung der Anmeldeinformationen mit dem Server</string>
+    <string name="progress_checking_with_server">Anmeldeinformationen mit dem Server überprüfen</string>
     <string name="progress_creating_album">Album erstellen</string>
     <string name="progress_setting_permissions">Berechtigungen festlegen</string>
-    <string name="progress_loading_groups">Abrufen von Benutzergruppen</string>
+    <string name="progress_loading_groups">Benutzergruppen abrufen</string>
     <string name="progress_loading_users">Benutzer abrufen</string>
-    <string name="progress_loading_album_permissions">Abrufen von Album-Berechtigungen</string>
-    <string name="progress_loading_group_details">Abrufen von Gruppendetails</string>
+    <string name="progress_loading_album_permissions">Albumberechtigungen abrufen</string>
+    <string name="progress_loading_group_details">Gruppendetails abrufen</string>
     <string name="progress_delete_group">Benutzergruppe löschen</string>
-    <string name="progress_loading_albums">Abrufen von Alben</string>
-    <string name="progress_loading_user_details">Abrufen von Benutzerdetails</string>
+    <string name="progress_loading_albums">Alben abrufen</string>
+    <string name="progress_loading_user_details">Benutzerdetails abrufen</string>
     <string name="progress_delete_user">Benutzer löschen</string>
-    <string name="alert_read_permissions_needed_for_file_upload">Zum Lesen des Dateisystems ist eine Erlaubnis erforderlich, um Dateien auszuwählen und hochzuladen.</string>
-    <string name="alert_write_permission_needed_for_video_caching">Die lokale Zwischenspeicherung von Videodateien ist aktiviert. Um dies zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wird dieser verweigert, wird das lokale Caching deaktiviert.</string>
+    <string name="alert_read_permissions_needed_for_file_upload">Zum Lesen des Dateisystems ist eine Berechtigung erforderlich, um Dateien auswählen und hochladen zu können</string>
+    <string name="alert_write_permission_needed_for_video_caching">Das lokale Caching von Videodateien ist aktiviert. Um dies zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn dies abgelehnt wird, wird das lokale Caching deaktiviert.</string>
     <string name="alert_error_tidying_video_cache">Der Video-Cache kann nicht aufgeräumt werden. Wenn dieses Problem weiterhin besteht, melden Sie es bitte.</string>
-    <string name="alert_error_unable_to_copy_file_from_cache_pattern">Das Kopieren von Dateien aus dem Cache ist nicht möglich. %1$s</string>
-    <string name="gallery_empty_text">Dieses Album ist derzeit leer.</string>
-    <string name="alert_error_unable_to_clear_cached_content">Es ist nicht möglich, zwischengespeicherte Inhalte zu löschen.</string>
-    <string name="alert_clear_cached_content">Zwischengespeicherte Daten für diese Ressource löschen und einen erneuten Download vom Server erzwingen?</string>
+    <string name="alert_error_unable_to_copy_file_from_cache_pattern">Datei kann nicht aus dem Cache kopiert werden. %1$s</string>
+    <string name="gallery_empty_text">Dieses Album ist derzeit leer</string>
+    <string name="alert_error_unable_to_clear_cached_content">Zwischengespeicherte Inhalte können nicht gelöscht werden.</string>
+    <string name="alert_clear_cached_content">Zwischengespeicherte Daten für diese Ressource löschen und erneuten Download vom Server erzwingen?</string>
     <string name="gallery_album_content_load_failed_text">Albuminhalt oder Berechtigungsdetails können nicht geladen werden</string>
-    <string name="gallery_permissions_load_failed_text">Album-Inhalt oder Berechtigungsdetails können nicht geladen werden</string>
-    <string name="gallery_update_failed_text">Album-Details können nicht aktualisiert werden</string>
-    <string name="progress_saving_changes">Speichern von Änderungen</string>
-    <string name="user_privacy_level_title">Datenschutz-Ebene</string>
+    <string name="gallery_permissions_load_failed_text">Albuminhalt oder Berechtigungsdetails können nicht geladen werden</string>
+    <string name="gallery_update_failed_text">Albumdetails können nicht aktualisiert werden</string>
+    <string name="progress_saving_changes">Änderungen speichern</string>
+    <string name="user_privacy_level_title">Datenschutzstufe</string>
     <string name="progress_adding_user">Benutzer hinzufügen</string>
-    <string name="last_visit_never">Niemals</string>
-    <string name="user_password_title">Kennwort</string>
+    <string name="last_visit_never">noch nie</string>
+    <string name="user_password_title">Passwort</string>
     <string name="password_unchanged">********</string>
     <string name="progress_reloading_album_permissions">Neuberechnung der Zugriffsrechte für Alben</string>
-    <string name="group_is_default_title">Ist Zahlungsverzug?</string>
+    <string name="group_is_default_title">Ist Standard?</string>
     <string name="progress_adding_group">Gruppe hinzufügen</string>
     <string name="upload_unacceptable_files_prefix">Nicht akzeptierte Dateien</string>
-    <string name="alert_error_unable_to_access_local_filesystem">Ohne Zugriff auf das lokale Dateisystem kann diese Aktion nicht fortgesetzt werden. Entschuldigung.</string>
-    <string name="alert_error_admin_user_required">Nur Admin-Benutzer können hochladen, es sei denn, das Community-Plugin ist installiert. Entschuldigung.</string>
+    <string name="alert_error_unable_to_access_local_filesystem">Ohne Zugriff auf das lokale Dateisystem kann diese Aktion nicht fortgesetzt werden. Es tut uns leid.</string>
+    <string name="alert_error_admin_user_required">Nur Administratoren können hochladen, es sei denn, das Community-Plugin ist installiert. Es tut uns leid.</string>
     <string name="upload_username_title">Hochladen als</string>
-    <string name="certificates_heading">Bescheinigungen</string>
+    <string name="certificates_heading">Zertifikate</string>
 
-    <string name="alert_slideshow_out_of_sync_with_album">Diese Diashow gibt den aktuellen Inhalt des Albums nicht mehr genau wieder</string>
+    <string name="alert_slideshow_out_of_sync_with_album">Diese Diashow gibt den aktuellen Albuminhalt nicht mehr genau wieder</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Diese Diashow gibt den aktuellen Tag-Inhalt nicht mehr genau wieder</string>
-    <string name="alert_error_app_not_yet_configured">Die Anwendung ist noch nicht konfiguriert und mit einem PIWIGO-Server verbunden. Bitte öffnen Sie die Anwendung manuell und konfigurieren Sie sie, bevor Sie versuchen, Elemente mit ihr zu teilen.</string>
-    <string name="error_server_configuration_invalid">Inakzeptable piwigo Serverdetails, bitte überprüfen Sie die Konfiguration der App-Verbindungen</string>
-    <string name="alert_image_show_image_select_max_zoom">Erlaubt bis zu 100-fachen Zoom</string>
+    <string name="alert_error_app_not_yet_configured">App noch nicht konfiguriert und mit einem PIWIGO-Server verbunden. Öffnen Sie die App manuell und konfigurieren Sie sie, bevor Sie versuchen, Elemente für sie freizugeben.</string>
+    <string name="error_server_configuration_invalid">Inakzeptable Details zum Piwigo-Server. Überprüfen Sie die Konfiguration der App-Verbindung</string>
+    <string name="alert_image_show_image_select_max_zoom">Erlaube bis zu 100x Zoom</string>
     <string name="alert_image_show_image_select_rotation">Bild drehen</string>
-    <string name="top_tips_menu_title">Top-Tipps</string>
-    <string name="top_tips_heading">Top-Tipps</string>
-    <string name="alert_error_please_select_upload_album">Bitte wählen Sie ein Album zum Hochladen auf</string>
+    <string name="top_tips_menu_title">Beste Tipps</string>
+    <string name="top_tips_heading">Beste Tipps</string>
+    <string name="alert_error_please_select_upload_album">Bitte wählen Sie ein Album zum Hochladen aus</string>
 
-    <string name="alert_title_select_album">Album auswählen</string>
+    <string name="alert_title_select_album">Wählen Sie Album</string>
     <string name="alert_title_set_album_thumbnail">Album-Miniaturansicht aktualisieren?</string>
-    <string name="alert_message_set_album_thumbnail">Album-Miniaturansicht auf dieses Bild aktualisieren?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Sind Sie sicher, dass Sie das Album (%1$s) und alle Inhalte dauerhaft löschen möchten (sofern sie nicht mit anderen Alben verknüpft sind)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Sind Sie absolut sicher, dass Sie das Album (%1$s) mit %2$d-Fotos und %3$d-Kinderalben, die weitere %4$d-Fotos enthalten, für immer löschen möchten? Beachten Sie, dass Fotos, die mit anderen Alben verknüpft sind, dort verbleiben, aber alle anderen werden für immer gelöscht. Es gibt keine Rückgängig-Funktion für diese Aktion.</string>
-    <string name="alert_confirm_copy_items_here_pattern">Kopieren Sie den/die Artikel %1$d im Korb hierher (%2$s)?</string>
-    <string name="alert_confirm_move_items_here_pattern">Den/die Artikel %1$d im Korb hierher verschieben (%2$s)?</string>
+    <string name="alert_message_set_album_thumbnail">Album-Miniaturbild auf dieses Bild aktualisieren?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Möchten Sie das Album (%1$s) und den gesamten Inhalt dauerhaft löschen (sofern nicht anderweitig mit Alben verknüpft)?</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Sind Sie absolut sicher, dass Sie ein Album (%1$s) mit%2$d Fotos und%3$d Kinderalben mit weiteren%4$d Fotos für immer löschen möchten? Beachten Sie, dass Fotos, die mit anderen Alben verknüpft sind, dort verbleiben, andere jedoch für immer gelöscht werden. Für diese Aktion gibt es keine Rückgängig-Funktion.</string>
+    <string name="alert_confirm_copy_items_here_pattern">Kopieren Sie die%1$d Artikel in den Warenkorb hier (%2$s)?</string>
+    <string name="alert_confirm_move_items_here_pattern">Verschieben Sie die%1$d-Artikel im Warenkorb hierher (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Verknüpfte Alben</string>
     <string name="list_ok_button">OK</string>
-    <string name="alert_confirm_really_remove_album_permissions_pattern">Sie haben ausgewählt, den Zugriff auf dieses Album und den navigierbaren Zugriff auf alle untergeordneten Alben von %1$d-Gruppen und %2$d-Benutzern zu entfernen. Fahren Sie mit dieser Aktion fort?</string>
-    <string name="alert_confirm_add_album_permissions_recursively_pattern">Sie haben ausgewählt, den Zugriff auf dieses Album für %1$d-Gruppen und %2$d-Benutzer hinzuzufügen. Möchten Sie diese Änderungen auf die %3$d-Kinderalben anwenden?</string>
-    <string name="alert_information_own_user_readded_to_permissions_list">Ihre Änderungen hätten verhindert, dass Sie auf dieses Album zugreifen können. Ihr Benutzername wurde zu der Liste der Benutzer mit ausdrücklicher Genehmigung hinzugefügt.</string>
-    <string name="alert_information_add_album_permissions_recursively_pattern">Hinzufügen von Berechtigungen auch zu den %1$d-Kinderalben.</string>
-    <string name="alert_error_please_provide_an_album_name">Ein Name für dieses Album muss angegeben werden. Bitte fügen Sie einen hinzu und versuchen Sie es dann erneut.</string>
-    <string name="error_upload_file_chunk_upload_failed_after_retries">Das Hochladen des Dateiabschnitts schlug nach den Versuchen von %1$d fehl. Bitte starten Sie diesen Upload erneut, sobald er abgeschlossen ist, um ihn erneut zu versuchen.</string>
-    <string name="error_upload_file_ext_missing_pattern">Datei %1$s kann nicht hochgeladen werden, da ihr eine Dateierweiterung fehlt, z.B. .jpg</string>
-    <string name="error_upload_file_verification_failed">Verifizierung der Datei auf dem Server für Upload von %1$s fehlgeschlagen</string>
-    <string name="alert_message_remove_file_server_state_incorrect">Diese Datei wurde teilweise hochgeladen, und Sie müssen daran denken, danach auf die Schaltfläche Hochladen zu klicken, um die beschädigte Datei vom Server zu entfernen. Fortfahren?</string>
-    <string name="alert_message_file_upload_cancelled_pattern">Das Hochladen der Datei (%1$s) wurde abgebrochen.</string>
+    <string name="alert_confirm_really_remove_album_permissions_pattern">Sie haben ausgewählt, den Zugriff auf dieses Album und den navigierbaren Zugriff auf alle untergeordneten Alben von%1$d-Gruppen und%2$d-Benutzern zu entfernen. Mit dieser Aktion fortfahren?</string>
+    <string name="alert_confirm_add_album_permissions_recursively_pattern">Sie haben ausgewählt, dass für%1$d-Gruppen und%2$d-Benutzer Zugriff auf dieses Album hinzugefügt werden soll. Möchten Sie diese Änderungen auf die%3$d-Kinderalben anwenden?</string>
+    <string name="alert_information_own_user_readded_to_permissions_list">Ihre Änderungen hätten Sie daran gehindert, auf dieses Album zuzugreifen. Ihr Benutzername wurde der Liste der Personen mit ausdrücklicher Genehmigung hinzugefügt.</string>
+    <string name="alert_information_add_album_permissions_recursively_pattern">Hinzufügen von Berechtigungen zu%1$d untergeordneten Alben.</string>
+    <string name="alert_error_please_provide_an_album_name">Ein Name für dieses Album muss angegeben werden. Bitte fügen Sie eine hinzu und versuchen Sie es erneut.</string>
+    <string name="error_upload_file_chunk_upload_failed_after_retries">Das Hochladen des Dateibereichs ist nach%1$d-Versuchen fehlgeschlagen. Bitte starten Sie diesen Upload nach Abschluss erneut, um es erneut zu versuchen.</string>
+    <string name="error_upload_file_ext_missing_pattern">Datei%1$s kann nicht hochgeladen werden, da eine Dateierweiterung fehlt, z. B. .jpg</string>
+    <string name="error_upload_file_verification_failed">Überprüfung der Datei auf dem Server beim Hochladen von%1$s fehlgeschlagen</string>
+    <string name="alert_message_remove_file_server_state_incorrect">Diese Datei wurde teilweise hochgeladen und Sie müssen daran denken, danach auf die Schaltfläche zum Hochladen zu klicken, um die beschädigte Datei vom Server zu entfernen. Fortsetzen?</string>
+    <string name="alert_message_file_upload_cancelled_pattern">Hochladen der Datei (%1$s) abgebrochen.</string>
     <string name="alert_message_upload_cancelled">Upload abgebrochen</string>
-    <string name="alert_message_upload_cancelled_message">Wenn Sie den Upload später nicht erneut starten möchten. Sie sollten die Dateien aus dem Upload-Job entfernen und dann auf Upload klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen gewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild in der Größe \"nearest match\" zurück.</string>
-    <string name="logging_out_of_piwigo_pattern">Abmelden von %1$s</string>
-    <string name="loading_new_server_configuration">Laden einer neuen Server-Verbindungskonfiguration</string>
-    <string name="alert_write_permission_needed_for_caching_to_disk">Um das Caching auf der Festplatte zuzulassen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wird der Zugriff verweigert, befindet sich das Caching im Speicher.</string>
-    <string name="error_request_timed_out">Der Aufruf des Servers wurde abgebrochen, da er zu lange dauerte.</string>
-    <string name="alert_information_video_caching_disabled">Caching von Videos auf der Festplatte deaktiviert</string>
+    <string name="alert_message_upload_cancelled_message">Wenn Sie den Upload später nicht neu starten möchten. Sie sollten die Dateien aus dem Upload-Auftrag entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
+    <string name="logging_out_of_piwigo_pattern">Abmelden von%1$s</string>
+    <string name="loading_new_server_configuration">Laden einer neuen Serververbindungskonfiguration</string>
+    <string name="alert_write_permission_needed_for_caching_to_disk">Um das Caching auf der Festplatte zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn dies abgelehnt wird, wird das Caching gespeichert.</string>
+    <string name="error_request_timed_out">Der Anruf beim Server wurde abgebrochen, da der Vorgang zu lange dauerte.</string>
+    <string name="alert_information_video_caching_disabled">Das Zwischenspeichern von Videos auf die Festplatte ist deaktiviert</string>
     <string name="error_building_http_engine">HTTP-Engine kann nicht erstellt werden</string>
-    <string name="error_unexpected_error_calling_server">Unerwarteter Fehler beim Aufrufen des Servers oder beim Parsen der Antwort</string>
-    <string name="error_insufficient_permissions_for_cache_folder">Lese- und Schreibzugriff auf den Cache-Ordner ist erforderlich. Prüfen Sie die App-Einstellungen.</string>
-    <string name="alert_title_error_talking_to_server">Fehler im Gespräch mit dem Server</string>
-    <string name="alert_title_error_connecting_to_server">Fehler bei der Verbindung zum Server</string>
-    <string name="alert_warning_message_self_signed_certificates">Selbstsignierte SSL-Zertifikate sollten nicht auf einem öffentlich zugänglichen Server (im Internet) verwendet werden - informieren Sie sich unter https://letsencrypt.org oder ähnlich. Dies dient nur zu Testzwecken.</string>
-    <string name="alert_error_adding_certificate_to_truststore">Fehler beim Hinzufügen eines Zertifikats zum Vertrauensspeicher</string>
-    <string name="alert_add_cert_to_truststore_pattern">Zertifikatskette zur Liste der vertrauenswürdigen CAs hinzufügen?\n\n</string>
-    <string name="certificate_summary_pattern">Betrifft: %1$s\nGültig: %2$s - %3$s\nSerie: %4$s</string>
+    <string name="error_unexpected_error_calling_server">Unerwarteter Fehler beim Aufrufen des Servers oder beim Analysieren der Antwort</string>
+    <string name="error_insufficient_permissions_for_cache_folder">Lese- / Schreibzugriff auf den Cache-Ordner ist erforderlich. Überprüfen Sie die App-Einstellungen.</string>
+    <string name="alert_title_error_talking_to_server">Fehler beim Sprechen mit dem Server</string>
+    <string name="alert_title_error_connecting_to_server">Fehler beim Verbinden mit dem Server</string>
+    <string name="alert_warning_message_self_signed_certificates">Selbstsignierte SSL-Zertifikate sollten nicht auf einem öffentlich zugänglichen Server (im Internet) verwendet werden. Weitere Informationen finden Sie unter https://letsencrypt.org oder ähnlichem. Dies dient nur zu Testzwecken.</string>
+    <string name="alert_error_adding_certificate_to_truststore">Fehler beim Hinzufügen eines Zertifikats zum Trust Store</string>
+    <string name="alert_add_cert_to_truststore_pattern">Zertifikatkette zur Liste der vertrauenswürdigen Zertifizierungsstellen hinzufügen?</string>
+    <string name="certificate_summary_pattern">Betreff:%1$s\nGültig:%2$s -%3$s\nSeriennummer:%4$s</string>
     <string name="alert_http_engine_shutdown">Herunterfahren der HTTP-Engine. Wird bei Bedarf automatisch neu gestartet.</string>
     
-    <string name="alert_clearing_certificate_use_history">Zurücksetzen der Liste der als vertrauenswürdig ausgewählten Zertifikate</string>
+    <string name="alert_clearing_certificate_use_history">Zurücksetzen der Liste der Zertifikate, die als vertrauenswürdig ausgewählt wurden</string>
     <string name="alert_delete_all_files_selected_for_upload">Alle zum Hochladen ausgewählten Dateien löschen?</string>
-    <string name="alert_partial_upload_deleted">Wenn ein Datei-Upload abgebrochen wird, nachdem er teilweise auf den Server übertragen wurde, verbleibt der teilweise Upload auf dem Server. Bereinigen Sie den Upload-Ordner auf dem Server manuell (z.B. /var/www/piwigo/upload/buffer), um Platz zu sparen.</string>
-    <string name="alert_album_created">Erstelltes Album</string>
+    <string name="alert_partial_upload_deleted">Wenn Sie einen Datei-Upload abbrechen, nachdem er teilweise auf den Server übertragen wurde, verbleibt der teilweise Upload auf dem Server. Bereinigen Sie den Upload-Ordner auf dem Server manuell (z. B. / var / www / piwigo / upload / buffer), um Speicherplatz zu sparen.</string>
+    <string name="alert_album_created">Album erstellt</string>
     <string name="album_create_failed">Album konnte nicht erstellt werden, bitte versuchen Sie es erneut</string>
-    <string name="alert_failure">Misserfolg</string>
-    <string name="album_created_but_permissions_set_failed">Das Album wurde erstellt, aber die Berechtigungen konnten nicht festgelegt werden. Der Versuch, das teilweise eingerichtete Album zu löschen, schlug fehl. Bitte überprüfen Sie den Server direkt.</string>
+    <string name="alert_failure">Fehler</string>
+    <string name="album_created_but_permissions_set_failed">Das Album wurde erstellt, aber die Berechtigungen konnten nicht festgelegt werden. Der Versuch, das teilweise eingerichtete Album zu löschen, ist fehlgeschlagen. Bitte überprüfen Sie den Server direkt.</string>
     <string name="filelist_item_prefix">Datei:</string>
     <string name="alert_loading_certificates_from_selected_files">Laden von Zertifikaten aus ausgewählten Dateien.</string>
-    <string name="x509_key_type_field_pattern">Privater %1$s-Schlüssel</string>
-    <string name="x509_key_strength_field_pattern">Stärke: %1$d Bits</string>
-    <string name="x509_cert_name_field_pattern">Identität: %1$s</string>
-    <string name="x509_cert_verified_by_field_pattern">Verifiziert von: %1$s</string>
-    <string name="x509_cert_valid_from_field_pattern">Gültig ab: %1$s</string>
-    <string name="x509_cert_valid_to_field_pattern">Gültig bis: %1$s</string>
-    <string name="alert_warning_multiple_users_found_pattern">Es wurden %1$d andere Benutzer gefunden, die diesen Benutzernamen teilen (%2$s). Der jüngste Benutzer dieses Piwigo-Servers wurde ausgewählt, aber das ist nicht sicher, wenn es möglich ist, dass sie den Server zur gleichen oder einer ähnlichen Zeit benutzen werden. Bitte erwägen Sie, diese Benutzernamen so zu ändern, dass der Benutzername eine eindeutige Kennung für eine bestimmte Benutzerklasse ist.</string>
-    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Diese Berechtigungen werden benötigt, um einen Upload-Prozess zu starten und den Upload-Prozess laufen zu lassen, sobald der Bildschirm ausgeschaltet ist.</string>
-    <string name="alert_no_scheme_specified">Sie müssen Ihrer Serveradresse entweder http:// oder https:// voranstellen. Andere Schemata werden nicht unterstützt. Der Port ist optional, wenn die Voreinstellung - 80 für http oder 443 für https - gewählt wurde. Beispiel http://piwigo.org/demo oder http://piwigo.org:80/demo.</string>
-    <string name="alert_files_larger_than_upload_threshold_pattern">Die folgenden %1$d-Dateien überschritten die Warnschwelle: %2$s. Möchten Sie diese aus dem Upload entfernen?</string>
-    <string name="alert_files_larger_than_upload_threshold_compress">Möchten Sie die Videos vor dem Hochladen komprimieren?</string>
-    <string name="alert_trusted_certificates_polling">Nicht vertrauenswürdige Zertifikate, die bei der Verbindung vom Server geliefert werden, werden Ihnen präsentiert, damit Sie diese dem Vertrauensspeicher hinzufügen können. Wenn Sie dies ablehnen, werden Sie nicht erneut zur Eingabe desselben Zertifikats aufgefordert. Um erneut aufgefordert zu werden, deaktivieren Sie die Option, einen benutzerdefinierten Speicher für vertrauenswürdige Zertifikate zu verwenden, und wählen Sie sie erneut aus.</string>
+    <string name="x509_key_type_field_pattern">Privater%1$s Schlüssel</string>
+    <string name="x509_key_strength_field_pattern">Stärke:%1$d Bits</string>
+    <string name="x509_cert_name_field_pattern">Identität:%1$s</string>
+    <string name="x509_cert_verified_by_field_pattern">Verifiziert durch:%1$s</string>
+    <string name="x509_cert_valid_from_field_pattern">Gültig ab:%1$s</string>
+    <string name="x509_cert_valid_to_field_pattern">Gültig bis:%1$s</string>
+    <string name="alert_warning_multiple_users_found_pattern">Es wurden%1$d andere Benutzer gefunden, die diesen Benutzernamen teilen (%2$s). Der letzte Benutzer dieses Piwigo-Servers wurde ausgewählt. Dies ist jedoch nicht sicher, wenn es möglich ist, dass er den Server zur gleichen oder einer ähnlichen Zeit verwendet. Bitte erwägen Sie, diese Benutzernamen so zu ändern, dass der Benutzername eine eindeutige Kennung für eine bestimmte Benutzerklasse ist.</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Diese Berechtigungen werden benötigt, um einen Upload-Vorgang zu starten und den Upload-Vorgang nach dem Ausschalten des Bildschirms fortzusetzen</string>
+    <string name="alert_no_scheme_specified">Sie müssen Ihrer Serveradresse entweder http:// oder https:// voranstellen. Andere Schemata werden nicht unterstützt. Port ist optional, wenn der Standardwert - 80 für http oder 443 für https ist. Beispiel http://piwigo.org/demo oder http://piwigo.org:80/demo</string>
+    <string name="alert_files_larger_than_upload_threshold_pattern">Die folgenden%1$d-Dateien haben den Warnschwellenwert überschritten:%2$s. Möchten Sie diese aus dem Upload entfernen?</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">Möchten Sie Videos vor dem Hochladen komprimieren?</string>
+    <string name="alert_trusted_certificates_polling">Nicht vertrauenswürdige Zertifikate, die vom Server bei der Verbindung bereitgestellt werden, werden Ihnen angezeigt, damit Sie diese dem Trust Store hinzufügen können. Wenn Sie ablehnen, werden Sie nicht erneut zur Eingabe desselben Zertifikats aufgefordert. Deaktivieren Sie die Option zur Verwendung eines benutzerdefinierten vertrauenswürdigen Zertifikatspeichers, und wählen Sie sie erneut aus, um erneut aufgefordert zu werden.</string>
     <string name="button_copy_link">Link kopieren</string>
-    <string name="download_link_clipboard_data_desc">Download-Link für %1$s</string>
-    <string name="alert_http_scheme_specified">Ihr Server verwendet http. Dies ist keine gute Idee, da der Benutzername und das Passwort im Klartext an den Server übermittelt werden. Ich empfehle Ihnen dringend, Ihren Server auf die Verwendung von https umzustellen.</string>
-    <string name="gallery_admin_albums_list_load_failed_text">Die vollständige administrative Liste der Alben konnte nicht geladen werden</string>
+    <string name="download_link_clipboard_data_desc">Download-Link für%1$s</string>
+    <string name="alert_http_scheme_specified">Ihr Server verwendet http. Dies ist keine gute Idee, da der Benutzername und das Passwort im Klartext an den Server übertragen werden. Ich empfehle Ihnen dringend, Ihren Server auf https umzustellen.</string>
+    <string name="gallery_admin_albums_list_load_failed_text">Fehler beim Laden der vollständigen Verwaltungsliste der Alben</string>
     <string name="title_adding_item">Artikel hinzufügen</string>
     <string name="title_editing_item">Element bearbeiten</string>
-    <string name="alert_error_item_not_unique">Tut mir leid, dieser Artikel existiert bereits.</string>
-    <string name="alert_warning_no_server_url_specified">Keine Server-URI angegeben. Bitte geben Sie den Standort Ihres Servers an und versuchen Sie es erneut.</string>
-    <string name="error_heading_unloadable_certificate_files">Die folgenden Zertifikatsdateien konnten nicht geladen werden:</string>
+    <string name="alert_error_item_not_unique">Entschuldigung, dieser Artikel existiert bereits.</string>
+    <string name="alert_warning_no_server_url_specified">Keine Server-URL angegeben. Bitte fügen Sie den Standort Ihres Servers hinzu und versuchen Sie es erneut.</string>
+    <string name="error_heading_unloadable_certificate_files">Die folgenden Zertifikatdateien konnten nicht geladen werden:</string>
     <string name="error_heading_unloadable_keystore_files">Die folgenden Keystore-Dateien konnten nicht geladen werden:</string>
     <string name="error_heading_unloadable_keystore_aliases">Die folgenden Keystore-Aliase konnten nicht geladen werden:</string>
-    <string name="heading_keystore_filename">Schlüsselspeicher</string>
+    <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Fehler beim Hochladen</string>
-    <string name="alert_message_error_uploading_end">Nach dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload erneut, um an der Stelle fortzufahren, an der er angekommen ist, und löschen Sie alle verbleibenden temporären Daten vom Server.</string>
-    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien trat ein Fehler auf. Starten Sie entweder den Upload erneut, um von dort aus fortzufahren, wo er angekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Job und klicken Sie dann auf die Schaltfläche Fertigstellen, um alle verbleibenden temporären Daten vom Server zu löschen.</string>
-    <string name="release_history">Freigabe-Historie</string>
+    <string name="alert_message_error_uploading_end">Nach dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload neu, um dort fortzufahren, wo er angekommen ist, und löschen Sie alle temporären Restdaten vom Server.</string>
+    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload entweder neu, um an der Stelle fortzufahren, an der er erreicht wurde, oder löschen Sie alle verbleibenden Dateien aus dem Job und klicken Sie dann auf die Schaltfläche \"Fertig stellen\", um alle verbleibenden temporären Daten vom Server zu löschen.</string>
+    <string name="release_history">Release-Verlauf</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
-    <string name="tags_heading">Schlagwörter</string>
-    <string name="progress_loading_tags">Abrufen von Tags</string>
-    <string name="alert_confirm_really_delete_tag">Sind Sie sicher, dass Sie diesen Tag löschen möchten? Alle Ressourcen, die mit ihm verknüpft sind, werden nicht gelöscht, aber diese Operation ist dauerhaft.</string>
+    <string name="tags_heading">Stichworte</string>
+    <string name="progress_loading_tags">Tags abrufen</string>
+    <string name="alert_confirm_really_delete_tag">Möchten Sie dieses Tag wirklich löschen? Alle damit verknüpften Ressourcen werden nicht gelöscht, aber dieser Vorgang ist permanent.</string>
     <string name="alert_tag_delete_success_pattern">Tag (%1$s) wurde erfolgreich gelöscht</string>
-    <string name="alert_tag_delete_failed_pattern">Fehler beim Löschen des Tags (%1$s). Bitte versuchen Sie es erneut.</string>
+    <string name="alert_tag_delete_failed_pattern">Fehler beim Löschen des Tags (%1$s). Bitte erneut versuchen.</string>
     <string name="tag_usage_count_pattern">(%1$d verwendet)</string>
-    <string name="progress_loading_tag_details">Abrufen von Ressourcen-Matching-Tag</string>
-    <string name="tags_menu_title">Schlagwörter</string>
-    <string name="favorites_menu_title">Favoriten</string>
-    <string name="tag_empty_text">Keine Elemente mit diesem Tag markiert</string>
-    <string name="tag_content_load_failed_text">Ressourcen, die mit dem Tag verknüpft sind, konnten nicht geladen werden</string>
-    <string name="tag_heading">Tag</string>
-    <string name="tag_tagname_title">Tag-Name</string>
-    <string name="alert_paid_feature_only">Diese Funktion ist nur in der kostenpflichtigen App verfügbar.</string>
-    <string name="paid_feature_only">nur bezahlte App</string>
-    <string name="slideshow_image_details_tags_title">Schlagwörter</string>
+    <string name="progress_loading_tag_details">Abrufen von Ressourcen, die dem Tag entsprechen</string>
+    <string name="tags_menu_title">Stichworte</string>
+    <string name="favorites_menu_title">Favoritinnen</string>
+    <string name="tag_empty_text">Keine mit diesem Tag getaggten Elemente</string>
+    <string name="tag_content_load_failed_text">Fehler beim Laden der mit dem Tag verknüpften Ressourcen</string>
+    <string name="tag_heading">Etikett</string>
+    <string name="tag_tagname_title">Verlinke den Namen</string>
+    <string name="alert_paid_feature_only">Diese Funktion ist nur in der kostenpflichtigen App verfügbar</string>
+    <string name="paid_feature_only">Nur bezahlte App</string>
+    <string name="slideshow_image_details_tags_title">Stichworte</string>
     <string name="button_search">Suche</string>
 
-    <string name="file_selection_heading">Datei-Auswahl</string>
-    <string name="tag_heading_pattern">Tag: %1$s</string>
-    <string name="error_updating_tag_pattern">Fehler beim Entfernen der Ressource (%1$s) aus dem Tag: %2$s</string>
-    <string name="alert_message_info_files_already_pending_approval_pattern">%1$d-Dateien wurden nicht hochgeladen, da sie bereits hochgeladen sind, aber die Genehmigung des Administrators noch aussteht.</string>
-    <string name="piwigo_connection_profile_heading">Verbindungs-Profil</string>
-    <string name="folder_root_label">Selektor-Wurzel</string>
-    <string name="folder_root_root">Geräte-Wurzel</string>
+    <string name="file_selection_heading">Dateiauswahl</string>
+    <string name="tag_heading_pattern">Tag:%1$s</string>
+    <string name="error_updating_tag_pattern">Fehler beim Entfernen der Ressource (%1$s) aus dem Tag:%2$s</string>
+    <string name="alert_message_info_files_already_pending_approval_pattern">%1$d-Dateien wurden nicht hochgeladen, da sie bereits hochgeladen wurden, jedoch noch nicht vom Administrator genehmigt wurden.</string>
+    <string name="piwigo_connection_profile_heading">Verbindungsprofil</string>
+    <string name="folder_root_label">Selector Root</string>
+    <string name="folder_root_root">Geräte-Root</string>
     <string name="folder_root_userdata">Benutzerdaten</string>
-    <string name="folder_extstorage">Externe Speicherung</string>
-    <string name="folder_extstorage_device_pattern">Externe Speicherung %1$d</string>
-    <string name="folder_default">Standardmäßig</string>
-    <string name="button_show_all">Alle anzeigen</string>
-    <string name="button_select_all">Alle auswählen</string>
-    <string name="button_show_none">Alle ausblenden</string>
-    <string name="button_select_none">Keine auswählen</string>
+    <string name="folder_extstorage">Externer Speicher</string>
+    <string name="folder_extstorage_device_pattern">Externer Speicher%1$d</string>
+    <string name="folder_default">Standard</string>
+    <string name="button_show_all">Zeige alles</string>
+    <string name="button_select_all">Wählen Sie Alle</string>
+    <string name="button_show_none">Versteck alles</string>
+    <string name="button_select_none">Nichts ausgewählt</string>
     <string name="button_reset">Zurücksetzen</string>
-    <string name="alert_network_monitor_permission_needed_for_wifi_upload">Netzwerküberwachung sollte für die effiziente Nutzung von WIFI nur beim Hochladen erlaubt sein</string>
-    <string name="inaccessible_remote_folder">** privat **</string>
-    <string name="error_unable_to_acquire_valid_session">Keine gültige Sitzung mit dem Server möglich</string>
-    <string name="upload_job_is_enabled_label">Ist gültig und berechtigt?</string>
-    <string name="alert_unable_to_show_image_image_missing">Dieses Bild fehlt. Kann nicht angezeigt werden.</string>
-    <string name="notification_title_foreground_upload_service">Piwigo Upload-Dienst</string>
-    <string name="notification_message_upload_service">Laufende</string>
-    <string name="slideshow_image_tab_basic_info">Grundlegende Informationen</string>
+    <string name="alert_network_monitor_permission_needed_for_wifi_upload">Die Netzwerküberwachung sollte für eine effiziente Nutzung des Hochladens von WIFI nur zulässig sein</string>
+    <string name="inaccessible_remote_folder">** Privat **</string>
+    <string name="error_unable_to_acquire_valid_session">Es kann keine gültige Sitzung mit dem Server abgerufen werden</string>
+    <string name="upload_job_is_enabled_label">Ist gültig und aktiviert?</string>
+    <string name="alert_unable_to_show_image_image_missing">Dieses Bild fehlt. Anzeige nicht möglich.</string>
+    <string name="notification_title_foreground_upload_service">Piwigo Upload Service</string>
+    <string name="notification_message_upload_service">Laufen</string>
+    <string name="slideshow_image_tab_basic_info">Basisinformation</string>
     <string name="slideshow_image_tab_exif_data">EXIF-Daten</string>
-    <string name="alert_bad_request_http_to_https">Schlechte Anfrage an die Ressource über HTTP. Wollen Sie alle HTTP-URIs für dieses Verbindungsprofil auf HTTPS umschreiben? Kann später in den App-Präferenzen geändert werden.</string>
-    <string name="alert_bad_request_follow_redirects">Der Server hat eine 302-Redirect-Antwort zurückgegeben. Wollen Sie das Verfolgen dieser für diesen Server erlauben?</string>
-    <string name="picture_resource_exif_data_unavailable">Noch keine Bild-Metadaten verfügbar</string>
-    <string name="video_caching_disabled_not_recommended">Die Deaktivierung des Video-Caches hat schwerwiegende Auswirkungen auf die Leistung</string>
-    <string name="video_caching_disabled_warning">Warnung. Der Video-Cache ist deaktiviert. Herunterladen auf Anfrage.</string>
-    <string name="alert_error_album_no_longer_on_server">Dieses Album konnte nicht vom Server geladen werden. Verschieben zum übergeordneten Album.</string>
+    <string name="alert_bad_request_http_to_https">Ungültige Anforderung an die Ressource über HTTP. Möchten Sie alle HTTP-URIs für dieses Verbindungsprofil in HTTPS umschreiben? Kann später in den App-Einstellungen geändert werden.</string>
+    <string name="alert_bad_request_follow_redirects">Der Server hat eine 302-Umleitungsantwort zurückgegeben. Möchten Sie zulassen, dass diese für diesen Server befolgt werden?</string>
+    <string name="picture_resource_exif_data_unavailable">Es sind noch keine Bildmetadaten verfügbar</string>
+    <string name="video_caching_disabled_not_recommended">Das Deaktivieren des Video-Cache beeinträchtigt die Leistung erheblich</string>
+    <string name="video_caching_disabled_warning">Warnung. Der Video-Cache ist deaktiviert. Download auf Anfrage.</string>
+    <string name="alert_error_album_no_longer_on_server">Dieses Album konnte nicht vom Server geladen werden. Zum übergeordneten Album wechseln.</string>
     <string name="button_show_details">Detail anzeigen</string>
     <string name="button_hide_details">Detail ausblenden</string>
-    <string name="alert_message_max_upload_file_count_reached">Maximale Anzahl der hochzuladenden Dateien erreicht. Um mehr auf einmal hochzuladen, erwerben und benutzen Sie bitte die kostenpflichtige Version dieser App.</string>
-    <string name="alert_message_advert_load_error">Anzeigen haben anhaltend Probleme beim Laden. Bitte melden Sie mir dies, da diese für mich eine wichtige, wenn auch sehr kleine Einnahmequelle darstellen. Bitte erwägen Sie den Kauf der kostenpflichtigen Version, um die Anzeigen vollständig zu entfernen. Die App friert nun für 5 Sekunden ein, während der dieser Bildschirm sichtbar bleiben muss. Der Countdown startet erneut, wenn die Nachricht versteckt ist. Nach 5 Sekunden können Sie diese Nachricht schließen und die App wie gewohnt weiter benutzen.</string>
+    <string name="alert_message_max_upload_file_count_reached">Die maximale Anzahl der hochzuladenden Dateien wurde erreicht. Um mehr auf einmal hochzuladen, kaufen und verwenden Sie bitte die kostenpflichtige Version dieser App.</string>
+    <string name="alert_message_advert_load_error">Anzeigen haben ständig Probleme beim Laden. Bitte melden Sie mir dies, da diese für mich eine wichtige, wenn auch sehr kleine Einnahmequelle darstellen. Bitte erwägen Sie den Kauf der kostenpflichtigen Version, um Werbung vollständig zu entfernen. Die App friert nun 5 Sekunden lang ein, währenddessen dieser Bildschirm sichtbar bleiben muss. Der Countdown wird neu gestartet, wenn die Nachricht ausgeblendet ist. Nach 5 Sekunden können Sie diese Nachricht schließen und die App wie gewohnt weiter verwenden.</string>
     <string name="alert_temporary_upload_album_deleted">Temporäres Upload-Album erfolgreich gelöscht</string>
-    <string name="alert_deleting_temporary_upload_album">Löschen eines temporären Upload-Albums</string>
-    <string name="alert_invalid_uri_pattern">Ungültiger URI. %1$s</string>
-    <string name="alert_invalid_uri_pattern_spaces">Ungültiger URI. Der URI enthält an der Position %1$d ein Leerzeichen.</string>
+    <string name="alert_deleting_temporary_upload_album">Temporäres Upload-Album löschen</string>
+    <string name="alert_invalid_uri_pattern">Ungültige URI. %1$s</string>
+    <string name="alert_invalid_uri_pattern_spaces">Ungültige URI. In der URI befindet sich an Position%1$d ein Leerzeichen</string>
     <string name="album_section_heading_albums">Alben</string>
     <string name="album_section_heading_albums_pattern">Alben (%1$d)</string>
     <string name="album_section_heading_resources">Fotos in diesem Album</string>
-    <string name="album_title_home">Startseite</string>
+    <string name="album_title_home">Zuhause</string>
     <string name="upload_file_rating">Meine Bewertung</string>
-    <string name="slideshow_image_details_rating_score_title">Bewertung</string>
-    <string name="rating_score_pattern">%1$.2f (%2$d-Sätze)</string>
-    <string name="connection_reset_warning_pattern">Der Server hat die Verbindung %1$d in den vergangenen %2$d Minuten mehrmals geschlossen. Dies könnte auf ein Problem mit Ihrer Serverkonfiguration hinweisen.</string>
+    <string name="slideshow_image_details_rating_score_title">Bewertungspunktzahl</string>
+    <string name="rating_score_pattern">%1$.2f (%2$d Sätze)</string>
+    <string name="connection_reset_warning_pattern">Der Server hat die Verbindung%1$d Mal in den letzten%2$d Minuten geschlossen. Dies könnte auf ein Problem mit Ihrer Serverkonfiguration hinweisen.</string>
     <string name="content_description_icon">Symbol</string>
-    <string name="duplicates_ignored_pattern">%1$d-Duplikate wurden ignoriert.</string>
-    <string name="progress_loading_session_details">Laden von Sitzungsdetails</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar, und es wurde der Fallback %2$s verwendet. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
-    <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar. Die Deaktivierung betraf die Funktionalität in der Anwendung. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
+    <string name="duplicates_ignored_pattern">%1$d Duplikate wurden ignoriert.</string>
+    <string name="progress_loading_session_details">Sitzungsdetails laden</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">Die Piwigo WS-Methode%1$s ist auf diesem Server nicht mehr verfügbar, und der Fallback%2$s wurde verwendet. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode%1$s ist auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionalität in der App. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
     <string name="removing_favorite">Favorit entfernen</string>
     <string name="adding_favorite">Favorit hinzufügen</string>
-    <string name="alert_error_unsupported_features_pattern">Einige Funktionen, die diese Anwendung unterstützt, sind auf Ihrem Server nicht verfügbar. Zu aktivieren:\n1. Installieren Sie das PiwigoClientWsExts-Plugin.\n2. loggen Sie sich bei dieser Anwendung aus und wieder ein.\n\nSie werden in einer Woche daran erinnert.</string>
-    <string name="tag_will_be_created_when_resource_is_saved">Verwendung des Plugins User Tags zum Hinzufügen neuer Tags. Das Tag wird erst erstellt, wenn die Ressource gespeichert ist.</string>
+    <string name="alert_error_unsupported_features_pattern">Einige Funktionen, die diese App unterstützt, sind auf Ihrem Server nicht verfügbar. Ermöglichen:\n1. Installieren Sie das PiwigoClientWsExts-Plugin.\n2.Loggen Sie sich in dieser App aus und wieder ein.\n\nSie werden in einer Woche daran erinnert.</string>
+    <string name="tag_will_be_created_when_resource_is_saved">Verwenden des Benutzer-Tags-Plugins zum Hinzufügen eines neuen Tags. Das Tag wird erst erstellt, wenn die Ressource gespeichert ist.</string>
     <string name="resource_details_updated_message">Ressourcendetails aktualisiert</string>
-    <string name="alert_server_call_in_progress_please_wait">Server-Aufruf in Bearbeitung. Bitte warten Sie, bis dieser abgeschlossen ist, bevor Sie es erneut versuchen.</string>
-    <string name="upload_error_too_many_orphaned_files_exist_on_server">Auf dem Server befinden sich zu viele verwaiste Bilder, als dass der Upload fortgesetzt werden könnte. Bitte räumen Sie diese auf, bevor Sie es erneut versuchen.</string>
-    <string name="upload_error_orphaned_file_retrieval_failed">Die Liste der verwaisten Bilder kann nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
-    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Admin-Benutzer hat keinen Zugang zu den erwarteten Funktionen. Dies kann auftreten, wenn Sie das Community-Plugin verwenden (das den Admin-Status für Nicht-Admin-Benutzer vortäuscht), das sich nicht korrekt installiert hat. Vergewissern Sie sich, dass das entsprechende Plugin die Methoden, die Sie bei der Verwendung eines Webbrowsers erwarten, korrekt darstellt: %1$s/Werkzeuge/ws.htm</string>
-    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExts-Plugin auf Ihrem Server. Wenn Sie dieses bereits installiert haben, aktualisieren Sie es bitte auf die neueste Version.</string>
-    <string name="alert_user_session_no_allowed_filetypes">Der Server hat keine Liste von Dateitypen bereitgestellt, die zusammen mit den Sitzungsinformationen der Benutzer hochgeladen werden können (dies ist normalerweise nur für Admin-Benutzer vorgesehen). Bitte überprüfen Sie, ob der Server korrekt konfiguriert ist, und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, senden Sie mir bitte eine E-Mail, damit ich das Problem für Sie diagnostizieren kann.</string>
+    <string name="alert_server_call_in_progress_please_wait">Serveraufruf läuft. Bitte warten Sie, bis dies abgeschlossen ist, bevor Sie es erneut versuchen.</string>
+    <string name="upload_error_too_many_orphaned_files_exist_on_server">Auf dem Server sind zu viele verwaiste Bilder vorhanden, als dass der Upload fortgesetzt werden könnte. Bitte räumen Sie diese auf, bevor Sie es erneut versuchen.</string>
+    <string name="upload_error_orphaned_file_retrieval_failed">Liste der verwaisten Bilder kann nicht abgerufen werden. Bitte erneut versuchen.</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Der Administrator hat keinen Zugriff auf die erwarteten Funktionen. Dies kann auftreten, wenn Sie das Community-Plugin verwenden (das den Administratorstatus für Benutzer ohne Administratorrechte vortäuscht), das sich nicht korrekt installiert hat. Überprüfen Sie, ob das entsprechende Plugin die von Ihnen erwarteten Methoden mit einem Webbrowser korrekt verfügbar macht:%1$s / tools / ws.htm</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExts-Plugin auf Ihrem Server. Wenn Sie dies bereits installiert haben, aktualisieren Sie es bitte auf die neueste Version.</string>
+    <string name="alert_user_session_no_allowed_filetypes">Der Server hat keine Liste der Dateitypen bereitgestellt, die mit den Benutzersitzungsinformationen hochgeladen werden können (dies wird normalerweise nur für Administratorbenutzer bereitgestellt). Bitte überprüfen Sie, ob der Server korrekt konfiguriert ist, und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, senden Sie mir bitte eine E-Mail, damit ich das Problem für Sie diagnostizieren kann.</string>
     <string name="job_not_found">Upload-Job nicht gefunden</string>
     <string name="files_mid_data_transfer_title">Dateien teilweise kopiert</string>
-    <string name="files_awaiting_verification_title">Dateien warten auf Datenintegritätsprüfung</string>
-    <string name="files_awaiting_transfer_title">Auf Datentransfer wartende Dateien</string>
-    <string name="files_awaiting_configuration_title">Auf Konfiguration wartende Dateien</string>
+    <string name="files_awaiting_verification_title">Dateien, die auf die Überprüfung der Datenintegrität warten</string>
+    <string name="files_awaiting_transfer_title">Dateien, die auf die Datenübertragung warten</string>
+    <string name="files_awaiting_configuration_title">Dateien warten auf Konfiguration</string>
     <string name="files_requiring_server_deletion_title">Dateien, die vom Server gelöscht werden müssen</string>
     <string name="files_fully_uploaded_title">Dateien vollständig hochgeladen</string>
     <string name="temporary_album_needs_deleting_title">Temporäres Album muss gelöscht werden</string>
-    <string name="upload_job_status_heading">Job-Status hochladen</string>
+    <string name="upload_job_status_heading">Jobstatus hochladen</string>
     <string name="file_count_pattern">%1$d Dateien</string>
-    <string name="errors_encountered_list_title">Aufgetretene Fehler</string>
-    <string name="upload_error_orphaned_file_retrieval_unavailable">Es ist nicht möglich, das Vorhandensein von verwaisten Bildern zu überprüfen. Empfehlen Sie die Installation des Server-Plugins PiwigoClientWsExts</string>
-    <string name="x_of_y">%1$s / %2$s</string>
-    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Ihre Version von PiwigoClientWsExts ist veraltet. Bitte aktualisieren Sie sie vorrangig.</string>
-    <string name="subalbum_detail_txt_pattern">%1$d Kind-Alben</string>
-    <string name="please_read_and_agree_with_eula_first">Bitte lesen und bestätigen Sie zunächst Ihre Zustimmung zu den Bedingungen des EULA</string>
-    <string name="alert_required_permissions_not_granted_action_cancelled">Erforderliche Genehmigungen wurden nicht erteilt. Aktion abgebrochen.</string>
-    <string name="default_str">Standardmäßig</string>
+    <string name="errors_encountered_list_title">Fehler aufgetreten</string>
+    <string name="upload_error_orphaned_file_retrieval_unavailable">Das Vorhandensein verwaister Bilder kann nicht überprüft werden. Empfehlen Sie die Installation des PiwigoClientWsExts-Server-Plugins</string>
+    <string name="x_of_y">%1$s /%2$s</string>
+    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Ihre Version von PiwigoClientWsExts ist veraltet. Bitte aktualisieren Sie es als Priorität.</string>
+    <string name="subalbum_detail_txt_pattern">%1$d untergeordnete Alben</string>
+    <string name="please_read_and_agree_with_eula_first">Bitte lesen und bestätigen Sie zuerst die Zustimmung zu den Bestimmungen der EULA</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen.</string>
+    <string name="default_str">Standard</string>
     <string name="copied_to_clipboard">In die Zwischenablage kopiert</string>
-    <string name="alert_plugin_required_pattern">%1$s Server-Plugin erforderlich - Version %2$s oder neuer</string>
+    <string name="alert_plugin_required_pattern">%1$s Server Plugin erforderlich - Version%2$s oder neuer</string>
 
 
 
@@ -614,85 +614,85 @@ Veröffentlichungen erfolgen im Moment auf einer Ad-hoc-Basis. Es wird erwartet,
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Präferenz %1$s ist unwiederbringlich und wurde auf %2$s zurückgestellt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück."</string>
-    <string name="switch_to_cached_mode">Der Server ist zur Zeit nicht verfügbar. Zwischengespeicherte Daten verwenden?</string>
-    <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="preference_corrupt_please_re_type_pattern">"Die Einstellung%1$s ist unwiederbringlich und wurde standardmäßig auf%2$s gesetzt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück"</string>
+    <string name="switch_to_cached_mode">Der Server ist derzeit nicht verfügbar. Zwischengespeicherte Daten verwenden?</string>
+    <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Videos komprimieren</string>
     <string name="compress_images">Bilder komprimieren</string>
-    <string name="upload_tab_title_settings">Einstellungen</string>
+    <string name="upload_tab_title_settings">die Einstellungen</string>
     <string name="upload_tab_title_files">Dateien</string>
-    <string name="unable_to_handle_shared_uri_missing_content_description_information">Gemeinsame Datei kann nicht bearbeitet werden. Es fehlen detaillierte Informationen wie Dateiname und genauer Dateityp. Bitte laden Sie die Datei zuerst auf Ihr Gerät herunter.</string>
-    <string name="alert_internal_server_exposed_pattern">Unerwartete Autorität %1$s in url gefunden und durch %2$s ersetzt. Ihr Server könnte falsch konfiguriert sein.</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">Freigegebene Datei kann nicht verarbeitet werden. Fehlende detaillierte Informationen wie Dateiname und genauer Dateityp. Bitte laden Sie die Datei zuerst auf Ihr Gerät herunter.</string>
+    <string name="alert_internal_server_exposed_pattern">Unerwartete Autorität%1$s in URL gefunden und durch%2$s ersetzt. Ihr Server ist möglicherweise falsch konfiguriert.</string>
     <string name="buy_time_menu_title">Anzeigen ausblenden</string>
-    <string name="watch_advert_to_buy_advert_free_time">Möchten Sie sich eine Anzeige ansehen, um einen kurzen Zeitraum ohne Werbung zu kaufen? Sie können dies mehrfach tun, um die Zeitspanne zu verlängern, falls gewünscht.</string>
-    <string name="reward_video_not_yet_loaded">Es tut uns leid, aber das Belohnungsvideo wurde noch nicht geladen. Bitte versuchen Sie es später noch einmal.</string>
-    <string name="bought_time_menu_title_pattern">Anzeigen in %1$02d:%2$02d</string>
-    <string name="allow_upload_of_incompressible_videos">Rohe Datei hochladen, wenn keine Komprimierung möglich ist</string>
-    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">Der Server akzeptiert keine %1$d-Dateien, die zum Hochladen ausgewählt wurden. Wenn es sich um Videos handelt, können Sie die Komprimierung aktivieren. Diese Dateien aus dem Upload entfernen?</string>
+    <string name="watch_advert_to_buy_advert_free_time">Möchten Sie eine Anzeige sehen, um einen kurzen Zeitraum ohne Werbung zu kaufen? Sie können dies mehrmals tun, um die Zeitdauer zu verlängern, wenn dies gewünscht wird.</string>
+    <string name="reward_video_not_yet_loaded">Entschuldigung, aber das Belohnungsvideo wurde noch nicht geladen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="bought_time_menu_title_pattern">Anzeigen in%1$02d:%2$02d</string>
+    <string name="allow_upload_of_incompressible_videos">Laden Sie die Rohdatei hoch, wenn die Komprimierung nicht möglich ist</string>
+    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">Der Server akzeptiert keine%1$d-Dateien, die zum Hochladen ausgewählt wurden. Wenn es sich um Videos handelt, können Sie die Komprimierung aktivieren. Diese Dateien aus dem Upload entfernen?</string>
     <string name="upload_status_tab_title_details">Einzelheiten</string>
     <string name="upload_status_tab_title_errors">Fehler</string>
-    <string name="message_piwigo_server_inconsistent_results">Der API-Aufruf %1$s von Piwigo berichtet, dass die Datei-Prüfsumme nicht übereinstimmt, aber der API-Aufruf %2$s berichtet, dass sie übereinstimmt. Dies könnte ein Fehler im PIWIGO-Server oder in einem von Ihnen verwendeten Plugin sein, und es könnte sich lohnen, darüber zu berichten.</string>
-    <string name="alert_bulk_image_permissions_title">Zugriffsberechtigungen festlegen</string>
-    <string name="alert_bulk_image_permissions_message">Zugriffsberechtigungsstufen für die ausgewählten Ressourcen %1$d festlegen</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die mit einem %1$s-Mime-Typ gemeinsam genutzt werden, können nicht verarbeitet werden</string>
-    <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit den folgenden Erweiterungen können nicht hochgeladen werden und wurden entfernt: %1$s</string>
-    <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album</string>
-    <string name="unsupported_device">Tut mir leid, dieses Gerät wird nicht unterstützt. Es gibt ein Problem mit dem Zugriff auf Google Play Services.</string>
-    <string name="hint_album_view">Tippen Sie unten auf den Bildschirm, um Details zu diesem Album anzuzeigen.</string>
+    <string name="message_piwigo_server_inconsistent_results">Die Prüfsumme der Piwigo-API-Aufruf%1$s-Datei stimmt nicht überein, aber der API-Aufruf%2$s meldet, dass sie übereinstimmt. Dies kann ein Fehler im PIWIGO-Server oder ein von Ihnen verwendetes Plugin sein und möglicherweise eine Meldung wert sein.</string>
+    <string name="alert_bulk_image_permissions_title">Festlegen von Zugriffsberechtigungen</string>
+    <string name="alert_bulk_image_permissions_message">Legen Sie die Zugriffsberechtigungsstufen für die ausgewählten Ressourcen%1$d fest</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die für einen MIME-Typ von%1$freigegeben wurden, können nicht verarbeitet werden</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit den folgenden Erweiterungen können nicht hochgeladen werden und wurden entfernt:%1$s</string>
+    <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album aus</string>
+    <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Beim Zugriff auf Google Play Services ist ein Problem aufgetreten.</string>
+    <string name="hint_album_view">Tippen Sie unten auf dem Bildschirm auf, um Details zu diesem Album aufzurufen</string>
     <string name="usage_hint_title">Hinweis</string>
-    <string name="hint_slideshow_base_view_1">Tippen Sie unten auf dem Bildschirm oder auf den Ressourcennamen, um Details zu dieser Ressource anzuzeigen.</string>
-    <string name="hint_slideshow_base_view_2">Streichen Sie nach links oder rechts, um zwischen den Ressourcen zu navigieren</string>
-    <string name="hint_slideshow_item_view_1">Die Bewertung kann durch Tippen oder Streichen auf die gewünschte Sternenbewertung angepasst werden. Dies hat eine sofortige Wirkung.</string>
-    <string name="hint_slideshow_paid_view_3">Um diese Ressource als Favorit zu markieren, tippen Sie auf das Herz-Symbol rechts neben dem Namen der Bildressource</string>
-    <string name="hint_navigation_panel_1">Tippen Sie auf das obige Anwendungssymbol, um eine Server-Abmeldung und -Anmeldung zu erzwingen</string>
+    <string name="hint_slideshow_base_view_1">Tippen Sie unten auf dem Bildschirm oder auf den Ressourcennamen, um Details zu dieser Ressource aufzurufen</string>
+    <string name="hint_slideshow_base_view_2">Wischen Sie nach links oder rechts, um zwischen den Ressourcen zu navigieren</string>
+    <string name="hint_slideshow_item_view_1">Die Bewertung kann durch Tippen oder Wischen auf die gewünschte Sternebewertung angepasst werden. Dies hat sofortige Wirkung.</string>
+    <string name="hint_slideshow_paid_view_3">Um diese Ressource als Favorit zu markieren, tippen Sie auf das Herzsymbol rechts neben dem Namen der Bildressource</string>
+    <string name="hint_navigation_panel_1">Tippen Sie oben auf das App-Symbol, um eine Server-Abmeldung und -Anmeldung zu erzwingen</string>
     <string name="user_details_not_found_on_server">Benutzerdetails auf dem Server konnten nicht gefunden werden</string>
-    <string name="resource_queued_for_download">Ressource in der Warteschlange zum Herunterladen. Es ist die Position %1$d in der Warteschlange.</string>
-    <string name="alert_message_showing_images_of_size">Zeigt Bilder vom Server der Größe %1$s</string>
-    <string name="alert_message_showing_image_thumbnails_of_size">Anzeigen von Bildminiaturansichten vom Server der Größe %1$s</string>
-    <string name="alert_message_showing_album_thumbnails_of_size">Anzeigen von Album-Miniaturbildern vom Server der Größe %1$s</string>
+    <string name="resource_queued_for_download">Ressource zum Herunterladen in die Warteschlange gestellt. Es ist Position%1$d in der Warteschlange.</string>
+    <string name="alert_message_showing_images_of_size">Anzeigen von Bildern vom Server der Größe%1$s</string>
+    <string name="alert_message_showing_image_thumbnails_of_size">Anzeigen von Miniaturbildern von Servern der Größe%1$s</string>
+    <string name="alert_message_showing_album_thumbnails_of_size">Anzeigen von Album-Miniaturansichten vom Server der Größe%1$s</string>
     
-    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload %1$s.\n%2$s</string>
-    <string name="uploading_progress_bar_message">Hochladen von</string>
-    <string name="compressing_progress_bar_message">komprimieren</string>
-    <string name="warning_missing_tags_links_removed_from_resource">Nicht alle mit diesem Element verknüpften Tags sind noch in der Datenbank vorhanden. Die Links zu %1$d wurden entfernt.</string>
-    <string name="button_stop_warning_me">Sagen Sie es mir nicht noch einmal.</string>
-    <string name="create_email_using_app">Erstellen einer E-Mail mit der Anwendung</string>
-    <string name="open_files">Dateien in der Anwendung öffnen</string>
-    <string name="files_unavailable_to_download_removed_pattern">Ihre Auswahl enthielt Dateien, die nicht verarbeitet werden konnten. Diese %1$d-Dateien wurden ignoriert. Um eine Videodatei freizugeben, muss sie zunächst vollständig lokal zwischengespeichert werden.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Alle einmaligen Benutzerhinweise werden wieder angezeigt"</string>
+    <string name="alert_error_upload_file_compression_error_message_pattern">Fehler beim Komprimieren der Datei für den Upload%1$s.\n%2$s</string>
+    <string name="uploading_progress_bar_message">Hochladen</string>
+    <string name="compressing_progress_bar_message">Komprimieren</string>
+    <string name="warning_missing_tags_links_removed_from_resource">Nicht alle mit diesem Element verknüpften Tags sind noch in der Datenbank vorhanden. Die Links zu%1$d wurden entfernt</string>
+    <string name="button_stop_warning_me">Sag es mir nicht noch einmal</string>
+    <string name="create_email_using_app">Erstellen Sie eine E-Mail mit der App</string>
+    <string name="open_files">Öffnen Sie Dateien in der App</string>
+    <string name="files_unavailable_to_download_removed_pattern">Ihre Auswahl enthielt Dateien, die nicht verarbeitet werden konnten. Diese%1$d-Dateien wurden ignoriert. Um eine Videodatei freizugeben, muss sie zuerst vollständig lokal zwischengespeichert werden.</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Alle einmaligen Benutzertipps werden erneut angezeigt"</string>
     
     
     <string name="delete_uploaded_files_title">Hochgeladene Dateien löschen</string>
-    <string name="release_permissions_for_uri_pattern">M?chten Sie die von dieser App gehaltenen Berechtigungen f?r die alten ausgew?hlten Uri (%1$s) freigeben?</string>
-    <string name="system_file_selector_label">Systemdatei-Auswahl</string>
-    <string name="uri_still_needed_pattern">Es tut mir leid, Sie können die Erlaubnis zur Verwendung dieser URI durch die App nicht entfernen. Die App benötigt weiterhin die Erlaubnis, auf diesen URI zuzugreifen: \n\n%1$s</string>
+    <string name="release_permissions_for_uri_pattern">Möchten Sie die von dieser App gehaltenen Berechtigungen für den alten ausgewählten Uri (%1$s) freigeben?</string>
+    <string name="system_file_selector_label">Auswahl der Systemdatei</string>
+    <string name="uri_still_needed_pattern">Leider können Sie die Berechtigung der App zur Verwendung dieses URI nicht entfernen. Die App benötigt weiterhin die Berechtigung, auf diesen URI zuzugreifen für:\n\n%1$s</string>
     <string name="no_suitable_activity_found">Keine geeignete Aktivität gefunden</string>
-    <string name="preference_uri_consumer_description_pattern">Präferenz: %1$s</string>
-    <string name="missing_permissions_warning_message_pattern">"Seit dem letzten Öffnen dieser Anwendung wurden Dateiberechtigungen entfernt, die für die folgenden Teile der Anwendung erforderlich sind\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen, damit alles wie erwartet funktioniert."</string>
+    <string name="preference_uri_consumer_description_pattern">Präferenz:%1$s</string>
+    <string name="missing_permissions_warning_message_pattern">"Seit dem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
     <string name="folder_selection_title">Ordner auswählen</string>
     <string name="files_selection_title">Dateien auswählen</string>
-    <string name="all">Alle</string>
-    <string name="user_high_definition_field">Zugriff auf Originaldateien (in voller Größe) erlauben</string>
+    <string name="all">Alles</string>
+    <string name="user_high_definition_field">Ermöglichen Sie den Zugriff auf Originaldateien (in voller Größe)</string>
     <string name="group_is_default_field">Weisen Sie dieser Gruppe neue Benutzer zu</string>
-    <string name="createGallery_galleryCommentsAllowed_title">Benutzer-Kommentare</string>
+    <string name="createGallery_galleryCommentsAllowed_title">Benutzerkommentare</string>
     <string name="uri_permission_justification_to_upload">Zum Hochladen auf den Server</string>
-    <string name="progress_loading_folder_content">Laden von Ordnerinhalten</string>
-    <string name="adding_files">Hinzufügen von Dateien</string>
-    <string name="calculating_file_checksums">Berechnen von Datei-Prüfsummen</string>
-    <string name="alert_error_starting_download">Fehler beim Starten des Datei-Downloads</string>
-    <string name="progress_importing_files">Importieren von Dateien</string>
+    <string name="progress_loading_folder_content">Ordnerinhalt laden</string>
+    <string name="adding_files">Dateien hinzufügen</string>
+    <string name="calculating_file_checksums">Berechnen von Dateiprüfsummen</string>
+    <string name="alert_error_starting_download">Fehler beim Starten des Dateidownloads</string>
+    <string name="progress_importing_files">Dateien importieren</string>
     <string name="content_filter">Inhaltsfilter</string>
-    <string name="alert_advert_importance_message">Die Einnahmen aus der Werbung sind für mich wichtig. Es tut mir leid, dass sie Sie frustrieren (mich frustrieren sie auch), aber wenn Sie sie sehen, werden sie so lange erscheinen, bis Sie eine sehen. Um dieses Problem zu vermeiden, beobachten Sie sie bitte so lange, bis sie die Option zum Schließen anbieten. Alternativ können Sie auch die kostenpflichtige Version dieser App kaufen. Vielen Dank für Ihre Unterstützung.</string>
-    <string name="eula_privacy_title">Datenschutz</string>
+    <string name="alert_advert_importance_message">Die Einnahmen aus Werbung sind mir wichtig. Es tut mir leid, dass sie dich frustrieren (sie tun es auch), aber wenn du sie dir ansiehst, werden sie so lange erscheinen, bis du eins siehst. Um dieses Problem zu vermeiden, beobachten Sie sie bitte, bis sie die Option zum Schließen anbieten. Alternativ können Sie die kostenpflichtige Version dieser App erwerben. Vielen Dank für Ihre Unterstützung.</string>
+    <string name="eula_privacy_title">Privatsphäre</string>
     <string name="privacy_policy_label">Unsere Datenschutzerklärung</string>
     <string name="title_advert_consent">Ihre Privatsphäre</string>
     <string name="personalised_adverts_label">Möchten Sie, dass Anzeigen personalisiert werden?</string>
-    <string name="personalised_adverts_field">Personalisierte Anzeigen anzeigen</string>
+    <string name="personalised_adverts_field">Zeigen Sie personalisierte Anzeigen</string>
     <string name="open_link">Webseite öffnen</string>
     <string name="no_adverts_label">Bevorzugen Sie eine werbefreie Version dieser App?</string>
-    <string name="view_the_paid_version">Bringen Sie mich zu der werbefreien Version</string>
+    <string name="view_the_paid_version">Bring mich zur werbefreien Version</string>
     <string name="advert_providers">Anzeigenanbieter im Einsatz</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Diese Datei konnte leider nicht verwendet werden, weil sie von einer App freigegeben wurde, die den beantragten erweiterten Zugang zu dieser Datei nicht autorisiert hat und dieser Zugang abgelaufen ist.</string>
-    <string name="likely_file_unusable_shared_without_permissions">Die hinzugefügten Dateien wurden ohne die beantragte Genehmigung freigegeben. Wenn sie nicht zum Hochladen hinzugefügt werden können, könnten Sie versuchen, sie von der Anwendung aus direkt mit dieser Anwendung zu teilen, anstatt auf sie über den Datei-Upload-Selektor zuzugreifen.</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Diese Datei konnte leider nicht verwendet werden, da sie von einer App freigegeben wurde, die den angeforderten erweiterten Zugriff auf diese Datei nicht autorisiert hat und der Zugriff abgelaufen ist.</string>
+    <string name="likely_file_unusable_shared_without_permissions">Die hinzugefügten Dateien wurden ohne die angeforderte Erlaubnis freigegeben. Wenn es nicht zum Hochladen hinzugefügt werden kann, können Sie versuchen, sie direkt aus der App für diese App freizugeben, anstatt über die Upload-Dateiauswahl darauf zuzugreifen.</string>
 
 </resources>

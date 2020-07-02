@@ -13,7 +13,7 @@
 
     
     
-    <string name="preference_test_server_connection_title">Nastavení...</string>
+    <string name="preference_test_server_connection_title">Vyzkoušejte připojení</string>
     <string name="preference_test_server_connection_summary">Otestujte připojení k serveru</string>
 
     
@@ -21,7 +21,7 @@
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
     <string name="preference_page_connection">Spojení</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
-    <string name="preference_connections_category_server_basic_auth">Piwigo...</string>
+    <string name="preference_connections_category_server_basic_auth">Základní ověření serveru</string>
     <string name="preference_connections_category_client_certificate_auth">Ověření klientského certifikátu</string>
     <string name="preference_connections_category_advanced">Pokročilé nastavení</string>
     <string name="preference_connections_category_connections_caching">Ukládání do mezipaměti na webu</string>
@@ -32,18 +32,18 @@
     
 
     
-    <string name="preference_server_connection_max_redirects_title">Vyberte hodnotu...</string>
-    <string name="preference_server_connection_max_redirects_summary">Maximální přesměrování serveru</string>
+    <string name="preference_server_connection_max_redirects_title">Maximální přesměrování serveru</string>
+    <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     
 
     
-    <string name="preference_server_connection_force_https_title">%1$d...</string>
-    <string name="preference_server_connection_force_https_summary">Přepište URL Http na Https...</string>
+    <string name="preference_server_connection_force_https_title">Přepište URL Http na Https</string>
+    <string name="preference_server_connection_force_https_summary">Všechny http:// adresy URL přepsány na https:// pro https server</string>
     
 
     
     <string name="preference_server_connection_offline_mode_title">Povolit procházení offline</string>
-    <string name="preference_server_connection_offline_mode_summary">Použijte data v mezipaměti, pokud jsou k dispozici</string>
+    <string name="preference_server_connection_offline_mode_summary">Použijte data v mezipaměti, jsou-li k dispozici</string>
     
 
     
@@ -57,7 +57,7 @@
     
 
     
-    <string name="preference_server_response_timeout_secs_title">%1$d sekund...</string>
+    <string name="preference_server_response_timeout_secs_title">Časový limit odpovědi (sekundy)</string>
     <string name="preference_server_response_timeout_secs_summary">%1$d sekund</string>
     
 
@@ -73,7 +73,7 @@
 
     
     <string name="preference_server_connection_retries_title">Obnovení připojení před selháním</string>
-    <string name="preference_server_connection_retries_summary">Maximální přesměrování serveru</string>
+    <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
     
@@ -89,11 +89,11 @@
 
     
     
-    <string name="preference_server_use_client_certs_title">Povolit, pokud server vyžaduje základní ověření...</string>
-    <string name="preference_server_use_client_certs_summary">Použijte ověření klientského certifikátu</string>
+    <string name="preference_server_use_client_certs_title">Použijte ověření klientského certifikátu</string>
+    <string name="preference_server_use_client_certs_summary">Povolit, pokud server vyžaduje ověření klienta na základě certifikátu</string>
 
     
-    <string name="preference_select_client_certificate_title">Povolit, pokud server vyžaduje ověření klienta na základě certifikátu</string>
+    <string name="preference_select_client_certificate_title">Klientské certifikáty (a soukromé klíče)</string>
     <string name="preference_select_client_certificate_summary">Vyberte Klientský certifikát pro ověření</string>
 
     
@@ -124,7 +124,7 @@
 
     <string name="preference_caching_clearResponseCache_title">Vymažte vyrovnávací paměť serveru</string>
     
-    <string name="preference_caching_clearResponseCache_summary">Vymažte vyrovnávací paměť serveru...</string>
+    <string name="preference_caching_clearResponseCache_summary">Odstraní všechny odpovědi serveru uložené v mezipaměti na disk</string>
 
     
     <string name="preference_caching_level_title">Úroveň mezipaměti odezvy</string>
@@ -133,7 +133,7 @@
 
     
     <string name="preference_caching_max_cache_entries_title">Maximální počet záznamů v paměti cacheListList</string>
-    <string name="preference_caching_max_cache_entries_summary">Maximální přesměrování serveru</string>
+    <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     
 
     
@@ -166,7 +166,7 @@
 
     
     <string name="preference_gallery_albums_preferredColumnsLandscape_title">Na šířku: Sloupce alb se zobrazí</string>
-    <string name="preference_gallery_albums_preferredColumnsLandscape_summary">Maximální přesměrování serveru</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
     <string name="preference_gallery_show_image_name_title">Zobrazit názvy obrázků v albu</string>
@@ -175,7 +175,7 @@
 
     
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Krajina: Sloupce obrázků k zobrazení</string>
-    <string name="preference_gallery_images_preferredColumnsLandscape_summary">Maximální přesměrování serveru</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Zobrazit miniaturu zvětšeného alba</string>
@@ -190,11 +190,11 @@
 
     
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrét: Sloupce alb, které se mají zobrazit</string>
-    <string name="preference_gallery_albums_preferredColumnsPortrait_summary">Maximální přesměrování serveru</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
     <string name="preference_gallery_images_preferredColumnsPortrait_title">Portrét: Sloupce obrázků k zobrazení</string>
-    <string name="preference_gallery_images_preferredColumnsPortrait_summary">Maximální přesměrování serveru</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">Zobrazit videa v prezentaci</string>
@@ -207,7 +207,7 @@
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">Povolte, pokud chcete stahovat a přehrávat videa na vyžádání...</string>
+    <string name="preference_piwigo_playable_media_extensions_title">Podporovaná multimediální rozšíření</string>
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
 
     
@@ -219,7 +219,7 @@
 
     
     <string name="preference_video_cache_maxsize_mb_title">Maximální velikost mezipaměti videa (MB)</string>
-    <string name="preference_video_cache_maxsize_mb_summary">Nahráno Max. Velikost souboru...</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
     
 
     
@@ -329,26 +329,26 @@
     <string name="preference_data_upload_default_privacy_level_title">Výchozí úroveň ochrany osobních údajů</string>
 
     
-    <string name="preference_data_upload_chunkSizeKb_title">Výchozí úroveň ochrany osobních údajů...</string>
+    <string name="preference_data_upload_chunkSizeKb_title">Maximální velikost bloku nahrání (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
     
 
     
     <string name="preference_data_upload_chunk_auto_retries_title">Maximální počet opakovaných nahrání souborů v automatickém souboru</string>
-    <string name="preference_data_upload_chunk_auto_retries_summary">Maximální přesměrování serveru</string>
+    <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
     
     <string name="preference_data_upload_preferredColumnsPortrait_title">Portrét: Sloupce obrázků k zobrazení</string>
-    <string name="preference_data_upload_preferredColumnsPortrait_summary">Maximální přesměrování serveru</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
     <string name="preference_data_upload_preferredColumnsLandscape_title">Krajina: Sloupce obrázků k zobrazení</string>
-    <string name="preference_data_upload_preferredColumnsLandscape_summary">Maximální přesměrování serveru</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
     <string name="preference_data_upload_max_filesize_mb_title">Max. Velikost souboru pro nahrávání bez upozornění (v MB)</string>
-    <string name="preference_data_upload_max_filesize_mb_summary">Nahráno Max. Velikost souboru...</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 
     
@@ -377,27 +377,27 @@
     
 
     <string name="preference_data_upload_compress_images_quality_title">Kvalita obrazu</string>
-    <string name="preference_data_upload_compress_images_quality_summary">Kvalita obrazu...</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Kvalita komprese obrazu%1$s</string>
     
     
     
     
 
     <string name="preference_data_upload_compress_images_max_height_title">Maximální výška</string>
-    <string name="preference_data_upload_compress_images_max_height_summary">Maximální výška...</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Maximální výška (%1$s pixelů)</string>
     
     
     
     
 
-    <string name="preference_data_upload_compress_images_max_width_title">Maximální výška (%1$s pixelů)</string>
-    <string name="preference_data_upload_compress_images_max_width_summary">Maximální výška (%1$s pixelů)...</string>
+    <string name="preference_data_upload_compress_images_max_width_title">Maximální šířka</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Maximální šířka (%1$s pixelů)</string>
     
     
     
     
 
-    <string name="preference_data_upload_compress_images_output_format_title">Maximální šířka (%1$s pixelů)</string>
+    <string name="preference_data_upload_compress_images_output_format_title">Formát výstupního obrázku</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Výstupní formát komprese obrazu%1$s</string>
     
     
@@ -407,7 +407,7 @@
 
     
 
-    <string name="preference_page_other">Aplikace...</string>
+    <string name="preference_page_other">jiný</string>
     <string name="preference_other_category_file_selector">Výběr souborů</string>
 
     
@@ -419,19 +419,19 @@
 
     
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Na šířku: Sloupce souborů k zobrazení</string>
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">Maximální přesměrování serveru</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Na šířku: Sloupce souborů k zobrazení...</string>
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">Maximální přesměrování serveru</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrét: Sloupce souborů k zobrazení</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
     
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Na šířku: Sloupce složek k zobrazení</string>
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">Maximální přesměrování serveru</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
     
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrét: Sloupce složek k zobrazení</string>
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">Maximální přesměrování serveru</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     
 
@@ -450,7 +450,7 @@
     <string name="preference_app_always_show_status_bar_summary">Povolit zabránit automatickému skrytí stavového řádku</string>
 
     
-    <string name="preference_app_desired_language_title">Povolit zabránit automatickému skrytí stavového řádku...</string>
+    <string name="preference_app_desired_language_title">Jazyk</string>
     <string name="preference_app_desired_language_summary">%1$s</string>
 
     

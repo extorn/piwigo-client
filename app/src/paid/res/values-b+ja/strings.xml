@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="notification_title_background_upload_service">背景Piwigoアップロードサービス</string>
-    <string name="notification_text_background_upload_running">アップロードジョブの実行</string>
-    <string name="notification_text_background_upload_sleeping">睡眠中。次の実行は %1$tR で</string>
-    <string name="notification_text_background_upload_polling">アップロードするファイルをポーリングします。</string>
+    <string name="notification_title_background_upload_service">バックグラウンドPiwigoアップロードサービス</string>
+    <string name="notification_text_background_upload_running">アップロードジョブを実行しています</string>
+    <string name="notification_text_background_upload_sleeping">睡眠。 次に%1$tRで実行</string>
+    <string name="notification_text_background_upload_polling">アップロードするファイルのポーリング。</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">ジョブを実行させたい場合は、バックグラウンドアップロードサービスを開始することを忘れないでください。</string>
-    <string name="alert_auto_upload_service_stopped">バックグラウンドアップロードサービス停止</string>
-    <string name="alert_auto_upload_service_started">背景アップロードサービス開始</string>
-    <string name="alert_auto_upload_service_job_restarted">以前に不完全なジョブをサーバ %1$s に %2$d ファイルと共にアップロードを開始しました。</string>
-    <string name="alert_auto_upload_service_job_started">2$d ファイルがあるサーバ %1$s へのジョブのアップロードを開始しています。</string>
-    <string name="alert_auto_upload_service_job_finished_success">サーバ %1$s へのバックグラウンド・アップロード・ジョブの実行を終了しました。</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">サーバ %1$s へのバックグラウンド・アップロード・ジョブの実行を終了しました。一部のファイルをアップロードできませんでした。</string>
-    <string name="alert_auto_upload_service_job_finished_failure">サーバ %1$s へのバックグラウンド・アップロード・ジョブの実行を終了しました。ファイルをアップロードできませんでした。ジョブは後で再試行されます。</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">タスクのバックグラウンド・アップロード・サービスのチェック</string>
-    <string name="progress_creating_tag">タグの作成</string>
-    <string name="error_updating_favorites_pattern">お気に入りからリソース (%1$s) を削除するエラー: %2$s。</string>
-    <string name="favorites_content_load_failed_text">お気に入りにマークされたリソースの読み込みに失敗しました</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">あなたは%1$dリソースの削除を要求しています。全てのアルバム(とサーバー)から削除しますか、それともこのお気に入りからリンクを解除しますか？</string>
-    <string name="progress_remove_favorite_resources">お気に入りリストからリソースを削除する</string>
-    <string name="favorites_empty_text">現在、お気に入りはありません。</string>
-    <string name="favorites_heading">お気に入り</string>
-    <string name="button_unfavorite">好みではない</string>
+    <string name="alert_warning_auto_upload_service_stopped">ジョブを実行したい場合は、バックグラウンドアップロードサービスを開始することを忘れないでください。</string>
+    <string name="alert_auto_upload_service_stopped">バックグラウンドアップロードサービスが停止しました</string>
+    <string name="alert_auto_upload_service_started">バックグラウンドアップロードサービスを開始しました</string>
+    <string name="alert_auto_upload_service_job_restarted">以前に完了していないジョブの%2$dファイルを含むサーバー%1$sへのアップロードを開始しました</string>
+    <string name="alert_auto_upload_service_job_started">%2$d個のファイルを含むサーバー%1$sへのジョブのアップロードを開始しています</string>
+    <string name="alert_auto_upload_service_job_finished_success">サーバー%1$sへのバックグラウンドアップロードジョブの実行が終了しました。</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">サーバー%1$sへのバックグラウンドアップロードジョブの実行が終了しました。 一部のファイルはアップロードに失敗し、後で再試行されます。</string>
+    <string name="alert_auto_upload_service_job_finished_failure">サーバー%1$sへのバックグラウンドアップロードジョブの実行が終了しました。 ファイルをアップロードできませんでした。 ジョブは後で再試行されます。</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">タスクのバックグラウンドアップロードサービスチェック</string>
+    <string name="progress_creating_tag">タグを作成しています</string>
+    <string name="error_updating_favorites_pattern">リソース（%1$s）をお気に入りから削除中にエラーが発生しました：%2$s</string>
+    <string name="favorites_content_load_failed_text">お気に入りとしてマークされたリソースを読み込めませんでした</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">%1$dリソースの削除をリクエストしました。 これらをすべてのアルバム（およびサーバー）から削除しますか-完全に削除しますか、それともこのお気に入りからリンクを解除しますか？</string>
+    <string name="progress_remove_favorite_resources">お気に入りリストからのリソースの削除</string>
+    <string name="favorites_empty_text">現在お気に入りはありません</string>
+    <string name="favorites_heading">あなたのお気に入り</string>
+    <string name="button_unfavorite">お気に入りではない</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">サーバー設定</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">ローカル設定</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">アップロード前の圧縮</string>
-    <string name="ignoring_job_local_folder_not_found">ローカルフォルダが存在しなくなりました。ジョブを無視する</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">アップロードに選択されたファイル拡張子がありません。ジョブを無視する</string>
-    <string name="ignoring_job_connection_profile_set_for_offline_access">接続プロファイルがオフラインモードに設定されている ジョブを無視する</string>
-    <string name="slideshow_auto_drive_paused">スライドショー オートドライブは次のスライドまで一時停止します。</string>
+    <string name="ignoring_job_local_folder_not_found">ローカルフォルダーは存在しません。 ジョブを無視する</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">アップロードするファイル拡張子が選択されていません。 ジョブを無視する</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">接続プロファイルがオフラインモードに設定されています。 ジョブを無視する</string>
+    <string name="slideshow_auto_drive_paused">スライドショーの自動ドライブが次のスライドまで一時停止しました</string>
 </resources>

@@ -29,7 +29,7 @@
     <string name="preference_data_upload_automatic_job_view_status_summary">Zobrazení stavu od posledního spuštění úlohy (pokud je k dispozici)</string>
 
     
-    <string name="preference_data_upload_automatic_job_is_valid_title">Zobrazení stavu od posledního spuštění úlohy (pokud je k dispozici)...</string>
+    <string name="preference_data_upload_automatic_job_is_valid_title">Úloha je platná</string>
 
     
     <string name="preference_data_upload_automatic_job_enabled_summary">Použije služba nahrávání tuto úlohu?</string>
@@ -74,11 +74,11 @@
     
     
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Nahráno Max. Velikost souboru</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">Nahráno Max. Velikost souboru...</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
     
     
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">%1$d MB</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Přípony souborů</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Nahrajte soubory s ext%1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Úroveň soukromí</string>

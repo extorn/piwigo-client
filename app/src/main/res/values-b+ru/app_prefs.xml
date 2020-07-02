@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
 
-    <string name="preferences_overall_heading">Настройки</string>
+    <string name="preferences_overall_heading">настройки</string>
 
     
 
@@ -13,18 +13,18 @@
 
     
     
-    <string name="preference_test_server_connection_title">Тестовое подключение</string>
-    <string name="preference_test_server_connection_summary">Тестовое подключение к серверу</string>
+    <string name="preference_test_server_connection_title">Тестовое соединение</string>
+    <string name="preference_test_server_connection_summary">Тестовое соединение с сервером</string>
 
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Чистый сервер</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Очищенная неудачная загрузка PiwigoClient с сервера</string>
-    <string name="preference_page_connection">Связь</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Очистить неудачные загрузки PiwigoClient с сервера</string>
+    <string name="preference_page_connection">соединение</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">Базовая аутентификация сервера</string>
     <string name="preference_connections_category_client_certificate_auth">Аутентификация сертификата клиента</string>
-    <string name="preference_connections_category_advanced">Дополнительные настройки</string>
-    <string name="preference_connections_category_connections_caching">Кэширование веб-реакций</string>
+    <string name="preference_connections_category_advanced">Расширенные настройки</string>
+    <string name="preference_connections_category_connections_caching">Кэширование веб-ответов</string>
     <string name="server_connection_preference_summary_default">Пожалуйста, выберите значение</string>
     <string name="server_album_preference_summary_default">Пожалуйста, выберите значение</string>
     <string name="local_folder_preference_summary_default">Пожалуйста, выберите значение</string>
@@ -32,27 +32,27 @@
     
 
     
-    <string name="preference_server_connection_max_redirects_title">Макс. перенаправление сервера</string>
+    <string name="preference_server_connection_max_redirects_title">Макс сервер перенаправляет</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     
 
     
-    <string name="preference_server_connection_force_https_title">Переписать Http URL в Https</string>
-    <string name="preference_server_connection_force_https_summary">Все URL-адреса http:// переписаны на https:// для https-сервера.</string>
+    <string name="preference_server_connection_force_https_title">Переписать URL-адреса Http в Https</string>
+    <string name="preference_server_connection_force_https_summary">Все http:// URL переписаны на https:// для сервера https</string>
     
 
     
-    <string name="preference_server_connection_offline_mode_title">Разрешить автономный просмотр</string>
+    <string name="preference_server_connection_offline_mode_title">Разрешить просмотр в автономном режиме</string>
     <string name="preference_server_connection_offline_mode_summary">Используйте кэшированные данные, когда они доступны</string>
     
 
     
-    <string name="preference_server_connection_allow_redirects_title">Разрешить перенаправление сервера</string>
-    <string name="preference_server_connection_allow_redirects_summary">Следуйте http 3xx-ответам</string>
+    <string name="preference_server_connection_allow_redirects_title">Разрешить перенаправления сервера</string>
+    <string name="preference_server_connection_allow_redirects_summary">Следуйте http 3xx ответов</string>
     
 
     
-    <string name="preference_server_connection_timeout_secs_title">Тайм-аут подключения (в секундах)</string>
+    <string name="preference_server_connection_timeout_secs_title">Тайм-аут соединения (секунды)</string>
     <string name="preference_server_connection_timeout_secs_summary">%1$d секунд</string>
     
 
@@ -62,25 +62,25 @@
     
 
     
-    <string name="preference_server_alter_cache_directives_title">Альтернативные серверные директивы Http кэширования</string>
-    <string name="preference_server_alter_cache_directives_summary">Разрешить автономный доступ в галерею</string>
+    <string name="preference_server_alter_cache_directives_title">Изменить директивы Http-кэша сервера</string>
+    <string name="preference_server_alter_cache_directives_summary">Включить, чтобы разрешить автономный доступ к галерее</string>
     
 
     
-    <string name="preference_server_connection_uri_path_segment_encoding_title">Кодировать URI путь для запросов ресурсов</string>
-    <string name="preference_server_connection_uri_path_segment_encoding_summary">Попробуйте включить его, если вы получаете 404 ошибки для файлов, которые существуют</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Кодировать путь URI для запросов на ресурсы</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Попробуйте включить это, если вы получаете 404 ошибки для файлов, которые существуют</string>
     
 
     
-    <string name="preference_server_connection_retries_title">Подключение повторяется до отказа</string>
+    <string name="preference_server_connection_retries_title">Соединение повторяется до сбоя</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
     
-    <string name="preference_server_basic_auth_username_title">Основная аутентификация Имя пользователя</string>
+    <string name="preference_server_basic_auth_username_title">Имя пользователя базовой аутентификации</string>
 
     
-    <string name="preference_server_basic_auth_password_title">Основная аутентификация Пароль</string>
+    <string name="preference_server_basic_auth_password_title">Пароль базовой аутентификации</string>
 
     
     <string name="preference_server_use_basic_auth_title">Использовать базовую аутентификацию</string>
@@ -89,16 +89,16 @@
 
     
     
-    <string name="preference_server_use_client_certs_title">Использовать сертификаты клиентов Аутентификация</string>
-    <string name="preference_server_use_client_certs_summary">Включите, если сервер требует аутентификации клиента на основе сертификата.</string>
+    <string name="preference_server_use_client_certs_title">Использовать аутентификацию сертификата клиента</string>
+    <string name="preference_server_use_client_certs_summary">Включить, если для сервера требуется проверка подлинности клиента на основе сертификатов</string>
 
     
-    <string name="preference_select_client_certificate_title">Сертификаты клиентов (и частные ключи)</string>
-    <string name="preference_select_client_certificate_summary">Выберите сертификат клиента для аутентификации</string>
+    <string name="preference_select_client_certificate_title">Клиентские сертификаты (и частные ключи)</string>
+    <string name="preference_select_client_certificate_summary">Выберите Сертификат клиента для аутентификации</string>
 
     
-    <string name="preference_piwigo_connection_profile_title">Выберите Профиль соединения</string>
-    <string name="preference_piwigo_connection_profile_summary">Профиль активного соединения (%1$s)</string>
+    <string name="preference_piwigo_connection_profile_title">Выберите профиль подключения</string>
+    <string name="preference_piwigo_connection_profile_summary">Активный профиль подключения (%1$s)</string>
 
     
     
@@ -109,12 +109,12 @@
     <string name="preference_piwigo_server_address_summary">%1$s</string>
 
     
-    <string name="preference_piwigo_server_username_title">Имя пользователя</string>
+    <string name="preference_piwigo_server_username_title">имя пользователя</string>
     <string name="preference_piwigo_server_username_summary">%1$s</string>
 
 
     
-    <string name="preference_piwigo_server_password_title">Пароль</string>
+    <string name="preference_piwigo_server_password_title">пароль</string>
     <string name="preference_piwigo_server_password_summary">%1$s</string>
 
     
@@ -122,7 +122,7 @@
     <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
     
 
-    <string name="preference_caching_clearResponseCache_title">Кэш отклика чистого сервера</string>
+    <string name="preference_caching_clearResponseCache_title">Очистить кэш ответа сервера</string>
     
     <string name="preference_caching_clearResponseCache_summary">Удаляет все ответы сервера, кэшированные на диск</string>
 
@@ -132,32 +132,32 @@
     <string name="preference_caching_level_default">диск</string>
 
     
-    <string name="preference_caching_max_cache_entries_title">Максимальное количество записей в кэшеСписок записей в кэше</string>
+    <string name="preference_caching_max_cache_entries_title">Максимальное количество записей в кэше</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     
 
     
-    <string name="preference_caching_max_cache_entry_size_title">Максимальный размер кэша (КБ)</string>
-    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
+    <string name="preference_caching_max_cache_entry_size_title">Максимальный размер записи в кэш (КБ)</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d КБ</string>
     
 
-    <string name="preference_connections_category_trusted_server_ca">Центры сертификации доверенных серверов</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_summary">Используйте настраиваемый список доверенных сертификатов ЦС для проверки сертификатов SSL сервера</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_title">Использовать пользовательские доверенные центры сертификации</string>
+    <string name="preference_connections_category_trusted_server_ca">CA сертификатов доверенных серверов</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">Используйте пользовательский список доверенных сертификатов CA для проверки SSL-сертификатов сервера.</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_title">Используйте настраиваемые доверенные центры сертификации</string>
     
     
 
     
-    <string name="preference_select_trusted_certificate_title">Выберите сертификаты доверенного ЦС</string>
-    <string name="preference_select_trusted_certificate_summary">Просмотр и редактирование списка доверенных сертификатов ЦС</string>
+    <string name="preference_select_trusted_certificate_title">Выберите доверенные сертификаты CA</string>
+    <string name="preference_select_trusted_certificate_summary">Просмотр и редактирование списка доверенных сертификатов CA</string>
 
     
 
     
 
     <string name="preference_page_gallery">Галерея</string>
-    <string name="preference_gallery_category_general">Общие сведения</string>
-    <string name="preference_gallery_category_advanced">Расширенный сайт</string>
+    <string name="preference_gallery_category_general">Общее</string>
+    <string name="preference_gallery_category_advanced">продвинутый</string>
     <string name="preference_gallery_category_slideshow">Слайд-шоу</string>
     <string name="preference_gallery_category_resources">Ресурсы</string>
     <string name="preference_gallery_category_albums">Альбомы</string>
@@ -165,45 +165,45 @@
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Пейзаж: Колонны альбомов на показ</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Пейзаж: колонны альбомов, чтобы показать</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_gallery_show_image_name_title">Показывать названия изображений в альбоме</string>
-    <string name="preference_gallery_show_image_name_summary">Показывает имя изображения под каждым изображением</string>
+    <string name="preference_gallery_show_image_name_title">Показать названия изображений в альбоме</string>
+    <string name="preference_gallery_show_image_name_summary">Показывает название изображения под каждым изображением</string>
     
 
     
-    <string name="preference_gallery_images_preferredColumnsLandscape_title">Пейзаж: Колонки изображений для показа</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Пейзаж: столбцы изображений, чтобы показать</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Показать Увеличенный Альбом Эскиз альбома</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Эскизы альбомов обрезаются по центру.</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Показать уменьшенное изображение альбома</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Миниатюры альбома по центру</string>
     
 
 
     
     <string name="preference_gallery_show_file_size_showing_title">Показать размер сервера просмотренных фотографий</string>
-    <string name="preference_gallery_show_file_size_showing_summary">Показывать размер каждой отображаемой фотографии</string>
+    <string name="preference_gallery_show_file_size_showing_summary">Показать размер каждой фотографии отображается</string>
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Портрет: Колонки альбомов для показа</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Портрет: колонки альбомов, чтобы показать</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_gallery_images_preferredColumnsPortrait_title">Портрет: Колонки изображений для показа</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">Портрет: столбцы изображений, чтобы показать</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_gallery_include_videos_in_slideshow_title">Показывать видео в слайд-шоу</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">Следует ли показывать видео при просмотре галереи в режиме слайд-шоу?</string>
+    <string name="preference_gallery_include_videos_in_slideshow_title">Показывать видео в Слайдшоу</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Нужно ли показывать видео при просмотре галереи в режиме слайд-шоу?</string>
     
 
     
     <string name="preference_gallery_enable_video_playback_title">Разрешить воспроизведение видео</string>
-    <string name="preference_gallery_enable_video_playback_summary">Включить, если вы хотите скачать и играть видео по запросу</string>
+    <string name="preference_gallery_enable_video_playback_summary">Включите, если вы хотите загружать и воспроизводить видео по запросу</string>
     
 
     
@@ -213,8 +213,8 @@
     
 
     
-    <string name="preference_video_cache_enabled_title">Кэш-видео, просмотренное в файл</string>
-    <string name="preference_video_cache_enabled_summary">Когда эта функция включена, любое потоковое видео будет кэшироваться для последующего воспроизведения.</string>
+    <string name="preference_video_cache_enabled_title">Кэширование видео в файл</string>
+    <string name="preference_video_cache_enabled_summary">Когда включено, любые потоковые видео будут кэшироваться для последующего воспроизведения.</string>
     
 
     
@@ -229,14 +229,14 @@
 
 
     
-    <string name="preference_album_subalbum_sort_order_title">Порядок сортировки детских альбомов</string>
+    <string name="preference_album_subalbum_sort_order_title">Порядок сортировки дочерних альбомов</string>
     <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
      
 
 
     
     <string name="preference_gallery_sort_order_inverted_title">Инвертировать порядок сортировки альбомов</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Когда эта функция включена, переверните выбранный порядок сортировки ресурсов альбома.</string>
+    <string name="preference_gallery_sort_order_inverted_summary">Когда включено, обратный порядок сортировки ресурсов альбома</string>
     
 
     
@@ -244,25 +244,25 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
-    <string name="preference_gallery_clearMemoryCache_title">Кэш чистой памяти</string>
+    <string name="preference_gallery_clearMemoryCache_title">Очистить кэш в памяти</string>
     
     <string name="preference_gallery_clearMemoryCache_summary">Удаляет все изображения, кэшированные в памяти</string>
 
-    <string name="preference_gallery_clearVideoCache_title">Кэш чистого видео</string>
+    <string name="preference_gallery_clearVideoCache_title">Очистить кэш видео</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Удаляет все видео, кэшированные на диск</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Удаляет все %1$.2fMB видео, кэшированные на диск.</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Удаляет все%1$.2fMB видео, кэшированных на диск</string>
 
     
     
-    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Максимальный возраст последние предметы (дни)</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Максимальный возраст последних предметов (дней)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d дней</string>
      
     
 
     
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Ящик для слайдов прозрачный</string>
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Слайд-шоу ящик с информацией об изображении прозрачный</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Ящик для слайдшоу прозрачный</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Ящик с информацией о слайд-шоу прозрачный</string>
     
 
     <string name="preference_gallery_slideshow_image_scaletype_title">Тип масштабирования слайд-шоу</string>
@@ -272,22 +272,22 @@
 
     
     <string name="preference_gallery_slideshow_image_rotate_title">Поворот изображения в соответствии с соотношением сторон экрана</string>
-    <string name="preference_gallery_slideshow_image_rotate_summary">Изображение поворачивается, чтобы соответствовать экрану</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Изображение повернуто по размеру экрана</string>
     
 
     
     <string name="preference_groups_request_pagesize_title">Размер страницы запроса сервера групп</string>
-    <string name="preference_groups_request_pagesize_summary">%1$d пункты</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d товаров</string>
     
 
     
-    <string name="preference_users_request_pagesize_title">Размер страницы запроса сервера</string>
-    <string name="preference_users_request_pagesize_summary">%1$d пункты</string>
+    <string name="preference_users_request_pagesize_title">Размер страницы запроса сервера пользователя</string>
+    <string name="preference_users_request_pagesize_summary">%1$d товаров</string>
     
 
     
     <string name="preference_album_request_pagesize_title">Размер страницы запроса сервера альбома</string>
-    <string name="preference_album_request_pagesize_summary">%1$d пункты</string>
+    <string name="preference_album_request_pagesize_summary">%1$d товаров</string>
     
 
     <string name="preference_gallery_item_thumbnail_size_title">Размер эскиза ресурса</string>
@@ -300,7 +300,7 @@
     <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_item_slideshow_image_size_title">Размер изображения по умолчанию</string>
+    <string name="preference_gallery_item_slideshow_image_size_title">Размер слайд-шоу по умолчанию</string>
     
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     
@@ -311,8 +311,8 @@
     <string name="preference_page_upload">Загрузить</string>
     <string name="preference_upload_category_data_upload_display">Визуальные настройки</string>
     <string name="preference_upload_category_data_upload">Загрузка данных</string>
-    <string name="preference_upload_category_pre_data_upload_compression">Преднагрузочное сжатие</string>
-    <string name="preference_upload_category_advanced">Расширенный сайт</string>
+    <string name="preference_upload_category_pre_data_upload_compression">Сжатие перед загрузкой</string>
+    <string name="preference_upload_category_advanced">продвинутый</string>
 
     
 
@@ -324,36 +324,36 @@
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">Загруженные файлы видны до %1$s</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Загруженные файлы видны%1$s</string>
     
     <string name="preference_data_upload_default_privacy_level_title">Уровень конфиденциальности по умолчанию</string>
 
     
-    <string name="preference_data_upload_chunkSizeKb_title">Максимальный размер загружаемого кусочка (КБ)</string>
-    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
+    <string name="preference_data_upload_chunkSizeKb_title">Максимальный размер загружаемого чанка (КБ)</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d КБ</string>
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">Макс. автоматические попытки загрузки фрагментов файлов</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">Максимальное количество повторных попыток автоматической загрузки файла</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
     
-    <string name="preference_data_upload_preferredColumnsPortrait_title">Портрет: Колонки изображений для показа</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_title">Портрет: столбцы изображений, чтобы показать</string>
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_preferredColumnsLandscape_title">Пейзаж: Колонки изображений для показа</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Пейзаж: столбцы изображений, чтобы показать</string>
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">Максимальный размер файла для загрузки без предупреждения (в мегабайтах)</string>
+    <string name="preference_data_upload_max_filesize_mb_title">Максимальный размер файла для загрузки без предупреждения вас (в МБ)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d МБ</string>
     
 
     
-    <string name="preference_data_upload_compress_videos_summary">Сжимать видео перед загрузкой</string>
-    <string name="preference_data_upload_compress_videos_title">Сжатые видео</string>
+    <string name="preference_data_upload_compress_videos_summary">Сжатие видео перед загрузкой</string>
+    <string name="preference_data_upload_compress_videos_title">Сжатие видео</string>
     
 
     
@@ -362,35 +362,35 @@
     
 
     <string name="preference_data_upload_compress_videos_quality_title">Качество видео</string>
-    <string name="preference_data_upload_compress_videos_quality_summary">Качество сжатия видеосигнала %1$s</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Качество сжатия видео%1$s</string>
     
     
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Битрейт аудио</string>
-    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Битрейт звука %1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Аудио битрейт%1$s</string>
     
     
 
     
     <string name="preference_data_upload_compress_images_summary">Сжатие изображений перед загрузкой</string>
-    <string name="preference_data_upload_compress_images_title">Сжатые изображения</string>
+    <string name="preference_data_upload_compress_images_title">Сжать изображения</string>
     
 
     <string name="preference_data_upload_compress_images_quality_title">Качество изображения</string>
-    <string name="preference_data_upload_compress_images_quality_summary">Качество сжатия изображения %1$s</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Качество сжатия изображения%1$s</string>
     
     
     
     
 
-    <string name="preference_data_upload_compress_images_max_height_title">Макс Хайт</string>
+    <string name="preference_data_upload_compress_images_max_height_title">Максимальная высота</string>
     <string name="preference_data_upload_compress_images_max_height_summary">Максимальная высота (%1$s пикселей)</string>
     
     
     
     
 
-    <string name="preference_data_upload_compress_images_max_width_title">Макс Ширина</string>
+    <string name="preference_data_upload_compress_images_max_width_title">Максимальная ширина</string>
     <string name="preference_data_upload_compress_images_max_width_summary">Максимальная ширина (%1$s пикселей)</string>
     
     
@@ -398,7 +398,7 @@
     
 
     <string name="preference_data_upload_compress_images_output_format_title">Формат вывода изображения</string>
-    <string name="preference_data_upload_compress_images_output_format_summary">Выходной формат сжатия изображений %1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Выходной формат сжатия изображения%1$s</string>
     
     
 
@@ -407,38 +407,38 @@
 
     
 
-    <string name="preference_page_other">Другое</string>
-    <string name="preference_other_category_file_selector">Селектор файлов</string>
+    <string name="preference_page_other">Другой</string>
+    <string name="preference_other_category_file_selector">Выбор файла</string>
 
     
 
     
     
-    <string name="preference_data_file_selector_showFilenames_title">Показывать имена файлов</string>
-    <string name="preference_data_file_selector_showFilenames_summary">Имена файлов показываются для каждого файла</string>
+    <string name="preference_data_file_selector_showFilenames_title">Показать имена файлов</string>
+    <string name="preference_data_file_selector_showFilenames_summary">Имена файлов показаны для каждого файла</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Пейзаж: Колонки Файлов показать</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Пейзаж: столбцы файлов для отображения</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Портрет: Колонки Файлов для показа</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Портрет: столбцы файлов для отображения</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Пейзаж: Колонны папок, чтобы показать</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Пейзаж: колонны папок, чтобы показать</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Портрет: Колонки папок для показа</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Портрет: колонны папок, чтобы показать</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     
 
     
     
-    <string name="preference_app_always_show_nav_buttons_title">Всегда показывать навигационные кнопки</string>
-    <string name="preference_app_always_show_nav_buttons_summary">Позволяет предотвратить автоматическое скрытие кнопок навигации</string>
+    <string name="preference_app_always_show_nav_buttons_title">Всегда показывать кнопки навигации</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Включить, чтобы запретить автоматическое скрытие кнопок навигации</string>
 
     
     <string name="preference_app_default_download_folder_title">Скачать в папку</string>
@@ -447,14 +447,14 @@
     
     
     <string name="preference_app_always_show_status_bar_title">Всегда показывать строку состояния</string>
-    <string name="preference_app_always_show_status_bar_summary">Позволяет предотвратить автоматическое скрытие строки состояния</string>
+    <string name="preference_app_always_show_status_bar_summary">Включить, чтобы запретить автоматическое скрытие строки состояния</string>
 
     
-    <string name="preference_app_desired_language_title">Язык</string>
+    <string name="preference_app_desired_language_title">язык</string>
     <string name="preference_app_desired_language_summary">%1$s</string>
 
     
-    <string name="preference_app_clear_list_of_user_hints_shown_title">Показать все пользовательские подсказки еще раз</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Показать все пользовательские подсказки снова</string>
 
     
 

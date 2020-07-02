@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="notification_title_background_upload_service">Fondo Servicio de Subida de Piwigo</string>
-    <string name="notification_text_background_upload_running">Ejecutando el trabajo de carga</string>
-    <string name="notification_text_background_upload_sleeping">Dormir. Próxima carrera a %1$tR</string>
-    <string name="notification_text_background_upload_polling">Sondeo de archivos para subir.</string>
+    <string name="notification_title_background_upload_service">Servicio de carga de fondo Piwigo</string>
+    <string name="notification_text_background_upload_running">Ejecutar carga de trabajo</string>
+    <string name="notification_text_background_upload_sleeping">Dormido. Próxima ejecución a%1$tR</string>
+    <string name="notification_text_background_upload_polling">Sondeo de archivos para cargar.</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">No olvides iniciar el servicio de subida en segundo plano si quieres que tus trabajos se ejecuten.</string>
-    <string name="alert_auto_upload_service_stopped">El servicio de carga de fondo se detuvo</string>
-    <string name="alert_auto_upload_service_started">Se inició el servicio de carga de fondo</string>
-    <string name="alert_auto_upload_service_job_restarted">Comenzó a subir un trabajo previamente incompleto al servidor %1$s con %2$d archivos</string>
-    <string name="alert_auto_upload_service_job_started">Empezando a subir el trabajo al servidor %1$s con %2$d archivos</string>
-    <string name="alert_auto_upload_service_job_finished_success">Terminé de ejecutar el trabajo de subida de fondo al servidor %1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Terminé de ejecutar el trabajo de fondo de subir al servidor %1$s. Algunos archivos fallaron al subirlos y serán recuperados más tarde.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Terminó de ejecutar el trabajo de fondo para subir al servidor %1$s. No se pudo subir ningún archivo. El trabajo se volverá a intentar más tarde.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Servicio de carga en segundo plano de comprobación de tareas</string>
-    <string name="progress_creating_tag">Creando la etiqueta</string>
-    <string name="error_updating_favorites_pattern">Error al eliminar el recurso (%1$s) de los favoritos: %2$s</string>
-    <string name="favorites_content_load_failed_text">No se cargaron los recursos marcados como favoritos</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Usted ha pedido que se eliminen los recursos de 1$d. ¿Desea borrarlos de todos los álbumes (y del servidor) - de forma permanente, o simplemente desvincularlos de este favorito?</string>
+    <string name="alert_warning_auto_upload_service_stopped">No olvide iniciar el servicio de carga en segundo plano si desea que se ejecuten sus trabajos</string>
+    <string name="alert_auto_upload_service_stopped">Servicio de carga en segundo plano detenido</string>
+    <string name="alert_auto_upload_service_started">Se inició el servicio de carga en segundo plano.</string>
+    <string name="alert_auto_upload_service_job_restarted">Comenzó a cargar un trabajo previamente incompleto al servidor%1$s con archivos%2$d</string>
+    <string name="alert_auto_upload_service_job_started">Comenzando a cargar el trabajo al servidor%1$s con%2$d archivos</string>
+    <string name="alert_auto_upload_service_job_finished_success">Terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s. Algunos archivos no se pudieron cargar y se volverán a intentar más tarde.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Terminó de ejecutar el trabajo de carga en segundo plano en el servidor%1$s. No se pudieron cargar archivos. El trabajo será reintentado más tarde.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Servicio de carga en segundo plano para tareas</string>
+    <string name="progress_creating_tag">Creando etiqueta</string>
+    <string name="error_updating_favorites_pattern">Error al eliminar el recurso (%1$s) de favoritos:%2$s</string>
+    <string name="favorites_content_load_failed_text">Error al cargar recursos marcados como favoritos</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Ha solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y el servidor) de forma permanente o simplemente desvincularlos de este favorito?</string>
     <string name="progress_remove_favorite_resources">Eliminar recursos de la lista de favoritos</string>
-    <string name="favorites_empty_text">Actualmente no tienes favoritos</string>
-    <string name="favorites_heading">Tus favoritos</string>
-    <string name="button_unfavorite">No es mi favorita.</string>
+    <string name="favorites_empty_text">Actualmente no tienes favoritas</string>
+    <string name="favorites_heading">Tus favoritas</string>
+    <string name="button_unfavorite">No favorita</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Configuración del servidor</string>
-    <string name="preference_data_upload_automatic_job_category_device_settings">Ajustes locales</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Compresión de pre-carga</string>
-    <string name="ignoring_job_local_folder_not_found">La carpeta local ya no existe. Ignorar el trabajo</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">No se han seleccionado extensiones de archivos para subir. Ignorando el trabajo</string>
-    <string name="ignoring_job_connection_profile_set_for_offline_access">Perfil de conexión configurado en modo desconectado. Ignorando el trabajo</string>
-    <string name="slideshow_auto_drive_paused">La presentación de diapositivas Autoconducción se detuvo hasta la siguiente diapositiva</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Configuraciones locales</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Compresión previa a la carga</string>
+    <string name="ignoring_job_local_folder_not_found">La carpeta local ya no existe. Ignorando el trabajo</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">No hay extensiones de archivo seleccionadas para cargar. Ignorando el trabajo</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Perfil de conexión configurado en modo fuera de línea. Ignorando el trabajo</string>
+    <string name="slideshow_auto_drive_paused">Presentación automática de diapositivas en pausa hasta la próxima diapositiva</string>
 </resources>

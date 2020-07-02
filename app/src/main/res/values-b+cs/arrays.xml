@@ -48,7 +48,7 @@
         <item>náměstí</item>
         <item>palec</item>
         <item>2mil</item>
-        <item>2mil...</item>
+        <item>xsmall</item>
         <item>malý</item>
         <item>střední</item>
         <item>velký</item>
@@ -62,15 +62,15 @@
         <item>náměstí</item>
         <item>palec</item>
         <item>2mil</item>
-        <item>2mil...</item>
+        <item>xsmall</item>
         <item>malý</item>
     </string-array>
 
     
     <string-array name="preference_gallery_sort_order_entries">
-        <item>xxlarge...</item>
-        <item>xxlarge......</item>
+        <item>ID zdroje</item>
         <item>Název zdroje zdroje</item>
+        <item>Název zdroje</item>
         <item>Počet zásahů</item>
         <item>Průměrné hodnocení</item>
         <item>Datum vzniku</item>
@@ -81,7 +81,7 @@
     <string-array name="server_ssl_certificate_hostname_verification_entries">
         <item>Přísný</item>
         <item>Prohlížeč kompatibilní</item>
-        <item>Prohlížeč kompatibilní...</item>
+        <item>Vypnuto</item>
     </string-array>
     
     <string-array name="user_types_array">
@@ -131,9 +131,9 @@
         <item>Dlouhým kliknutím na album odstraníte dané album a veškerý obsah</item>
         <item>Dlouhým kliknutím na obrázek alba povolíte hromadný výběr obrázků pro akci</item>
         <item>Při prohlížení jakéhokoli obrázku v prezentaci dlouhým kliknutím otočíte / změníte velikost zobrazeného obrázku nebo povolíte další přiblížení</item>
-        <item>Při prohlížení jakéhokoli obrázku v prezentaci dlouhým kliknutím otočíte / změníte velikost zobrazeného obrázku nebo povolíte další přiblížení...</item>
+        <item>Při prohlížení v prezentaci můžete přiblížit obrázek tak, že na obrazovce nakreslíte dva prsty k sobě nebo od sebe</item>
         <item>Pokud jste přihlášeni jako správce, před předáním zařízení příteli k prohlížení fotografií aktivujte funkci zámku aplikace, abyste zabránili nechtěným změnám ve vaší galerii.</item>
-        <item>Pokud jste přihlášeni jako správce, před předáním zařízení příteli k prohlížení fotografií aktivujte funkci zámku aplikace, abyste zabránili nechtěným změnám ve vaší galerii....</item>
+        <item>Po zobrazení celého videa, pokud je povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
         <item>Chcete-li smazat všechny soubory, které mají být nahrány (když úloha právě neprobíhá), klikněte na tlačítko pro smazání souboru \ \'pro upload \'</item>
         <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server při nahrávání automaticky vygeneruje velikost používanou touto aplikací</item>
     </string-array>
@@ -162,6 +162,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.66.5</item>
+        <item>"Oprava chyby:
+                 - Byla opravena spousta negrů způsobujících pády
+                 - Vybraná cílová stránka alba pro nahrávání již není průhledná"</item>
         <item>1.4.0.66</item>
         <item>"Změny:
                 - Hlavní přepis všech kódů souvisejících s tématem, aby se radikálně zjednodušily a opravily barvy ve verzích Androidu
@@ -207,9 +211,9 @@
                  - Úloha nahrávání (nesprávně) byla spuštěna, zatímco se video stále zapisuje do kamery zařízení"</item>
         <item>1.4.0.61</item>
         <item>"Oprava chyby:
-                 - Byl aktualizován proces upřednostňování upgradu pro lidi, kteří upgradují starou verzi několika verzí z aplikace na nejnovější dostupnou
-                 - Uložení souboru stavu úlohy se neuloží
-                 - Úloha nahrávání (nesprávně) byla spuštěna, zatímco se video stále zapisuje do kamery zařízení..."</item>
+                 - Několik drobných oprav chyb
+                Změna:
+                 - Povolená podpora pro Android 11 - Prosím, dejte mi vědět, pokud již nemůžete vidět soubory k nahrání"</item>
         <item>1.4.0.60</item>
         <item>"Změna:
                  - Změny na stránce předvoleb aplikace
@@ -220,7 +224,7 @@
                  - Povolit stahování nebo sdílení více souborů po jejich výběru v zobrazení alba"</item>
         <item>1.4.0.58</item>
         <item>"Změna:
-                 - Povolit stahování nebo sdílení více souborů po jejich výběru v zobrazení alba..."</item>
+                 - Bezplatná verze: odstraněny všechny vsunuté reklamy na několik měsíců, takže je možné použít více než zkušební verzi placené verze"</item>
         <item>1.4.0.57</item>
         <item>"Oprava chyby:
                  - prozatím se odhlásili z omezeného úložiště - umožňuje aplikaci znovu zobrazit soubory pro upload na Android 10"</item>

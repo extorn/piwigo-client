@@ -6,14 +6,14 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps ( --X )</item>
-        <item>très faible (0,025 b/pixels*frame)</item>
-        <item>inférieur (0,05 b/pixels*frame)</item>
-        <item>faible (0,1 b/pixels*frame)</item>
-        <item>moyen (0,15 b/pixels*frame)</item>
-        <item>élevé (0,2 b/pixels*frame)</item>
-        <item>très élevé (0,25 b/pixels*frame)</item>
-        <item>ultra haut (0,3 b/pixels*frame)</item>
+        <item>0 bps (--X)</item>
+        <item>très faible (0,025 b / pixels * image)</item>
+        <item>inférieur (0,05 b / pixels * image)</item>
+        <item>faible (0,1 b / pixels * cadre)</item>
+        <item>moyen (0,15 b / pixels * image)</item>
+        <item>élevé (0,2 b / pixels * image)</item>
+        <item>très élevé (0,25 b / pixels * image)</item>
+        <item>ultra élevé (0,3 b / pixels * image)</item>
     </string-array>
 
     
@@ -22,36 +22,36 @@
     
 
     <string-array name="preference_album_subalbum_sort_order_items">
-        <item>Par défaut</item>
+        <item>Défaut</item>
         <item>Nom de l\'album A-Z</item>
         <item>Dernière mise à jour</item>
     </string-array>
     
     <string-array name="preference_caching_level_items">
-        <item>Mise en cache des personnes handicapées</item>
-        <item>Cache à la mémoire</item>
-        <item>Cache to Disk</item>
+        <item>Mise en cache désactivée</item>
+        <item>Cache en mémoire</item>
+        <item>Cache sur disque</item>
     </string-array>
 
 
     <string-array name="preference_gallery_slideshow_image_scaletype_array">
-        <item>Par défaut</item>
+        <item>Défaut</item>
         <item>s\'adapter à la taille de l\'écran</item>
         <item>agrandir et recadrer pour s\'adapter à l\'écran</item>
-        <item>au centre de l\'écran</item>
+        <item>centre sur l\'écran</item>
     </string-array>
 
     
 
     <string-array name="preference_gallery_item_slideshow_image_size_array">
-        <item>best-fit</item>
-        <item>square</item>
+        <item>meilleur ajustement</item>
+        <item>carrée</item>
         <item>pouce</item>
-        <item>2petit</item>
+        <item>2petits</item>
         <item>xsmall</item>
-        <item>petit</item>
-        <item>support</item>
-        <item>grand</item>
+        <item>petite</item>
+        <item>moyen</item>
+        <item>grande</item>
         <item>xlarge</item>
         <item>xxlarge</item>
     </string-array>
@@ -59,44 +59,44 @@
     
 
     <string-array name="preference_gallery_item_thumbnail_size_array">
-        <item>square</item>
+        <item>carrée</item>
         <item>pouce</item>
-        <item>2petit</item>
+        <item>2petits</item>
         <item>xsmall</item>
-        <item>petit</item>
+        <item>petite</item>
     </string-array>
 
     
     <string-array name="preference_gallery_sort_order_entries">
-        <item>ID de la ressource</item>
-        <item>Nom du fichier de la ressource</item>
+        <item>ID de ressource</item>
+        <item>Nom de fichier de ressource</item>
         <item>Nom de la ressource</item>
-        <item>Nombre de réponses</item>
-        <item>Score moyen de notation</item>
+        <item>Nombre de hits</item>
+        <item>Score d\'évaluation moyen</item>
         <item>Date de création</item>
         <item>Date de disponibilité</item>
-        <item>aléatoire</item>
+        <item>Aléatoire</item>
     </string-array>
     
     <string-array name="server_ssl_certificate_hostname_verification_entries">
         <item>Stricte</item>
-        <item>Compatible avec les navigateurs</item>
-        <item>Off</item>
+        <item>Compatible navigateur</item>
+        <item>De</item>
     </string-array>
     
     <string-array name="user_types_array">
         <item>webmaster</item>
-        <item>admin</item>
-        <item>normal</item>
+        <item>administratrice</item>
+        <item>Ordinaire</item>
         <item>générique</item>
-        <item>invité</item>
+        <item>cliente</item>
     </string-array>
 
     
 
     <string-array name="privacy_levels_groups_array">
-        <item>Admins</item>
-        <item>Admins, Famille</item>
+        <item>Administratrices</item>
+        <item>Administrateurs, Famille</item>
         <item>Administrateurs, famille, amis</item>
         <item>Administrateurs, famille, amis, contacts</item>
         <item>Tout le monde</item>
@@ -108,231 +108,235 @@
 
     <string-array name="preference_gallery_unique_id_entries">
         <item>md5sum</item>
-        <item>nom</item>
+        <item>Nom</item>
     </string-array>
 
     
 
     <string-array name="rotation_array">
-        <item>A gauche 90 degrés</item>
+        <item>Gauche 90 degrés</item>
         <item>Aucune</item>
         <item>Droite 90 degrés</item>
-        <item>A droite 180 degrés</item>
+        <item>180 degrés à droite</item>
     </string-array>
 
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui sont acceptables pour le téléchargement sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier le fichier config.inc.php de votre serveur pour y inclure $conf[\'upload_form_all_types\'] = true ; plutôt que false"</item>
-        <item>Si un téléchargement ne réussit pas, essayez d\'utiliser les préférences de la page de téléchargement des paramètres de l\'application pour effacer du serveur tout téléchargement résiduel ayant échoué</item>
-        <item>Une erreur se produit toujours lors de la mise à jour des balises - \"Vous n\'êtes pas autorisé à supprimer des balises\" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (réglage du plugin du serveur)</item>
-        <item>Partager des fichiers d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à être envoyés sur votre serveur actuel</item>
-        <item>Cliquez longuement sur une image (vignette ou diaporama) qui ne s\'est pas chargée afin de la récupérer à nouveau</item>
+        <item>"Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, assurez-vous de modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux"</item>
+        <item>Si un téléchargement ne réussit pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur</item>
+        <item>Une erreur se produit toujours lorsque vous essayez de mettre à jour des balises - \ \"Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre de plug-in de serveur)</item>
+        <item>Partagez des fichiers à partir d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à accéder à votre serveur actuel</item>
+        <item>Cliquez longuement sur une image (miniature ou diaporama) qui n\'a pas pu être chargée pour la récupérer à nouveau</item>
         <item>Cliquez longuement sur un album pour supprimer cet album et tout son contenu</item>
-        <item>Cliquez longuement sur une image d\'album pour permettre la sélection en masse des images d\'une action</item>
-        <item>Lorsque vous visualisez une image dans le diaporama, cliquez longuement pour la faire pivoter / modifier la taille de l\'image affichée / permettre un zoom supplémentaire</item>
-        <item>Vous pouvez zoomer sur une image lors de la visualisation d\'un diaporama en rapprochant ou en éloignant deux doigts sur l\'écran</item>
-        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de donner votre appareil à un ami pour qu\'il puisse voir vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications soient apportées par inadvertance à votre galerie</item>
+        <item>Cliquez longuement sur une image d\'album pour activer la sélection en masse d\'images pour une action</item>
+        <item>Lors de la visualisation d\'une image dans le diaporama, cliquez longuement pour faire pivoter / modifier la taille de l\'image affichée / permettre un zoom supplémentaire</item>
+        <item>Vous pouvez zoomer sur une image lors de la visualisation dans un diaporama en rapprochant ou en écartant deux doigts sur l\'écran</item>
+        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de remettre votre appareil à un ami pour afficher vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications soient apportées par inadvertance à votre galerie.</item>
         <item>Une fois que vous avez visionné une vidéo entière, si la mise en cache des fichiers locaux est activée, il est possible d\'enregistrer cette vidéo dans votre dossier de téléchargements</item>
-        <item>Cliquez longuement sur le bouton de suppression d\'un \"fichier à télécharger\" pour supprimer tous les fichiers à télécharger (lorsque le travail n\'est pas en cours)</item>
-        <item>Si les images sont lentes à charger, vérifiez que votre serveur génère automatiquement la taille utilisée par cette application lorsqu\'elles sont téléchargées</item>
+        <item>Cliquez longuement sur le bouton Supprimer d\'un \ \'fichier à télécharger \' pour supprimer tous les fichiers à télécharger (lorsque le travail n\'est pas en cours)</item>
+        <item>Si les images sont lentes à charger, vérifiez que votre serveur génère automatiquement la taille utilisée par cette application lors de leur téléchargement</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
-        <item>"Bugfix :
-            - Correction d\'erreurs HTTP 401 intermittentes mais incorrectes, éventuellement liées à la revalidation de la réponse en cache
-            Changements :
-         - Possible :
-            - Suppression de la totalité ou de la plupart des publicités en faveur d\'une période d\'essai gratuite suivie d\'un modèle de paiement par abonnement
-            - Vérifiez le statut de connexion actuel pour vous assurer que les listes d\'albums et d\'images sont toujours correctes
-            - Vérifier la prise en charge du téléchargement vers d\'anciens serveurs (par exemple piwigo.com - version 2.8a)
+        <item>"Correction d\'un bug:
+            - correction des erreurs HTTP 401 intermittentes mais incorrectes éventuellement liées à la revalidation des réponses mises en cache
+            Changements:
+         - Peut-être:
+            - Suppression de la totalité ou de la plupart des publicités au profit d\'une période d\'essai gratuite suivie d\'un modèle de paiement par abonnement
+            - Vérifiez l\'état de connexion actuel pour vous assurer que les listes d\'albums et d\'images sont toujours correctes
+            - Vérifiez la prise en charge du téléchargement vers des serveurs plus anciens (par exemple piwigo.com - version 2.8a)
             - La possibilité de supprimer un album, mais pas son contenu (création d\'orphelins)
-            - Gestion des dossiers d\'orphelins
-            - Étudier la possibilité d\'ajouter un support pour le plugin de balises colorées
-            - Amélioration de la prise en charge des gif animés (diffusion de fichiers volumineux)
-         - Eventuellement (App. payante uniquement) :
-            - L\'idée des photos aléatoires mise en place sur l\'interface utilisateur du site piwigo
-            - Support pour les commentaires des utilisateurs
-            - Aviser l\'utilisateur des mises à jour du serveur qui sont disponibles
-            - Prise en charge de l\'édition des formats EXIF et autres métadonnées d\'images
-            - Ajouter une préférence pour permettre d\'afficher/masquer les champs EXIF etc. d\'intérêt ou non
-            - Écran moulé d\'une manière ou d\'une autre pour permettre la reproduction de l\'appareil sur un écran plus grand
-         - Tout le reste :
-            - Veuillez m\'envoyer un courriel (il y a un lien vers un courriel dans la barre de navigation) pour me demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fasse pas encore"</item>
+            - Gestion des fichiers orphelins
+            - Enquêter sur l\'ajout de la prise en charge du plugin de balises colorées
+            - Prise en charge améliorée des gifs animés (streaming de fichiers volumineux)
+         - Peut-être (application payante uniquement):
+            - L\'idée de photos aléatoires implémentée sur l\'interface web piwigo
+            - Prise en charge des commentaires des utilisateurs
+            - Avertissez l\'utilisateur des mises à jour du serveur disponibles
+            - Prise en charge de l\'édition EXIF ​​et d\'autres formats de métadonnées d\'image
+            - Ajouter une préférence pour permettre d\'afficher / masquer les champs EXIF, etc. d\'intérêt ou non
+            - Diffusion d\'écran d\'une sorte pour permettre le miroir de l\'appareil sur un écran plus grand
+         - Rien d\'autre:
+            - S\'il vous plaît écrivez-moi (il y a un lien email dans la barre de navigation) pour demander ce dont vous avez besoin ou que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.66.5</item>
+        <item>"Correction d\'un bug:
+                 - Beaucoup de problèmes provoquant des accidents ont été corrigés
+                 - La page de sélection de l\'album de destination de téléchargement n\'est plus transparente"</item>
         <item>1.4.0.66</item>
-        <item>"Changements :
-                - Réécriture majeure de tout le code lié au thème pour simplifier et corriger radicalement les couleurs dans toutes les versions d\'androïdes
-                - Le thème a été remplacé par un thème jour/nuit afin qu\'il soit configurable par l\'utilisateur (la nuit, aucun écran n\'a de fond blanc).
-                - Ajout de la prise en charge de l\'Uri et du stockage dimensionné :
-                    - partage facile des fichiers
-                    - sélectionner des fichiers à l\'aide du sélecteur de fichiers du système ou de l\'application in
+        <item>"Changements:
+                - Réécriture majeure de tout le code lié au thème pour simplifier et corriger radicalement les couleurs dans les versions Android
+                - Changement du thème en jour / nuit pour qu\'il soit configurable par l\'utilisateur (la nuit, aucun écran n\'a de fond blanc).
+                - prise en charge supplémentaire pour Uri et le stockage étendu:
+                    - partager des fichiers facilement
+                    - sélectionner des fichiers à l\'aide du sélecteur de fichiers système ou de celui de l\'application
                     - la suppression des fichiers après le téléchargement fonctionne à nouveau
-                    - vérifier que les fichiers sont uniques avant de les télécharger - c\'est maintenant plus difficile, donc un peu plus long
-                    - Le sélecteur de fichiers dans l\'application est relativement lent à charger les dossiers contenant beaucoup de fichiers - limitations des API androïdes à l\'heure actuelle
-                - lors de la compression des vidéos, vous pouvez supprimer le flux audio ou vidéo si vous souhaitez créer un fichier m4a ou m4v (extension de fichier mp4 ajoutée si votre serveur ne le permet pas).
-                - Le menu du tiroir est disponible à partir de l\'écran de téléchargement pour vous permettre de passer à la galerie, ou aux paramètres
-                - L\'application est prête pour l\'implémentation du code pour vous avertir lors de la sélection de photos de celles que vous avez téléchargées précédemment.
-               Bugfix :
-                - La page de téléchargement conserve les fichiers lors de l\'ajout de nouveaux fichiers à partir du sélecteur de système et/ou de la navigation dans la galerie principale
-                - Le code de compression vidéo a été radicalement remanié. Il ne devrait pas geler et renoncer à toute vidéo maintenant. (Faites-moi savoir si c\'est le cas)
-                - Réécriture de grandes surfaces pour éliminer les fuites de mémoire potentielles
-                - Devrait être beaucoup moins enclin à planter sur les anciennes versions d\'Android (avant Lollipop)"</item>
+                    - vérifier que les fichiers sont uniques avant le téléchargement - c\'est maintenant plus difficile, donc cela prend un peu plus de temps
+                    - Le sélecteur de fichiers dans l\'application est relativement lent à charger des dossiers contenant beaucoup de fichiers - limitations dans les API Android à l\'heure actuelle
+                - lors de la compression de vidéos, vous pouvez supprimer le flux audio ou vidéo si vous souhaitez créer un fichier m4a ou m4v (extension de fichier mp4 ajoutée si c\'est tout ce que votre serveur permet).
+                - Menu de tiroir disponible à partir de l\'écran de téléchargement pour vous permettre de passer à la galerie ou aux paramètres
+                - L\'application est prête pour la mise en œuvre du code pour vous avertir lors de la sélection des photos de celles que vous avez téléchargées précédemment.
+               Correction d\'un bug:
+                - La page de téléchargement conserve les fichiers lors de l\'ajout de nouveaux fichiers à partir du sélecteur de système et / ou de la navigation dans la galerie principale
+                - Le code de compression vidéo a été radicalement révisé. Il ne devrait pas geler et abandonner les vidéos maintenant. (Faites-moi savoir si c\'est le cas)
+                - Réécriture de grandes zones pour éliminer les fuites de mémoire potentielles
+                - Devrait être beaucoup moins enclin à planter sur les anciennes versions d\'Android (pré Lollipop)"</item>
         <item>1.4.0.65</item>
-        <item>"Changements :
-            - Correction de la question du thème restant pour les dialogues
-               Bugfix :
-            - Fragment de chemin d\'accès au serveur Uri incorrectement converti en minuscules entraînant une erreur 404"</item>
+        <item>"Changements:
+             - Correction du problème de thème restant pour les dialogues
+                Correction d\'un bug:
+             - Le fragment de chemin Uri du serveur est incorrectement converti en minuscules, ce qui entraîne une erreur 404"</item>
         <item>1.4.0.64</item>
-        <item>"Changements :
-            - Ajout d\'un bouton pour afficher le mot de passe caché dans les préférences
-            - Passage au thème basé sur les composants matériels (il y a quelques changements mineurs)
-            - Cacher la plupart des préférences de connexion par défaut - cliquer pour les développer et accéder au reste
-            - déplacé certaines préférences de téléchargement vers la section avancée
-               Bugfix :
-            - Ajout d\'un encodage URI optionnel pour la récupération de photos (utilise la préférence de connexion existante pour l\'encodage uri)
-            - Arrêt de la mise en garde contre les étiquettes manquantes pour dire qu\'il en manque 0"</item>
+        <item>"Changements:
+             - Ajout d\'un bouton pour afficher le mot de passe caché dans les préférences
+             - Déplacé vers le thème basé sur MaterialComponents (il y a quelques changements mineurs)
+             - Masquer la plupart des préférences de connexion par défaut - cliquez pour les développer pour accéder au reste
+             - déplacé certaines préférences de téléchargement vers la section avancée
+                Correction d\'un bug:
+             - Ajout d\'un encodage URI optionnel pour la récupération de photos (utilise la préférence de connexion d\'encodage uri existante)
+             - Arrêt de l\'avertissement concernant les balises manquantes indiquant que 0 manquait"</item>
         <item>1.4.0.63</item>
-        <item>"Changements :
-                - Ajout de la possibilité de sélectionner un dossier de téléchargement dans les préférences de l\'application
-              Bugfix :
-                - Arrêt de l\'affichage des avertissements pour la conduite automatique du diaporama lorsqu\'elle est désactivée.
-                - Sélectionner le fichier actuellement visible lors de l\'affichage de la boîte de dialogue de téléchargement de fichiers"</item>
+        <item>"Changements:
+                 - Ajout de la possibilité de sélectionner un dossier de téléchargement dans les préférences de l\'application
+               Correction d\'un bug:
+                 - Arrêtez les avertissements qui s\'affichent pour le lecteur automatique de diaporama lorsqu\'il est désactivé.
+                 - Sélectionnez le fichier actuellement visible lors de l\'affichage de la boîte de dialogue de téléchargement de fichier"</item>
         <item>1.4.0.62</item>
-        <item>"Bugfix :
-                - Correction du processus de mise à jour des préférences pour les personnes mettant à jour une ancienne version de l\'application vers la dernière version disponible
-                - Téléchargement du fichier de statut de l\'emploi non enregistré
-                - Le téléchargement du travail (incorrectement) a commencé alors que la vidéo était encore en cours d\'écriture par la caméra de l\'appareil"</item>
+        <item>"Correction d\'un bug:
+                 - Processus de mise à niveau des préférences fixé pour les personnes mettant à niveau une ancienne version de plusieurs versions de l\'application vers la dernière version disponible
+                 - Le fichier de statut de la tâche de téléchargement n\'est pas enregistré
+                 - La tâche de téléchargement (incorrecte) a commencé alors que la vidéo est toujours en cours d\'écriture par la caméra de l\'appareil"</item>
         <item>1.4.0.61</item>
-        <item>"Bugfix :
-                - Plusieurs petites corrections de bogues
-               Le changement :
-                - Activation de la prise en charge d\'Android 11 - Veuillez me faire savoir si vous ne voyez plus de fichiers à télécharger"</item>
+        <item>"Correction d\'un bug:
+                 - Plusieurs petites corrections de bugs
+                Changement:
+                 - Prise en charge activée pour Android 11 - Veuillez me faire savoir si vous ne pouvez plus voir les fichiers à télécharger"</item>
         <item>1.4.0.60</item>
-        <item>"Le changement :
-                - Modifications de la page des préférences de l\'application
-                - Ajout d\'une nouvelle préférence permettant de forcer l\'affichage d\'une seule fois d\'un indice d\'utilisateur
-                - app. payante Ajout d\'une fonction d\'entraînement automatique du diaporama - nouveau réglage dans la section diaporama des préférences de la galerie"</item>
+        <item>"Changement:
+                 - Modifications de la page des préférences de l\'application
+                 - Ajout d\'une nouvelle préférence pour forcer les conseils utilisateur uniques à s\'afficher à nouveau
+                 - application payante: ajout d\'une fonction de lecteur automatique sur le diaporama - nouveau paramètre dans la section diaporama des préférences de la galerie"</item>
         <item>1.4.0.59</item>
-        <item>"Le changement :
-                - Autoriser le téléchargement ou le partage de plusieurs fichiers après les avoir sélectionnés dans la vue de l\'album"</item>
+        <item>"Changement:
+                 - Autorisez le téléchargement ou le partage de plusieurs fichiers après les avoir sélectionnés dans la vue de l\'album"</item>
         <item>1.4.0.58</item>
-        <item>"Le changement :
-                - Version gratuite : suppression de toutes les publicités interstitielles pendant quelques mois afin que son utilisation soit tolérée au-delà d\'un essai de la version payante"</item>
+        <item>"Changement:
+                 - Version gratuite: suppression de toutes les publicités interstitielles pendant quelques mois afin que son utilisation comme plus qu\'un essai de la version payante soit tolérable"</item>
         <item>1.4.0.57</item>
-        <item>"Bugfix :
-                - suppression de la limite de stockage pour l\'instant - permet à l\'application de voir les fichiers à télécharger à nouveau sur android 10"</item>
+        <item>"Correction d\'un bug:
+                 - Désactivé pour le moment du stockage limité - permet à l\'application de voir à nouveau les fichiers à télécharger sur Android 10"</item>
         <item>1.4.0.56</item>
-        <item>"Bugfix :
-                - les vidéos ne sont parfois reconnues que comme des photos selon le cas de l\'url du serveur saisie dans les paramètres de connexion"</item>
+        <item>"Correction d\'un bug:
+                 - les vidéos ne sont parfois reconnues que comme des photos selon le cas de l\'URL du serveur entrée dans les paramètres de connexion"</item>
         <item>1.4.0.55</item>
-        <item>"Bugfix :
-                - suppression de la limite de stockage pour l\'instant - permet à l\'application de voir les fichiers à télécharger à nouveau sur android 10"</item>
+        <item>"Correction d\'un bug:
+                 - Désactivé pour le moment du stockage limité - permet à l\'application de voir à nouveau les fichiers à télécharger sur Android 10"</item>
         <item>1.4.0.54</item>
-        <item>"Changements :
-                - titre de la page cliquable - navigation vers l\'album parent
-                Bugfix :
-                - L\'ordre de tri des albums n\'est pas toujours correct
-                - les traductions éventuellement non sélectionnées dans l\'ordre optimal automatiquement."</item>
+        <item>"Changements:
+                 - titre de la page cliquable - accédez à l\'album parent
+                 Correction d\'un bug:
+                 - L\'ordre de tri des albums n\'est pas toujours correct
+                 - traductions éventuellement non sélectionnées automatiquement dans un ordre optimal."</item>
         <item>1.4.0.53</item>
-        <item>"Changements :
-                - Ajout d\'une préférence pour contrôler l\'affichage du message indiquant la taille de l\'image chargée depuis le serveur
-               Bugfix :
-                - Rafraîchir la vue de l\'album immédiatement après avoir changé l\'ordre de tri des ressources ou des albums enfants
-                - Correction d\'un bug dans le tri général des albums
-                - correction de l\'accès au diaporama lorsque les albums des enfants sont écrasés (en touchant l\'en-tête des albums)
-                - Bug possible où certains paramètres de connexion sont modifiés (comme l\'utilisation de l\'authentification de base) et ne sont pas entièrement utilisés avant le prochain redémarrage de l\'application"</item>
+        <item>"Changements:
+                 - Ajout d\'une préférence pour contrôler l\'affichage du message montrant la taille de l\'image chargée à partir du serveur
+                Correction d\'un bug:
+                 - Actualisez la vue de l\'album immédiatement après avoir changé l\'ordre de tri des ressources ou des albums enfants
+                 - correction d\'un bug avec le tri général des albums
+                 - accès fixe au diaporama lorsque les albums enfants sont écrasés (en touchant l\'en-tête des albums)
+                 - Bug possible où certains changements de paramètres de connexion (tels que l\'utilisation de l\'authentification de base) ne seraient pas entièrement utilisés jusqu\'au prochain redémarrage de l\'application"</item>
         <item>1.4.0.52</item>
-        <item>"Bugfix :
-            - L\'annulation d\'un téléchargement de fichier et le fait de quitter la page de téléchargement avant que l\'annulation ne soit signalée provoque un plantage
-            - application payante : crash avec le russe sur la page de configuration des tâches de téléchargement automatique
-            - app. payante La mise à jour de la liste des balises pour une ressource dont au moins une balise sélectionnée précédemment n\'existe plus provoque un plantage (avertit maintenant l\'utilisateur et les supprime)
-            - app. payante L\'application peut planter lors de la sélection de l\'album de destination pour le téléchargement automatique
-            - application payante : la sélection de l\'album racine comme album de destination pour le travail de téléchargement automatique affiche le nom du premier album comme album sélectionné (incorrect)
-            - app. payante Note : Je ne suis pas sûr que la sélection de la racine de la galerie comme destination de téléchargement soit toujours judicieuse, mais au cas où elle le serait dans certaines circonstances, elle est autorisée."</item>
+        <item>"Correction d\'un bug:
+             - L\'annulation d\'un téléchargement de fichier et la sortie de la page de téléchargement avant l\'annulation signalée provoquent un crash
+             - application payante: plantage en russe sur la page de configuration de la tâche de téléchargement automatique
+             - application payante: la mise à jour de la liste des balises pour une ressource où au moins une balise précédemment sélectionnée n\'existe plus provoque un crash (maintenant avertir l\'utilisateur et les supprimer)
+             - application payante: l\'application peut se bloquer lors de la sélection de l\'album de destination pour le travail de téléchargement automatique
+             - application payante: la sélection de l\'album racine comme album de destination pour le travail de téléchargement automatique affiche le premier nom de l\'album comme album sélectionné (incorrectement)
+             - application payante: Remarque: je ne suis pas certain que la sélection de la racine de la galerie en tant que destination de téléchargement soit toujours judicieuse, mais dans le cas où cela l\'est dans certaines circonstances, cela est autorisé."</item>
         <item>1.4.0.51</item>
-        <item>"Changements :
-                - Nouvelle préférence de galerie pour permettre de forcer le langage utilisé dans l\'application
-                - Nouvelle préférence de connexion au serveur avancé - Activer l\'encodage des URI des ressources
-               Bugfix :
-                - les préférences du sélecteur de numéro acceptent la valeur à la fermeture du dialogue
-                - Le plugin PiwigoClientWsExt est correctement nommé dans le message de l\'utilisateur
-                - Correction de quelques traductions"</item>
+        <item>"Changements:
+                 - Nouvelle préférence de galerie pour permettre de forcer la langue utilisée dans l\'application
+                 - Nouvelle préférence de connexion de serveur avancée - Activer le codage URI des URI de ressources
+                Correction d\'un bug:
+                 - les préférences du sélecteur de nombres acceptent la valeur à la fermeture de la boîte de dialogue
+                 - Plugin PiwigoClientWsExt correctement nommé dans le message utilisateur
+                 - Correction de quelques traductions"</item>
         <item>1.4.0.50</item>
-        <item>"Changements :
-                - Permettre le passage de l\'audio comme option de compression
-                - Compression activée pour les flux audio mime non \"audio/raw\".
-                - Ajout d\'une option permettant de supprimer la piste audio de la vidéo
-               Bugfix :
-                - Arrêt de la compression de la vidéo si elle est supprimée du téléchargement pendant la compression
-                - Arrêter le téléchargement de la vidéo si elle est supprimée du téléchargement pendant la compression
-                - mettre de l\'ordre dans l\'affichage de la progression du téléchargement des fichiers individuels"</item>
+        <item>"Changements:
+                 - Autoriser le passage de l\'audio comme option de compression
+                 - Compression activée pour les flux audio MIME non \'audio / raw\'
+                 - Ajouter une option pour retirer la piste audio de la vidéo
+                Correction d\'un bug:
+                 - Arrêtez la compression vidéo si elle est supprimée du téléchargement pendant la compression
+                 - Arrêtez le téléchargement de la vidéo si elle est supprimée du téléchargement pendant la compression
+                 - ranger l\'affichage de la progression du téléchargement pour les fichiers individuels"</item>
         <item>1.4.0.49</item>
-        <item>"Bugfix :
-                - échec de la compression vidéo
-                - la dernière tâche de téléchargement est relancée (sans dommage) lors du prochain téléchargement, ce qui vous oblige à cliquer à nouveau sur le bouton de téléchargement pour lancer une nouvelle tâche
-                - affichage lent des images lors du défilement"
+        <item>"Correction d\'un bug:
+                 - échec de compression vidéo
+                 - le dernier travail de téléchargement est réexécuté (aucun dommage) lors de l\'exécution du prochain téléchargement - vous obligeant à cliquer à nouveau sur le téléchargement pour exécuter le nouveau travail
+                 - affichage lent des images lors du défilement"
         </item>
         <item>1.4.0.48</item>
-        <item>"Changements :
-        - Nouvelle préférence dans les paramètres de la galerie pour désactiver le bouton de navigation et ou la fonction de masquage automatique de la barre d\'état
-        - N\'indiquez qu\'une seule fois la taille des images, à moins qu\'elle ne change"
+        <item>"Changements:
+         - Nouvelle préférence dans les paramètres de la galerie pour désactiver le bouton de navigation et / ou la fonction de masquage automatique de la barre d\'état
+         - Afficher uniquement les tailles d\'image affichées une fois, sauf si elles changent"
         </item>
         <item>1.4.0.47</item>
-        <item>"Bugfix :
-        - Améliorations de la stabilité des applications"
+        <item>"Correction d\'un bug:
+         - Améliorations de la stabilité de l\'application"
         </item>
         <item>1.4.0.46</item>
-        <item>"Changements :
-            - Ajout d\'un bouton de rechargement du contenu à la page de sélection des fichiers
-            - a supprimé le suffixe (payé) du nom de l\'application
-            - Afficher le chemin ou l\'indication de celui-ci pour l\'album de téléchargement de destination
-            Bugfix :
-            - Il manquait le dernier élément du diaporama dans l\'album
-            - Supprimer un élément dans le diaporama - page blanche"
+        <item>"Changements:
+             - Bouton de rechargement du contenu ajouté à la page de sélection des fichiers
+             - supprimé le suffixe (payant) du nom de l\'application
+             - Afficher le chemin ou l\'indication de celui-ci pour l\'album de téléchargement de destination
+             Correction d\'un bug:
+             - Le dernier élément de l\'album manquait au diaporama
+             - Supprimer l\'élément dans le diaporama - page vierge"
         </item>
         <item>1.4.0.45</item>
-        <item>"Changements :
-            - Augmentation de la taille maximale des fichiers téléchargés par l\'application arbitraire à 10 Go
-            - Versions actualisées des bibliothèques dépendantes"
+        <item>"Changements:
+             - Augmentation de la taille maximale du fichier de téléchargement de l\'application arbitraire prise en charge à 10 Go
+             - Versions de bibliothèque dépendantes mises à jour"
         </item>
         <item>1.4.0.44</item>
-        <item>"Bugfix :
-        - Améliorations de la stabilité des applications"
+        <item>"Correction d\'un bug:
+         - Améliorations de la stabilité de l\'application"
         </item>
         <item>1.4.0.43</item>
-        <item>"Bugfix :
-        - Améliorations de la stabilité des applications"
+        <item>"Correction d\'un bug:
+         - Améliorations de la stabilité de l\'application"
         </item>
         <item>1.4.0.42</item>
-        <item>"Bugfix :
-                - Corrections de la gestion des erreurs de chargement des images
-                - Correction d\'un bogue mineur dans le processus de téléchargement de fichiers"</item>
+        <item>"Correction d\'un bug:
+                 - Corrections de la gestion des erreurs de chargement d\'image
+                 - Correction pour corriger un bug mineur dans le processus de téléchargement de fichier"</item>
         <item>1.4.0.41</item>
-        <item>"Bugfix :
-                - Améliorations de la stabilité des applications
-                - mode d\'édition fermé après la mise à jour des détails de l\'image
-            Changements :
-                - (pro uniquement) Visualiser les détails de l\'état du téléchargement, y compris les erreurs pour les emplois automatiques - sur chaque page de configuration des emplois à téléchargement automatique"</item>
+        <item>"Correction d\'un bug:
+                 - Améliorations de la stabilité de l\'application
+                 - mode d\'édition fermé après la mise à jour des détails de l\'image
+             Changements:
+                 - (pro uniquement) Afficher les détails de l\'état de téléchargement, y compris les erreurs pour les travaux automatiques - sur chaque page de configuration de travail de téléchargement automatique"</item>
         <item>1.4.0.38</item>
-        <item>"Bugfix :
-                - Le diaporama (vue de l\'image en plein écran) fonctionne à nouveau. Mes sincères excuses.
-                - Ajout des traductions en russe pour les préférences"
+        <item>"Correction d\'un bug:
+                 - Le diaporama (affichage d\'image en plein écran) fonctionne à nouveau. Mes sincères excuses.
+                 - Traductions russes pour les préférences ajoutées"
         </item>
 
 
         <item>1.4.0.37</item>
-        <item>"Bugfix :
-                - Le nettoyage de la connexion fonctionne à nouveau
-                - L\'évaluation des ressources en Russian Locale fonctionne à nouveau"</item>
+        <item>"Correction d\'un bug:
+                 - Le nettoyage de la connexion fonctionne à nouveau
+                 - La définition du classement des ressources dans les paramètres régionaux russes fonctionne à nouveau"</item>
         <item>1.4.0.36</item>
-        <item>"Changements :
-                - Le téléchargement des fichiers s\'effectue désormais dans une file d\'attente rudimentaire et est géré au niveau de l\'application. Cependant, vous devez toujours garder l\'application ouverte pour que le téléchargement puisse se poursuivre.
-               Correction d\'un bogue :
-                - Le téléchargement de fichiers fonctionne désormais lorsque le serveur ne signale pas la taille du fichier
-                - Les fichiers ajoutés à l\'écran de téléchargement de fichiers sont à nouveau affichés (ils étaient initialement invisibles)
-                - Autres insectes assortis"</item>
+        <item>"Changements:
+                 - Le téléchargement des fichiers s\'effectue désormais dans une file d\'attente rudimentaire et est géré au niveau de l\'application. Cependant, vous devez toujours garder l\'application ouverte pour que le téléchargement puisse continuer.
+                Correction d\'un bug:
+                 - Le téléchargement des fichiers fonctionne désormais lorsque le serveur ne signale pas la taille du fichier
+                 - Les fichiers ajoutés à l\'écran de téléchargement de fichiers sont à nouveau affichés (étaient initialement invisibles)
+                 - Autres bugs assortis"</item>
     </string-array>
 </resources>

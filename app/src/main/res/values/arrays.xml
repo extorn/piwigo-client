@@ -264,6 +264,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.66.5</item>
+        <item>"Bugfix:
+                - Lots of niggles causing crashes have been rectified
+                - The select upload destination album page is no longer transparent"</item>
         <item>1.4.0.66</item>
         <item>"Changes:
                 - Major rewrite of all the theme related code to radically simplify and correct colors across android versions

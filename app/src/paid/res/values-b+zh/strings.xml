@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="notification_title_background_upload_service">背景 Piwigo上传服务</string>
-    <string name="notification_text_background_upload_running">运行上传工作</string>
-    <string name="notification_text_background_upload_sleeping">睡觉。下一次运行在%1$tR</string>
-    <string name="notification_text_background_upload_polling">轮询上传文件。</string>
+    <string name="notification_title_background_upload_service">后台Piwigo上传服务</string>
+    <string name="notification_text_background_upload_running">正在执行上传作业</string>
+    <string name="notification_text_background_upload_sleeping">睡眠。 下次在%1$tR运行</string>
+    <string name="notification_text_background_upload_polling">轮询要上传的文件。</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">如果你想让你的工作运行，别忘了启动后台上传服务。</string>
-    <string name="alert_auto_upload_service_stopped">后台上传服务停止</string>
-    <string name="alert_auto_upload_service_started">开始提供后台上传服务</string>
-    <string name="alert_auto_upload_service_job_restarted">开始上传以前未完成的作业到服务器%1$s和%2$d文件。</string>
-    <string name="alert_auto_upload_service_job_started">开始上传作业到服务器%1$s和%2$d文件。</string>
-    <string name="alert_auto_upload_service_job_finished_success">完成后台上传工作至服务器%1$s。</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">已完成后台上传工作至服务器%1$s。部分文件未能上传，稍后将重新尝试。</string>
-    <string name="alert_auto_upload_service_job_finished_failure">完成后台上传工作至服务器 %1$s。没有文件可以上传。任务将在稍后重试。</string>
+    <string name="alert_warning_auto_upload_service_stopped">如果您想运行作业，请不要忘记启动后台上传服务</string>
+    <string name="alert_auto_upload_service_stopped">后台上传服务已停止</string>
+    <string name="alert_auto_upload_service_started">后台上传服务已启动</string>
+    <string name="alert_auto_upload_service_job_restarted">开始将以前不完整的作业与%2$d个文件上传到服务器%1$s</string>
+    <string name="alert_auto_upload_service_job_started">开始使用%2$d个文件将作业上传到服务器%1$s</string>
+    <string name="alert_auto_upload_service_job_finished_success">已完成向服务器%1$s的后台上传作业。</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">已完成向服务器%1$s的后台上传作业。 某些文件上传失败，稍后将重试。</string>
+    <string name="alert_auto_upload_service_job_finished_failure">已完成向服务器%1$s的后台上传作业。 没有文件可以上传。 作业将在稍后重试。</string>
     <string name="alert_auto_upload_service_checking_for_tasks">后台上传服务检查任务</string>
     <string name="progress_creating_tag">创建标签</string>
-    <string name="error_updating_favorites_pattern">从收藏夹中删除资源(%1$s)出错：%2$s。</string>
-    <string name="favorites_content_load_failed_text">无法加载标记为收藏夹的资源</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">你请求删除%1$d资源。您希望从所有相册（和服务器）中永久地删除这些资源，还是只从这个收藏夹中解除链接？</string>
+    <string name="error_updating_favorites_pattern">从收藏夹中删除资源（%1$s）时出错：%2$s</string>
+    <string name="favorites_content_load_failed_text">无法加载标记为收藏的资源</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">您已请求删除%1$d个资源。 您是要永久删除所有相册（和服务器）中的相册，还是要将它们从收藏夹中取消链接？</string>
     <string name="progress_remove_favorite_resources">从收藏夹列表中删除资源</string>
-    <string name="favorites_empty_text">您目前没有收藏</string>
-    <string name="favorites_heading">您的收藏夹</string>
+    <string name="favorites_empty_text">您目前没有收藏夹</string>
+    <string name="favorites_heading">您的最爱</string>
     <string name="button_unfavorite">不喜欢</string>
-    <string name="preference_data_upload_automatic_job_category_server_settings">服务器设置</string>
-    <string name="preference_data_upload_automatic_job_category_device_settings">本地设置</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">预上载压缩</string>
-    <string name="ignoring_job_local_folder_not_found">本地文件夹不再存在。忽略工作</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">没有选择上传的文件扩展名。忽略工作</string>
-    <string name="ignoring_job_connection_profile_set_for_offline_access">连接配置文件设置为脱机模式。忽略作业</string>
-    <string name="slideshow_auto_drive_paused">幻灯片自动驾驶暂停，直到下一张幻灯片。</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">服务器设定</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">本地设置，本地配置</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">上载前压缩</string>
+    <string name="ignoring_job_local_folder_not_found">本地文件夹不再存在。 忽略工作</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">没有选择要上传的文件扩展名。 忽略工作</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">连接配置文件设置为脱机模式。 忽略工作</string>
+    <string name="slideshow_auto_drive_paused">幻灯片自动驱动暂停，直到下一张幻灯片</string>
 </resources>
