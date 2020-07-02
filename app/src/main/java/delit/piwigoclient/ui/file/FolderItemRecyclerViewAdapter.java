@@ -542,6 +542,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     public static class FolderItem implements Parcelable {
         private static final AtomicLong uidGen = new AtomicLong();
+        private static final String TAG = "FolderItem";
         private long uid;
         private Uri rootUri;
         private Uri itemUri;
@@ -703,7 +704,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 isFile = itemDocFile.isFile();
                 name = itemDocFile.getName();
                 ext = IOUtils.getFileExt(name);
-                mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext.toLowerCase());
+                if(ext != null) {
+                    mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext.toLowerCase());
+                } else {
+                    Logging.log(Log.WARN, TAG, "Unable to set mime type for file with no extension ("+name+")");
+                }
                 lastModified = itemDocFile.lastModified();
                 fileLength = itemDocFile.length();
                 fieldsLoadedFrom = DOCFILE;

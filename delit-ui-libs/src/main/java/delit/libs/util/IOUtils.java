@@ -449,7 +449,10 @@ public class IOUtils {
     public static Set<String> getUniqueFileExts(Context context, Collection<Uri> files) {
         Set<String> exts = new HashSet<>();
         for (Uri f : files) {
-            exts.add(IOUtils.getFileExt(context, f).toLowerCase());
+            String fileExt = IOUtils.getFileExt(context, f);
+            if(fileExt != null) {
+                exts.add(fileExt.toLowerCase());
+            }
         }
         return exts;
     }
