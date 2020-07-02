@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
@@ -23,6 +24,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -44,6 +46,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -54,6 +57,7 @@ import delit.libs.ui.view.CustomToolbar;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -607,11 +611,15 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             notificationIntent = new Intent(Intent.ACTION_VIEW);
             // Action on click on notification
             MimeTypeMap map = MimeTypeMap.getSingleton();
+            Uri shareFileUri = downloadedFile;
+            try {
+                shareFileUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", Objects.requireNonNull(LegacyIOUtils.getFile(downloadedFile)));
+            } catch (IOException|NullPointerException e) {
+                Logging.log(Log.ERROR, TAG, "File to share is not a raw file (file://). Share it as is.", e);
+            }
             String ext = MimeTypeMap.getFileExtensionFromUrl(downloadedFile.toString());
             String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-            //notificationIntent.setDataAndType(selectedUri, mimeType);
-
-            notificationIntent.setDataAndType(downloadedFile, mimeType);
+            notificationIntent.setDataAndType(shareFileUri, mimeType);
             notificationIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
