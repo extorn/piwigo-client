@@ -483,9 +483,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         for(Uri fileToShare : filesToShare) {
             String ext = IOUtils.getFileExt(this, fileToShare);
-            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
+            if(ext != null) {
+                String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
+                mimesOfSharedUris.add(mimeType);
+            } else {
+                Logging.log(Log.WARN, TAG, "Sharing file with another app, unable to tell it the mime type as file has no extension (" + fileToShare + ")");
+            }
             urisToShare.add(fileToShare);
-            mimesOfSharedUris.add(mimeType);
         }
         if(mimesOfSharedUris.size() == 1) {
             intent.setType(mimesOfSharedUris.get(0));
