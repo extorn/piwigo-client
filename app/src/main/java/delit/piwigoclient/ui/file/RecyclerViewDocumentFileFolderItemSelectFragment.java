@@ -397,19 +397,23 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             return null;
         } else {
+            Context context = getContext();
+            if(context == null) {
+                context = getUiHelper().getAppContext();
+            }
             List<FolderItemRecyclerViewAdapter.FolderItem> itemsShared = new ArrayList<>();
             // get a reference to permitted folder on the device.
             Uri permittedUri = resultData.getData();
 
             try {
-                DocumentFile docFile = DocumentFile.fromTreeUri(requireContext(), permittedUri);
+                DocumentFile docFile = DocumentFile.fromTreeUri(context, permittedUri);
                 if(docFile != null) {
                     final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), permittedUri, takeFlags, getString(R.string.file_selection_heading));
+                        appSettingsViewModel.takePersistableFileSelectionUriPermissions(context, permittedUri, takeFlags, getString(R.string.file_selection_heading));
                     }
                     FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
-                    folderItem.cacheFields(requireContext());
+                    folderItem.cacheFields(context);
                     itemsShared.add(folderItem);
                     listener.onProgress(100);
                 } else {
@@ -417,12 +421,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 }
             } catch(IllegalArgumentException e) {
                 // this is most likely because it is not a folder.
-                DocumentFile docFile = DocumentFile.fromSingleUri(requireContext(), permittedUri);
+                DocumentFile docFile = DocumentFile.fromSingleUri(context, permittedUri);
 
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     try {
-                        appSettingsViewModel.takePersistableUriPermissions(requireContext(), permittedUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+                        appSettingsViewModel.takePersistableUriPermissions(context, permittedUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
                     } catch(SecurityException se) {
                         Logging.log(Log.WARN, TAG, "Unable to take persistable folder permissions for URI : " + permittedUri);
                         Logging.recordException(se);
@@ -430,7 +434,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 }
 
                 FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
-                folderItem.cacheFields(requireContext());
+                folderItem.cacheFields(context);
                 itemsShared.add(folderItem);
                 listener.onProgress(100);
             }
@@ -779,7 +783,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         @Override
         protected void onProgressUpdateSafely(Integer... progress) {
             super.onProgressUpdateSafely(progress);
-            getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),progress[0]);
+            try {
+                getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),progress[0]);
+            } catch(NullPointerException e) {
+                Logging.log(Log.ERROR, TAG, "Unable to report progress. Likely not attached", e);
+            }
+
         }
 
         @Override
