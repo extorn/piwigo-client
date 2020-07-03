@@ -182,6 +182,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState == null) {
+            //Set these values once the screen is back to normal (otherwise horrible JVM crash)
+            // only set them if the saved instance state is null else we overwrite the user values.
+            compressImagesQualityNumberPicker.setValue(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
+            compressImagesMaxHeightNumberPicker.setValue(UploadPreferences.getImageCompressionMaxHeight(getContext(), getPrefs()));
+            compressImagesMaxWidthNumberPicker.setValue(UploadPreferences.getImageCompressionMaxWidth(getContext(), getPrefs()));
+        }
         super.onViewStateRestored(savedInstanceState);
     }
 
@@ -458,17 +465,21 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressImagesQualityNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_quality);
         compressImagesQualityNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_quality_min));
         compressImagesQualityNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_quality_max));
-        compressImagesQualityNumberPicker.setValue(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
+        compressImagesQualityNumberPicker.setSaveFromParentEnabled(false);
+        compressImagesQualityNumberPicker.setSaveEnabled(true);
 
         compressImagesMaxHeightNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_max_height);
         compressImagesMaxHeightNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_height_min));
         compressImagesMaxHeightNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_height_max));
-        compressImagesMaxHeightNumberPicker.setValue(UploadPreferences.getImageCompressionMaxHeight(getContext(), getPrefs()));
+        compressImagesMaxHeightNumberPicker.setSaveFromParentEnabled(false);
+        compressImagesMaxHeightNumberPicker.setSaveEnabled(true);
 
         compressImagesMaxWidthNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_max_width);
         compressImagesMaxWidthNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_width_min));
         compressImagesMaxWidthNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_width_max));
-        compressImagesMaxWidthNumberPicker.setValue(UploadPreferences.getImageCompressionMaxWidth(getContext(), getPrefs()));
+        compressImagesMaxWidthNumberPicker.setSaveFromParentEnabled(false);
+        compressImagesMaxWidthNumberPicker.setSaveEnabled(true);
+
 
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
         boolean compressPics = UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs());
@@ -882,6 +893,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Override
     public void onResume() {
         super.onResume();
+
         FileSelectionCompleteEvent evt = EventBus.getDefault().getStickyEvent(FileSelectionCompleteEvent.class);
         if(evt != null) {
             onEvent(evt);

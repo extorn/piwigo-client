@@ -101,7 +101,7 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
         return mPicker;
     }
 
-    private void fixEditTextsForMarshmallow(View rootView) {
+    private static void fixEditTextsForMarshmallow(View rootView) {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
             ArrayList<View> views = rootView.getTouchables();
             for (View view : views) {
