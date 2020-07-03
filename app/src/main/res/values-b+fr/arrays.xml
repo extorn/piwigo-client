@@ -45,13 +45,13 @@
 
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>meilleur ajustement</item>
-        <item>carrée</item>
+        <item>carré</item>
         <item>pouce</item>
         <item>2petits</item>
         <item>xsmall</item>
-        <item>petite</item>
+        <item>petit</item>
         <item>moyen</item>
-        <item>grande</item>
+        <item>grand</item>
         <item>xlarge</item>
         <item>xxlarge</item>
     </string-array>
@@ -59,11 +59,11 @@
     
 
     <string-array name="preference_gallery_item_thumbnail_size_array">
-        <item>carrée</item>
+        <item>carré</item>
         <item>pouce</item>
         <item>2petits</item>
         <item>xsmall</item>
-        <item>petite</item>
+        <item>petit</item>
     </string-array>
 
     
@@ -79,23 +79,23 @@
     </string-array>
     
     <string-array name="server_ssl_certificate_hostname_verification_entries">
-        <item>Stricte</item>
+        <item>Strict</item>
         <item>Compatible navigateur</item>
         <item>De</item>
     </string-array>
     
     <string-array name="user_types_array">
         <item>webmaster</item>
-        <item>administratrice</item>
+        <item>administrateur</item>
         <item>Ordinaire</item>
         <item>générique</item>
-        <item>cliente</item>
+        <item>client</item>
     </string-array>
 
     
 
     <string-array name="privacy_levels_groups_array">
-        <item>Administratrices</item>
+        <item>Administrateurs</item>
         <item>Administrateurs, Famille</item>
         <item>Administrateurs, famille, amis</item>
         <item>Administrateurs, famille, amis, contacts</item>
@@ -115,7 +115,7 @@
 
     <string-array name="rotation_array">
         <item>Gauche 90 degrés</item>
-        <item>Aucune</item>
+        <item>Aucun</item>
         <item>Droite 90 degrés</item>
         <item>180 degrés à droite</item>
     </string-array>
@@ -124,7 +124,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>"Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, assurez-vous de modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux"</item>
-        <item>Si un téléchargement ne réussit pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur</item>
+        <item>Si un téléchargement ne réussit pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur.</item>
         <item>Une erreur se produit toujours lorsque vous essayez de mettre à jour des balises - \ \"Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre de plug-in de serveur)</item>
         <item>Partagez des fichiers à partir d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à accéder à votre serveur actuel</item>
         <item>Cliquez longuement sur une image (miniature ou diaporama) qui n\'a pas pu être chargée pour la récupérer à nouveau</item>

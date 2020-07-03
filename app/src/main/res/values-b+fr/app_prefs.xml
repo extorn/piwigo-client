@@ -28,7 +28,7 @@
     <string name="server_connection_preference_summary_default">Veuillez sélectionner une valeur</string>
     <string name="server_album_preference_summary_default">Veuillez sélectionner une valeur</string>
     <string name="local_folder_preference_summary_default">Veuillez sélectionner une valeur</string>
-    <string name="server_connection_preference_user_guest">cliente</string>
+    <string name="server_connection_preference_user_guest">client</string>
     
 
     
@@ -90,7 +90,7 @@
     
     
     <string name="preference_server_use_client_certs_title">Utiliser l\'authentification du certificat client</string>
-    <string name="preference_server_use_client_certs_summary">Activer si le serveur requiert une authentification client basée sur un certificat</string>
+    <string name="preference_server_use_client_certs_summary">Activer si le serveur nécessite une authentification client basée sur un certificat</string>
 
     
     <string name="preference_select_client_certificate_title">Certificats clients (et clés privées)</string>
@@ -156,7 +156,7 @@
     
 
     <string name="preference_page_gallery">Galerie</string>
-    <string name="preference_gallery_category_general">Générale</string>
+    <string name="preference_gallery_category_general">Général</string>
     <string name="preference_gallery_category_advanced">Avancée</string>
     <string name="preference_gallery_category_slideshow">Diaporama</string>
     <string name="preference_gallery_category_resources">Ressources</string>
@@ -236,7 +236,7 @@
 
     
     <string name="preference_gallery_sort_order_inverted_title">Inverser l\'ordre de tri des albums</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Lorsqu\'il est activé, inversez l\'ordre de tri sélectionné des ressources de l\'album</string>
+    <string name="preference_gallery_sort_order_inverted_summary">Lorsqu\'il est activé, inversez l\'ordre de tri sélectionné des ressources d\'album</string>
     
 
     
@@ -352,7 +352,7 @@
     
 
     
-    <string name="preference_data_upload_compress_videos_summary">Compressez les vidéos avant le téléchargement</string>
+    <string name="preference_data_upload_compress_videos_summary">Compressez les vidéos avant de les télécharger</string>
     <string name="preference_data_upload_compress_videos_title">Compresser des vidéos</string>
     
 
@@ -422,7 +422,7 @@
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrait: Colonnes de fichiers à afficher</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrait: colonnes de fichiers à afficher</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
     

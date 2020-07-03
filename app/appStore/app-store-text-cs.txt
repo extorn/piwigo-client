@@ -19,7 +19,7 @@ Stahujte obrázky.
 Uložte plně stažená videa
 Volitelně vyloučit videa z prezentací
 Ohodnoťte obrázky a zobrazte průměrné hodnocení
-Nahrajte nové obrázky nebo videa (lze libovolně komprimovat)
+Nahrajte nové obrázky nebo videa (lze volitelně komprimovat)
 Nastavení a změna oprávnění, popisu a dalších podrobností o albech a souborech
 Přidat nebo změnit alba, jejich oprávnění, popis atd
 Přidávejte, zobrazujte a upravujte uživatele galerie

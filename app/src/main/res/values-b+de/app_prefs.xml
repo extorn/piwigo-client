@@ -77,7 +77,7 @@
     
 
     
-    <string name="preference_server_basic_auth_username_title">Grundlegende Authentifizierung Benutzername</string>
+    <string name="preference_server_basic_auth_username_title">Benutzername für die Standardauthentifizierung</string>
 
     
     <string name="preference_server_basic_auth_password_title">Grundlegendes Authentifizierungskennwort</string>
@@ -165,7 +165,7 @@
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landschaft: Zu zeigende Spalten von Alben</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landschaft: Spalten von Alben zu zeigen</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
@@ -265,7 +265,7 @@
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Die Schublade für Diashow-Bildinformationen ist transparent</string>
     
 
-    <string name="preference_gallery_slideshow_image_scaletype_title">Typ der Diashow-Bildskalierung</string>
+    <string name="preference_gallery_slideshow_image_scaletype_title">Skalierungsart für Diashow-Bilder</string>
     
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
     

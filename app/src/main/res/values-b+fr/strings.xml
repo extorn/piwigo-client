@@ -47,7 +47,7 @@
     <string name="alert_message_success_connectionTest">Succès\nType d\'utilisateur:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">avertissement\nLe serveur n\'a pas signalé les tailles d\'image disponibles.</string>
     <string name="alert_success">SUCCÈS!</string>
-    <string name="alert_partial_success">INCOMPLÈTE</string>
+    <string name="alert_partial_success">INCOMPLET</string>
     <string name="alert_error">Erreur</string>
     <string name="alert_error_no_app_available_to_handle_action">Aucune application n\'a pu être trouvée pour gérer cette action.</string>
     <string name="alert_error_no_app_available_to_rate_app">Aucune application n\'a été trouvée pour évaluer cette application. Merci d\'avoir essayé.</string>
@@ -65,7 +65,7 @@
     <string name="gallery_menu_title">Galerie</string>
     <string name="upload_menu_title">Télécharger</string>
     <string name="upload_page_title">Piwigo Upload</string>
-    <string name="gallery_to_alter_title">Télécharger sur</string>
+    <string name="gallery_to_alter_title">Télécharger vers</string>
     <string name="login_button_title">S\'identifier</string>
 
     <string name="alert_question_enable_network_access">Autoriser la récupération des données depuis le serveur?</string>
@@ -126,7 +126,7 @@
     <string name="alert_server_error_pattern">Le serveur a renvoyé une erreur HTTP:%1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Erreur lors de l\'analyse de la réponse de Piwigo</string>
     <string name="alert_error_handling_response_pattern">Réponse impossible à analyser:%1$d (%2$s)</string>
-    <string name="none_selected">Aucune</string>
+    <string name="none_selected">Aucun</string>
     <string name="alert_title_error_too_many_users">Erreur</string>
     <string name="alert_error_too_many_users_message">Trop d\'utilisateurs à gérer. Veuillez soumettre une demande d\'amélioration pour activer la pagination des utilisateurs.</string>
 
@@ -169,7 +169,7 @@
     <string formatted="false" name="eula">"Contrat de licence utilisateur final («Contrat»)
 Dernière mise à jour: 7 août 2018
 
-Veuillez lire attentivement le présent Contrat de licence utilisateur final («Contrat») avant de cliquer sur «J\'accepte»
+Veuillez lire attentivement le présent Contrat de licence utilisateur final (le «Contrat») avant de cliquer sur «J\'accepte»
 bouton, en téléchargeant ou en utilisant Piwigo Client (\"Application\").
 
 En cliquant sur le bouton \"J\'accepte\", en téléchargeant ou en utilisant l\'Application, vous acceptez d\'être lié
@@ -192,14 +192,14 @@ Gareth Deli vous accorde une licence limitée révocable, non exclusive, non tra
 pour télécharger, installer et utiliser l\'Application uniquement à des fins personnelles ou commerciales
 strictement en conformité avec les termes de cet accord.
 
-LE LOGICIEL EST FOURNI \"TEL QUEL\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET DE NON-CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES DÉTENTEURS DE DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTES RÉCLAMATIONS, DOMMAGES OU AUTRES RESPONSABILITÉS, QUE CE SOIT DANS UNE ACTION CONTRACTUELLE, TORTURE OU AUTRE, DÉCOULANT DU LOGICIEL OU DE L\'UTILISATION OU D\'AUTRES OPÉRATIONS DANS LE LOGICIEL
+LE LOGICIEL EST FOURNI «TEL QUEL», SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET DE NON-CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES DÉTENTEURS DE DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTES RÉCLAMATIONS, DOMMAGES OU AUTRES RESPONSABILITÉS, QUE CE SOIT DANS UNE ACTION CONTRACTUELLE, TORTURE OU AUTRE, DÉCOULANT DU LOGICIEL OU DE L\'UTILISATION OU D\'AUTRES OPÉRATIONS DANS LE LOGICIEL
 
 
 Restrictions
 
 Vous acceptez de ne pas le faire et vous ne permettrez pas à d\'autres de:
 a) octroyer une licence, vendre, louer, louer à bail, céder, distribuer, transmettre, héberger, externaliser, divulguer ou autrement
-exploiter l\'Application à des fins commerciales ou mettre l\'Application à la disposition de tout tiers.
+exploiter l\'Application à des fins commerciales ou la mettre à la disposition de tout tiers.
 b) décompiler ou afficher autrement le code source ou le code d\'octet de l\'application manuellement ou à l\'aide d\'un outil
 c) exécuter ou tenter d\'exécuter cette application dans autre chose qu\'un appareil physique de type téléphone ou tablette, et qui utilise le système d\'exploitation Android comme système d\'exploitation principal.
 d) exécuter ou tenter d\'exécuter cette application dans un émulateur ou un autre environnement sandbox dans le but d\'examiner son comportement.
@@ -219,7 +219,7 @@ Il est de la seule responsabilité du preneur de licence de vérifier si le logi
 
 Limitations de responsabilité
 
-Le licencié est responsable des conséquences de l\'utilisation du logiciel et des dommages directs et indirects qui en résultent dans la mesure où cela est légalement possible. La responsabilité est limitée au prix d\'achat dans la mesure où cela est légalement possible; sinon, il est limité au minimum légalement possible.
+Le licencié est responsable des conséquences de l\'utilisation du logiciel et des dommages directs et indirects qui en résultent, dans la mesure où cela est légalement possible. La responsabilité est limitée au prix d\'achat dans la mesure où cela est légalement possible; sinon, il est limité au minimum légalement possible.
 
 
 Maintenance et assistance
@@ -241,7 +241,7 @@ Le présent accord restera en vigueur jusqu\'à sa résiliation par vous ou Gare
 Gareth Deli peut, à sa seule discrétion, à tout moment et pour n\'importe quelle raison ou pour aucune raison,
 suspendre ou résilier le présent accord avec ou sans préavis.
 Le présent accord prendra fin immédiatement, sans préavis de Gareth Deli, en
-le cas où vous ne respecteriez aucune disposition du présent Contrat. Vous pouvez également y mettre fin
+le cas où vous ne respecteriez pas une disposition du présent accord. Vous pouvez également y mettre fin
 Accord en supprimant l\'Application et toutes ses copies de votre appareil mobile ou de votre
 bureau.
 À la résiliation du présent Accord, vous cesserez toute utilisation de l\'Application et supprimerez toutes les copies
@@ -352,7 +352,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="alert_user_delete_failed_pattern">Erreur lors de la suppression de l\'utilisateur (%1$s). Veuillez réessayer.</string>
     <string name="alert_confirm_really_delete_group">Voulez-vous vraiment supprimer ce groupe? Les utilisateurs qui en sont membres ne seront pas supprimés, mais peuvent perdre l\'accès aux zones de la galerie de ce groupe.</string>
     <string name="alert_confirm_really_delete_user">Voulez-vous vraiment supprimer cet utilisateur?</string>
-    <string name="users_menu_title">Utilisatrices</string>
+    <string name="users_menu_title">Utilisateurs</string>
     <string name="alert_error_unable_to_delete_yourself_pattern">Désolé, vous ne pouvez pas supprimer l\'utilisateur sous lequel vous êtes connecté (%1$s).</string>
     <string name="alert_information_coming_soon">Cette option sera disponible sous peu.</string>
 
@@ -360,18 +360,18 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="user_lastvisit_title">Dernière visite du site</string>
     <string name="user_groups_title">Appartenance à un groupe</string>
     <string name="user_usertype_title">Type d\'utilisateur</string>
-    <string name="user_user_heading">Utilisatrice</string>
+    <string name="user_user_heading">Utilisateur</string>
     <string name="group_heading">Groupe</string>
     <string name="group_name_title">Nom</string>
     <string name="group_members_title">Membres</string>
     <string name="user_access_rights_title">Des droits d\'accès</string>
     <string name="group_access_rights_title">Des droits d\'accès</string>
     <string name="groups_heading">Groupes</string>
-    <string name="users_heading">Utilisatrices</string>
+    <string name="users_heading">Utilisateurs</string>
     <string name="albums_heading">Albums</string>
     <string name="user_high_definition_title">Haute définition</string>
     <string name="user_email_title">Adresse électronique</string>
-    <string name="none_value">Aucune</string>
+    <string name="none_value">Aucun</string>
     <string name="access_rights_heading">Des droits d\'accès</string>
     <string name="progress_loading_album_content">Chargement du contenu de l\'album</string>
     <string name="progress_loading_resource_details">Chargement des détails de la ressource</string>
@@ -482,8 +482,8 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="x509_cert_valid_from_field_pattern">Valable à partir de:%1$s</string>
     <string name="x509_cert_valid_to_field_pattern">Valide jusqu\'à:%1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">Il y a%1$d autres utilisateurs trouvés pour partager ce nom d\'utilisateur (%2$s). L\'utilisateur le plus récent de ce serveur Piwigo a été sélectionné, mais ce n\'est pas sûr s\'il est possible qu\'ils utilisent le serveur en même temps ou à un moment similaire. Veuillez envisager de modifier ces noms d\'utilisateur afin que le nom d\'utilisateur soit un identifiant unique pour une classe d\'utilisateurs donnée.</string>
-    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Ces autorisations sont nécessaires pour démarrer un processus de téléchargement, puis poursuivre le processus de téléchargement une fois que l\'écran s\'est éteint</string>
-    <string name="alert_no_scheme_specified">Vous devez préfixer l\'adresse de votre serveur avec http:// ou https://. Aucun autre programme n\'est pris en charge. Le port est facultatif si la valeur par défaut - 80 pour http ou 443 pour https. Exemple http://piwigo.org/demo ou http://piwigo.org:80/demo</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Ces autorisations sont nécessaires pour démarrer un processus de téléchargement, puis poursuivre le processus de téléchargement une fois l\'écran éteint</string>
+    <string name="alert_no_scheme_specified">Vous devez préfixer votre adresse de serveur avec http:// ou https://. Aucun autre programme n\'est pris en charge. Le port est facultatif si la valeur par défaut - 80 pour http ou 443 pour https. Exemple http://piwigo.org/demo ou http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Les fichiers%1$d suivants ont dépassé le seuil d\'avertissement:%2$s. Souhaitez-vous les supprimer du téléchargement?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Souhaitez-vous compresser des vidéos avant de les télécharger?</string>
     <string name="alert_trusted_certificates_polling">Les certificats non approuvés fournis par le serveur lors de la connexion vous seront présentés afin que vous puissiez choisir de les ajouter au magasin de clés de confiance. Si vous refusez, vous ne serez pas invité à nouveau pour le même certificat. Pour être à nouveau invité, désélectionnez et resélectionnez l\'option d\'utiliser un magasin de certificats de confiance personnalisé.</string>
@@ -523,7 +523,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="slideshow_image_details_tags_title">Mots clés</string>
     <string name="button_search">Chercher</string>
 
-    <string name="file_selection_heading">Sélection de fichiers</string>
+    <string name="file_selection_heading">Sélection de fichier</string>
     <string name="tag_heading_pattern">Balise:%1$s</string>
     <string name="error_updating_tag_pattern">Erreur lors de la suppression de la ressource (%1$s) de la balise:%2$s</string>
     <string name="alert_message_info_files_already_pending_approval_pattern">%1$d fichiers n\'ont pas été téléchargés car ils sont déjà téléchargés mais en attente de l\'approbation de l\'administrateur.</string>
@@ -578,14 +578,14 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="removing_favorite">Suppression du favori</string>
     <string name="adding_favorite">Ajout d\'un favori</string>
     <string name="alert_error_unsupported_features_pattern">Certaines fonctionnalités prises en charge par cette application ne sont pas disponibles sur votre serveur. Autoriser:\n1. Installez le plugin PiwigoClientWsExts.\n2. Déconnectez-vous et reconnectez-vous sur cette application.\n\nVous serez rappelé dans une semaine.</string>
-    <string name="tag_will_be_created_when_resource_is_saved">Utilisation du plugin de balises utilisateur pour ajouter une nouvelle balise. Le tag ne sera créé qu\'une fois la ressource enregistrée.</string>
+    <string name="tag_will_be_created_when_resource_is_saved">Utilisation du plugin User Tags pour ajouter un nouveau tag. Le tag ne sera créé qu\'une fois la ressource enregistrée.</string>
     <string name="resource_details_updated_message">Détails des ressources mis à jour</string>
     <string name="alert_server_call_in_progress_please_wait">Appel serveur en cours. Veuillez patienter avant de réessayer.</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Il y a trop d\'images orphelines sur le serveur pour que le téléchargement se poursuive. Veuillez les ranger avant de réessayer.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Impossible de récupérer la liste des images orphelines. Veuillez réessayer.</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur administrateur n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de communauté (qui simule le statut d\'administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plug-in concerné expose correctement les méthodes que vous attendez à l\'aide d\'un navigateur Web:%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Cette fonctionnalité n\'est pas disponible. Veuillez installer le plugin PiwigoClientWsExts sur votre serveur. Si vous l\'avez déjà installé, veuillez le mettre à jour vers la dernière version.</string>
-    <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste de types de fichiers pouvant être téléchargés avec les informations de session utilisateur (ceci n\'est généralement fourni qu\'aux utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, veuillez m\'envoyer un e-mail pour m\'aider à diagnostiquer le problème pour vous.</string>
+    <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste de types de fichiers pouvant être téléchargés avec les informations de session utilisateur (ceci n\'est généralement fourni qu\'aux utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, envoyez-moi un e-mail pour m\'aider à diagnostiquer le problème pour vous.</string>
     <string name="job_not_found">Téléverser le travail introuvable</string>
     <string name="files_mid_data_transfer_title">Fichiers partiellement copiés</string>
     <string name="files_awaiting_verification_title">Fichiers en attente de vérification de l\'intégrité des données</string>
@@ -628,12 +628,12 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="reward_video_not_yet_loaded">Désolé, mais la vidéo de récompense n\'a pas encore été chargée. Veuillez réessayer plus tard.</string>
     <string name="bought_time_menu_title_pattern">Annonces dans%1$02d:%2$02d</string>
     <string name="allow_upload_of_incompressible_videos">Téléchargez le fichier brut s\'il est impossible de compresser</string>
-    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">Le serveur n\'acceptera pas les fichiers%1$d sélectionnés pour le téléchargement. S\'il s\'agit de vidéos, vous pouvez activer la compression. Supprimer ces fichiers du téléchargement?</string>
+    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">Le serveur n\'acceptera pas%1$d fichiers sélectionnés pour le téléchargement. S\'il s\'agit de vidéos, vous pouvez activer la compression. Supprimer ces fichiers du téléchargement?</string>
     <string name="upload_status_tab_title_details">Détails</string>
     <string name="upload_status_tab_title_errors">les erreurs</string>
     <string name="message_piwigo_server_inconsistent_results">Piwigo API Call%1$s reports file checksum does not match, but API call%2$s reports that it matches. Cela pourrait être un bogue dans le serveur PIWIGO ou un plugin que vous utilisez, et peut valoir la peine d\'être signalé.</string>
     <string name="alert_bulk_image_permissions_title">Définir les autorisations d\'accès</string>
-    <string name="alert_bulk_image_permissions_message">Définir les niveaux d\'autorisation d\'accès pour les ressources sélectionnées%1$d</string>
+    <string name="alert_bulk_image_permissions_message">Définir les niveaux d\'autorisation d\'accès pour les ressources%1$d sélectionnées</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec un type MIME%1$s</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Les fichiers avec les extensions suivantes ne peuvent pas être téléchargés et ont été supprimés:%1$s</string>
     <string name="please_select_a_parent_album">Veuillez sélectionner un album parent</string>
@@ -671,7 +671,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="missing_permissions_warning_message_pattern">"Depuis la dernière ouverture de cette application, les autorisations de fichiers requises par les parties suivantes de l\'application ont été supprimées\n\n%1$s\n\nVeuillez sélectionner de nouvelles autorisations pour ces paramètres pour que les choses fonctionnent comme prévu."</string>
     <string name="folder_selection_title">Sélectionner le dossier</string>
     <string name="files_selection_title">Sélectionnez les fichiers</string>
-    <string name="all">Toute</string>
+    <string name="all">Tout</string>
     <string name="user_high_definition_field">Autoriser l\'accès aux fichiers originaux (taille réelle)</string>
     <string name="group_is_default_field">Attribuer de nouveaux utilisateurs à ce groupe</string>
     <string name="createGallery_galleryCommentsAllowed_title">Commentaires des utilisateurs</string>

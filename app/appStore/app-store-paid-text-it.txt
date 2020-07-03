@@ -1,0 +1,47 @@
+Utilizzare per sfogliare una galleria fotografica PIWIGO.
+
+NOTA: l'EULA deve essere accettato durante il download.
+
+Questa app ha tutte le funzionalità nella versione gratuita con poche altre. Nessuna pubblicità
+
+** L'app viene sviluppata attivamente **
+** Se qualcosa non funziona - inviami un'e-mail - verrà risolto **
+
+Vedi l'elenco completo delle funzionalità di seguito.
+
+Connettersi a server in esecuzione su porte http o https non standard
+Accettare certificati server non validi (nome host errato) o autofirmati, se necessario
+pinning certificato server è supportato (verifica certificati contro una copia locale)
+Visualizza le immagini con una risoluzione ottimizzata per il tuo schermo (o seleziona quella che desideri).
+Visualizzazione in sola lettura offline del tuo server
+Mostra e consenti lo zoom in immagini di qualsiasi dimensione disponibili sul server
+Guarda i video MP4 (anche altri dovrebbero funzionare, ma non ho testato altri formati)
+Scarica immagini.
+Salva video scaricati completamente
+Opzionalmente esclude i video dalle presentazioni
+Valuta le immagini e visualizza le valutazioni medie
+Carica nuove immagini o video (può essere eventualmente compresso)
+Monitoraggio automatico delle cartelle dei dispositivi e caricamento dei file in un processo in background
+Visualizza, aggiungi, modifica, elimina tag e immagini taggate
+Impostazione e modifica di autorizzazioni, descrizione e altri dettagli di album e file
+Aggiungi o modifica gli album, i loro permessi, la descrizione, ecc
+Aggiungi, visualizza e modifica gli utenti della galleria
+Aggiungi, visualizza e modifica gruppi di gallerie
+Copia o sposta le immagini all'interno della galleria
+Seleziona le immagini per il caricamento utilizzando altre app e condividile con PIWIGO
+Disponibile modalità di sola lettura app speciale per prevenire eventuali modifiche indesiderate alla galleria
+Qualche controllo sul layout delle schermate sull'app (utilizzare per personalizzare lo schermo sul dispositivo)
+
+Plugin server supportati: community, piwigo_privacy, videojs, tag utente.
+
+Vuoi qualcos'altro non elencato? Prova l'app. Se non fa esattamente quello che ti serve. Mandami una email usando il link nell'app e cercherò di aggiungere le funzioni mancanti.
+
+Prossime modifiche:
+
+L'intenzione è quella di migliorare progressivamente l'interfaccia utente e uno degli utenti, David Klement, ha gentilmente fornito alcuni suggerimenti per i layout dello schermo che ho iniziato a utilizzare dalla versione 1.3.95 e senza dubbio prenderò più idee. Le proposte sono disponibili per intero:
+https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
+
+
+Limitazioni note:
+
+1. I commenti non sono attualmente supportati: non è possibile visualizzare né aggiungere commenti. Se questa funzione mancante è importante per te, per favore, parlami.

@@ -28,7 +28,7 @@
     <string name="server_connection_preference_summary_default">Por favor seleccione un valor</string>
     <string name="server_album_preference_summary_default">Por favor seleccione un valor</string>
     <string name="local_folder_preference_summary_default">Por favor seleccione un valor</string>
-    <string name="server_connection_preference_user_guest">invitada</string>
+    <string name="server_connection_preference_user_guest">invitado</string>
     
 
     
@@ -72,7 +72,7 @@
     
 
     
-    <string name="preference_server_connection_retries_title">Reintentos de conexión antes del fallo</string>
+    <string name="preference_server_connection_retries_title">Intentos de conexión antes del fallo</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
@@ -94,7 +94,7 @@
 
     
     <string name="preference_select_client_certificate_title">Certificados de cliente (y claves privadas)</string>
-    <string name="preference_select_client_certificate_summary">Seleccione el certificado del cliente para la autenticación</string>
+    <string name="preference_select_client_certificate_summary">Seleccione el certificado de cliente para la autenticación</string>
 
     
     <string name="preference_piwigo_connection_profile_title">Seleccionar perfil de conexión</string>
@@ -157,7 +157,7 @@
 
     <string name="preference_page_gallery">Galería</string>
     <string name="preference_gallery_category_general">General</string>
-    <string name="preference_gallery_category_advanced">Avanzada</string>
+    <string name="preference_gallery_category_advanced">Avanzado</string>
     <string name="preference_gallery_category_slideshow">Diapositivas</string>
     <string name="preference_gallery_category_resources">Recursos</string>
     <string name="preference_gallery_category_albums">Álbumes</string>
@@ -214,7 +214,7 @@
 
     
     <string name="preference_video_cache_enabled_title">Caché de videos vistos para archivar</string>
-    <string name="preference_video_cache_enabled_summary">Cuando está habilitado, los videos transmitidos se almacenarán en caché para su posterior reproducción</string>
+    <string name="preference_video_cache_enabled_summary">Cuando está habilitado, cualquier video transmitido será almacenado en caché para su posterior reproducción</string>
     
 
     
@@ -276,7 +276,7 @@
     
 
     
-    <string name="preference_groups_request_pagesize_title">Tamaño de página de solicitud de servidor de grupos</string>
+    <string name="preference_groups_request_pagesize_title">Solicitud de servidor de grupos tamaño de página</string>
     <string name="preference_groups_request_pagesize_summary">%1$d artículos</string>
     
 
@@ -312,7 +312,7 @@
     <string name="preference_upload_category_data_upload_display">Ajustes visuales</string>
     <string name="preference_upload_category_data_upload">Carga de datos</string>
     <string name="preference_upload_category_pre_data_upload_compression">Compresión previa a la carga</string>
-    <string name="preference_upload_category_advanced">Avanzada</string>
+    <string name="preference_upload_category_advanced">Avanzado</string>
 
     
 
@@ -403,11 +403,11 @@
     
 
     
-    <string name="preference_page_app">Aplicación</string>
+    <string name="preference_page_app">App</string>
 
     
 
-    <string name="preference_page_other">Otra</string>
+    <string name="preference_page_other">Otro</string>
     <string name="preference_other_category_file_selector">Selector de archivos</string>
 
     

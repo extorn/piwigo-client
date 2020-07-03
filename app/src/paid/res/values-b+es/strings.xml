@@ -19,11 +19,11 @@
     <string name="progress_creating_tag">Creando etiqueta</string>
     <string name="error_updating_favorites_pattern">Error al eliminar el recurso (%1$s) de favoritos:%2$s</string>
     <string name="favorites_content_load_failed_text">Error al cargar recursos marcados como favoritos</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Ha solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y el servidor) de forma permanente o simplemente desvincularlos de este favorito?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Has solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y el servidor) de forma permanente o simplemente desvincularlos de este favorito?</string>
     <string name="progress_remove_favorite_resources">Eliminar recursos de la lista de favoritos</string>
-    <string name="favorites_empty_text">Actualmente no tienes favoritas</string>
-    <string name="favorites_heading">Tus favoritas</string>
-    <string name="button_unfavorite">No favorita</string>
+    <string name="favorites_empty_text">Actualmente no tiene favoritos</string>
+    <string name="favorites_heading">Tus favoritos</string>
+    <string name="button_unfavorite">No favorito</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Configuración del servidor</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Configuraciones locales</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Compresión previa a la carga</string>

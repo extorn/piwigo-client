@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    
+
+    
+
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0bps (--X)</item>
+        <item>molto basso (frame 0,025 b / pixel *)</item>
+        <item>inferiore (frame 0,05 b / pixel *)</item>
+        <item>basso (frame 0,1 b / pixel *)</item>
+        <item>medio (0,15 b / pixel * frame)</item>
+        <item>alto (frame 0,2 b / pixel *)</item>
+        <item>molto alto (0,25 b / pixel * frame)</item>
+        <item>ultra alto (frame 0,3 b / pixel *)</item>
+    </string-array>
+
+    
+    
+
+    
+
+    <string-array name="preference_album_subalbum_sort_order_items">
+        <item>Predefinito</item>
+        <item>Nome album A-Z</item>
+        <item>Ultimo aggiornamento</item>
+    </string-array>
+    
+    <string-array name="preference_caching_level_items">
+        <item>Memorizzazione nella cache disabilitata</item>
+        <item>Cache in memoria</item>
+        <item>Cache su disco</item>
+    </string-array>
+
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+        <item>Predefinito</item>
+        <item>adatta alle dimensioni dello schermo</item>
+        <item>ingrandire e ritagliare per adattarsi allo schermo</item>
+        <item>centrare sullo schermo</item>
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_slideshow_image_size_array">
+        <item>il più adatto</item>
+        <item>piazza</item>
+        <item>pollice</item>
+        <item>2small</item>
+        <item>xsmall</item>
+        <item>piccolo</item>
+        <item>medio</item>
+        <item>grande</item>
+        <item>XLarge</item>
+        <item>XXLarge</item>
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_thumbnail_size_array">
+        <item>piazza</item>
+        <item>pollice</item>
+        <item>2small</item>
+        <item>xsmall</item>
+        <item>piccolo</item>
+    </string-array>
+
+    
+    <string-array name="preference_gallery_sort_order_entries">
+        <item>ID risorsa</item>
+        <item>Nome file risorsa</item>
+        <item>Nome risorsa</item>
+        <item>Numero di colpi</item>
+        <item>Punteggio di valutazione medio</item>
+        <item>Data di creazione</item>
+        <item>Data Disponibile</item>
+        <item>casuale</item>
+    </string-array>
+    
+    <string-array name="server_ssl_certificate_hostname_verification_entries">
+        <item>Rigoroso</item>
+        <item>Compatibile con il browser</item>
+        <item>via</item>
+    </string-array>
+    
+    <string-array name="user_types_array">
+        <item>webmaster</item>
+        <item>Admin</item>
+        <item>normale</item>
+        <item>generico</item>
+        <item>ospite</item>
+    </string-array>
+
+    
+
+    <string-array name="privacy_levels_groups_array">
+        <item>amministratori</item>
+        <item>Amministratori, famiglia</item>
+        <item>Amministratori, famiglia, amici</item>
+        <item>Amministratori, famiglia, amici, contatti</item>
+        <item>Tutti</item>
+    </string-array>
+
+    
+
+    
+
+    <string-array name="preference_gallery_unique_id_entries">
+        <item>md5sum</item>
+        <item>nome</item>
+    </string-array>
+
+    
+
+    <string-array name="rotation_array">
+        <item>Sinistra 90 gradi</item>
+        <item>Nessuna</item>
+        <item>Destra 90 gradi</item>
+        <item>Destra 180 gradi</item>
+    </string-array>
+
+    
+
+    <string-array name="top_tips" translatable="true">
+        <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del tuo server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
+        <item>Se un caricamento non ha esito positivo, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
+        <item>L\'errore si verifica sempre quando si tenta di aggiornare i tag - \ "Non è consentito eliminare i tag \" - Assicurarsi che gli utenti possano sia aggiungere che eliminare i tag (impostazione del plugin del server)</item>
+        <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per andare al tuo server corrente</item>
+        <item>Fai clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stata caricata per recuperarla di nuovo</item>
+        <item>Fai clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
+        <item>Fare clic a lungo sull\'immagine di un album per abilitare la selezione in blocco di immagini per un\'azione</item>
+        <item>Durante la visualizzazione di qualsiasi immagine nella presentazione, fare clic a lungo per ruotare / modificare le dimensioni dell\'immagine mostrata / consentire ulteriori zoom</item>
+        <item>È possibile ingrandire un\'immagine durante la visualizzazione in una presentazione avvicinando o allontanando due dita sullo schermo</item>
+        <item>Una volta effettuato l\'accesso come amministratore, prima di passare il dispositivo a un amico per visualizzare le foto, attivare la funzione di blocco dell\'applicazione per impedire che vengano apportate modifiche involontarie alla galleria</item>
+        <item>Dopo aver visualizzato un intero video, se la memorizzazione nella cache dei file locali è abilitata, è possibile salvarlo nella cartella dei download</item>
+        <item>Fare clic sul pulsante Elimina lungo su un \ \'file per il caricamento \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
+        <item>Se le immagini sono lente da caricare, controlla che il tuo server generi automaticamente le dimensioni utilizzate da questa app quando vengono caricate</item>
+    </string-array>
+    <string-array name="planned_releases" translatable="true">
+        <item>Il futuro</item>
+        <item>"Risoluzione del problema:
+            - correggere errori HTTP 401 intermittenti ma errati, eventualmente collegati alla riconvalida della risposta memorizzata nella cache
+            I cambiamenti:
+         - Possibilmente:
+            - Rimozione di tutte o la maggior parte degli annunci pubblicitari a favore di un periodo di prova gratuito seguito da un modello di pagamento basato su abbonamento
+            - Verifica lo stato di accesso corrente per assicurarti che gli elenchi di album e immagini siano sempre corretti
+            - Verifica del supporto per il caricamento su server meno recenti (ad es. Piwigo.com - versione 2.8a)
+            - La possibilità di eliminare un album, ma non il suo contenuto (creazione di orfani)
+            - Gestione dei file orfani
+            - Esamina l\'aggiunta del supporto per il plug-in tag colorato
+            - Supporto GIF animato migliorato (streaming di file di grandi dimensioni)
+         - Forse (solo app a pagamento):
+            - L\'idea di foto casuali implementata sull\'interfaccia utente web di Piwigo
+            - Supporto per i commenti degli utenti
+            - Notifica all\'utente gli aggiornamenti del server disponibili
+            - Supporto per la modifica di EXIF ​​e altri formati di metadati di immagine
+            - Aggiungi preferenza per consentire di mostrare / nascondere i campi EXIF ​​ecc. Di interesse o meno
+            - Screen cast di qualche tipo per consentire il mirroring del dispositivo su uno schermo più grande
+         - Qualunque altra cosa:
+            - Inviami un\'e-mail (c\'è un link e-mail nella barra di navigazione) per richiedere le cose di cui hai bisogno o che desideri che questa app non faccia ancora"</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
+        
+        <item>1.4.0.66.5</item>
+        <item>"Risoluzione del problema:
+                 - Sono stati rettificati molti problemi che causavano arresti anomali
+                 - La pagina di selezione dell\'album di destinazione del caricamento non è più trasparente"</item>
+        <item>1.4.0.66</item>
+        <item>"I cambiamenti:
+                - Importante riscrittura di tutto il codice relativo al tema per semplificare e correggere radicalmente i colori tra le versioni di Android
+                - Modificato il tema in uno di giorno / notte in modo che sia configurabile dall\'utente (di notte, nessuno schermo ha uno sfondo bianco).
+                - aggiunto supporto per Uri e archiviazione con ambito:
+                    - condividi facilmente i file
+                    - seleziona i file utilizzando il selettore dei file di sistema o quello in-app
+                    - l\'eliminazione dei file dopo il caricamento ora funziona di nuovo
+                    - controlla che i file siano univoci prima del caricamento - ora è più difficile, quindi richiede un po \'più di tempo
+                    - Il selettore di file in app è relativamente lento per caricare cartelle contenenti molti file - attualmente le limitazioni nelle API Android
+                - durante la compressione di video, è possibile rimuovere l\'audio o il flusso video se si desidera creare un file m4a o m4v (estensione del file mp4 aggiunta se è tutto ciò che il server consente).
+                - Menu del cassetto disponibile dalla schermata di caricamento per consentire di passare alla galleria o alle impostazioni
+                - L\'app è pronta per l\'implementazione del codice per avvisarti mentre selezioni le foto di quelle che hai caricato in precedenza.
+               Risoluzione del problema:
+                - La pagina di caricamento conserva i file quando si aggiungono nuovi file dal selettore di sistema e o si naviga nella galleria principale
+                - Il codice di compressione video è stato radicalmente revisionato. Non dovrebbe congelare e rinunciare a nessun video ora. (Fammi sapere se lo fa)
+                - Riscrivi di ampie aree per rimuovere potenziali perdite di memoria
+                - Dovrebbe essere molto meno soggetto a crash sulle vecchie versioni di Android (pre-Lollipop)"</item>
+        <item>1.4.0.65</item>
+        <item>"I cambiamenti:
+             - Corretto problema di tema rimanente per le finestre di dialogo
+                Risoluzione del problema:
+             - Il frammento del percorso Uri del server è stato erroneamente convertito in minuscolo con conseguente errore 404"</item>
+        <item>1.4.0.64</item>
+        <item>"I cambiamenti:
+             - Aggiunto un pulsante per visualizzare la password nascosta nelle preferenze
+             - Spostato sul tema basato su MaterialComponents (ci sono alcune piccole modifiche)
+             - Nascondi la maggior parte delle preferenze di connessione per impostazione predefinita: fai clic per espanderle per accedere al resto
+             - spostato alcune preferenze di caricamento nella sezione avanzata
+                Risoluzione del problema:
+             - Aggiunta una codifica URI opzionale per il recupero di foto (utilizza la preferenza di connessione della codifica uri esistente)
+             - Avviso di arresto relativo ai tag mancanti che indicano che mancavano 0"</item>
+        <item>1.4.0.63</item>
+        <item>"I cambiamenti:
+                 - Aggiunta l\'opzione per selezionare una cartella di download nelle preferenze dell\'app
+               Risoluzione del problema:
+                 - Interrompi gli avvisi che vengono visualizzati per la guida automatica delle presentazioni quando è disabilitato.
+                 - Seleziona il file attualmente visibile quando mostra la finestra di download del file"</item>
+        <item>1.4.0.62</item>
+        <item>"Risoluzione del problema:
+                 - Risolto il processo di aggiornamento delle preferenze per le persone che aggiornavano una versione più vecchia dell\'app dall\'ultima disponibile
+                 - Il file di stato del processo di caricamento non viene salvato
+                 - Il processo di caricamento (errato) è stato avviato mentre il video era ancora scritto dalla videocamera del dispositivo"</item>
+        <item>1.4.0.61</item>
+        <item>"Risoluzione del problema:
+                 - Diverse piccole correzioni di bug
+                Modificare:
+                 - Supporto abilitato per Android 11 - Fammi sapere se non riesci più a vedere i file da caricare"</item>
+        <item>1.4.0.60</item>
+        <item>"Modificare:
+                 - Modifiche alla pagina delle preferenze dell\'app
+                 - Aggiunta una nuova preferenza per forzare la visualizzazione di nuovi suggerimenti utente
+                 - app a pagamento: aggiunta una funzione di auto drive nella presentazione - nuova impostazione nella sezione presentazione delle preferenze della galleria"</item>
+        <item>1.4.0.59</item>
+        <item>"Modificare:
+                 - Consenti il download o la condivisione di più file dopo averli selezionati nella vista album"</item>
+        <item>1.4.0.58</item>
+        <item>"Modificare:
+                 - Versione gratuita: rimossi tutti gli annunci interstiziali per un paio di mesi, quindi è tollerabile il suo utilizzo come più di una versione di prova della versione a pagamento"</item>
+        <item>1.4.0.57</item>
+        <item>"Risoluzione del problema:
+                 - per il momento ha scelto di non utilizzare l\'archiviazione con ambito - consente all\'app di vedere nuovamente i file da caricare su Android 10"</item>
+        <item>1.4.0.56</item>
+        <item>"Risoluzione del problema:
+                 - i video a volte riconosciuti solo come foto a seconda del caso dell\'URL del server inserito nelle impostazioni di connessione"</item>
+        <item>1.4.0.55</item>
+        <item>"Risoluzione del problema:
+                 - per il momento ha scelto di non utilizzare l\'archiviazione con ambito - consente all\'app di vedere nuovamente i file da caricare su Android 10"</item>
+        <item>1.4.0.54</item>
+        <item>"I cambiamenti:
+                 - titolo della pagina selezionabile - passa all\'album principale
+                 Risoluzione del problema:
+                 - L\'ordinamento degli album non è sempre corretto
+                 - le traduzioni potrebbero non essere selezionate automaticamente nell\'ordine ottimale."</item>
+        <item>1.4.0.53</item>
+        <item>"I cambiamenti:
+                 - Aggiunta preferenza per controllare la visualizzazione del messaggio che mostra la dimensione dell\'immagine caricata dal server
+                Risoluzione del problema:
+                 - Aggiorna la visualizzazione dell\'album immediatamente dopo aver modificato l\'ordinamento delle risorse o degli album secondari
+                 - risolto bug con ordinamento generale dell\'album
+                 - accesso fisso alla presentazione in caso di compressione degli album secondari (toccando l\'intestazione degli album)
+                 - Possibile bug in cui alcune modifiche alle impostazioni di connessione (come l\'uso dell\'autenticazione di base) non sarebbero state completamente utilizzate fino al prossimo riavvio dell\'app"</item>
+        <item>1.4.0.52</item>
+        <item>"Risoluzione del problema:
+             - L\'annullamento di un caricamento di file e l\'uscita dalla pagina di caricamento prima dell\'annullamento segnalato causa un arresto anomalo
+             - app a pagamento: arresto anomalo utilizzando il russo nella pagina di configurazione del processo di caricamento automatico
+             - app a pagamento: l\'aggiornamento dell\'elenco dei tag per una risorsa in cui almeno un tag precedentemente selezionato non esiste più provoca un arresto anomalo (ora avvisa l\'utente e rimuovilo)
+             - app a pagamento: l\'app può bloccarsi quando si seleziona l\'album di destinazione per il processo di caricamento automatico
+             - app a pagamento: selezionando l\'album principale come album di destinazione per il processo di caricamento automatico viene visualizzato il nome del primo album come album selezionato (in modo errato)
+             - App a pagamento: Nota: non sono chiaro che la selezione della radice della galleria come destinazione di caricamento sia sempre ragionevole, ma nel caso in alcune circostanze, è consentito."</item>
+        <item>1.4.0.51</item>
+        <item>"I cambiamenti:
+                 - Nuova preferenza della galleria per consentire la forzatura del linguaggio utilizzato all\'interno dell\'app
+                 - Nuova preferenza di connessione server avanzata: abilita la codifica URI degli URI delle risorse
+                Risoluzione del problema:
+                 - le preferenze di selezione dei numeri accettano il valore alla chiusura della finestra di dialogo
+                 - Plugin PiwigoClientWsExt nominato correttamente nel messaggio dell\'utente
+                 - Corrette alcune traduzioni"</item>
+        <item>1.4.0.50</item>
+        <item>"I cambiamenti:
+                 - Consenti il passthrough dell\'audio come opzione di compressione
+                 - Abilitazione della compressione per flussi audio mime non \"audio / raw\"
+                 - Aggiungi l\'opzione per rimuovere la traccia audio dal video
+                Risoluzione del problema:
+                 - Arresta la compressione video se viene eliminato dal caricamento durante la compressione
+                 - Interrompi il caricamento del video se viene eliminato dal caricamento durante la compressione
+                 - riordina la visualizzazione dell\'avanzamento del caricamento per i singoli file"</item>
+        <item>1.4.0.49</item>
+        <item>"Risoluzione del problema:
+                 - errore di compressione video
+                 - l\'ultimo lavoro di caricamento viene rieseguito (nessun danno) all\'esecuzione del prossimo caricamento - richiedendo di fare nuovamente clic sul caricamento per avviare il nuovo processo
+                 - visualizzazione lenta delle immagini durante lo scorrimento"
+        </item>
+        <item>1.4.0.48</item>
+        <item>"I cambiamenti:
+         - Nuova preferenza nelle impostazioni della galleria per disabilitare il pulsante di navigazione e / o la funzione di nascondere automaticamente la barra di stato
+         - Mostra solo le dimensioni dell\'immagine che vengono mostrate una volta a meno che non cambi"
+        </item>
+        <item>1.4.0.47</item>
+        <item>"Risoluzione del problema:
+         - Miglioramenti alla stabilità dell\'app"
+        </item>
+        <item>1.4.0.46</item>
+        <item>"I cambiamenti:
+             - Aggiunto il pulsante di ricarica dei contenuti alla pagina di selezione dei file
+             - rimosso il suffisso (a pagamento) dal nome dell\'app
+             - Mostra il percorso o l\'indicazione per l\'album di caricamento di destinazione
+             Risoluzione del problema:
+             - Nella presentazione mancava l\'ultimo elemento dell\'album
+             - Elimina l\'elemento nella presentazione - pagina vuota"
+        </item>
+        <item>1.4.0.45</item>
+        <item>"I cambiamenti:
+             - Aumentata la dimensione massima del file di upload supportata da app arbitraria a 10 GB
+             - Aggiornate le versioni della libreria dipendente"
+        </item>
+        <item>1.4.0.44</item>
+        <item>"Risoluzione del problema:
+         - Miglioramenti alla stabilità dell\'app"
+        </item>
+        <item>1.4.0.43</item>
+        <item>"Risoluzione del problema:
+         - Miglioramenti alla stabilità dell\'app"
+        </item>
+        <item>1.4.0.42</item>
+        <item>"Risoluzione del problema:
+                 - Correzioni alla gestione degli errori di caricamento delle immagini
+                 - Correzione per correggere bug minori nel processo di caricamento dei file"</item>
+        <item>1.4.0.41</item>
+        <item>"Risoluzione del problema:
+                 - Miglioramenti alla stabilità dell\'app
+                 - modalità di modifica chiusa dopo l\'aggiornamento dei dettagli dell\'immagine
+             I cambiamenti:
+                 - (solo pro) Visualizza i dettagli sullo stato del caricamento, inclusi gli errori per i lavori automatici, su ciascuna pagina di configurazione del lavoro di caricamento automatico"</item>
+        <item>1.4.0.38</item>
+        <item>"Risoluzione del problema:
+                 - La presentazione (visualizzazione immagine a schermo intero) ora funziona di nuovo. Le mie sincere scuse.
+                 - Aggiunte traduzioni in russo per le preferenze"
+        </item>
+
+
+        <item>1.4.0.37</item>
+        <item>"Risoluzione del problema:
+                 - La pulizia della connessione ora funziona di nuovo
+                 - L\'impostazione della classificazione delle risorse nelle impostazioni locali russe ora funziona di nuovo"</item>
+        <item>1.4.0.36</item>
+        <item>"I cambiamenti:
+                 - Il download dei file ora avviene in una coda rudimentale ed è gestito a livello di app. Tuttavia, è ancora necessario mantenere l\'app aperta per poter scaricare.
+                Risoluzione del problema:
+                 - Il download dei file ora funziona dove il server non segnala le dimensioni del file
+                 - I file aggiunti alla schermata di caricamento dei file ora vengono mostrati di nuovo (erano inizialmente invisibili)
+                 - Altri bug assortiti"</item>
+    </string-array>
+</resources>

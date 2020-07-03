@@ -19,7 +19,7 @@
     <string name="progress_creating_tag">Создание тега</string>
     <string name="error_updating_favorites_pattern">Ошибка удаления ресурса (%1$s) из избранного:%2$s</string>
     <string name="favorites_content_load_failed_text">Не удалось загрузить ресурсы, отмеченные как избранные</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Вы запросили удалить ресурсы%1$d. Вы хотите удалить их из всех альбомов (и сервера) - навсегда или просто отсоединить их от этого фаворита?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Вы запросили удалить ресурсы%1$d. Вы хотите удалить их из всех альбомов (и сервера) - навсегда или просто удалить их из этого списка?</string>
     <string name="progress_remove_favorite_resources">Удаление ресурсов из списка избранного</string>
     <string name="favorites_empty_text">У вас нет избранных</string>
     <string name="favorites_heading">Ваше избранное</string>

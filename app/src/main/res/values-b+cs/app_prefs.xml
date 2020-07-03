@@ -21,7 +21,7 @@
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
     <string name="preference_page_connection">Spojení</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
-    <string name="preference_connections_category_server_basic_auth">Základní ověření serveru</string>
+    <string name="preference_connections_category_server_basic_auth">Základní ověřování serveru</string>
     <string name="preference_connections_category_client_certificate_auth">Ověření klientského certifikátu</string>
     <string name="preference_connections_category_advanced">Pokročilé nastavení</string>
     <string name="preference_connections_category_connections_caching">Ukládání do mezipaměti na webu</string>

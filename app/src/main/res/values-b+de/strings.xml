@@ -3,7 +3,7 @@
     <string name="checking_license">Lizenz prüfen…</string>
     <string name="button_quit">Ausgang</string>
     <string name="button_buy">Kaufe App</string>
-    <string name="unlicensed_dialog_retry_body">Es kann nicht bestätigt werden, dass die Anwendung lizenziert ist. Bitte kaufen Sie es im Android Market. Wenn ja, überprüfen Sie, ob eine Netzwerkverbindung verfügbar ist, und wiederholen Sie diese Lizenzprüfung.</string>
+    <string name="unlicensed_dialog_retry_body">Es kann nicht bestätigt werden, dass die Anwendung lizenziert ist. Bitte kaufen Sie es im Android Market. Wenn ja, überprüfen Sie bitte, ob eine Netzwerkverbindung verfügbar ist, und wiederholen Sie diese Lizenzprüfung.</string>
     <string name="unlicensed_dialog_body">Lizenz kann nicht validiert werden. Überprüfen Sie, ob eine Netzwerkverbindung verfügbar ist.</string>
     <string name="unlicensed_dialog_title">Anwendung nicht lizenziert</string>
     <string name="application_error">Anwendungsfehler:%1$d</string>
@@ -158,7 +158,7 @@
     <string name="alert_question_title">Frage</string>
     <string name="alert_confirm_really_delete_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Fortsetzen?</string>
     <string name="alert_confirm_really_delete_items_from_server">Dadurch werden die Elemente dauerhaft vom Server gelöscht. Fortsetzen?</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Sie haben angefordert,%1$d-Ressourcen zu löschen, die für andere Alben freigegeben sind. Möchten Sie diese aus allen Alben (und dem Server - dauerhaft) löschen oder einfach die Verknüpfung mit diesem Album aufheben?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Sie haben darum gebeten,%1$d-Ressourcen zu löschen, die für andere Alben freigegeben sind. Möchten Sie diese aus allen Alben (und dem Server - dauerhaft) löschen oder einfach die Verknüpfung mit diesem Album aufheben?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Sie haben angefordert,%1$d Ressourcen zu löschen. Möchten Sie diese dauerhaft aus allen Alben (und dem Server) löschen oder einfach die Verknüpfung mit diesem Tag aufheben?</string>
     <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Sie haben angefordert,%1$d Ressourcen zu löschen. Möchten Sie diese dauerhaft aus allen Alben (und dem Server) löschen? (Sie können keine Tags aus Bildern entfernen, ohne dass das UserTags-Plugin auf Ihrem Server installiert ist.)</string>
     <string name="about_menu_title">Über</string>
@@ -323,7 +323,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="click_to_view">Klicke zum Zeigen</string>
     <string name="click_to_view_pattern">%1$d - Klicken zum Anzeigen / Bearbeiten</string>
     <string name="alert_warning_lowMemory">Wenig Speicher</string>
-    <string name="alert_warning_lowMemory_message">Das Gerät verfügt nicht über genügend Speicher (%1$d). Der In-Memory-Image-Cache wurde gelöscht.</string>
+    <string name="alert_warning_lowMemory_message">Das Gerät verfügt nicht über genügend Arbeitsspeicher (%1$d). Der In-Memory-Image-Cache wurde gelöscht.</string>
     <string name="files_for_upload_title">Dateien zum Hochladen</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Herunterladen</string>
@@ -360,7 +360,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="user_lastvisit_title">Zuletzt besucht die Website</string>
     <string name="user_groups_title">Gruppenmitgliedschaft</string>
     <string name="user_usertype_title">Benutzertyp</string>
-    <string name="user_user_heading">Benutzerin</string>
+    <string name="user_user_heading">Benutzer</string>
     <string name="group_heading">Gruppe</string>
     <string name="group_name_title">Name</string>
     <string name="group_members_title">Mitglieder</string>
@@ -444,7 +444,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_please_provide_an_album_name">Ein Name für dieses Album muss angegeben werden. Bitte fügen Sie eine hinzu und versuchen Sie es erneut.</string>
     <string name="error_upload_file_chunk_upload_failed_after_retries">Das Hochladen des Dateibereichs ist nach%1$d-Versuchen fehlgeschlagen. Bitte starten Sie diesen Upload nach Abschluss erneut, um es erneut zu versuchen.</string>
     <string name="error_upload_file_ext_missing_pattern">Datei%1$s kann nicht hochgeladen werden, da eine Dateierweiterung fehlt, z. B. .jpg</string>
-    <string name="error_upload_file_verification_failed">Überprüfung der Datei auf dem Server beim Hochladen von%1$s fehlgeschlagen</string>
+    <string name="error_upload_file_verification_failed">Überprüfung der Datei auf dem Server fehlgeschlagen beim Hochladen von%1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">Diese Datei wurde teilweise hochgeladen und Sie müssen daran denken, danach auf die Schaltfläche zum Hochladen zu klicken, um die beschädigte Datei vom Server zu entfernen. Fortsetzen?</string>
     <string name="alert_message_file_upload_cancelled_pattern">Hochladen der Datei (%1$s) abgebrochen.</string>
     <string name="alert_message_upload_cancelled">Upload abgebrochen</string>
@@ -513,7 +513,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="tag_usage_count_pattern">(%1$d verwendet)</string>
     <string name="progress_loading_tag_details">Abrufen von Ressourcen, die dem Tag entsprechen</string>
     <string name="tags_menu_title">Stichworte</string>
-    <string name="favorites_menu_title">Favoritinnen</string>
+    <string name="favorites_menu_title">Favoriten</string>
     <string name="tag_empty_text">Keine mit diesem Tag getaggten Elemente</string>
     <string name="tag_content_load_failed_text">Fehler beim Laden der mit dem Tag verknüpften Ressourcen</string>
     <string name="tag_heading">Etikett</string>

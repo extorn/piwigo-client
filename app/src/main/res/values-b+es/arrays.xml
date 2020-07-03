@@ -7,12 +7,12 @@
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
         <item>0bps (--X)</item>
-        <item>Muy baja (0.025 b / píxeles * fotograma)</item>
+        <item>muy bajo (0.025 b / píxeles * cuadro)</item>
         <item>inferior (0,05 b / píxeles * fotograma)</item>
-        <item>Baja (0,1 b / píxeles * marco)</item>
+        <item>bajo (0.1 b / píxeles * fotograma)</item>
         <item>medio (0,15 b / píxeles * fotograma)</item>
-        <item>Alta (0,2 b / píxeles * marco)</item>
-        <item>Muy alta (0.25 b / píxeles * fotograma)</item>
+        <item>alto (0,2 b / píxeles * fotograma)</item>
+        <item>muy alto (0,25 b / píxeles * fotograma)</item>
         <item>ultra alto (0.3 b / píxeles * cuadro)</item>
     </string-array>
 
@@ -28,7 +28,7 @@
     </string-array>
     
     <string-array name="preference_caching_level_items">
-        <item>Almacenamiento en caché deshabilitada</item>
+        <item>Almacenamiento en caché deshabilitado</item>
         <item>Caché a la memoria</item>
         <item>Caché en disco</item>
     </string-array>
@@ -45,7 +45,7 @@
 
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>mejor ajuste</item>
-        <item>Cuadrada</item>
+        <item>cuadrado</item>
         <item>pulgar</item>
         <item>2pequeño</item>
         <item>xsmall</item>
@@ -59,7 +59,7 @@
     
 
     <string-array name="preference_gallery_item_thumbnail_size_array">
-        <item>Cuadrada</item>
+        <item>cuadrado</item>
         <item>pulgar</item>
         <item>2pequeño</item>
         <item>xsmall</item>
@@ -75,31 +75,31 @@
         <item>Puntaje de calificación promedio</item>
         <item>Fecha de creación</item>
         <item>Fecha disponible</item>
-        <item>aleatoria</item>
+        <item>aleatorio</item>
     </string-array>
     
     <string-array name="server_ssl_certificate_hostname_verification_entries">
-        <item>Estricta</item>
+        <item>Estricto</item>
         <item>Compatible con navegador</item>
-        <item>Apagada</item>
+        <item>Apagado</item>
     </string-array>
     
     <string-array name="user_types_array">
         <item>administrador de página web</item>
         <item>administración</item>
         <item>normal</item>
-        <item>genérica</item>
-        <item>invitada</item>
+        <item>genérico</item>
+        <item>invitado</item>
     </string-array>
 
     
 
     <string-array name="privacy_levels_groups_array">
-        <item>Administradoras</item>
-        <item>Administradoras, familia</item>
+        <item>Administradores</item>
+        <item>Administradores, familia</item>
         <item>Administradores, Familia, Amigos</item>
         <item>Administradores, Familia, Amigos, Contactos</item>
-        <item>Todas</item>
+        <item>Todos</item>
     </string-array>
 
     
@@ -124,7 +124,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>"Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
-        <item>Si una carga no tiene éxito, intente usar la preferencia en la página de carga de configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
+        <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
         <item>Siempre se produce un error al intentar actualizar etiquetas - \ \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
         <item>Haga clic largo en una imagen (ya sea en miniatura o elemento de presentación de diapositivas) que no se pudo cargar para recuperarla nuevamente</item>

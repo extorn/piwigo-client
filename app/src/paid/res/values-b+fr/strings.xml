@@ -2,7 +2,7 @@
 <resources>
     
     <string name="notification_title_background_upload_service">Service de téléchargement Piwigo en arrière-plan</string>
-    <string name="notification_text_background_upload_running">Exécution du travail de téléchargement</string>
+    <string name="notification_text_background_upload_running">Exécution d\'un travail de téléchargement</string>
     <string name="notification_text_background_upload_sleeping">En train de dormir. Prochaine exécution à%1$tR</string>
     <string name="notification_text_background_upload_polling">Interrogation des fichiers à télécharger.</string>
 

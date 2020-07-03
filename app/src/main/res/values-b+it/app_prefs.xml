@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    <string name="preferences_overall_heading">impostazioni</string>
+
+    
+
+    
+
+    
+    
+    
+
+    
+    
+    <string name="preference_test_server_connection_title">Test di connessione</string>
+    <string name="preference_test_server_connection_summary">Testare la connessione al server</string>
+
+    
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Server pulito</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Pulisci caricamenti PiwigoClient non riusciti dal server</string>
+    <string name="preference_page_connection">Connessione</string>
+    <string name="preference_connections_category_piwigo">Piwigo</string>
+    <string name="preference_connections_category_server_basic_auth">Autenticazione di base del server</string>
+    <string name="preference_connections_category_client_certificate_auth">Autenticazione certificato client</string>
+    <string name="preference_connections_category_advanced">Impostazioni avanzate</string>
+    <string name="preference_connections_category_connections_caching">Memorizzazione nella cache della risposta Web</string>
+    <string name="server_connection_preference_summary_default">Seleziona un valore</string>
+    <string name="server_album_preference_summary_default">Seleziona un valore</string>
+    <string name="local_folder_preference_summary_default">Seleziona un valore</string>
+    <string name="server_connection_preference_user_guest">ospite</string>
+    
+
+    
+    <string name="preference_server_connection_max_redirects_title">Max server reindirizza</string>
+    <string name="preference_server_connection_max_redirects_summary">%1$d</string>
+    
+
+    
+    <string name="preference_server_connection_force_https_title">Riscrivi gli URL HTTP su Https</string>
+    <string name="preference_server_connection_force_https_summary">Tutti gli URL http:// riscritti in https:// per il server https</string>
+    
+
+    
+    <string name="preference_server_connection_offline_mode_title">Consenti la navigazione offline</string>
+    <string name="preference_server_connection_offline_mode_summary">Usa i dati memorizzati nella cache quando disponibili</string>
+    
+
+    
+    <string name="preference_server_connection_allow_redirects_title">Consenti reindirizzamenti server</string>
+    <string name="preference_server_connection_allow_redirects_summary">Segui le risposte http 3xx</string>
+    
+
+    
+    <string name="preference_server_connection_timeout_secs_title">Timeout connessione (secondi)</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d secondi</string>
+    
+
+    
+    <string name="preference_server_response_timeout_secs_title">Timeout di risposta (secondi)</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d secondi</string>
+    
+
+    
+    <string name="preference_server_alter_cache_directives_title">Modifica le direttive della cache HTTP del server</string>
+    <string name="preference_server_alter_cache_directives_summary">Abilita per consentire l\'accesso offline alla galleria</string>
+    
+
+    
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Codifica del percorso URI per le richieste di risorse</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Prova ad abilitarlo se ricevi 404 errori per i file esistenti</string>
+    
+
+    
+    <string name="preference_server_connection_retries_title">Tentativi di connessione prima dell\'errore</string>
+    <string name="preference_server_connection_retries_summary">%1$d</string>
+    
+
+    
+    <string name="preference_server_basic_auth_username_title">Nome utente di autenticazione di base</string>
+
+    
+    <string name="preference_server_basic_auth_password_title">Password di autenticazione di base</string>
+
+    
+    <string name="preference_server_use_basic_auth_title">Usa autenticazione di base</string>
+    <string name="preference_server_use_basic_auth_summary">Abilitare se il server richiede l\'autenticazione di base</string>
+    
+
+    
+    
+    <string name="preference_server_use_client_certs_title">Usa autenticazione certificato client</string>
+    <string name="preference_server_use_client_certs_summary">Abilitare se il server richiede l\'autenticazione client basata su certificato</string>
+
+    
+    <string name="preference_select_client_certificate_title">Certificati client (e chiavi private)</string>
+    <string name="preference_select_client_certificate_summary">Seleziona Certificato client per l\'autenticazione</string>
+
+    
+    <string name="preference_piwigo_connection_profile_title">Seleziona il profilo di connessione</string>
+    <string name="preference_piwigo_connection_profile_summary">Profilo di connessione attivo (%1$s)</string>
+
+    
+    
+
+    
+    
+    <string name="preference_piwigo_server_address_title">Indirizzo del server</string>
+    <string name="preference_piwigo_server_address_summary">%1$s</string>
+
+    
+    <string name="preference_piwigo_server_username_title">Nome utente</string>
+    <string name="preference_piwigo_server_username_summary">%1$s</string>
+
+
+    
+    <string name="preference_piwigo_server_password_title">Parola d\'ordine</string>
+    <string name="preference_piwigo_server_password_summary">%1$s</string>
+
+    
+    <string name="preference_server_ssl_certificate_hostname_verification_title">Convalida del nome host del certificato SSL</string>
+    <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
+    
+
+    <string name="preference_caching_clearResponseCache_title">Cancella cache di risposta del server</string>
+    
+    <string name="preference_caching_clearResponseCache_summary">Elimina tutte le risposte del server memorizzate nella cache sul disco</string>
+
+    
+    <string name="preference_caching_level_title">Livello di cache di risposta</string>
+    <string name="preference_caching_level_summary">%1$s</string>
+    <string name="preference_caching_level_default">disco</string>
+
+    
+    <string name="preference_caching_max_cache_entries_title">Numero massimo voci cache Elenco</string>
+    <string name="preference_caching_max_cache_entries_summary">%1$d</string>
+    
+
+    
+    <string name="preference_caching_max_cache_entry_size_title">Dimensione voce cache massima (KB)</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
+    
+
+    <string name="preference_connections_category_trusted_server_ca">Autorità di certificazione certificati server attendibili</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">Utilizzare un elenco personalizzato di certificati CA attendibili per convalidare i certificati SSL del server</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_title">Utilizzare le autorità di certificazione affidabili personalizzate</string>
+    
+    
+
+    
+    <string name="preference_select_trusted_certificate_title">Seleziona certificati CA attendibili</string>
+    <string name="preference_select_trusted_certificate_summary">Visualizza e modifica l\'elenco di certificati CA affidabili</string>
+
+    
+
+    
+
+    <string name="preference_page_gallery">Galleria</string>
+    <string name="preference_gallery_category_general">Generale</string>
+    <string name="preference_gallery_category_advanced">Avanzate</string>
+    <string name="preference_gallery_category_slideshow">Presentazione</string>
+    <string name="preference_gallery_category_resources">risorse</string>
+    <string name="preference_gallery_category_albums">Album</string>
+
+    
+
+    
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Panorama: colonne di album da mostrare</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_show_image_name_title">Mostra i nomi delle immagini nell\'album</string>
+    <string name="preference_gallery_show_image_name_summary">Mostra il nome dell\'immagine sotto ogni immagine</string>
+    
+
+    
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Paesaggio: colonne di immagini da mostrare</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Mostra miniatura album ingrandita</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Le miniature degli album sono ritagliate al centro</string>
+    
+
+
+    
+    <string name="preference_gallery_show_file_size_showing_title">Mostra dimensioni server delle foto visualizzate</string>
+    <string name="preference_gallery_show_file_size_showing_summary">Mostra le dimensioni di ogni foto visualizzata</string>
+    
+
+    
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Ritratto: colonne di album da mostrare</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">Ritratto: colonne di immagini da mostrare</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_gallery_include_videos_in_slideshow_title">Mostra video nella presentazione</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">I video devono essere mostrati quando si sfoglia una galleria in modalità presentazione?</string>
+    
+
+    
+    <string name="preference_gallery_enable_video_playback_title">Consenti riproduzione video</string>
+    <string name="preference_gallery_enable_video_playback_summary">Abilitare se si desidera scaricare e riprodurre video su richiesta</string>
+    
+
+    
+    <string name="preference_piwigo_playable_media_extensions_title">Estensioni multimediali supportate</string>
+    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
+
+    
+
+    
+    <string name="preference_video_cache_enabled_title">Cache video visualizzati su file</string>
+    <string name="preference_video_cache_enabled_summary">Se abilitato, tutti i video in streaming verranno memorizzati nella cache per la successiva riproduzione</string>
+    
+
+    
+    <string name="preference_video_cache_maxsize_mb_title">Dimensione massima della cache video (MB)</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
+    
+
+    
+    <string name="preference_gallery_sort_order_title">Ordinamento degli album</string>
+    <string name="preference_gallery_sort_order_summary">%1$s</string>
+    
+
+
+    
+    <string name="preference_album_subalbum_sort_order_title">Ordinamento degli album secondari</string>
+    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+     
+
+
+    
+    <string name="preference_gallery_sort_order_inverted_title">Inverti ordinamento album</string>
+    <string name="preference_gallery_sort_order_inverted_summary">Se abilitato, invertire l\'ordine delle risorse dell\'album selezionato</string>
+    
+
+    
+    <string name="preference_gallery_unique_id_title">Identificatore univoco per le immagini</string>
+    <string name="preference_gallery_unique_id_summary">%1$s</string>
+    
+
+    <string name="preference_gallery_clearMemoryCache_title">Cancella cache in memoria</string>
+    
+    <string name="preference_gallery_clearMemoryCache_summary">Elimina tutte le immagini memorizzate nella cache</string>
+
+    <string name="preference_gallery_clearVideoCache_title">Cancella cache video</string>
+    
+    <string name="preference_gallery_clearVideoCache_summary">Elimina tutti i video memorizzati nella cache sul disco</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Elimina tutti i%1$.2fMB di video memorizzati nella cache su disco</string>
+
+    
+    
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Età recente articoli recenti (giorni)</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d giorni</string>
+     
+    
+
+    
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Il cassetto della presentazione è trasparente</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Il cassetto informazioni sull\'immagine della presentazione è trasparente</string>
+    
+
+    <string name="preference_gallery_slideshow_image_scaletype_title">Tipo di ridimensionamento immagine della presentazione</string>
+    
+    <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
+    
+
+    
+    <string name="preference_gallery_slideshow_image_rotate_title">Ruota l\'immagine in base alle proporzioni dello schermo</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Immagine ruotata per adattarsi allo schermo</string>
+    
+
+    
+    <string name="preference_groups_request_pagesize_title">Gruppi server richiedono dimensioni della pagina</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d elementi</string>
+    
+
+    
+    <string name="preference_users_request_pagesize_title">Il server degli utenti richiede dimensioni della pagina</string>
+    <string name="preference_users_request_pagesize_summary">%1$d elementi</string>
+    
+
+    
+    <string name="preference_album_request_pagesize_title">Dimensione server richiesta album server</string>
+    <string name="preference_album_request_pagesize_summary">%1$d elementi</string>
+    
+
+    <string name="preference_gallery_item_thumbnail_size_title">Dimensione della miniatura della risorsa</string>
+    
+    <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
+    
+
+    <string name="preference_gallery_album_thumbnail_size_title">Dimensione della miniatura dell\'album</string>
+    
+    <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
+    
+
+    <string name="preference_gallery_item_slideshow_image_size_title">Dimensione immagine predefinita della presentazione</string>
+    
+    <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
+    
+
+
+    
+
+    <string name="preference_page_upload">Caricare</string>
+    <string name="preference_upload_category_data_upload_display">Impostazioni visive</string>
+    <string name="preference_upload_category_data_upload">Caricamento dati</string>
+    <string name="preference_upload_category_pre_data_upload_compression">Compressione pre-caricamento</string>
+    <string name="preference_upload_category_advanced">Avanzate</string>
+
+    
+
+    
+    
+    <string name="preference_data_upload_delete_uploaded_summary">Elimina i file caricati correttamente</string>
+    <string name="preference_data_upload_delete_uploaded_title">Eliminazione automatica predefinita</string>
+
+    
+
+    
+    <string name="preference_data_upload_default_privacy_level_summary">File caricati visibili a%1$s</string>
+    
+    <string name="preference_data_upload_default_privacy_level_title">Livello di privacy predefinito</string>
+
+    
+    <string name="preference_data_upload_chunkSizeKb_title">Dimensione massima del blocco di caricamento (KB)</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
+    
+
+    
+    <string name="preference_data_upload_chunk_auto_retries_title">Numero massimo di tentativi di caricamento automatico di blocchi di file</string>
+    <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
+    
+
+    
+    <string name="preference_data_upload_preferredColumnsPortrait_title">Ritratto: colonne di immagini da mostrare</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Paesaggio: colonne di immagini da mostrare</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_data_upload_max_filesize_mb_title">Dimensione massima file da caricare senza preavviso (in MB)</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
+    
+
+    
+    <string name="preference_data_upload_compress_videos_summary">Comprimi i video prima del caricamento</string>
+    <string name="preference_data_upload_compress_videos_title">Comprimi video</string>
+    
+
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_videos_quality_title">Qualità video</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Qualità di compressione video%1$s</string>
+    
+    
+
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Bitrate audio</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Bitrate audio%1$s</string>
+    
+    
+
+    
+    <string name="preference_data_upload_compress_images_summary">Comprimi le immagini prima del caricamento</string>
+    <string name="preference_data_upload_compress_images_title">Comprimi immagini</string>
+    
+
+    <string name="preference_data_upload_compress_images_quality_title">Qualità dell\'immagine</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Qualità di compressione dell\'immagine%1$s</string>
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_images_max_height_title">Altezza massima</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Altezza massima (%1$s pixel)</string>
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_images_max_width_title">Larghezza massima</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Larghezza massima (%1$s pixel)</string>
+    
+    
+    
+    
+
+    <string name="preference_data_upload_compress_images_output_format_title">Formato di output dell\'immagine</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Formato di output della compressione dell\'immagine%1$s</string>
+    
+    
+
+    
+    <string name="preference_page_app">App</string>
+
+    
+
+    <string name="preference_page_other">Altro</string>
+    <string name="preference_other_category_file_selector">Selettore file</string>
+
+    
+
+    
+    
+    <string name="preference_data_file_selector_showFilenames_title">Mostra i nomi dei file</string>
+    <string name="preference_data_file_selector_showFilenames_summary">Nomi dei file visualizzati per ogni file</string>
+
+    
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Orizzontale: colonne di file da mostrare</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Ritratto: colonne di file da mostrare</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
+
+    
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Orizzontale: colonne di cartelle da mostrare</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
+
+    
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Ritratto: colonne di cartelle da mostrare</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
+
+    
+
+    
+    
+    <string name="preference_app_always_show_nav_buttons_title">Mostra sempre i pulsanti di navigazione</string>
+    <string name="preference_app_always_show_nav_buttons_summary">Abilita per impedire il nascondimento automatico dei pulsanti di navigazione</string>
+
+    
+    <string name="preference_app_default_download_folder_title">Scarica nella cartella</string>
+    <string name="preference_app_default_download_folder_summary">%1$s</string>
+
+    
+    
+    <string name="preference_app_always_show_status_bar_title">Mostra sempre la barra di stato</string>
+    <string name="preference_app_always_show_status_bar_summary">Abilita per impedire il nascondimento automatico della barra di stato</string>
+
+    
+    <string name="preference_app_desired_language_title">linguaggio</string>
+    <string name="preference_app_desired_language_summary">%1$s</string>
+
+    
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Mostra di nuovo tutti i suggerimenti utente</string>
+
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+
+    
+
+    
+
+</resources>

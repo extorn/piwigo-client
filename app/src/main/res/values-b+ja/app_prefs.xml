@@ -43,7 +43,7 @@
 
     
     <string name="preference_server_connection_offline_mode_title">オフラインでの閲覧を許可する</string>
-    <string name="preference_server_connection_offline_mode_summary">可能な場合はキャッシュデータを使用する</string>
+    <string name="preference_server_connection_offline_mode_summary">可能な場合はキャッシュされたデータを使用する</string>
     
 
     
@@ -62,12 +62,12 @@
     
 
     
-    <string name="preference_server_alter_cache_directives_title">サーバーHttpキャッシュディレクティブの変更</string>
-    <string name="preference_server_alter_cache_directives_summary">ギャラリーへのオフラインアクセスを許可します</string>
+    <string name="preference_server_alter_cache_directives_title">サーバーのHTTPキャッシュディレクティブの変更</string>
+    <string name="preference_server_alter_cache_directives_summary">ギャラリーへのオフラインアクセスを許可できるようにします</string>
     
 
     
-    <string name="preference_server_connection_uri_path_segment_encoding_title">リソースのリクエストのエンコードURIパス</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_title">リソースのリクエストのURIパスをエンコードする</string>
     <string name="preference_server_connection_uri_path_segment_encoding_summary">存在するファイルの404エラーを受け取った場合は、これを有効にしてください</string>
     
 
@@ -334,7 +334,7 @@
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">最大ファイルチャンクアップロードの最大再試行回数</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">最大ファイルチャンクアップロード再試行回数</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
@@ -383,7 +383,7 @@
     
     
 
-    <string name="preference_data_upload_compress_images_max_height_title">最大高さ</string>
+    <string name="preference_data_upload_compress_images_max_height_title">最高の高さ</string>
     <string name="preference_data_upload_compress_images_max_height_summary">最大の高さ（%1$sピクセル）</string>
     
     

@@ -124,7 +124,7 @@
 
     <string-array name="top_tips" translatable="true">
         <item>"Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé"</item>
-        <item>Pokud se nahrávání nepodaří uspět, zkuste použít předvolbu na stránce pro nahrání nastavení aplikace, abyste odstranili veškerá zbývající selhání nahrávání ze serveru.</item>
+        <item>Pokud se nahrávání nepodaří uspět, zkuste použít předvolbu na stránce pro nahrání nastavení aplikace k odstranění veškerých zbývajících neúspěšných nahrávek ze serveru.</item>
         <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ \"Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání, která je připravena přejít na váš aktuální server</item>
         <item>Dlouhé kliknutí na obrázek (buď miniaturu nebo položku prezentace), který se nepodařilo načíst, aby bylo možné jej znovu načíst</item>
@@ -134,7 +134,7 @@
         <item>Při prohlížení v prezentaci můžete přiblížit obrázek tak, že na obrazovce nakreslíte dva prsty k sobě nebo od sebe</item>
         <item>Pokud jste přihlášeni jako správce, před předáním zařízení příteli k prohlížení fotografií aktivujte funkci zámku aplikace, abyste zabránili nechtěným změnám ve vaší galerii.</item>
         <item>Po zobrazení celého videa, pokud je povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
-        <item>Chcete-li smazat všechny soubory, které mají být nahrány (když úloha právě neprobíhá), klikněte na tlačítko pro smazání souboru \ \'pro upload \'</item>
+        <item>Chcete-li smazat všechny soubory, které mají být nahrány (když úloha právě neprobíhá), klikněte na tlačítko pro smazání souboru \ \'file for upload \'.</item>
         <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server při nahrávání automaticky vygeneruje velikost používanou touto aplikací</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">

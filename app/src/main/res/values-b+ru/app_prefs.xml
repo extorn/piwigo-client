@@ -84,7 +84,7 @@
 
     
     <string name="preference_server_use_basic_auth_title">Использовать базовую аутентификацию</string>
-    <string name="preference_server_use_basic_auth_summary">Включить, если сервер требует базовой аутентификации</string>
+    <string name="preference_server_use_basic_auth_summary">Включить, если для сервера требуется обычная аутентификация</string>
     
 
     
@@ -193,7 +193,7 @@
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_gallery_images_preferredColumnsPortrait_title">Портрет: столбцы изображений, чтобы показать</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">Портрет: столбцы изображений для показа</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
 
     
@@ -339,7 +339,7 @@
     
 
     
-    <string name="preference_data_upload_preferredColumnsPortrait_title">Портрет: столбцы изображений, чтобы показать</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_title">Портрет: столбцы изображений для показа</string>
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
