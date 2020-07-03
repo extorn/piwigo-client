@@ -466,7 +466,7 @@ public class DisplayUtils {
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
         if(BuildConfig.DEBUG) {
-            Log.i(TAG, "Loading color from theme : " + getThemeName(context));
+            Log.d(TAG, "Loading color from theme : " + getThemeName(context));
         }
         theme.resolveAttribute(attrResId, typedValue, true);
         @ColorInt int color;
