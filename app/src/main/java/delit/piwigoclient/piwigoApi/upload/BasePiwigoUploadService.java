@@ -310,7 +310,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (deleteJobConfigFile) {
             DocumentFile stateFile = thisUploadJob.getLoadedFromFile();
             if (stateFile == null) {
-                stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());
+                try {
+                    stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());
+                } catch(IllegalStateException e) {
+                    // to be expected. Ignore.
+                }
             }
             deleteJobStateFile(stateFile);
         }
