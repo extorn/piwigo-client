@@ -47,6 +47,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.NoSubscriberEvent;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -644,6 +645,11 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         isAttachedToWindow = true;
+    }
+
+    @Subscribe
+    public void onEvent(NoSubscriberEvent e) {
+        Logging.log(Log.WARN, TAG, "No subscriber for event " + e.originalEvent.toString());
     }
 
     public boolean isAttachedToWindow() {
