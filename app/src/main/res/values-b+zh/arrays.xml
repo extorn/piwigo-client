@@ -123,7 +123,7 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"您只能看到可以选择上传的文件，这些文件可以在您的服务器上上传。如果您想上传视频，请确保更改服务器的config.inc.php文件，使其包含$ conf [\'upload_form_all_types\'] = true；而不是假的"</item>
+        <item>您只能看到可以选择上传的文件，这些文件可以在您的服务器上上传。如果您想上传视频，请确保更改服务器的config.inc.php文件，使其包含$ conf [\'upload_form_all_types\'] = true；而不是假的</item>
         <item>如果上传无法成功，请尝试使用“应用程序设置”上传页面中的偏好设置，以清除服务器上所有剩余的失败上传</item>
         <item>尝试更新标签时始终会发生错误-\“您不允许删除标签”-确保用户可以添加和删除标签（服务器插件设置）</item>
         <item>与此应用共享来自其他应用的文件，以将其添加到上传屏幕中，准备转到当前服务器</item>
@@ -162,6 +162,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.66.6</item>
+        <item>"错误修正：
+                 -上传完成后当机的问题
+                 -单个文件上传的进度未显示
+                 -在显示上载屏幕的旋转设备上崩溃
+                 -无法向上滚动页面以查看上载设置选项卡上的上载按钮"</item>
         <item>1.4.0.66.5</item>
         <item>"错误修正：
                  -许多导致崩溃的小问题已得到纠正

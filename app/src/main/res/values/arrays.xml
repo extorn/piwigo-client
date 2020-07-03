@@ -264,6 +264,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.66.6</item>
+        <item>"Bugfix:
+                - Issues with crashes after upload completes
+                - progress for individual file upload not shown
+                - crash on rotate device with upload screen shown
+                - unable to scroll page up to view upload button on upload settings tab"</item>
         <item>1.4.0.66.5</item>
         <item>"Bugfix:
                 - Lots of niggles causing crashes have been rectified

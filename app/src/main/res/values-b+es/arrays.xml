@@ -123,9 +123,9 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
+        <item>Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar etiquetas - \ \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Siempre se produce un error al intentar actualizar etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
         <item>Haga clic largo en una imagen (ya sea en miniatura o elemento de presentación de diapositivas) que no se pudo cargar para recuperarla nuevamente</item>
         <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido.</item>
@@ -162,6 +162,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.66.6</item>
+        <item>"Arreglo del fallo:
+                 - Problemas con bloqueos después de completar la carga
+                 - no se muestra el progreso para la carga de archivos individuales
+                 - se bloquea al girar el dispositivo con la pantalla de carga mostrada
+                 - no se puede desplazar la página hacia arriba para ver el botón de carga en la pestaña de configuración de carga"</item>
         <item>1.4.0.66.5</item>
         <item>"Arreglo del fallo:
                  - Se han rectificado muchas molestias que causan accidentes

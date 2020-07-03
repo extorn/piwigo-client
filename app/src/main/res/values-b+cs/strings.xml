@@ -342,7 +342,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="button_agree">Souhlasím</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Varování</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Velikost miniatury, kterou jste vybrali, není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek velikosti \"nejbližší shoda\".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Velikost miniatury, kterou jste vybrali, není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek velikosti "nejbližší shoda".</string>
     <string name="rate_dialog_message">Pokud se vám tato aplikace líbí, bude vám vadit chvilku, abyste ji ohodnotili? Nebude to trvat déle než minutu. Děkuji za vaši podporu!</string>
     <string name="groups_menu_title">Skupiny</string>
     <string name="group_members_pattern">(%1$d členů)</string>
@@ -449,7 +449,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="alert_message_file_upload_cancelled_pattern">Nahrávání souboru (%1$s) bylo zrušeno.</string>
     <string name="alert_message_upload_cancelled">Nahrávání bylo zrušeno</string>
     <string name="alert_message_upload_cancelled_message">Pokud si nepřejete restartovat nahrávání později. Měli byste odstranit soubory z úlohy nahrávání a poté kliknout na upload. Tím se ze serveru odstraní zrušený stav nahrávání.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Vybraný obrázek není nativně podporován serverem, ke kterému jste připojeni. Server vrátí obrázek velikosti \"nejbližší shoda\".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Vybraný obrázek není nativně podporován serverem, ke kterému jste připojeni. Server vrátí obrázek velikosti "nejbližší shoda".</string>
     <string name="logging_out_of_piwigo_pattern">Odhlášení z%1$s</string>
     <string name="loading_new_server_configuration">Načítání nové konfigurace připojení k serveru</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Chcete-li povolit ukládání do mezipaměti na disk, musí být udělen přístup pro zápis do systému souborů. Pokud bude odmítnuto, bude ukládání do paměti cache.</string>
@@ -614,7 +614,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Předvolba%1$s je nenávratná a byla nastavena na%2$s. Obnovte prosím tuto hodnotu v nastavení aplikace"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Předvolba%1$s je nenávratná a byla nastavena na%2$s. Obnovte prosím tuto hodnotu v nastavení aplikace</string>
     <string name="switch_to_cached_mode">Server v současné době není k dispozici. Použít data v mezipaměti?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Komprimujte videa</string>
@@ -659,7 +659,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="create_email_using_app">Vytvořte e-mail pomocí aplikace</string>
     <string name="open_files">Otevřete soubory v aplikaci</string>
     <string name="files_unavailable_to_download_removed_pattern">Váš výběr obsahoval soubory, které nebylo možné zpracovat. Tyto soubory%1$d byly ignorovány. Chcete-li sdílet video soubor, musí být nejprve nejprve lokálně uložen do mezipaměti.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Všechny jednorázové rady pro uživatele se znovu zobrazí"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">Všechny jednorázové rady pro uživatele se znovu zobrazí</string>
     
     
     <string name="delete_uploaded_files_title">Odstraňte nahrané soubory</string>

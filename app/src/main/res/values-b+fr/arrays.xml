@@ -123,9 +123,9 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, assurez-vous de modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux"</item>
+        <item>Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, assurez-vous de modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux</item>
         <item>Si un téléchargement ne réussit pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur.</item>
-        <item>Une erreur se produit toujours lorsque vous essayez de mettre à jour des balises - \ \"Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre de plug-in de serveur)</item>
+        <item>Une erreur se produit toujours lorsque vous essayez de mettre à jour des balises - \ "Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre de plug-in de serveur)</item>
         <item>Partagez des fichiers à partir d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à accéder à votre serveur actuel</item>
         <item>Cliquez longuement sur une image (miniature ou diaporama) qui n\'a pas pu être chargée pour la récupérer à nouveau</item>
         <item>Cliquez longuement sur un album pour supprimer cet album et tout son contenu</item>
@@ -162,6 +162,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.66.6</item>
+        <item>"Correction d\'un bug:
+                 - Problèmes de plantages une fois le téléchargement terminé
+                 - la progression du téléchargement de fichiers individuels n\'est pas affichée
+                 - crash sur rotation de l\'appareil avec écran de téléchargement affiché
+                 - impossible de faire défiler la page vers le haut pour afficher le bouton de téléchargement sur l\'onglet des paramètres de téléchargement"</item>
         <item>1.4.0.66.5</item>
         <item>"Correction d\'un bug:
                  - Beaucoup de problèmes provoquant des accidents ont été corrigés

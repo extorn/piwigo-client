@@ -342,7 +342,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
     <string name="alert_warning">avertissement</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de miniature que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \ \"correspondance la plus proche \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de miniature que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \ "correspondance la plus proche \".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, cela vous dérangerait-il de prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -449,7 +449,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Téléchargement annulé</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers du travail de téléchargement, puis cliquer sur télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \ \"correspondance la plus proche \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \ "correspondance la plus proche \".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour permettre la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. En cas de refus, la mise en cache sera en mémoire.</string>
@@ -614,7 +614,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application"</string>
+    <string name="preference_corrupt_please_re_type_pattern">La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données en cache?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -659,7 +659,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="create_email_using_app">Créer un e-mail à l\'aide d\'une application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contient des fichiers qui n\'ont pas pu être traités. Ces fichiers%1$d ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d\'utilisation uniques s\'afficheront à nouveau"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">Tous les conseils d\'utilisation uniques s\'afficheront à nouveau</string>
     
     
     <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>

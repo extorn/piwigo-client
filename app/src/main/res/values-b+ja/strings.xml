@@ -614,7 +614,7 @@ piwigo_privacyプラグインとVideoJSプラグインをインストールし�
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"設定%1$sは取得できず、デフォルトで%2$sに設定されています。アプリの設定でこの値をリセットしてください"</string>
+    <string name="preference_corrupt_please_re_type_pattern">設定%1$sは取得できず、デフォルトで%2$sに設定されています。アプリの設定でこの値をリセットしてください</string>
     <string name="switch_to_cached_mode">サーバーは現在利用できません。キャッシュデータを使用しますか？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">ビデオを圧縮する</string>
@@ -659,7 +659,7 @@ piwigo_privacyプラグインとVideoJSプラグインをインストールし�
     <string name="create_email_using_app">アプリを使用してメールを作成する</string>
     <string name="open_files">アプリでファイルを開く</string>
     <string name="files_unavailable_to_download_removed_pattern">選択に処理できないファイルが含まれていました。これらの%1$dファイルは無視されました。ビデオファイルを共有するには、まずローカルで完全にキャッシュする必要があります。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"すべての1回限りのユーザーヒントが再び表示されます"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">すべての1回限りのユーザーヒントが再び表示されます</string>
     
     
     <string name="delete_uploaded_files_title">アップロードしたファイルを削除する</string>

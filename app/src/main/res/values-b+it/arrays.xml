@@ -162,6 +162,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.66.6</item>
+        <item>"Risoluzione del problema:
+                 - Problemi con arresti anomali al termine del caricamento
+                 - avanzamento per il caricamento di singoli file non mostrato
+                 - crash sul dispositivo di rotazione con la schermata di caricamento mostrata
+                 - impossibile scorrere la pagina verso l\'alto per visualizzare il pulsante di caricamento nella scheda delle impostazioni di caricamento"</item>
         <item>1.4.0.66.5</item>
         <item>"Risoluzione del problema:
                  - Sono stati rettificati molti problemi che causavano arresti anomali
