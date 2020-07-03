@@ -102,7 +102,7 @@
             android:layout_height="wrap_content"
             android:text="@string/upload_tab_title_settings" />
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/upload_settings_scollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -282,7 +282,7 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
     </delit.libs.ui.view.CustomViewPager>
 
