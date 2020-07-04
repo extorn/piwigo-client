@@ -61,7 +61,6 @@
 
 -dontwarn com.google.android.gms.**
 
-#-keep class delit.libs.ui.view.SlidingTabLayout* { public *; }
 -keep class delit.libs.ui.view.SlidingTabLayout$TabColorizer { public *; }
 
 -keep class com.google.ads.** { public *; }
