@@ -20,10 +20,13 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 
+import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
 import delit.libs.util.ArrayUtils;
 
 public class BundleUtils {
+
+    private static final String TAG = "BundleUtils";
 
     public static <T extends Serializable> T getSerializable(Bundle bundle, String key, Class<T> clazz) {
         try {
@@ -228,6 +231,10 @@ public class BundleUtils {
     }
 
     public static void logSizeVerbose(String bundleId, Bundle bundle) {
+        if(!BuildConfig.DEBUG) {
+            Logging.log(Log.WARN, TAG, "Inadvertently left debug code in production code");
+            return;
+        }
 
         for (String bundleItemKey : bundle.keySet()) {
             Parcel parcel = Parcel.obtain();

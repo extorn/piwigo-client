@@ -1624,7 +1624,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     private boolean deleteUploadedResourceFromServer(UploadJob uploadJob, ResourceItem uploadedResource) {
 
         if(uploadedResource == null) {
-            Log.w(TAG, "cannot delete uploaded resource from server, as we are missing a reference to it (presumably upload has not been started)!");
+            Logging.log(Log.WARN, TAG, "cannot delete uploaded resource from server, as we are missing a reference to it (presumably upload has not been started)!");
             return true;
         }
         if (PiwigoSessionDetails.isAdminUser(uploadJob.getConnectionPrefs())) {

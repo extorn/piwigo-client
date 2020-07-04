@@ -64,19 +64,19 @@ public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerP
             return constructor.newInstance(position);
 
         } catch (NoSuchMethodException e) {
-            Logging.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
+            Logging.log(Log.ERROR, TAG, tabClass.getName());
             Logging.recordException(e);
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
-            Logging.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
+            Logging.log(Log.ERROR, TAG, tabClass.getName());
             Logging.recordException(e);
             throw new RuntimeException(e);
         } catch (java.lang.InstantiationException e) {
-            Logging.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
+            Logging.log(Log.ERROR, TAG, tabClass.getName());
             Logging.recordException(e);
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
-            Logging.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
+            Logging.log(Log.ERROR, TAG, tabClass.getName());
             Logging.recordException(e);
             throw new RuntimeException(e);
         }

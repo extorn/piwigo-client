@@ -171,7 +171,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 buffer.flip();
                 synchronized (destinationChannel) {
                     if (!destinationChannel.isOpen()) {
-                        Log.d(TAG, "response handler is being run after the local cache file has been closed. Exiting");
+                        Logging.log(Log.DEBUG, TAG, "response handler is being run after the local cache file has been closed. Exiting");
                         //exit while loop
                         break;
                     }
@@ -263,7 +263,9 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
                     firstContentByte = Long.parseLong(matcher.group(1));
 
-                    Log.d(TAG, String.format("RETRIEVED BYTES %1$d-%2$d of %3$d", firstContentByte, lastContentByte, totalFileContentBytes));
+                    if(BuildConfig.DEBUG) {
+                        Log.d(TAG, String.format("RETRIEVED BYTES %1$d-%2$d of %3$d", firstContentByte, lastContentByte, totalFileContentBytes));
+                    }
 
                     long contentLengthFromRange =
                             (lastContentByte - firstContentByte) + 1;

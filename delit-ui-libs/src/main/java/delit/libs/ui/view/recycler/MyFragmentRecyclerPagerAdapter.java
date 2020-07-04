@@ -156,7 +156,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         if (f == null) {
             f = createNewItem(fragmentTypeNeeded, position);
             if (f == null) {
-                Log.e(TAG, "Fragment must implement PagerItemFragment");
+                Logging.log(Log.ERROR, TAG, "Fragment must implement PagerItemFragment");
             }
 
             addFragmentToTransaction(container, f, position);
@@ -265,9 +265,10 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             mCurTransaction = mFragmentManager.beginTransaction();
         }
 
-        if (DEBUG) Log.v(TAG, "Removing item #" + position + ": f=" + object
-                + " v=" + fragment.getView());
-
+        if (DEBUG) {
+            Log.v(TAG, "Removing item #" + position + ": f=" + object
+                    + " v=" + fragment.getView());
+        }
         recordPageState(fragment, position);
         tidyPageState();
 

@@ -536,7 +536,6 @@ public class ExoPlayerCompression {
             } catch(Exception e) {
                 Logging.log(Log.ERROR, TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.");
                 Logging.recordException(e);
-                Log.e(TAG, "Unexpected error in exo player compression listener thread. Cancelling compression.", e);
                 cancel();
             }
         }

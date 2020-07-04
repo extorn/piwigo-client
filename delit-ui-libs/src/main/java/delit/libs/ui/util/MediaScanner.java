@@ -99,7 +99,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
                     sb.append(", ");
                 }
             }
-            Log.d(TAG, sb.toString());
+            Logging.log(Log.DEBUG, TAG, sb.toString());
         }
     }
 
