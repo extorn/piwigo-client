@@ -905,6 +905,9 @@ public class AdsManager {
     }
 
     private void buildNonEuConsentForm(Context context, List<AdProvider> adProviders) {
+        if(!DisplayUtils.canShowDialog(context)) {
+            return;
+        }
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
         View view = LayoutInflater.from(dialogBuilder.getContext()).inflate(R.layout.layout_dialog_advert_consent_non_eu, null);
         SwitchMaterial personalisedAdsField = view.findViewById(R.id.personalised_adverts_field);
@@ -936,8 +939,10 @@ public class AdsManager {
         // don't allow the user to cancel as we need this set up before we can begin serving adverts.
         //dialogBuilder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
         dialogBuilder.setCancelable(false);
-        dialogBuilder.show();
 
+        if(DisplayUtils.canShowDialog(context)) {
+            dialogBuilder.show();
+        }
     }
 
     private void updateConsentInformation(Context context, ConsentStatus consentStatus) {

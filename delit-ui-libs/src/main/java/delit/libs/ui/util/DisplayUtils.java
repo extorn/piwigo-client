@@ -552,6 +552,19 @@ public class DisplayUtils {
         return aspect;
     }
 
+    /**
+     * Check if a good idea.
+     * @param context
+     * @return
+     */
+    public static boolean canShowDialog(Context context) {
+        Activity activity = getActivity(context);
+        if(activity != null && activity.isFinishing()) {
+            return false;
+        }
+        return true;
+    }
+
     private static class SystemUiVisibilityChangeListener implements View.OnSystemUiVisibilityChangeListener {
 
         private View decorView;
