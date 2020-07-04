@@ -1,3 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title" translatable="false">Piwigo Client - Free</string>
+    <string name="shortDesc">
+Browse and alter content on the Piwigo photo gallery of your choice
+    </string>
+    <string name="longDesc">
 Use to browse a PIWIGO photo gallery.
 
 NOTE: EULA must be accepted on download.
@@ -42,3 +49,5 @@ Known limitations:
 
 1. Comments are currently unsupported - you can neither see comments nor add them. If this missing feature is important to you - please talk to me.
 2. The number of files that can be added to an upload job is limited to 5 in this free version (use the paid version to remove this limit)
+    </string>
+</resources>

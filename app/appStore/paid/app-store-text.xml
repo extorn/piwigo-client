@@ -1,3 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title" translatable="false">Piwigo Client - Pro</string>
+    <string name="shortDesc">
+Browse and alter content on the Piwigo photo gallery of your choice
+    </string>
+    <string name="longDesc">
 Use to browse a PIWIGO photo gallery.
 
 NOTE: EULA must be accepted on download.
@@ -20,7 +27,7 @@ Download images.
 Save fully downloaded videos
 Optionally exclude videos from slide-shows
 Rate images and view average ratings
-Upload new images or videos  (can be optionally compressed)
+Upload new images or videos (can be optionally compressed)
 Automatic device folder monitoring and upload of files in a background job
 View, add, amend, delete Tags and Tagged images
 Setting and amend permissions, description, and other details of albums and files
@@ -41,7 +48,8 @@ Upcoming Changes:
 The intention is to enhance the user interface progressively, and one of the users, David Klement, has kindly provided some suggestions for screen layouts going forward which I have started using from version 1.3.95 and will no doubt be taking more ideas from. The proposals are available in full:
 https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html
 
-
 Known limitations:
 
 1. Comments are currently unsupported - you can neither see comments nor add them. If this missing feature is important to you - please talk to me.
+    </string>
+</resources>
