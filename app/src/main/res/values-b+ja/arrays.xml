@@ -162,7 +162,7 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
-        <item>1.4.0.66.6</item>
+        <item>1.4.0.66.7</item>
         <item>"バグ修正：
                  -アップロード完了後のクラッシュに関する問題
                  -個々のファイルのアップロードの進行状況は表示されません
