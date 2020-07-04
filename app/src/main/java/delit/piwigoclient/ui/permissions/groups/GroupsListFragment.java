@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
@@ -57,6 +59,7 @@ import delit.piwigoclient.ui.model.PiwigoGroupsModel;
 public class GroupsListFragment extends MyFragment<GroupsListFragment> {
 
     private static final String GROUPS_MODEL = "groupsModel";
+    private static final String TAG = "GrpLstFrag";
     private final ConcurrentHashMap<Long, Group> deleteActionsPending = new ConcurrentHashMap<>();
     private ExtendedFloatingActionButton retryActionButton;
     private PiwigoGroups groupsModel;
@@ -208,6 +211,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
             groupsModel.clear();
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -343,11 +347,14 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
 
     private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<GroupsListFragment> {
+
+        private static final String TAG = "GrpLstPwgResLstnr";
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -361,6 +368,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    Logging.log(Log.INFO, TAG, "removing from activity as not admin");
                     getParent().getParentFragmentManager().popBackStack();
                     return;
                 }

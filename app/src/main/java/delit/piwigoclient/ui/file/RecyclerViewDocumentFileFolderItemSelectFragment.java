@@ -625,6 +625,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

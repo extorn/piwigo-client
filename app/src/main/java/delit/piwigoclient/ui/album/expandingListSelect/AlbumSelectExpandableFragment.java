@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.album.expandingListSelect;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -54,6 +56,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
     private static final String STATE_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
     private static final String STATE_ROOT_ALBUM = "rootAlbum";
+    private static final String TAG = "ExpAlbFrag";
     private CategoryItem rootAlbum;
     private ArrayList<CategoryItem> availableAlbums;
     private int actionId;
@@ -200,6 +203,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         loadStateFromBundle(savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as server connection changed");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -370,6 +374,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), selectedAlbumIds, selectedAlbums, albumPaths));
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately on select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

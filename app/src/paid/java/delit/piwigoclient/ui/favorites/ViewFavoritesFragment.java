@@ -84,6 +84,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
     private static final String STATE_FAVORITES_DIRTY = "favoritesIsDirty";
+    private static final String TAG = "FavsFrag";
 
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private ExtendedFloatingActionButton retryActionButton;
@@ -254,6 +255,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
                 reloadFavoritesModel();
             } else {
                 // immediately leave this screen.
+                Logging.log(Log.INFO, TAG, "Unable to show favorites page - removing from activity");
                 getParentFragmentManager().popBackStack();
             }
         }

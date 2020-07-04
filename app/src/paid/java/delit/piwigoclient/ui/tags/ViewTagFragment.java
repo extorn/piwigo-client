@@ -271,6 +271,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 reloadTagModel();
             } else {
                 // immediately leave this screen.
+                Logging.log(Log.INFO, TAG, "removing from activity as no longer logged in");
                 getParentFragmentManager().popBackStack();
             }
         }
@@ -913,6 +914,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         @Override
         public boolean onFailure(FragmentUIHelper<ViewTagFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ViewTagFragment fragment = uiHelper.getParent();
+            Logging.log(Log.INFO, TAG, "removing from activity on piwigo error");
             fragment.getParentFragmentManager().popBackStack();
             return false;
         }

@@ -268,6 +268,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     // get the next album to show
                     CategoryItem nextAlbumToShow = ((ViewAlbumFragment) currentFragment).getParentAlbum();
                     if (nextAlbumToShow != null) {
+                        Logging.log(Log.INFO, TAG, "removing from activity to show next (parent) album");
                         getSupportFragmentManager().popBackStack();
                         // open this fragment again, but with new album
                         showGallery(nextAlbumToShow);
@@ -1186,11 +1187,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(SlideshowEmptyEvent event) {
+        Logging.log(Log.INFO, TAG, "removing from activity immediately as slideshow empty event rxd");
         getSupportFragmentManager().popBackStackImmediate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumCreatedEvent event) {
+        Logging.log(Log.INFO, TAG, "removing from activity immediately as album created event rxd");
         getSupportFragmentManager().popBackStackImmediate();
     }
 

@@ -320,6 +320,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
         if(event.item.getId() == this.getModel().getId() && isVisible() && showingOutsideSlideshow) {
+            Logging.log(Log.INFO, TAG, "removing from activity after deleted item");
             getParentFragmentManager().popBackStack();
         }
     }

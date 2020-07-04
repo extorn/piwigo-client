@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.util.CollectionUtils;
@@ -88,6 +90,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     private static final String IN_FLIGHT_MEMBER_SAVE_ACTION_IDS = "memberSaveActionIds";
     private static final String IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS = "permissionsSaveActionIds";
     private static final String STATE_SELECT_USERS_ACTION_ID = "selectUsersActionId";
+    private static final String TAG = "GrpFrag";
     private final HashSet<Long> memberSaveActionIds = new HashSet<>(2);
     private final HashSet<Long> permissionsSaveActionIds = new HashSet<>(2);
     // Fields
@@ -280,6 +283,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_group_details, new GroupsGetListResponseHandler(currentGroup.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -321,6 +325,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
             HashSet<Group> groups = response.getGroups();
             GroupFragment groupFragment = uiHelper.getParent();
             if(groups.isEmpty()) {
+                Logging.log(Log.INFO, TAG, "removing from activity as group not available any more");
                 groupFragment.getParentFragmentManager().popBackStack();
                 return false;
             }
@@ -333,6 +338,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
 
         @Override
         public boolean onFailure(FragmentUIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            Logging.log(Log.INFO, TAG, "removing from activity on piwigo error response rxd");
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
         }
@@ -627,6 +633,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         EventBus.getDefault().post(new GroupDeletedEvent(currentGroup));
         // return to previous screen
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately on this group deleted");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -722,15 +729,19 @@ public class GroupFragment extends MyFragment<GroupFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
 
     private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<GroupFragment> {
+        private static final String TAG = "GroupFrag";
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
                     getParent().getParentFragmentManager().popBackStack();
                     return;
                 }

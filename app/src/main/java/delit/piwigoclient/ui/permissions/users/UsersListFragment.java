@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
@@ -56,6 +58,7 @@ import delit.piwigoclient.ui.model.PiwigoUsersModel;
 
 public class UsersListFragment extends MyFragment<UsersListFragment> {
 
+    private static final String TAG = "UsrListFrag";
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private ExtendedFloatingActionButton retryActionButton;
     private PiwigoUsers usersModel;
@@ -211,6 +214,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
             usersModel.clear();
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -348,6 +352,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -366,6 +371,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
                     getParent().getParentFragmentManager().popBackStack();
                     return;
                 }

@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.Enableable;
 import delit.libs.ui.view.list.SelectableItemsAdapter;
@@ -46,6 +48,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private static final String ARG_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
+    private static final String TAG = "LogSetSelFrag";
 
     private Y list;
     private X listAdapter;
@@ -315,6 +318,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected void onCancelChanges() {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately on cancel changes action");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

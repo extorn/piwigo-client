@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.album.create;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -64,6 +66,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
     private static final String STATE_SET_GALLERY_PERMISSIONS_CALL_ID = "setGalleryPermissionsCallId";
     private static final String STATE_DELETE_GALLERY_CALL_ID = "deleteGalleryCallId";
     private static final String STATE_ACTION_ID = "actionId";
+    private static final String TAG = "CrAlbFrag";
     private CategoryItemStub parentGallery;
     private TextView galleryNameEditField;
     private TextView galleryDescriptionEditField;
@@ -290,6 +293,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
         super.onViewCreated(view, savedInstanceState);
         if (!isAllowedToCreateAlbum()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity immediately");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -393,6 +397,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

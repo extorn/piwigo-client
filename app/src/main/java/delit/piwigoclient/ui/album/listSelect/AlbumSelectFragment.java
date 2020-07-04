@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.album.listSelect;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -34,6 +36,7 @@ import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
+    private static final String TAG = "AlbumSelFrag";
     private ArrayList<CategoryItemStub> availableAlbums;
 
     public static AlbumSelectFragment newInstance(AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
@@ -74,6 +77,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as server connection has changed");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -164,6 +168,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
             EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
             // now pop this screen off the stack.
             if (isVisible()) {
+                Logging.log(Log.INFO, TAG, "removing from activity immediately as select action complete");
                 getParentFragmentManager().popBackStackImmediate();
             }
         }

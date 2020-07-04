@@ -338,6 +338,7 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumCreatedEvent event) {
+        Logging.log(Log.INFO, TAG, "removing from activity immediately on album created");
         getSupportFragmentManager().popBackStackImmediate();
     }
 

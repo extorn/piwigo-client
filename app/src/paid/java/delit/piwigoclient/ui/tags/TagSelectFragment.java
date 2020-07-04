@@ -56,6 +56,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
     private static final String TAGS_MODEL = "tagsModel";
     private static final String ARGS_UNSAVED_TAGS = "unsavedTags";
+    private static final String TAG = "TagSelFrag";
     private PiwigoTags tagsModel;
 
     public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection, HashSet<Tag> unsavedNewTags) {
@@ -128,6 +129,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         if(isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as server connection changed");
             getParentFragmentManager().popBackStack();
             return null;
         }
@@ -397,6 +399,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         EventBus.getDefault().post(new TagSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if(isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as tags selected");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

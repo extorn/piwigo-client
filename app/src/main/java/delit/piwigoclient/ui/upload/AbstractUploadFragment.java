@@ -872,8 +872,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         final PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if ((sessionDetails == null || (!sessionDetails.isAdminUser() && !sessionDetails.isUseCommunityPlugin())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
-            getParentFragmentManager().popBackStack();
             Logging.log(Log.ERROR, TAG, "Unable to view upload fragment - removing from activity");
+            getParentFragmentManager().popBackStack();
         }
     }
 
@@ -1297,6 +1297,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

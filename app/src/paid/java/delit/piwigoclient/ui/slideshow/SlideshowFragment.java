@@ -130,6 +130,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
 
         @Override
         public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            Logging.log(Log.INFO, TAG, "removing from activity on piwigo failure");
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
         }

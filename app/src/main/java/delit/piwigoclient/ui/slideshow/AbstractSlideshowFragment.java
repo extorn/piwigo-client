@@ -128,6 +128,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             if (resourceContainer == null || resourceContainer.getItemCount() == 0) {
                 // attempt to get back to a working fragment.
                 try {
+                    Logging.log(Log.INFO, TAG, "removing from activity immediately");
                     getParentFragmentManager().popBackStackImmediate();
                 } catch (RuntimeException e) {
                     Logging.log(Log.WARN, TAG, "Unable to popBackStackImmediate - requesting it instead");
@@ -247,6 +248,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 reloadSlideshowModel();
             } else {
                 // immediately leave this screen.
+                Logging.log(Log.INFO, TAG, "removing from activity as now not logged in");
                 getParentFragmentManager().popBackStack();
             }
         }
@@ -331,6 +333,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 galleryItemAdapter.deleteGalleryItem(fullGalleryIdx);
                 if (galleryItemAdapter.getCount() == 0) {
                     // slideshow is now empty close this page.
+                    Logging.log(Log.INFO, TAG, "removing from activity as slideshow empty");
                     getParentFragmentManager().popBackStack();
                 }
             }
@@ -414,6 +417,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
             if (response.getAlbums().isEmpty()) {
                 // will occur if the album no longer exists.
+                Logging.log(Log.INFO, TAG, "removing from activity as album no longer exists");
                 fragment.getParentFragmentManager().popBackStack();
                 return false;
             }
@@ -432,6 +436,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         @Override
         public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
+            Logging.log(Log.INFO, TAG, "removing from activity after piwigo error response");
             fragment.getParentFragmentManager().popBackStack();
             return false;
         }

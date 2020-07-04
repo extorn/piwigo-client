@@ -152,6 +152,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         } else {
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 // pop the current fragment off
+                Logging.log(Log.INFO, TAG, "removing from activity - on default back button op");
                 getSupportFragmentManager().popBackStack();
                 // get the next fragment
                 int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
@@ -538,6 +539,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
             i++;
         }
         if (found) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as intentional flush of stack");
             getSupportFragmentManager().popBackStackImmediate(popToStateId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
         return found;
@@ -561,6 +563,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         }
 
         if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as want to show and dups not allowed");
             getSupportFragmentManager().popBackStackImmediate();
         }
 

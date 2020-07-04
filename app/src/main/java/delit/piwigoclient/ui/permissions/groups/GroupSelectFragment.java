@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
@@ -42,6 +44,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String GROUPS_MODEL = "groupsModel";
+    private static final String TAG = "GrpSelFrag";
     private PiwigoGroups groupsModel;
 
     public static GroupSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
@@ -142,6 +145,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as server connection changed");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -228,6 +232,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         EventBus.getDefault().post(new GroupSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

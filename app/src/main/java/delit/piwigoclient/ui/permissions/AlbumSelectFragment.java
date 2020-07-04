@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.permissions;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -34,6 +36,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
+    private static final String TAG = "AlbumSelect";
     private ArrayList<CategoryItemStub> availableItems;
     private HashSet<Long> indirectSelection;
 
@@ -97,6 +100,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         super.onViewCreated(view, savedInstanceState);
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "Unable to show album select page - removing from activity");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -156,6 +160,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
 
         // now pop this screen off the stack.
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as select action complete");
             getParentFragmentManager().popBackStackImmediate();
         }
     }

@@ -639,6 +639,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     galleryIsDirty = true;
                 } else {
                     // immediately leave this screen.
+                    Logging.log(Log.INFO, TAG, "Unable to show album page - removing from activity");
                     getParentFragmentManager().popBackStack();
                 }
             }
@@ -2140,6 +2141,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         }
         if (exitFragment) {
+            Logging.log(Log.INFO, TAG, "removing from activity on album deleted piwigo response rxd");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -2528,6 +2530,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         public void onDismiss(AlertDialog dialog) {
             super.onDismiss(dialog);
             try {
+                Logging.log(Log.INFO, TAG, "removing from activity on dialog dismiss");
                 getUiHelper().getParent().getParentFragmentManager().popBackStack();
             } catch(IllegalStateException e) {
                 Logging.log(Log.ERROR, TAG, "Unable to pop fragment as it is no longer visible!");

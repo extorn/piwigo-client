@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.upload;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
@@ -28,6 +30,7 @@ import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDetailsFragment> {
     private static final String STATE_UPLOAD_JOB_ID = "uploadJobId";
+    private static final String TAG = "UpJobStatFrag";
     private UploadJob uploadJob;
 
     public static UploadJobStatusDetailsFragment newInstance(UploadJob job) {
@@ -71,6 +74,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDe
         }
 
         if(uploadJob == null) {
+            Logging.log(Log.INFO, TAG, "removing from activity as no upload job to show status for");
             getParentFragmentManager().popBackStack();
             return;
         }

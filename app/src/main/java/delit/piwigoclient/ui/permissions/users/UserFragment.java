@@ -99,6 +99,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     private static final String STATE_NEW_GROUP_MEMBERSHIP = "newGroupMembership";
     private static final String IN_FLIGHT_SAVE_ACTION_IDS = "saveActionIds";
     private static final String STATE_SELECT_GROUPS_ACTION_ID = "selectGroupsActionId";
+    private static final String TAG = "UsrFrag";
     // other stuff
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.UK);
     private final HashSet<Long> saveActionIds = new HashSet<>(5);
@@ -428,6 +429,8 @@ public class UserFragment extends MyFragment<UserFragment> {
 
     private static class UserFragmentAction extends UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> implements Parcelable {
 
+        private static final String TAG = "UsrFrag";
+
         protected UserFragmentAction() {}
 
         protected UserFragmentAction(Parcel in) {
@@ -474,6 +477,7 @@ public class UserFragment extends MyFragment<UserFragment> {
 
         @Override
         public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            Logging.log(Log.INFO, TAG, "removing from activity on piwigo error response rxd");
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
         }
@@ -488,6 +492,7 @@ public class UserFragment extends MyFragment<UserFragment> {
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_user_details, new UserGetInfoResponseHandler(user.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -820,6 +825,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as user deleted piwigo response rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -862,6 +868,7 @@ public class UserFragment extends MyFragment<UserFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
@@ -871,6 +878,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (getParent().isVisible()) {
                 if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    Logging.log(Log.INFO, TAG, "removing from activity as not admin user");
                     getParent().getParentFragmentManager().popBackStack();
                     return;
                 }

@@ -18,6 +18,7 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.libs.ui.view.recycler.SimpleFragmentPagerAdapter;
 import delit.piwigoclient.R;
@@ -50,7 +52,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
  */
 public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragment> {
 
-    static final String LOG_TAG = "PreferencesFragment";
+    private static final String TAG = "CmnPrefFrag";
 
     public CommonPreferencesFragment() {
         // Required empty public constructor
@@ -108,6 +110,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         super.onViewCreated(view, savedInstanceState);
         if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
             // immediately leave this screen.
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as not logged in or app read only mode");
             getParentFragmentManager().popBackStack();
         }
     }
@@ -120,6 +123,7 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
+            Logging.log(Log.INFO, TAG, "removing from activity immediately as app locked event rxd");
             getParentFragmentManager().popBackStackImmediate();
         }
     }
