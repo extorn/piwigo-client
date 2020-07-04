@@ -730,8 +730,9 @@ public abstract class UIHelper<T> {
                         onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[0]), new int[0]);
                     }
                 });
-                alert.create().show();
-
+                if(DisplayUtils.canShowDialog(activity)) {
+                    alert.create().show();
+                }
             } else {
 //                EventBus.getDefault().post(event);
                 // No explanation needed, we can request the permission.
