@@ -614,8 +614,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             Uri shareFileUri = downloadedFile;
             try {
                 shareFileUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", Objects.requireNonNull(LegacyIOUtils.getFile(downloadedFile)));
-            } catch (IOException|NullPointerException e) {
-                Logging.log(Log.ERROR, TAG, "File to share is not a raw file (file://). Share it as is.", e);
+            } catch (IOException|NullPointerException|IllegalArgumentException e) {
+                Logging.log(Log.ERROR, TAG, "File to share ("+shareFileUri+")is not a raw file or stored inside this app folder (file://). Share it as is.", e);
             }
             String ext = MimeTypeMap.getFileExtensionFromUrl(downloadedFile.toString());
             String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
