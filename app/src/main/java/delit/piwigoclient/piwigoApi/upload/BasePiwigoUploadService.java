@@ -353,10 +353,12 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             filename = "uploadJob.state";
         }
         DocumentFile file =  jobsFolder.findFile(filename);
-        if(createIfMissing && file == null) {
-            file = Objects.requireNonNull(jobsFolder.createFile("",filename));
-        } else {
-            throw new IllegalStateException("unable to find job state file, but not allowed to create it when missing");
+        if(file == null) {
+            if (createIfMissing) {
+                file = Objects.requireNonNull(jobsFolder.createFile("", filename));
+            } else {
+                throw new IllegalStateException("unable to find job state file, but not allowed to create it when missing");
+            }
         }
         return file;
     }
