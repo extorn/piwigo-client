@@ -809,11 +809,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         @Override
         protected List<FilesToUploadRecyclerViewAdapter.UploadDataItem> doInBackgroundSafely(Void... nothing) {
-            uploadJob.withContext(getUiHelper().getAppContext());
-            int itemCount = uploadJob.getFilesNotYetUploaded().size();
+            int itemCount = uploadJob.getFilesNotYetUploaded(getUiHelper().getAppContext()).size();
             List<FilesToUploadRecyclerViewAdapter.UploadDataItem> itemsToBeUploaded = new ArrayList<>(itemCount);
             int currentItem = 0;
-            for(Uri toUpload : uploadJob.getFilesNotYetUploaded()) {
+            for(Uri toUpload : uploadJob.getFilesNotYetUploaded(getUiHelper().getAppContext())) {
                 currentItem++;
                 // this recalculates the hash-codes - maybe unnecessary, but the file could have been altered since added to the job
                 itemsToBeUploaded.add(new FilesToUploadRecyclerViewAdapter.UploadDataItem(toUpload, null, null));
@@ -831,7 +830,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             for (Uri f : adapter.getFiles()) {
                 int progress = uploadJob.getUploadProgress(f);
-                int compressionProgress = uploadJob.getCompressionProgress(f);
+                int compressionProgress = uploadJob.getCompressionProgress(getUiHelper().getAppContext(), f);
                 if (compressionProgress == 100) {
                     Uri compressedFile = uploadJob.getCompressedFile(f);
                     if (compressedFile != null) {
@@ -1005,7 +1004,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
             boolean isDeleteFilesAfterUpload = deleteFilesAfterUploadCheckbox.isChecked();
             activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, privacyLevelWanted, handlerId, isDeleteFilesAfterUpload);
-            activeJob.withContext(requireContext());
             if (compressVideosCheckbox.isChecked()) {
                 UploadJob.VideoCompressionParams vidCompParams = new UploadJob.VideoCompressionParams();
                 vidCompParams.setQuality(((double) compressVideosQualitySpinner.getSelectedItemId()) / 1000);
@@ -1174,7 +1172,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
             if (job != null) {
                 uploadJobStatusButton.setVisibility(VISIBLE);
-                boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully();
+                boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully(ctx);
                 deleteUploadJobButton.setVisibility(canForceDeleteJob ? VISIBLE : GONE);
             } else {
                 uploadJobStatusButton.setVisibility(GONE);
@@ -1740,13 +1738,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onRequestedFileUploadCancelComplete(Context context, Uri cancelledFile) {
+        protected void onRequestedFileUploadCancelComplete(@NonNull Context context, Uri cancelledFile) {
             if (getParent() != null && getParent().isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
                 adapter.remove(cancelledFile);
                 getParent().releaseUriPermissionsForUploadItem(cancelledFile);
                 UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, getParent().uploadJobId);
-                updateOverallUploadProgress(uploadJob.getUploadProgress());
+                updateOverallUploadProgress(uploadJob.getUploadProgress(context));
             }
             if (getParent() != null && getParent().uploadJobId != null) {
                 if (getParent() != null && getParent().isAdded()) {
@@ -1756,15 +1754,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     }
                 }
             } else {
-                FirebaseAnalytics.getInstance(getParent().requireContext()).logEvent("noJobDelFile", null);
+                FirebaseAnalytics.getInstance(context).logEvent("noJobDelFile", null);
             }
         }
 
         @Override
-        protected void onUploadComplete(final Context context, final UploadJob job) {
+        protected void onUploadComplete(@NonNull final Context context, final UploadJob job) {
             if (getParent() != null && getParent().isAdded()) {
-                job.withContext(getParent().getContext());
-                if (job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
+                if (job.hasJobCompletedAllActionsSuccessfully(context) && job.isFinished()) {
                     getParent().uploadJobId = null;
                     ForegroundPiwigoUploadService.removeJob(job);
                     HashSet<Uri> filesPendingApproval = job.getFilesPendingApproval();
@@ -1776,13 +1773,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     getParent().getUiHelper().showOrQueueDialogMessage(R.string.alert_message_upload_cancelled, context.getString(R.string.alert_message_upload_cancelled_message), R.string.button_ok);
                 } else {
                     int errMsgResourceId = R.string.alert_message_error_uploading_start;
-                    if (job.getFilesNotYetUploaded().size() == 0) {
+                    if (job.getFilesNotYetUploaded(context).size() == 0) {
                         errMsgResourceId = R.string.alert_message_error_uploading_end;
                     }
                     getParent().getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_upload, context.getString(errMsgResourceId), R.string.button_ok);
                 }
                 getParent().allowUserUploadConfiguration(job);
-                updateOverallUploadProgress(job.getUploadProgress());
+                updateOverallUploadProgress(job.getUploadProgress(context));
             }
             // ensure the album view is refreshed if visible (to remove temp upload album).
             for (Long albumParent : job.getUploadToCategoryParentage()) {
@@ -1793,11 +1790,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             notifyUserUploadJobComplete(context, job);
         }
 
-        private void notifyUserUploadJobComplete(Context context, UploadJob job) {
+        private void notifyUserUploadJobComplete(@NonNull Context context, UploadJob job) {
             String message;
             int titleId = R.string.alert_success;
 
-            if (!job.hasJobCompletedAllActionsSuccessfully()) {
+            if (!job.hasJobCompletedAllActionsSuccessfully(context)) {
                 message = context.getString(R.string.alert_upload_partial_success);
                 titleId = R.string.alert_partial_success;
             } else {
@@ -1832,7 +1829,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onCleanupPostUploadFailed(Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response) {
+        protected void onCleanupPostUploadFailed(@NonNull Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
             getParent().processError(context, error);
         }
@@ -1845,13 +1842,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onFileUploadProgressUpdate(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+        protected void onFileUploadProgressUpdate(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
             if (getParent() != null && getParent().isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
                 adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
                 UploadJob activeJob = getParent().getActiveJob(context);
                 if (activeJob != null) {
-                    updateOverallUploadProgress(activeJob.getUploadProgress());
+                    updateOverallUploadProgress(activeJob.getUploadProgress(context));
                 }
             }
             if (response.getProgress() == 100) {
@@ -1860,29 +1857,29 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
+        protected void onFileCompressionProgressUpdate(@NonNull Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
             if (getParent() != null && getParent().isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getParent().getFilesForUploadViewAdapter();
                 adapter.updateCompressionProgress(response.getFileForUpload(), response.getCompressedFileUpload(), response.getProgress());
-                updateOverallUploadProgress(getParent().getActiveJob(context).getUploadProgress());
+                updateOverallUploadProgress(getParent().getActiveJob(context).getUploadProgress(context));
             }
             if (response.getProgress() == 100) {
                 onFileCompressionComplete(context, response);
             }
         }
 
-        private void onFileCompressionComplete(Context context, final BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
+        private void onFileCompressionComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
             // Do nothing for now.
         }
 
-        private void onFileUploadComplete(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+        private void onFileUploadComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
 
 
             //TODO This causes lots of server calls and is really unnecessary! Refresh once at the end
 
             UploadJob uploadJob = getParent().getActiveJob(context);
             if (uploadJob != null) {
-                updateOverallUploadProgress(uploadJob.getUploadProgress());
+                updateOverallUploadProgress(uploadJob.getUploadProgress(context));
 //                ResourceItem item = uploadJob.getUploadedFileResource(response.getFileForUpload());
 //                for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
 //                    EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
@@ -1900,7 +1897,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, final BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse response) {
+        protected void onFilesSelectedForUploadAlreadyExistOnServer(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse response) {
             if (getParent() != null && getParent().isAdded()) {
                 UploadJob uploadJob = getParent().getActiveJob(context);
 
@@ -1911,7 +1908,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         adapter.updateUploadProgress(existingFile, progress);
 //                    adapter.remove(existingFile);
                     }
-                    updateOverallUploadProgress(uploadJob.getUploadProgress());
+                    updateOverallUploadProgress(uploadJob.getUploadProgress(context));
                 }
             }
             String message = String.format(context.getString(R.string.alert_items_for_upload_already_exist_message_pattern), response.getExistingFiles().size());

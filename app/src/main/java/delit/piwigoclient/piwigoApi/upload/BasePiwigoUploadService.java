@@ -149,13 +149,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground()) {
-                    return uploadJob.withContext(context);
+                    return uploadJob;
                 }
             }
             activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground()) {
-                    return uploadJob.withContext(context);
+                    return uploadJob;
                 }
             }
         }
@@ -216,7 +216,6 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         synchronized (activeUploadJobs) {
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.getJobId() == jobId) {
-                    uploadJob.withContext(context);
                     return uploadJob;
                 }
             }
@@ -229,7 +228,6 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             job = null;
         }
         if (job != null) {
-            job.withContext(context);
             synchronized (activeUploadJobs) {
                 activeUploadJobs.add(job);
             }
@@ -253,7 +251,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (job != null) {
                 job.setLoadedFromFile(jobFile);
                 AbstractPiwigoDirectResponseHandler.blockMessageId(job.getJobId());
-                jobs.add(job.withContext(c));
+                jobs.add(job);
             } else {
                 if (!jobFile.delete()) {
                     onFileDeleteFailed(TAG, jobFile, "job file");
@@ -421,7 +419,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
 
         // record all files uploaded to prevent repeated upload (do this always in case delete fails for a file!
-        HashMap<Uri, String> uploadedFileChecksums = uploadJob.getUploadedFilesLocalFileChecksums();
+        HashMap<Uri, String> uploadedFileChecksums = uploadJob.getUploadedFilesLocalFileChecksums(this);
         updateListOfPreviouslyUploadedFiles(uploadJob, uploadedFileChecksums);
     }
 
@@ -616,7 +614,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 saveStateToDisk(thisUploadJob);
 
 
-                Map<Uri, Md5SumUtils.Md5SumException> failures = thisUploadJob.calculateChecksums();
+                Map<Uri, Md5SumUtils.Md5SumException> failures = thisUploadJob.calculateChecksums(this);
                 if (!failures.isEmpty()) {
                     for (Map.Entry<Uri, Md5SumUtils.Md5SumException> entry : failures.entrySet()) {
                         recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), entry.getKey(), entry.getValue()));
@@ -695,7 +693,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
                 if (!thisUploadJob.isCancelUploadAsap()) {
 
-                    if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
+                    if (thisUploadJob.getFilesNotYetUploaded(this).size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
                         boolean success = deleteTemporaryUploadAlbum(thisUploadJob);
                         if (!success) {
                             return;
@@ -712,9 +710,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 thisUploadJob.setRunning(false);
                 thisUploadJob.clearCancelUploadAsapFlag();
 
-                updateNotificationProgressText(thisUploadJob.getUploadProgress());
+                updateNotificationProgressText(thisUploadJob.getUploadProgress(this));
 
-                if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
+                if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully(this)) {
                     saveStateToDisk(thisUploadJob);
                 } else {
                     deleteStateFromDisk(this, thisUploadJob, deleteJobConfigFileOnSuccess);
@@ -860,7 +858,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private boolean deleteTemporaryUploadAlbum(UploadJob thisUploadJob) {
 
-        if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() < 0) {
+        if (thisUploadJob.getFilesNotYetUploaded(this).size() == 0 && thisUploadJob.getTemporaryUploadAlbum() < 0) {
             throw new IllegalStateException("Cannot delete upload album when job is still incomplete");
         }
         // all files were uploaded successfully.
@@ -1210,9 +1208,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             if (thisUploadJob.needsUpload(fileForUploadUri)) {
                 DocumentFile compressedFile = null;
-                if (thisUploadJob.isVideo(fileForUploadUri)) {
+                if (thisUploadJob.isVideo(this, fileForUploadUri)) {
                     // it is compression wanted, and it this particular video compressible.
-                    if (thisUploadJob.isCompressVideosBeforeUpload() && thisUploadJob.canCompressVideoFile(fileForUploadUri)) {
+                    if (thisUploadJob.isCompressVideosBeforeUpload() && thisUploadJob.canCompressVideoFile(this, fileForUploadUri)) {
                         //Check if we've already compressed it
                         compressedFile = getCompressedVersionOfFileToUpload(thisUploadJob, fileForUploadUri);
                         if (thisUploadJob.isUploadProcessNotYetStarted(fileForUploadUri)) {
@@ -1223,7 +1221,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                             }
                         }
                     }
-                } else if (thisUploadJob.isPhoto(fileForUploadUri)) {
+                } else if (thisUploadJob.isPhoto(this, fileForUploadUri)) {
                     if (thisUploadJob.isCompressPhotosBeforeUpload()) {
                         compressedFile = getCompressedVersionOfFileToUpload(thisUploadJob, fileForUploadUri);
                         if (thisUploadJob.isUploadProcessNotYetStarted(fileForUploadUri)) {
@@ -1235,7 +1233,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 if (compressedFile != null) {
                     // we use this checksum to check the file was uploaded successfully
                     try {
-                        thisUploadJob.addFileChecksum(fileForUploadUri, compressedFile.getUri());
+                        thisUploadJob.addFileChecksum(this, fileForUploadUri, compressedFile.getUri());
                         thisUploadJob.markFileAsCompressed(fileForUploadUri);
                         saveStateToDisk(thisUploadJob);
                     } catch (Md5SumUtils.Md5SumException e) {
@@ -1325,7 +1323,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             saveStateToDisk(thisUploadJob);
 
-            updateNotificationProgressText(thisUploadJob.getUploadProgress());
+            updateNotificationProgressText(thisUploadJob.getUploadProgress(this));
 
         }
     }
@@ -1433,7 +1431,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         deleteCompressedVersionIfExists(thisUploadJob, uploadJobKey);
                         bytesOfDataInChunk = -1;
                     }
-                    updateNotificationProgressText(thisUploadJob.getUploadProgress());
+                    updateNotificationProgressText(thisUploadJob.getUploadProgress(this));
                 } while (bytesOfDataInChunk >= 0);
 
                 if (fileBytesUploaded < totalBytesInFile) {
@@ -1755,7 +1753,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         @Override
         public void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs) {
             int intCompProgress = (int) Math.round(compressionProgress);
-            uploadService.updateNotificationProgressText(job.getUploadProgress());
+            uploadService.updateNotificationProgressText(job.getUploadProgress(uploadService));
             uploadService.postNewResponse(job.getJobId(), new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(),  inputFile, outputFile, intCompProgress));
         }
 

@@ -12,7 +12,6 @@ import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -74,7 +72,6 @@ public class UploadJob implements Parcelable {
     private volatile boolean cancelUploadAsap;
     private DocumentFile loadedFromFile;
     private boolean wasLastRunCancelled;
-    private WeakReference<Context> contextRef;
 
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, List<Uri> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
@@ -126,12 +123,7 @@ public class UploadJob implements Parcelable {
         }
     };
 
-    public UploadJob withContext(Context context) {
-        contextRef = new WeakReference<>(context);
-        return this;
-    }
-
-    public int getUploadProgress() {
+    public int getUploadProgress(@NonNull Context context) {
         int filesCount = filesForUpload.size();
         long totalProgress = filesCount * 100;
         long jobProgress = 0;
@@ -140,10 +132,10 @@ public class UploadJob implements Parcelable {
                 totalProgress -= 100;
                 continue;
             }
-            if ((isPhoto(f) && isCompressPhotosBeforeUpload()) || (isVideo(f) && isCompressVideosBeforeUpload())) {
+            if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isVideo(context, f) && isCompressVideosBeforeUpload())) {
                 totalProgress += 100;
             }
-            jobProgress += getCompressionProgress(f);
+            jobProgress += getCompressionProgress(context, f);
             jobProgress += getUploadProgress(f);
 
         }
@@ -335,12 +327,12 @@ public class UploadJob implements Parcelable {
         filePartialUploadProgress.remove(f);
     }
 
-    public synchronized int getCompressionProgress(Uri uploadJobKey) {
+    public synchronized int getCompressionProgress(@NonNull Context context, Uri uploadJobKey) {
         Integer status = fileUploadStatus.get(uploadJobKey);
         if (COMPRESSED.equals(status)) {
             return 100;
         }
-        if ((isCompressVideosBeforeUpload() && canCompressVideoFile(uploadJobKey)) || isCompressPhotosBeforeUpload()) {
+        if ((isCompressVideosBeforeUpload() && canCompressVideoFile(context, uploadJobKey)) || isCompressPhotosBeforeUpload()) {
             // if we've started uploading this file it must have been compressed first!
             return getUploadProgress(uploadJobKey) > 0 ? 100 : 0;
         }
@@ -383,22 +375,22 @@ public class UploadJob implements Parcelable {
         return progress;
     }
 
-    public synchronized Map<Uri, Md5SumUtils.Md5SumException> calculateChecksums() {
+    public synchronized Map<Uri, Md5SumUtils.Md5SumException> calculateChecksums(@NonNull Context context) {
         Map<Uri, Md5SumUtils.Md5SumException> failures = new HashMap<>(0);
-        ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded();
+        ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded(context);
         boolean newJob = false;
         if (fileChecksums == null) {
             fileChecksums = new HashMap<>(filesForUpload.size());
             newJob = true;
         }
         for (Uri f : filesNotFinished) {
-            if(!IOUtils.exists(getContext(), f)) {
+            if(!IOUtils.exists(context, f)) {
                 // Remove file from upload list
                 cancelFileUpload(f);
             } else if (needsUpload(f) || needsVerification(f)) {
                 Uri fileForChecksumCalc = null;
-                if (!((isPhoto(f) && isCompressPhotosBeforeUpload())
-                        || canCompressVideoFile(f) && isCompressVideosBeforeUpload())) {
+                if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
+                        || canCompressVideoFile(context, f) && isCompressVideosBeforeUpload())) {
                     fileForChecksumCalc = f;
                 } else if(getCompressedFile(f) != null) {
                     fileForChecksumCalc = getCompressedFile(f);
@@ -409,7 +401,7 @@ public class UploadJob implements Parcelable {
                     // recalculate checksums for all files not yet uploaded
                     String checksum = null;
                     try {
-                        checksum = Md5SumUtils.calculateMD5(getContext().getContentResolver(), fileForChecksumCalc);
+                        checksum = Md5SumUtils.calculateMD5(context.getContentResolver(), fileForChecksumCalc);
                     } catch (Md5SumUtils.Md5SumException e) {
                         failures.put(f, e);
                         Logging.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
@@ -435,8 +427,8 @@ public class UploadJob implements Parcelable {
         return fileChecksums.get(fileForUpload);
     }
 
-    public synchronized void addFileChecksum(Uri uploadJobKey, Uri fileForUpload) throws Md5SumUtils.Md5SumException {
-        String checksum = Md5SumUtils.calculateMD5(getContext().getContentResolver(), fileForUpload);
+    public synchronized void addFileChecksum(@NonNull Context context, Uri uploadJobKey, Uri fileForUpload) throws Md5SumUtils.Md5SumException {
+        String checksum = Md5SumUtils.calculateMD5(context.getContentResolver(), fileForUpload);
         fileChecksums.put(uploadJobKey, checksum);
     }
 
@@ -472,19 +464,11 @@ public class UploadJob implements Parcelable {
         return partialUploadData.getUploadedItem();
     }
 
-    public boolean hasJobCompletedAllActionsSuccessfully() {
-        return getFilesNotYetUploaded().size() == 0 && getTemporaryUploadAlbum() < 0;
+    public boolean hasJobCompletedAllActionsSuccessfully(@NonNull Context context) {
+        return getFilesNotYetUploaded(context).size() == 0 && getTemporaryUploadAlbum() < 0;
     }
 
-    private @NonNull Context getContext() {
-        return Objects.requireNonNull(contextRef.get());
-    }
-
-    public synchronized ArrayList<Uri> getFilesNotYetUploaded() {
-        return getFilesNotYetUploaded(getContext());
-    }
-
-    public synchronized ArrayList<Uri> getFilesNotYetUploaded(Context context) {
+    public synchronized ArrayList<Uri> getFilesNotYetUploaded(@NonNull Context context) {
         ArrayList<Uri> filesToUpload = new ArrayList<>(filesForUpload);
         filesToUpload.removeAll(getFilesProcessedToEnd());
         Iterator<Uri> filesToUploadIterator = filesToUpload.iterator();
@@ -552,7 +536,7 @@ public class UploadJob implements Parcelable {
         this.submitted = submitted;
     }
 
-    public Map<Uri, String> getFileToFilenamesMap(Context context) {
+    public Map<Uri, String> getFileToFilenamesMap(@NonNull Context context) {
         Map<Uri, String> filenamesMap = new HashMap<>(filesForUpload.size());
         for (Uri f : filesForUpload) {
             filenamesMap.put(f, DocumentFile.fromSingleUri(context, f).getName());
@@ -605,13 +589,13 @@ public class UploadJob implements Parcelable {
         return errors;
     }
 
-    public boolean isVideo(@NonNull Uri file) {
-        String mimeType = IOUtils.getMimeType(getContext(), file);
+    public boolean isVideo(@NonNull Context context, @NonNull Uri file) {
+        String mimeType = IOUtils.getMimeType(context, file);
         return MimeTypeFilter.matches(mimeType,"video/*");
     }
 
-    public boolean isPhoto(@NonNull Uri file) {
-        String mimeType = IOUtils.getMimeType(getContext(), file);
+    public boolean isPhoto(@NonNull Context context, @NonNull Uri file) {
+        String mimeType = IOUtils.getMimeType(context, file);
         return MimeTypeFilter.matches(mimeType,"image/*");
     }
 
@@ -649,8 +633,8 @@ public class UploadJob implements Parcelable {
         return compressedFolder;
     }
 
-    public boolean canCompressVideoFile(Uri rawVideo) {
-        return isVideo(rawVideo);
+    public boolean canCompressVideoFile(@NonNull Context context, Uri rawVideo) {
+        return isVideo(context, rawVideo);
     }
 
     public void clearCancelUploadAsapFlag() {
@@ -707,11 +691,11 @@ public class UploadJob implements Parcelable {
         return resourceIds;
     }
 
-    public HashMap<Uri, String> getUploadedFilesLocalFileChecksums() {
+    public HashMap<Uri, String> getUploadedFilesLocalFileChecksums(@NonNull Context context) {
         HashSet<Uri> filesUploaded = getFilesSuccessfullyUploaded();
         HashMap<Uri, String> uploadedFileChecksums = new HashMap<>(filesUploaded.size());
         for (Uri f : filesUploaded) {
-            DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), f);
+            DocumentFile docFile = DocumentFile.fromSingleUri(context, f);
             if (docFile != null && docFile.exists()) {
                 uploadedFileChecksums.put(f, getFileChecksum(f));
             }

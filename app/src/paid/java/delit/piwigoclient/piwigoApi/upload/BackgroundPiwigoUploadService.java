@@ -216,7 +216,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 }
                 if (!unfinishedJob.isFinished() && jobIsValid) {
                     runJob(unfinishedJob, this, true);
-                    if (unfinishedJob.hasJobCompletedAllActionsSuccessfully()) {
+                    if (unfinishedJob.hasJobCompletedAllActionsSuccessfully(this)) {
                         removeJob(unfinishedJob);
                     }
                 } else {
@@ -286,7 +286,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     @Override
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
         try {
-            updateNotificationText(getString(R.string.notification_text_background_upload_running), thisUploadJob.getUploadProgress());
+            updateNotificationText(getString(R.string.notification_text_background_upload_running), thisUploadJob.getUploadProgress(this));
             boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
                 super.runJob(thisUploadJob, listener, deleteJobConfigFileOnSuccess);
@@ -490,7 +490,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         uploadJob.setVideoCompressionParams(jobConfig.getVideoCompressionParams(context));
         uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(context));
-        return uploadJob.withContext(context);
+        return uploadJob;
     }
 
     @Override
@@ -532,7 +532,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
 
         public void startWatching() {
-            context.getContentResolver().registerContentObserver(watchedUri, false, this);
+            try {
+                context.getContentResolver().registerContentObserver(watchedUri, false, this);
+            } catch(SecurityException e) {
+                Logging.log(Log.ERROR, TAG, "Unable to watch uri : " + watchedUri);
+                Logging.recordException(e);
+            }
         }
 
         public void stopWatching() {
