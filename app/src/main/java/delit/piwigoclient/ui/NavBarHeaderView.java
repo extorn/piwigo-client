@@ -3,6 +3,7 @@ package delit.piwigoclient.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -37,6 +38,14 @@ import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 
 public class NavBarHeaderView extends FrameLayout {
 
+    public static final String EMAIL_TEMPLATE_PATTERN = "Comments:\n" +
+            "Feature Request:\n" +
+            "Bug Summary:\n" +
+            "Bug Details:\n" +
+            "Version of Piwigo Server Connected to: %1$s\n" +
+            "Version of PIWIGO Client: %2$s\n" +
+            "Android version of this device: %3$s\n" +
+            "Type and model of Device Being Used:\n";
     private boolean refreshSessionInProgress;
     private TextView currentUsernameField;
     private TextView currentServerField;
@@ -170,7 +179,8 @@ public class NavBarHeaderView extends FrameLayout {
         if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             serverVersion = sessionDetails.getPiwigoVersion();
         }
-        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: " + appVersion + "\nType and model of Device Being Used:\n");
+        String emailContent = String.format(EMAIL_TEMPLATE_PATTERN, serverVersion, appVersion, Build.VERSION.CODENAME + "(" + Build.VERSION.SDK_INT + ")");
+        intent.putExtra(Intent.EXTRA_TEXT, emailContent);
         getContext().startActivity(Intent.createChooser(intent, ""));
     }
 
