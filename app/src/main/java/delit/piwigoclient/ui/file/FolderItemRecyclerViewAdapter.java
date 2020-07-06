@@ -1049,9 +1049,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
         @Override
         protected Pair<List<FolderItem>,List<FolderItem>> doInBackgroundSafely(Object[] objects) {
+            Context context = getContext();
+            if(context == null) {
+                return null; // the view has already been destroyed.
+            }
             List<FolderItem> fullContent = getOwner().currentFullContent;
             if(!refreshingExistingFolder || force) {
-                fullContent = getOwner().getNewDisplayContentInternal(getContext(), newContent);
+                fullContent = getOwner().getNewDisplayContentInternal(context, newContent);
             }
             List<FolderItem> filteredContent = fullContent;
             if(fullContent != null) {
