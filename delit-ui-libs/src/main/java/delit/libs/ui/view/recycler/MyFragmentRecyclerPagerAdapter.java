@@ -126,8 +126,6 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
-        Class<? extends T> fragmentTypeNeeded = getFragmentType(position);
-
         if (activeFragments.size() == 0) {
             List<Fragment> fragments = mFragmentManager.getFragments();
             // if fragments is not empty then the page was very probably rotated
@@ -154,12 +152,13 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         T f = activeFragments.get(position);
 
         if (f == null) {
+            Class<? extends T> fragmentTypeNeeded = getFragmentType(position);
             f = createNewItem(fragmentTypeNeeded, position);
             if (f == null) {
                 Logging.log(Log.ERROR, TAG, "Fragment must implement PagerItemFragment");
+            } else {
+                addFragmentToTransaction(container, f, position);
             }
-
-            addFragmentToTransaction(container, f, position);
         }
 
         if (position == ((ViewPager) container).getCurrentItem()) {
