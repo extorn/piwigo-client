@@ -725,18 +725,18 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         DocumentFile currentRoot = getListAdapter().getActiveFolder();
                         try {
                             if (currentRoot == null && getViewPrefs().getInitialFolder() != null) {
-                                DocumentFile file = IOUtils.getTreeLinkedDocFile(getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
-                                getListAdapter().updateContentAndRoot(getContext(), newRoot, file);
+                                DocumentFile file = IOUtils.getTreeLinkedDocFile(view.getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
+                                getListAdapter().updateContentAndRoot(view.getContext(), newRoot, file);
                             } else {
-                                getListAdapter().resetRoot(getContext(), newRoot);
+                                getListAdapter().resetRoot(view.getContext(), newRoot);
                             }
                         } catch(IllegalStateException e) {
-                            getListAdapter().resetRoot(getContext(), newRoot); // just use the current root and ignore the initial folder.
+                            getListAdapter().resetRoot(view.getContext(), newRoot); // just use the current root and ignore the initial folder.
                         }
                         deselectAllItems();
                     } else {
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
-                        getListAdapter().resetRoot(getContext(), newRoot);
+                        getListAdapter().resetRoot(view.getContext(), newRoot);
                         deselectAllItems();
                         fileExtFilters.setEnabled(false);
                         retrieveFilesFromSystemPicker(getViewPrefs().getInitialFolder());
@@ -746,7 +746,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 // just show the empty view (if we're not already).
                 if(getListAdapter().getActiveFolder() != null) {
                     getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
-                    getListAdapter().resetRoot(getContext(), null);
+                    getListAdapter().resetRoot(view.getContext(), null);
                     deselectAllItems();
                 }
             }
