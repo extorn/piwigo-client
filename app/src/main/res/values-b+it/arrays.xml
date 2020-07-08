@@ -167,7 +167,9 @@
                  - Numerose correzioni di bug per arresti anomali relativi alla recente revisione del codice di gestione dei file
                 I cambiamenti:
                  - Vasto miglioramento delle prestazioni della selezione dei file per le schermate di caricamento
-                 - Supporto continuo per la selezione di file nelle app che non forniscono le autorizzazioni necessarie per i file"</item>
+                 - Supporto continuo per la selezione di file nelle app che non forniscono le autorizzazioni necessarie per i file
+                 - app a pagamento: abilitazione dell\'accelerazione hardware in tutta l\'app
+                 - app a pagamento: abilitato l\'uso dell\'attività di selezione cartella / file da parte di altre app (si prega di segnalare eventuali problemi)"</item>
         <item>1.4.0.66.8</item>
         <item>"Risoluzione del problema:
                  - Blocco dell\'app durante o dopo un caricamento"</item>

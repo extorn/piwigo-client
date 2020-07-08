@@ -1035,7 +1035,7 @@ SOFTWARE.
     <string name="alert_error_starting_download">Error starting file download</string>
     <string name="progress_importing_files">Importing Files</string>
     <string name="content_filter">Content Filter</string>
-    <string name="alert_advert_importance_message">The revenue from adverts is important to me. I\'m sorry they frustrate you (they do me too), but if you watch them, they will keep appearing until you watch one. To avoid this problem, please watch them until they offer the option to close. Alternateively, purchase the paid version of this app. Many thanks for your support.</string>
+    <string name="alert_advert_importance_message">The revenue from adverts is important to me. I\'m sorry they frustrate you (they do me too), but if you watch them, they will keep appearing until you watch one. To avoid this problem, please watch them until they offer the option to close. Alternatively, purchase the paid version of this app. Many thanks for your support.</string>
     <string name="eula_privacy_title">Privacy</string>
     <string name="privacy_policy_label">Our privacy policy</string>
     <string name="title_advert_consent">Your Privacy</string>
@@ -1049,5 +1049,6 @@ SOFTWARE.
     <string name="files_shared_without_required_permissions_error">The app you used to select the files has not delegated the necessary file permissions to Piwigo Client. A solution has been added for this issue in the paid version of Piwigo Client, but alternatively, you could use a different method of selecting the files.</string>
     <string name="files_cached_from_other_apps">Cached Shares</string>
     <string name="progress_copying_imported_files">Copying imported files</string>
+    <string name="selected_files">Selected Files</string>
 
 </resources>

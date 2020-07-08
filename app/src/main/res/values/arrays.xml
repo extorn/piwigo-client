@@ -269,7 +269,9 @@
                 - A number of bug fixes for crashes surrounding the recent overhaul of file handling code
                Changes:
                 - Vast improvement to the performance of the file selection for upload screens
-                - Seamless support for selecting files in apps that do not provide required file permissions"</item>
+                - Seamless support for selecting files in apps that do not provide required file permissions
+                - paid app: Enabled hardware acceleration across the app
+                - paid app: Enabled use of the folder/file selection task by other apps (please report any issues)"</item>
         <item>1.4.0.66.8</item>
         <item>"Bugfix:
                 - App crash during or after an upload"</item>

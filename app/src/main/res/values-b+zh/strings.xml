@@ -696,5 +696,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="files_shared_without_required_permissions_error">您用来选择文件的应用程序尚未将必要的文件权限委派给Piwigo Client。 在Piwigo Client的付费版本中已添加了针对此问题的解决方案，但您也可以使用其他方法来选择文件。</string>
     <string name="files_cached_from_other_apps">缓存的共享</string>
     <string name="progress_copying_imported_files">复制导入的文件</string>
+    <string name="selected_files">选定文件</string>
 
 </resources>

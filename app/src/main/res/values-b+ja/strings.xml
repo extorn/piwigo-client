@@ -696,5 +696,6 @@ piwigo_privacyプラグインとVideoJSプラグインをインストールし�
     <string name="files_shared_without_required_permissions_error">ファイルの選択に使用したアプリは、必要なファイル権限をPiwigoクライアントに委任していません。 有料バージョンのPiwigoクライアントでこの問題の解決策が追加されましたが、別の方法として、別の方法でファイルを選択することもできます。</string>
     <string name="files_cached_from_other_apps">キャッシュされた共有</string>
     <string name="progress_copying_imported_files">インポートしたファイルをコピーする</string>
+    <string name="selected_files">選択したファイル</string>
 
 </resources>

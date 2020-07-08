@@ -3,61 +3,79 @@
 - A number of bug fixes for crashes surrounding the recent overhaul of file handling code
 Changes:
 - Vast improvement to the performance of the file selection for upload screens
-- Seamless support for selecting files in apps that do not provide required file permissions"
+- Seamless support for selecting files in apps that do not provide required file permissions
+- paid app: Enabled hardware acceleration across the app
+- paid app: Enabled use of the folder/file selection task by other apps (please report any issues)"
 </en-GB>
 <cs-CZ>
 "Oprava chyby:
 - Řada oprav chyb při haváriích kolem nedávného přepracování kódu pro manipulaci se soubory
 Změny:
 - Výrazné zlepšení výkonu výběru souborů pro obrazovky pro nahrávání
-- Bezproblémová podpora pro výběr souborů v aplikacích, které neposkytují požadovaná oprávnění k souborům"
+- Bezproblémová podpora pro výběr souborů v aplikacích, které neposkytují požadovaná oprávnění k souborům
+- placená aplikace: povolena hardwarová akcelerace v celé aplikaci
+- placená aplikace: povoleno použití úlohy výběru složky / souboru jinými aplikacemi (nahlásit případné problémy)"
 </cs-CZ>
 <de-DE>
 "Fehlerbehebung:
 - Eine Reihe von Fehlerkorrekturen für Abstürze im Zusammenhang mit der kürzlich erfolgten Überarbeitung des Dateibehandlungscodes
 Änderungen:
 - Deutliche Verbesserung der Leistung der Dateiauswahl für Upload-Bildschirme
-- Nahtlose Unterstützung für die Auswahl von Dateien in Apps, die nicht die erforderlichen Dateiberechtigungen bieten"
+- Nahtlose Unterstützung für die Auswahl von Dateien in Apps, die nicht die erforderlichen Dateiberechtigungen bieten
+- Bezahlte App: Aktivierte Hardwarebeschleunigung in der gesamten App
+- Bezahlte App: Ermöglicht die Verwendung der Ordner- / Dateiauswahlaufgabe durch andere Apps (bitte melden Sie alle Probleme)"
 </de-DE>
 <es-ES>
 "Arreglo del fallo:
-- Varias correcciones de errores para bloqueos que rodean la reciente revisión del código de manejo de archivos
+- Varias correcciones de errores para bloqueos relacionados con la reciente revisión del código de manejo de archivos
 Cambios:
 - Gran mejora en el rendimiento de la selección de archivos para pantallas de carga
-- Soporte perfecto para seleccionar archivos en aplicaciones que no proporcionan los permisos de archivo requeridos"
+- Soporte perfecto para seleccionar archivos en aplicaciones que no proporcionan los permisos de archivo requeridos
+- aplicación paga: aceleración de hardware habilitada en toda la aplicación
+- aplicación paga: Habilitado el uso de la tarea de selección de carpeta / archivo por otras aplicaciones (informe cualquier problema)"
 </es-ES>
 <fr-FR>
 "Correction d\'un bug:
 - Un certain nombre de corrections de bugs pour les plantages entourant la récente refonte du code de gestion des fichiers
 Changements:
 - Vaste amélioration des performances de la sélection de fichiers pour les écrans de téléchargement
-- Prise en charge transparente de la sélection de fichiers dans les applications qui ne fournissent pas les autorisations de fichiers requises"
+- Prise en charge transparente de la sélection de fichiers dans les applications qui ne fournissent pas les autorisations de fichiers requises
+- application payante: accélération matérielle activée dans l\'application
+- application payante: utilisation autorisée de la tâche de sélection de dossier / fichier par d\'autres applications (veuillez signaler tout problème)"
 </fr-FR>
 <it-IT>
 "Risoluzione del problema:
 - Numerose correzioni di bug per arresti anomali relativi alla recente revisione del codice di gestione dei file
 I cambiamenti:
 - Vasto miglioramento delle prestazioni della selezione dei file per le schermate di caricamento
-- Supporto continuo per la selezione di file nelle app che non forniscono le autorizzazioni necessarie per i file"
+- Supporto continuo per la selezione di file nelle app che non forniscono le autorizzazioni necessarie per i file
+- app a pagamento: abilitazione dell\'accelerazione hardware in tutta l\'app
+- app a pagamento: abilitato l\'uso dell\'attività di selezione cartella / file da parte di altre app (si prega di segnalare eventuali problemi)"
 </it-IT>
 <ja-JP>
 "バグ修正：
 -ファイル処理コードの最近のオーバーホールを取り巻くクラッシュの多くのバグ修正
 変更：
 -アップロード画面のファイル選択のパフォーマンスが大幅に改善されました
--必要なファイル権限を提供しないアプリでファイルを選択するためのシームレスなサポート"
+-必要なファイル権限を提供しないアプリでファイルを選択するためのシームレスなサポート
+-有料アプリ：アプリ全体で有効なハードウェアアクセラレーション
+-有料アプリ：他のアプリによるフォルダー/ファイル選択タスクの有効化（問題を報告してください）"
 </ja-JP>
 <ru-RU>
 "Исправлена ошибка:
 - Ряд исправлений ошибок, связанных с недавним пересмотром кода обработки файлов
 Изменения:
 - Значительное улучшение производительности выбора файлов для экранов загрузки
-- Полная поддержка выбора файлов в приложениях, которые не предоставляют необходимые разрешения для файлов"
+- Полная поддержка выбора файлов в приложениях, которые не предоставляют необходимые разрешения для файлов
+- платное приложение: включено аппаратное ускорение во всем приложении
+- платное приложение: разрешено использование задачи выбора папки / файла другими приложениями (сообщите о любых проблемах)"
 </ru-RU>
 <zh-CN>
 "错误修正：
 -修复了一些错误，这些错误与最近对文件处理代码的全面检查有关的崩溃有关
 变化：
 -大大提高了上传屏幕的文件选择性能
--无缝支持在不提供所需文件权限的应用程序中选择文件"
+-无缝支持在不提供所需文件权限的应用中选择文件
+-付费应用：在整个应用中启用了硬件加速
+-付费应用：其他应用已启用文件夹/文件选择任务（请报告任何问题）"
 </zh-CN>

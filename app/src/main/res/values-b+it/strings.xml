@@ -682,7 +682,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="alert_error_starting_download">Errore durante l\'avvio del download del file</string>
     <string name="progress_importing_files">Importazione di file</string>
     <string name="content_filter">Filtro contenuto</string>
-    <string name="alert_advert_importance_message">I ricavi delle pubblicità sono importanti per me. Mi dispiace che ti frustrino (lo fanno anche loro), ma se li guardi, continueranno ad apparire fino a quando non ne guardi uno. Per evitare questo problema, ti preghiamo di guardarli fino a quando non offrono la possibilità di chiudere. In alternativa, acquista la versione a pagamento di questa app. molte grazie per il vostro sostegno!</string>
+    <string name="alert_advert_importance_message">Le entrate delle pubblicità sono importanti per me. Mi dispiace che ti frustrino (lo fanno anche loro), ma se li guardi, continueranno ad apparire fino a quando non ne guardi uno. Per evitare questo problema, ti preghiamo di guardarli fino a quando non offrono la possibilità di chiudere. In alternativa, acquista la versione a pagamento di questa app. molte grazie per il vostro sostegno!</string>
     <string name="eula_privacy_title">vita privata</string>
     <string name="privacy_policy_label">La nostra politica sulla privacy</string>
     <string name="title_advert_consent">La tua privacy</string>
@@ -696,5 +696,6 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="files_shared_without_required_permissions_error">L\'app utilizzata per selezionare i file non ha delegato le autorizzazioni file necessarie al client Piwigo. È stata aggiunta una soluzione per questo problema nella versione a pagamento di Piwigo Client, ma in alternativa è possibile utilizzare un metodo diverso per selezionare i file.</string>
     <string name="files_cached_from_other_apps">Azioni cache</string>
     <string name="progress_copying_imported_files">Copia dei file importati</string>
+    <string name="selected_files">File selezionati</string>
 
 </resources>

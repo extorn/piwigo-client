@@ -167,7 +167,9 @@
                  - Un certain nombre de corrections de bugs pour les plantages entourant la récente refonte du code de gestion des fichiers
                 Changements:
                  - Vaste amélioration des performances de la sélection de fichiers pour les écrans de téléchargement
-                 - Prise en charge transparente de la sélection de fichiers dans les applications qui ne fournissent pas les autorisations de fichiers requises"</item>
+                 - Prise en charge transparente de la sélection de fichiers dans les applications qui ne fournissent pas les autorisations de fichiers requises
+                 - application payante: accélération matérielle activée dans l\'application
+                 - application payante: utilisation autorisée de la tâche de sélection de dossier / fichier par d\'autres applications (veuillez signaler tout problème)"</item>
         <item>1.4.0.66.8</item>
         <item>"Correction d\'un bug:
                  - Plantage de l\'application pendant ou après un téléchargement"</item>

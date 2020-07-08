@@ -167,7 +167,9 @@
                  - Řada oprav chyb při haváriích kolem nedávného přepracování kódu pro manipulaci se soubory
                 Změny:
                  - Výrazné zlepšení výkonu výběru souborů pro obrazovky pro nahrávání
-                 - Bezproblémová podpora pro výběr souborů v aplikacích, které neposkytují požadovaná oprávnění k souborům"</item>
+                 - Bezproblémová podpora pro výběr souborů v aplikacích, které neposkytují požadovaná oprávnění k souborům
+                 - placená aplikace: povolena hardwarová akcelerace v celé aplikaci
+                 - placená aplikace: povoleno použití úlohy výběru složky / souboru jinými aplikacemi (nahlásit případné problémy)"</item>
         <item>1.4.0.66.8</item>
         <item>"Oprava chyby:
                  - Selhání aplikace během nebo po nahrávání"</item>

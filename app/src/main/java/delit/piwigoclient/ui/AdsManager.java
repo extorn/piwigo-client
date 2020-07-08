@@ -241,9 +241,12 @@ public class AdsManager {
 
     private void showInterstitialAd(Context context, InterstitialAd ad) {
         interstitialShowing = true;
-        albumBrowsingAd.show();
-        albumBrowsingAd.setOnPaidEventListener(adValue -> lastAdPaid = true);
-        albumBrowsingAd.setAdListener(new InterstitialAdListener(context));
+        if(lastAdPaid == null) {
+            lastAdPaid = false;
+        }
+        ad.setOnPaidEventListener(adValue -> lastAdPaid = true);
+        ad.setAdListener(new InterstitialAdListener(context));
+        ad.show();
     }
 
     public boolean isInterstitialShowing() {
@@ -265,6 +268,7 @@ public class AdsManager {
 
     public void showPleadingMessageIfNeeded(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
         if(isLastAdShownAndUnpaid()) {
+            lastAdPaid = null;
             uiHelper.showOrQueueDialogQuestion(R.string.alert_warning, uiHelper.getString(R.string.alert_advert_importance_message), View.NO_ID, R.string.button_ok, new AdvertPleadingListener(uiHelper));
         }
     }

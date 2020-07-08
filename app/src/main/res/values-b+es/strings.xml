@@ -696,5 +696,6 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="files_shared_without_required_permissions_error">La aplicación que utilizó para seleccionar los archivos no ha delegado los permisos de archivo necesarios a Piwigo Client. Se ha agregado una solución para este problema en la versión paga de Piwigo Client, pero también puede utilizar un método diferente para seleccionar los archivos.</string>
     <string name="files_cached_from_other_apps">Acciones en caché</string>
     <string name="progress_copying_imported_files">Copiar archivos importados</string>
+    <string name="selected_files">Archivos seleccionados</string>
 
 </resources>

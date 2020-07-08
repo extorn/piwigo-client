@@ -682,7 +682,7 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="alert_error_starting_download">Erreur lors du démarrage du téléchargement du fichier</string>
     <string name="progress_importing_files">Importation de fichiers</string>
     <string name="content_filter">Filtre de contenu</string>
-    <string name="alert_advert_importance_message">Les revenus publicitaires sont importants pour moi. Je suis désolé qu\'ils vous frustrent (ils me font aussi), mais si vous les regardez, ils continueront à apparaître jusqu\'à ce que vous en regardiez un. Pour éviter ce problème, veuillez les regarder jusqu\'à ce qu\'ils offrent la possibilité de fermer. Alternativement, achetez la version payante de cette application. Merci beaucoup pour votre soutien.</string>
+    <string name="alert_advert_importance_message">Les revenus publicitaires sont importants pour moi. Je suis désolé qu\'ils vous frustrent (ils me font aussi), mais si vous les regardez, ils continueront à apparaître jusqu\'à ce que vous en regardiez un. Pour éviter ce problème, veuillez les regarder jusqu\'à ce qu\'ils offrent la possibilité de fermer. Vous pouvez également acheter la version payante de cette application. Merci beaucoup pour votre soutien.</string>
     <string name="eula_privacy_title">Intimité</string>
     <string name="privacy_policy_label">Notre politique de confidentialité</string>
     <string name="title_advert_consent">Votre vie privée</string>
@@ -696,5 +696,6 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="files_shared_without_required_permissions_error">L\'application que vous avez utilisée pour sélectionner les fichiers n\'a pas délégué les autorisations de fichiers nécessaires à Piwigo Client. Une solution a été ajoutée pour ce problème dans la version payante de Piwigo Client, mais vous pouvez également utiliser une méthode différente de sélection des fichiers.</string>
     <string name="files_cached_from_other_apps">Partages en cache</string>
     <string name="progress_copying_imported_files">Copie de fichiers importés</string>
+    <string name="selected_files">Fichiers sélectionnés</string>
 
 </resources>

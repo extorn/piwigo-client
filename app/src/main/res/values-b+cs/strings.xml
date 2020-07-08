@@ -682,7 +682,7 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="alert_error_starting_download">Chyba při spuštění stahování souboru</string>
     <string name="progress_importing_files">Import souborů</string>
     <string name="content_filter">Filtr obsahu</string>
-    <string name="alert_advert_importance_message">Příjmy z reklam jsou pro mě důležité. Je mi líto, že vás frustrují (také mě dělají), ale pokud je budete sledovat, budou se objevovat, dokud si je nebudete dívat. Chcete-li se tomuto problému vyhnout, sledujte je, dokud nenabídnou možnost uzavření. Alternativně si koupte placenou verzi této aplikace. Děkujeme za vaši podporu.</string>
+    <string name="alert_advert_importance_message">Příjmy z reklam jsou pro mě důležité. Je mi líto, že vás frustrují (také mě dělají), ale pokud je budete sledovat, budou se objevovat, dokud si je nebudete dívat. Chcete-li se tomuto problému vyhnout, sledujte je, dokud nenabídnou možnost uzavření. Můžete si také zakoupit placenou verzi této aplikace. Děkujeme za vaši podporu.</string>
     <string name="eula_privacy_title">Soukromí</string>
     <string name="privacy_policy_label">Naše zásady ochrany osobních údajů</string>
     <string name="title_advert_consent">Vaše soukromí</string>
@@ -696,5 +696,6 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="files_shared_without_required_permissions_error">Aplikace, kterou jste použili k výběru souborů, delegovala potřebná oprávnění k souborům na klienta Piwigo. Řešení bylo přidáno pro tento problém v placené verzi Piwigo Client, ale alternativně můžete použít jinou metodu výběru souborů.</string>
     <string name="files_cached_from_other_apps">Akcie v mezipaměti</string>
     <string name="progress_copying_imported_files">Kopírování importovaných souborů</string>
+    <string name="selected_files">Vybrané soubory</string>
 
 </resources>

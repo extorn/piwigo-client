@@ -682,7 +682,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_starting_download">Fehler beim Starten des Dateidownloads</string>
     <string name="progress_importing_files">Dateien importieren</string>
     <string name="content_filter">Inhaltsfilter</string>
-    <string name="alert_advert_importance_message">Die Einnahmen aus Werbung sind mir wichtig. Es tut mir leid, dass sie dich frustrieren (sie tun es auch), aber wenn du sie dir ansiehst, werden sie so lange erscheinen, bis du eins siehst. Um dieses Problem zu vermeiden, beobachten Sie sie bitte, bis sie die Option zum Schließen anbieten. Alternativ können Sie die kostenpflichtige Version dieser App erwerben. Vielen Dank für Ihre Unterstützung.</string>
+    <string name="alert_advert_importance_message">Die Einnahmen aus Werbung sind mir wichtig. Es tut mir leid, dass sie dich frustrieren (sie tun es auch mir), aber wenn du sie siehst, werden sie so lange erscheinen, bis du eine siehst. Um dieses Problem zu vermeiden, beobachten Sie sie bitte, bis sie die Option zum Schließen anbieten. Alternativ können Sie die kostenpflichtige Version dieser App erwerben. Vielen Dank für Ihre Unterstützung.</string>
     <string name="eula_privacy_title">Privatsphäre</string>
     <string name="privacy_policy_label">Unsere Datenschutzerklärung</string>
     <string name="title_advert_consent">Ihre Privatsphäre</string>
@@ -696,5 +696,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="files_shared_without_required_permissions_error">Die App, mit der Sie die Dateien ausgewählt haben, hat die erforderlichen Dateiberechtigungen nicht an Piwigo Client delegiert. In der kostenpflichtigen Version von Piwigo Client wurde eine Lösung für dieses Problem hinzugefügt. Alternativ können Sie auch eine andere Methode zur Auswahl der Dateien verwenden.</string>
     <string name="files_cached_from_other_apps">Zwischengespeicherte Anteile</string>
     <string name="progress_copying_imported_files">Importierte Dateien kopieren</string>
+    <string name="selected_files">Ausgewählte Dateien</string>
 
 </resources>
