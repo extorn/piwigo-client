@@ -362,12 +362,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 }
             }
         }
+        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
+
         if (restore) {
             showFragmentNow(new ViewAlbumFragment(), !gallery.isRoot());
         } else {
             showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot());
         }
-        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
