@@ -1045,7 +1045,9 @@ SOFTWARE.
     <string name="no_adverts_label">Prefer an advert free version of this app?</string>
     <string name="view_the_paid_version">Take me to the advert free version</string>
     <string name="advert_providers">Advert Providers in use</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Sorry, this file was not able to be used because it was shared by an app that did not authorise the requested extended access to this file and that access has expired.</string>
-    <string name="likely_file_unusable_shared_without_permissions">The files added have been shared without the requested permission. If it fails to be added for upload, you could try sharing them from the app direct with this app rather than accessing it through upload file selector.</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Sorry, this file was not able to be used because it was shared by an app that did not authorise the requested extended access to this file and that access has expired.</string>
+    <string name="files_shared_without_required_permissions_error">The app you used to select the files has not delegated the necessary file permissions to Piwigo Client. A solution has been added for this issue in the paid version of Piwigo Client, but alternatively, you could use a different method of selecting the files.</string>
+    <string name="files_cached_from_other_apps">Cached Shares</string>
+    <string name="progress_copying_imported_files">Copying imported files</string>
 
 </resources>

@@ -474,7 +474,8 @@ public class UploadJob implements Parcelable {
         Iterator<Uri> filesToUploadIterator = filesToUpload.iterator();
         while(filesToUploadIterator.hasNext()) {
             Uri f = filesToUploadIterator.next();
-            DocumentFile docFile = DocumentFile.fromSingleUri(context, f);
+            IOUtils.getSingleDocFile(context, f);
+            DocumentFile docFile = IOUtils.getSingleDocFile(context, f);
             if(docFile != null && (docFile.isDirectory() || !docFile.isFile())) {
                 filesToUploadIterator.remove();
             }
@@ -539,7 +540,7 @@ public class UploadJob implements Parcelable {
     public Map<Uri, String> getFileToFilenamesMap(@NonNull Context context) {
         Map<Uri, String> filenamesMap = new HashMap<>(filesForUpload.size());
         for (Uri f : filesForUpload) {
-            filenamesMap.put(f, DocumentFile.fromSingleUri(context, f).getName());
+            filenamesMap.put(f, IOUtils.getSingleDocFile(context, f).getName());
         }
         return filenamesMap;
     }
@@ -695,7 +696,7 @@ public class UploadJob implements Parcelable {
         HashSet<Uri> filesUploaded = getFilesSuccessfullyUploaded();
         HashMap<Uri, String> uploadedFileChecksums = new HashMap<>(filesUploaded.size());
         for (Uri f : filesUploaded) {
-            DocumentFile docFile = DocumentFile.fromSingleUri(context, f);
+            DocumentFile docFile = IOUtils.getSingleDocFile(context, f);
             if (docFile != null && docFile.exists()) {
                 uploadedFileChecksums.put(f, getFileChecksum(f));
             }

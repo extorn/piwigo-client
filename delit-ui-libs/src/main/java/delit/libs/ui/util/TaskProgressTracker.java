@@ -14,11 +14,11 @@ public abstract class TaskProgressTracker implements ProgressListener {
     private int ticksInTask;
     private double progressPerTick;
 
-    protected TaskProgressTracker() {
+    public TaskProgressTracker() {
         this(1);
     }
 
-    protected TaskProgressTracker(double reportAtIncrement) {
+    public TaskProgressTracker(double reportAtIncrement) {
         if(Math.max(100,Math.round(reportAtIncrement)) == 100) {
             reportAtIncrement = 100;
         } else if(Math.round(reportAtIncrement) == 0) {
@@ -33,12 +33,12 @@ public abstract class TaskProgressTracker implements ProgressListener {
     /**
      * A single tick task. Progress can be fluid across that task
      *
-     * @param overallProgress progress so far by other sub tasks of the main task
-     * @param taskProgress    what 100% complete of this task is as portion of the main task. i.e. 15 if main task is 100 and this task is 15% of that
+     * @param startProgress what progress of the main task will be before this task runs (between 0 and 100)
+     * @param endProgress   what progress of the main task will be after this task finishes
      * @return this
      */
-    public TaskProgressTracker withStage(int overallProgress, double taskProgress) {
-        return withStage(overallProgress, taskProgress, 1);
+    public TaskProgressTracker withStage(double startProgress, double endProgress) {
+        return withStage(startProgress, endProgress, 1);
     }
 
     /**
@@ -126,8 +126,8 @@ public abstract class TaskProgressTracker implements ProgressListener {
     }
 
     private void onProgressIncrement(double overallProgressIncrement) {
-        double actualCurrentOverallTaskProgress = overallTaskProgress + overallProgressIncrement;
-        if (actualCurrentOverallTaskProgress >= lastProgressReportAt + reportAtIncrement) {
+        double actualCurrentOverallTaskProgress = (overallTaskProgress + overallProgressIncrement);
+        if (100 * actualCurrentOverallTaskProgress >= lastProgressReportAt + reportAtIncrement) {
             lastProgressReportAt = actualCurrentOverallTaskProgress;
             reportProgress((int)Math.rint(actualCurrentOverallTaskProgress * 100));
         }

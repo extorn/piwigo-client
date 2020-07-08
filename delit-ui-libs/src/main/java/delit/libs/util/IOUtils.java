@@ -664,6 +664,14 @@ public class IOUtils {
         return getTmpFile(outputFolder, baseFilename, fileExt, mimeType, false);
     }
 
+    public static DocumentFile getSharedFilesFolder(@NonNull Context context) {
+        DocumentFile folder = DocumentFile.fromFile(context.getExternalCacheDir()).findFile("piwigo-shared");
+        if(folder == null) {
+            folder = DocumentFile.fromFile(context.getExternalCacheDir()).createDirectory("piwigo-shared");
+        }
+        return folder;
+    }
+
     public static DocumentFile getTmpFile(@NonNull DocumentFile outputFolder, @NonNull String baseFilename, @NonNull String fileExt, @NonNull String mimeType, boolean deleteIfExists) {
 
         String tmpFilename = baseFilename;
@@ -1000,5 +1008,27 @@ public class IOUtils {
             }
         }
         return null;
+    }
+
+    public static void deleteAllFilesSharedWithThisApp(@NonNull Context context) {
+        DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(context);
+        DocumentFile[] sharedFiles = sharedFilesFolder.listFiles();
+        boolean success = true;
+        for (DocumentFile sharedFile : sharedFiles) {
+            success &= sharedFile.delete();
+        }
+        if(!success) {
+            Logging.log(Log.WARN, TAG, "Unable to delete all files shared with this app");
+        }
+    }
+
+    public static DocumentFile getSingleDocFile(@NonNull Context context, @Nullable Uri uri) {
+        if(uri == null) {
+            return null;
+        }
+        if("file".equals(uri.getScheme())) {
+            return DocumentFile.fromFile(new File(uri.getPath()));
+        }
+        return DocumentFile.fromSingleUri(context, uri);
     }
 }

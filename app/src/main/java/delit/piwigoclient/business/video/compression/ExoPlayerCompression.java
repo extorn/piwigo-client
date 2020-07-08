@@ -567,7 +567,7 @@ public class ExoPlayerCompression {
             Handler progressHandler = new Handler(getLooper());
             progressHandler.postDelayed(new CompressionProgressListener(progressHandler, player, mediaMuxerControl, listenerWrapper), 1000);
             if (cancelled) {
-                DocumentFile outputDocFile = DocumentFile.fromSingleUri(getContext(), outputFile);
+                DocumentFile outputDocFile = IOUtils.getSingleDocFile(getContext(), outputFile);
                 if (outputDocFile.exists() && !outputDocFile.delete()) {
                     Logging.log(Log.ERROR, TAG, "Unable to delete output file after compression cancelled");
                 }

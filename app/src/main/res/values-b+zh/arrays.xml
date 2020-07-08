@@ -162,6 +162,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.67</item>
+        <item>"错误修正：
+                 -修复了一些错误，这些错误与最近对文件处理代码的全面检查有关的崩溃有关
+                变化：
+                 -大大提高了上传屏幕的文件选择性能
+                 -无缝支持在不提供所需文件权限的应用程序中选择文件"</item>
         <item>1.4.0.66.8</item>
         <item>"错误修正：
                  -上传期间或上传之后应用崩溃"</item>

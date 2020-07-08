@@ -162,6 +162,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.67</item>
+        <item>"Arreglo del fallo:
+                 - Varias correcciones de errores para bloqueos que rodean la reciente revisión del código de manejo de archivos
+                Cambios:
+                 - Gran mejora en el rendimiento de la selección de archivos para pantallas de carga
+                 - Soporte perfecto para seleccionar archivos en aplicaciones que no proporcionan los permisos de archivo requeridos"</item>
         <item>1.4.0.66.8</item>
         <item>"Arreglo del fallo:
                  - La aplicación se bloquea durante o después de una carga"</item>

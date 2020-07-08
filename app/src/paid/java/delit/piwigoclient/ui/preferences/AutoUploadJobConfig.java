@@ -359,7 +359,7 @@ public class AutoUploadJobConfig implements Parcelable {
             if(fileUrisAndHashcodes.size() > 0) {
                 Set<Uri> itemsToRemove = new HashSet<>();
                 for(Map.Entry<Uri, String> priorUploadEntry : fileUrisAndHashcodes.entrySet()) {
-                    DocumentFile docFile = DocumentFile.fromSingleUri(context, priorUploadEntry.getKey());
+                    DocumentFile docFile = IOUtils.getSingleDocFile(context, priorUploadEntry.getKey());
                     if(docFile == null || !docFile.exists()) {
                         itemsToRemove.add(priorUploadEntry.getKey());
                         outOfSync = true;

@@ -60,7 +60,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
     @Override
     protected void logJsonSyntaxError(String responseBodyStr) {
         if(responseBodyStr != null && responseBodyStr.contains("forbidden file type")) {
-            DocumentFile originalFile = DocumentFile.fromSingleUri(getContext(), fileChunk.getOriginalFile());
+            DocumentFile originalFile = IOUtils.getSingleDocFile(getContext(), fileChunk.getOriginalFile());
             String fileType = originalFile.isDirectory() ? "dir" : "file";
             String filePath = originalFile.getUri().toString();
             String mimeType = fileChunk.getMimeType();

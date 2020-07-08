@@ -7,7 +7,7 @@ import androidx.documentfile.provider.DocumentFile;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.file.FolderItem;
 
 /**
  * Created by gareth on 13/06/17.
@@ -16,7 +16,7 @@ import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
 public class FileSelectionCompleteEvent extends TrackableResponseEvent {
 
     private long actionTimeMillis;
-    private final ArrayList<FolderItemRecyclerViewAdapter.FolderItem> selectedFolderItems;
+    private final ArrayList<FolderItem> selectedFolderItems;
 
     public FileSelectionCompleteEvent(int actionId, long actionTimeMillis) {
         super(actionId);
@@ -26,13 +26,13 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
 
     public FileSelectionCompleteEvent withFiles(Collection<Uri> uris) {
         for (Uri uri : uris) {
-            FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(uri);
+            FolderItem item = new FolderItem(uri);
             selectedFolderItems.add(item);
         }
         return this;
     }
 
-    public FileSelectionCompleteEvent withFolderItems(ArrayList<FolderItemRecyclerViewAdapter.FolderItem> selectedFolderItems) {
+    public FileSelectionCompleteEvent withFolderItems(ArrayList<FolderItem> selectedFolderItems) {
         this.selectedFolderItems.addAll(selectedFolderItems);
         return this;
     }
@@ -41,13 +41,13 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
         return actionTimeMillis;
     }
 
-    public ArrayList<FolderItemRecyclerViewAdapter.FolderItem> getSelectedFolderItems() {
+    public ArrayList<FolderItem> getSelectedFolderItems() {
         return selectedFolderItems;
     }
 
     public ArrayList<DocumentFile> getSelectedFolderItemsAsFiles() {
         ArrayList<DocumentFile> selectedFiles = new ArrayList<>(selectedFolderItems.size());
-        for (FolderItemRecyclerViewAdapter.FolderItem item : selectedFolderItems) {
+        for (FolderItem item : selectedFolderItems) {
             selectedFiles.add(item.getDocumentFile());
         }
         return selectedFiles;

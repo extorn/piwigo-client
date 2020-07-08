@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,16 +55,21 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ProgressListener;
+import delit.libs.ui.util.SimpleSubTaskProgressTracker;
+import delit.libs.ui.util.TaskProgressListener;
+import delit.libs.ui.util.TaskProgressTracker;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.ui.common.BackButtonHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
@@ -219,8 +227,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
 
         @Override
-        public void onTaskProgress(double percentageComplete) {
-            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), (int) Math.rint(percentageComplete* 100));
+        public void onProgress(int percentageComplete) {
+            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), percentageComplete);
         }
 
         @Override
@@ -352,47 +360,74 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private List<FolderItemRecyclerViewAdapter.FolderItem> processOpenDocuments(Intent resultData, ProgressListener listener) {
+    private void processOpenDocumentsWithoutPermissions(List<FolderItem> itemsShared) {
+        if(BuildConfig.PAID_VERSION) {
+            new SharedFilesClonedIntentProcessingTask(this).execute(itemsShared);
+        } else {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_shared_without_required_permissions_error), R.string.button_ok);
+        }
+    }
+
+    private @NonNull List<FolderItem> processOpenDocuments(Intent resultData, ProgressListener listener) {
         ClipData clipData = resultData.getClipData();
-        List<FolderItemRecyclerViewAdapter.FolderItem> itemsShared = new ArrayList<>();
+        List<FolderItem> itemsShared = new ArrayList<>();
+        boolean permissionsMissing = false;
+
         if(clipData != null) {
-            boolean permissionsMissing = false;
             int items = clipData.getItemCount();
             for (int i = 0; i < items; i++) {
                 Uri itemUri = clipData.getItemAt(i).getUri();
 
-                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    try {
-                        appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
-                    } catch(SecurityException e) {
-                        permissionsMissing = true;
-                        Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for URI : " + itemUri);
-                        Logging.recordException(e);
-                    }
-                }
-
-
-                FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(itemUri);
-                item.cacheFields(getContext());
+                FolderItem item = new FolderItem(itemUri);
                 itemsShared.add(item);
-                listener.onProgress((int) (100 * Math.rint((float)i) / items));
-            }
-            if(permissionsMissing) {
-                DisplayUtils.postOnUiThread(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getContext().getString(R.string.likely_file_unusable_shared_without_permissions), R.string.button_ok));
+                permissionsMissing |= takePersistablePermissionsIfNeeded(resultData, item.getContentUri());
             }
 
         } else if(resultData.getData() != null) {
-            FolderItemRecyclerViewAdapter.FolderItem item = new FolderItemRecyclerViewAdapter.FolderItem(resultData.getData());
-            item.cacheFields(getContext());
+            FolderItem item = new FolderItem(resultData.getData());
             itemsShared.add(item);
+            permissionsMissing = takePersistablePermissionsIfNeeded(resultData, item.getContentUri());
         } else {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+        }
+        FolderItem.cacheDocumentInformation(requireContext(), itemsShared, listener);
+        if(permissionsMissing) {
+            //DisplayUtils.postOnUiThread(() -> getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getContext().getString(R.string.likely_file_unusable_shared_without_permissions_pattern), R.string.button_no, R.string.button_yes, new TakeCopyOfFilesActionListener(getUiHelper(), itemsShared)));
+            processOpenDocumentsWithoutPermissions(itemsShared);
+            return new ArrayList<>();
         }
         return itemsShared;
     }
 
-    private List<FolderItemRecyclerViewAdapter.FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
+    /**
+     *
+     * @param resultData
+     * @param itemUri
+     * @param permFlags default is READ WRITE if not provided
+     * @return
+     */
+    private boolean takePersistablePermissionsIfNeeded(Intent resultData, Uri itemUri, int ... permFlags) {
+        boolean permissionsMissing = true;
+        int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        if(permFlags != null) {
+            takeFlags = resultData.getFlags();
+            for(int flag : permFlags) {
+                takeFlags &= flag;
+            }
+        }
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+                permissionsMissing = false;
+            } catch(SecurityException e) {
+                Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for URI : " + itemUri);
+//                Logging.recordException(e);
+            }
+        }
+        return permissionsMissing;
+    }
+
+    private List<FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
         if (resultData.getData() == null) {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             return null;
@@ -401,42 +436,41 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             if(context == null) {
                 context = getUiHelper().getAppContext();
             }
-            List<FolderItemRecyclerViewAdapter.FolderItem> itemsShared = new ArrayList<>();
+            List<FolderItem> itemsShared = new ArrayList<>();
             // get a reference to permitted folder on the device.
             Uri permittedUri = resultData.getData();
 
             try {
                 DocumentFile docFile = DocumentFile.fromTreeUri(context, permittedUri);
                 if(docFile != null) {
-                    final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        appSettingsViewModel.takePersistableFileSelectionUriPermissions(context, permittedUri, takeFlags, getString(R.string.file_selection_heading));
+                    //final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri());
+                    if(!permissionsMissing) {
+                        FolderItem folderItem = new FolderItem(permittedUri, docFile);
+                        folderItem.cacheFields(context);
+                        itemsShared.add(folderItem);
+                    } else {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions), R.string.button_ok);
                     }
-                    FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
-                    folderItem.cacheFields(context);
-                    itemsShared.add(folderItem);
                     listener.onProgress(100);
                 } else {
                     itemsShared = processOpenDocuments(resultData, listener);
                 }
             } catch(IllegalArgumentException e) {
                 // this is most likely because it is not a folder.
-                DocumentFile docFile = DocumentFile.fromSingleUri(context, permittedUri);
+                DocumentFile docFile = IOUtils.getSingleDocFile(context, permittedUri);
+//                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri());
 
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    try {
-                        appSettingsViewModel.takePersistableUriPermissions(context, permittedUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
-                    } catch(SecurityException se) {
-                        Logging.log(Log.WARN, TAG, "Unable to take persistable folder permissions for URI : " + permittedUri);
-                        Logging.recordException(se);
-                    }
-                }
-
-                FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(permittedUri, docFile);
+                FolderItem folderItem = new FolderItem(permittedUri, docFile);
                 folderItem.cacheFields(context);
                 itemsShared.add(folderItem);
                 listener.onProgress(100);
+
+                if(permissionsMissing) {
+                    processOpenDocumentsWithoutPermissions(itemsShared);
+                    return new ArrayList<>(0);
+                }
             }
             return itemsShared;
         }
@@ -453,7 +487,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if (parent == null) {
             return false;
         } else {
-            getListAdapter().changeFolderViewed(getContext(), parent);
+            getListAdapter().changeFolderViewed(requireContext(), parent);
             return true;
         }
     }
@@ -468,7 +502,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if(getListAdapter() == null) {
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItemRecyclerViewAdapter.FolderItem>(), getViewPrefs());
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItem>(), getViewPrefs());
             viewAdapter.setTaskListener(new FolderItemTaskListener(getUiHelper()));
 
             if (!viewAdapter.isItemSelectionAllowed()) {
@@ -484,7 +518,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
             fileExtFilters.setListener(new FileExtFilterControlListener(getListAdapter()));
 
-            DocumentFile initialFolder = IOUtils.getDocumentFileForUriLinkedToAnAccessibleRoot(requireContext(), getViewPrefs().getInitialFolder());
+            DocumentFile initialFolder = null;
+            if(getViewPrefs().getInitialFolder() != null) {
+                initialFolder = IOUtils.getDocumentFileForUriLinkedToAnAccessibleRoot(requireContext(), getViewPrefs().getInitialFolder());
+            }
             if (initialFolder != null) {
                 // We still have access to the given Uri somehow.
                 DocumentFile root = IOUtils.getRootDocFile(initialFolder);
@@ -603,6 +640,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
             }
         }
+        roots.put(getString(R.string.files_cached_from_other_apps), IOUtils.getSharedFilesFolder(requireContext()));
         roots.put(getString(R.string.system_file_selector_label), null);
         return roots;
     }
@@ -611,11 +649,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
-        HashSet<FolderItemRecyclerViewAdapter.FolderItem> selectedItems = listAdapter.getSelectedItems();
+        HashSet<FolderItem> selectedItems = listAdapter.getSelectedItems();
         if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             selectedItems = new HashSet<>(1);
             if(listAdapter.getActiveFolder() != null) {
-                FolderItemRecyclerViewAdapter.FolderItem folderItem = new FolderItemRecyclerViewAdapter.FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder());
+                FolderItem folderItem = new FolderItem(listAdapter.getActiveRootUri(), listAdapter.getActiveFolder());
                 folderItem.cacheFields(getContext());
                 selectedItems.add(folderItem);
             }
@@ -757,7 +795,88 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, Intent, Integer, List<FolderItemRecyclerViewAdapter.FolderItem>> implements ProgressListener {
+    private static class SharedFilesClonedIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, List<FolderItem>, Integer, List<FolderItem>> implements ProgressListener {
+
+
+        public SharedFilesClonedIntentProcessingTask(RecyclerViewDocumentFileFolderItemSelectFragment parent) {
+            super(parent);
+            withContext(parent.requireContext());
+        }
+
+        public AsyncTask<List<FolderItem>, Integer, List<FolderItem>> execute(List<FolderItem> param) {
+            return super.execute(param);
+        }
+
+        @Override
+        protected void onPreExecuteSafely() {
+            super.onPreExecuteSafely();
+            getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),0);
+        }
+
+        @Override
+        public Context getContext() {
+            return getOwner().requireContext();
+        }
+
+        @Override
+        protected List<FolderItem> doInBackgroundSafely(List<FolderItem> ... params) {
+            List<FolderItem> itemsShared = params[0];
+            List<FolderItem> copiedItemsShared = new ArrayList<>(itemsShared.size());
+            TaskProgressTracker progressTracker = new SimpleSubTaskProgressTracker(this);
+            progressTracker.withStage(0, 80, itemsShared.size());
+            int i = 0;
+            for(FolderItem item : itemsShared) {
+                DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(getContext());
+
+                DocumentFile tmpFile = IOUtils.getTmpFile(sharedFilesFolder, IOUtils.getFileNameWithoutExt(item.getName()), item.getExt(), item.getMime());
+                try {
+                    Uri newUri = IOUtils.copyDocumentUriDataToUri(getContext(), item.getContentUri(), tmpFile.getUri());
+                    copiedItemsShared.add(new FolderItem(newUri));
+                    progressTracker.onTick(++i);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            progressTracker.withStage(80, 100, copiedItemsShared.size());
+            itemsShared.clear();
+            FolderItem.cacheDocumentInformation(getContext(), copiedItemsShared, progressTracker);
+            return copiedItemsShared;
+        }
+
+        @Override
+        protected void onProgressUpdateSafely(Integer... progress) {
+            super.onProgressUpdateSafely(progress);
+            try {
+                getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_copying_imported_files),progress[0]);
+            } catch(NullPointerException e) {
+                Logging.log(Log.ERROR, TAG, "Unable to report progress. Likely not attached");
+                Logging.recordException(e);
+            }
+
+        }
+
+        @Override
+        protected void onPostExecuteSafely(List<FolderItem> folderItems) {
+            if(folderItems != null) {
+                if (folderItems.size() == 1 && folderItems.get(0).isFolder()) {
+                    FolderItem item = folderItems.get(0);
+                    getOwner().addRootFolder(item.getDocumentFile());
+                } else {
+                    getOwner().getListAdapter().addItems(getOwner().getContext(), folderItems);
+                    getOwner().selectAllItems();
+                }
+            }
+            getOwner().getUiHelper().hideProgressIndicator();
+            getOwner().fileExtFilters.setEnabled(true);
+        }
+
+        @Override
+        public void onProgress(int percent) {
+            publishProgress(percent);
+        }
+    }
+
+    private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, Intent, Integer, List<FolderItem>> implements ProgressListener {
 
 
         public SharedFilesIntentProcessingTask(RecyclerViewDocumentFileFolderItemSelectFragment parent) {
@@ -772,7 +891,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
 
         @Override
-        protected List<FolderItemRecyclerViewAdapter.FolderItem> doInBackgroundSafely(Intent[] objects) {
+        protected List<FolderItem> doInBackgroundSafely(Intent[] objects) {
             Intent intent = objects[0];
             if (intent.getClipData() != null) {
                 return getOwner().processOpenDocuments(intent, this);
@@ -787,19 +906,20 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             try {
                 getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),progress[0]);
             } catch(NullPointerException e) {
-                Logging.log(Log.ERROR, TAG, "Unable to report progress. Likely not attached", e);
+                Logging.log(Log.ERROR, TAG, "Unable to report progress. Likely not attached");
+                Logging.recordException(e);
             }
 
         }
 
         @Override
-        protected void onPostExecuteSafely(List<FolderItemRecyclerViewAdapter.FolderItem> folderItems) {
+        protected void onPostExecuteSafely(List<FolderItem> folderItems) {
             if(folderItems != null) {
                 if (folderItems.size() == 1 && folderItems.get(0).isFolder()) {
-                    FolderItemRecyclerViewAdapter.FolderItem item = folderItems.get(0);
+                    FolderItem item = folderItems.get(0);
                     getOwner().addRootFolder(item.getDocumentFile());
-                } else {
-                    getOwner().getListAdapter().addItems(folderItems);
+                } else if(folderItems.size() > 0) {
+                    getOwner().getListAdapter().addItems(getOwner().getContext(), folderItems);
                     getOwner().selectAllItems();
                 }
             }
@@ -827,7 +947,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 return; // UI out of sync. Do nothing and be patient.
             }
             if(getListAdapter().getActiveFolder().getUri().equals(pathItemFile.getUri())) {
-                getListAdapter().rebuildContentView(getContext());
+                getListAdapter().rebuildContentView(requireContext());
             } else {
                 boolean loadedFromMemory = false;
                 if(listViewStates != null) {
@@ -861,4 +981,49 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             }
         }
     }
+
+    private static class TakeCopyOfFilesActionListener extends UIHelper.QuestionResultAdapter<FragmentUIHelper<RecyclerViewDocumentFileFolderItemSelectFragment>, RecyclerViewDocumentFileFolderItemSelectFragment> implements Parcelable {
+        private final List<FolderItem> itemsShared;
+
+        public TakeCopyOfFilesActionListener(FragmentUIHelper<RecyclerViewDocumentFileFolderItemSelectFragment> uiHelper, List<FolderItem> itemsShared) {
+            super(uiHelper);
+            this.itemsShared = itemsShared;
+        }
+
+        protected TakeCopyOfFilesActionListener(Parcel in) {
+            super(in);
+            itemsShared = null;// it isn't sensible to retain these items if there isn't persistent permissions
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<TakeCopyOfFilesActionListener> CREATOR = new Creator<TakeCopyOfFilesActionListener>() {
+            @Override
+            public TakeCopyOfFilesActionListener createFromParcel(Parcel in) {
+                return new TakeCopyOfFilesActionListener(in);
+            }
+
+            @Override
+            public TakeCopyOfFilesActionListener[] newArray(int size) {
+                return new TakeCopyOfFilesActionListener[size];
+            }
+        };
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                getUiHelper().getParent().processOpenDocumentsWithoutPermissions(itemsShared);
+            }
+        }
+
+    }
+
 }

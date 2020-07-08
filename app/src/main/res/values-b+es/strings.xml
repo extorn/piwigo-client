@@ -692,7 +692,9 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="no_adverts_label">¿Prefieres una versión sin publicidad de esta aplicación?</string>
     <string name="view_the_paid_version">Llévame a la versión gratuita de anuncios</string>
     <string name="advert_providers">Proveedores de anuncios en uso</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Lo sentimos, este archivo no se pudo usar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
-    <string name="likely_file_unusable_shared_without_permissions">Los archivos agregados se han compartido sin el permiso solicitado. Si no se agrega para cargar, puede intentar compartirlos desde la aplicación directamente con esta aplicación en lugar de acceder a través del selector de archivos de carga.</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Lo sentimos, este archivo no se pudo usar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
+    <string name="files_shared_without_required_permissions_error">La aplicación que utilizó para seleccionar los archivos no ha delegado los permisos de archivo necesarios a Piwigo Client. Se ha agregado una solución para este problema en la versión paga de Piwigo Client, pero también puede utilizar un método diferente para seleccionar los archivos.</string>
+    <string name="files_cached_from_other_apps">Acciones en caché</string>
+    <string name="progress_copying_imported_files">Copiar archivos importados</string>
 
 </resources>

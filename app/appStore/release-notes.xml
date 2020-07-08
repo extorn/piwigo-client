@@ -1,36 +1,63 @@
 <en-GB>
 "Bugfix:
-- App crash during or after an upload"
+- A number of bug fixes for crashes surrounding the recent overhaul of file handling code
+Changes:
+- Vast improvement to the performance of the file selection for upload screens
+- Seamless support for selecting files in apps that do not provide required file permissions"
 </en-GB>
 <cs-CZ>
 "Oprava chyby:
-- Selhání aplikace během nebo po nahrávání"
+- Řada oprav chyb při haváriích kolem nedávného přepracování kódu pro manipulaci se soubory
+Změny:
+- Výrazné zlepšení výkonu výběru souborů pro obrazovky pro nahrávání
+- Bezproblémová podpora pro výběr souborů v aplikacích, které neposkytují požadovaná oprávnění k souborům"
 </cs-CZ>
 <de-DE>
 "Fehlerbehebung:
-- App-Absturz während oder nach einem Upload"
+- Eine Reihe von Fehlerkorrekturen für Abstürze im Zusammenhang mit der kürzlich erfolgten Überarbeitung des Dateibehandlungscodes
+Änderungen:
+- Deutliche Verbesserung der Leistung der Dateiauswahl für Upload-Bildschirme
+- Nahtlose Unterstützung für die Auswahl von Dateien in Apps, die nicht die erforderlichen Dateiberechtigungen bieten"
 </de-DE>
 <es-ES>
 "Arreglo del fallo:
-- La aplicación se bloquea durante o después de una carga"
+- Varias correcciones de errores para bloqueos que rodean la reciente revisión del código de manejo de archivos
+Cambios:
+- Gran mejora en el rendimiento de la selección de archivos para pantallas de carga
+- Soporte perfecto para seleccionar archivos en aplicaciones que no proporcionan los permisos de archivo requeridos"
 </es-ES>
 <fr-FR>
 "Correction d\'un bug:
-- Plantage de l\'application pendant ou après un téléchargement"
+- Un certain nombre de corrections de bugs pour les plantages entourant la récente refonte du code de gestion des fichiers
+Changements:
+- Vaste amélioration des performances de la sélection de fichiers pour les écrans de téléchargement
+- Prise en charge transparente de la sélection de fichiers dans les applications qui ne fournissent pas les autorisations de fichiers requises"
 </fr-FR>
 <it-IT>
 "Risoluzione del problema:
-- Blocco dell\'app durante o dopo un caricamento"
+- Numerose correzioni di bug per arresti anomali relativi alla recente revisione del codice di gestione dei file
+I cambiamenti:
+- Vasto miglioramento delle prestazioni della selezione dei file per le schermate di caricamento
+- Supporto continuo per la selezione di file nelle app che non forniscono le autorizzazioni necessarie per i file"
 </it-IT>
 <ja-JP>
 "バグ修正：
--アップロード中またはアップロード後にアプリがクラッシュする"
+-ファイル処理コードの最近のオーバーホールを取り巻くクラッシュの多くのバグ修正
+変更：
+-アップロード画面のファイル選択のパフォーマンスが大幅に改善されました
+-必要なファイル権限を提供しないアプリでファイルを選択するためのシームレスなサポート"
 </ja-JP>
 <ru-RU>
 "Исправлена ошибка:
-- Сбой приложения во время или после загрузки"
+- Ряд исправлений ошибок, связанных с недавним пересмотром кода обработки файлов
+Изменения:
+- Значительное улучшение производительности выбора файлов для экранов загрузки
+- Полная поддержка выбора файлов в приложениях, которые не предоставляют необходимые разрешения для файлов"
 </ru-RU>
 <zh-CN>
 "错误修正：
--上传期间或上传之后应用崩溃"
+-修复了一些错误，这些错误与最近对文件处理代码的全面检查有关的崩溃有关
+变化：
+-大大提高了上传屏幕的文件选择性能
+-无缝支持在不提供所需文件权限的应用程序中选择文件"
 </zh-CN>

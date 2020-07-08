@@ -692,7 +692,9 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="no_adverts_label">Vous préférez une version sans publicité de cette application?</string>
     <string name="view_the_paid_version">Emmenez-moi à la version gratuite de l\'annonce</string>
     <string name="advert_providers">Fournisseurs d\'annonces en cours d\'utilisation</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Désolé, ce fichier n\'a pas pu être utilisé car il a été partagé par une application qui n\'a pas autorisé l\'accès étendu demandé à ce fichier et cet accès a expiré.</string>
-    <string name="likely_file_unusable_shared_without_permissions">Les fichiers ajoutés ont été partagés sans l\'autorisation demandée. S\'il ne parvient pas à être ajouté pour le téléchargement, vous pouvez essayer de les partager directement depuis l\'application avec cette application plutôt que d\'y accéder via le sélecteur de fichiers de téléchargement.</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Désolé, ce fichier n\'a pas pu être utilisé car il a été partagé par une application qui n\'a pas autorisé l\'accès étendu demandé à ce fichier et cet accès a expiré.</string>
+    <string name="files_shared_without_required_permissions_error">L\'application que vous avez utilisée pour sélectionner les fichiers n\'a pas délégué les autorisations de fichiers nécessaires à Piwigo Client. Une solution a été ajoutée pour ce problème dans la version payante de Piwigo Client, mais vous pouvez également utiliser une méthode différente de sélection des fichiers.</string>
+    <string name="files_cached_from_other_apps">Partages en cache</string>
+    <string name="progress_copying_imported_files">Copie de fichiers importés</string>
 
 </resources>

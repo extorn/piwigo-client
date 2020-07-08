@@ -692,7 +692,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="no_adverts_label">Bevorzugen Sie eine werbefreie Version dieser App?</string>
     <string name="view_the_paid_version">Bring mich zur werbefreien Version</string>
     <string name="advert_providers">Anzeigenanbieter im Einsatz</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Diese Datei konnte leider nicht verwendet werden, da sie von einer App freigegeben wurde, die den angeforderten erweiterten Zugriff auf diese Datei nicht autorisiert hat und der Zugriff abgelaufen ist.</string>
-    <string name="likely_file_unusable_shared_without_permissions">Die hinzugefügten Dateien wurden ohne die angeforderte Erlaubnis freigegeben. Wenn es nicht zum Hochladen hinzugefügt werden kann, können Sie versuchen, sie direkt aus der App für diese App freizugeben, anstatt über die Upload-Dateiauswahl darauf zuzugreifen.</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Diese Datei konnte leider nicht verwendet werden, da sie von einer App freigegeben wurde, die den angeforderten erweiterten Zugriff auf diese Datei nicht autorisiert hat und der Zugriff abgelaufen ist.</string>
+    <string name="files_shared_without_required_permissions_error">Die App, mit der Sie die Dateien ausgewählt haben, hat die erforderlichen Dateiberechtigungen nicht an Piwigo Client delegiert. In der kostenpflichtigen Version von Piwigo Client wurde eine Lösung für dieses Problem hinzugefügt. Alternativ können Sie auch eine andere Methode zur Auswahl der Dateien verwenden.</string>
+    <string name="files_cached_from_other_apps">Zwischengespeicherte Anteile</string>
+    <string name="progress_copying_imported_files">Importierte Dateien kopieren</string>
 
 </resources>

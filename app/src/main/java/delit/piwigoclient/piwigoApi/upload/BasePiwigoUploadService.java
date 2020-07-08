@@ -297,7 +297,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         for (Uri file : thisUploadJob.getFilesWithStatus(UploadJob.COMPRESSED)) {
             Uri compressedVersion = thisUploadJob.getCompressedFile(file);
             if (compressedVersion != null) {
-                DocumentFile compressedFile = DocumentFile.fromSingleUri(c, compressedVersion);
+                DocumentFile compressedFile = IOUtils.getSingleDocFile(c, compressedVersion);
                 if(compressedFile != null && compressedFile.exists()) {
                     if (!compressedFile.delete()) {
                         Logging.log(Log.ERROR, TAG, "Unable to delete compressed file when attempting to delete job state from disk.");
@@ -371,6 +371,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
+
+
     public static File getTmpUploadFolderAsFile(Context context) {
         File extCacheFolder = context.getExternalCacheDir();
         File tmpUploads = new File(extCacheFolder, "piwigo-upload");
@@ -398,17 +400,30 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         } else {
             tmpUploadUri = Uri.fromFile(getTmpUploadFolderAsFile(this));
         }
+        DocumentFile sharedFiles = IOUtils.getSharedFilesFolder(this);
         boolean isDeleteUploadedFiles = uploadJob.isDeleteFilesAfterUpload();
         for (Uri f : uploadJob.getFilesSuccessfullyUploaded()) {
-            DocumentFile docFile;
+            DocumentFile docFile = null;
             boolean isTmpFile = false;
             try {
                 docFile = IOUtils.getTreeLinkedDocFile(this, tmpUploadUri, f);
                 isTmpFile = true;
             } catch(IllegalStateException e) {
-                // this is NOT a temporary folder file.
-                 docFile = DocumentFile.fromSingleUri(this, f);
+                // ignore.
             }
+            if(docFile == null) {
+                try {
+                    docFile = IOUtils.getTreeLinkedDocFile(this, sharedFiles.getUri(), f);
+                    isTmpFile = true;
+                } catch(IllegalStateException e) {
+                    // ignore.
+                }
+            }
+            if(docFile == null) {
+                // this is NOT a temporary folder file.
+                docFile = IOUtils.getSingleDocFile(this, f);
+            }
+
             if (docFile != null && docFile.exists()) {
                 if (isDeleteUploadedFiles || isTmpFile) {
                     if (!docFile.delete()) {
@@ -1035,7 +1050,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
                 FirebaseAnalytics.getInstance(this).logEvent("incompressible_video_encountered", b);
                 uploadJob.markFileAsCompressed(rawVideo);
-                outputVideo = DocumentFile.fromSingleUri(this, rawVideo);
+                outputVideo = IOUtils.getSingleDocFile(this, rawVideo);
             } else {
                 String msg = "Unable to find acceptable file extension for compressed video amongst " + serverAcceptedFileExts;
                 Logging.log(Log.ERROR, TAG, msg);
@@ -1077,7 +1092,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     b.putString("file_ext", IOUtils.getFileExt(rawVideo.toString()));
                     FirebaseAnalytics.getInstance(this).logEvent("incompressible_video_encountered", b);
                     uploadJob.markFileAsCompressed(rawVideo);
-                    outputVideo = DocumentFile.fromSingleUri(this, rawVideo);
+                    outputVideo = IOUtils.getSingleDocFile(this, rawVideo);
                 } else {
                     Logging.recordException(e);
                     postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
@@ -1282,7 +1297,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 Uri compressedVideoFileUri = thisUploadJob.getCompressedFile(fileForUploadUri);
 
                 if (!IOUtils.delete(this, compressedVideoFileUri)) {
-                    DocumentFile compressedVideoFile = Objects.requireNonNull(DocumentFile.fromSingleUri(this, compressedVideoFileUri));
+                    DocumentFile compressedVideoFile = Objects.requireNonNull(IOUtils.getSingleDocFile(this, compressedVideoFileUri));
                     onFileDeleteFailed(tag, compressedVideoFile, "compressed video - post upload");
                 }
             }
@@ -1330,7 +1345,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected DocumentFile getCompressedVersionOfFileToUpload(UploadJob uploadJob, Uri fileForUpload) {
         Uri compressedFileUri = uploadJob.getCompressedFile(fileForUpload);
-        DocumentFile compressedFile = DocumentFile.fromSingleUri(this, compressedFileUri);
+        DocumentFile compressedFile = IOUtils.getSingleDocFile(this, compressedFileUri);
         if (compressedFile != null && compressedFile.exists() && !uploadJob.isFileCompressed(fileForUpload)) {
             if (!compressedFile.delete()) { // the compression failed - delete file and allow restart
                 onFileDeleteFailed(tag, compressedFile, "compressed file - pre upload");

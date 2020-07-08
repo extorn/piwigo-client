@@ -296,6 +296,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         public static final String SMALL1 = "2small";
         public static final String THUMB = "thumb";
         public static final String SQUARE = "square";
+        public static final String OPTIMAL = "Optimal";
 
         private final byte id;
         private final String url;
@@ -377,6 +378,8 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
                     return 9;
                 case SQUARE:
                     return 10;
+                case OPTIMAL:
+                    return 11;
                 default:
                     Logging.log(Log.ERROR, TAG, "Unsupported resource name encountered : " + name);
                     return -1;

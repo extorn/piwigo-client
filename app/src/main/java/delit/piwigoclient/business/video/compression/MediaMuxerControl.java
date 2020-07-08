@@ -67,7 +67,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         this.outputFile = outputFile;
         extractLocationData(inputFile);
         extractInputVideoFormat(inputFile);
-        DocumentFile docFile = DocumentFile.fromSingleUri(context, inputFile);
+        DocumentFile docFile = IOUtils.getSingleDocFile(context, inputFile);
         inputBytes = docFile.length();
         if(VERBOSE_LOGGING) {
             Log.d(TAG, "Extracted file length from input file");

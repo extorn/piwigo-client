@@ -162,6 +162,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.67</item>
+        <item>"Fehlerbehebung:
+                 - Eine Reihe von Fehlerkorrekturen für Abstürze im Zusammenhang mit der kürzlich erfolgten Überarbeitung des Dateibehandlungscodes
+                Änderungen:
+                 - Deutliche Verbesserung der Leistung der Dateiauswahl für Upload-Bildschirme
+                 - Nahtlose Unterstützung für die Auswahl von Dateien in Apps, die nicht die erforderlichen Dateiberechtigungen bieten"</item>
         <item>1.4.0.66.8</item>
         <item>"Fehlerbehebung:
                  - App-Absturz während oder nach einem Upload"</item>

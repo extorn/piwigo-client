@@ -28,6 +28,7 @@ import cz.msebera.android.httpclient.util.ByteArrayBuffer;
 import delit.libs.core.util.Logging;
 import delit.libs.http.cache.CachingAsyncHttpClient;
 import delit.libs.http.cache.RequestHandle;
+import delit.libs.util.IOUtils;
 import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -165,7 +166,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
             AsyncHttpClient.endEntityViaReflection(entity);
             AsyncHttpClient.silentCloseOutputStream(bos);
             if (isCancelCallAsap()) {
-                DocumentFile docFile = DocumentFile.fromSingleUri(getContext(), outputFileUri);
+                DocumentFile docFile = IOUtils.getSingleDocFile(getContext(), outputFileUri);
                 if(docFile != null && !docFile.delete()) {
                     Logging.log(Log.ERROR, TAG, "Unable to delete partially downloaded file");
                 }

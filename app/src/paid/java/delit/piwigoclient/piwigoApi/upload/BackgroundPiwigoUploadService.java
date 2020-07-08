@@ -584,7 +584,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             }
 
             private boolean processEvent(Uri watchedUri, Uri eventSourceUri, int eventId) {
-                DocumentFile file = DocumentFile.fromSingleUri(getContext(), eventSourceUri);
+                DocumentFile file = IOUtils.getSingleDocFile(getContext(), eventSourceUri);
                 if(file == null) {
                     Logging.log(Log.ERROR, TAG, "Unable to retrieve DocumentFile for uri " + eventSourceUri);
                     return false;

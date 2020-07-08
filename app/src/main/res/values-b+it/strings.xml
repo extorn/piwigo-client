@@ -692,7 +692,9 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="no_adverts_label">Preferisci una versione senza pubblicità di questa app?</string>
     <string name="view_the_paid_version">Portami alla versione gratuita dell\'annuncio</string>
     <string name="advert_providers">Provider di annunci pubblicitari in uso</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">Spiacenti, non è stato possibile utilizzare questo file perché è stato condiviso da un\'app che non ha autorizzato l\'accesso esteso richiesto a questo file e che l\'accesso è scaduto.</string>
-    <string name="likely_file_unusable_shared_without_permissions">I file aggiunti sono stati condivisi senza l\'autorizzazione richiesta. Se non è possibile aggiungerlo per il caricamento, è possibile provare a condividerli dall\'app direttamente con questa app anziché accedervi tramite il selettore di file di caricamento.</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Spiacenti, non è stato possibile utilizzare questo file perché è stato condiviso da un\'app che non ha autorizzato l\'accesso esteso richiesto a questo file e che l\'accesso è scaduto.</string>
+    <string name="files_shared_without_required_permissions_error">L\'app utilizzata per selezionare i file non ha delegato le autorizzazioni file necessarie al client Piwigo. È stata aggiunta una soluzione per questo problema nella versione a pagamento di Piwigo Client, ma in alternativa è possibile utilizzare un metodo diverso per selezionare i file.</string>
+    <string name="files_cached_from_other_apps">Azioni cache</string>
+    <string name="progress_copying_imported_files">Copia dei file importati</string>
 
 </resources>

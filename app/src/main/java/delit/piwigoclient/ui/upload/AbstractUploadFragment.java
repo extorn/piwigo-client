@@ -106,7 +106,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 import static android.view.View.GONE;
@@ -229,21 +229,18 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (PiwigoSessionDetails.getInstance(activeProfile) != null) {
 
                 Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
-                Iterator<FolderItemRecyclerViewAdapter.FolderItem> iter = event.getSelectedFolderItems().iterator();
+                Iterator<FolderItem> iter = event.getSelectedFolderItems().iterator();
                 Set<String> unsupportedExts = new HashSet<>();
                 int currentItem = 0;
 
                 // Initialise phase 1 (0% -15% - split between number of files to process)
                 mainTaskProgressListener.withStage(0, 15, itemCount);
 
+                FolderItem.cacheDocumentInformation(getContext(), event.getSelectedFolderItems(), mainTaskProgressListener);
+
                 while (iter.hasNext()) {
                     currentItem++;
-                    FolderItemRecyclerViewAdapter.FolderItem f = iter.next();
-                    if(!f.isFieldsCached()) {
-                        if(!f.cacheFields(getContext())) {
-                            Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + f.getContentUri());
-                        }
-                    }
+                    FolderItem f = iter.next();
                     //TODO check this is correct to assume that upper case extensions are okay (server isn't case sensitive!).
                     if (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase())) {
                         String mimeType = f.getMime();
@@ -252,8 +249,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                             unsupportedExts.add(f.getExt());
                         }
                     }
-                    //mainTaskProgressListener.onProgress((currentItem*100)/itemCount);
-                    mainTaskProgressListener.onTick(currentItem);
                 }
                 if (!unsupportedExts.isEmpty()) {
                     DisplayUtils.postOnUiThread(() ->getOwner().getUiHelper().showDetailedMsg(R.string.alert_information, getOwner().getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts))));
@@ -261,7 +256,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
 
             long totalImportedFileBytes = 0;
-            for (FolderItemRecyclerViewAdapter.FolderItem item : event.getSelectedFolderItems()) {
+            for (FolderItem item : event.getSelectedFolderItems()) {
                 totalImportedFileBytes += item.getFileLength();
             }
 
@@ -271,7 +266,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             ArrayList<FilesToUploadRecyclerViewAdapter.UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
 
-            for (FolderItemRecyclerViewAdapter.FolderItem f : event.getSelectedFolderItems()) {
+            for (FolderItem f : event.getSelectedFolderItems()) {
                 double sizeOfThisFileAsPercentageOfThoseToProcess = (100.0 * f.getFileLength()) / totalImportedFileBytes;
                 double progressForThisItem = sizeOfThisFileAsPercentageOfThoseToProcess * thisStageAsPercOfTotal;
 
@@ -289,11 +284,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 } catch (Md5SumUtils.Md5SumException e) {
                     Logging.recordException(e);
                 } catch(SecurityException secException) {
-                    getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions));
+                    getOwner().overallUploadProgressBar.post(() -> getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions)));
                 }
             }
             if(mainTaskProgressListener.getLastReportedProgress() < 100) {
-                mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(), 100).onProgress(100);
+                mainTaskProgressListener.withStage(mainTaskProgressListener.getOverallTaskProgress(), 100).onProgress(100);
             }
             getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
             return uploadDataItems;
@@ -625,7 +620,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             DocumentFile moviesFolder = DocumentFile.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES));
             DocumentFile outputVideo;
             int i = 0;
-            DocumentFile inputDocFile = DocumentFile.fromSingleUri(requireContext(), fileForCompression);
+            DocumentFile inputDocFile = IOUtils.getSingleDocFile(requireContext(), fileForCompression);
             String compressedFileExt = compressionSettings.getOutputFileExt();
             String outputFilenameSuffix = IOUtils.getFileNameWithoutExt(inputDocFile.getName()) + '.' + compressedFileExt;
             do {
@@ -899,6 +894,28 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
+    @Override
+    public void onPause() {
+        purgeAnyUnwantedSharedFiles();
+        super.onPause();
+    }
+
+    private void purgeAnyUnwantedSharedFiles() {
+        DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(requireContext());
+        int deleted = 0;
+        if(sharedFilesFolder.listFiles().length > 0 && BasePiwigoUploadService.getFirstActiveForegroundJob(requireContext()) == null) {
+            for(DocumentFile oldFile : sharedFilesFolder.listFiles()) {
+                if(!filesToUploadAdapter.contains(oldFile.getUri())) {
+                    oldFile.delete();
+                    deleted++;
+                }
+            }
+        }
+        if(deleted > 0) {
+            Logging.log(Log.DEBUG, TAG, "Deleted unneeded shared files : " + deleted);
+        }
+    }
+
     protected FilesToUploadRecyclerViewAdapter getFilesForUploadViewAdapter() {
         return (FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter();
     }
@@ -930,8 +947,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private void updateLastOpenedFolderPref(Context context, List<FolderItemRecyclerViewAdapter.FolderItem> folderItemsToBeUploaded) {
-        for(FolderItemRecyclerViewAdapter.FolderItem item : folderItemsToBeUploaded) {
+    private void updateLastOpenedFolderPref(Context context, List<FolderItem> folderItemsToBeUploaded) {
+        for(FolderItem item : folderItemsToBeUploaded) {
             try {
                 DocumentFile documentFile = item.getDocumentFile();
                 if(documentFile != null) {
@@ -1118,7 +1135,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             } else {
                 // job running.
                 boolean immediatelyCancelled = activeJob.cancelFileUpload(itemToRemove);
-                DocumentFile fileRemoved = DocumentFile.fromSingleUri(requireContext(), itemToRemove);
+                DocumentFile fileRemoved = IOUtils.getSingleDocFile(requireContext(), itemToRemove);
                 getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_file_upload_cancelled_pattern, fileRemoved.getName()));
                 if (immediatelyCancelled) {
                     adapter.remove(itemToRemove);
@@ -1669,6 +1686,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum());
                     getUiHelper().addNonBlockingActiveServiceCall(getContext().getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()), albumDelHandler.getTag());
                 }
+                IOUtils.deleteAllFilesSharedWithThisApp(getContext());
                 ForegroundPiwigoUploadService.removeJob(job);
                 ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job, true);
                 fragment.allowUserUploadConfiguration(null);
@@ -1806,9 +1824,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         protected void onLocalFileError(Context context, final BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
             String errorMessage;
-            String cause = response.getError().getMessage();
+            Logging.log(Log.ERROR, TAG, "Local file Upload Error");
+            Logging.recordException(response.getError());
             Uri fileForUploadUri = response.getFileForUpload();
-            DocumentFile fileForUpload = DocumentFile.fromSingleUri(context, fileForUploadUri);
+            DocumentFile fileForUpload = IOUtils.getSingleDocFile(context, fileForUploadUri);
             String uploadFilename = fileForUpload == null ? null : fileForUpload.getName();
             if (response.getError() instanceof FileNotFoundException) {
                 errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), uploadFilename,fileForUploadUri);
@@ -1963,7 +1982,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         protected void onAddUploadedFileToAlbumFailure(Context context, final BasePiwigoUploadService.PiwigoUploadFileAddToAlbumFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
             Uri fileForUploadUri = response.getFileForUpload();
-            DocumentFile fileForUpload = DocumentFile.fromSingleUri(context, fileForUploadUri);
+            DocumentFile fileForUpload = IOUtils.getSingleDocFile(context, fileForUploadUri);
             String errorMessage = null;
             String uploadFilename = fileForUpload == null ? "" : fileForUpload.getName();
 

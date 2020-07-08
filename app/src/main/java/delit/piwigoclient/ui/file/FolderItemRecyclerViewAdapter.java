@@ -1,20 +1,14 @@
 package delit.piwigoclient.ui.file;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,8 +18,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,17 +27,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
-import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.SafeAsyncTask;
+import delit.libs.ui.util.TaskProgressListener;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.libs.ui.view.recycler.CustomClickListener;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
@@ -54,11 +45,12 @@ import delit.piwigoclient.business.ResizingPicassoLoader;
 import static delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences.ALPHABETICAL;
 
 
-public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, FolderItemRecyclerViewAdapter.FolderItem, FolderItemRecyclerViewAdapter.FolderItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<FolderItemRecyclerViewAdapter.FolderItem>> {
+public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, FolderItem, FolderItemRecyclerViewAdapter.FolderItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<FolderItem>> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
+    private static final String TAG = "FolderItemRecAdap";
     private Comparator<? super FolderItem> fileComparator;
     private NavigationListener navigationListener;
     private TreeMap<String, String> currentVisibleDocumentFileExts;
@@ -67,7 +59,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     private DocumentFile activeFolder;
     private Uri activeRootUri;
     private boolean isBusy;
-    private AsyncTask activeTask;
+    private SafeAsyncTask activeTask;
     private TaskProgressListener taskListener;
 
     public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MultiSelectStatusListener<FolderItem> multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
@@ -149,14 +141,17 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         this.taskListener = taskListener;
     }
 
-    protected void updateContent(Context context, DocumentFile newContent, boolean force) {
+    protected void updateContent(@NonNull Context context, DocumentFile newContent, boolean force) {
         if(isBusy) {
-            activeTask.cancel(true);
+            activeTask.cancelSafely(true);
         }
-        activeTask = new UpdateFolderContentTask(this, newContent, force).withContext(context).execute();
+        Logging.log(Log.DEBUG, TAG, "Invoking Background task - UpdateFolderContentTask");
+//        Logging.recordException(new Exception().fillInStackTrace());
+        activeTask = new UpdateFolderContentTask(this, newContent, force).withContext(context);
+        activeTask.execute();
     }
 
-    protected List<FolderItem> getNewDisplayContentInternal(Context context, DocumentFile newContent) {
+    protected List<FolderItem> getNewDisplayContentInternal(@NonNull Context context, DocumentFile newContent) {
 
         List<FolderItem> currentDisplayContent;
         activeFolder = newContent;
@@ -168,12 +163,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             folderContent = new ArrayList<>(activeFolder.listFiles().length);
             Collections.addAll(folderContent, activeFolder.listFiles());
             currentDisplayContent = buildDisplayContent(context, folderContent);
+            if(currentDisplayContent == null) {
+                Logging.log(Log.DEBUG, TAG, "Thread interrupted - returning null immediately");
+                return null;
+            }
         } else {
             currentDisplayContent = new ArrayList<>();
             // null used to mean no folder to show, but now means items without a folder shown so we leave the content intact.
-        }
-        if(Thread.currentThread().isInterrupted()) {
-            return null;
         }
 
         boolean initialSetup = currentVisibleDocumentFileExts == null;
@@ -250,17 +246,17 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    public void refreshContentView(Context context) {
+    public void refreshContentView(@NonNull Context context) {
         updateContent(context, activeFolder, false);
     }
 
-    public void rebuildContentView(Context context) {
+    public void rebuildContentView(@NonNull Context context) {
         updateContent(context, activeFolder, true);
     }
 
-    public void resetRoot(Context context, DocumentFile activeRootFile) {
+    public void resetRoot(@NonNull Context context, DocumentFile activeRootFile) {
         if(isBusy) {
-            activeTask.cancel(true);
+            activeTask.cancelSafely(true);
         }
         if(activeRootFile == null) {
             this.activeRootUri = null;
@@ -271,40 +267,49 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         changeFolderViewed(context, activeRootFile);
     }
 
-    public void updateContentAndRoot(Context context, @NonNull DocumentFile activeRootFile, @NonNull DocumentFile newFolder) {
+    public void updateContentAndRoot(@NonNull Context context, @NonNull DocumentFile activeRootFile, @NonNull DocumentFile newFolder) {
         if(isBusy) {
-            activeTask.cancel(true);
+            activeTask.cancelSafely(true);
         }
         this.activeRootUri = IOUtils.getTreeUri(activeRootFile.getUri());
         clear();
         changeFolderViewed(context, newFolder);
     }
 
-    public boolean changeFolderViewed(Context context, DocumentFile newContent) {
+    public boolean changeFolderViewed(@NonNull Context context, DocumentFile newContent) {
         updateContent(context, newContent, false);
         return true;
     }
 
     private List<FolderItem> buildDisplayContent(Context context, @NonNull List<DocumentFile> folderContent) {
 
-        ArrayList<FolderItem> displayContent = new ArrayList<>(folderContent.size());
+        if(folderContent.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<FolderItem> displayContent = new ArrayList<>(folderContent.size());
         int itemCount = folderContent.size();
-        String[] permissableMimeTypes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
+//        String[] permissableMimeTypes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
+
         for (int i = 0; i < itemCount; i++) {
             DocumentFile f = folderContent.get(i);
             FolderItem folderItem = new FolderItem(activeRootUri, f);
-            folderItem.cacheFields(context);
-            if(folderItem.isFolder() || (folderItem.getLastModified() > 0 /*&& MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null*/)) { // 0 length check hides system files.
-                displayContent.add(folderItem);
-            }
-            if (Thread.currentThread().isInterrupted()) {
-                return null;
-            }
-            if(taskListener != null) {
-                double progress = ((double)i)/itemCount;
-                DisplayUtils.postOnUiThread(() -> taskListener.onTaskProgress(progress));
+            displayContent.add(folderItem);
+        }
+
+        boolean success = FolderItem.cacheDocumentInformation(context, displayContent, taskListener);
+        if(!success) {
+            return null;
+        }
+
+        for(FolderItem item : displayContent) {
+            if(!item.isFolder() && (item.getLastModified() == 0 /*&& MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null*/)) { // 0 length check hides system files.
+                displayContent.remove(item); // this isn't a file we can do anything useful with.
             }
         }
+
+
+
         return displayContent;
     }
 
@@ -363,7 +368,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     public long getItemId(int position) {
-        return getItemByPosition(position).uid;
+        return getItemByPosition(position).getUid();
     }
 
     @Override
@@ -376,7 +381,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             content = currentDisplayContent;
         }
         for(FolderItem item : content) {
-            if(item.uid == selectedId) {
+            if(item.getUid() == selectedId) {
                 return item;
             }
         }
@@ -451,14 +456,16 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     @Override
     protected void addItemToInternalStore(FolderItem item) {
         addFolderItemToInternalStore(item);
-        afterAddingFolderItemsToInternalStore();
     }
 
 
-    private void afterAddingFolderItemsToInternalStore() {
+    private void afterAddingFolderItemsToInternalStore(@NonNull Context context) {
         if(activeFolder == null) {
             navigationListener.onPreFolderOpened(null, getItems());
-            activeTask = new UpdateContentListAndSortContentAfterAdd(this).execute();
+            Logging.log(Log.DEBUG, TAG, "Invoking Background task (afterAddingFolderItemsToInternalStore) - UpdateContentListAndSortContentAfterAdd");
+//            Logging.recordException(new Exception().fillInStackTrace());
+            activeTask = new UpdateContentListAndSortContentAfterAdd(this).withContext(context);
+            activeTask.execute();
         }
     }
 
@@ -474,9 +481,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
             if(f.getExt() != null && f.getMime() != null) {
                 currentVisibleDocumentFileExts.put(f.getExt(), f.getMime());
-            }
-            if(Thread.currentThread().isInterrupted()) {
-                return null;
             }
         }
         return currentVisibleDocumentFileExts;
@@ -519,12 +523,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return activeRootUri;
     }
 
-    public void addItems(List<FolderItem> folderItems) {
+    public void addItems(@NonNull Context context, List<FolderItem> folderItems) {
         if(folderItems != null) {
             for (FolderItem item : folderItems) {
                 addFolderItemToInternalStore(item);
             }
-            afterAddingFolderItemsToInternalStore();
+            afterAddingFolderItemsToInternalStore(context);
         }
     }
 
@@ -542,254 +546,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     public void clear() {
         if(currentDisplayContent != null) {
             currentDisplayContent.clear();
-        }
-    }
-
-    public static class FolderItem implements Parcelable {
-        private static final AtomicLong uidGen = new AtomicLong();
-        private static final String TAG = "FolderItem";
-        private long uid;
-        private Uri rootUri;
-        private Uri itemUri;
-        private DocumentFile itemDocFile;
-        private Boolean isFolder;
-        private Boolean isFile; // items are not files or folders if they are special system files
-        private long lastModified = -1;
-        private String name;
-        private String ext;
-        private String mime;
-        private long fileLength;
-        private int fieldsLoadedFrom = NONE;
-        private final static int NONE = 0;
-        private final static int DOCFILE = 1;
-        private final static int FILE = 2;
-        private final static int MEDIASTORE = 3;
-
-        public FolderItem(Uri itemUri) {
-            this.itemUri = itemUri;
-            uid = uidGen.getAndIncrement();
-        }
-
-        public FolderItem(Uri rootUri, DocumentFile itemDocFile) {
-            this.itemDocFile = itemDocFile;
-            this.rootUri = rootUri;
-            this.itemUri = itemDocFile.getUri(); // used for persistence
-            this.isFolder = itemDocFile.isDirectory();
-            this.isFile = itemDocFile.isFile();
-            this.mime = (isFolder||!isFile)?null:itemDocFile.getType();
-            //Note: We're kind of stuck - if we use filename or docFile, we need to retrieve the filename first....
-            // best to guess from the uri path
-            this.ext = (isFolder||!isFile)?null:IOUtils.getFileExt(this.name != null ? this.name : this.itemUri.getPath(), mime);
-            uid = uidGen.getAndIncrement();
-        }
-
-        protected FolderItem(Parcel in) {
-            uid = in.readLong();
-            rootUri = in.readParcelable(Uri.class.getClassLoader());
-            itemUri = in.readParcelable(Uri.class.getClassLoader());
-            byte tmpIsFolder = in.readByte();
-            isFolder = tmpIsFolder == 0 ? null : tmpIsFolder == 1;
-            byte tmpIsFile = in.readByte();
-            isFile = tmpIsFile == 0 ? null : tmpIsFile == 1;
-            lastModified = in.readLong();
-            name = in.readString();
-            ext = in.readString();
-            mime = in.readString();
-            fileLength = in.readLong();
-            fieldsLoadedFrom = in.readInt();
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(uid);
-            dest.writeParcelable(rootUri, flags);
-            dest.writeParcelable(itemUri, flags);
-            dest.writeByte((byte) (isFolder == null ? 0 : isFolder ? 1 : 2));
-            dest.writeByte((byte) (isFile == null ? 0 : isFile ? 1 : 2));
-            dest.writeLong(lastModified);
-            dest.writeString(name);
-            dest.writeString(ext);
-            dest.writeString(mime);
-            dest.writeLong(fileLength);
-            dest.writeInt(fieldsLoadedFrom);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<FolderItem> CREATOR = new Creator<FolderItem>() {
-            @Override
-            public FolderItem createFromParcel(Parcel in) {
-                return new FolderItem(in);
-            }
-
-            @Override
-            public FolderItem[] newArray(int size) {
-                return new FolderItem[size];
-            }
-        };
-
-        public boolean isFolder() {
-            if(!isFieldsCached()) {
-                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
-            }
-            return isFolder;
-        }
-
-        public boolean isFile() {
-            if(!isFieldsCached()) {
-                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
-            }
-            return isFile;
-        }
-
-        public long getLastModified() {
-            if(!isFieldsCached()) {
-                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
-            }
-            return lastModified;
-        }
-
-        public String getMime() {
-            if(!isFieldsCached()) {
-                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
-            }
-            return mime;
-        }
-
-        public String getExt() {
-            if(!isFieldsCached()) {
-                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
-            }
-            return ext;
-        }
-
-        public String getName() {
-            if(!isFieldsCached()) {
-                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
-            }
-            return name;
-        }
-
-        public Uri getContentUri() {
-            return itemUri;
-        }
-
-        /**
-         * Get's the doc file - may be null if item not initialised.
-         * @return
-         */
-        public DocumentFile getDocumentFile() {
-            return itemDocFile;
-        }
-
-        /**
-         *
-         * @param context
-         * @return may be null (pre lollipop always null! :-( )
-         */
-        private @Nullable DocumentFile getDocumentFile(Context context) {
-            if(itemDocFile != null) {
-                return itemDocFile;
-            }
-            if(rootUri != null) {
-                // will be the case after loaded from parcel
-                itemDocFile = IOUtils.getTreeLinkedDocFile(context, rootUri, itemUri);
-            } else {
-                itemDocFile = DocumentFile.fromSingleUri(context, itemUri); // this will occur if the file was shared with us by external app
-            }
-            return itemDocFile;
-        }
-
-        private boolean cacheDocFileFields(Context context) {
-            if(null != getDocumentFile(context)) {
-                isFolder = itemDocFile.isDirectory();
-                isFile = itemDocFile.isFile();
-                name = itemDocFile.getName();
-                ext = IOUtils.getFileExt(name);
-                if(ext != null) {
-                    mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext.toLowerCase());
-                } else {
-                    Logging.log(Log.WARN, TAG, "Unable to set mime type for file with no extension ("+name+")");
-                }
-                lastModified = itemDocFile.lastModified();
-                fileLength = itemDocFile.length();
-                fieldsLoadedFrom = DOCFILE;
-                return true;
-            }
-            return false;
-        }
-
-        public long getFileLength() {
-            if(!isFieldsCached()) {
-                throw new IllegalStateException("Fields not available. Please cache from either DocFile or MediaStore");
-            }
-            return fileLength;
-        }
-
-        private boolean withLegacyCachedFields() {
-            File f;
-            try {
-                f = LegacyIOUtils.getFile(itemUri);
-            } catch (IOException e) {
-                return false;
-            }
-            if(f == null) {
-                return false;
-            }
-            isFolder = f.isDirectory();
-            isFile = f.isFile();
-            name = f.getName();
-            ext = IOUtils.getFileExt(name);
-            mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-            lastModified = f.lastModified();
-            fileLength = f.length();
-            fieldsLoadedFrom = FILE;
-            return true;
-        }
-
-        public boolean isFieldsCached() {
-            return fieldsLoadedFrom != NONE;
-        }
-
-        private boolean withMediaStoreCachedFields(Context context) {
-            String[] projection = new String[]{MediaStore.MediaColumns.MIME_TYPE, MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.SIZE, MediaStore.MediaColumns.DATE_MODIFIED};
-            try (Cursor c = context.getContentResolver().query(itemUri, projection, null,null, null)) {
-                if (c != null) {
-                    c.moveToFirst();
-                    mime = c.getString(c.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
-                    name = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME));
-                    ext = IOUtils.getFileExt(name, mime);
-                    fileLength = c.getLong(c.getColumnIndex(MediaStore.MediaColumns.SIZE));
-                    lastModified = c.getLong(c.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED));
-                    isFile = true;
-                    isFolder = false;
-                    fieldsLoadedFrom = MEDIASTORE;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         *
-         * @param context
-         * @return true if the fields were cached somehow.
-         */
-        public boolean cacheFields(Context context) {
-            boolean cached = false;
-            if("file".equals(itemUri.getScheme())) {
-                cached = withLegacyCachedFields();
-            }
-            if(!cached) {
-                cached = cacheDocFileFields(context);
-            }
-            if(!cached) {
-                cached = withMediaStoreCachedFields(context);
-            }
-            return cached;
         }
     }
 
@@ -902,7 +658,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFileSelection() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItemIds().contains(newItem.uid));
+            getCheckBox().setChecked(getSelectedItemIds().contains(newItem.getUid()));
             getCheckBox().setEnabled(isEnabled());
             Uri itemUri = newItem.getContentUri();
             if (itemUri != null) {
@@ -981,10 +737,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         protected Object doInBackgroundSafely(Object[] objects) {
             getOwner().currentVisibleDocumentFileExts = getOwner().buildListOfFileExtsAndMimesInCurrentFolder(getOwner().currentDisplayContent);
-            if(Thread.currentThread().isInterrupted()) {
-                return null;
+            if(getOwner().currentDisplayContent != null) {
+                Collections.sort(getOwner().currentDisplayContent, getOwner().getFolderItemComparator());
             }
-            Collections.sort(getOwner().currentDisplayContent, getOwner().getFolderItemComparator());
             return null;
         }
 
@@ -993,8 +748,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             super.onPostExecuteSafely(o);
             getOwner().notifyDataSetChanged();
             // this will trigger rebuild of the file filters view and possibly post filter the files selected
-            getOwner().navigationListener.onPostFolderOpened(null, null);
             getOwner().isBusy = false;
+            getOwner().navigationListener.onPostFolderOpened(null, null);
         }
 
         @Override
@@ -1049,19 +804,23 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
         @Override
         protected Pair<List<FolderItem>,List<FolderItem>> doInBackgroundSafely(Object[] objects) {
-            Context context = getContext();
-            if(context == null) {
-                return null; // the view has already been destroyed.
+            Context context;
+            try {
+                context = getContext();
+            } catch(NullPointerException e) {
+                // the view has already been destroyed.
+                return null;
             }
             List<FolderItem> fullContent = getOwner().currentFullContent;
             if(!refreshingExistingFolder || force) {
                 fullContent = getOwner().getNewDisplayContentInternal(context, newContent);
             }
-            List<FolderItem> filteredContent = fullContent;
+            List<FolderItem> filteredContent;
             if(fullContent != null) {
                 filteredContent = getOwner().getFilteredListOfContent(fullContent);
+                return new Pair<>(fullContent, filteredContent);
             }
-            return new Pair<>(fullContent, filteredContent);
+            return null;
         }
 
         @Override
@@ -1074,12 +833,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                     getOwner().currentDisplayContent = newFilteredContent;
                     getOwner().notifyDataSetChanged();
                 }
-                if (!refreshingExistingFolder) {
-                    getOwner().navigationListener.onPostFolderOpened(oldFolder, newContent);
-                }
                 getOwner().isBusy = false;
                 if (getOwner().taskListener != null) {
                     getOwner().taskListener.onTaskFinished();
+                }
+                if (!refreshingExistingFolder) {
+                    getOwner().navigationListener.onPostFolderOpened(oldFolder, newContent);
                 }
             }
         }
@@ -1088,6 +847,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         protected void onCancelledSafely() {
             super.onCancelledSafely();
             getOwner().isBusy = false;
+            if (getOwner().taskListener != null) {
+                getOwner().taskListener.onTaskFinished();
+            }
             Logging.log(Log.WARN, TAG, "Async Task cancelled");
         }
     }

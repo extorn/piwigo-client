@@ -264,6 +264,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.67</item>
+        <item>"Bugfix:
+                - A number of bug fixes for crashes surrounding the recent overhaul of file handling code
+               Changes:
+                - Vast improvement to the performance of the file selection for upload screens
+                - Seamless support for selecting files in apps that do not provide required file permissions"</item>
         <item>1.4.0.66.8</item>
         <item>"Bugfix:
                 - App crash during or after an upload"</item>

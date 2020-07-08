@@ -216,6 +216,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return uploadDataItemsModel.getFilesSelectedForUpload();
     }
 
+    public boolean contains(Uri uri) {
+        return uploadDataItemsModel.contains(uri);
+    }
+
 
     /**
      * Note that this will not invoke a media scanner call.
@@ -386,6 +390,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 }
             }
             return null;
+        }
+
+        public boolean contains(Uri uri) {
+            return getUploadDataItemForFileSelectedForUpload(uri) != null;
         }
 
         private UploadDataItem getUploadDataItemForFileSelectedForUpload(Uri uri) {

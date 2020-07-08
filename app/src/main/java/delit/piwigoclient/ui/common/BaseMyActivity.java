@@ -80,7 +80,7 @@ import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
-import delit.piwigoclient.ui.file.FolderItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.file.FolderItem;
 
 /**
  * Created by gareth on 26/05/17.
@@ -173,7 +173,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
             if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
-                ArrayList<FolderItemRecyclerViewAdapter.FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
+                ArrayList<FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
                 // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
                 EventBus.getDefault().postSticky(event);
@@ -264,7 +264,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 taskDesc = new ActivityManager.TaskDescription(
                         null, // Leave the default title.
-                        R.mipmap.ic_launcher_round_new
+                        R.mipmap.ic_launcher_round
                 );
                 setTaskDescription(taskDesc);
             } /*else {
@@ -429,7 +429,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             String label = getString(R.string.app_name);
-            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_new);
+            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             int color = DisplayUtils.getColor(this, R.attr.colorPrimary);
             ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription(label, icon, color);
             setTaskDescription(taskDesc);

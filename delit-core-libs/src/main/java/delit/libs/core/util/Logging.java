@@ -2,7 +2,10 @@ package delit.libs.core.util;
 
 import android.util.Log;
 
+import com.google.firebase.BuildConfig;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
+import java.util.Arrays;
 
 public class Logging {
 
@@ -12,8 +15,26 @@ public class Logging {
         isDebug = debug;
     }
 
-    public static void log(int logLevel, String tag, String format, Object ... args) {
-        log(logLevel, tag, String.format(format, args));
+
+    /**
+     * Final Argument should never be a throwable. Should use recordException to log a full exception
+     * @param logLevel
+     * @param tag
+     * @param format
+     * @param formatArgs formatArgs
+     */
+    public static void log(int logLevel, String tag, String format, Object ... formatArgs) {
+        if(formatArgs.length > 0 && formatArgs[formatArgs.length-1] instanceof Throwable) {
+            Object[] newArgs = Arrays.copyOf(formatArgs, formatArgs.length -1);
+            Throwable th = (Throwable) formatArgs[formatArgs.length-1];
+            log(logLevel, tag, String.format(format, newArgs));
+            recordException(th);
+            if(BuildConfig.DEBUG) {
+                throw new RuntimeException("Logging being used incorrectly. Don't pass throwable");
+            }
+        } else {
+            log(logLevel, tag, String.format(format, formatArgs));
+        }
     }
 
     public static void log(int logLevel, String tag, String message) {

@@ -692,7 +692,9 @@ piwigo_privacyプラグインとVideoJSプラグインをインストールし�
     <string name="no_adverts_label">このアプリの広告なしのバージョンを好みますか？</string>
     <string name="view_the_paid_version">広告無料版に連れて行って</string>
     <string name="advert_providers">使用中の広告プロバイダー</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_neccesary_permissions">申し訳ありませんが、このファイルへの要求された拡張アクセスを許可していないアプリによって共有され、そのアクセスの有効期限が切れているため、このファイルは使用できませんでした。</string>
-    <string name="likely_file_unusable_shared_without_permissions">追加されたファイルは、要求された許可なしに共有されました。 アップロード用に追加できない場合は、アップロードファイルセレクターからアクセスするのではなく、アプリから直接このアプリと共有してみてください。</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">申し訳ありませんが、このファイルへの要求された拡張アクセスを許可していないアプリによって共有され、そのアクセスの有効期限が切れているため、このファイルは使用できませんでした。</string>
+    <string name="files_shared_without_required_permissions_error">ファイルの選択に使用したアプリは、必要なファイル権限をPiwigoクライアントに委任していません。 有料バージョンのPiwigoクライアントでこの問題の解決策が追加されましたが、別の方法として、別の方法でファイルを選択することもできます。</string>
+    <string name="files_cached_from_other_apps">キャッシュされた共有</string>
+    <string name="progress_copying_imported_files">インポートしたファイルをコピーする</string>
 
 </resources>
