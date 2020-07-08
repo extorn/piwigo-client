@@ -2,6 +2,8 @@ package delit.piwigoclient.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,12 +13,20 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
@@ -32,6 +42,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
+import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
 import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragment;
 
@@ -147,12 +158,47 @@ public class FileSelectActivity extends MyActivity {
     private FileSelectionNeededEvent getFileSelectionNeededEvent() {
         FileSelectionNeededEvent event = getIntent().getParcelableExtra(INTENT_DATA);
         if(event == null) {
-            event = new FileSelectionNeededEvent(true,true, true);
+            FirebaseAnalytics.getInstance(this).logEvent("FileSelectStandalone", null);
+            HashSet<String> mimeTypes = getVisibleMimeTypes(getIntent());
+            boolean allowFolderSelection = false;
+            if(mimeTypes != null) {
+                if(mimeTypes.remove("vnd.android.document/directory")) {
+                    allowFolderSelection = true;
+                }
+            }
+            boolean allowFileSelection = mimeTypes == null || mimeTypes.size() > 0;
+            event = new FileSelectionNeededEvent(allowFileSelection, allowFolderSelection, true);
+            event.withVisibleMimeTypes(mimeTypes);
+
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 event.withInitialFolder(Uri.fromFile(Environment.getExternalStorageDirectory()));
             }
         }
         return event;
+    }
+
+    private HashSet<String> getVisibleMimeTypes(Intent intent) {
+        String intentMimeType = intent.getType();
+        if(intentMimeType != null) {
+            List<String> intentMimeTypes;
+            if(intentMimeType.indexOf('|') > 0) {
+                intentMimeTypes = Arrays.asList(intentMimeType.split("\\|"));
+            } else {
+                intentMimeTypes = new ArrayList<>();
+                intentMimeTypes.add(intentMimeType);
+            }
+            return new HashSet<>(intentMimeTypes);
+        }
+
+        if(intent.getExtras() != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                String[] desiredMimeTypes = intent.getExtras().getStringArray(Intent.EXTRA_MIME_TYPES);
+                if (desiredMimeTypes != null) {
+                    return new HashSet<>(Arrays.asList(desiredMimeTypes));
+                }
+            }
+        }
+        return null;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -168,17 +214,50 @@ public class FileSelectActivity extends MyActivity {
     public void onEvent(FileSelectionCompleteEvent event) {
         int sourceEventId = getTrackedIntentType(event.getActionId());
         if (sourceEventId >= 0) {
-            Intent result = this.getIntent();
+            if (getIntent().getParcelableExtra(INTENT_DATA) != null) {
+
+                Intent result = this.getIntent();
 //            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
-            result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
-            if (event.getSelectedFolderItems() != null) {
-                result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
-                setResult(Activity.RESULT_OK, result);
+                result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
+                if (event.getSelectedFolderItems() != null) {
+                    result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
+                    setResult(Activity.RESULT_OK, result);
+                } else {
+                    setResult(Activity.RESULT_CANCELED, result);
+                }
+                finish();
             } else {
-                setResult(Activity.RESULT_CANCELED, result);
+                Intent result = this.getIntent();
+                if(event.getSelectedFolderItems() != null) {
+                    if (!event.getSelectedFolderItems().isEmpty()) {
+                        ClipData clipData = buildClipData(event);
+                        result.setClipData(clipData);
+                    }
+                    setResult(Activity.RESULT_OK, result);
+                } else {
+                    setResult(Activity.RESULT_CANCELED, result);
+                }
+                finish();
             }
-            finish();
         }
+    }
+
+    @NonNull
+    private ClipData buildClipData(FileSelectionCompleteEvent event) {
+        ArrayList<String> mimes = new ArrayList<>(event.getSelectedFolderItems().size());
+        ArrayList<ClipData.Item> clipItems = new ArrayList<>(event.getSelectedFolderItems().size());
+        for (FolderItem item : event.getSelectedFolderItems()) {
+
+            ClipData.Item clipItem = new ClipData.Item(item.getName(), null, item.getContentUri());
+            mimes.add(item.getMime());
+            clipItems.add(clipItem);
+        }
+        ClipDescription desc = new ClipDescription(getString(R.string.selected_files), mimes.toArray(new String[0]));
+        ClipData clipData = new ClipData(desc, clipItems.remove(0));
+        for (ClipData.Item clipItem : clipItems) {
+            clipData.addItem(clipItem);
+        }
+        return clipData;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
