@@ -617,7 +617,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 //                compressionSettings.disableFastStart();
 
 
-            DocumentFile moviesFolder = DocumentFile.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES));
+            DocumentFile moviesFolder = DocumentFile.fromFile(requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES));
             DocumentFile outputVideo;
             int i = 0;
             DocumentFile inputDocFile = IOUtils.getSingleDocFile(requireContext(), fileForCompression);

@@ -170,9 +170,7 @@ public class FileSelectActivity extends MyActivity {
             event = new FileSelectionNeededEvent(allowFileSelection, allowFolderSelection, true);
             event.withVisibleMimeTypes(mimeTypes);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                event.withInitialFolder(Uri.fromFile(Environment.getExternalStorageDirectory()));
-            }
+            event.withInitialFolder(Uri.fromFile(this.getExternalFilesDir(null)));
         }
         return event;
     }
@@ -228,6 +226,7 @@ public class FileSelectActivity extends MyActivity {
                 finish();
             } else {
                 Intent result = this.getIntent();
+                result.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION & Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 if(event.getSelectedFolderItems() != null) {
                     if (!event.getSelectedFolderItems().isEmpty()) {
                         ClipData clipData = buildClipData(event);
@@ -237,6 +236,7 @@ public class FileSelectActivity extends MyActivity {
                 } else {
                     setResult(Activity.RESULT_CANCELED, result);
                 }
+
                 finish();
             }
         }

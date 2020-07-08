@@ -577,7 +577,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private Map<String, DocumentFile> buildDocFilesRootsMapPreKitKat() {
         List<String> rootLabels = ArrayUtils.toArrayList(new String[]{getString(R.string.folder_root_root), getString(R.string.folder_root_userdata), getString(R.string.folder_extstorage)});
 
-        List<File> rootPaths = ArrayUtils.toArrayList(new File[]{Environment.getRootDirectory(), Environment.getDataDirectory(), Environment.getExternalStorageDirectory()});
+        List<File> rootPaths = ArrayUtils.toArrayList(new File[]{Environment.getRootDirectory(), Environment.getDataDirectory(), requireContext().getExternalFilesDir(null)});
         List<String> sdCardPaths = LegacyIOUtils.getSdCardPaths(getContext(), true);
         if(sdCardPaths != null) {
             int extStorageDeviceId = 1;

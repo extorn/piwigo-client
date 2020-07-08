@@ -202,7 +202,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             allowedFileTypes.addAll(getPreference().getAllowedCertificateFileTypes());
         }
         allowedFileTypes.addAll(getPreference().getAllowedKeyFileTypes());
-        fileSelectionEvent.withInitialFolder(Uri.fromFile(Environment.getExternalStorageDirectory()));
+        fileSelectionEvent.withInitialFolder(Uri.fromFile(requireContext().getExternalFilesDir(null)));
         fileSelectionEvent.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.ALPHABETICAL);
 //        fileSelectionEvent.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey()); Not currently needed as permissions are transient.
 

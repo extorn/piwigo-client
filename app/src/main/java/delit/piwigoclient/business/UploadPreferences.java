@@ -110,7 +110,7 @@ public class UploadPreferences {
     }
 
     public static String getDefaultLocalUploadFolder(Context context, SharedPreferences prefs) {
-        return getString(context, prefs, R.string.preference_data_upload_default_local_folder_key, Environment.getExternalStorageDirectory().getAbsolutePath());
+        return getString(context, prefs, R.string.preference_data_upload_default_local_folder_key, context.getExternalFilesDir(null).getAbsolutePath());
     }
 
     public static void setDefaultLocalUploadFolder(Context context, SharedPreferences prefs, Uri newFolder) {
