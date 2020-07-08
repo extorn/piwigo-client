@@ -8,8 +8,59 @@
     <application
         android:name="delit.piwigoclient.ui.MyApplication"
         tools:node="merge"
+        tools:replace="android:hardwareAccelerated"
         android:fullBackupContent="@xml/backup_descriptor"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="UnusedAttribute"
+        android:hardwareAccelerated="true">
+
+        <activity
+            tools:node="replace"
+            android:launchMode="singleTop"
+            android:name=".ui.FileSelectActivity"
+            android:icon="@mipmap/ic_launcher_file_select"
+            android:roundIcon="@mipmap/ic_launcher_file_select_round"
+            android:logo="@drawable/ic_logo_file_select"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.App.EditPages"
+            android:configChanges="layoutDirection"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:stateNotNeeded="true"
+            android:exported="true">
+
+            <!-- enable this to place an icon on the app selection page for testing -->
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+            <intent-filter>
+                <action android:name="android.intent.action.PICK" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.OPEN_DOCUMENT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PICK" />
+                <category android:name="android.intent.category.APP_FILES" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.OPEN_DOCUMENT" />
+                <category android:name="android.intent.category.APP_FILES" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+                <category android:name="android.intent.category.APP_FILES" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".piwigoApi.upload.BackgroundPiwigoUploadService"
