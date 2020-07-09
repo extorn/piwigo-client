@@ -409,7 +409,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private boolean takePersistablePermissionsIfNeeded(Intent resultData, Uri itemUri, int ... permFlags) {
         boolean permissionsMissing = true;
         int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        if(permFlags != null) {
+        if(permFlags != null && permFlags.length > 0) {
             int desiredPerms = 0;
             for(int flag : permFlags) {
                 desiredPerms |= flag;
