@@ -410,9 +410,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         boolean permissionsMissing = true;
         int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         if(permFlags != null) {
+            int desiredPerms = 0;
             for(int flag : permFlags) {
-                takeFlags &= flag;
+                desiredPerms |= flag;
             }
+            takeFlags &= desiredPerms;
         }
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
