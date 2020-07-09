@@ -697,5 +697,6 @@ Les sorties sont pour le moment ponctuelles. La fréquence des versions devrait 
     <string name="files_cached_from_other_apps">Partages en cache</string>
     <string name="progress_copying_imported_files">Copie de fichiers importés</string>
     <string name="selected_files">Fichiers sélectionnés</string>
+    <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diaporama désynchronisé avec le contenu de l\'album chargé. Réinitialisation au démarrage.</string>
 
 </resources>

@@ -1050,5 +1050,6 @@ SOFTWARE.
     <string name="files_cached_from_other_apps">Cached Shares</string>
     <string name="progress_copying_imported_files">Copying imported files</string>
     <string name="selected_files">Selected Files</string>
+    <string name="alert_slideshow_reset_as_out_of_sync_with_album">Slideshow out of sync with the loaded album contents. Resetting at start.</string>
 
 </resources>

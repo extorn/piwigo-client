@@ -697,5 +697,6 @@ Vydání jsou v současné době ad hoc. Čeká se, jak se aplikace zraje, aby s
     <string name="files_cached_from_other_apps">Akcie v mezipaměti</string>
     <string name="progress_copying_imported_files">Kopírování importovaných souborů</string>
     <string name="selected_files">Vybrané soubory</string>
+    <string name="alert_slideshow_reset_as_out_of_sync_with_album">Prezentace není synchronizována s načteným obsahem alba. Resetování na začátku.</string>
 
 </resources>

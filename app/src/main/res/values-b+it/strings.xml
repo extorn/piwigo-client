@@ -697,5 +697,6 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="files_cached_from_other_apps">Azioni cache</string>
     <string name="progress_copying_imported_files">Copia dei file importati</string>
     <string name="selected_files">File selezionati</string>
+    <string name="alert_slideshow_reset_as_out_of_sync_with_album">Presentazione non sincronizzata con il contenuto dell\'album caricato. Ripristino all\'avvio.</string>
 
 </resources>

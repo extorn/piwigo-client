@@ -264,6 +264,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.68</item>
+        <item>"Bugfix:
+                - Crash on navigation to the gallery from upload or settings if the last open page of the gallery was a slideshow"</item>
         <item>1.4.0.67</item>
         <item>"Bugfix:
                 - A number of bug fixes for crashes surrounding the recent overhaul of file handling code

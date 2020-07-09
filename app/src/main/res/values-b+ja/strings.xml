@@ -697,5 +697,6 @@ piwigo_privacyプラグインとVideoJSプラグインをインストールし�
     <string name="files_cached_from_other_apps">キャッシュされた共有</string>
     <string name="progress_copying_imported_files">インポートしたファイルをコピーする</string>
     <string name="selected_files">選択したファイル</string>
+    <string name="alert_slideshow_reset_as_out_of_sync_with_album">ロードされたアルバムのコンテンツと同期していないスライドショー。 開始時にリセット。</string>
 
 </resources>

@@ -226,4 +226,12 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         addResourcesToIndex(firstPositionAddedAt, itemsAddedCount, -1);
         notifyDataSetChanged();
     }
+
+    public boolean isOutOfDate() {
+        int maxAlbumIdxInSlideshow = galleryResourceItems.get(galleryResourceItems.size() -1);
+        if(maxAlbumIdxInSlideshow > gallery.getItemCount() -1) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -114,6 +115,23 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public void onResume() {
         if (resourceContainer == null) {
             loadModelFromArguments();
+        } else {
+            if(galleryItemAdapter.isOutOfDate()) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_reset_as_out_of_sync_with_album));
+                /*getUiHelper().showOrQueueDialogMessage(R.string.alert_information, "Slideshow out of sync. Triggering data load", R.string.button_ok, new UIHelper.QuestionResultAdapter<>(){
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                        super.onDismiss(dialog);
+                        getParentFragmentManager().popBackStack();
+                    }
+                });*/
+                try {
+                    galleryItemAdapter.getItemByPagerPosition(viewPager.getCurrentItem());
+                } catch(IndexOutOfBoundsException e) {
+                    viewPager.setCurrentItem(0);
+                    loadMoreGalleryResources();
+                }
+            }
         }
         super.onResume();
         getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_base_view_1);

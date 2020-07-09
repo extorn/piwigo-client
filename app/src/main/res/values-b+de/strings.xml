@@ -697,5 +697,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="files_cached_from_other_apps">Zwischengespeicherte Anteile</string>
     <string name="progress_copying_imported_files">Importierte Dateien kopieren</string>
     <string name="selected_files">Ausgewählte Dateien</string>
+    <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diashow nicht synchron mit dem geladenen Albuminhalt. Beim Start zurücksetzen.</string>
 
 </resources>

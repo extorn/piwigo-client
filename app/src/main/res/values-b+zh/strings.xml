@@ -697,5 +697,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="files_cached_from_other_apps">缓存的共享</string>
     <string name="progress_copying_imported_files">复制导入的文件</string>
     <string name="selected_files">选定文件</string>
+    <string name="alert_slideshow_reset_as_out_of_sync_with_album">幻灯片与加载的相册内容不同步。 开始复位。</string>
 
 </resources>
