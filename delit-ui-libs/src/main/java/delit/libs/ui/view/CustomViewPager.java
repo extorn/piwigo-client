@@ -66,7 +66,7 @@ public class CustomViewPager extends ViewPager {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if(getLayoutParams().height == FlowLayout.LayoutParams.WRAP_CONTENT && getMeasuredHeight() != 0) {
+        if(getLayoutParams().height == LayoutParams.WRAP_CONTENT && getMeasuredHeight() != 0) {
             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(getMinimumDesiredHeight(), MeasureSpec.EXACTLY));
         } else if(MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY && getMeasuredHeight() == 0
         || MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY && getMeasuredWidth() == 0) {
