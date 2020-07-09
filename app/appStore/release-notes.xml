@@ -1,36 +1,36 @@
 <en-GB>
 Bugfix:
-- Crash on navigation to the gallery from upload or settings if the last open page of the gallery was a slideshow
+- Folder permissions not correctly accepted when offered
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Selhání při navigaci do galerie z nahrání nebo nastavení, pokud poslední otevřená stránka galerie byla prezentace
+- Když byla nabídnuta oprávnění ke složkám, nebyla správně přijata
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Absturz bei der Navigation zur Galerie vom Upload oder den Einstellungen, wenn die letzte geöffnete Seite der Galerie eine Diashow war
+- Ordnerberechtigungen werden beim Angebot nicht korrekt akzeptiert
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Bloqueo en la navegación a la galería desde la carga o la configuración si la última página abierta de la galería fue una presentación de diapositivas
+- Permisos de carpeta no aceptados correctamente cuando se ofrecen
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Blocage de la navigation vers la galerie à partir du téléchargement ou des paramètres si la dernière page ouverte de la galerie était un diaporama
+- Les autorisations de dossier ne sont pas correctement acceptées lorsqu\'elles sont proposées
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Arresto anomalo della navigazione nella galleria da caricamento o impostazioni se l\'ultima pagina aperta della galleria era una presentazione
+- Autorizzazioni per le cartelle non accettate correttamente quando offerte
 </it-IT>
 <ja-JP>
 バグ修正：
--ギャラリーの最後に開いたページがスライドショーの場合、アップロードまたは設定からギャラリーへのナビゲーションでクラッシュする
+-提供されたときにフォルダのアクセス許可が正しく受け入れられない
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Сбой при переходе в галерею из загрузки или настроек, если последняя открытая страница галереи была слайд-шоу.
+- Права доступа к папкам не принимаются правильно, когда предлагаются
 </ru-RU>
 <zh-CN>
 错误修正：
--如果图库的最后打开页面是幻灯片，则无法从上传或设置导航到图库
+-提供文件夹权限时未正确接受
 </zh-CN>

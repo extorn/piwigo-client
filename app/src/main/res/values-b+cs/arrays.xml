@@ -162,6 +162,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.69</item>
+        <item>"Oprava chyby:
+             - Když byla nabídnuta oprávnění ke složkám, nebyla správně přijata"</item>
         <item>1.4.0.68</item>
         <item>"Oprava chyby:
                  - Selhání při navigaci do galerie z nahrání nebo nastavení, pokud poslední otevřená stránka galerie byla prezentace"</item>
