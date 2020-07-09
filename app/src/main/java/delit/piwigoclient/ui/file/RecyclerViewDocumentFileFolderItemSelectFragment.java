@@ -410,7 +410,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         boolean permissionsMissing = true;
         int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         if(permFlags != null) {
-            takeFlags = resultData.getFlags();
             for(int flag : permFlags) {
                 takeFlags &= flag;
             }
@@ -420,7 +419,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
                 permissionsMissing = false;
             } catch(SecurityException e) {
-                Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for URI : " + itemUri);
+                Logging.log(Log.WARN, TAG, "Unable to take persistable permissions %2$d for URI : %1$s", itemUri, takeFlags, resultData.getFlags());
 //                Logging.recordException(e);
             }
         }
