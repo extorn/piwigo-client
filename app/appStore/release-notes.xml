@@ -1,36 +1,45 @@
 <en-GB>
 Bugfix:
-- Folder permissions not correctly accepted when offered
+- Crashes on upload reported by user
+- Crash on redisplay of a slideshow viewed for an album since viewed. I tried to make the back button behaviour more logical, but alas I feear it has gotten worse (especially since it has exposed this issue).
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Když byla nabídnuta oprávnění ke složkám, nebyla správně přijata
+- Selhání při nahrávání nahlášené uživatelem
+- Selhání při opětovném zobrazení slideshow prohlíženého u alba od jeho zobrazení. Snažil jsem se, aby chování tlačítka Zpět bylo logičtější, ale bohužel se domnívám, že se to zhoršilo (zejména od té doby, co tento problém odhalil).
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Ordnerberechtigungen werden beim Angebot nicht korrekt akzeptiert
+- Vom Benutzer gemeldete Abstürze beim Hochladen
+- Absturz beim erneuten Anzeigen einer Diashow, die seitdem für ein Album angezeigt wurde. Ich habe versucht, das Verhalten der Zurück-Schaltfläche logischer zu gestalten, aber leider befürchte ich, dass es schlimmer geworden ist (insbesondere, seit es dieses Problem aufgedeckt hat).
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Permisos de carpeta no aceptados correctamente cuando se ofrecen
+- Los bloqueos en la carga informados por el usuario
+- Fallo al volver a mostrar una presentación de diapositivas vista para un álbum desde que se vio. Traté de hacer que el comportamiento del botón de retroceso sea más lógico, pero por desgracia temo que ha empeorado (especialmente porque ha expuesto este problema).
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Les autorisations de dossier ne sont pas correctement acceptées lorsqu\'elles sont proposées
+- Plantage lors du téléchargement signalé par l\'utilisateur
+- Plantage lors de la réaffichage d\'un diaporama visualisé pour un album depuis sa visualisation. J\'ai essayé de rendre le comportement du bouton de retour plus logique, mais hélas, je pense qu\'il a empiré (surtout depuis qu\'il a exposé ce problème).
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Autorizzazioni per le cartelle non accettate correttamente quando offerte
+- Arresti anomali al caricamento segnalati dall\'utente
+- Arresto anomalo alla visualizzazione di una presentazione visualizzata per un album visto. Ho cercato di rendere più logico il comportamento del pulsante Indietro, ma purtroppo temo che sia peggiorato (soprattutto da quando ha esposto questo problema).
 </it-IT>
 <ja-JP>
 バグ修正：
--提供されたときにフォルダのアクセス許可が正しく受け入れられない
+-ユーザーから報告されたアップロード時のクラッシュ
+-アルバムから表示された後、スライドショーを再表示するとクラッシュする。 私は戻るボタンの動作をより論理的にしようとしましたが、残念ながら、それが悪化しました（特に、この問題が発生したためです）。
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Права доступа к папкам не принимаются правильно, когда предлагаются
+- Сбои при загрузке, о которых сообщил пользователь
+- Сбой при повторном отображении слайд-шоу, просмотренного для альбома после просмотра. Я пытался сделать поведение кнопки «Назад» более логичным, но, увы, боюсь, что оно ухудшилось (особенно после того, как оно выявило эту проблему).
 </ru-RU>
 <zh-CN>
 错误修正：
--提供文件夹权限时未正确接受
+-用户报告的上载崩溃
+-自从查看以来，重新显示为相册查看的幻灯片时会崩溃。 我试图使后退按钮的行为更合乎逻辑，但是a，我感觉它变得更糟了（特别是因为它暴露了此问题）。
 </zh-CN>

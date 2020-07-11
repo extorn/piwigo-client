@@ -162,6 +162,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.70</item>
+        <item>"Risoluzione del problema:
+                 - Arresti anomali al caricamento segnalati dall\'utente
+                 - Arresto anomalo alla visualizzazione di una presentazione visualizzata per un album visto. Ho cercato di rendere più logico il comportamento del pulsante Indietro, ma purtroppo temo che sia peggiorato (soprattutto da quando ha esposto questo problema)."</item>
         <item>1.4.0.69</item>
         <item>"Risoluzione del problema:
              - Autorizzazioni per le cartelle non accettate correttamente quando offerte"</item>

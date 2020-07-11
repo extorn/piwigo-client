@@ -162,6 +162,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.70</item>
+        <item>"Oprava chyby:
+                 - Selhání při nahrávání nahlášené uživatelem
+                 - Selhání při opětovném zobrazení slideshow prohlíženého u alba od jeho zobrazení. Snažil jsem se, aby chování tlačítka Zpět bylo logičtější, ale bohužel se domnívám, že se to zhoršilo (zejména od té doby, co tento problém odhalil)."</item>
         <item>1.4.0.69</item>
         <item>"Oprava chyby:
              - Když byla nabídnuta oprávnění ke složkám, nebyla správně přijata"</item>

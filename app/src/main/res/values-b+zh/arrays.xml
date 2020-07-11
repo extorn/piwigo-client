@@ -162,6 +162,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.70</item>
+        <item>"错误修正：
+                 -用户报告的上载崩溃
+                 -自从查看以来，重新显示为相册查看的幻灯片时会崩溃。 我试图使后退按钮的行为更合乎逻辑，但是a，我感觉它变得更糟了（特别是因为它暴露了此问题）。"</item>
         <item>1.4.0.69</item>
         <item>"错误修正：
              -提供文件夹权限时未正确接受"</item>

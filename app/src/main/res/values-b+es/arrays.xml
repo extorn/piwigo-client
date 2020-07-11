@@ -162,6 +162,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.70</item>
+        <item>"Arreglo del fallo:
+                 - Los bloqueos en la carga informados por el usuario
+                 - Fallo al volver a mostrar una presentación de diapositivas vista para un álbum desde que se vio. Traté de hacer que el comportamiento del botón de retroceso sea más lógico, pero por desgracia temo que ha empeorado (especialmente porque ha expuesto este problema)."</item>
         <item>1.4.0.69</item>
         <item>"Arreglo del fallo:
              - Permisos de carpeta no aceptados correctamente cuando se ofrecen"</item>
