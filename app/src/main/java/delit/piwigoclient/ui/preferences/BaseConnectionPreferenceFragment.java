@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
@@ -25,6 +26,7 @@ import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
@@ -298,12 +300,21 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
         @Override
         protected Long doInBackgroundSafely(Void... params) {
-            this.responseCacheFlushButton = getOwner().findPreference(R.string.preference_caching_clearResponseCache_key);
-            return CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
+            try {
+                this.responseCacheFlushButton = getOwner().findPreference(R.string.preference_caching_clearResponseCache_key);
+                return CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
+            } catch(IllegalStateException e) {
+                Logging.log(Log.WARN, TAG, "unable to retrieve response cache details");
+                Logging.recordException(e);
+            }
+            return null;
         }
 
         @Override
         protected void onPostExecuteSafely(Long cacheBytes) {
+            if(cacheBytes == null) {
+                return; // no value to process
+            }
             try {
                 if (!isCancelled() && getOwner().isVisible()) {
                     String spaceSuffix = "(" + IOUtils.bytesToNormalizedText(cacheBytes) + ")";
