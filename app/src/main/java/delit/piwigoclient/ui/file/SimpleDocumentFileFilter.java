@@ -24,7 +24,8 @@ public class SimpleDocumentFileFilter implements DocumentFileFilter {
     @Override
     public boolean accept(DocumentFile f) {
         if(acceptableFileExts != null) {
-            if(!acceptableFileExts.contains(IOUtils.getFileExt(f))) {
+            String ext = IOUtils.getFileExt(f);
+            if(ext == null || !acceptableFileExts.contains(ext)) {
                 return nonAcceptOverride(f);
             }
         }
