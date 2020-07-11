@@ -277,7 +277,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 try {
 
                     double fromProgress = mainTaskProgressListener.getLastReportedProgress(); // gets current progress
-                    double toProgress = fromProgress + progressForThisItem;
+                    double toProgress = Math.min(fromProgress + progressForThisItem, 100);
                     mainTaskProgressListener.withStage(fromProgress, toProgress, 1);
                     item.calculateDataHashCode(getContext(), mainTaskProgressListener);
                     uploadDataItems.add(item);

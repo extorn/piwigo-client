@@ -53,18 +53,12 @@ public abstract class TaskProgressTracker implements ProgressListener {
      * @return this
      */
     public TaskProgressTracker withStage(double startProgress, double endProgress, int ticksInTask) {
-        if(startProgress < 0 || startProgress > 100) {
-            if(Math.round(startProgress) == 0) {
-                startProgress = 0;
-            } else {
-                throw new IllegalArgumentException("start progress must be between 0 and 100 : " + startProgress);
-            }
+        if(startProgress < 0) {
+            startProgress = 0;
         }
         if(endProgress < 0 || endProgress > 100) {
-            if(Math.max(100, Math.round(endProgress)) == 100) {
+            if(endProgress > 100) {
                 endProgress = 100;
-            } else {
-                throw new IllegalArgumentException("end progress must be between 0 and 100 : " + endProgress);
             }
         }
         if(startProgress >= endProgress) {
