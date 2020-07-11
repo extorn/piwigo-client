@@ -228,10 +228,14 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     }
 
     public boolean isOutOfDate() {
-        int maxAlbumIdxInSlideshow = galleryResourceItems.get(galleryResourceItems.size() -1);
-        if(maxAlbumIdxInSlideshow > gallery.getItemCount() -1) {
+        try {
+            int maxAlbumIdxInSlideshow = galleryResourceItems.get(galleryResourceItems.size() - 1);
+            if (maxAlbumIdxInSlideshow > gallery.getItemCount() - 1) {
+                return true;
+            }
+            return false;
+        } catch(ArrayIndexOutOfBoundsException e) {
             return true;
         }
-        return false;
     }
 }
