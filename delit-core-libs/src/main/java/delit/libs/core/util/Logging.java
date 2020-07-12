@@ -6,6 +6,7 @@ import com.google.firebase.BuildConfig;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 public class Logging {
 
@@ -27,7 +28,7 @@ public class Logging {
         if(formatArgs.length > 0 && formatArgs[formatArgs.length-1] instanceof Throwable) {
             Object[] newArgs = Arrays.copyOf(formatArgs, formatArgs.length -1);
             Throwable th = (Throwable) formatArgs[formatArgs.length-1];
-            log(logLevel, tag, String.format(format, newArgs));
+            log(logLevel, tag, String.format(Locale.ENGLISH, format, newArgs));
             recordException(th);
             if(BuildConfig.DEBUG) {
                 throw new RuntimeException("Logging being used incorrectly. Don't pass throwable");

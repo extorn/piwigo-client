@@ -567,8 +567,12 @@ public class IOUtils {
      * @return DocumentFile which is chained together all the way from the itemUri to the rootUri allowing traversal
      */
     public static DocumentFile getTreeLinkedDocFile(@NonNull Context context, @NonNull Uri rootUri, @NonNull Uri itemUri) {
-        if(!(itemUri.getScheme().equals(rootUri.getScheme()) && itemUri.getAuthority().equals(rootUri.getAuthority()))) {
+        if(itemUri.getScheme() == null || itemUri.getAuthority() == null || !(itemUri.getScheme().equals(rootUri.getScheme()) && itemUri.getAuthority().equals(rootUri.getAuthority()))) {
+            Logging.log(Log.WARN, TAG, "Something went badly wrong here! Uri not child of Uri:\n%1$s\n%2$s", itemUri, rootUri);
             throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+        }
+        if("file".equals(itemUri.getScheme())) {
+            return DocumentFile.fromFile(new File(Objects.requireNonNull(itemUri.getPath())));
         }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             return getTreeLinkedDocFileO(context, rootUri, itemUri);

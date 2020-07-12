@@ -162,6 +162,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.71</item>
+        <item>"Correction d\'un bug
+                 - Crash causé par l\'application qui attend plus d\'autorisations pour le dossier partagé que nécessaire et fourni"</item>
         <item>1.4.0.70</item>
         <item>"Correction d\'un bug:
                  - Plantage lors du téléchargement signalé par l\'utilisateur

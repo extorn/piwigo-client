@@ -162,6 +162,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.71</item>
+        <item>"バグ修正
+                 -アプリが共有フォルダに必要以上の権限を期待して提供されているために発生するクラッシュ"</item>
         <item>1.4.0.70</item>
         <item>"バグ修正：
                  -ユーザーから報告されたアップロード時のクラッシュ

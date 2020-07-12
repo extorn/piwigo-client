@@ -45,6 +45,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
@@ -177,7 +178,13 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
         MaterialButton addRootButton = v.findViewById(R.id.add_root);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addRootButton.setOnClickListener(v1 -> retrievePermissionsForUri(null));
+            int perms;
+            if(!getViewPrefs().isAllowFolderSelection()) {
+                perms = getViewPrefs().getSelectedUriPermissionFlags();
+            } else {
+                perms = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+            }
+            addRootButton.setOnClickListener(v1 -> retrievePermissionsForUri(null, perms));
         } else {
             addRootButton.setVisibility(GONE);
         }
@@ -291,12 +298,13 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void retrievePermissionsForUri(@Nullable Uri initialUriToRequestOpened) {
+    private void retrievePermissionsForUri(@Nullable Uri initialUriToRequestOpened, int permissions) {
         Intent openDocTreeIntent;
         openDocTreeIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && initialUriToRequestOpened != null) {
             openDocTreeIntent.putExtra(EXTRA_INITIAL_URI, initialUriToRequestOpened);
         }
+        openDocTreeIntent.addFlags(permissions);
         openDocTreeIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         int eventId = TrackableRequestEvent.getNextEventId();
         try {
@@ -408,13 +416,19 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
      */
     private boolean takePersistablePermissionsIfNeeded(Intent resultData, Uri itemUri, int ... permFlags) {
         boolean permissionsMissing = true;
-        int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        int desiredPerms = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+        int takeFlags = resultData.getFlags() & (desiredPerms);
         if(permFlags != null && permFlags.length > 0) {
-            int desiredPerms = 0;
+            desiredPerms = 0;
             for(int flag : permFlags) {
                 desiredPerms |= flag;
             }
             takeFlags &= desiredPerms;
+        } else {
+            permissionsMissing = takeFlags != desiredPerms;
+            if(permissionsMissing) {
+                Logging.log(Log.ERROR, TAG, "Wanted permissions %1$d but received %2$d for uri %3$s", desiredPerms, takeFlags, itemUri);
+            }
         }
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
@@ -424,6 +438,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 Logging.log(Log.WARN, TAG, "Unable to take persistable permissions %2$d for URI : %1$s", itemUri, takeFlags, resultData.getFlags());
 //                Logging.recordException(e);
             }
+        } else {
+            permissionsMissing = false;
         }
         return permissionsMissing;
     }
@@ -444,14 +460,15 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             try {
                 DocumentFile docFile = DocumentFile.fromTreeUri(context, permittedUri);
                 if(docFile != null) {
-                    //final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri());
+                    final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri(), takeFlags);
                     if(!permissionsMissing) {
                         FolderItem folderItem = new FolderItem(permittedUri, docFile);
                         folderItem.cacheFields(context);
                         itemsShared.add(folderItem);
                     } else {
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions), R.string.button_ok);
+                        Logging.log(Log.WARN, TAG, "File shared without needed permissions: " + docFile.getUri());
+                        getView().post(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions), R.string.button_ok));
                     }
                     listener.onProgress(100);
                 } else {
@@ -460,8 +477,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             } catch(IllegalArgumentException e) {
                 // this is most likely because it is not a folder.
                 DocumentFile docFile = IOUtils.getSingleDocFile(context, permittedUri);
-//                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri());
+                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri(), takeFlags);
 
                 FolderItem folderItem = new FolderItem(permittedUri, docFile);
                 folderItem.cacheFields(context);
