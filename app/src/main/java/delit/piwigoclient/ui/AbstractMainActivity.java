@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.Manifest;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
@@ -29,6 +28,7 @@ import androidx.core.view.GravityCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.loader.app.LoaderManager;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -46,6 +46,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,6 +86,7 @@ import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
@@ -129,6 +131,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
     private static final String NOTIFICATION_GROUP_DOWNLOADS = "Downloads";
+    private final CustomBackStackListener backStackListener;
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
@@ -142,6 +145,14 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     public AbstractMainActivity() {
         super(R.layout.activity_main);
+        backStackListener = new CustomBackStackListener();
+        getSupportFragmentManager().addOnBackStackChangedListener(backStackListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
+        super.onDestroy();
     }
 
     @Override
@@ -1231,4 +1242,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
 
+    private class CustomBackStackListener implements FragmentManager.OnBackStackChangedListener {
+        @Override
+        public void onBackStackChanged() {
+            List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+            if(!fragmentList.isEmpty()) {
+                ((MyFragment)fragmentList.get(fragmentList.size()-1)).updatePageTitle();
+            }
+        }
+    }
 }

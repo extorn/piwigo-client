@@ -782,7 +782,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     @Override
-    protected void updatePageTitle() {
+    public void updatePageTitle() {
         // Do nothing ( called in resume).
     }
 

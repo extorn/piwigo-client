@@ -172,6 +172,11 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
     public void onResume() {
         Logging.log(Log.VERBOSE,TAG, "onResume : " + getClass().getName());
         super.onResume();
@@ -191,7 +196,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         }
     }
 
-    protected void updatePageTitle() {
+    public void updatePageTitle() {
         ToolbarEvent event = new ToolbarEvent(getActivity());
         event.setTitle(buildPageHeading());
         EventBus.getDefault().post(event);

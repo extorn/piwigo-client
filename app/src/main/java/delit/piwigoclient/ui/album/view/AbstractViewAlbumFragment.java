@@ -1200,7 +1200,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     }
 
     @Override
-    protected void updatePageTitle() {
+    public void updatePageTitle() {
         ToolbarEvent event = new ToolbarEvent(getActivity());
         event.setTitle(buildPageHeading());
         if (event.getTitle().startsWith("... / ")) {
@@ -1208,11 +1208,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    if(getActivity() == null) {
-                        getParentFragmentManager().popBackStack();
-                    } else {
-                        requireActivity().onBackPressed();
-                    }
+                    requireActivity().onBackPressed();
                 }
             };
             spannableTitle.setSpan(clickableSpan, 0, 5, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
