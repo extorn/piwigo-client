@@ -162,6 +162,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.72</item>
+        <item>"I cambiamenti:
+                 - Rimosso il supporto per le versioni Android precedenti alla 4.4. Scusami se questo ti riguarda, ma a meno che tu non possa
+                     fornire un motivo convincente, non tornerà. Il selettore numeri è difettoso sotto questa versione
+                     e ho passato troppo tempo a provare a risolverlo già.
+             Risoluzione del problema:
+                 - Blocco al caricamento completato se la pagina di caricamento non è più visibile."</item>
         <item>1.4.0.71</item>
         <item>"Risoluzione del problema
                  - Blocco causato dall\'app che prevede più autorizzazioni per la cartella condivisa di quanto necessario e fornito"</item>

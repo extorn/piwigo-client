@@ -162,6 +162,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.72</item>
+        <item>"变化：
+                 -删除了对4.4之前的android版本的支持。 抱歉，如果这影响到您，但是除非您可以
+                     提供令人信服的理由，它不会回来。 在此版本以下，号码选择器存在错误
+                     而且我花了很长时间尝试修复它。
+             错误修正：
+                 -如果上传页面不再可见，则上传失败。"</item>
         <item>1.4.0.71</item>
         <item>"错误修正
                  -因应用期望共享文件夹的权限超出必要而提供的应用而导致的崩溃"</item>

@@ -162,6 +162,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.72</item>
+        <item>"Změny:
+                 - Odstraněna podpora pro Android verze starší než 4.4. Omlouváme se, pokud se to týká vás, ale pokud nemůžete
+                     poskytnout přesvědčivý důvod, že se nevrátí. Výběr čísla je pod touto verzí buggy
+                     a už jsem to příliš dlouho zkoušel opravit.
+             Oprava chyby:
+                 - Selhání při nahrávání je dokončeno, pokud již není stránka pro nahrávání viditelná."</item>
         <item>1.4.0.71</item>
         <item>"Oprava chyby
                  - Selhání způsobené tím, že aplikace očekává více oprávnění pro sdílenou složku, než je nutné a poskytnuté"</item>

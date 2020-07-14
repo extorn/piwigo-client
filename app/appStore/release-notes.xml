@@ -1,36 +1,72 @@
 <en-GB>
-Bugfix
-- Crash caused by app expecting more permissions for shared folder than necessary and provided
+Changes:
+- Removed support for android versions earlier than 4.4. Sorry if this affects you, but unless you can
+provide a compelling reason, it won't come back. The number picker is buggy below this version
+and I've spent too long trying to fix it already.
+Bugfix:
+- Crash on upload complete if upload page no longer visible.
 </en-GB>
 <cs-CZ>
-Oprava chyby
-- Selhání způsobené tím, že aplikace očekává více oprávnění pro sdílenou složku, než je nutné a poskytnuté
+Změny:
+- Odstraněna podpora pro Android verze starší než 4.4. Omlouváme se, pokud se to týká vás, ale pokud nemůžete
+poskytnout přesvědčivý důvod, že se nevrátí. Výběr čísla je pod touto verzí buggy
+a už jsem to příliš dlouho zkoušel opravit.
+Oprava chyby:
+- Selhání při nahrávání je dokončeno, pokud již není stránka pro nahrávání viditelná.
 </cs-CZ>
 <de-DE>
-Fehlerbehebung
-- Absturz durch App, die mehr Berechtigungen für freigegebene Ordner erwartet als erforderlich und bereitgestellt
+Änderungen:
+- Unterstützung für Android-Versionen vor 4.4 entfernt. Entschuldigung, wenn Sie davon betroffen sind, aber es sei denn, Sie können
+Geben Sie einen zwingenden Grund an, es wird nicht zurückkommen. Die Nummernauswahl ist unterhalb dieser Version fehlerhaft
+und ich habe zu lange versucht, es bereits zu beheben.
+Fehlerbehebung:
+- Absturz beim Upload abgeschlossen, wenn die Upload-Seite nicht mehr sichtbar ist.
 </de-DE>
 <es-ES>
-Arreglo del fallo
-- Bloqueo causado por la aplicación que espera más permisos para la carpeta compartida de lo necesario y proporcionado
+Cambios:
+- Se eliminó el soporte para versiones de Android anteriores a 4.4. Lo siento si esto te afecta, pero a menos que puedas
+proporcionar una razón convincente, no volverá. El selector de números tiene errores debajo de esta versión
+y ya he pasado demasiado tiempo tratando de arreglarlo.
+Arreglo del fallo:
+- El bloqueo al cargar se completa si la página de carga ya no está visible.
 </es-ES>
 <fr-FR>
-Correction d\'un bug
-- Crash causé par l\'application qui attend plus d\'autorisations pour le dossier partagé que nécessaire et fourni
+Changements:
+- Suppression de la prise en charge des versions Android antérieures à 4.4. Désolé si cela vous affecte, mais sauf si vous le pouvez
+fournir une raison impérieuse, il ne reviendra pas. Le sélecteur de numéro est bogué en dessous de cette version
+et j\'ai déjà passé trop de temps à le réparer.
+Correction d\'un bug:
+- Blocage lors du téléchargement terminé si la page de téléchargement n\'est plus visible.
 </fr-FR>
 <it-IT>
-Risoluzione del problema
-- Blocco causato dall\'app che prevede più autorizzazioni per la cartella condivisa di quanto necessario e fornito
+I cambiamenti:
+- Rimosso il supporto per le versioni Android precedenti alla 4.4. Scusami se questo ti riguarda, ma a meno che tu non possa
+fornire un motivo convincente, non tornerà. Il selettore numeri è difettoso sotto questa versione
+e ho passato troppo tempo a provare a risolverlo già.
+Risoluzione del problema:
+- Blocco al caricamento completato se la pagina di caricamento non è più visibile.
 </it-IT>
 <ja-JP>
-バグ修正
--アプリが共有フォルダに必要以上の権限を期待して提供されているために発生するクラッシュ
+変更：
+-4.4より前のAndroidバージョンのサポートを削除しました。 これがあなたに影響を与える場合は申し訳ありませんが、できる限り
+説得力のある理由を提供し、それは戻ってきません。 番号ピッカーは、このバージョンよりもバグが多い
+そして私はすでにそれを修正するためにあまりにも長い時間を費やしました。
+バグ修正：
+-アップロードページが表示されなくなった場合、アップロード完了時にクラッシュする。
 </ja-JP>
 <ru-RU>
-Исправлена ошибка
-- Сбой, вызванный тем, что приложение ожидает больше разрешений для общей папки, чем необходимо и предоставляется
+Изменения:
+- Удалена поддержка версий Android ранее 4.4. Извините, если это влияет на вас, но если вы не можете
+предоставить убедительную причину, он не вернется. Выбор номера глючит ниже этой версии
+и я потратил слишком много времени, пытаясь это исправить.
+Исправлена ошибка:
+- Ошибка при завершении загрузки, если страница загрузки больше не видна.
 </ru-RU>
 <zh-CN>
-错误修正
--因应用期望共享文件夹的权限超出必要而提供的应用而导致的崩溃
+变化：
+-删除了对4.4之前的android版本的支持。 抱歉，如果这影响到您，但是除非您可以
+提供令人信服的理由，它不会回来。 在此版本以下，号码选择器存在错误
+而且我花了很长时间尝试修复它。
+错误修正：
+-如果上传页面不再可见，则上传失败。
 </zh-CN>

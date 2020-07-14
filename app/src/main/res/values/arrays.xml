@@ -264,6 +264,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.72</item>
+        <item>"Changes:
+                - Removed support for android versions earlier than 4.4. Sorry if this affects you, but unless you can
+                    provide a compelling reason, it won't come back. The number picker is buggy below this version
+                    and I've spent too long trying to fix it already.
+            Bugfix:
+                - Crash on upload complete if upload page no longer visible."</item>
         <item>1.4.0.71</item>
         <item>"Bugfix
                 - Crash caused by app expecting more permissions for shared folder than necessary and provided"</item>

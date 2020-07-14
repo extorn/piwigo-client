@@ -162,6 +162,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.72</item>
+        <item>"Cambios:
+                 - Se eliminó el soporte para versiones de Android anteriores a 4.4. Lo siento si esto te afecta, pero a menos que puedas
+                     proporcionar una razón convincente, no volverá. El selector de números tiene errores debajo de esta versión
+                     y ya he pasado demasiado tiempo tratando de arreglarlo.
+             Arreglo del fallo:
+                 - El bloqueo al cargar se completa si la página de carga ya no está visible."</item>
         <item>1.4.0.71</item>
         <item>"Arreglo del fallo
                  - Bloqueo causado por la aplicación que espera más permisos para la carpeta compartida de lo necesario y proporcionado"</item>

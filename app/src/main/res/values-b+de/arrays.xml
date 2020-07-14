@@ -162,6 +162,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.72</item>
+        <item>"Änderungen:
+                 - Unterstützung für Android-Versionen vor 4.4 entfernt. Entschuldigung, wenn Sie davon betroffen sind, aber es sei denn, Sie können
+                     Geben Sie einen zwingenden Grund an, es wird nicht zurückkommen. Die Nummernauswahl ist unterhalb dieser Version fehlerhaft
+                     und ich habe zu lange versucht, es bereits zu beheben.
+             Fehlerbehebung:
+                 - Absturz beim Upload abgeschlossen, wenn die Upload-Seite nicht mehr sichtbar ist."</item>
         <item>1.4.0.71</item>
         <item>"Fehlerbehebung
                  - Absturz durch App, die mehr Berechtigungen für freigegebene Ordner erwartet als erforderlich und bereitgestellt"</item>
