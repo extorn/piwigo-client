@@ -168,7 +168,8 @@
                      proporcionar una razón convincente, no volverá. El selector de números tiene errores debajo de esta versión
                      y ya he pasado demasiado tiempo tratando de arreglarlo.
              Arreglo del fallo:
-                 - El bloqueo al cargar se completa si la página de carga ya no está visible."</item>
+                 - Fallo al cargar si la página de carga ya no es visible.
+                 - Bloqueo en la navegación entre álbumes usando la barra de título"</item>
         <item>1.4.0.71</item>
         <item>"Arreglo del fallo
                  - Bloqueo causado por la aplicación que espera más permisos para la carpeta compartida de lo necesario y proporcionado"</item>

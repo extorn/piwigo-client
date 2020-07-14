@@ -168,7 +168,8 @@
                      fornire un motivo convincente, non tornerà. Il selettore numeri è difettoso sotto questa versione
                      e ho passato troppo tempo a provare a risolverlo già.
              Risoluzione del problema:
-                 - Blocco al caricamento completato se la pagina di caricamento non è più visibile."</item>
+                 - Blocco al caricamento completato se la pagina di caricamento non è più visibile.
+                 - Arresto anomalo della navigazione tra album tramite la barra del titolo"</item>
         <item>1.4.0.71</item>
         <item>"Risoluzione del problema
                  - Blocco causato dall\'app che prevede più autorizzazioni per la cartella condivisa di quanto necessario e fornito"</item>

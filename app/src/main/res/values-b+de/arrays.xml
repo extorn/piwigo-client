@@ -168,7 +168,8 @@
                      Geben Sie einen zwingenden Grund an, es wird nicht zurückkommen. Die Nummernauswahl ist unterhalb dieser Version fehlerhaft
                      und ich habe zu lange versucht, es bereits zu beheben.
              Fehlerbehebung:
-                 - Absturz beim Upload abgeschlossen, wenn die Upload-Seite nicht mehr sichtbar ist."</item>
+                 - Absturz beim Upload abgeschlossen, wenn die Upload-Seite nicht mehr sichtbar ist.
+                 - Absturz bei der Navigation zwischen Alben mithilfe der Titelleiste"</item>
         <item>1.4.0.71</item>
         <item>"Fehlerbehebung
                  - Absturz durch App, die mehr Berechtigungen für freigegebene Ordner erwartet als erforderlich und bereitgestellt"</item>
