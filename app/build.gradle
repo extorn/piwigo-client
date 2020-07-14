@@ -5,7 +5,6 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 //apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
-//apply plugin: 'com.google.gms.google-services'
 
 
 
@@ -36,11 +35,11 @@ android {
     defaultConfig {
         buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.9\""
         applicationId "delit.piwigoclient"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 29
 
-        versionCode 305
-        versionName "1.4.0.71"
+        versionCode 306
+        versionName "1.4.0.72"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -187,10 +186,10 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.0.1'
     //implementation 'androidx.webkit:webkit:1.2.0' // to use webview on old versions of android
     //implementation 'com.google.firebase:firebase-core:17.4.3'
-    implementation 'com.google.firebase:firebase-iid:20.2.1'
+    implementation 'com.google.firebase:firebase-iid:20.2.3'
     //implementation 'com.google.firebase:firebase-messaging:20.2.1'
-    implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
-    implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
     implementation 'com.google.firebase:firebase-ads:19.2.0'
     // don't think I need these
     //implemenation 'com.google.firebase:firebase-inappmessaging:19.0.7'

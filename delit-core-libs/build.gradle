@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         //<!-- Devices >= 3 have version of Android Market that supports licensing. -->
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 29
     }
 
