@@ -365,7 +365,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
     private void commitFragmentTransaction() {
         if (mCurTransaction != null) {
-            mCurTransaction.commitNow();
+            mCurTransaction.commitAllowingStateLoss();
             mCurTransaction = null;
         }
     }

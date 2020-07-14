@@ -1893,8 +1893,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         private void onFileUploadComplete(@NonNull Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
 
+            //TODO This method causes lots of server calls and is really unnecessary! Refresh once at the end
 
-            //TODO This causes lots of server calls and is really unnecessary! Refresh once at the end
+            if(getParent() == null) {
+                Logging.log(Log.ERROR, TAG, "Unable to notify user of file upload complete");
+                return;
+            }
+
 
             UploadJob uploadJob = getParent().getActiveJob(context);
             if (uploadJob != null) {

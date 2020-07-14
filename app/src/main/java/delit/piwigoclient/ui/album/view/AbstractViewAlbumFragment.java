@@ -1208,7 +1208,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    requireActivity().onBackPressed();
+                    if(getActivity() == null) {
+                        getParentFragmentManager().popBackStack();
+                    } else {
+                        requireActivity().onBackPressed();
+                    }
                 }
             };
             spannableTitle.setSpan(clickableSpan, 0, 5, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
