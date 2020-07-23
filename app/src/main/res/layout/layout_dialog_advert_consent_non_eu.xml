@@ -10,7 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="?textAppearanceHeadline5"
-        android:labelFor="@id/edit_field"
         android:text="@string/title_advert_consent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -72,7 +71,7 @@
     <TextView
         android:id="@+id/advert_providers_label"
         style="?editableFieldLabel"
-        android:labelFor="@+id/advert_providers_field"
+        android:labelFor="@+id/ad_providers_list"
         android:text="@string/advert_providers"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/no_adverts_field"/>

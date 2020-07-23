@@ -420,6 +420,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 // copy this local download cache to the destination.
                 try {
                     String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getRemoteUri()));
+                    Logging.log(Log.DEBUG, TAG, "LFC: Mime type : " + mimeType + " retrieved from remote uri : " + fileDetail.getRemoteUri());
+                    if(mimeType == null) {
+                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getOutputFilename()));
+                        Logging.log(Log.DEBUG, TAG, "LFC: Mime type : " + mimeType + " retrieved from output uri : " + fileDetail.getOutputFilename());
+                    }
                     DocumentFile destFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
                     IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
                     Uri mediaStoreUri = IOUtils.addFileToMediaStore(this, destFile.getUri());
@@ -433,6 +438,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             } else {
                 // invoke a download of this file
                 String mimeType = IOUtils.getMimeType(this, Uri.parse(fileDetail.getRemoteUri()));
+                Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from remote uri : " + fileDetail.getRemoteUri());
+                if(mimeType == null) {
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getOutputFilename()));
+                    Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from output uri : " + fileDetail.getOutputFilename());
+                }
                 DocumentFile destinationFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
                 event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction(event)));
             }

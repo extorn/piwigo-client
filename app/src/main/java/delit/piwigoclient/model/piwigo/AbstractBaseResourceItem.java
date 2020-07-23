@@ -202,6 +202,8 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         if (filesystemSafeFilenameRoot.length() > maxLen) {
             filesystemSafeFilenameRoot = filesystemSafeFilenameRoot.substring(0, 127);
         }
+        String downloadFilename = filesystemSafeFilenameRoot + '_' + filePiwigoSizeName + ext;
+        Logging.log(Log.INFO, TAG, "getDownloadFileName : " + resourceFileUrl + " -> " + downloadFilename);
         return filesystemSafeFilenameRoot + '_' + filePiwigoSizeName + ext;
     }
 
