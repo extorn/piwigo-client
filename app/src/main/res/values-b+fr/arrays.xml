@@ -123,6 +123,7 @@
     
 
     <string-array name="top_tips" translatable="true">
+        <item>"Si vous rencontrez des problèmes avec l\'application, veuillez m\'en informer par e-mail. Si vous le souhaitez, publiez un avis négatif sur Google Play, je n\'essaie pas d\'arrêter cela, mais veuillez également envoyer un e-mail. Il y a un lien pour m\'envoyer un e-mail en haut du menu du tiroir coulissant. Je peux fournir une assistance beaucoup plus complète à une adresse e-mail. Merci beaucoup."</item>
         <item>Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, assurez-vous de modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux</item>
         <item>Si un téléchargement ne réussit pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur.</item>
         <item>Une erreur se produit toujours lorsque vous essayez de mettre à jour des balises - \ "Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre de plug-in de serveur)</item>
@@ -162,6 +163,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.73</item>
+        <item>"Changements:
+                 - téléchargement de fichiers: plus de journalisation ajoutée pour aider à la résolution des problèmes
+                 - téléchargement de fichier: code ajouté pour deviner le type de mime pour le fichier téléchargé s\'il n\'y a pas d\'extension de fichier
+                 - Un e-mail de demande d\'élément de pointe ajouté est utilisé pour résoudre les problèmes avec l\'application"</item>
         <item>1.4.0.72</item>
         <item>"Changements:
                  - Suppression de la prise en charge des versions Android antérieures à 4.4. Désolé si cela vous affecte, mais sauf si vous le pouvez

@@ -123,6 +123,7 @@
     
 
     <string-array name="top_tips" translatable="true">
+        <item>"In caso di problemi con l\'app, utilizzare l\'e-mail per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarlo, ma ti preghiamo di inviare un\'e-mail. C\'è un link per inviarmi un\'e-mail nella parte superiore del menu del cassetto scorrevole. Posso fornire un supporto molto più completo a un indirizzo e-mail. Grazie molto."</item>
         <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del tuo server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
         <item>Se un caricamento non ha esito positivo, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
         <item>L\'errore si verifica sempre quando si tenta di aggiornare i tag - \ "Non è consentito eliminare i tag \" - Assicurarsi che gli utenti possano sia aggiungere che eliminare i tag (impostazione del plugin del server)</item>
@@ -162,6 +163,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.73</item>
+        <item>"I cambiamenti:
+                 - download di file: sono state aggiunte ulteriori registrazioni per facilitare la risoluzione dei problemi
+                 - download di file: codice aggiunto per indovinare il tipo mime per il file scaricato se non è presente alcuna estensione
+                 - L\'elemento di suggerimento aggiunto che richiede l\'e-mail viene utilizzato per risolvere i problemi con l\'app"</item>
         <item>1.4.0.72</item>
         <item>"I cambiamenti:
                  - Rimosso il supporto per le versioni Android precedenti alla 4.4. Scusami se questo ti riguarda, ma a meno che tu non possa

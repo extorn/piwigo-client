@@ -221,6 +221,7 @@
     </integer-array>
 
     <string-array name="top_tips" translatable="true">
+        <item>"If you have any issues with the app, please use email to notify me. If you wish, do post a negative review on Google Play, I'm not trying to stop that, but please email too. There is a link to send me an email at the top of the slide-out drawer menu. I can provide much more comprehensive support to an email address. Many thanks."</item>
         <item>"You can only see files to select for upload that are acceptable to upload on your server. If you wish to upload videos, be sure to alter your server config.inc.php file to include $conf['upload_form_all_types'] = true; rather than false"</item>
         <item>If an upload just won\'t succeed, try using the preference in the app settings upload page to clear any residual failed uploads from the server</item>
         <item>Error always occurs when trying to update tags - \"You are not allowed to delete tags\" - Ensure users can both add and delete tags (server plugin setting)</item>
@@ -264,6 +265,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.73</item>
+        <item>"Changes:
+                - file download: more logging added to assist resolution of issues
+                - file download: added code to guess the mime type for downloaded file if there is no file extension
+                - Added top-tip item requesting email is used to resolve issues with the app"</item>
         <item>1.4.0.72</item>
         <item>"Changes:
                 - Removed support for android versions earlier than 4.4. Sorry if this affects you, but unless you can

@@ -123,6 +123,7 @@
     
 
     <string-array name="top_tips" translatable="true">
+        <item>"Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una crítica negativa en Google Play, no estoy tratando de detenerlo, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
         <item>Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
         <item>Siempre se produce un error al intentar actualizar etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
@@ -162,6 +163,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.73</item>
+        <item>"Cambios:
+                 - descarga de archivos: se agregaron más registros para ayudar a la resolución de problemas
+                 - descarga de archivo: código agregado para adivinar el tipo mime para el archivo descargado si no hay extensión
+                 - Se agregó un elemento de primera clase que solicita el correo electrónico para resolver problemas con la aplicación"</item>
         <item>1.4.0.72</item>
         <item>"Cambios:
                  - Se eliminó el soporte para versiones de Android anteriores a 4.4. Lo siento si esto te afecta, pero a menos que puedas
