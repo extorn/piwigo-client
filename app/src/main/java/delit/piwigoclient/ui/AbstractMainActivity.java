@@ -425,6 +425,13 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                         mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getOutputFilename()));
                         Logging.log(Log.DEBUG, TAG, "LFC: Mime type : " + mimeType + " retrieved from output uri : " + fileDetail.getOutputFilename());
                     }
+                    if(mimeType == null) {
+                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getResourceName()));
+                        Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from resource name : " + fileDetail.getResourceName());
+                    }
+                    if(mimeType == null) {
+                        Logging.log(Log.ERROR, TAG, "Unable to establish mime type for download");
+                    }
                     DocumentFile destFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
                     IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
                     Uri mediaStoreUri = IOUtils.addFileToMediaStore(this, destFile.getUri());
@@ -443,7 +450,23 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getOutputFilename()));
                     Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from output uri : " + fileDetail.getOutputFilename());
                 }
-                DocumentFile destinationFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
+                if(mimeType == null) {
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getResourceName()));
+                    Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from resource name : " + fileDetail.getResourceName());
+                }
+                if(mimeType == null) {
+                    Logging.log(Log.ERROR, TAG, "Unable to establish mime type for download");
+                }
+                String downloadToFile = fileDetail.getOutputFilename();
+                boolean noFileExt = downloadToFile.lastIndexOf('.') < downloadToFile.length() - 5;
+                if(noFileExt) {
+                    if(mimeType != null) {
+                        mimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                        Logging.log(Log.ERROR, TAG, "Added mime type for download " + mimeType);
+                        downloadToFile = downloadToFile + '.' + mimeType;
+                    }
+                }
+                DocumentFile destinationFile = getDestinationFile(mimeType, downloadToFile);
                 event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction(event)));
             }
         } else {

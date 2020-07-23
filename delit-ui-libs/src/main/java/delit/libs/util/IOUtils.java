@@ -38,6 +38,7 @@ import java.io.ObjectStreamException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -947,12 +948,26 @@ public class IOUtils {
     }
 
     public static Uri addFileToMediaStore(Context context, Uri fileUri) {
+        String mimeType = IOUtils.getMimeType(context, fileUri);
+        return addFileToMediaStore(context, fileUri, mimeType);
+    }
+
+    public static Uri addFileToMediaStore(Context context, Uri fileUri, String mimeType) {
         ContentValues values = new ContentValues();
         if(!"file".equals(fileUri.getScheme())) {
             // Only raw files can be added (the others either already are, or aren't local).
             return fileUri;
         }
-        String mimeType = IOUtils.getMimeType(context, fileUri);
+        if(mimeType == null) {
+            // guess from the file content.
+            try(FileInputStream fis = new FileInputStream(fileUri.getPath())) {
+                mimeType = URLConnection.guessContentTypeFromStream(fis);
+                Logging.log(Log.INFO, TAG, "Guessed mime type for unknown file : " + mimeType);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Uri mediaStoreUri = IOUtils.selectExternalMediaStoreContentProviderUriForFile(mimeType);
 
         if(mediaStoreUri != null) {
