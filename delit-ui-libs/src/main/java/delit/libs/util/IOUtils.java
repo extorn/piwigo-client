@@ -742,7 +742,11 @@ public class IOUtils {
 
     public static Uri getTreeUri(Uri uri) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
+            if(!"file".equals(uri.getScheme())) {
+                return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
+            } else {
+                return uri; // can't do more. its a raw file.
+            }
         } else {
             if(!"file".equals(uri.getScheme())) {
                 List<String> pathSegments = uri.getPathSegments();
