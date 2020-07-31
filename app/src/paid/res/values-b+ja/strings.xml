@@ -7,7 +7,7 @@
     <string name="notification_text_background_upload_polling">アップロードするファイルのポーリング。</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">ジョブを実行する場合は、バックグラウンドアップロードサービスを開始することを忘れないでください</string>
+    <string name="alert_warning_auto_upload_service_stopped">ジョブを実行する場合は、バックグラウンドアップロードサービスを開始することを忘れないでください。</string>
     <string name="alert_auto_upload_service_stopped">バックグラウンドアップロードサービスが停止しました</string>
     <string name="alert_auto_upload_service_started">バックグラウンドアップロードサービスを開始しました</string>
     <string name="alert_auto_upload_service_job_restarted">以前に完了していないジョブの%2$dファイルを含むサーバー%1$sへのアップロードを開始しました</string>

@@ -277,7 +277,7 @@
 
     
     <string name="preference_groups_request_pagesize_title">Gruppiert die Seitengröße der Serveranforderung</string>
-    <string name="preference_groups_request_pagesize_summary">%1$d Artikel</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d Gegenstände</string>
     
 
     

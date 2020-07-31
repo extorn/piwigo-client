@@ -92,7 +92,7 @@
     <string name="alert_upload_failed_piwigo">La carga falló debido a un error en el servidor PIWIGO (%1$d:%2$s).</string>
     <string name="alert_upload_failed_webserver">La carga falló debido a un error del servidor web (%1$d:%2$s).</string>
     <string name="alert_upload_failed_webresponse">La carga falló debido a un error al procesar la respuesta de PIWIGO. Esto probablemente se deba a un cambio en la API de PIWIGO. Respuesta no analizable:%1$s.</string>
-    <string name="alert_error_upload_chunk_failed_message_pattern">Error al cargar el fragmento para el archivo%1$s. Abandonando carga de archivo.</string>
+    <string name="alert_error_upload_chunk_failed_message_pattern">Error al cargar el fragmento para el archivo%1$s. Abandonando la carga del archivo.</string>
     <string name="alert_error_upload_file_no_longer_available_message_pattern">El archivo%1$s ya no está disponible en el dispositivo, tal vez se haya eliminado o movido.\n%2$s</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Error al cargar el archivo%1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">El archivo cargado%1$s ya está presente en el servidor, acción cancelada.</string>
@@ -120,7 +120,7 @@
     <string name="upload_files_button_title">Subir</string>
     <string name="upload_files_finish_job_button_title">Terminar</string>
     <string name="upload_job_status_button">Estado</string>
-    <string name="alert_really_delete_upload_job">Esto eliminará el estado del trabajo de este dispositivo. Deberá limpiar manualmente los archivos cargados parcialmente en el servidor (o usar la preferencia en esta aplicación: página de configuración de carga). Los trabajos a menudo se completarán con éxito si los reanuda más tarde. ¿Estás seguro de que deseas dar este paso drástico?</string>
+    <string name="alert_really_delete_upload_job">Esto eliminará el estado del trabajo de este dispositivo. Deberá limpiar manualmente cualquier archivo cargado parcialmente en el servidor (o usar la preferencia en esta aplicación: página de configuración de carga). Los trabajos a menudo se completarán con éxito si los reanuda más tarde. ¿Estás seguro de que deseas dar este paso drástico?</string>
     <string name="loading_please_wait">Cargando por favor espere</string>
     <string name="alert_title_server_error">Error del Servidor</string>
     <string name="alert_server_error_pattern">El servidor devolvió un error HTTP:%1$d (%2$s)</string>
@@ -178,7 +178,7 @@ Si no está de acuerdo con los términos de este Acuerdo, no haga clic en el bot
 descargue o use la aplicación.
 
 Si está considerando usar esta aplicación para acceder o modificar un servidor utilizado con fines comerciales, es esencial que lea y comprenda las limitaciones de responsabilidad.
-Debe probar esto en un servidor que no sea de producción para su satisfacción antes de aceptar cualquier riesgo y responsabilidad en función de sus decisiones. Esta aplicación ha sido diseñada principalmente
+Debe probar esto en un servidor que no sea de producción para su satisfacción antes de aceptar cualquier riesgo y responsabilidad usted mismo en función de sus decisiones. Esta aplicación ha sido diseñada principalmente
 para fines no comerciales.
 
 Definiciones
@@ -192,7 +192,7 @@ Gareth Deli le otorga una licencia limitada, no exclusiva, no transferible y rev
 para descargar, instalar y usar la Aplicación únicamente para sus fines personales o comerciales
 estrictamente de acuerdo con los términos de este Acuerdo.
 
-EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA, INCLUYENDO PERO SIN LIMITARSE A LAS GARANTÍAS DE COMERCIABILIDAD, IDONEIDAD PARA UN PROPÓSITO Y NO INFRACCIÓN EN PARTICULAR. EN NINGÚN CASO, LOS AUTORES O LOS TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES POR NINGÚN RECLAMO, DAÑOS U OTRA RESPONSABILIDAD, YA SEA EN ACCIÓN DE CONTRATO, TORT O DE OTRA MANERA, DERIVADA DE, FUERA DE, O EN RELACIÓN CON EL SOFTWARE O EL USO O OTRO TRATO EN EL SOFTWARE
+EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPLÍCITA O IMPLÍCITA, INCLUYENDO PERO SIN LIMITARSE A LAS GARANTÍAS DE COMERCIABILIDAD, APTITUD PARA UN PROPÓSITO Y NO INFRACCIÓN PARTICULARES. EN NINGÚN CASO, LOS AUTORES O LOS TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE NINGÚN RECLAMO, DAÑOS U OTRA RESPONSABILIDAD, YA SEA EN ACCIÓN DE CONTRATO, TORT O DE OTRA MANERA, DERIVADA DE, FUERA DE, O EN RELACIÓN CON EL SOFTWARE O EL USO O OTRO TRATO EN EL SOFTWARE
 
 
 Restricciones
@@ -212,14 +212,14 @@ La integración de Firebase se ha agregado a esta aplicación para facilitar el 
 
 Garantía limitada y exención de responsabilidad
 
-El software se proporciona \"tal cual\" y el licenciatario lo usa bajo su propio riesgo.Gareth Deli no garantiza su uso, rendimiento o aptitud para un propósito particular. Siempre es posible que el software contenga errores (errores) y no funcione. Por lo tanto, Gareth Deli no garantiza que el software esté completamente libre de errores o que funcione sin interrupción con todas las computadoras y configuraciones.
+El software se proporciona \"tal cual\" y el licenciatario lo utiliza bajo su propio riesgo.Gareth Deli no garantiza su uso, rendimiento o aptitud para un propósito particular. Siempre es posible que el software contenga errores (errores) y no funcione. Por lo tanto, Gareth Deli no garantiza que el software esté completamente libre de errores o que funcione sin interrupción con todas las computadoras y configuraciones.
 
 Es responsabilidad exclusiva del licenciatario verificar si el software cumple con su propósito particular o si cumple con sus requisitos funcionales y de rendimiento. El licenciatario también está obligado a probar cómo funciona el software en sus dispositivos y sus configuraciones; pruebe todos los casos de uso y verifique si los datos se procesaron sin errores y según lo deseado antes de usar el software en entornos de producción. Esto es de vital importancia si se utiliza el software con fines comerciales.
 
 
 Limitaciones de responsabilidad
 
-El titular de la licencia es responsable de las consecuencias del uso del software y de los daños directos e indirectos resultantes, en la medida en que sea legalmente posible. La responsabilidad se limita al precio de compra siempre que sea legalmente posible; de lo contrario se limita al mínimo legalmente posible.
+El licenciatario es responsable de las consecuencias del uso del software y de los daños directos e indirectos resultantes, en la medida en que sea legalmente posible. La responsabilidad se limita al precio de compra siempre que sea legalmente posible; de lo contrario se limita al mínimo legalmente posible.
 
 
 Mantenimiento y soporte
@@ -249,7 +249,7 @@ de la aplicación desde su dispositivo móvil o desde su escritorio.
 Divisibilidad
 Si alguna disposición de este Acuerdo se considera inaplicable o inválida, dicha disposición será
 cambiado e interpretado para lograr los objetivos de dicha disposición en la mayor medida
-posible bajo la ley aplicable y las disposiciones restantes continuarán en pleno vigor y efecto.
+posible según la ley aplicable y las disposiciones restantes continuarán en pleno vigor y efecto.
 
 
 Enmiendas a este Acuerdo
@@ -282,7 +282,7 @@ Actualmente, la versión paga ha agregado soporte para etiquetas:
 
 Por el momento, proporciona un nivel básico de funcionalidad para permitir la navegación por una galería existente, cargar nuevas fotos y videos y crear nuevas categorías dentro de una galería. Algunos campos se pueden modificar una vez creados, pero muchos todavía son de solo lectura ... ¡por ahora!
 
-Puedo solicitar que si desinstala la aplicación, utilice el enlace en el menú de la aplicación para enviarme un correo electrónico diciéndome por qué la aplicación no satisfizo sus necesidades para que pueda abordar esto.
+¿Puedo solicitar que si desinstala la aplicación, utilice el enlace en el menú de la aplicación para enviarme un correo electrónico y me diga por qué la aplicación no satisfizo sus necesidades para que pueda abordar esto?
 
 La versión del servidor PIWIGO con la que pruebo actualmente es 2.10.2.
 
@@ -292,7 +292,7 @@ ADVERTENCIA: Versiones de Piwigo debajo de 1.9.2: creo que la carga de videos de
 
 He estado probando con una copia del complemento piwigo_privacy instalado y también el complemento VideoJS instalado.
 Tengo instalada una copia del complemento Descripción Extendida, pero desafortunadamente, esta funcionalidad aún no está expuesta a través de la API de PIWIGO.
-Me gustaría incluir soporte para fotos \"favoritas\" pero esta funcionalidad aún no parece estar expuesta a través de la API de PIWIGO.
+Me gustaría incluir soporte para fotos \"favoritas\" pero esta funcionalidad todavía no parece estar expuesta a través de la API de PIWIGO.
 
 Por favor, informe si me envía un correo electrónico si encuentra algún error. He probado esto en el emulador de Android, un teléfono Samsung y una tableta Samsung, pero es mi primera aplicación, así que estoy seguro de que las cosas saldrán mal para alguien.
 
@@ -323,7 +323,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="click_to_view">Click para ver</string>
     <string name="click_to_view_pattern">%1$d - Haz clic para ver / editar</string>
     <string name="alert_warning_lowMemory">Memoria baja</string>
-    <string name="alert_warning_lowMemory_message">El dispositivo se está quedando sin memoria (%1$d). La memoria caché de la imagen en memoria se ha borrado.</string>
+    <string name="alert_warning_lowMemory_message">El dispositivo se está quedando sin memoria (%1$d). La memoria caché de la imagen en memoria ha sido borrada</string>
     <string name="files_for_upload_title">Archivos para cargar</string>
     <string name="alert_information">Información</string>
     <string name="alert_image_download_title">Descargar</string>
@@ -333,7 +333,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="download_file">Descargar archivo</string>
     <string name="share_with_an_app">Compartir con una aplicación</string>
     <string name="alert_image_show_image_title">Control de renderizado de imagen</string>
-    <string name="alert_image_show_image_message">Por favor, elija el tamaño de archivo que desea ver</string>
+    <string name="alert_image_show_image_message">Elija el tamaño de archivo que desea ver</string>
     <string name="alert_image_download_complete_message">Descarga completa.</string>
     <string name="alert_error_unsupported_piwigo_version_pattern">El servidor está ejecutando la versión de PIWIGO%1$s. La versión mínima probada con esta aplicación es%2$s. Algunas características de la aplicación pueden no funcionar como se esperaba. Por favor, consulte la página acerca de cualquier problema identificado.</string>
     <string name="notification_download_event">Archivo descargado</string>
@@ -342,7 +342,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="button_agree">Estoy de acuerdo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Advertencia</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de "coincidencia más cercana".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \"coincidencia más cercana\".</string>
     <string name="rate_dialog_message">Si le gusta usar esta aplicación, ¿le importaría tomarse un momento para calificarla? No tomará más de un minuto. ¡Gracias por su apoyo!</string>
     <string name="groups_menu_title">Grupos</string>
     <string name="group_members_pattern">(%1$d miembros)</string>
@@ -449,7 +449,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="alert_message_file_upload_cancelled_pattern">Carga del archivo (%1$s) cancelada.</string>
     <string name="alert_message_upload_cancelled">Subida cancelada</string>
     <string name="alert_message_upload_cancelled_message">Si no desea reiniciar la carga más tarde. Debe eliminar los archivos del trabajo de carga y luego hacer clic en cargar. Esto limpiará el estado de carga cancelado del servidor.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de la imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de "coincidencia más cercana".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de la imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \"coincidencia más cercana\".</string>
     <string name="logging_out_of_piwigo_pattern">Cerrar sesión en%1$s</string>
     <string name="loading_new_server_configuration">Cargando la nueva configuración de conexión del servidor</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Para permitir el almacenamiento en caché en el disco, se debe otorgar acceso de escritura al sistema de archivos. Si se niega, el almacenamiento en caché estará en la memoria.</string>
@@ -462,7 +462,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="alert_title_error_connecting_to_server">Error al conectarse al servidor</string>
     <string name="alert_warning_message_self_signed_certificates">Los certificados SSL autofirmados no deben usarse en un servidor público (en Internet); investigue en https://letsencrypt.org o similar. Esto es solo para fines de prueba.</string>
     <string name="alert_error_adding_certificate_to_truststore">Error al agregar certificado a la tienda de confianza</string>
-    <string name="alert_add_cert_to_truststore_pattern">¿Agregar cadena de certificado a la lista de CA de confianza?</string>
+    <string name="alert_add_cert_to_truststore_pattern">¿Agregar cadena de certificado a la lista de CA confiables?</string>
     <string name="certificate_summary_pattern">Asunto:%1$s\nVálido:%2$s -%3$s\nSerie:%4$s</string>
     <string name="alert_http_engine_shutdown">Apagado del motor HTTP. Se reiniciará automáticamente según sea necesario.</string>
     
@@ -556,7 +556,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="alert_error_album_no_longer_on_server">Este álbum no se pudo cargar desde el servidor. Pasando al álbum principal.</string>
     <string name="button_show_details">Mostrar detalle</string>
     <string name="button_hide_details">Ocultar detalle</string>
-    <string name="alert_message_max_upload_file_count_reached">Se alcanzó el número máximo de archivos a cargar. Para cargar más a la vez, compre y use la versión paga de esta aplicación.</string>
+    <string name="alert_message_max_upload_file_count_reached">Se alcanzó el número máximo de archivos a cargar. Para cargar más de una vez, compre y use la versión paga de esta aplicación.</string>
     <string name="alert_message_advert_load_error">Los anuncios persistentemente tienen problemas para cargar. Por favor, infórmeme, ya que constituyen una fuente de ingresos importante aunque muy pequeña para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta regresiva se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación de manera normal.</string>
     <string name="alert_temporary_upload_album_deleted">Álbum de carga temporal eliminado con éxito</string>
     <string name="alert_deleting_temporary_upload_album">Eliminar el álbum de carga temporal</string>
@@ -573,11 +573,11 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="content_description_icon">icono</string>
     <string name="duplicates_ignored_pattern">%1$d duplicados han sido ignorados.</string>
     <string name="progress_loading_session_details">Cargando detalles de la sesión</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor, y se ha utilizado el respaldo%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">El método de Piwigo WS%1$s ya no está disponible en este servidor, y se ha utilizado el respaldo%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor. Deshabilitar la funcionalidad afectada en la aplicación. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="removing_favorite">Eliminar favoritos</string>
     <string name="adding_favorite">Agregar favorito</string>
-    <string name="alert_error_unsupported_features_pattern">Algunas funciones que admite esta aplicación no están disponibles en su servidor. Para permitir:\n1. Instale el complemento PiwigoClientWsExts.\n2.Cierra sesión y vuelve a iniciarla en esta aplicación.\n\nTe lo recordaremos en una semana.</string>
+    <string name="alert_error_unsupported_features_pattern">Algunas funciones que admite esta aplicación no están disponibles en su servidor. Para permitir:\n1. Instale el complemento PiwigoClientWsExts.\n2.Cierre sesión y vuelva a iniciar sesión en esta aplicación.\n\nTe lo recordaremos en una semana.</string>
     <string name="tag_will_be_created_when_resource_is_saved">Uso del complemento de etiquetas de usuario para agregar una nueva etiqueta. La etiqueta solo se creará una vez que se guarde el recurso.</string>
     <string name="resource_details_updated_message">Detalles de recursos actualizados</string>
     <string name="alert_server_call_in_progress_please_wait">Llamada del servidor en curso. Espere a que esto se complete antes de volver a intentarlo.</string>
@@ -614,7 +614,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La preferencia%1$s es irrecuperable y se ha predeterminado a%2$s. Restablezca este valor en la configuración de la aplicación</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La preferencia%1$s es irrecuperable y se ha predeterminado a%2$s. Restablezca este valor en la configuración de la aplicación"</string>
     <string name="switch_to_cached_mode">El servidor actualmente no está disponible. ¿Usar datos en caché?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Comprimir videos</string>
@@ -659,7 +659,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="create_email_using_app">Crear un correo electrónico usando la aplicación</string>
     <string name="open_files">Abrir archivos en la aplicación</string>
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no pudieron procesarse. Estos archivos%1$d han sido ignorados. Para compartir un archivo de video, primero debe almacenarse completamente en la memoria caché local.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Todos los consejos de usuario únicos se mostrarán nuevamente</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Todos los consejos de usuario únicos se mostrarán nuevamente"</string>
     
     
     <string name="delete_uploaded_files_title">Eliminar archivos cargados</string>
@@ -668,7 +668,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="uri_still_needed_pattern">Lo sentimos, no puedes eliminar el permiso para que la aplicación use este URI. La aplicación aún necesita permiso para acceder a este URI para:\n\n%1$s</string>
     <string name="no_suitable_activity_found">No se encontró actividad adecuada</string>
     <string name="preference_uri_consumer_description_pattern">Preferencia:%1$s</string>
-    <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, se han eliminado los permisos de archivo requeridos por las siguientes partes de la aplicación\n\n%1$s\n\nSeleccione nuevos permisos para esta configuración para que todo funcione como se espera."</string>
+    <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, los permisos de archivo requeridos por las siguientes partes de la aplicación se han eliminado\n\n%1$s\n\nSeleccione nuevos permisos para esta configuración para que todo funcione como se espera."</string>
     <string name="folder_selection_title">Seleccione la carpeta</string>
     <string name="files_selection_title">Selecciona archivos</string>
     <string name="all">Todas</string>
@@ -692,7 +692,7 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="no_adverts_label">¿Prefieres una versión sin publicidad de esta aplicación?</string>
     <string name="view_the_paid_version">Llévame a la versión gratuita de anuncios</string>
     <string name="advert_providers">Proveedores de anuncios en uso</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Lo sentimos, este archivo no se pudo usar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Lo sentimos, este archivo no se pudo utilizar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
     <string name="files_shared_without_required_permissions_error">La aplicación que utilizó para seleccionar los archivos no ha delegado los permisos de archivo necesarios a Piwigo Client. Se ha agregado una solución para este problema en la versión paga de Piwigo Client, pero también puede utilizar un método diferente para seleccionar los archivos.</string>
     <string name="files_cached_from_other_apps">Acciones en caché</string>
     <string name="progress_copying_imported_files">Copiar archivos importados</string>

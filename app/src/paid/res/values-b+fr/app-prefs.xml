@@ -3,29 +3,29 @@
     
 
     <string name="preference_page_auto_upload_jobs">Téléchargement automatique</string>
-    <string name="preference_data_upload_automatic_title">Téléchargements automatiques</string>
-    <string name="preference_data_upload_automatic_job_title">Travail de téléchargement automatique</string>
+    <string name="preference_data_upload_automatic_title">Transferts automatiques</string>
+    <string name="preference_data_upload_automatic_job_title">Tâche de téléchargement automatique</string>
 
     
 
     
     <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement en arrière-plan</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Téléchargements automatiques</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Transferts automatiques</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utiliser uniquement le téléchargement automatique sur sans fil</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Sans fil uniquement</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utiliser uniquement le téléchargement automatique sur le sans fil</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Sur sans fil uniquement</string>
     
-    
-
-    
-    <string name="preference_data_upload_automatic_upload_jobs_title">Travaux de téléchargement automatique</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d travaux</string>
-
     
 
     
-    <string name="preference_data_upload_automatic_job_view_status_title">Afficher le statut de téléchargement</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Tâches de téléchargement automatique</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d emplois</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">Afficher l\'état du téléchargement</string>
     <string name="preference_data_upload_automatic_job_view_status_summary">Afficher l\'état de la dernière exécution du travail (si disponible)</string>
 
     
@@ -33,7 +33,7 @@
 
     
     <string name="preference_data_upload_automatic_job_enabled_summary">Le service de téléchargement utilisera-t-il ce travail?</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">Travail activé</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Job activé</string>
     
 
     <string name="preference_data_upload_automatic_job_server_title">Télécharger sur le serveur</string>
@@ -73,7 +73,7 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize uploadé</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Taille maximale du fichier téléchargé</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d Mo</string>
 
     
@@ -82,7 +82,7 @@
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Télécharger des fichiers avec l\'extension%1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Niveau de confidentialité</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléchargés visibles par%1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléversés visibles par%1$s</string>
     
     
 
@@ -120,18 +120,18 @@
 
     
     <string name="preference_gallery_slideshow_auto_drive_title">Progression automatique du diaporama</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">Après l\'heure définie, l\'image ou la vidéo suivante s\'affichera</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Après l\'heure définie, l\'image ou la vidéo suivante s\'affiche</string>
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retard d\'image de lecteur automatique</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retard d\'image du lecteur automatique</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecondes</string>
     
     
     
     
 
     <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retard vidéo du lecteur automatique</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecondes</string>
     
     
     

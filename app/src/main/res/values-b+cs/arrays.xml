@@ -124,17 +124,17 @@
 
     <string-array name="top_tips" translatable="true">
         <item>"Pokud máte s aplikací nějaké problémy, upozorněte mě prosím e-mailem. Pokud si přejete, zveřejněte na Google Play zápornou recenzi, nesnažím se to zastavit, ale prosím také e-mailem. V horní části nabídky vysouvací zásuvky je odkaz, který mi pošle e-mail. Mohu poskytnout mnohem komplexnější podporu e-mailové adresy. Mnohokrát děkuji."</item>
-        <item>Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé</item>
+        <item>"Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé"</item>
         <item>Pokud se nahrávání nepodaří uspět, zkuste použít předvolbu na stránce pro nahrání nastavení aplikace k odstranění veškerých zbývajících neúspěšných nahrávek ze serveru.</item>
-        <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ "Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
+        <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ \"Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání, která je připravena přejít na váš aktuální server</item>
-        <item>Dlouhé kliknutí na obrázek (buď miniaturu nebo položku prezentace), který se nepodařilo načíst, aby bylo možné jej znovu načíst</item>
+        <item>Dlouhým kliknutím na obrázek (buď miniaturu nebo položku prezentace), který se nepodařilo načíst, je znovu načíst</item>
         <item>Dlouhým kliknutím na album odstraníte dané album a veškerý obsah</item>
         <item>Dlouhým kliknutím na obrázek alba povolíte hromadný výběr obrázků pro akci</item>
         <item>Při prohlížení jakéhokoli obrázku v prezentaci dlouhým kliknutím otočíte / změníte velikost zobrazeného obrázku nebo povolíte další přiblížení</item>
         <item>Při prohlížení v prezentaci můžete přiblížit obrázek tak, že na obrazovce nakreslíte dva prsty k sobě nebo od sebe</item>
         <item>Pokud jste přihlášeni jako správce, před předáním zařízení příteli k prohlížení fotografií aktivujte funkci zámku aplikace, abyste zabránili nechtěným změnám ve vaší galerii.</item>
-        <item>Po zobrazení celého videa, pokud je povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
+        <item>Po zobrazení celého videa, pokud je povoleno ukládání souborů do mezipaměti, je možné toto video uložit do složky ke stažení</item>
         <item>Chcete-li smazat všechny soubory, které mají být nahrány (když úloha právě neprobíhá), klikněte na tlačítko pro smazání souboru \ \'file for upload \'.</item>
         <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server při nahrávání automaticky vygeneruje velikost používanou touto aplikací</item>
     </string-array>
@@ -144,12 +144,12 @@
             - oprava občasných, ale nesprávných chyb HTTP 401, případně spojených s obnovením odpovědi v mezipaměti
             Změny:
          - Možná:
-            - Odstranění všech nebo většiny inzerátů ve prospěch bezplatné zkušební doby, po které následuje platební model založený na předplatném
+            - Odstranění všech nebo většiny reklam ve prospěch bezplatné zkušební doby, po které následuje platební model založený na předplatném
             - Ověřte aktuální stav přihlášení a ujistěte se, že seznamy alb a obrázků jsou vždy správné
             - Ověřte podporu nahrávání na starší servery (např. Piwigo.com - verze 2.8a).
             - Možnost odstranit album, ale nikoli jeho obsah (vytváření sirotků)
             - Správa osiřelých souborů
-            - Prozkoumejte přidání podpory pro barevný plugin
+            - Prozkoumejte přidání podpory pro barevný plugin plugin
             - Vylepšená podpora animovaného gif (streamování velkých souborů)
          - Možná (pouze placená aplikace):
             - Náhodný nápad fotografií implementovaný do uživatelského rozhraní piwigo web
@@ -159,10 +159,17 @@
             - Přidejte preferenci, abyste mohli zobrazit / skrýt pole EXIF ​​atd., Která jsou nebo nejsou předmětem zájmu
             - Nějaký druh obrazovky umožňující zrcadlení zařízení na větší obrazovce
          - Něco dalšího:
-            - Pošlete mi e-mail (na navigační liště je e-mailový odkaz) a vyžádejte si věci, které potřebujete nebo chcete, aby tato aplikace dosud nedělala"</item>
+            - Pošlete mi e-mail (na navigační liště je e-mailový odkaz) a požádejte o věci, které potřebujete nebo které chcete, aby tato aplikace dosud nedělala"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.74</item>
+        <item>"Oprava chyby:
+                 - Android 10
+                  : výběr složek - oprávnění spravovaná správně.
+                  : stažení položek - nyní funguje
+                  Poznámka: Možná budete muset znovu vybrat preferovanou složku pro stahování nebo automatické nahrávání.
+               POZNÁMKA: Přestávám aktivně vyvíjet tuto aplikaci - budu ji však nadále občas podporovat podporou oprav chyb."</item>
         <item>1.4.0.73</item>
         <item>"Změny:
                  - stahování souborů: přidáno další protokolování, které pomůže vyřešit problémy
@@ -220,23 +227,23 @@
                     - mazání souborů po nahrání nyní funguje znovu
                     - kontrolní soubory jsou před nahráním jedinečné - nyní je to těžší, takže to trvá trochu déle
                     - Selektor souborů v aplikacích je relativně pomalý, aby se načítaly složky obsahující spoustu souborů - omezení v Android API v současnosti
-                - při kompresi videa můžete vypnout zvukový nebo obrazový tok, pokud chcete vytvořit soubor m4a nebo m4v (přidaná přípona mp4, pokud to vše umožňuje váš server).
-                - Nabídka šuplíků dostupná na obrazovce nahrávání, která vám umožní přejít do galerie nebo nastavení
+                - Při kompresi videa můžete vypnout zvukový nebo obrazový tok, pokud chcete vytvořit soubor m4a nebo m4v (přidaná přípona mp4, pokud to vše umožňuje váš server).
+                - Nabídka zásuvky dostupná na obrazovce nahrávání, která vám umožní přejít na galerii nebo nastavení
                 - Aplikace je připravena k implementaci kódu, který vás upozorní při výběru fotografií těch, které jste dříve nahráli.
                Oprava chyby:
                 - Nahrát stránku zachovává soubory při přidávání nových souborů ze systémového voliče a / nebo navigace do hlavní galerie
                 - Kód komprese videa byl radikálně přepracován. Nemělo by teď zmrznout a vzdávat se žádných videí. (Dejte mi vědět, pokud ano)
-                - Přepište velké oblasti, abyste odstranili možné úniky paměti
+                - Přepište velké oblasti, abyste odstranili potenciální úniky paměti
                 - Měl by být mnohem méně náchylný ke zhroucení na starých verzích systému Android (před lollipopem)"</item>
         <item>1.4.0.65</item>
         <item>"Změny:
              - Opraveno zbývající téma téma pro dialogy
                 Oprava chyby:
-             - Fragment cesty Uri serveru je nesprávně převeden na malá písmena, což vede k chybě 404"</item>
+             - Fragment cesty Uri serveru je nesprávně převeden na malá písmena, což má za následek chybu 404"</item>
         <item>1.4.0.64</item>
         <item>"Změny:
              - Přidáno tlačítko pro zobrazení skrytého hesla v preferencích
-             - Téma přesunuto do MaterialComponentů (došlo k několika drobným změnám)
+             - Přesun na téma založené na MaterialComponentech (existují drobné změny)
              - Ve výchozím nastavení skryjte většinu preferencí připojení - kliknutím rozbalte a zpřístupněte ostatní
              - přesunul některé předvolby nahrávání do rozšířené sekce
                 Oprava chyby:
@@ -261,7 +268,7 @@
         <item>1.4.0.60</item>
         <item>"Změna:
                  - Změny na stránce předvoleb aplikace
-                 - Přidána nová preference pro nutení jednorázových tipů pro uživatele, aby se znovu zobrazovaly
+                 - Přidána nová preference pro nutení opětovného zobrazení nápovědy pro uživatele
                  - placená aplikace: Přidána funkce automatického pohonu v prezentaci - nové nastavení v sekci prezentace v předvolbách galerie"</item>
         <item>1.4.0.59</item>
         <item>"Změna:
@@ -271,13 +278,13 @@
                  - Bezplatná verze: odstraněny všechny vsunuté reklamy na několik měsíců, takže je možné použít více než zkušební verzi placené verze"</item>
         <item>1.4.0.57</item>
         <item>"Oprava chyby:
-                 - prozatím se odhlásili z omezeného úložiště - umožňuje aplikaci znovu zobrazit soubory pro upload na Android 10"</item>
+                 - prozatím se odhlásili z omezeného úložiště - umožňuje aplikaci zobrazit soubory pro opětovné nahrání v systému Android 10"</item>
         <item>1.4.0.56</item>
         <item>"Oprava chyby:
-                 - videa někdy rozpoznána pouze jako fotografie v závislosti na adrese URL serveru zadané v nastavení připojení"</item>
+                 - videa někdy rozpoznávána pouze jako fotografie v závislosti na adrese URL serveru zadané v nastavení připojení"</item>
         <item>1.4.0.55</item>
         <item>"Oprava chyby:
-                 - prozatím se odhlásili z omezeného úložiště - umožňuje aplikaci znovu zobrazit soubory pro upload na Android 10"</item>
+                 - prozatím se odhlásili z omezeného úložiště - umožňuje aplikaci zobrazit soubory pro opětovné nahrání v systému Android 10"</item>
         <item>1.4.0.54</item>
         <item>"Změny:
                  - lze kliknout na název stránky - přejděte na nadřazené album
@@ -288,14 +295,14 @@
         <item>"Změny:
                  - Přidána preference pro ovládání zobrazení zprávy zobrazující velikost obrázku načteného ze serveru
                 Oprava chyby:
-                 - Obnovte zobrazení alba ihned po změně zdroje nebo pořadí třídění podřízených alb
+                 - Obnovte zobrazení alba okamžitě po změně zdroje nebo pořadí třídění podřízených alb
                  - opravit chybu s obecným tříděním alb
                  - opravený přístup k prezentaci, když jsou podřízená alba rozdrcena (klepnutím na záhlaví alb)
-                 - Možná chyba, kdy by se některá nastavení nastavení připojení (např. Použití základního ověření) plně nevyužila až do příštího restartování aplikace"</item>
+                 - Možná chyba, kdy by se některá změna nastavení připojení (například použití základního ověření) plně nevyužila až do příštího restartování aplikace"</item>
         <item>1.4.0.52</item>
         <item>"Oprava chyby:
              - Zrušení nahrávání souboru a opuštění stránky nahrávání před nahlášením zrušení způsobí selhání
-             - placená aplikace: selhání pomocí ruštiny na stránce s konfigurací úlohy automatického nahrávání
+             - placená aplikace: selhání pomocí ruštiny na stránce konfigurace úlohy automatického nahrávání
              - placená aplikace: Aktualizace seznamu značek pro prostředek, kde alespoň jedna dříve vybraná značka již neexistuje, způsobuje selhání (nyní upozorněte uživatele a odstraňte je)
              - placená aplikace: Aplikace může selhat při výběru cílového alba pro úlohu automatického nahrávání
              - placená aplikace: při výběru kořenového alba jako cílového alba pro úlohu automatického nahrávání se zobrazí první název alba jako vybrané album (nesprávně)
@@ -326,7 +333,7 @@
         <item>1.4.0.48</item>
         <item>"Změny:
          - Nová předvolba v nastavení galerie pro deaktivaci funkce automatického skrytí navigačního tlačítka nebo stavového řádku
-         - Zobrazují se pouze velikosti obrázků, které se zobrazují pouze jednou, pokud se nezmění"
+         - Uveďte, které velikosti obrázku se zobrazují pouze jednou, pokud se nezmění"
         </item>
         <item>1.4.0.47</item>
         <item>"Oprava chyby:
@@ -343,7 +350,7 @@
         </item>
         <item>1.4.0.45</item>
         <item>"Změny:
-             - Zvýšená libovolná aplikace podporovala maximální velikost souboru pro upload na 10 GB
+             - Zvýšená libovolná aplikace podporovala maximální velikost nahraného souboru na 10 GB
              - Aktualizované verze závislých knihoven"
         </item>
         <item>1.4.0.44</item>

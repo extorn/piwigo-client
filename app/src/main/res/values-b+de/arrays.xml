@@ -123,10 +123,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link zum Senden einer E-Mail. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals."</item>
-        <item>Sie können nur Dateien zum Hochladen auswählen, die für das Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch</item>
+        <item>"Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals."</item>
+        <item>"Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch"</item>
         <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite für die App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
-        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - "Sie dürfen Tags nicht löschen" - Stellen Sie sicher, dass Benutzer Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
+        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - \"Sie dürfen Tags nicht löschen\" - Stellen Sie sicher, dass Benutzer Tags sowohl hinzufügen als auch löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen und auf Ihren aktuellen Server zu übertragen</item>
         <item>Klicken Sie lange auf ein Bild (entweder Miniaturbild oder Diashow), das nicht geladen werden konnte, um es erneut abzurufen</item>
         <item>Klicken Sie lange auf ein Album, um das Album und den gesamten Inhalt zu löschen</item>
@@ -134,8 +134,8 @@
         <item>Wenn Sie ein Bild in der Diashow anzeigen, klicken Sie lange, um die angezeigte Bildgröße zu drehen / zu ändern / weiteres Zoomen zuzulassen</item>
         <item>Sie können ein Bild beim Anzeigen in einer Diashow vergrößern, indem Sie zwei Finger zusammen oder auseinander auf dem Bildschirm zeichnen</item>
         <item>Wenn Sie als Administrator angemeldet sind, aktivieren Sie die Anwendungssperrfunktion, bevor Sie Ihr Gerät einem Freund zum Anzeigen Ihrer Fotos übergeben, um zu verhindern, dass versehentlich Änderungen an Ihrer Galerie vorgenommen werden</item>
-        <item>Wenn Sie ein ganzes Video angesehen haben und das lokale Datei-Caching aktiviert ist, können Sie dieses Video in Ihrem Download-Ordner speichern</item>
-        <item>Klicken Sie lange auf die Schaltfläche "Löschen" in einer "Datei zum Hochladen", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
+        <item>Wenn Sie ein gesamtes Video angesehen haben und das lokale Datei-Caching aktiviert ist, können Sie dieses Video in Ihrem Download-Ordner speichern</item>
+        <item>Klicken Sie lange auf die Schaltfläche \"Löschen\" in einer \"Datei zum Hochladen\", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
         <item>Wenn Bilder nur langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser App verwendete Größe generiert</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
@@ -159,10 +159,17 @@
             - Fügen Sie eine Voreinstellung hinzu, um das Ein- und Ausblenden der EXIF-Felder usw. zu ermöglichen, die von Interesse sind oder nicht
             - Eine Art Bildschirmguss, um den Spiegel des Geräts auf einem größeren Bildschirm zu ermöglichen
          - Noch etwas:
-            - Bitte senden Sie mir eine E-Mail (in der Navigationsleiste befindet sich ein E-Mail-Link), um Dinge anzufordern, die diese App noch nicht benötigt"</item>
+            - Bitte senden Sie mir eine E-Mail (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die diese App noch nicht benötigt"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.74</item>
+        <item>"Fehlerbehebung:
+                 - Android 10
+                  : Ordnerauswahl - Berechtigungen korrekt verwaltet.
+                  : Download von Artikeln - funktioniert jetzt
+                  Hinweis: Möglicherweise müssen Sie Ihren bevorzugten Download- oder automatischen Upload-Ordner erneut auswählen.
+               HINWEIS: Ich höre auf, diese App aktiv zu entwickeln. Ich werde sie jedoch weiterhin zeitweise mit Bugfixes unterstützen."</item>
         <item>1.4.0.73</item>
         <item>"Änderungen:
                  - Dateidownload: Weitere Protokollierung hinzugefügt, um die Lösung von Problemen zu unterstützen
@@ -188,7 +195,7 @@
              - Ordnerberechtigungen werden beim Angebot nicht korrekt akzeptiert"</item>
         <item>1.4.0.68</item>
         <item>"Fehlerbehebung:
-                 - Absturz bei der Navigation zur Galerie vom Upload oder den Einstellungen, wenn die letzte geöffnete Seite der Galerie eine Diashow war"</item>
+                 - Absturz bei der Navigation zur Galerie vom Upload oder den Einstellungen, wenn die zuletzt geöffnete Seite der Galerie eine Diashow war"</item>
         <item>1.4.0.67</item>
         <item>"Fehlerbehebung:
                  - Eine Reihe von Fehlerkorrekturen für Abstürze im Zusammenhang mit der kürzlich erfolgten Überarbeitung des Dateibehandlungscodes
@@ -216,10 +223,10 @@
                 - Das Thema wurde in ein Tag / Nacht-Thema geändert, sodass es vom Benutzer konfiguriert werden kann (in der Nacht haben keine Bildschirme einen weißen Hintergrund).
                 - Unterstützung für Uri und Speicher mit Gültigkeitsbereich hinzugefügt:
                     - Dateien einfach teilen
-                    - Wählen Sie Dateien mit dem System File Selector oder dem In App App
+                    - Wählen Sie Dateien mit der Systemdatei-Auswahl oder der In-App-Datei aus
                     - Das Löschen von Dateien nach dem Hochladen funktioniert jetzt wieder
                     - Überprüfen Sie, ob die Dateien vor dem Hochladen eindeutig sind. - Dies ist jetzt schwieriger und dauert etwas länger
-                    - Der In-App-Datei-Selektor lädt Ordner mit vielen Dateien relativ langsam - Einschränkungen in Android-APIs derzeit
+                    - Der In-App-Datei-Selektor lädt Ordner mit vielen Dateien relativ langsam - derzeit Einschränkungen in Android-APIs
                 - Beim Komprimieren von Videos können Sie den Audio- oder Videostream entfernen, wenn Sie eine m4a- oder m4v-Datei erstellen möchten (MP4-Dateierweiterung hinzugefügt, wenn Ihr Server dies nur zulässt).
                 - Schubladenmenü auf dem Upload-Bildschirm verfügbar, damit Sie zur Galerie oder zu den Einstellungen springen können
                 - Die App ist bereit für die Implementierung von Code, um Sie zu warnen, während Sie Fotos von denen auswählen, die Sie zuvor hochgeladen haben.
@@ -227,7 +234,7 @@
                 - Die Upload-Seite behält Dateien bei, wenn neue Dateien aus der Systemauswahl und / oder Navigation in die Hauptgalerie hinzugefügt werden
                 - Der Videokomprimierungscode wurde grundlegend überarbeitet. Es sollte jetzt nicht einfrieren und keine Videos mehr aufgeben. (Lass es mich wissen, wenn es so ist)
                 - Schreiben Sie große Bereiche neu, um mögliche Speicherlecks zu beseitigen
-                - Sollte auf alten Android-Versionen (vor Lollipop) weniger anfällig für Abstürze sein."</item>
+                - Sollte auf alten Android-Versionen (vor Lollipop) viel weniger zum Absturz neigen."</item>
         <item>1.4.0.65</item>
         <item>"Änderungen:
              - Das verbleibende Themenproblem für Dialoge wurde behoben
@@ -262,7 +269,7 @@
         <item>"Veränderung:
                  - Änderungen an der Seite mit den App-Einstellungen
                  - Neue Einstellung hinzugefügt, um zu erzwingen, dass einmalige Benutzertipps erneut angezeigt werden
-                 - Bezahlte App: In der Diashow wurde eine Funktion für das automatische Laufwerk hinzugefügt. - Neue Einstellung im Diashow-Bereich der Galerieeinstellungen"</item>
+                 - Bezahlte App: In der Diashow wurde eine automatische Laufwerksfunktion hinzugefügt. - Neue Einstellung im Diashow-Bereich der Galerieeinstellungen"</item>
         <item>1.4.0.59</item>
         <item>"Veränderung:
                  - Ermöglichen Sie das Herunterladen oder Freigeben mehrerer Dateien, nachdem Sie diese in der Albumansicht ausgewählt haben"</item>
@@ -288,14 +295,14 @@
         <item>"Änderungen:
                  - Einstellung zur Steuerung der Anzeige von Nachrichten mit der vom Server geladenen Bildgröße hinzugefügt
                 Fehlerbehebung:
-                 - Aktualisieren Sie die Albumansicht sofort nach dem Ändern der Sortierreihenfolge der Ressource oder des untergeordneten Albums
+                 - Aktualisieren Sie die Albumansicht sofort nach dem Ändern der Sortierreihenfolge für Ressourcen oder untergeordnete Alben
                  - Fehler bei der allgemeinen Sortierung der Alben behoben
-                 - Der Zugriff auf die Diashow beim Quetschen von untergeordneten Alben wurde korrigiert (durch Berühren des Albumkopfs)
+                 - Der Zugriff auf die Diashow beim Quetschen von untergeordneten Alben wurde korrigiert (durch Berühren des Albumkopfs).
                  - Möglicher Fehler, bei dem einige Änderungen der Verbindungseinstellungen (z. B. die Verwendung der Basisauthentifizierung) erst beim nächsten Neustart der App vollständig verwendet werden"</item>
         <item>1.4.0.52</item>
         <item>"Fehlerbehebung:
              - Das Abbrechen eines Datei-Uploads und das Verlassen der Upload-Seite vor dem gemeldeten Abbruch führt zum Absturz
-             - Bezahlte App: Absturz mit Russisch auf der Konfigurationsseite für den automatischen Upload-Job
+             - Bezahlte App: Absturz mit Russisch auf der Konfigurationsseite für automatische Upload-Jobs
              - Bezahlte App: Das Aktualisieren der Tag-Liste für eine Ressource, in der mindestens ein zuvor ausgewähltes Tag nicht mehr vorhanden ist, führt zum Absturz (jetzt Benutzer warnen und entfernen)
              - Bezahlte App: Die App kann abstürzen, wenn das Zielalbum für den automatischen Upload-Auftrag ausgewählt wird
              - Bezahlte App: Wenn Sie das Stammalbum als Zielalbum für den automatischen Upload-Auftrag auswählen, wird der Name des ersten Albums als ausgewähltes Album angezeigt (falsch).
@@ -306,12 +313,12 @@
                  - Neue erweiterte Serververbindungseinstellungen - Aktivieren Sie die URI-Codierung von Ressourcen-URIs
                 Fehlerbehebung:
                  - Die Einstellungen für die Nummernauswahl akzeptieren den Wert beim Schließen des Dialogfelds
-                 - Das PiwigoClientWsExt-Plugin wurde in der Benutzernachricht korrekt benannt
+                 - PiwigoClientWsExt-Plugin in der Benutzernachricht korrekt benannt
                  - Einige Übersetzungen wurden korrigiert"</item>
         <item>1.4.0.50</item>
         <item>"Änderungen:
                  - Zulassen, dass Audio als Komprimierungsoption durchgelassen wird
-                 - Aktivierte Komprimierung für Nicht-Audio / Raw-MIME-Audiostreams
+                 - Aktivierte Komprimierung für Nicht-Audio / Raw-Mime-Audio-Streams
                  - Option hinzufügen, um die Audiospur vom Video zu entfernen
                 Fehlerbehebung:
                  - Stoppen Sie die Videokomprimierung, wenn sie während der Komprimierung aus dem Upload gelöscht wird
@@ -343,7 +350,7 @@
         </item>
         <item>1.4.0.45</item>
         <item>"Änderungen:
-             - Die maximale Anzahl beliebiger Apps wurde auf 10 GB erhöht
+             - Die maximale Unterstützung für beliebige Apps wurde auf 10 GB erhöht
              - Aktualisierte abhängige Bibliotheksversionen"
         </item>
         <item>1.4.0.44</item>

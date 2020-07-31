@@ -63,7 +63,7 @@
 
     
     <string name="preference_server_alter_cache_directives_title">サーバーのHTTPキャッシュディレクティブの変更</string>
-    <string name="preference_server_alter_cache_directives_summary">ギャラリーへのオフラインアクセスを許可できるようにします</string>
+    <string name="preference_server_alter_cache_directives_summary">ギャラリーへのオフラインアクセスを許可します</string>
     
 
     
@@ -157,7 +157,7 @@
 
     <string name="preference_page_gallery">ギャラリー</string>
     <string name="preference_gallery_category_general">一般的な</string>
-    <string name="preference_gallery_category_advanced">高度な</string>
+    <string name="preference_gallery_category_advanced">上級</string>
     <string name="preference_gallery_category_slideshow">スライドショー</string>
     <string name="preference_gallery_category_resources">資源</string>
     <string name="preference_gallery_category_albums">アルバム</string>
@@ -312,7 +312,7 @@
     <string name="preference_upload_category_data_upload_display">ビジュアル設定</string>
     <string name="preference_upload_category_data_upload">データのアップロード</string>
     <string name="preference_upload_category_pre_data_upload_compression">アップロード前の圧縮</string>
-    <string name="preference_upload_category_advanced">高度な</string>
+    <string name="preference_upload_category_advanced">上級</string>
 
     
 

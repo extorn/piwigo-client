@@ -213,7 +213,7 @@
     
 
     
-    <string name="preference_video_cache_enabled_title">Ukládání do mezipaměti videa</string>
+    <string name="preference_video_cache_enabled_title">Cache videa prohlížená do souboru</string>
     <string name="preference_video_cache_enabled_summary">Pokud je povoleno, všechna streamovaná videa budou uložena do mezipaměti pro pozdější přehrávání</string>
     
 

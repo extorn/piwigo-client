@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="hint_slideshow_free_view_1">Le pilotage automatique du diaporama (progression dans les images) est disponible dans la version payante</string>
+    <string name="hint_slideshow_free_view_1">Le pilotage automatique du diaporama (progression à travers les images) est disponible dans la version payante</string>
     
 </resources>

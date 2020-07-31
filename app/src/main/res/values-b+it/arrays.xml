@@ -124,11 +124,11 @@
 
     <string-array name="top_tips" translatable="true">
         <item>"In caso di problemi con l\'app, utilizzare l\'e-mail per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarlo, ma ti preghiamo di inviare un\'e-mail. C\'è un link per inviarmi un\'e-mail nella parte superiore del menu del cassetto scorrevole. Posso fornire un supporto molto più completo a un indirizzo e-mail. Grazie molto."</item>
-        <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del tuo server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
+        <item>"Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del tuo server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso"</item>
         <item>Se un caricamento non ha esito positivo, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
-        <item>L\'errore si verifica sempre quando si tenta di aggiornare i tag - \ "Non è consentito eliminare i tag \" - Assicurarsi che gli utenti possano sia aggiungere che eliminare i tag (impostazione del plugin del server)</item>
+        <item>L\'errore si verifica sempre quando si tenta di aggiornare i tag - \ \"Non è consentito eliminare i tag \" - Assicurarsi che gli utenti possano sia aggiungere che eliminare i tag (impostazione del plug-in del server)</item>
         <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per andare al tuo server corrente</item>
-        <item>Fai clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stata caricata per recuperarla di nuovo</item>
+        <item>Fai clic a lungo su un\'immagine (anteprima o elemento della presentazione) che non è stata caricata per recuperarla di nuovo</item>
         <item>Fai clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
         <item>Fare clic a lungo sull\'immagine di un album per abilitare la selezione in blocco di immagini per un\'azione</item>
         <item>Durante la visualizzazione di qualsiasi immagine nella presentazione, fare clic a lungo per ruotare / modificare le dimensioni dell\'immagine mostrata / consentire ulteriori zoom</item>
@@ -159,10 +159,17 @@
             - Aggiungi preferenza per consentire di mostrare / nascondere i campi EXIF ​​ecc. Di interesse o meno
             - Screen cast di qualche tipo per consentire il mirroring del dispositivo su uno schermo più grande
          - Qualunque altra cosa:
-            - Inviami un\'e-mail (c\'è un link e-mail nella barra di navigazione) per richiedere le cose di cui hai bisogno o che desideri che questa app non faccia ancora"</item>
+            - Inviami un\'e-mail (c\'è un link e-mail nella barra di navigazione) per richiedere le cose di cui hai bisogno o desideri che questa app non faccia ancora"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.74</item>
+        <item>"Risoluzione del problema:
+                 - Android 10
+                  : selezione di cartelle - autorizzazioni gestite correttamente.
+                  : download di elementi - ora funziona
+                  Nota: potrebbe essere necessario selezionare nuovamente il download preferito o la cartella di caricamento automatico.
+               NOTA: sto smettendo di sviluppare attivamente questa app - continuerò comunque a supportarla con correzioni di bug in modo intermittente."</item>
         <item>1.4.0.73</item>
         <item>"I cambiamenti:
                  - download di file: sono state aggiunte ulteriori registrazioni per facilitare la risoluzione dei problemi
@@ -225,7 +232,7 @@
                 - L\'app è pronta per l\'implementazione del codice per avvisarti mentre selezioni le foto di quelle che hai caricato in precedenza.
                Risoluzione del problema:
                 - La pagina di caricamento conserva i file quando si aggiungono nuovi file dal selettore di sistema e o si naviga nella galleria principale
-                - Il codice di compressione video è stato radicalmente revisionato. Non dovrebbe congelare e rinunciare a nessun video ora. (Fammi sapere se lo fa)
+                - Il codice di compressione video è stato radicalmente revisionato. Non dovrebbe bloccarsi e rinunciare a nessun video ora. (Fammi sapere se lo fa)
                 - Riscrivi di ampie aree per rimuovere potenziali perdite di memoria
                 - Dovrebbe essere molto meno soggetto a crash sulle vecchie versioni di Android (pre-Lollipop)"</item>
         <item>1.4.0.65</item>
@@ -236,7 +243,7 @@
         <item>1.4.0.64</item>
         <item>"I cambiamenti:
              - Aggiunto un pulsante per visualizzare la password nascosta nelle preferenze
-             - Spostato sul tema basato su MaterialComponents (ci sono alcune piccole modifiche)
+             - Spostato al tema basato su MaterialComponents (ci sono alcune piccole modifiche)
              - Nascondi la maggior parte delle preferenze di connessione per impostazione predefinita: fai clic per espanderle per accedere al resto
              - spostato alcune preferenze di caricamento nella sezione avanzata
                 Risoluzione del problema:
@@ -246,7 +253,7 @@
         <item>"I cambiamenti:
                  - Aggiunta l\'opzione per selezionare una cartella di download nelle preferenze dell\'app
                Risoluzione del problema:
-                 - Interrompi gli avvisi che vengono visualizzati per la guida automatica delle presentazioni quando è disabilitato.
+                 - Arresta gli avvisi che vengono visualizzati per la guida automatica della presentazione quando è disabilitato.
                  - Seleziona il file attualmente visibile quando mostra la finestra di download del file"</item>
         <item>1.4.0.62</item>
         <item>"Risoluzione del problema:
@@ -294,9 +301,9 @@
                  - Possibile bug in cui alcune modifiche alle impostazioni di connessione (come l\'uso dell\'autenticazione di base) non sarebbero state completamente utilizzate fino al prossimo riavvio dell\'app"</item>
         <item>1.4.0.52</item>
         <item>"Risoluzione del problema:
-             - L\'annullamento di un caricamento di file e l\'uscita dalla pagina di caricamento prima dell\'annullamento segnalato causa un arresto anomalo
+             - L\'annullamento di un caricamento di file e l\'uscita dalla pagina di caricamento prima dell\'annullamento segnalato causano crash
              - app a pagamento: arresto anomalo utilizzando il russo nella pagina di configurazione del processo di caricamento automatico
-             - app a pagamento: l\'aggiornamento dell\'elenco dei tag per una risorsa in cui almeno un tag precedentemente selezionato non esiste più provoca un arresto anomalo (ora avvisa l\'utente e rimuovilo)
+             - app a pagamento: l\'aggiornamento dell\'elenco dei tag per una risorsa in cui almeno un tag precedentemente selezionato non esiste più provoca arresti anomali (ora avvisa l\'utente e rimuovili)
              - app a pagamento: l\'app può bloccarsi quando si seleziona l\'album di destinazione per il processo di caricamento automatico
              - app a pagamento: selezionando l\'album principale come album di destinazione per il processo di caricamento automatico viene visualizzato il nome del primo album come album selezionato (in modo errato)
              - App a pagamento: Nota: non sono chiaro che la selezione della radice della galleria come destinazione di caricamento sia sempre ragionevole, ma nel caso in alcune circostanze, è consentito."</item>
@@ -306,7 +313,7 @@
                  - Nuova preferenza di connessione server avanzata: abilita la codifica URI degli URI delle risorse
                 Risoluzione del problema:
                  - le preferenze di selezione dei numeri accettano il valore alla chiusura della finestra di dialogo
-                 - Plugin PiwigoClientWsExt nominato correttamente nel messaggio dell\'utente
+                 - Plugin PiwigoClientWsExt nominato correttamente nel messaggio utente
                  - Corrette alcune traduzioni"</item>
         <item>1.4.0.50</item>
         <item>"I cambiamenti:
@@ -377,7 +384,7 @@
                  - L\'impostazione della classificazione delle risorse nelle impostazioni locali russe ora funziona di nuovo"</item>
         <item>1.4.0.36</item>
         <item>"I cambiamenti:
-                 - Il download dei file ora avviene in una coda rudimentale ed è gestito a livello di app. Tuttavia, è ancora necessario mantenere l\'app aperta per poter scaricare.
+                 - Il download dei file ora avviene in una coda rudimentale ed è gestito a livello di app. Tuttavia, è ancora necessario mantenere l\'app aperta per poterla scaricare per continuare.
                 Risoluzione del problema:
                  - Il download dei file ora funziona dove il server non segnala le dimensioni del file
                  - I file aggiunti alla schermata di caricamento dei file ora vengono mostrati di nuovo (erano inizialmente invisibili)

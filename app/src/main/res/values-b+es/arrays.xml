@@ -124,14 +124,14 @@
 
     <string-array name="top_tips" translatable="true">
         <item>"Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una crítica negativa en Google Play, no estoy tratando de detenerlo, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
-        <item>Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
+        <item>"Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea subir videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
-        <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
+        <item>Siempre se produce un error al intentar actualizar etiquetas - \ \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Comparta archivos desde una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
         <item>Haga clic largo en una imagen (ya sea en miniatura o elemento de presentación de diapositivas) que no se pudo cargar para recuperarla nuevamente</item>
         <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido.</item>
         <item>Haga clic largo en la imagen de un álbum para habilitar la selección masiva de imágenes para una acción</item>
-        <item>Al ver cualquier imagen en la presentación de diapositivas, haga clic largo para rotar / cambiar el tamaño de la imagen que se muestra / permitir un mayor zoom</item>
+        <item>Al visualizar cualquier imagen en la presentación de diapositivas, haga clic largo para rotar / cambiar el tamaño de la imagen que se muestra / permitir un mayor zoom</item>
         <item>Puede ampliar una imagen cuando la ve en una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
         <item>Cuando inicie sesión como administrador, antes de entregar su dispositivo a un amigo para ver sus fotos, active la función de bloqueo de la aplicación para evitar cambios involuntarios en su galería</item>
         <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos locales está habilitado, es posible guardar ese video en su carpeta de descargas</item>
@@ -163,11 +163,18 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.74</item>
+        <item>"Arreglo del fallo:
+                 - Android 10
+                  : selección de carpetas: permisos administrados correctamente.
+                  : descarga de elementos - ahora funciona
+                  Nota: es posible que deba volver a seleccionar su descarga preferida o la carpeta de carga automática.
+               NOTA: Dejo de desarrollar activamente esta aplicación, aunque continuaré admitiéndola con correcciones de errores de forma intermitente."</item>
         <item>1.4.0.73</item>
         <item>"Cambios:
                  - descarga de archivos: se agregaron más registros para ayudar a la resolución de problemas
-                 - descarga de archivo: código agregado para adivinar el tipo mime para el archivo descargado si no hay extensión
-                 - Se agregó un elemento de primera clase que solicita el correo electrónico para resolver problemas con la aplicación"</item>
+                 - descarga de archivo: código agregado para adivinar el tipo mime para el archivo descargado si no hay extensión de archivo
+                 - Se agregó un elemento de sugerencia superior que solicita el correo electrónico para resolver problemas con la aplicación"</item>
         <item>1.4.0.72</item>
         <item>"Cambios:
                  - Se eliminó el soporte para versiones de Android anteriores a 4.4. Lo siento si esto te afecta, pero a menos que puedas
@@ -191,11 +198,11 @@
                  - Bloqueo en la navegación a la galería desde la carga o la configuración si la última página abierta de la galería fue una presentación de diapositivas"</item>
         <item>1.4.0.67</item>
         <item>"Arreglo del fallo:
-                 - Varias correcciones de errores para bloqueos relacionados con la reciente revisión del código de manejo de archivos
+                 - Varias correcciones de errores para bloqueos que rodean la reciente revisión del código de manejo de archivos
                 Cambios:
                  - Gran mejora en el rendimiento de la selección de archivos para pantallas de carga
                  - Soporte perfecto para seleccionar archivos en aplicaciones que no proporcionan los permisos de archivo requeridos
-                 - aplicación paga: aceleración de hardware habilitada en toda la aplicación
+                 - aplicación paga: aceleración de hardware habilitada en la aplicación
                  - aplicación paga: Habilitado el uso de la tarea de selección de carpeta / archivo por otras aplicaciones (informe cualquier problema)"</item>
         <item>1.4.0.66.8</item>
         <item>"Arreglo del fallo:
@@ -220,11 +227,11 @@
                     - Eliminar archivos después de cargar ahora está funcionando nuevamente
                     - los archivos de verificación son únicos antes de cargarlos; ahora es más difícil, por lo que lleva un poco más de tiempo
                     - El selector de archivos en la aplicación es relativamente lento para cargar carpetas que contienen muchos archivos - limitaciones en las API de Android en la actualidad
-                - al comprimir videos, puede quitar la transmisión de audio o video si desea crear un archivo m4a o m4v (se agregó la extensión de archivo mp4 si eso es todo lo que su servidor permite).
+                - al comprimir videos, puede quitar la transmisión de audio o video si desea crear un archivo m4a o m4v (se agregó la extensión de archivo mp4 si eso es todo lo que permite su servidor).
                 - Menú de cajones disponible desde la pantalla de carga para permitirle saltar a la galería o la configuración
                 - La aplicación está lista para la implementación de código para advertirle mientras selecciona fotos de las que ha cargado anteriormente.
                Arreglo del fallo:
-                - La página de carga retiene los archivos al agregar archivos nuevos desde el selector del sistema o la navegación a la galería principal
+                - La página de carga retiene los archivos al agregar nuevos archivos desde el selector del sistema y / o la navegación a la galería principal
                 - El código de compresión de video ha sido revisado radicalmente. No debería congelarse y renunciar a ningún video ahora. (Avísame si lo hace)
                 - Reescribe grandes áreas para eliminar posibles pérdidas de memoria
                 - Debería ser mucho menos propenso a fallar en versiones antiguas de Android (pre Lollipop)"</item>
@@ -236,7 +243,7 @@
         <item>1.4.0.64</item>
         <item>"Cambios:
              - Se agregó un botón para ver la contraseña oculta en las preferencias
-             - Movido al tema basado en MaterialComponents (hay algunos cambios menores)
+             - Se movió al tema basado en MaterialComponents (hay algunos cambios menores)
              - Ocultar la mayoría de las preferencias de conexión de forma predeterminada: haga clic para expandirlas para acceder al resto
              - movió algunas preferencias de carga a la sección avanzada
                 Arreglo del fallo:
@@ -246,7 +253,7 @@
         <item>"Cambios:
                  - Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación
                Arreglo del fallo:
-                 - Detenga las advertencias que se muestran para la presentación automática de la presentación de diapositivas cuando está deshabilitada.
+                 - Detenga las advertencias que se muestran para la presentación automática de diapositivas cuando está deshabilitada.
                  - Seleccione el archivo actualmente visible al mostrar el diálogo de descarga de archivos"</item>
         <item>1.4.0.62</item>
         <item>"Arreglo del fallo:
@@ -262,7 +269,7 @@
         <item>"Cambio:
                  - Cambios en la página de preferencias de la aplicación
                  - Se agregó una nueva preferencia para forzar que las sugerencias de un usuario se muestren nuevamente
-                 - aplicación paga: se agregó una función de unidad automática en la presentación de diapositivas - nueva configuración en la sección de presentación de diapositivas de las preferencias de la galería"</item>
+                 - aplicación paga: se agregó una función de unidad automática en la presentación de diapositivas - nueva configuración en la sección presentación de diapositivas de las preferencias de la galería"</item>
         <item>1.4.0.59</item>
         <item>"Cambio:
                  - Permitir descargar o compartir múltiples archivos después de seleccionarlos en la vista del álbum"</item>
@@ -283,7 +290,7 @@
                  - se puede hacer clic en el título de la página - navegar al álbum principal
                  Arreglo del fallo:
                  - El orden de los álbumes no siempre es correcto
-                 - Traducciones posiblemente no seleccionadas en orden óptimo automáticamente."</item>
+                 - Traducciones posiblemente no seleccionadas en el orden óptimo automáticamente."</item>
         <item>1.4.0.53</item>
         <item>"Cambios:
                  - Se agregó preferencia para controlar la visualización del mensaje que muestra el tamaño de la imagen cargada desde el servidor
@@ -306,7 +313,7 @@
                  - Nueva preferencia de conexión avanzada del servidor - Habilite la codificación URI de los URI de recursos
                 Arreglo del fallo:
                  - las preferencias del selector de número aceptan el valor al cerrar el diálogo
-                 - El complemento PiwigoClientWsExt está correctamente nombrado en el mensaje del usuario
+                 - El complemento PiwigoClientWsExt se nombra correctamente en el mensaje del usuario
                  - Corregidas algunas traducciones"</item>
         <item>1.4.0.50</item>
         <item>"Cambios:
@@ -320,12 +327,12 @@
         <item>1.4.0.49</item>
         <item>"Arreglo del fallo:
                  - falla de compresión de video
-                 - el último trabajo de carga se vuelve a ejecutar (sin daños) al ejecutar la siguiente carga, lo que requiere que haga clic en cargar nuevamente para que se ejecute el nuevo trabajo
+                 - el último trabajo de carga se vuelve a ejecutar (sin daños) al ejecutar la siguiente carga, lo que requiere que haga clic en cargar nuevamente para que se ejecute el trabajo
                  - visualización lenta de imágenes al desplazarse"
         </item>
         <item>1.4.0.48</item>
         <item>"Cambios:
-         - Nueva preferencia en la configuración de la galería para deshabilitar el botón de navegación o la función de ocultación automática de la barra de estado
+         - Nueva preferencia en la configuración de la galería para desactivar el botón de navegación o la función de ocultación automática de la barra de estado
          - Solo muestra qué tamaños de imagen se muestran una vez, a menos que cambie"
         </item>
         <item>1.4.0.47</item>
@@ -339,7 +346,7 @@
              - Mostrar ruta o indicación para el álbum de carga de destino
              Arreglo del fallo:
              - A la presentación de diapositivas le faltaba el último elemento del álbum
-             - Eliminar elemento en la presentación de diapositivas - página en blanco"
+             - Eliminar elemento en Presentación de diapositivas - página en blanco"
         </item>
         <item>1.4.0.45</item>
         <item>"Cambios:
@@ -374,7 +381,7 @@
         <item>1.4.0.37</item>
         <item>"Arreglo del fallo:
                  - La limpieza de conexión ahora funciona de nuevo
-                 - Establecer la calificación de recursos en la configuración regional de Rusia ahora funciona de nuevo"</item>
+                 - Establecer la calificación de recursos en Russian Locale ahora funciona de nuevo"</item>
         <item>1.4.0.36</item>
         <item>"Cambios:
                  - La descarga de archivos ahora ocurre en una cola rudimentaria y se administra a nivel de aplicación. Sin embargo, todavía debe mantener la aplicación abierta para luego descargarla para continuar.

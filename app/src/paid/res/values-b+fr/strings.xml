@@ -2,33 +2,33 @@
 <resources>
     
     <string name="notification_title_background_upload_service">Service de téléchargement Piwigo en arrière-plan</string>
-    <string name="notification_text_background_upload_running">Exécution d\'un travail de téléchargement</string>
+    <string name="notification_text_background_upload_running">Exécution de la tâche de téléchargement</string>
     <string name="notification_text_background_upload_sleeping">En train de dormir. Prochaine exécution à%1$tR</string>
-    <string name="notification_text_background_upload_polling">Interrogation des fichiers à télécharger.</string>
+    <string name="notification_text_background_upload_polling">Sondage pour les fichiers à télécharger.</string>
 
 
     <string name="alert_warning_auto_upload_service_stopped">N\'oubliez pas de démarrer le service de téléchargement en arrière-plan si vous souhaitez que vos travaux s\'exécutent</string>
     <string name="alert_auto_upload_service_stopped">Service de téléchargement en arrière-plan arrêté</string>
-    <string name="alert_auto_upload_service_started">Démarrage du service de téléchargement en arrière-plan</string>
-    <string name="alert_auto_upload_service_job_restarted">Début du téléchargement d\'un travail précédemment incomplet sur le serveur%1$s avec les fichiers%2$d</string>
-    <string name="alert_auto_upload_service_job_started">Démarrage du téléchargement du travail sur le serveur%1$s avec les fichiers%2$d</string>
-    <string name="alert_auto_upload_service_job_finished_success">Fin du travail de téléchargement en arrière-plan sur le serveur%1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Fin du travail de téléchargement en arrière-plan sur le serveur%1$s. Certains fichiers n\'ont pas pu être téléchargés et seront réessayés ultérieurement.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Fin du travail de téléchargement en arrière-plan sur le serveur%1$s. Aucun fichier n\'a pu être téléchargé. Le travail sera réessayé plus tard.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Service de téléchargement en arrière-plan vérifiant les tâches</string>
-    <string name="progress_creating_tag">Création d\'une balise</string>
+    <string name="alert_auto_upload_service_started">Service de téléchargement en arrière-plan démarré</string>
+    <string name="alert_auto_upload_service_job_restarted">Démarrage du téléchargement d\'une tâche précédemment incomplète sur le serveur%1$s avec%2$d fichiers</string>
+    <string name="alert_auto_upload_service_job_started">Démarrage du téléchargement du travail sur le serveur%1$s avec%2$d fichiers</string>
+    <string name="alert_auto_upload_service_job_finished_success">Fin de l\'exécution de la tâche de téléchargement en arrière-plan sur le serveur%1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Fin de l\'exécution de la tâche de téléchargement en arrière-plan sur le serveur%1$s. Certains fichiers n\'ont pas pu être téléchargés et seront réessayés ultérieurement.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Fin de l\'exécution de la tâche de téléchargement en arrière-plan sur le serveur%1$s. Aucun fichier n\'a pu être téléchargé. Le travail sera retenté plus tard.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Vérification du service de téléchargement en arrière-plan pour les tâches</string>
+    <string name="progress_creating_tag">Créer une balise</string>
     <string name="error_updating_favorites_pattern">Erreur lors de la suppression de la ressource (%1$s) des favoris:%2$s</string>
-    <string name="favorites_content_load_failed_text">Impossible de charger les ressources marquées comme favorites</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Vous avez demandé de supprimer%1$d ressources. Souhaitez-vous les supprimer de tous les albums (et du serveur) - définitivement, ou simplement les dissocier de ce favori?</string>
-    <string name="progress_remove_favorite_resources">Suppression de ressources de la liste des favoris</string>
+    <string name="favorites_content_load_failed_text">Échec du chargement des ressources marquées comme favorites</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Vous avez demandé la suppression de%1$d ressources. Souhaitez-vous les supprimer de tous les albums (et du serveur) - de manière permanente, ou simplement les dissocier de ce favori?</string>
+    <string name="progress_remove_favorite_resources">Supprimer des ressources de la liste des favoris</string>
     <string name="favorites_empty_text">Vous n\'avez actuellement aucun favori</string>
     <string name="favorites_heading">Vos favoris</string>
     <string name="button_unfavorite">Pas favori</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Paramètres du serveur</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Paramètres locaux</string>
-    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Compression de pré-téléchargement</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Compression de pré-téléversement</string>
     <string name="ignoring_job_local_folder_not_found">Le dossier local n\'existe plus. Ignorer le travail</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">Aucune extension de fichier sélectionnée pour le téléchargement. Ignorer le travail</string>
-    <string name="ignoring_job_connection_profile_set_for_offline_access">Profil de connexion défini en mode hors ligne. Ignorer le travail</string>
-    <string name="slideshow_auto_drive_paused">Autodrive du diaporama suspendu jusqu\'à la diapositive suivante</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Aucune extension de fichier sélectionnée pour l\'importation. Ignorer le travail</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Profil de connexion défini sur le mode hors ligne. Ignorer le travail</string>
+    <string name="slideshow_auto_drive_paused">La lecture automatique du diaporama a été interrompue jusqu\'à la diapositive suivante</string>
 </resources>

@@ -37,7 +37,7 @@
     
 
     
-    <string name="preference_server_connection_force_https_title">Reescribir URL Http en Https</string>
+    <string name="preference_server_connection_force_https_title">Reescribir URL Http a Https</string>
     <string name="preference_server_connection_force_https_summary">Todas las URL http:// reescritas en https:// para el servidor https</string>
     
 

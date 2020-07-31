@@ -38,7 +38,7 @@
 
     
     <string name="preference_server_connection_force_https_title">Переписать URL-адреса Http в Https</string>
-    <string name="preference_server_connection_force_https_summary">Все http:// URL переписаны на https:// для сервера https</string>
+    <string name="preference_server_connection_force_https_summary">Все ссылки http:// переписаны на https:// для сервера https</string>
     
 
     

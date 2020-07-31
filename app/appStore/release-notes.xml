@@ -1,54 +1,72 @@
 <en-GB>
-Changes:
-- file download: more logging added to assist resolution of issues
-- file download: added code to guess the mime type for downloaded file if there is no file extension
-- Added top-tip item requesting email is used to resolve issues with the app
+Bugfix:
+- Android 10+
+: selection of folders - permissions managed correctly.
+: download of items - now works
+Note: You may need to re-select your preferred download or automatic upload folder.
+NOTE: I am ceasing to actively develop this app - I'll continue to support it with bugfixes intermittently though.
 </en-GB>
 <cs-CZ>
-Změny:
-- stahování souborů: přidáno další protokolování, které pomůže vyřešit problémy
-- stažení souboru: přidaný kód pro odhad typu mime pro stažený soubor, pokud neexistuje přípona souboru
-- Přidaná položka top-tip vyžadující e-mail se používá k vyřešení problémů s aplikací
+Oprava chyby:
+- Android 10
+: výběr složek - oprávnění spravovaná správně.
+: stažení položek - nyní funguje
+Poznámka: Možná budete muset znovu vybrat preferovanou složku pro stahování nebo automatické nahrávání.
+POZNÁMKA: Přestávám aktivně vyvíjet tuto aplikaci - budu ji však nadále občas podporovat podporou oprav chyb.
 </cs-CZ>
 <de-DE>
-Änderungen:
-- Dateidownload: Weitere Protokollierung hinzugefügt, um die Lösung von Problemen zu unterstützen
-- Dateidownload: Code hinzugefügt, um den MIME-Typ für die heruntergeladene Datei zu erraten, wenn keine Dateierweiterung vorhanden ist
-- Das Hinzufügen eines Top-Tipp-Elements zum Anfordern von E-Mails wird verwendet, um Probleme mit der App zu beheben
+Fehlerbehebung:
+- Android 10
+: Ordnerauswahl - Berechtigungen korrekt verwaltet.
+: Download von Artikeln - funktioniert jetzt
+Hinweis: Möglicherweise müssen Sie Ihren bevorzugten Download- oder automatischen Upload-Ordner erneut auswählen.
+HINWEIS: Ich höre auf, diese App aktiv zu entwickeln. Ich werde sie jedoch weiterhin zeitweise mit Bugfixes unterstützen.
 </de-DE>
 <es-ES>
-Cambios:
-- descarga de archivos: se agregaron más registros para ayudar a la resolución de problemas
-- descarga de archivo: código agregado para adivinar el tipo mime para el archivo descargado si no hay extensión
-- Se agregó un elemento de primera clase que solicita el correo electrónico para resolver problemas con la aplicación
+Arreglo del fallo:
+- Android 10
+: selección de carpetas: permisos administrados correctamente.
+: descarga de elementos - ahora funciona
+Nota: es posible que deba volver a seleccionar su descarga preferida o la carpeta de carga automática.
+NOTA: Dejo de desarrollar activamente esta aplicación, aunque continuaré admitiéndola con correcciones de errores de forma intermitente.
 </es-ES>
 <fr-FR>
-Changements:
-- téléchargement de fichiers: plus de journalisation ajoutée pour aider à la résolution des problèmes
-- téléchargement de fichier: code ajouté pour deviner le type de mime pour le fichier téléchargé s\'il n\'y a pas d\'extension de fichier
-- Un e-mail de demande d\'élément de pointe ajouté est utilisé pour résoudre les problèmes avec l\'application
+Correction d\'un bug:
+- Android 10
+: sélection de dossiers - autorisations gérées correctement.
+: téléchargement d\'articles - fonctionne maintenant
+Remarque: vous devrez peut-être sélectionner à nouveau votre dossier de téléchargement ou de téléchargement automatique préféré.
+REMARQUE: je cesse de développer activement cette application - je continuerai à la supporter avec des corrections de bogues par intermittence.
 </fr-FR>
 <it-IT>
-I cambiamenti:
-- download di file: sono state aggiunte ulteriori registrazioni per facilitare la risoluzione dei problemi
-- download di file: codice aggiunto per indovinare il tipo mime per il file scaricato se non è presente alcuna estensione
-- L\'elemento di suggerimento aggiunto che richiede l\'e-mail viene utilizzato per risolvere i problemi con l\'app
+Risoluzione del problema:
+- Android 10
+: selezione di cartelle - autorizzazioni gestite correttamente.
+: download di elementi - ora funziona
+Nota: potrebbe essere necessario selezionare nuovamente il download preferito o la cartella di caricamento automatico.
+NOTA: sto smettendo di sviluppare attivamente questa app - continuerò comunque a supportarla con correzioni di bug in modo intermittente.
 </it-IT>
 <ja-JP>
-変更：
--ファイルのダウンロード：問題の解決を支援するために追加のロギング
--ファイルのダウンロード：ファイル拡張子がない場合に、ダウンロードしたファイルのMIMEタイプを推測するコードを追加しました
--アプリの問題を解決するために追加のトップアイテムリクエストメールを使用
+バグ修正：
+-Android 10
+：フォルダの選択-権限は正しく管理されています。
+：アイテムのダウンロード-機能するようになりました
+注：必要なダウンロードまたは自動アップロードフォルダを再選択する必要がある場合があります。
+注：私は積極的にこのアプリを開発するのをやめます-断続的にバグ修正をしながら引き続きサポートします。
 </ja-JP>
 <ru-RU>
-Изменения:
-- загрузка файла: добавлено ведение журнала для решения проблем
-- загрузка файла: добавлен код, позволяющий угадать тип mime для загруженного файла, если расширение файла отсутствует
-- Добавлен элемент подсказки, запрашивающий электронную почту, который используется для решения проблем с приложением.
+Исправлена ошибка:
+- Android 10
+: выбор папок - права доступа управляются правильно.
+: загрузка предметов - теперь работает
+Примечание. Возможно, вам придется повторно выбрать предпочитаемую папку для загрузки или папку автоматической загрузки.
+ПРИМЕЧАНИЕ: я прекращаю активно разрабатывать это приложение - я буду продолжать поддерживать его периодически с исправлениями ошибок.
 </ru-RU>
 <zh-CN>
-变化：
--文件下载：添加了更多日志记录以帮助解决问题
--文件下载：如果没有文件扩展名，则添加代码以猜测下载文件的mime类型
--添加了请求电子邮件的最高提示项，用于解决该应用程序的问题
+错误修正：
+-安卓10
+：选择文件夹-权限管理正确。
+：下载项目-现在可以使用
+注意：您可能需要重新选择首选下载或自动上传文件夹。
+注意：我将停止积极开发此应用程序-虽然我将继续间歇性地通过错误修正来支持它。
 </zh-CN>

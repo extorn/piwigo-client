@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.Preference;
@@ -183,8 +184,13 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
                 if(removingOldPermissions) {
                     Uri oldFolder = IOUtils.getLocalFileUri(oldValue);
                     if(!"file".equals(oldFolder.getScheme())) {
-                        // file uris dont get dealt with in this way.
+                        // file uris don't get dealt with in this way.
                         thisPref.appSettingsViewModel.releasePersistableUriPermission(thisPref.getContext(), oldFolder, thisPref.getUriPermissionsKey());
+                        DocumentFile docFile = DocumentFile.fromTreeUri(thisPref.getContext(), oldFolder);
+                        if(docFile != null) {
+                            // this is needed only because I messed up and added items incorrectly in the past.
+                            thisPref.appSettingsViewModel.releasePersistableUriPermission(thisPref.getContext(), oldFolder, thisPref.getUriPermissionsKey());
+                        }
                     }
                 }
                 if(newValue != null) {

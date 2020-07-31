@@ -265,6 +265,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.74</item>
+        <item>"Bugfix:
+                - Android 10+
+                 : selection of folders - permissions managed correctly.
+                 : download of items - now works
+                 Note: You may need to re-select your preferred download or automatic upload folder.
+              NOTE: I am ceasing to actively develop this app - I'll continue to support it with bugfixes intermittently though."</item>
         <item>1.4.0.73</item>
         <item>"Changes:
                 - file download: more logging added to assist resolution of issues

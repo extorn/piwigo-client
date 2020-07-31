@@ -461,7 +461,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 DocumentFile docFile = DocumentFile.fromTreeUri(context, permittedUri);
                 if(docFile != null) {
                     final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri(), takeFlags);
+                    boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, permittedUri, takeFlags);
                     if(!permissionsMissing) {
                         FolderItem folderItem = new FolderItem(permittedUri, docFile);
                         folderItem.cacheFields(context);

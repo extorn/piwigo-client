@@ -192,7 +192,7 @@ Gareth Deli ti concede una licenza revocabile, non esclusiva, non trasferibile, 
 per scaricare, installare e utilizzare l\'Applicazione esclusivamente per scopi personali o commerciali
 rigorosamente in conformità con i termini del presente Accordo.
 
-IL SOFTWARE È FORNITO \"COSÌ COM\'È\", SENZA ALCUN TIPO DI GARANZIA, ESPRESSA O IMPLICITA, COMPRESO MA NON LIMITATO ALLE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI DI QUALSIASI RECLAMO, DANNO O ALTRO RESPONSABILITÀ, SE IN AZIONE DI CONTRATTO, TORT O ALTRO, DERIVANTE DA, FUORI O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRE OFFERTE NEL SOFTWARE
+IL SOFTWARE È FORNITO \"COSÌ COM\'È\", SENZA ALCUN TIPO DI GARANZIA, ESPLICITA O IMPLICITA, COMPRESO MA NON LIMITATO ALLE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ A UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI DI QUALSIASI RECLAMO, DANNO O ALTRO RESPONSABILITÀ, SE IN AZIONE DI CONTRATTO, TORT O ALTRO, DERIVANTE DA, FUORI O IN CONNESSIONE CON IL SOFTWARE O L\'UTILIZZO O ALTRE OFFERTE NEL SOFTWARE
 
 
 restrizioni
@@ -244,7 +244,7 @@ Il presente Accordo terminerà immediatamente, senza preavviso da parte di Garet
 caso in cui l\'utente non rispetti le disposizioni del presente Accordo. Puoi anche terminare questo
 Accordo cancellando l\'Applicazione e tutte le sue copie dal tuo dispositivo mobile o dal tuo
 desktop.
-Alla risoluzione del presente Accordo, l\'utente dovrà cessare qualsiasi uso dell\'Applicazione ed eliminare tutte le copie
+Alla risoluzione del presente Accordo, l\'utente dovrà cessare qualsiasi utilizzo dell\'Applicazione ed eliminare tutte le copie
 dell\'applicazione dal tuo dispositivo mobile o dal desktop.
 Invalidità
 Se una qualsiasi disposizione del presente Accordo è ritenuta inapplicabile o non valida, tale disposizione sarà
@@ -286,9 +286,9 @@ Per favore, posso chiedere che se disinstalli l\'app, usi il link nel menu dell\
 
 La versione del server PIWIGO con cui collaudo è attualmente 2.10.2.
 
-La mia galleria di test contiene solo file .jpg e .mp4. Se il tuo contiene altri, potresti riscontrare problemi - in tal caso, per favore dimmelo e darò la priorità al lavoro su quei tipi di file.
+La mia galleria di test contiene solo file .jpg e .mp4. Se il tuo contiene altri, potresti riscontrare problemi - in tal caso, per favore dimmelo e darò la priorità al lavoro su questi tipi di file.
 
-ATTENZIONE: Le versioni di Piwigo sotto 1.9.2 - caricamento di video credo dipenda dalla correzione # 756 applicata al tuo server.
+ATTENZIONE: versioni di Piwigo sotto 1.9.2 - il caricamento di video è secondo me dipendente dalla correzione # 756 applicata al tuo server.
 
 Ho provato con una copia del plug-in piwigo_privacy installato e anche il plug-in VideoJS installato.
 Ho una copia del plug-in Extended Description installato, ma sfortunatamente questa funzionalità non è ancora esposta tramite l\'API PIWIGO.
@@ -298,7 +298,7 @@ Si prega di segnalare a scrivermi una e-mail se si verificano errori. Ho provato
 
 Un grande grazie a tutti coloro che mi hanno inviato email con suggerimenti o bug. Cercherò di rispondere a tutti i tuoi suggerimenti non appena possibile.
 
-Scegli di segnalare ogni arresto anomalo che si verifica. Se riscontri che il bug si verifica ancora dopo il prossimo aggiornamento, ti preghiamo di dedicare del tempo a inviarmi un\'e-mail.Probabilmente ho bisogno di un po \'più di contesto su ciò che sta accadendo poco prima che si verifichi il bug.
+Scegli di segnalare ogni arresto anomalo che si verifica. Se ritieni che il bug si verifichi ancora dopo il prossimo aggiornamento, prenditi il ​​tempo di inviarmi un\'e-mail.Probabilmente ho bisogno di un po \'più di contesto su ciò che sta accadendo poco prima che si verifichi il bug.
 
 Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ridursi man mano che l\'app matura. La pianificazione e la cronologia delle versioni sono riportate di seguito. Questo può cambiare e le cose possono essere ritardate, ma puoi vedere cosa c\'è nella lista."</string>
     <string name="licences_heading">Licenze per le risorse utilizzate all\'interno di questa app</string>
@@ -314,7 +314,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="alert_message_unlock">Immettere la password PIWIGO per%1$s per riattivare l\'accesso completo a tutte le funzionalità di questa app e fare clic su Sblocca.</string>
     <string name="button_unlock">Sbloccare</string>
     <string name="alert_app_unlocked_message">L\'app è stata ora sbloccata</string>
-    <string name="gallery_details_status_title">Stato della privacy</string>
+    <string name="gallery_details_status_title">Stato sulla privacy</string>
     <string name="gallery_details_status_galleryIsPrivate">sì</string>
     <string name="gallery_details_status_galleryIsPublic">No</string>
     <string name="gallery_details_status">Limitare l\'accesso a questa cartella</string>
@@ -342,7 +342,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="button_agree">Sono d\'accordo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">avvertimento</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine \ "corrispondenza più vicina \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine \ \"corrispondenza più vicina \".</string>
     <string name="rate_dialog_message">Se ti piace usare questa app, ti dispiacerebbe prenderti un momento per valutarla? Non ci vorrà più di un minuto. Grazie per il vostro sostegno!</string>
     <string name="groups_menu_title">gruppi</string>
     <string name="group_members_pattern">(%1$d membri)</string>
@@ -414,7 +414,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="progress_adding_group">Aggiunta di un gruppo</string>
     <string name="upload_unacceptable_files_prefix">File non accettati</string>
     <string name="alert_error_unable_to_access_local_filesystem">Senza accesso al filesystem locale, questa azione non può procedere. Scusate.</string>
-    <string name="alert_error_admin_user_required">Solo gli utenti amministratori possono caricare a meno che non sia installato il plugin della comunità. Scusate.</string>
+    <string name="alert_error_admin_user_required">Solo gli utenti amministratori possono caricare a meno che non sia installato il plug-in della comunità. Scusate.</string>
     <string name="upload_username_title">Carica come</string>
     <string name="certificates_heading">certificati</string>
 
@@ -432,7 +432,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="alert_title_set_album_thumbnail">Aggiorna la miniatura dell\'album?</string>
     <string name="alert_message_set_album_thumbnail">Aggiorna la miniatura dell\'album a questa immagine?</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">Sei sicuro di voler eliminare l\'album (%1$s) e tutti i contenuti in modo permanente (a meno che non siano collegati ad album altrove)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Sei assolutamente sicuro di voler eliminare l\'album (%1$s) con%2$d foto e%3$d album secondari contenenti altre%4$d foto per sempre? Nota che le foto collegate ad altri album rimarranno lì, ma tutte le altre verranno eliminate per sempre. Non è disponibile alcuna funzione di annullamento per questa azione.</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Sei assolutamente sicuro di voler eliminare l\'album (%1$s) con%2$d foto e%3$d album secondari contenenti altre%4$d foto per sempre? Tieni presente che le foto collegate ad altri album rimarranno lì, ma tutte le altre verranno eliminate per sempre. Non è disponibile alcuna funzione di annullamento per questa azione.</string>
     <string name="alert_confirm_copy_items_here_pattern">Copia qui%1$d articoli nel carrello (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Sposta qui gli articoli%1$d nel carrello (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Album collegati</string>
@@ -449,7 +449,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="alert_message_file_upload_cancelled_pattern">Caricamento del file (%1$s) annullato.</string>
     <string name="alert_message_upload_cancelled">Caricamento annullato</string>
     <string name="alert_message_upload_cancelled_message">Se non desideri riavviare il caricamento in un secondo momento. È necessario rimuovere i file dal processo di caricamento, quindi fare clic su Carica. Ciò pulirà lo stato di caricamento annullato dal server.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine selezionata non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine \ "corrispondenza più vicina \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine selezionata non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine \ \"corrispondenza più vicina \".</string>
     <string name="logging_out_of_piwigo_pattern">Disconnessione da%1$s</string>
     <string name="loading_new_server_configuration">Caricamento nuova configurazione connessione server</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Per consentire la memorizzazione nella cache su disco, è necessario concedere l\'accesso in scrittura al file system. Se negato, la memorizzazione nella cache sarà in memoria.</string>
@@ -614,7 +614,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La preferenza%1$s è irrecuperabile ed è stata impostata automaticamente su%2$s. Reimposta questo valore nelle impostazioni dell\'app</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La preferenza%1$s è irrecuperabile ed è stata impostata automaticamente su%2$s. Reimposta questo valore nelle impostazioni dell\'app"</string>
     <string name="switch_to_cached_mode">Il server non è attualmente disponibile. Utilizzare i dati memorizzati nella cache?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Comprimi video</string>
@@ -632,7 +632,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="upload_status_tab_title_details">Dettagli</string>
     <string name="upload_status_tab_title_errors">Errori</string>
     <string name="message_piwigo_server_inconsistent_results">Il checksum del file di report della chiamata API Piwigo%1$s non corrisponde, ma la chiamata API%2$s segnala che corrisponde. Potrebbe trattarsi di un bug nel server PIWIGO o di un plug-in che usi e potrebbe valere la pena segnalarlo.</string>
-    <string name="alert_bulk_image_permissions_title">Imposta autorizzazioni di accesso</string>
+    <string name="alert_bulk_image_permissions_title">Imposta le autorizzazioni di accesso</string>
     <string name="alert_bulk_image_permissions_message">Imposta i livelli di autorizzazione di accesso per le risorse selezionate di%1$d</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">Impossibile gestire i file condivisi con un tipo mime%1$s</string>
     <string name="alert_error_unsupported_file_extensions_pattern">I file con le seguenti estensioni non possono essere caricati e sono stati rimossi:%1$s</string>
@@ -659,7 +659,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="create_email_using_app">Crea un\'e-mail utilizzando l\'app</string>
     <string name="open_files">Apri file in app</string>
     <string name="files_unavailable_to_download_removed_pattern">La selezione conteneva file che non potevano essere elaborati. Questi file%1$d sono stati ignorati. Per condividere un file video, è necessario innanzitutto prima memorizzarlo nella cache locale.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Tutti i suggerimenti utente di una volta verranno mostrati di nuovo</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Tutti i suggerimenti utente di una volta verranno mostrati di nuovo"</string>
     
     
     <string name="delete_uploaded_files_title">Elimina i file caricati</string>
@@ -682,7 +682,7 @@ Le pubblicazioni sono al momento ad hoc. La frequenza delle versioni dovrebbe ri
     <string name="alert_error_starting_download">Errore durante l\'avvio del download del file</string>
     <string name="progress_importing_files">Importazione di file</string>
     <string name="content_filter">Filtro contenuto</string>
-    <string name="alert_advert_importance_message">Le entrate delle pubblicità sono importanti per me. Mi dispiace che ti frustrino (lo fanno anche loro), ma se li guardi, continueranno ad apparire fino a quando non ne guardi uno. Per evitare questo problema, ti preghiamo di guardarli fino a quando non offrono la possibilità di chiudere. In alternativa, acquista la versione a pagamento di questa app. molte grazie per il vostro sostegno!</string>
+    <string name="alert_advert_importance_message">I ricavi delle pubblicità sono importanti per me. Mi dispiace che ti frustrino (lo fanno anche loro), ma se li guardi, continueranno ad apparire fino a quando non ne guardi uno. Per evitare questo problema, ti preghiamo di guardarli fino a quando non offrono la possibilità di chiudere. In alternativa, acquista la versione a pagamento di questa app. molte grazie per il vostro sostegno!</string>
     <string name="eula_privacy_title">vita privata</string>
     <string name="privacy_policy_label">La nostra politica sulla privacy</string>
     <string name="title_advert_consent">La tua privacy</string>

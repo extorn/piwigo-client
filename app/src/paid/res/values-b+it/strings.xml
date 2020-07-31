@@ -30,5 +30,5 @@
     <string name="ignoring_job_local_folder_not_found">La cartella locale non esiste più. Ignorare il lavoro</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">Nessuna estensione di file selezionata per il caricamento. Ignorare il lavoro</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Profilo di connessione impostato su modalità offline. Ignorare il lavoro</string>
-    <string name="slideshow_auto_drive_paused">Presentazione Autodrive in pausa fino alla diapositiva successiva</string>
+    <string name="slideshow_auto_drive_paused">Presentazione L\'azionamento automatico è stato messo in pausa fino alla diapositiva successiva</string>
 </resources>
