@@ -52,7 +52,6 @@ import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import kotlin.RequiresOptIn;
 import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
