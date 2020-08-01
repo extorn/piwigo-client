@@ -506,7 +506,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //                    .setGroupSummary(true)
 //                    .setAutoCancel(true);
 //            getUiHelper().showNotification(TAG, DownloadTarget.notificationId.getAndIncrement(), mBuilder.build());
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
+            if(event.getFileDetails().size() > 1) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
+            }
         }
     }
 
@@ -661,7 +663,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             try {
                 shareFileUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", Objects.requireNonNull(LegacyIOUtils.getFile(downloadedFile)));
             } catch (IOException|NullPointerException|IllegalArgumentException e) {
-                Logging.log(Log.ERROR, TAG, "File to share ("+shareFileUri+")is not a raw file or stored inside this app folder (file://). Share it as is.");
+                Logging.log(Log.WARN, TAG, "File to share ("+shareFileUri+")is not a raw file or stored inside this app folder (file://). Share it as is.");
                 Logging.recordException(e);
             }
             String ext = MimeTypeMap.getFileExtensionFromUrl(downloadedFile.toString());
@@ -689,7 +691,8 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     .setContentText(IOUtils.getFilename(getContext(), downloadedFile))
                     .setContentIntent(pendingIntent)
                     .setGroup(NOTIFICATION_GROUP_DOWNLOADS)
-                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+//                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
                     .setAutoCancel(true);
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {

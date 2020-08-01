@@ -322,6 +322,12 @@ public class FolderItem implements Parcelable {
             }
         }
         executor.shutdown();
+        try {
+            executor.awaitTermination(2, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            cancelled = true;
+            Logging.log(Log.ERROR, TAG, "Timeout while waiting for folder content field loading executor to end");
+        }
         return !cancelled;
     }
 }

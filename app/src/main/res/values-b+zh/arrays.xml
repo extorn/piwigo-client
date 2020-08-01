@@ -54,6 +54,7 @@
         <item>大</item>
         <item>超大</item>
         <item>xx大</item>
+        
     </string-array>
 
     
@@ -123,8 +124,8 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"如果您对应用程序有任何疑问，请使用电子邮件通知我。如果您愿意，请在Google Play上发布负面评论，但我不想阻止它，但也请发送电子邮件。滑出式抽屉菜单顶部有一个链接可向我发送电子邮件。我可以为电子邮件地址提供更全面的支持。非常感谢。"</item>
-        <item>"您只能看到可以选择上传的文件，这些文件可以在您的服务器上上传。如果您想上传视频，请确保更改服务器的config.inc.php文件，使其包含$ conf [\'upload_form_all_types\'] = true；而不是假的"</item>
+        <item>如果您对应用程序有任何疑问，请使用电子邮件通知我。如果您愿意，请在Google Play上发布负面评论，但我不想阻止它，但也请发送电子邮件。滑出式抽屉菜单顶部有一个链接可向我发送电子邮件。我可以为电子邮件地址提供更全面的支持。非常感谢。</item>
+        <item>您只能看到可以选择上传的文件，这些文件可以在您的服务器上上传。如果您想上传视频，请确保更改服务器的config.inc.php文件，使其包含$ conf [\'upload_form_all_types\'] = true；而不是假的</item>
         <item>如果上传无法成功，请尝试使用应用设置上传页面中的偏好设置，以清除服务器上所有残留的失败上传</item>
         <item>尝试更新标签时始终会出现错误-\“您不允许删除标签”-确保用户可以添加和删除标签（服务器插件设置）</item>
         <item>与此应用共享来自其他应用的文件，以将其添加到上传屏幕中，准备转到当前服务器</item>
@@ -163,6 +164,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.75</item>
+        <item>"错误修正：
+             通知未正确显示下载的文件"</item>
         <item>1.4.0.74</item>
         <item>"错误修正：
                  -安卓10

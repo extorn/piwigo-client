@@ -2,9 +2,11 @@ package delit.piwigoclient.database;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -15,10 +17,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 
 public class AppSettingsViewModel extends AndroidViewModel {
@@ -94,11 +99,31 @@ public class AppSettingsViewModel extends AndroidViewModel {
                 int mask = ~flagsStillUsed;
                 flagsToRemove &= mask;
 
-                if (flagsToRemove != 0 && consumers.size() == 0 && permissionsHeld.size() > 0) {
+                if ((flagsToRemove != 0 || flagsStillUsed == 0) && consumers.size() == 0) {
                     // remove the Uri permission if it is no longer in use
-                    List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, Collections.singletonList(uri));
+                    List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, new ArrayList<>(Arrays.asList(uri)));//DO NOT USE SINGLETON LIST
                     if(uriPermsHeld.indexOf(uri) >= 0) {
-                        context.getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
+                        try {
+                            context.getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
+                        } catch(SecurityException e) {
+                            Logging.log(Log.WARN, TAG, "unable to release permission");
+                            Logging.recordException(e);
+                        }
+                    } else {
+                        // check the tree uri.
+                        Uri treeUri = IOUtils.getTreeUri(uri);
+                        uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, new ArrayList<>(Arrays.asList(treeUri)));//DO NOT USE SINGLETON LIST
+                        if(!uriPermsHeld.isEmpty()) {
+                            if(flagsStillUsed == 0) {
+                                flagsToRemove = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+                            }
+                            try {
+                                context.getContentResolver().releasePersistableUriPermission(uriPermsHeld.get(0), flagsToRemove);
+                            } catch (SecurityException e) {
+                                Logging.log(Log.WARN, TAG, "unable to release permission");
+                                Logging.recordException(e);
+                            }
+                        }
                     }
                 }
             }

@@ -846,8 +846,10 @@ public class IOUtils {
         for(UriPermission actualHeldPerm : context.getContentResolver().getPersistedUriPermissions()) {
             heldPerms.add(actualHeldPerm.getUri());
         }
-        if(uris.retainAll(heldPerms)) {
-            Logging.log(Log.INFO, TAG, "Some permissions to remove are no longer held (removing silently)");
+        if(!heldPerms.isEmpty()) {
+            if (uris.retainAll(heldPerms)) {
+                Logging.log(Log.INFO, TAG, "Some permissions to remove are no longer held (removing silently)");
+            }
         }
         return uris;
     }

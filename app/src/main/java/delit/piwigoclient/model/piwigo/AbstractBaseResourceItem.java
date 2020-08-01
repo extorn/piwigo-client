@@ -347,9 +347,11 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
                     return THUMB;
                 case 10:
                     return SQUARE;
+                case 11:
+                    return OPTIMAL;
                 default:
                     Logging.log(Log.ERROR, TAG, "Unsupported resource id encountered : " + id);
-                    return "unknown";
+                    return BEST_FIT;
             }
         }
 

@@ -1,72 +1,36 @@
 <en-GB>
 Bugfix:
-- Android 10+
-: selection of folders - permissions managed correctly.
-: download of items - now works
-Note: You may need to re-select your preferred download or automatic upload folder.
-NOTE: I am ceasing to actively develop this app - I'll continue to support it with bugfixes intermittently though.
+Notifications not showing correctly for downloaded files
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Android 10
-: výběr složek - oprávnění spravovaná správně.
-: stažení položek - nyní funguje
-Poznámka: Možná budete muset znovu vybrat preferovanou složku pro stahování nebo automatické nahrávání.
-POZNÁMKA: Přestávám aktivně vyvíjet tuto aplikaci - budu ji však nadále občas podporovat podporou oprav chyb.
+Oznámení se pro stažené soubory nezobrazují správně
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Android 10
-: Ordnerauswahl - Berechtigungen korrekt verwaltet.
-: Download von Artikeln - funktioniert jetzt
-Hinweis: Möglicherweise müssen Sie Ihren bevorzugten Download- oder automatischen Upload-Ordner erneut auswählen.
-HINWEIS: Ich höre auf, diese App aktiv zu entwickeln. Ich werde sie jedoch weiterhin zeitweise mit Bugfixes unterstützen.
+Benachrichtigungen werden für heruntergeladene Dateien nicht korrekt angezeigt
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Android 10
-: selección de carpetas: permisos administrados correctamente.
-: descarga de elementos - ahora funciona
-Nota: es posible que deba volver a seleccionar su descarga preferida o la carpeta de carga automática.
-NOTA: Dejo de desarrollar activamente esta aplicación, aunque continuaré admitiéndola con correcciones de errores de forma intermitente.
+Las notificaciones no se muestran correctamente para los archivos descargados
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Android 10
-: sélection de dossiers - autorisations gérées correctement.
-: téléchargement d\'articles - fonctionne maintenant
-Remarque: vous devrez peut-être sélectionner à nouveau votre dossier de téléchargement ou de téléchargement automatique préféré.
-REMARQUE: je cesse de développer activement cette application - je continuerai à la supporter avec des corrections de bogues par intermittence.
+Les notifications ne s\'affichent pas correctement pour les fichiers téléchargés
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Android 10
-: selezione di cartelle - autorizzazioni gestite correttamente.
-: download di elementi - ora funziona
-Nota: potrebbe essere necessario selezionare nuovamente il download preferito o la cartella di caricamento automatico.
-NOTA: sto smettendo di sviluppare attivamente questa app - continuerò comunque a supportarla con correzioni di bug in modo intermittente.
+Notifiche non visualizzate correttamente per i file scaricati
 </it-IT>
 <ja-JP>
 バグ修正：
--Android 10
-：フォルダの選択-権限は正しく管理されています。
-：アイテムのダウンロード-機能するようになりました
-注：必要なダウンロードまたは自動アップロードフォルダを再選択する必要がある場合があります。
-注：私は積極的にこのアプリを開発するのをやめます-断続的にバグ修正をしながら引き続きサポートします。
+ダウンロードしたファイルの通知が正しく表示されない
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Android 10
-: выбор папок - права доступа управляются правильно.
-: загрузка предметов - теперь работает
-Примечание. Возможно, вам придется повторно выбрать предпочитаемую папку для загрузки или папку автоматической загрузки.
-ПРИМЕЧАНИЕ: я прекращаю активно разрабатывать это приложение - я буду продолжать поддерживать его периодически с исправлениями ошибок.
+Уведомления не отображаются правильно для загруженных файлов
 </ru-RU>
 <zh-CN>
 错误修正：
--安卓10
-：选择文件夹-权限管理正确。
-：下载项目-现在可以使用
-注意：您可能需要重新选择首选下载或自动上传文件夹。
-注意：我将停止积极开发此应用程序-虽然我将继续间歇性地通过错误修正来支持它。
+通知未正确显示下载的文件
 </zh-CN>

@@ -96,6 +96,7 @@
         <item>large</item>
         <item>xlarge</item>
         <item>xxlarge</item>
+        <!--<item>Optimal</item>-->
     </string-array>
 
     <string-array name="preference_gallery_item_slideshow_image_size_array_values" translatable="false">
@@ -109,6 +110,7 @@
         <item>large</item>
         <item>xlarge</item>
         <item>xxlarge</item>
+        <!--<item>Optimal</item>-->
     </string-array>
 
     <string-array name="preference_gallery_item_thumbnail_size_array">
@@ -265,6 +267,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.75</item>
+        <item>"Bugfix:
+            Notifications not showing correctly for downloaded files"</item>
         <item>1.4.0.74</item>
         <item>"Bugfix:
                 - Android 10+

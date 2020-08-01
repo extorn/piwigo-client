@@ -1173,22 +1173,27 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         };
 
         public void doDownloadAction(Set<ResourceItem> items, String selectedPiwigoFilesizeName, boolean shareWithOtherAppsAfterDownload) {
-            ResourceItem item = items.iterator().next();
+            Iterator<ResourceItem> itemsIterator = items.iterator();
             DownloadFileRequestEvent evt = new DownloadFileRequestEvent(shareWithOtherAppsAfterDownload);
-            if (item instanceof VideoResourceItem) {
-                File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
-                if (localCache != null) {
-                    String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
-                    String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
-                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
+            while(itemsIterator.hasNext()) {
+                ResourceItem item = itemsIterator.next();
+                if (item instanceof VideoResourceItem) {
+                    File localCache = RemoteAsyncFileCachingDataSource.getFullyLoadedCacheFile(getContext(), Uri.parse(item.getFileUrl(item.getFullSizeFile().getName())));
+                    if (localCache != null) {
+                        String downloadFilename = item.getDownloadFileName(item.getFullSizeFile());
+                        String remoteUri = item.getFileUrl(item.getFullSizeFile().getName());
+                        evt.addFileDetail(item.getName(), remoteUri, downloadFilename, Uri.fromFile(localCache));
+                    }
+                } else {
+                    String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
+                    String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
+                    evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
                 }
-            } else {
-                String downloadFilename = item.getDownloadFileName(item.getFile(selectedPiwigoFilesizeName));
-                String remoteUri = item.getFileUrl(selectedPiwigoFilesizeName);
-                evt.addFileDetail(item.getName(), remoteUri, downloadFilename);
             }
             EventBus.getDefault().post(evt);
-            EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), item));
+            if(items.size() == 1) {
+                EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), items.iterator().next()));
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.Set;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
 import delit.piwigoclient.R;
@@ -49,6 +52,7 @@ import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import kotlin.RequiresOptIn;
 import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
@@ -56,6 +60,7 @@ import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_
 public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<PictureResourceItem> implements PicassoLoader.PictureItemImageLoaderListener<TouchImageView> {
 
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
+    private static final String TAG = "AbPicItemFrag";
     private String currentImageUrlDisplayed;
     private PicassoLoader loader;
     private ImageView imageView;
@@ -277,9 +282,21 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         loader.resetAll();
         loader.cancelImageLoadIfRunning();
         loader.setPlaceholderImageUri(model.getThumbnailUrl());
-        char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
-        String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
-        loader.setUriToLoad(uriToLoad);
+        if(currentImageUrlDisplayed != null) {
+            char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
+            String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
+            loader.setUriToLoad(uriToLoad);
+        } else {
+            StringBuilder availableFilesSb = new StringBuilder();
+            for (Iterator<AbstractBaseResourceItem.ResourceFile> iterator = model.getAvailableFiles().iterator(); iterator.hasNext(); ) {
+                ResourceItem.ResourceFile rf = iterator.next();
+                availableFilesSb.append(rf.getName());
+                if(iterator.hasNext()) {
+                    availableFilesSb.append(",");
+                }
+            }
+            Logging.log(Log.ERROR, TAG, "Picture Item uri is null. Available files : " + availableFilesSb.toString());
+        }
         loader.load();
     }
 

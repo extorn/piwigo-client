@@ -179,9 +179,9 @@ public abstract class UIHelper<T> {
             }
 
             channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
-            importance = NotificationManager.IMPORTANCE_DEFAULT; // noise
+            importance = NotificationManager.IMPORTANCE_DEFAULT; // makes a noise
             if (channel == null || channel.getImportance() != importance) {
-                channel = new NotificationChannel(getLowImportanceNotificationChannelId(), name, importance);
+                channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
                 notificationManager.createNotificationChannel(channel);
             }
         }

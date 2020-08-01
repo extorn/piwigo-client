@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <external-cache-path name="piwigo_shared" path="piwigo-shared/"/>
-    <external-path name="external_files" path="."/>
+    <!--<external-path name="external_files" path="."/>-->
+    <files-path name="files" path="." />
 </paths>

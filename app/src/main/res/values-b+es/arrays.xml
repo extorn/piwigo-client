@@ -54,6 +54,7 @@
         <item>grande</item>
         <item>xlarge</item>
         <item>xxlarge</item>
+        
     </string-array>
 
     
@@ -123,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una crítica negativa en Google Play, no estoy tratando de detenerlo, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
-        <item>"Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea subir videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
+        <item>Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una crítica negativa en Google Play, no estoy tratando de detenerlo, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
+        <item>Solo puede ver archivos para seleccionar para cargar que son aceptables para cargar en su servidor. Si desea subir videos, asegúrese de alterar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar etiquetas - \ \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Siempre se produce un error al intentar actualizar etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos desde una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
         <item>Haga clic largo en una imagen (ya sea en miniatura o elemento de presentación de diapositivas) que no se pudo cargar para recuperarla nuevamente</item>
         <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido.</item>
@@ -163,6 +164,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.75</item>
+        <item>"Arreglo del fallo:
+             Las notificaciones no se muestran correctamente para los archivos descargados"</item>
         <item>1.4.0.74</item>
         <item>"Arreglo del fallo:
                  - Android 10
