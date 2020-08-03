@@ -698,5 +698,6 @@ Gareth Deliは、独自の裁量により、これを変更または置き換え
     <string name="progress_copying_imported_files">インポートしたファイルをコピーする</string>
     <string name="selected_files">選択したファイル</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">ロードされたアルバムコンテンツと同期していないスライドショー。開始時にリセット。</string>
+    <string name="uri_permission_justification_file_selection"/>
 
 </resources>

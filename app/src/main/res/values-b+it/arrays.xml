@@ -164,6 +164,8 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.76</item>
+        <item>""</item>
         <item>1.4.0.75</item>
         <item>"Risoluzione del problema:
              Notifiche non visualizzate correttamente per i file scaricati"</item>

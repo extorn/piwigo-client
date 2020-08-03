@@ -10,20 +10,33 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.opengl.GLES20;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
+import android.view.TextureView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.MimeTypeFilter;
 
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.squareup.picasso.MyPicasso;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
 import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -32,6 +45,10 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.CustomImageDownloader;
 import delit.piwigoclient.business.PicassoLoader;
+import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
+import delit.piwigoclient.business.video.capture.ExoPlayerFrameCapture;
+import delit.piwigoclient.business.video.capture.FrameHandler;
+import delit.piwigoclient.business.video.compression.OutputSurface;
 
 import static android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC;
 
@@ -68,7 +85,7 @@ public class PicassoFactory {
             appContextRef = new WeakReference<>(appContext);
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
-                // request handler would work but it cant because it doesnt get in before the broken one!
+                // request handler would work but it can't because it doesn't get in before the broken one!
                 picasso = new MyPicasso.Builder(appContext)
                         .addRequestHandler(new ResourceRequestHandler(appContext))
                         .addRequestHandler(new VideoRequestHandler(appContext))
@@ -144,8 +161,6 @@ public class PicassoFactory {
 
     static class VideoRequestHandler extends RequestHandler {
 
-        public static final int DEFAULT_WIDTH = 512;
-        public static final int DEFAULT_HEIGHT = 384;
         private Context context;
 
         private VideoRequestHandler(Context context) {
@@ -154,27 +169,32 @@ public class PicassoFactory {
 
         @Override
         public boolean canHandleRequest(Request data) {
-            MimeTypeMap map = MimeTypeMap.getSingleton();
             String mimeType = IOUtils.getMimeType(context, data.uri);
             return MimeTypeFilter.matches(mimeType, "video/*");
         }
 
         @Override
         public Result load(Request data, int networkPolicy) {
-            Bitmap bm = null;
+            Bitmap bm;
             /*if(NetworkPolicy.shouldReadFromDiskCache(networkPolicy)) {
                 bm = getPicassoSingleton().getCache().get(data.stableKey);
             }*/
-            if(bm == null) {
-                bm = buildBitmapForVideo(data);
-                if(NetworkPolicy.shouldWriteToDiskCache(networkPolicy)) {
+            bm = buildBitmapForVideo(data);
+//            if(NetworkPolicy.shouldWriteToDiskCache(networkPolicy)) {
 //                    getPicassoSingleton().getCache().set(data.stableKey, bm);
-                }
+//            }
+            if(bm == null) {
+                return null;
             }
             return new Result(bm, Picasso.LoadedFrom.DISK);
         }
 
         private Bitmap buildBitmapForVideo(Request data) {
+            return buildBitmapForVideoNewWay(data);
+//            return buildBitmapForVideoOldWay(data);
+        }
+
+        private Bitmap buildBitmapForVideoOldWay(Request data) {
             MediaMetadataRetriever mediaRetriever = new MediaMetadataRetriever();
             Bitmap bm;
             try {
@@ -193,12 +213,148 @@ public class PicassoFactory {
                 mediaRetriever.release();
             }
             if (bm == null) {
-                Log.e(TAG, "Unable to create a video thumbnail for file : " + data.uri.getPath());
+                Logging.log(Log.ERROR, TAG, "Unable to create a video thumbnail for file : " + data.uri.getPath());
                 return null;
             } else {
                 Log.d(TAG, "Created a video thumbnail for file : " + data.uri.getPath());
             }
             return bm;
+        }
+
+        private Bitmap buildBitmapForVideoNewWay(Request data) {
+            ExoPlayerFrameCapture frameCapture = new ExoPlayerFrameCapture();
+            FrameCapturer frameCapturer = new FrameCapturer(data.uri, 1);
+            try {
+                frameCapture.invokeFrameCapture(context, frameCapturer, true).join();
+            } catch (InterruptedException e) {
+                Logging.log(Log.ERROR, TAG, "Unable to create a video thumbnail for file : " + data.uri.getPath());
+                return null;
+            }
+            Bitmap bm = frameCapturer.getFrame();
+            if (bm == null) {
+                Logging.log(Log.ERROR, TAG, "Unable to create a video thumbnail for file : " + data.uri.getPath());
+                return null;
+            } else {
+                bm = getResizedCenterFittedBitmap(bm, data.targetWidth, data.targetHeight);
+                Log.d(TAG, "Created a video thumbnail for file : " + data.uri.getPath());
+            }
+            return bm;
+        }
+
+        static class FrameCapturer extends FrameHandler {
+            private Bitmap frame;
+            private long frameTimeUs;
+
+            public FrameCapturer(Uri videoFileUri, int framesToCapture) {
+                super(videoFileUri, framesToCapture);
+            }
+
+            @Override
+            public void handleFrame(long frameTimeUs, Bitmap frame) {
+                this.frameTimeUs = frameTimeUs;
+                this.frame = frame;
+            }
+
+            public Bitmap getFrame() {
+                return frame;
+            }
+
+            public long getFrameTimeUs() {
+                return frameTimeUs;
+            }
+        }
+
+        class ExoPlayerThread extends HandlerThread {
+
+            private Bitmap bitmap;
+            private final Request data;
+
+            public ExoPlayerThread(String name, Request data) {
+                super(name);
+                this.data = data;
+            }
+
+            @Override
+            protected void onLooperPrepared() {
+                getBitmapUsingExoPlayer(data);
+            }
+
+            public Bitmap getBitmap() {
+                return bitmap;
+            }
+
+            class PlayerListener extends ExoPlayerEventAdapter {
+                private final SimpleExoPlayer player;
+                private final Request data;
+
+                public PlayerListener(SimpleExoPlayer player, Request data) {
+                    this.player = player;
+                    this.data = data;
+                }
+
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    super.onPlayerStateChanged(playWhenReady, playbackState);
+                    if(playbackState == 3) {
+                        OutputSurface os = new OutputSurface(player.getVideoFormat().width, player.getVideoFormat().height, new Handler(getLooper()));
+                        player.setVideoSurface(os.getSurface());
+                        os.makeCurrent();
+
+
+                        player.seekTo(Math.min(1000, player.getDuration()));
+                        player.setPlayWhenReady(true);
+                        if(player.getCurrentPosition() <= 100) {
+                            return;
+                        }
+
+//                        boolean frameAv = os.checkForNewImage(10000);
+//                        os.awaitNewImage();
+                        os.drawImage();
+                        player.setPlayWhenReady(false);
+
+                        int width = player.getVideoFormat().width;
+                        int height = player.getVideoFormat().height;
+                        ByteBuffer pixelBuf = ByteBuffer.allocateDirect(width * height * 4);
+                        pixelBuf.order(ByteOrder.LITTLE_ENDIAN);
+                        GLES20.glReadPixels(0, 0, width, height,
+                        GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuf);
+//                        byte[] pixels = pixelBuf.array();
+
+//                        Bitmap frame = BitmapFactory.decodeByteArray(pixels,0,pixels.length);
+                        Bitmap frame = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                        pixelBuf.rewind();
+                        frame.copyPixelsFromBuffer(pixelBuf);
+
+//                        Bitmap frame = tv.getBitmap();
+                        if (frame != null) {
+                            int scaleToHeight = data.targetHeight;
+                            int scaleToWidth = data.targetWidth;
+                            frame = getResizedCenterFittedBitmap(frame, scaleToWidth, scaleToHeight);
+                            ExoPlayerThread.this.bitmap = frame;
+                        }
+                        player.stop();
+                        player.release();
+                    }
+
+                }
+            }
+
+            private void getBitmapUsingExoPlayer(Request data) {
+                Uri uri = IOUtils.getTreeLinkedDocFile(context, IOUtils.getTreeUri(data.uri), data.uri).getUri();
+                TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+                DefaultTrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+                SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(context), trackSelector);
+                TextureView tv = new TextureView(context);
+//                OutputSurface os = new OutputSurface(data.targetWidth, data.targetHeight, new Handler(getLooper()));
+//                tv.setSurfaceTexture(os.getSurfaceTexture());
+//                player.setVideoTextureView(tv);
+//                player.setVideoSurface(os.getSurface());
+
+                player.addListener(new PlayerListener(player, data));
+                player.prepare(new ExtractorMediaSource.Factory(new DefaultDataSourceFactory(context, "na")).createMediaSource(uri));
+
+//                player.setPlayWhenReady(true);
+            }
         }
 
         public Bitmap getResizedCenterFittedBitmap(Bitmap bm, int newWidth, int newHeight) {
@@ -219,9 +375,8 @@ public class PicassoFactory {
             bm.recycle();
             return resizedBitmap;
         }
+
     }
-
-
 
     static class ResourceRequestHandler extends RequestHandler {
         private final Context context;

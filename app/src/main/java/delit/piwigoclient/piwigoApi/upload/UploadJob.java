@@ -212,6 +212,10 @@ public class UploadJob implements Parcelable {
         return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED, DELETED, CANCELLED);
     }
 
+    public HashSet<Uri> getFilesWhereUploadedDataHasBeenVerified() {
+        return getFilesWithStatus(VERIFIED);
+    }
+
     public HashSet<Uri> getFilesSuccessfullyUploaded() {
         return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED);
     }
@@ -471,6 +475,7 @@ public class UploadJob implements Parcelable {
     public synchronized ArrayList<Uri> getFilesNotYetUploaded(@NonNull Context context) {
         ArrayList<Uri> filesToUpload = new ArrayList<>(filesForUpload);
         filesToUpload.removeAll(getFilesProcessedToEnd());
+        filesToUpload.removeAll(getFilesWhereUploadedDataHasBeenVerified());
         Iterator<Uri> filesToUploadIterator = filesToUpload.iterator();
         while(filesToUploadIterator.hasNext()) {
             Uri f = filesToUploadIterator.next();
@@ -737,6 +742,11 @@ public class UploadJob implements Parcelable {
 
     public boolean isDeleteFilesAfterUpload() {
         return isDeleteFilesAfterUpload;
+    }
+
+    public boolean isLocalFileNeededForUpload(Uri fileForUploadUri) {
+        Integer status = fileUploadStatus.get(fileForUploadUri);
+        return status == null || UploadJob.UPLOADING == status.intValue() || UploadJob.UPLOADED == status.intValue();
     }
 
     protected static class PartialUploadData implements Parcelable {

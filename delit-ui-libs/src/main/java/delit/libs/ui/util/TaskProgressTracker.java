@@ -61,7 +61,7 @@ public abstract class TaskProgressTracker implements ProgressListener {
                 endProgress = 100;
             }
         }
-        if(startProgress >= endProgress) {
+        if(startProgress > endProgress) {
             throw new IllegalArgumentException("end progress must be more than start progress: " + startProgress + " - " + endProgress);
         }
         this.mainTaskProgressPerPercentOfThisTask = (endProgress - startProgress) / (100 * 100);

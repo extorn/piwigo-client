@@ -288,7 +288,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 }
             }
             if(mainTaskProgressListener.getLastReportedProgress() < 100) {
-                mainTaskProgressListener.withStage(mainTaskProgressListener.getOverallTaskProgress(), 100).onProgress(100);
+                mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(), 100).onProgress(100);
             }
             getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
             return uploadDataItems;

@@ -2,9 +2,11 @@ package delit.piwigoclient.business.video.compression;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.media.MediaCodec;
 import android.media.MediaCodecList;
 import android.media.MediaFormat;
+import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -30,6 +32,7 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -321,6 +324,8 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         // try and render what has been sent so far to the decoder.
         decoderOutputSurface.drawImage();
 
+        //takeCopyOfFrame();
+
         // publish the frame to the encoder surface from the decoder decoderOutputSurface
         encoderInputSurface.setPresentationTime(presentationTimeUs * 1000);
 
@@ -328,6 +333,23 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         encoderInputSurface.swapBuffers();
 
 //        }
+    }
+
+    private Bitmap takeCopyOfFrame() {
+        MediaFormat mediaFormat = mediaMuxerControl.getTrueVideoInputFormat();
+        int width = mediaFormat.getInteger(MediaFormat.KEY_WIDTH);
+        int height = mediaFormat.getInteger(MediaFormat.KEY_HEIGHT);
+        ByteBuffer pixelBuf = ByteBuffer.allocateDirect(width * height * 4);
+        pixelBuf.order(ByteOrder.LITTLE_ENDIAN);
+        GLES20.glReadPixels(0, 0, width, height,
+                GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuf);
+//                        byte[] pixels = pixelBuf.array();
+
+//                        Bitmap frame = BitmapFactory.decodeByteArray(pixels,0,pixels.length);
+        Bitmap frame = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        pixelBuf.rewind();
+        frame.copyPixelsFromBuffer(pixelBuf);
+        return frame;
     }
 
     @Override

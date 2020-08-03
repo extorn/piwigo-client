@@ -1223,10 +1223,15 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             boolean isHaveUploadedCompressedFile = false;
             boolean canUploadFile = false;
-            try {
-                canUploadFile = IOUtils.exists(this, fileForUploadUri);
-            } catch(SecurityException e) {
-                recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUploadUri, e));
+
+            if(!thisUploadJob.isLocalFileNeededForUpload(fileForUploadUri)) {
+                canUploadFile = true;
+            } else {
+                try {
+                    canUploadFile = IOUtils.exists(this, fileForUploadUri);
+                } catch (SecurityException e) {
+                    recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUploadUri, e));
+                }
             }
 
             if (!canUploadFile) {

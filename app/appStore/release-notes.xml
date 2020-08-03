@@ -1,36 +1,32 @@
 <en-GB>
 Bugfix:
-Notifications not showing correctly for downloaded files
+- Sharing of multiple downloaded files fixed
+- Message shown to indicate that remote file URI link has been copied to clipboard
+- Fixed uploads not working due to rushed alteration in 1.4.0.75
+- File selection: Video files not showing thumbnails when path contains a space character
+- Support for creating thumbnails for all videos (including MOV) for all possible android devices
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-Oznámení se pro stažené soubory nezobrazují správně
+
 </cs-CZ>
 <de-DE>
-Fehlerbehebung:
-Benachrichtigungen werden für heruntergeladene Dateien nicht korrekt angezeigt
+
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-Las notificaciones no se muestran correctamente para los archivos descargados
+
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-Les notifications ne s\'affichent pas correctement pour les fichiers téléchargés
+
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-Notifiche non visualizzate correttamente per i file scaricati
+
 </it-IT>
 <ja-JP>
-バグ修正：
-ダウンロードしたファイルの通知が正しく表示されない
+
 </ja-JP>
 <ru-RU>
-Исправлена ошибка:
-Уведомления не отображаются правильно для загруженных файлов
+
 </ru-RU>
 <zh-CN>
-错误修正：
-通知未正确显示下载的文件
+
 </zh-CN>

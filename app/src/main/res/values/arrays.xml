@@ -269,9 +269,11 @@
         -->
         <item>1.4.0.76</item>
         <item>"Bugfix:
-            - TODO Shared downloaded files
+            - Sharing of multiple downloaded files fixed
+            - Message shown to indicate that remote file URI link has been copied to clipboard
             - Fixed uploads not working due to rushed alteration in 1.4.0.75
-            - File selection: Video files not showing thumbnails when path contains a space character"</item>
+            - File selection: Video files not showing thumbnails when path contains a space character
+            - Support for creating thumbnails for all videos (including MOV) for all possible android devices"</item>
         <item>1.4.0.75</item>
         <item>"Bugfix:
             Notifications not showing correctly for downloaded files"</item>

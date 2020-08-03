@@ -117,12 +117,17 @@ public class ExoPlayerCompression {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
-                player.release();
-                player = null;
-                if (mediaMuxerControl.isHasAudio() || mediaMuxerControl.isHasVideo()) {
-                    mediaMuxerControl.safeShutdown();
-                }
-                looper.quitSafely();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        player.release();
+                        player = null;
+                        if (mediaMuxerControl.isHasAudio() || mediaMuxerControl.isHasVideo()) {
+                            mediaMuxerControl.safeShutdown();
+                        }
+                        looper.quitSafely();
+                    }
+                }.start();
             }
             super.onPlayerStateChanged(playWhenReady, playbackState);
         }

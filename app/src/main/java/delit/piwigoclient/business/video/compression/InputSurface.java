@@ -36,7 +36,7 @@ import delit.libs.core.util.Logging;
  * to create an EGL window surface.  Calls to eglSwapBuffers() cause a frame of data to be sent
  * to the video encoder.
  */
-class InputSurface {
+public class InputSurface {
     private static final String TAG = "InputSurface";
     private static final int EGL_RECORDABLE_ANDROID = 0x3142;
     private EGLDisplay mEGLDisplay = EGL14.EGL_NO_DISPLAY;

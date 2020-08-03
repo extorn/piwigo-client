@@ -65,8 +65,13 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         this.context = context;
         this.inputFile = inputFile;
         this.outputFile = outputFile;
-        extractLocationData(inputFile);
-        extractInputVideoFormat(inputFile);
+        try {
+            extractLocationData(inputFile);
+            extractInputVideoFormat(inputFile);
+        } catch(RuntimeException e) {
+            Logging.log(Log.WARN, TAG, "Unable to extract metadata for video uri : " + inputFile);
+            Logging.recordException(e);
+        }
         DocumentFile docFile = IOUtils.getSingleDocFile(context, inputFile);
         inputBytes = docFile.length();
         if(VERBOSE_LOGGING) {

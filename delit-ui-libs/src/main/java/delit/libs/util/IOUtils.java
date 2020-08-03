@@ -593,9 +593,13 @@ public class IOUtils {
             for (int i = 1; i < itemPath.size() && rootDocFile != null; i++) {
                 List<String> rootDocPath = DocumentsContract.findDocumentPath(context.getContentResolver(), rootDocFile.getUri()).getPath();
                 String parentPath = rootDocPath.get(rootDocPath.size() - 1);
-                String filename = itemPath.get(i).substring(parentPath.length());
-                filename = filename.indexOf('/') == 0 ? filename.substring(1) : filename;
-                rootDocFile = rootDocFile.findFile(filename);
+                if(itemPath.get(i).length() > parentPath.length()) {
+                    String filename = itemPath.get(i).substring(parentPath.length());
+                    filename = filename.indexOf('/') == 0 ? filename.substring(1) : filename;
+                    rootDocFile = rootDocFile.findFile(filename);
+                } else {
+                    rootDocFile = null;
+                }
             }
             if (rootDocFile == null) {
                 throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
@@ -949,6 +953,9 @@ public class IOUtils {
             if (f.exists()) {
                 return f.delete();
             }
+        }
+        if("file".equals(uri.getScheme())) {
+            return false;
         }
         return 0 < context.getContentResolver().delete(uri, null, null);
     }

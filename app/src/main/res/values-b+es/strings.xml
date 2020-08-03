@@ -698,5 +698,6 @@ Los lanzamientos son ad-hoc en este momento. Se espera que la frecuencia de lanz
     <string name="progress_copying_imported_files">Copiar archivos importados</string>
     <string name="selected_files">Archivos seleccionados</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Presentación de diapositivas fuera de sincronización con el contenido del álbum cargado. Restablecimiento al inicio.</string>
+    <string name="uri_permission_justification_file_selection"/>
 
 </resources>

@@ -698,5 +698,6 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
     <string name="progress_copying_imported_files">Copie de fichiers importés</string>
     <string name="selected_files">Fichiers sélectionnés</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diaporama désynchronisé avec le contenu de l\'album chargé. Réinitialisation au démarrage.</string>
+    <string name="uri_permission_justification_file_selection"/>
 
 </resources>
