@@ -165,7 +165,12 @@
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.76</item>
-        <item>""</item>
+        <item>"错误修正：
+             -修复了多个下载文件的共享
+             -显示消息，表明远程文件URI链接已复制到剪贴板
+             -修复了由于1.4.0.75中的紧急更改而导致上传无法正常工作的问题
+             -文件选择：当路径包含空格字符时，视频文件不显示缩略图
+             -支持为所有可能的android设备创建所有视频的缩略图（包括MOV）"</item>
         <item>1.4.0.75</item>
         <item>"错误修正：
              通知未正确显示下载的文件"</item>

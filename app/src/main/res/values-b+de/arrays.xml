@@ -165,7 +165,12 @@
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.76</item>
-        <item>""</item>
+        <item>"Fehlerbehebung:
+             - Freigabe mehrerer heruntergeladener Dateien behoben
+             - Die angezeigte Meldung zeigt an, dass der URI-Link der Remote-Datei in die Zwischenablage kopiert wurde
+             - Es wurde behoben, dass Uploads aufgrund von Änderungen in 1.4.0.75 nicht funktionierten
+             - Dateiauswahl: Videodateien zeigen keine Miniaturansichten an, wenn der Pfad ein Leerzeichen enthält
+             - Unterstützung für das Erstellen von Miniaturansichten für alle Videos (einschließlich MOV) für alle möglichen Android-Geräte"</item>
         <item>1.4.0.75</item>
         <item>"Fehlerbehebung:
              Benachrichtigungen werden für heruntergeladene Dateien nicht korrekt angezeigt"</item>

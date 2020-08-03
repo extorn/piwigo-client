@@ -7,26 +7,66 @@ Bugfix:
 - Support for creating thumbnails for all videos (including MOV) for all possible android devices
 </en-GB>
 <cs-CZ>
-
+Oprava chyby:
+- Bylo opraveno sdílení více stažených souborů
+- Zobrazí se zpráva, která označuje, že odkaz URI vzdáleného souboru byl zkopírován do schránky
+- Opravená nahrávání nefungují kvůli rychlé změně v 1.4.0.75
+- Výběr souboru: Video soubory, které nezobrazují miniatury, pokud cesta obsahuje mezeru
+- Podpora vytváření miniatur pro všechna videa (včetně MOV) pro všechna možná zařízení Android
 </cs-CZ>
 <de-DE>
-
+Fehlerbehebung:
+- Freigabe mehrerer heruntergeladener Dateien behoben
+- Die angezeigte Meldung zeigt an, dass der URI-Link der Remote-Datei in die Zwischenablage kopiert wurde
+- Es wurde behoben, dass Uploads aufgrund von Änderungen in 1.4.0.75 nicht funktionierten
+- Dateiauswahl: Videodateien zeigen keine Miniaturansichten an, wenn der Pfad ein Leerzeichen enthält
+- Unterstützung für das Erstellen von Miniaturansichten für alle Videos (einschließlich MOV) für alle möglichen Android-Geräte
 </de-DE>
 <es-ES>
-
+Arreglo del fallo:
+- Reparto de múltiples archivos descargados arreglados
+- Mensaje mostrado para indicar que el enlace URI del archivo remoto se ha copiado al portapapeles
+- Las cargas fijas no funcionan debido a la alteración apresurada en 1.4.0.75
+- Selección de archivo: los archivos de video no muestran miniaturas cuando la ruta contiene un carácter de espacio
+- Soporte para crear miniaturas para todos los videos (incluido MOV) para todos los dispositivos Android posibles
 </es-ES>
 <fr-FR>
-
+Correction d\'un bug:
+- Partage de plusieurs fichiers téléchargés fixe
+- Message affiché pour indiquer que le lien URI du fichier distant a été copié dans le presse-papiers
+- Correction des téléchargements ne fonctionnant pas en raison d\'une modification précipitée dans 1.4.0.75
+- Sélection de fichier: les fichiers vidéo ne montrent pas de vignettes lorsque le chemin contient un espace
+- Prise en charge de la création de vignettes pour toutes les vidéos (y compris MOV) pour tous les apparei..."
 </fr-FR>
 <it-IT>
-
+Risoluzione del problema:
+- Corretta la condivisione di più file scaricati
+- Messaggio visualizzato per indicare che il collegamento URI del file remoto è stato copiato negli Appunti
+- Risolti i caricamenti che non funzionavano a causa dell\'alterata modifica in 1.4.0.75
+- Selezione file: i file video non mostrano le anteprime quando il percorso contiene uno spazio
+- Supporto per la creazione di miniature per tutti i video (incluso MOV) per tutti i possibili dispositivi Android
 </it-IT>
 <ja-JP>
-
+バグ修正：
+-ダウンロードした複数のファイルの共有を修正
+-リモートファイルURIリンクがクリップボードにコピーされたことを示すメッセージが表示されます
+-1.4.0.75での急な変更によりアップロードが機能しない問題を修正
+-ファイル選択：パスにスペース文字が含まれている場合、ビデオファイルにサムネイルが表示されない
+-可能なすべてのAndroidデバイスのすべてのビデオ（MOVを含む）のサムネイルの作成のサポート
 </ja-JP>
 <ru-RU>
-
+Исправлена ошибка:
+- Исправлен обмен несколькими загруженными файлами
+- Сообщение, показывающее, что ссылка на удаленный URI файла была скопирована в буфер обмена.
+- Исправлена ошибка, из-за которой загрузка не работала из-за поспешного изменения версии 1.4.0.75.
+- Выбор файла: видеофайлы не отображаются в виде миниатюр, когда путь содержит пробел
+- Поддержка создания миниатюр для всех видео (включая MOV) для всех возможных устройств Android
 </ru-RU>
 <zh-CN>
-
+错误修正：
+-修复了多个下载文件的共享
+-显示消息，表明远程文件URI链接已复制到剪贴板
+-修复了由于1.4.0.75中的紧急更改而导致上传无法正常工作的问题
+-文件选择：当路径包含空格字符时，视频文件不显示缩略图
+-支持为所有可能的android设备创建所有视频的缩略图（包括MOV）
 </zh-CN>

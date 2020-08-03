@@ -165,7 +165,12 @@
     <string-array name="release_history" translatable="true">
         
         <item>1.4.0.76</item>
-        <item>""</item>
+        <item>"Correction d\'un bug:
+             - Partage de plusieurs fichiers téléchargés fixe
+             - Message affiché pour indiquer que le lien URI du fichier distant a été copié dans le presse-papiers
+             - Correction des téléchargements ne fonctionnant pas en raison d\'une modification précipitée dans 1.4.0.75
+             - Sélection de fichier: les fichiers vidéo ne montrent pas de vignettes lorsque le chemin contient un espace
+             - Prise en charge de la création de vignettes pour toutes les vidéos (y compris MOV) pour tous les appareils Android possibles"</item>
         <item>1.4.0.75</item>
         <item>"Correction d\'un bug:
              Les notifications ne s\'affichent pas correctement pour les fichiers téléchargés"</item>
