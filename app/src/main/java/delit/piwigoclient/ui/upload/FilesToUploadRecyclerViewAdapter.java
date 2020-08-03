@@ -105,7 +105,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 if (uploadDataItem.uploadProgress.uploadProgress <= 0 && uploadDataItem.uploadProgress.compressionProgress > 0) {
                     progressTextResId = R.string.compressing_progress_bar_message;
                 }
-                holder.progressBar.showMultiProgressIndicator(progressTextResId, uploadDataItem.uploadProgress.compressionProgress, uploadDataItem.uploadProgress.uploadProgress);
+                holder.progressBar.showMultiProgressIndicator(progressTextResId, uploadDataItem.uploadProgress.uploadProgress, uploadDataItem.uploadProgress.compressionProgress);
                 if (uploadDataItem.uploadProgress.compressionProgress == 100) {
                     // change the shown file size to be that of the compressed file
                     try {

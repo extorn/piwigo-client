@@ -45,7 +45,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
@@ -207,7 +206,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         DocumentFile documentFile = folderRootsAdapter.getItemValue(pos);
         if(documentFile != null) {
             Uri treeUri = IOUtils.getTreeUri(documentFile.getUri());
-            appSettingsViewModel.releasePersistableUriPermission(requireContext(), treeUri, UriPermissionUse.CONSUMER_ID_FILE_SELECT);
+            appSettingsViewModel.releasePersistableUriPermission(requireContext(), treeUri, UriPermissionUse.CONSUMER_ID_FILE_SELECT, true);
             folderRootsAdapter.remove(folderRootsAdapter.getItem(pos));
             folderRootFolderSpinner.setSelection(0); //  calls listener because it's a definite change.
 //                            DisplayUtils.selectSpinnerItemAndCallItemSelectedListener(folderRootFolderSpinner, 0);
@@ -433,6 +432,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+                //TODO take permissions just for file selection perhaps - is this desirable?
+//                if(IOUtils.getTreeUri(itemUri).equals(itemUri)) {
+                    // take permission for file select too.
+//                    appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), itemUri, takeFlags, getString(R.string.uri_permission_justification_file_selection));
+//                }
                 permissionsMissing = false;
             } catch(SecurityException e) {
                 Logging.log(Log.WARN, TAG, "Unable to take persistable permissions %2$d for URI : %1$s", itemUri, takeFlags, resultData.getFlags());
@@ -771,6 +775,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             if(listViewStates != null) {
                 listViewStates.clear();
             }
+            Context ctx = parent.getContext();
             if (id > 0) {
                 DisplayUtils.postOnUiThread(() -> {
                     DocumentFileArrayAdapter adapter = (DocumentFileArrayAdapter) parent.getAdapter();
@@ -781,18 +786,18 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         DocumentFile currentRoot = getListAdapter().getActiveFolder();
                         try {
                             if (currentRoot == null && getViewPrefs().getInitialFolder() != null) {
-                                DocumentFile file = IOUtils.getTreeLinkedDocFile(view.getContext(), newRoot.getUri(), getViewPrefs().getInitialFolder());
-                                getListAdapter().updateContentAndRoot(view.getContext(), newRoot, file);
+                                DocumentFile file = IOUtils.getTreeLinkedDocFile(ctx, newRoot.getUri(), getViewPrefs().getInitialFolder());
+                                getListAdapter().updateContentAndRoot(ctx, newRoot, file);
                             } else {
-                                getListAdapter().resetRoot(view.getContext(), newRoot);
+                                getListAdapter().resetRoot(ctx, newRoot);
                             }
                         } catch(IllegalStateException e) {
-                            getListAdapter().resetRoot(view.getContext(), newRoot); // just use the current root and ignore the initial folder.
+                            getListAdapter().resetRoot(ctx, newRoot); // just use the current root and ignore the initial folder.
                         }
                         deselectAllItems();
                     } else {
                         getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
-                        getListAdapter().resetRoot(view.getContext(), newRoot);
+                        getListAdapter().resetRoot(ctx, newRoot);
                         deselectAllItems();
                         fileExtFilters.setEnabled(false);
                         retrieveFilesFromSystemPicker(getViewPrefs().getInitialFolder());
@@ -802,7 +807,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 // just show the empty view (if we're not already).
                 if(getListAdapter().getActiveFolder() != null) {
                     getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
-                    getListAdapter().resetRoot(view.getContext(), null);
+                    getListAdapter().resetRoot(ctx, null);
                     deselectAllItems();
                 }
             }

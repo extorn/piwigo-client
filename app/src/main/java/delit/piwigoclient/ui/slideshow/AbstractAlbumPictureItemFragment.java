@@ -388,6 +388,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             if(mgr != null) {
                 ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
                 mgr.setPrimaryClip(clipData);
+                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
             } else {
                 FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
             }

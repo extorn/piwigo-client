@@ -51,6 +51,11 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
+    protected void onLocalUnexpectedError(Context context, BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse response) {
+
+    }
+
+    @Override
     protected void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
         // Do nothing for now.
     }

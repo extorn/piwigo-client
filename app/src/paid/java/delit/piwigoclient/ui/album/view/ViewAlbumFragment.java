@@ -125,7 +125,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                             if(filesUnavailableToDownload.size() > 0) {
                                 getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<>(getUiHelper(), items, selectedPiwigoFilesizeName));
                             } else {
-                                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
                             }
                         }
 
@@ -139,6 +139,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                             if(mgr != null) {
                                 ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
                                 mgr.setPrimaryClip(clipData);
+                                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
                             } else {
                                 FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
                             }

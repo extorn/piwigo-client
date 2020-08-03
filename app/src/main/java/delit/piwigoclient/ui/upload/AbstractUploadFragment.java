@@ -1798,7 +1798,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 }
                 getParent().allowUserUploadConfiguration(job);
                 updateOverallUploadProgress(job.getUploadProgress(context));
+                // This will release permissions for the folder tree upload items loaded from (will get annoying)
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                    getParent().releaseUriPermissions();
+//                }
             }
+
             // ensure the album view is refreshed if visible (to remove temp upload album).
             for (Long albumParent : job.getUploadToCategoryParentage()) {
                 EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
@@ -1819,6 +1824,16 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 message = context.getString(R.string.alert_upload_success);
             }
             getParent().notifyUser(context, titleId, message);
+        }
+
+        @Override
+        protected void onLocalUnexpectedError(Context context, BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse response) {
+            String errorMessage;
+            Logging.log(Log.ERROR, TAG, "Local Upload Error");
+            Logging.recordException(response.getError());
+            errorMessage = response.getError().getMessage();
+            //TODO show the user the full cause perhaps
+            getParent().notifyUser(context, R.string.alert_error, errorMessage);
         }
 
         @Override
@@ -2021,9 +2036,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
+    private void releaseUriPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            appSettingsViewModel.releaseAllPersistableUriPermissions(requireContext(), URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
+        }
+    }
+
     private void releaseUriPermissionsForUploadItem(Uri fileForUploadUri) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
+            appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUri, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
         }
     }
 

@@ -278,7 +278,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         try {
             DocumentFile sourceFile = getJobStateFile(c, false, -1);
-            if (sourceFile != null && sourceFile.exists()) {
+            if (sourceFile.exists()) {
                 loadedJobState = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), sourceFile, UploadJob.class);
             }
             if (loadedJobState != null) {
@@ -545,10 +545,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 thisUploadJob.recordError(new Date(), "PiwigoUploadFileChunk:Failed : " + ((PiwigoUploadFileChunkFailedResponse) response).getFileForUpload().toString());
             }
             if(response instanceof PiwigoUploadFileLocalErrorResponse) {
-                String error = ((PiwigoUploadFileLocalErrorResponse) response).error.getMessage();
+                String error = ((PiwigoUploadFileLocalErrorResponse) response).getError().getMessage();
                 thisUploadJob.recordError(new Date(), "PiwigoUploadFileLocalError: " + error);
+            } else if(response instanceof PiwigoUploadUnexpectedLocalErrorResponse) {
+                // need else as this is extended by the previous exception
+                String error = ((PiwigoUploadUnexpectedLocalErrorResponse) response).getError().getMessage();
+                thisUploadJob.recordError(new Date(), "PiwigoUploadUnexpectedLocalError: " + error);
             }
-
         }
         postNewResponse(thisUploadJob.getJobId(), response);
     }
@@ -719,6 +722,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 thisUploadJob.setFinished();
 
             } catch(RuntimeException e) {
+                recordAndPostNewResponse(thisUploadJob, new PiwigoUploadUnexpectedLocalErrorResponse(getNextMessageId(), e));
                 Logging.log(Log.ERROR,TAG, "An unexpected Runtime error stopped upload job");
                 Logging.recordException(e);
             } finally {
@@ -732,12 +736,18 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 } else {
                     deleteStateFromDisk(this, thisUploadJob, deleteJobConfigFileOnSuccess);
                 }
-
+            }
+            try {
+                runPostJobCleanup(thisUploadJob);
+            } catch(RuntimeException e) {
+                recordAndPostNewResponse(thisUploadJob, new PiwigoUploadUnexpectedLocalErrorResponse(getNextMessageId(), e));
+                Logging.log(Log.ERROR,TAG, "An unexpected Runtime error stopped upload job");
+                Logging.recordException(e);
+            } finally {
                 recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
                 PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(thisUploadJob.getJobId());
                 AbstractPiwigoDirectResponseHandler.unblockMessageId(thisUploadJob.getJobId());
             }
-            runPostJobCleanup(thisUploadJob);
         } finally {
             clearRunningUploadJob();
         }
@@ -1210,8 +1220,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         for (Uri fileForUploadUri : thisUploadJob.getFilesForUpload()) {
 
+
             boolean isHaveUploadedCompressedFile = false;
-            boolean canUploadFile = IOUtils.exists(this, fileForUploadUri);
+            boolean canUploadFile = false;
+            try {
+                canUploadFile = IOUtils.exists(this, fileForUploadUri);
+            } catch(SecurityException e) {
+                recordAndPostNewResponse(thisUploadJob, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUploadUri, e));
+            }
 
             if (!canUploadFile) {
                 thisUploadJob.cancelFileUpload(fileForUploadUri);
@@ -1900,23 +1916,35 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    public static class PiwigoUploadFileLocalErrorResponse extends PiwigoResponseBufferingHandler.BaseResponse implements PiwigoResponseBufferingHandler.ErrorResponse {
+    public static class PiwigoUploadUnexpectedLocalErrorResponse extends PiwigoResponseBufferingHandler.BaseResponse implements PiwigoResponseBufferingHandler.ErrorResponse {
 
         private final Exception error;
+
+        PiwigoUploadUnexpectedLocalErrorResponse(long jobId, Exception error) {
+            super(jobId, true);
+            this.error = error;
+        }
+
+        public Exception getError() {
+            return error;
+        }
+
+        public long getJobId() {
+            return getMessageId();
+        }
+    }
+
+    public static class PiwigoUploadFileLocalErrorResponse extends PiwigoUploadUnexpectedLocalErrorResponse {
+
         private final Uri fileForUpload;
 
         PiwigoUploadFileLocalErrorResponse(long jobId, Uri fileForUpload, Exception error) {
-            super(jobId, true);
-            this.error = error;
+            super(jobId, error);
             this.fileForUpload = fileForUpload;
         }
 
         public Uri getFileForUpload() {
             return fileForUpload;
-        }
-
-        public Exception getError() {
-            return error;
         }
 
         public long getJobId() {

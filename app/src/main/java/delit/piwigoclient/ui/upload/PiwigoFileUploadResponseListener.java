@@ -31,6 +31,9 @@ public abstract class PiwigoFileUploadResponseListener<T> extends BasicPiwigoRes
             onFileCompressionProgressUpdate(context, (BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse) response);
         } else if (response instanceof BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse) {
             onLocalFileError(context, (BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse) response);
+        } else if (response instanceof BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse) {
+            // this is after the localFileError as that extends this exception.
+            onLocalUnexpectedError(context, (BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse) response);
         } else if (response instanceof BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse) {
             onFilesSelectedForUploadAlreadyExistOnServer(context, (BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse) response);
         } else if (response instanceof BasePiwigoUploadService.PiwigoUploadFileChunkFailedResponse) {
@@ -63,6 +66,8 @@ public abstract class PiwigoFileUploadResponseListener<T> extends BasicPiwigoRes
     protected abstract void onLocalFileError(Context context, BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response);
 
     protected abstract void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response);
+
+    protected abstract void onLocalUnexpectedError(Context context, BasePiwigoUploadService.PiwigoUploadUnexpectedLocalErrorResponse response);
 
     protected abstract void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response);
 

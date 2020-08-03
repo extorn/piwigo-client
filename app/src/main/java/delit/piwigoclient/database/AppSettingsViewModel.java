@@ -2,7 +2,6 @@ package delit.piwigoclient.database;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
@@ -18,12 +17,10 @@ import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 
 public class AppSettingsViewModel extends AndroidViewModel {
@@ -38,6 +35,10 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
     public void insert(UriPermissionUse uriPermissionUse) {
         appSettingsRepository.insert(uriPermissionUse);
+    }
+
+    public LiveData<List<UriPermissionUse>> getAllForConsumer(String consumer) {
+        return appSettingsRepository.getAllUriPermissions(consumer);
     }
 
     public LiveData<List<UriPermissionUse>> getAllForUri(Uri uri) {
@@ -75,7 +76,22 @@ public class AppSettingsViewModel extends AndroidViewModel {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId) {
+    public void releaseAllPersistableUriPermissions(@NonNull Context context, String consumerId) {
+        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
+        LiveData<List<UriPermissionUse>> liveData = getAllForConsumer(consumerId);
+        liveData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
+            @Override
+            public void onChanged(List<UriPermissionUse> permissionsHeld) {
+                liveData.removeObserver(this);
+                for(UriPermissionUse use : permissionsHeld) {
+                    releasePersistableUriPermission(context, Uri.parse(use.uri), use.consumerId, false);
+                }
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId, boolean removeTreeToo) {
         LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
         LiveData<List<UriPermissionUse>> liveData = getAllForUri(uri);
         liveData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
@@ -109,19 +125,13 @@ public class AppSettingsViewModel extends AndroidViewModel {
                             Logging.log(Log.WARN, TAG, "unable to release permission");
                             Logging.recordException(e);
                         }
-                    } else {
+                    } else if(removeTreeToo) {
                         // check the tree uri.
                         Uri treeUri = IOUtils.getTreeUri(uri);
-                        uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, new ArrayList<>(Arrays.asList(treeUri)));//DO NOT USE SINGLETON LIST
-                        if(!uriPermsHeld.isEmpty()) {
-                            if(flagsStillUsed == 0) {
-                                flagsToRemove = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
-                            }
-                            try {
-                                context.getContentResolver().releasePersistableUriPermission(uriPermsHeld.get(0), flagsToRemove);
-                            } catch (SecurityException e) {
-                                Logging.log(Log.WARN, TAG, "unable to release permission");
-                                Logging.recordException(e);
+                        if(!treeUri.equals(uri)) {
+                            uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, new ArrayList<>(Arrays.asList(treeUri)));//DO NOT USE SINGLETON LIST
+                            if (!uriPermsHeld.isEmpty()) {
+                                releasePersistableUriPermission(context, treeUri, consumerId, true);
                             }
                         }
                     }

@@ -868,8 +868,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 // pick up responses when the page is visible again.
         isPrimarySlideshowItem = false;
         FragmentUIHelper uiHelper = getUiHelper();
-        uiHelper.setBlockDialogsFromShowing(true);
-        uiHelper.deregisterFromActiveServiceCalls();
+        if(uiHelper != null) {
+            uiHelper.setBlockDialogsFromShowing(true);
+            uiHelper.deregisterFromActiveServiceCalls();
+        }
     }
 
     void onAlbumThumbnailUpdated(AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse response) {

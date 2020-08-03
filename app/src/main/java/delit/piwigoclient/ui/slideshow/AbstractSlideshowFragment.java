@@ -128,7 +128,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 try {
                     galleryItemAdapter.getItemByPagerPosition(viewPager.getCurrentItem());
                 } catch(IndexOutOfBoundsException e) {
-                    viewPager.setCurrentItem(0);
+//                    viewPager.setCurrentItem(0);
                     loadMoreGalleryResources();
                 }
             }

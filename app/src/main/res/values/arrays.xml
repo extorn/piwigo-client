@@ -267,6 +267,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.76</item>
+        <item>"Bugfix:
+            - TODO Shared downloaded files
+            - Fixed uploads not working due to rushed alteration in 1.4.0.75
+            - File selection: Video files not showing thumbnails when path contains a space character"</item>
         <item>1.4.0.75</item>
         <item>"Bugfix:
             Notifications not showing correctly for downloaded files"</item>

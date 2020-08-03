@@ -903,7 +903,7 @@ public class IOUtils {
                 return pfd.getStatSize();
             }
             return -1;
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | SecurityException e) {
             return -1;
         } finally {
             if(pfd != null) {
