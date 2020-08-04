@@ -170,10 +170,12 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         viewHolder.fileForUploadImageView.setOnClickListener(v -> {
             if (!viewHolder.imageLoader.isImageLoaded()) {
+                viewHolder.imageLoader.cancelImageLoadIfRunning();
                 viewHolder.imageLoader.loadNoCache();
             }
         });
         viewHolder.fileForUploadImageView.setOnLongClickListener(v -> {
+            viewHolder.imageLoader.cancelImageLoadIfRunning();
             viewHolder.imageLoader.loadNoCache();
             return true;
         });

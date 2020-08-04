@@ -210,6 +210,7 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
         public void onClick(View v) {
             if (v == getViewHolder().mImageView && !getViewHolder().imageLoader.isImageLoaded() && getViewHolder().imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
                 manualRetries++;
+                getViewHolder().imageLoader.cancelImageLoadIfRunning();
                 getViewHolder().imageLoader.loadNoCache();
             } else {
                 if(getViewHolder().getItem() != null) {

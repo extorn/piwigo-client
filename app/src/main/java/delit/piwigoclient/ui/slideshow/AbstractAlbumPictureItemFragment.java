@@ -111,6 +111,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         imageView.setOnClickListener(v -> {
             if (loader != null && !loader.isImageLoaded()) {
+                loader.cancelImageLoadIfRunning();
                 loader.loadNoCache();
             }
         });
