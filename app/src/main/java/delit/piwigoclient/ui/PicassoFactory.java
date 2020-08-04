@@ -48,7 +48,7 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.capture.ExoPlayerFrameCapture;
 import delit.piwigoclient.business.video.capture.FrameHandler;
-import delit.piwigoclient.business.video.compression.OutputSurface;
+import delit.piwigoclient.business.video.opengl.OutputSurface;
 
 import static android.media.MediaMetadataRetriever.OPTION_CLOSEST_SYNC;
 

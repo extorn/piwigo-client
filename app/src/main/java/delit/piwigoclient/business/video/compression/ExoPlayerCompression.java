@@ -95,12 +95,14 @@ public class ExoPlayerCompression {
         private final Looper looper;
         private final MediaMuxerControl mediaMuxerControl;
         private SimpleExoPlayer player;
+        private boolean exiting;
 
         public PlayerMonitor(SimpleExoPlayer player, MediaMuxerControl mediaMuxerControl, CompressionListener listenerWrapper, Looper looper) {
             this.mediaMuxerControl = mediaMuxerControl;
             this.listenerWrapper = listenerWrapper;
             this.player = player;
             this.looper = looper;
+            exiting = false;
         }
 
         @Override
@@ -116,7 +118,9 @@ public class ExoPlayerCompression {
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
+
+            if (!exiting && (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE)) {
+                exiting = true;
                 new Thread() {
                     @Override
                     public void run() {

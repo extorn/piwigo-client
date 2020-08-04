@@ -815,11 +815,17 @@ public class IOUtils {
         DocumentFile match = null;
         for(UriPermission perm : persistedPermissions) {
             try {
-                DocumentFile item = IOUtils.getTreeLinkedDocFile(context, perm.getUri(), initialFolder);
-                if(match == null || getTreeDepth(item) < getTreeDepth(match)) {
-                    match = item;
+                DocumentFile file = DocumentFile.fromTreeUri(context, perm.getUri());
+//                DocumentFile file = DocumentFile.fromSingleUri(context, perm.getUri());
+                if(file != null && file.isDirectory()) {
+                    DocumentFile item = IOUtils.getTreeLinkedDocFile(context, perm.getUri(), initialFolder);
+                    if (match == null || getTreeDepth(item) < getTreeDepth(match)) {
+                        match = item;
+                    }
                 }
-            } catch(IllegalStateException e) {
+            } catch(IllegalStateException | IllegalArgumentException e) {
+                // Illegal argument is when the item is a file not folder
+                // Illegal state is thrown in getTreeLinkedDocFile
                 //ignore - this isn't the right root. We'll try the next.
             }
         }

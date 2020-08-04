@@ -173,6 +173,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 viewHolder.imageLoader.loadNoCache();
             }
         });
+        viewHolder.fileForUploadImageView.setOnLongClickListener(v -> {
+            viewHolder.imageLoader.loadNoCache();
+            return true;
+        });
 
         viewHolder.deleteButton.setOnClickListener(v -> onDeleteButtonClicked(viewHolder, false));
         viewHolder.deleteButton.setOnLongClickListener(v -> {

@@ -703,6 +703,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
             iconView = itemView.findViewById(delit.libs.R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("folder item thumb");
+            iconView.setOnLongClickListener(v -> {
+                iconViewLoader.loadNoCache();
+                return true;
+            });
             iconViewLoader = new ResizingPicassoLoader<>(getIconView(), this, 0, 0);
         }
 

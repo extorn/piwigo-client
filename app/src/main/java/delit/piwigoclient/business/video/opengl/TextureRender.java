@@ -15,25 +15,33 @@
  *
  * https://android.googlesource.com/platform/cts/+/jb-mr2-release/tests/tests/media/src/android/media/cts/
  */
-package delit.piwigoclient.business.video.compression;
+package delit.piwigoclient.business.video.opengl;
 
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.util.Size;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
 
 /**
  * Code for rendering a texture onto a surface using OpenGL ES 2.0.
  */
-class TextureRender {
+public class TextureRender {
     private static final String TAG = "TextureRender";
+    public static final int FLIP_TYPE_NONE = 0;
+    public static final int FLIP_TYPE_HORIZONTAL = 1;
+    public static final int FLIP_TYPE_VERTICAL = 2;
+    public static final int FLIP_TYPE_BOTH = FLIP_TYPE_HORIZONTAL | FLIP_TYPE_VERTICAL;
+    private static final int GL_MATRIX_SIZE = 16;
     private static final int FLOAT_SIZE_BYTES = 4;
     private static final int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
     private static final int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
@@ -56,29 +64,80 @@ class TextureRender {
                     "void main() {\n" +
                     "  gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
                     "}\n";
-    private final float[] mTriangleVerticesData = {
+    // Sampling is mirrored across the horizontal axis
+    private static final float[] sHorizontalFlipTriangleVertices = {
+            // X, Y, Z, U, V
+            -1.0f, -1.0f, 0, 1.f, 0.f,
+            1.0f, -1.0f, 0, 0.f, 0.f,
+            -1.0f,  1.0f, 0, 1.f, 1.f,
+            1.0f,  1.0f, 0, 0.f, 1.f,
+    };
+
+    // Sampling is mirrored across the vertical axis
+    private static final float[] sVerticalFlipTriangleVertices = {
+            // X, Y, Z, U, V
+            -1.0f, -1.0f, 0, 0.f, 1.f,
+            1.0f, -1.0f, 0, 1.f, 1.f,
+            -1.0f,  1.0f, 0, 0.f, 0.f,
+            1.0f,  1.0f, 0, 1.f, 0.f,
+    };
+
+    // Sampling is mirrored across the both axes
+    private static final float[] sBothFlipTriangleVertices = {
+            // X, Y, Z, U, V
+            -1.0f, -1.0f, 0, 1.f, 1.f,
+            1.0f, -1.0f, 0, 0.f, 1.f,
+            -1.0f,  1.0f, 0, 1.f, 0.f,
+            1.0f,  1.0f, 0, 0.f, 0.f,
+    };
+
+    // Sampling is 1:1 for a straight copy for the back camera
+    private static final float[] sRegularTriangleVertices = {
             // X, Y, Z, U, V
             -1.0f, -1.0f, 0, 0.f, 0.f,
             1.0f, -1.0f, 0, 1.f, 0.f,
-            -1.0f, 1.0f, 0, 0.f, 1.f,
-            1.0f, 1.0f, 0, 1.f, 1.f,
+            -1.0f,  1.0f, 0, 0.f, 1.f,
+            1.0f,  1.0f, 0, 1.f, 1.f,
     };
-    private FloatBuffer mTriangleVertices;
-    private float[] mMVPMatrix = new float[16];
-    private float[] mSTMatrix = new float[16];
+
+    private float[] mMVPMatrix = new float[GL_MATRIX_SIZE];
+    private float[] mSTMatrix = new float[GL_MATRIX_SIZE];
     private int mProgram;
     private int mTextureID = -12345;
     private int muMVPMatrixHandle;
     private int muSTMatrixHandle;
     private int maPositionHandle;
     private int maTextureHandle;
+    private FloatBuffer mRegularTriangleVertices;
+    private FloatBuffer mHorizontalFlipTriangleVertices;
+    private FloatBuffer mVerticalFlipTriangleVertices;
+    private FloatBuffer mBothFlipTriangleVertices;
+
 
     public TextureRender() {
-        mTriangleVertices = ByteBuffer.allocateDirect(
-                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
-                .order(ByteOrder.nativeOrder()).asFloatBuffer();
-        mTriangleVertices.put(mTriangleVerticesData).position(0);
+        initTriangleVertices();
         Matrix.setIdentityM(mSTMatrix, 0);
+    }
+    
+    private void initTriangleVertices() {
+        mRegularTriangleVertices = ByteBuffer.allocateDirect(sRegularTriangleVertices.length *
+                FLOAT_SIZE_BYTES).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mRegularTriangleVertices.put(sRegularTriangleVertices).position(0);
+
+        mHorizontalFlipTriangleVertices = ByteBuffer.allocateDirect(
+                sHorizontalFlipTriangleVertices.length * FLOAT_SIZE_BYTES).
+                order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mHorizontalFlipTriangleVertices.put(sHorizontalFlipTriangleVertices).position(0);
+
+        mVerticalFlipTriangleVertices = ByteBuffer.allocateDirect(
+                sVerticalFlipTriangleVertices.length * FLOAT_SIZE_BYTES).
+                order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mVerticalFlipTriangleVertices.put(sVerticalFlipTriangleVertices).position(0);
+
+        mBothFlipTriangleVertices = ByteBuffer.allocateDirect(
+                sBothFlipTriangleVertices.length * FLOAT_SIZE_BYTES).
+                order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mBothFlipTriangleVertices.put(sBothFlipTriangleVertices).position(0);
     }
 
     public int getTextureId() {
@@ -86,6 +145,10 @@ class TextureRender {
     }
 
     public void drawFrame(SurfaceTexture st) {
+        drawFrame(st, FLIP_TYPE_NONE, 0);
+    }
+
+    public void drawFrame(SurfaceTexture st, int flipType, int rotateAngle) {
         checkGlError("onDrawFrame start");
         st.getTransformMatrix(mSTMatrix);
         GLES20.glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -94,24 +157,65 @@ class TextureRender {
         checkGlError("glUseProgram");
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, mTextureID);
-        mTriangleVertices.position(TRIANGLE_VERTICES_DATA_POS_OFFSET);
+
+        FloatBuffer triangleVertices;
+        switch(flipType) {
+            case FLIP_TYPE_HORIZONTAL:
+                triangleVertices = mHorizontalFlipTriangleVertices;
+                break;
+            case FLIP_TYPE_VERTICAL:
+                triangleVertices = mVerticalFlipTriangleVertices;
+                break;
+            case FLIP_TYPE_BOTH:
+                triangleVertices = mBothFlipTriangleVertices;
+                break;
+            case FLIP_TYPE_NONE:
+            default:
+                triangleVertices = mRegularTriangleVertices;
+                break;
+        }
+        triangleVertices.position(TRIANGLE_VERTICES_DATA_POS_OFFSET);
+
         GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, false,
-                TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
+                TRIANGLE_VERTICES_DATA_STRIDE_BYTES, triangleVertices);
         checkGlError("glVertexAttribPointer maPosition");
         GLES20.glEnableVertexAttribArray(maPositionHandle);
         checkGlError("glEnableVertexAttribArray maPositionHandle");
-        mTriangleVertices.position(TRIANGLE_VERTICES_DATA_UV_OFFSET);
+        triangleVertices.position(TRIANGLE_VERTICES_DATA_UV_OFFSET);
         GLES20.glVertexAttribPointer(maTextureHandle, 2, GLES20.GL_FLOAT, false,
-                TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
+                TRIANGLE_VERTICES_DATA_STRIDE_BYTES, triangleVertices);
         checkGlError("glVertexAttribPointer maTextureHandle");
         GLES20.glEnableVertexAttribArray(maTextureHandle);
         checkGlError("glEnableVertexAttribArray maTextureHandle");
         Matrix.setIdentityM(mMVPMatrix, 0);
+        if(rotateAngle != 0) {
+            Matrix.rotateM(mMVPMatrix, 0, rotateAngle, 0f, 0f, 1f);
+        }
         GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
         GLES20.glUniformMatrix4fv(muSTMatrixHandle, 1, false, mSTMatrix, 0);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         checkGlError("glDrawArrays");
         GLES20.glFinish();
+    }
+
+    private void checkGlDrawError(String msg) throws RuntimeException {
+        int error;
+        boolean surfaceAbandoned = false;
+        boolean glError = false;
+        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+            if (error == GLES20.GL_OUT_OF_MEMORY) {
+                surfaceAbandoned = true;
+            } else {
+                glError = true;
+            }
+        }
+        if (glError) {
+            throw new IllegalStateException(
+                    msg + ": GLES20 error: 0x" + Integer.toHexString(error));
+        }
+        if (surfaceAbandoned) {
+            throw new RuntimeException();
+        }
     }
 
     /**

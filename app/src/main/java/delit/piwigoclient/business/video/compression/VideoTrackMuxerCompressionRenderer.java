@@ -39,6 +39,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
+import delit.piwigoclient.business.video.opengl.InputSurface;
+import delit.piwigoclient.business.video.opengl.OutputSurface;
+
 //import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 
 /**

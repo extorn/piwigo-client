@@ -16,18 +16,23 @@
 // from: https://android.googlesource.com/platform/cts/+/lollipop-release/tests/tests/media/src/android/media/cts/OutputSurface.java
 // blob: fc8ad9cd390c5c311f015d3b7c1359e4d295bc52
 // modified: change TIMEOUT_MS from 500 to 10000
-package delit.piwigoclient.business.video.compression;
+package delit.piwigoclient.business.video.opengl;
 
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
 import android.opengl.EGLSurface;
+import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Surface;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Holds state associated with a Surface used for MediaCodec decoder output.
@@ -67,6 +72,18 @@ public class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         eglSetup(width, height);
         makeCurrent();
         setup(h);
+    }
+
+    public int getSurfaceWidth() {
+        int[] vArr = new int[1];
+        EGL14.eglQuerySurface(mEGLDisplay, mEGLSurface, EGL14.EGL_WIDTH, vArr, 0);
+        return vArr[0];
+    }
+
+    public int getSurfaceHeight() {
+        int[] vArr = new int[1];
+        EGL14.eglQuerySurface(mEGLDisplay, mEGLSurface, EGL14.EGL_HEIGHT, vArr, 0);
+        return vArr[0];
     }
 
     /**
@@ -275,6 +292,15 @@ public class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     public void drawImage() {
         mTextureRender.drawFrame(mSurfaceTexture);
     }
+
+    /**
+     * Draws the data from SurfaceTexture onto the current EGL surface.
+     */
+    public void drawImage(int flipType, int rotationDegrees) {
+        mTextureRender.drawFrame(mSurfaceTexture, flipType, rotationDegrees);
+    }
+
+
     @Override
     public void onFrameAvailable(SurfaceTexture st) {
         if (VERBOSE) Log.d(TAG, "new frame available");
@@ -300,5 +326,19 @@ public class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         synchronized (mFrameSyncObject) {
             return mFrameAvailable;
         }
+    }
+
+    public Bitmap createBitmap() {
+        int width = getSurfaceWidth();
+        int height = getSurfaceHeight();
+        ByteBuffer pixelBuf = ByteBuffer.allocateDirect(width * height * 4);
+        pixelBuf.order(ByteOrder.LITTLE_ENDIAN);
+        GLES20.glReadPixels(0, 0, width, height,
+                GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuf);
+        Bitmap frame = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        pixelBuf.rewind();
+        frame.copyPixelsFromBuffer(pixelBuf);
+        return frame;
     }
 }

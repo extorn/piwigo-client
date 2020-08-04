@@ -3,10 +3,8 @@ package delit.piwigoclient.business.video.capture;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
-import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -18,20 +16,16 @@ import androidx.annotation.RequiresApi;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
-import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
-import delit.piwigoclient.business.video.compression.OutputSurface;
+import delit.piwigoclient.business.video.opengl.OutputSurface;
+import delit.piwigoclient.business.video.opengl.TextureRender;
 
 //import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 
@@ -162,32 +156,14 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
         }
 
         // try and render what has been sent so far to the decoder.
-        decoderOutputSurface.drawImage();
+        decoderOutputSurface.drawImage(TextureRender.FLIP_TYPE_VERTICAL, pendingRotationDegrees); // flip vertical because glReadPixels reads top to bottom.
         if(!frameListener.isCaptureComplete()) {
             frameListener.onFrameReady(presentationTimeUs, takeCopyOfFrame());
         }
     }
 
     private Bitmap takeCopyOfFrame() {
-        int width = mediaFormat.getInteger(MediaFormat.KEY_WIDTH);
-        int height = mediaFormat.getInteger(MediaFormat.KEY_HEIGHT);
-        ByteBuffer pixelBuf = ByteBuffer.allocateDirect(width * height * 4);
-        pixelBuf.order(ByteOrder.LITTLE_ENDIAN);
-        GLES20.glReadPixels(0, 0, width, height,
-                GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixelBuf);
-        //TRANSFORM BY pendingRotationDegrees
-        Bitmap frame = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        pixelBuf.rewind();
-        frame.copyPixelsFromBuffer(pixelBuf);
-        if(pendingRotationDegrees != 0) {
-            Matrix matrix = new Matrix();
-            matrix.postRotate(pendingRotationDegrees);
-            Bitmap rotatedBitmap = Bitmap.createBitmap(frame, 0, 0, frame.getWidth(), frame.getHeight(), matrix, true);
-            frame.recycle();
-            frame = rotatedBitmap;
-        }
-        return frame;
+        return decoderOutputSurface.createBitmap();
     }
 
     @Override
@@ -229,17 +205,20 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
         this.mediaFormat = inputMediaFormat;
 
         if (inputMediaFormat.containsKey(KEY_ROTATION)) {
-            //pendingRotationDegrees = inputMediaFormat.getInteger(KEY_ROTATION);
-
-            if (Util.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            pendingRotationDegrees = inputMediaFormat.getInteger(KEY_ROTATION);
+            if(pendingRotationDegrees != 0) {
+                //don't rotate the image.
+                inputMediaFormat.setInteger(KEY_ROTATION, 0);
+            }
+            /*if (Util.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 // On API level 21 and above the decoder applies the rotation when rendering to the surface - prevent this auto-rotation.
                 if (inputMediaFormat.containsKey(KEY_ROTATION)) {
                     boolean isLandscape = inputMediaFormat.getInteger(MediaFormat.KEY_WIDTH) > inputMediaFormat.getInteger(MediaFormat.KEY_HEIGHT);
                     if(inputMediaFormat.getInteger(KEY_ROTATION) == 0 && isLandscape) {
-                        pendingRotationDegrees = 90;
+                        inputMediaFormat.setInteger(KEY_ROTATION, 0);
                     }
                 }
-            }
+            }*/
         }
 
         return inputMediaFormat;
@@ -248,16 +227,7 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
     @Override
     protected MediaCodecInfo getDecoderInfo(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
         MediaCodecInfo info = super.getDecoderInfo(mediaCodecSelector, format, requiresSecureDecoder);
-        if(decoderOutputSurface == null) {
-            decoderOutputSurface = new OutputSurface(format.width, format.height, new Handler(ht.getLooper()));
-            // ensure the decoded data gets written to this surface
-            try {
-                handleMessage(C.MSG_SET_SURFACE, decoderOutputSurface.getSurface());
-            } catch (ExoPlaybackException e) {
-                // this shouldn't ever occur as its an internal well used library call
-                throw new RuntimeException("Error setting decoder output surface", e);
-            }
-        }
+//        initialiseOutputSurface(format.width, format.height);
         return info;
     }
 
@@ -270,5 +240,24 @@ public class VideoFrameCaptureRenderer extends MediaCodecVideoRenderer {
     protected void onCodecInitialized(String name, long initializedTimestampMs, long initializationDurationMs) {
         codecNeedsInit = false;
         super.onCodecInitialized(name, initializedTimestampMs, initializationDurationMs);
+        initialiseOutputSurface(mediaFormat.getInteger(MediaFormat.KEY_WIDTH), mediaFormat.getInteger(MediaFormat.KEY_HEIGHT));
+    }
+
+    private void initialiseOutputSurface(int width, int height) {
+        if(decoderOutputSurface == null) {
+            if((pendingRotationDegrees / 90) % 2 != 0) {
+                decoderOutputSurface = new OutputSurface(height, width, new Handler(ht.getLooper()));
+            } else {
+                decoderOutputSurface = new OutputSurface(width, height, new Handler(ht.getLooper()));
+            }
+//            decoderOutputSurface = new OutputSurface(width, height, new Handler(ht.getLooper()));
+            // ensure the decoded data gets written to this surface
+            try {
+                handleMessage(C.MSG_SET_SURFACE, decoderOutputSurface.getSurface());
+            } catch (ExoPlaybackException e) {
+                // this shouldn't ever occur as its an internal well used library call
+                throw new RuntimeException("Error setting decoder output surface", e);
+            }
+        }
     }
 }

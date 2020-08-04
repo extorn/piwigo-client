@@ -125,7 +125,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final String SAVED_STATE_UPLOAD_TO_ALBUM = "uploadToAlbum";
     private static final String SAVED_STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID = "externallyTriggeredSelectFilesActionId";
-    private static final boolean ENABLE_COMPRESSION_BUTTON = false;
+    private static final boolean ENABLE_COMPRESSION_BUTTON = true;
     private static final int TAB_IDX_SETTINGS = 1;
     private static final int TAB_IDX_FILES = 0;
     private static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
@@ -622,12 +622,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             int i = 0;
             DocumentFile inputDocFile = IOUtils.getSingleDocFile(requireContext(), fileForCompression);
             String compressedFileExt = compressionSettings.getOutputFileExt();
-            String outputFilenameSuffix = IOUtils.getFileNameWithoutExt(inputDocFile.getName()) + '.' + compressedFileExt;
+            String outputFilenameSuffixWithoutExt = IOUtils.getFileNameWithoutExt(inputDocFile.getName());
+            String outputFilenameSuffix = outputFilenameSuffixWithoutExt + '.' + compressedFileExt;
+
             do {
                 i++;
                 outputVideo = moviesFolder.findFile("compressed_" + i + outputFilenameSuffix);
                 if(outputVideo == null) {
-                    outputVideo = moviesFolder.createFile(compressionSettings.getOutputFileMimeType(null), "compressed_" + i + outputFilenameSuffix);
+                    outputVideo = moviesFolder.createFile(compressionSettings.getOutputFileMimeType(null), "compressed_" + i + outputFilenameSuffixWithoutExt);
                     break;
                 }
             } while (true);

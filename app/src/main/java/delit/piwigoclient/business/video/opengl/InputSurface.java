@@ -15,7 +15,7 @@
  */
 // from: https://android.googlesource.com/platform/cts/+/lollipop-release/tests/tests/media/src/android/media/cts/InputSurface.java
 // blob: 157ed88d143229e4edb6889daf18fb73aa2fc5a5
-package delit.piwigoclient.business.video.compression;
+package delit.piwigoclient.business.video.opengl;
 
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;

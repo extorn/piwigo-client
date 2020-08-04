@@ -17,12 +17,15 @@ import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -118,12 +121,14 @@ public class ExoPlayerFrameCapture {
         private final Looper looper;
         private SimpleExoPlayer player;
         private Uri inputFile;
+        private boolean exiting;
 
         public PlayerMonitor(SimpleExoPlayer player, FrameHandler frameHandler, Looper looper, Uri inputFile) {
             this.frameHandler = frameHandler;
             this.player = player;
             this.looper = looper;
             this.inputFile = inputFile;
+            this.exiting = false;
         }
 
         @Override
@@ -133,7 +138,8 @@ public class ExoPlayerFrameCapture {
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            if(frameHandler.isCaptureComplete() || playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
+            if (!exiting && (frameHandler.isCaptureComplete() || playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE)) {
+                exiting = true;
                 new Thread() {
                     @Override
                     public void run() {
@@ -142,12 +148,21 @@ public class ExoPlayerFrameCapture {
                         }
                         player.stop(true);
                         player.release();
-                        player = null;
                         looper.quitSafely();
                     }
                 }.start();
             }
             super.onPlayerStateChanged(playWhenReady, playbackState);
+        }
+
+        @Override
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            super.onTracksChanged(trackGroups, trackSelections);
+        }
+
+        @Override
+        public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+            super.onTimelineChanged(timeline, manifest, reason);
         }
     }
 

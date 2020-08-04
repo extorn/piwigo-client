@@ -16,6 +16,7 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.util.UriUtils;
 
 
 public class DebugCompressionListener implements ExoPlayerCompression.CompressionListener {
@@ -68,7 +69,10 @@ public class DebugCompressionListener implements ExoPlayerCompression.Compressio
                 linkedView.setEnabled(true);
                 AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
                 fragment.getFilesForUploadViewAdapter().updateCompressionProgress(inputFile, outputFile, 0);
-                IOUtils.addFileToMediaStore(uiHelper.getAppContext(), outputFile);
+                Uri compressedFileUri = IOUtils.addFileToMediaStore(uiHelper.getAppContext(), outputFile);
+                String filename = IOUtils.getFilename(uiHelper.getAppContext(), outputFile);
+                String mimeType = IOUtils.getMimeType(uiHelper.getAppContext(), outputFile);
+                fragment.getFilesForUploadViewAdapter().add(new FilesToUploadRecyclerViewAdapter.UploadDataItem(outputFile, filename, mimeType));
             });
         }
 
