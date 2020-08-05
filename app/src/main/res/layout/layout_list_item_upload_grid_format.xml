@@ -5,7 +5,7 @@
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:layout_width="140dp"
+    tools:layout_width="180dp"
     >
 <!--android:background="?attr/colorAlbumItemBackground"-->
     <androidx.appcompat.widget.AppCompatImageView
@@ -17,6 +17,21 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_file_black_24dp"
         tools:tint="@color/app_color_surface"/>
+
+    <ImageView
+        android:id="@+id/type_indicator"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".25"
+        app:layout_constraintHeight_default="percent"
+        android:alpha="0.9"
+        android:padding="2dp"
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/barrier_top_of_footer"
+        app:layout_constraintEnd_toEndOf="@id/file_for_upload_img"
+        tools:src="@drawable/ic_file_black_24dp"/>
 
 
     <com.google.android.material.textview.MaterialTextView
@@ -86,5 +101,12 @@
         tools:progress="50"
         tools:secondaryProgress="80"
         tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_top_of_footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="file_for_upload_txt, file_for_upload_progress" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

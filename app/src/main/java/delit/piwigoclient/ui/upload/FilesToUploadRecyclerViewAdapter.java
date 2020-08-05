@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.material.button.MaterialButton;
 
 import androidx.annotation.NonNull;
@@ -143,8 +145,20 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             holder.imageLoader.setUriToLoad(item.uri.toString());
             holder.itemHeading.setVisibility(View.VISIBLE);
             holder.imageLoader.load();
+
+            holder.fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
+            if(MimeTypes.isVideo(item.getMimeType())) {
+                holder.fileForUploadMimeTypeImageView.setImageDrawable(holder.mView.getResources().getDrawable(R.drawable.ic_movie_filter_black_24px));
+                holder.fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
+            } else if(MimeTypes.isAudio(item.getMimeType())) {
+                holder.fileForUploadMimeTypeImageView.setImageDrawable(holder.mView.getResources().getDrawable(R.drawable.ic_audiotrack_black_24dp));
+                holder.fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.fileForUploadMimeTypeImageView.setVisibility(View.GONE);
+            }
         } else {
             // theoretically this shouldn't happen I think
+            holder.fileForUploadMimeTypeImageView.setVisibility(View.GONE);
             holder.imageLoader.setFileToLoad(null);
             holder.itemHeading.setVisibility(View.INVISIBLE);
             Logging.log(Log.ERROR, TAG, "file to upload cannot be rendered as is null");
@@ -574,6 +588,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         private final MaterialButton deleteButton;
         private final AppCompatImageView fileForUploadImageView;
         private final ResizingPicassoLoader imageLoader;
+        private final ImageView fileForUploadMimeTypeImageView;
         // data!
         private UploadDataItem mItem;
 
@@ -589,6 +604,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 throw new IllegalStateException("Context is not available in the view at this time");
             }
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
+            fileForUploadMimeTypeImageView = itemView.findViewById(R.id.type_indicator);
 
             imageLoader = new ResizingPicassoLoader<>(fileForUploadImageView, this, 0, 0);
             imageLoader.setUsePlaceholderIfNothingToLoad(true);
