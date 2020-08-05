@@ -7,7 +7,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 
-public class RoundedTransformation implements
+public class RoundedTransformation /*
+NOTE: this class works perfectly. but i don't want a picasso reference in this library at the moment
+implements
         com.squareup.picasso.Transformation {
     private final int radius;
     private final int margin; // dp
@@ -42,5 +44,5 @@ public class RoundedTransformation implements
     @Override
     public String key() {
         return "rounded";
-    }
+    }*/{
 }

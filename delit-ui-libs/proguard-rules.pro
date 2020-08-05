@@ -8,7 +8,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 -renamesourcefileattribute SourceFile
-
 -keep class delit.libs.ui.view.SlidingTabLayout$TabColorizer { public *; }
 
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
