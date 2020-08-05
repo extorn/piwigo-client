@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.google.android.exoplayer2.util.MimeTypes;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -667,6 +669,17 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 getIconViewLoader().setResourceToLoad(R.drawable.ic_file_gray_24dp);
             }
             getIconViewLoader().load();
+
+            ImageView mimeIndicator = getMimeTypeIndicatorView();
+            if(MimeTypes.isVideo(newItem.getMime())) {
+                mimeIndicator.setImageDrawable(itemView.getResources().getDrawable(R.drawable.ic_movie_filter_black_24px));
+                mimeIndicator.setVisibility(View.VISIBLE);
+            } else if(MimeTypes.isAudio(newItem.getMime())) {
+                mimeIndicator.setImageDrawable(itemView.getResources().getDrawable(R.drawable.ic_audiotrack_black_24dp));
+                mimeIndicator.setVisibility(View.VISIBLE);
+            } else {
+                mimeIndicator.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -680,6 +693,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     protected abstract static class FolderItemViewHolder extends BaseViewHolder<FolderItemViewAdapterPreferences, FolderItem> implements PicassoLoader.PictureItemImageLoaderListener {
 
         private ImageView iconView;
+        private ImageView typeIndicatorView;
         private ResizingPicassoLoader<ImageView> iconViewLoader;
 
         public FolderItemViewHolder(View view) {
@@ -694,13 +708,17 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             return iconViewLoader;
         }
 
+        public ImageView getMimeTypeIndicatorView() {
+            return typeIndicatorView;
+        }
+
         public abstract void fillValues(FolderItem newItem, boolean allowItemDeletion);
 
         @Override
         public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {
 
             super.cacheViewFieldsAndConfigure(adapterPrefs);
-
+            typeIndicatorView = itemView.findViewById(delit.libs.R.id.type_indicator);
             iconView = itemView.findViewById(delit.libs.R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("folder item thumb");
             iconView.setOnLongClickListener(v -> {

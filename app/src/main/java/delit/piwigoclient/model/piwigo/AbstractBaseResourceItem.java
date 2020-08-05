@@ -3,8 +3,7 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 
@@ -282,6 +281,15 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             uri = getFileUrl(getFullSizeFile().getName());
         }
         return uri;
+    }
+
+    public String guessMimeTypeFromUri() {
+        ResourceFile file = getFullSizeFile();
+        if(file != null) {
+            String fileExt = MimeTypeMap.getFileExtensionFromUrl(file.getUrl());
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+        }
+        return null;
     }
 
     public static class ResourceFile implements Comparable<ResourceFile>, Parcelable {

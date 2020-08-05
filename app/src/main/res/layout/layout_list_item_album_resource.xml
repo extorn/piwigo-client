@@ -34,8 +34,11 @@
 
     <ImageView
         android:id="@+id/type_indicator"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".3"
+        app:layout_constraintHeight_default="percent"
         android:alpha="0.9"
         android:padding="2dp"
         android:visibility="visible"

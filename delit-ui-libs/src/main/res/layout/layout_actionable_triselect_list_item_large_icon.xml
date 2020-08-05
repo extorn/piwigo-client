@@ -19,6 +19,21 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/ic_file_black_24dp" />
 
+    <ImageView
+        android:id="@+id/type_indicator"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent=".3"
+        app:layout_constraintHeight_default="percent"
+        android:alpha="0.9"
+        android:padding="2dp"
+        tools:visibility="visible"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/list_item_name"
+        app:layout_constraintEnd_toEndOf="@id/list_item_icon_thumbnail"
+        tools:src="@drawable/ic_file_black_24dp"/>
+
 
     <delit.libs.ui.view.button.MaterialCheckboxTriState
         android:id="@+id/list_item_checked"

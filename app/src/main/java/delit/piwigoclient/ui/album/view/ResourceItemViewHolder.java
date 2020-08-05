@@ -5,6 +5,8 @@ import android.view.View;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.google.android.exoplayer2.util.MimeTypes;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -46,8 +48,13 @@ public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
 
     private void setTypeIndicatorStatus(GalleryItem newItem) {
         if (newItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
+            String itemMime = ((ResourceItem)newItem).guessMimeTypeFromUri();
             PicassoLoader picasso = new PicassoLoader<>(mTypeIndicatorImg);
-            picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
+            if(itemMime == null || MimeTypes.isVideo(itemMime)) {
+                picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
+            } else if(MimeTypes.isAudio(itemMime)) {
+                picasso.setResourceToLoad(R.drawable.ic_audiotrack_black_24dp);
+            }
             picasso.load();
             mTypeIndicatorImg.setVisibility(View.VISIBLE);
         } else {
