@@ -267,6 +267,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.77</item>
+        <item>"Bugfix:
+                - Corrected rotation of thumbnail previews for video files in file selection
+               Changes:
+                - long press failed image or video thumbnail to reload it
+               Known Bug (not introduced in this version):
+                - large images (e.g. 3096 * 4128) will not have a thumbnail generated, though the image can be uploaded still"</item>
         <item>1.4.0.76</item>
         <item>"Bugfix:
             - Sharing of multiple downloaded files fixed

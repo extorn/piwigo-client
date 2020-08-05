@@ -1,72 +1,72 @@
 <en-GB>
 Bugfix:
-- Sharing of multiple downloaded files fixed
-- Message shown to indicate that remote file URI link has been copied to clipboard
-- Fixed uploads not working due to rushed alteration in 1.4.0.75
-- File selection: Video files not showing thumbnails when path contains a space character
-- Support for creating thumbnails for all videos (including MOV) for all possible android devices
+- Corrected rotation of thumbnail previews for video files in file selection
+Changes:
+- long press failed image or video thumbnail to reload it
+Known Bug (not introduced in this version):
+- large images (e.g. 3096 * 4128) will not have a thumbnail generated, though the image can be uploaded still
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Bylo opraveno sdílení více stažených souborů
-- Zobrazí se zpráva, která označuje, že odkaz URI vzdáleného souboru byl zkopírován do schránky
-- Opravená nahrávání nefungují kvůli rychlé změně v 1.4.0.75
-- Výběr souboru: Video soubory, které nezobrazují miniatury, pokud cesta obsahuje mezeru
-- Podpora vytváření miniatur pro všechna videa (včetně MOV) pro všechna možná zařízení Android
+- Opravená rotace náhledů miniatur u video souborů při výběru souboru
+Změny:
+- dlouhým stisknutím selhal obrázek nebo miniatura videa jej znovu načíst
+Známá chyba (v této verzi není uvedena):
+- u velkých obrázků (např. 3096 * 4128) nebude vygenerována miniatura, ale obrázek lze nahrát stále
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Freigabe mehrerer heruntergeladener Dateien behoben
-- Die angezeigte Meldung zeigt an, dass der URI-Link der Remote-Datei in die Zwischenablage kopiert wurde
-- Es wurde behoben, dass Uploads aufgrund von Änderungen in 1.4.0.75 nicht funktionierten
-- Dateiauswahl: Videodateien zeigen keine Miniaturansichten an, wenn der Pfad ein Leerzeichen enthält
-- Unterstützung für das Erstellen von Miniaturansichten für alle Videos (einschließlich MOV) für alle möglichen Android-Geräte
+- Die Drehung der Miniaturansichten für Videodateien bei der Dateiauswahl wurde korrigiert
+Änderungen:
+- Drücken Sie lange auf fehlgeschlagenes Bild oder Video-Miniaturbild, um es neu zu laden
+Bekannter Fehler (in dieser Version nicht eingeführt):
+- Bei großen Bildern (z. B. 3096 * 4128) wird keine Miniaturansicht generiert, obwohl das Bild noch hochgeladen werden kann
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Reparto de múltiples archivos descargados arreglados
-- Mensaje mostrado para indicar que el enlace URI del archivo remoto se ha copiado al portapapeles
-- Las cargas fijas no funcionan debido a la alteración apresurada en 1.4.0.75
-- Selección de archivo: los archivos de video no muestran miniaturas cuando la ruta contiene un carácter de espacio
-- Soporte para crear miniaturas para todos los videos (incluido MOV) para todos los dispositivos Android posibles
+- Se corrigió la rotación de vistas previas en miniatura para archivos de video en la selección de archivos
+Cambios:
+- Mantenga presionada la imagen fallida o la miniatura del video para volver a cargarla
+Error conocido (no introducido en esta versión):
+- las imágenes grandes (por ejemplo, 3096 * 4128) no tendrán una miniatura generada, aunque la imagen se puede cargar aún
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Partage de plusieurs fichiers téléchargés fixe
-- Message affiché pour indiquer que le lien URI du fichier distant a été copié dans le presse-papiers
-- Correction des téléchargements ne fonctionnant pas en raison d\'une modification précipitée dans 1.4.0.75
-- Sélection de fichier: les fichiers vidéo ne montrent pas de vignettes lorsque le chemin contient un espace
-- Prise en charge de la création de vignettes pour toutes les vidéos (y compris MOV) pour tous les apparei..."
+- Correction de la rotation des aperçus miniatures pour les fichiers vidéo dans la sélection de fichiers
+Changements:
+- appuyez longuement sur l\'image ou la vignette vidéo échouée pour la recharger
+Bug connu (non introduit dans cette version):
+- les grandes images (par exemple 3096 * 4128) n\'auront pas de vignette générée, bien que l\'image puisse être téléchargée encore
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Corretta la condivisione di più file scaricati
-- Messaggio visualizzato per indicare che il collegamento URI del file remoto è stato copiato negli Appunti
-- Risolti i caricamenti che non funzionavano a causa dell\'alterata modifica in 1.4.0.75
-- Selezione file: i file video non mostrano le anteprime quando il percorso contiene uno spazio
-- Supporto per la creazione di miniature per tutti i video (incluso MOV) per tutti i possibili dispositivi Android
+- Corretta rotazione delle anteprime in miniatura per i file video nella selezione dei file
+I cambiamenti:
+- premere a lungo l\'immagine non riuscita o l\'anteprima del video per ricaricarla
+Bug noto (non introdotto in questa versione):
+- le immagini di grandi dimensioni (ad es. 3096 * 4128) non avranno una miniatura generata, sebbene l\'immagine possa essere caricata in modo fisso
 </it-IT>
 <ja-JP>
 バグ修正：
--ダウンロードした複数のファイルの共有を修正
--リモートファイルURIリンクがクリップボードにコピーされたことを示すメッセージが表示されます
--1.4.0.75での急な変更によりアップロードが機能しない問題を修正
--ファイル選択：パスにスペース文字が含まれている場合、ビデオファイルにサムネイルが表示されない
--可能なすべてのAndroidデバイスのすべてのビデオ（MOVを含む）のサムネイルの作成のサポート
+-ファイル選択でのビデオファイルのサムネイルプレビューの回転を修正
+変更：
+-失敗した画像またはビデオのサムネイルを長押ししてリロードします
+既知のバグ（このバージョンでは導入されていません）：
+-大きな画像（例：3096 * 4128）ではサムネイルは生成されませんが、画像は引き続きアップロードできます
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Исправлен обмен несколькими загруженными файлами
-- Сообщение, показывающее, что ссылка на удаленный URI файла была скопирована в буфер обмена.
-- Исправлена ошибка, из-за которой загрузка не работала из-за поспешного изменения версии 1.4.0.75.
-- Выбор файла: видеофайлы не отображаются в виде миниатюр, когда путь содержит пробел
-- Поддержка создания миниатюр для всех видео (включая MOV) для всех возможных устройств Android
+- Исправлено вращение превью миниатюр для видеофайлов при выборе файла.
+Изменения:
+- длительное нажатие не удалось изображение или видео, чтобы перезагрузить его
+Известная ошибка (не представлена в этой версии):
+- для больших изображений (например, 3096 * 4128) не будет сгенерировано уменьшенное изображение, хотя изображение может быть загружено до сих пор
 </ru-RU>
 <zh-CN>
 错误修正：
--修复了多个下载文件的共享
--显示消息，表明远程文件URI链接已复制到剪贴板
--修复了由于1.4.0.75中的紧急更改而导致上传无法正常工作的问题
--文件选择：当路径包含空格字符时，视频文件不显示缩略图
--支持为所有可能的android设备创建所有视频的缩略图（包括MOV）
+-纠正了文件选择中视频文件缩略图预览的旋转
+变化：
+-长按失败的图像或视频缩略图以重新加载
+已知错误（此版本未引入）：
+-大图片（例如3096 * 4128）将不会生成缩略图，但仍可以上传图片
 </zh-CN>

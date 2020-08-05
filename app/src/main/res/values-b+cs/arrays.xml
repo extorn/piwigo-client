@@ -164,6 +164,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.77</item>
+        <item>"Oprava chyby:
+                 - Opravená rotace náhledů miniatur u video souborů při výběru souboru
+                Změny:
+                 - dlouhým stisknutím selhal obrázek nebo miniatura videa jej znovu načíst
+                Známá chyba (v této verzi není uvedena):
+                 - u velkých obrázků (např. 3096 * 4128) nebude vygenerována miniatura, ale obrázek lze nahrát stále"</item>
         <item>1.4.0.76</item>
         <item>"Oprava chyby:
              - Bylo opraveno sdílení více stažených souborů

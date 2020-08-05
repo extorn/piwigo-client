@@ -164,6 +164,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.77</item>
+        <item>"Arreglo del fallo:
+                 - Se corrigió la rotación de vistas previas en miniatura para archivos de video en la selección de archivos
+                Cambios:
+                 - Mantenga presionada la imagen fallida o la miniatura del video para volver a cargarla
+                Error conocido (no introducido en esta versión):
+                 - las imágenes grandes (por ejemplo, 3096 * 4128) no tendrán una miniatura generada, aunque la imagen se puede cargar aún"</item>
         <item>1.4.0.76</item>
         <item>"Arreglo del fallo:
              - Reparto de múltiples archivos descargados arreglados
