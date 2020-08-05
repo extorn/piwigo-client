@@ -164,6 +164,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.77.1</item>
+        <item>"Correction d\'un bug:
+                 - Correction de la rotation des aperçus miniatures pour les fichiers vidéo dans la sélection de fichiers
+                 - Les grandes images (par exemple 3096 * 4128) ont maintenant une vignette générée dans la sélection de fichiers
+                Changements:
+                 - appuyez longuement sur l\'image ou la vignette vidéo échouée pour la recharger"</item>
         <item>1.4.0.77</item>
         <item>"Correction d\'un bug:
                  - Correction de la rotation des aperçus miniatures pour les fichiers vidéo dans la sélection de fichiers
