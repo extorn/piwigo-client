@@ -15,10 +15,12 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.FileObserver;
 import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
@@ -27,6 +29,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
@@ -177,7 +180,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         registerBroadcastReceiver(context, jobs);
 
-        Map<Uri, CustomContentObserver> runningObservers = new HashMap<>();
+        Map<Uri, UriWatcher> runningObservers = new HashMap<>();
 
         try {
 
@@ -202,7 +205,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, CustomContentObserver> runningObservers, BackgroundPiwigoFileUploadResponseListener jobListener) {
+    private void pollFoldersForJobsAndUploadAnyMatchingFilesFoundNow(Context context, AutoUploadJobsConfig jobs, Map<Uri, UriWatcher> runningObservers, BackgroundPiwigoFileUploadResponseListener jobListener) {
         updateNotificationText(getString(R.string.notification_text_background_upload_polling), true);
         UploadJob unfinishedJob;
         do {
@@ -238,7 +241,14 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
                     if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder)) {
                         // TODO get rid of the event processor thread and use the handler instead to minimise potential thread generation!
-                        CustomContentObserver observer = new CustomContentObserver(null, this, monitoringFolder.getUri());
+                        UriWatcher observer;
+                        if(monitoringFolder.getUri().getScheme().equals("file")) {
+                            observer = new CustomFileObserver(this, new File(monitoringFolder.getUri().getPath()));
+                        } else {
+                            observer = new CustomContentObserver(null, this, monitoringFolder.getUri());
+                        }
+
+
                         runningObservers.put(observer.getWatchedUri(), observer);
                         observer.startWatching();
                     }
@@ -273,10 +283,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
     }
 
-    private void removeAllContentObservers(Map<Uri, CustomContentObserver> runningObservers) {
+    private void removeAllContentObservers(Map<Uri, UriWatcher> runningObservers) {
         List<Uri> keys = new ArrayList<>(runningObservers.keySet());
         for(Uri key : keys) {
-            CustomContentObserver observer = runningObservers.remove(key);
+            UriWatcher observer = runningObservers.remove(key);
             if (observer != null) {
                 observer.stopWatching();
             }
@@ -501,7 +511,93 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 //        PiwigoResponseBufferingHandler.getDefault().processResponse(response);
     }
 
-    private static class CustomContentObserver extends ContentObserver {
+    private static class CustomFileObserver extends FileObserver implements UriWatcher {
+        private final File watchedFile;
+        private FileEventProcessor eventProcessor;
+        private Context context;
+
+        CustomFileObserver(Context context, File f) {
+            super(f.getAbsolutePath(), FileObserver.CREATE ^ FileObserver.MOVED_TO);
+            this.context = context;
+            this.watchedFile = f;
+        }
+
+        @Override
+        public void onEvent(int event, @Nullable String path) {
+            switch(event) {
+                case FileObserver.CLOSE_WRITE:
+                case FileObserver.MOVED_TO:
+                case FileObserver.CREATE:
+                case FileObserver.MODIFY:
+                case FileObserver.ATTRIB:
+                    if(eventProcessor == null) {
+                        eventProcessor = new FileEventProcessor();
+                    }
+                    eventProcessor.execute(new File(watchedFile, path));
+                    break;
+                default:
+                    // do nothing for other events.
+            }
+        }
+
+        @Override
+        public Uri getWatchedUri() {
+            return null;
+        }
+
+        private class FileEventProcessor extends Thread {
+
+            private File eventSourceFile;
+            private int lastEventId;
+            private boolean running;
+
+            @Override
+            public void run() {
+                while(!processEvent(eventSourceFile, lastEventId)){} // do until processed.
+                lastEventId = 0;
+            }
+
+            public void execute(File eventSourceFile) {
+                lastEventId++;
+                if(lastEventId <= 0) {
+                    lastEventId = 1;
+                }
+                this.eventSourceFile = eventSourceFile;
+                synchronized (this) {
+                    if (!running) {
+                        running = true;
+                        start();
+                    }
+                }
+            }
+
+            private boolean processEvent(File eventSourceFile, int eventId) {
+                long len = eventSourceFile.length();
+                long lastMod = eventSourceFile.lastModified();
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(eventId == lastEventId && len == eventSourceFile.length() && lastMod == eventSourceFile.lastModified()) {
+                    BackgroundPiwigoUploadService.sendActionWakeServiceIfSleeping(context);
+                    return true;
+                }
+                return false;
+            }
+        }
+    }
+
+    private interface UriWatcher {
+
+        void startWatching();
+
+        void stopWatching();
+
+        Uri getWatchedUri();
+    }
+
+    private static class CustomContentObserver extends ContentObserver implements UriWatcher {
 
         private final Uri watchedUri;
         private final Context context;
@@ -531,6 +627,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             eventProcessor.execute(context, watchedUri, uri);
         }
 
+        @Override
         public void startWatching() {
             try {
                 context.getContentResolver().registerContentObserver(watchedUri, false, this);
@@ -540,10 +637,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             }
         }
 
+        @Override
         public void stopWatching() {
             context.getContentResolver().unregisterContentObserver(this);
         }
 
+        @Override
         public Uri getWatchedUri() {
             return watchedUri;
         }
