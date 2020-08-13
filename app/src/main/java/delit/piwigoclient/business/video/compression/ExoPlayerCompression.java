@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
+import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 
@@ -425,7 +426,7 @@ public class ExoPlayerCompression {
             if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
                 return ext;
             }
-            throw new IllegalStateException("No valid output file extension could be found acceptable to the server");
+            throw new IllegalStateException(String.format("No valid output file extension could be found acceptable to the server amongst options (%1$s)", CollectionUtils.toCsvList(acceptableFileExts)));
         }
 
         /**
