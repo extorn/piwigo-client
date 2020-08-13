@@ -163,7 +163,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                         Logging.recordException(e);
                     }
                 } else {
-                    DocumentFile docFile = DocumentFile.fromTreeUri(requireContext(), uri);
+                    DocumentFile docFile;
+                    try {
+                        docFile = DocumentFile.fromTreeUri(requireContext(), uri);
+                    } catch(IllegalArgumentException e) {
+                        docFile = null;
+                    }
                     allPreferencesValid = docFile != null && docFile.exists() && docFile.isDirectory();
                 }
             }
