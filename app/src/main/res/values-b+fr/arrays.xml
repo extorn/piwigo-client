@@ -124,17 +124,17 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Si vous rencontrez des problèmes avec l\'application, veuillez m\'en informer par e-mail. Si vous le souhaitez, publiez un avis négatif sur Google Play, je n\'essaie pas d\'arrêter cela, mais veuillez également envoyer un e-mail. Il y a un lien pour m\'envoyer un e-mail en haut du menu du tiroir coulissant. Je peux fournir une assistance beaucoup plus complète à une adresse e-mail. Merci beaucoup.</item>
-        <item>Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux</item>
+        <item>"Si vous rencontrez des problèmes avec l\'application, veuillez m\'en informer par e-mail. Si vous le souhaitez, publiez un avis négatif sur Google Play, je n\'essaie pas d\'arrêter cela, mais veuillez également envoyer un e-mail. Il y a un lien pour m\'envoyer un e-mail en haut du menu du tiroir coulissant. Je peux fournir une assistance beaucoup plus complète à une adresse e-mail. Merci beaucoup."</item>
+        <item>"Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux"</item>
         <item>Si un téléchargement ne réussit tout simplement pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur.</item>
-        <item>Une erreur se produit toujours lors de la tentative de mise à jour des balises - \ "Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre du plug-in de serveur)</item>
+        <item>Une erreur se produit toujours lors de la tentative de mise à jour des balises - \ \"Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre du plug-in de serveur)</item>
         <item>Partagez des fichiers d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à être envoyés sur votre serveur actuel</item>
         <item>Cliquez longuement sur une image (miniature ou élément de diaporama) qui n\'a pas pu se charger afin de la récupérer à nouveau</item>
         <item>Cliquez longuement sur un album pour supprimer cet album et tout son contenu</item>
         <item>Cliquez longuement sur une image d\'album pour activer la sélection en bloc d\'images pour une action</item>
         <item>Lors de la visualisation d\'une image dans le diaporama, cliquez longuement pour faire pivoter / modifier la taille de l\'image affichée / permettre un zoom supplémentaire</item>
         <item>Vous pouvez zoomer sur une image lors de la visualisation dans un diaporama en dessinant deux doigts ensemble ou en écartant sur l\'écran</item>
-        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de donner votre appareil à un ami pour qu\'il affiche vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications involontaires soient apportées à votre galerie.</item>
+        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de confier votre appareil à un ami pour qu\'il affiche vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications involontaires soient apportées à votre galerie</item>
         <item>Une fois que vous avez visionné une vidéo entière, si la mise en cache des fichiers locaux est activée, il est possible d\'enregistrer cette vidéo dans votre dossier de téléchargements</item>
         <item>Cliquez longuement sur le bouton de suppression sur un \ \'fichier à télécharger \' pour supprimer tous les fichiers à télécharger (lorsque le travail n\'est pas en cours)</item>
         <item>Si les images sont lentes à charger, vérifiez que votre serveur génère automatiquement la taille utilisée par cette application lors de leur téléchargement</item>
@@ -164,6 +164,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.78</item>
+        <item>"Correction d\'un bug:
+                 - Plusieurs, y compris des correctifs de compression d\'image.
+                Changements:
+                 - amélioration de la journalisation pour aider au débogage de quelques erreurs potentielles
+                 - Mise à jour vers les dernières bibliothèques de build Android 30"</item>
         <item>1.4.0.77.1</item>
         <item>"Correction d\'un bug:
                  - Correction de la rotation des aperçus miniatures pour les fichiers vidéo dans la sélection de fichiers
@@ -405,7 +411,7 @@
         <item>1.4.0.37</item>
         <item>"Correction d\'un bug:
                  - Le nettoyage de la connexion fonctionne à nouveau
-                 - La définition de l\'évaluation des ressources dans les paramètres régionaux russes fonctionne à nouveau"</item>
+                 - La définition de l\'évaluation des ressources dans la langue russe fonctionne à nouveau"</item>
         <item>1.4.0.36</item>
         <item>"Changements:
                  - Le téléchargement des fichiers s\'effectue désormais dans une file d\'attente rudimentaire et est géré au niveau de l\'application. Cependant, vous devez toujours garder l\'application ouverte pour que le téléchargement se poursuive.

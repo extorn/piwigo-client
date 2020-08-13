@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Pokud máte s aplikací nějaké problémy, upozorněte mě prosím e-mailem. Pokud si přejete, zveřejněte na Google Play zápornou recenzi, nesnažím se to zastavit, ale prosím také e-mailem. V horní části nabídky vysouvací zásuvky je odkaz, který mi pošle e-mail. Mohu poskytnout mnohem komplexnější podporu e-mailové adresy. Mnohokrát děkuji.</item>
-        <item>Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé</item>
-        <item>Pokud se nahrávání nepodaří uspět, zkuste použít předvolbu na stránce pro nahrání nastavení aplikace k odstranění veškerých zbývajících neúspěšných nahrávek ze serveru.</item>
-        <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ "Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
+        <item>"Pokud máte s aplikací nějaké problémy, upozorněte mě prosím e-mailem. Pokud si přejete, zveřejněte na Google Play zápornou recenzi, nesnažím se to zastavit, ale prosím také e-mailem. V horní části nabídky vysouvací zásuvky je odkaz, který mi pošle e-mail. Mohu poskytnout mnohem komplexnější podporu e-mailové adresy. Mnohokrát děkuji."</item>
+        <item>"Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé"</item>
+        <item>Pokud se nahrávání nepodaří uspět, zkuste použít předvolbu na stránce pro nahrání nastavení aplikace k odstranění veškerých zbývajících neúspěšných nahrávání ze serveru.</item>
+        <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ \"Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání, která je připravena přejít na váš aktuální server</item>
         <item>Dlouhým kliknutím na obrázek (buď miniaturu nebo položku prezentace), který se nepodařilo načíst, je znovu načíst</item>
         <item>Dlouhým kliknutím na album odstraníte dané album a veškerý obsah</item>
@@ -157,13 +157,19 @@
             - Podpora pro komentáře uživatelů
             - Informujte uživatele o dostupných aktualizacích serveru
             - Podpora pro editaci EXIF ​​a dalších obrazových metadatových formátů
-            - Přidejte preferenci, abyste mohli zobrazit / skrýt pole EXIF ​​atd., Která jsou nebo nejsou předmětem zájmu
+            - Přidejte preferenci, která umožní zobrazení / skrytí polí EXIF ​​atd., Která jsou nebo nejsou předmětem zájmu
             - Nějaký druh obrazovky umožňující zrcadlení zařízení na větší obrazovce
          - Něco dalšího:
-            - Pošlete mi e-mail (na navigační liště je e-mailový odkaz) a požádejte o věci, které potřebujete nebo které chcete, aby tato aplikace dosud nedělala"</item>
+            - Pošlete mi e-mail (na navigační liště je e-mailový odkaz) a vyžádejte si věci, které potřebujete nebo chcete, aby tato aplikace dosud nedělala"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.78</item>
+        <item>"Oprava chyby:
+                 - Několik, včetně oprav komprese obrazu.
+                Změny:
+                 - vylepšení protokolování, které pomůže ladit několik potenciálních chyb
+                 - Aktualizováno na nejnovější Android 30 build knihovny"</item>
         <item>1.4.0.77.1</item>
         <item>"Oprava chyby:
                  - Opravená rotace náhledů miniatur u video souborů při výběru souboru
@@ -236,14 +242,14 @@
                  - Problémy s selháním po dokončení nahrávání
                  - Průběh nahrávání jednotlivých souborů není zobrazen
                  - selhání na rotačním zařízení se zobrazenou obrazovkou pro odeslání
-                 - na kartě nastavení nahrávání nelze posouvat stránku nahoru a zobrazit tlačítko pro odeslání"</item>
+                 - nelze posouvat stránku nahoru a zobrazit tlačítko pro odeslání na kartě nastavení nahrávání"</item>
         <item>1.4.0.66.5</item>
         <item>"Oprava chyby:
                  - Byla opravena spousta negrů způsobujících pády
                  - Vybraná cílová stránka alba pro nahrávání již není průhledná"</item>
         <item>1.4.0.66</item>
         <item>"Změny:
-                - Hlavní přepis všech kódů souvisejících s tématem, aby se radikálně zjednodušily a opravily barvy ve verzích Androidu
+                - Hlavní přepisování všech tématických kódů, aby se radikálně zjednodušily a opravily barvy ve verzích Androidu
                 - Změnilo téma na den / noc, takže je uživatelsky konfigurovatelné (v noci nemají žádné obrazovky bílé pozadí).
                 - přidaná podpora pro Uri a oborové úložiště:
                     - snadno sdílet soubory
@@ -251,14 +257,14 @@
                     - mazání souborů po nahrání nyní funguje znovu
                     - kontrolní soubory jsou před nahráním jedinečné - nyní je to těžší, takže to trvá trochu déle
                     - Selektor souborů v aplikacích je relativně pomalý, aby se načítaly složky obsahující spoustu souborů - omezení v Android API v současnosti
-                - Při kompresi videa můžete vypnout zvukový nebo obrazový tok, pokud chcete vytvořit soubor m4a nebo m4v (přidaná přípona mp4, pokud to vše umožňuje váš server).
-                - Nabídka zásuvky dostupná na obrazovce nahrávání, která vám umožní přejít na galerii nebo nastavení
+                - při kompresi videa můžete vypnout zvukový nebo obrazový tok, pokud chcete vytvořit soubor m4a nebo m4v (přidaná přípona mp4, pokud to vše umožňuje váš server).
+                - Nabídka zásuvky dostupná na obrazovce nahrávání, která vám umožní přejít do galerie nebo nastavení
                 - Aplikace je připravena k implementaci kódu, který vás upozorní při výběru fotografií těch, které jste dříve nahráli.
                Oprava chyby:
-                - Nahrát stránku zachovává soubory při přidávání nových souborů ze systémového voliče a / nebo navigace do hlavní galerie
+                - Nahrát stránku uchová soubory při přidávání nových souborů ze systémového voliče a / nebo navigace do v hlavní galerii
                 - Kód komprese videa byl radikálně přepracován. Nemělo by teď zmrznout a vzdávat se žádných videí. (Dejte mi vědět, pokud ano)
                 - Přepište velké oblasti, abyste odstranili potenciální úniky paměti
-                - Měl by být mnohem méně náchylný ke zhroucení na starých verzích systému Android (před lollipopem)"</item>
+                - Měl by být mnohem méně náchylný ke zhroucení na starých verzích systému Android (před lízátko)"</item>
         <item>1.4.0.65</item>
         <item>"Změny:
              - Opraveno zbývající téma téma pro dialogy
@@ -267,7 +273,7 @@
         <item>1.4.0.64</item>
         <item>"Změny:
              - Přidáno tlačítko pro zobrazení skrytého hesla v preferencích
-             - Přesun na téma založené na MaterialComponentech (existují drobné změny)
+             - Téma přesunuto do MaterialComponentů (došlo k několika drobným změnám)
              - Ve výchozím nastavení skryjte většinu preferencí připojení - kliknutím rozbalte a zpřístupněte ostatní
              - přesunul některé předvolby nahrávání do rozšířené sekce
                 Oprava chyby:
@@ -319,10 +325,10 @@
         <item>"Změny:
                  - Přidána preference pro ovládání zobrazení zprávy zobrazující velikost obrázku načteného ze serveru
                 Oprava chyby:
-                 - Obnovte zobrazení alba okamžitě po změně zdroje nebo pořadí třídění podřízených alb
+                 - Obnovte zobrazení alba ihned po změně zdroje nebo pořadí řazení podřízených alb
                  - opravit chybu s obecným tříděním alb
                  - opravený přístup k prezentaci, když jsou podřízená alba rozdrcena (klepnutím na záhlaví alb)
-                 - Možná chyba, kdy by se některá změna nastavení připojení (například použití základního ověření) plně nevyužila až do příštího restartování aplikace"</item>
+                 - Možná chyba, kdy by se některá nastavení nastavení připojení (například použití základního ověření) plně nevyužila až do příštího restartování aplikace"</item>
         <item>1.4.0.52</item>
         <item>"Oprava chyby:
              - Zrušení nahrávání souboru a opuštění stránky nahrávání před nahlášením zrušení způsobí selhání
@@ -330,7 +336,7 @@
              - placená aplikace: Aktualizace seznamu značek pro prostředek, kde alespoň jedna dříve vybraná značka již neexistuje, způsobuje selhání (nyní upozorněte uživatele a odstraňte je)
              - placená aplikace: Aplikace může selhat při výběru cílového alba pro úlohu automatického nahrávání
              - placená aplikace: při výběru kořenového alba jako cílového alba pro úlohu automatického nahrávání se zobrazí první název alba jako vybrané album (nesprávně)
-             - placená aplikace: Poznámka: Není mi jasné, že výběr kořene galerie jako cíle nahrávání je vždy rozumný, ale v některých případech je to povoleno."</item>
+             - placená aplikace: Poznámka: Nejsem si jistý, že výběr kořene galerie jako cíle nahrávání je vždy rozumný, ale v některých případech je to povoleno."</item>
         <item>1.4.0.51</item>
         <item>"Změny:
                  - Nová předvolba galerie umožňující vynucení jazyka používaného v aplikaci
@@ -357,7 +363,7 @@
         <item>1.4.0.48</item>
         <item>"Změny:
          - Nová předvolba v nastavení galerie pro deaktivaci funkce automatického skrytí navigačního tlačítka nebo stavového řádku
-         - Uveďte, které velikosti obrázku se zobrazují pouze jednou, pokud se nezmění"
+         - Zobrazují se pouze velikosti obrázků, které se zobrazují pouze jednou, pokud se nezmění"
         </item>
         <item>1.4.0.47</item>
         <item>"Oprava chyby:
@@ -397,7 +403,7 @@
                  - (pouze pro) Zobrazení podrobností o stavu nahrávání včetně chyb pro automatické úlohy - na každé stránce konfigurace automatického nahrávání úlohy"</item>
         <item>1.4.0.38</item>
         <item>"Oprava chyby:
-                 - Prezentace (zobrazení celého obrazu) nyní funguje znovu. Upřímně se omlouvám.
+                 - Prezentace (zobrazení na celou obrazovku) nyní funguje znovu. Upřímně se omlouvám.
                  - Přidány ruské překlady pro preference"
         </item>
 

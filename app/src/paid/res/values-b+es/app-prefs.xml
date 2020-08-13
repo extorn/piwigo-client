@@ -3,33 +3,33 @@
     
 
     <string name="preference_page_auto_upload_jobs">Carga automática</string>
-    <string name="preference_data_upload_automatic_title">Subidas automáticas</string>
-    <string name="preference_data_upload_automatic_job_title">Carga automática de trabajo</string>
+    <string name="preference_data_upload_automatic_title">Cargas automáticas</string>
+    <string name="preference_data_upload_automatic_job_title">Trabajo de carga automática</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">Habilitar carga en segundo plano</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Subidas automáticas</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Habilitar la carga en segundo plano</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Cargas automáticas</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Solo use la carga automática en la conexión inalámbrica</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo inalámbrica</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilice solo la carga automática en modo inalámbrico</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo por conexión inalámbrica</string>
     
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">Trabajos de carga automática</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Empleos</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Cargar trabajos automáticamente</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d trabajos</string>
 
     
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">Ver estado de carga</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Ver el estado de la última ejecución de trabajo (si está disponible)</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Ver el estado de la última ejecución del trabajo (si está disponible)</string>
 
     
-    <string name="preference_data_upload_automatic_job_is_valid_title">El trabajo es valido</string>
+    <string name="preference_data_upload_automatic_job_is_valid_title">El trabajo es válido</string>
 
     
     <string name="preference_data_upload_automatic_job_enabled_summary">¿El servicio de carga utilizará este trabajo?</string>
@@ -45,7 +45,7 @@
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
-    <string name="preference_data_upload_automatic_job_local_folder_title">Subir desde carpeta</string>
+    <string name="preference_data_upload_automatic_job_local_folder_title">Subir de carpeta</string>
     
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
@@ -119,18 +119,18 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">Progresión automática de diapositivas</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">Después del tiempo establecido, se mostrará la siguiente imagen o video</string>
+    <string name="preference_gallery_slideshow_auto_drive_title">Progresión automática de la presentación de diapositivas</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Después del tiempo establecido, se mostrará la siguiente imagen o video.</string>
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retardo de imagen de la unidad automática</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Retraso de imagen de conducción automática</string>
     <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s milisegundos</string>
     
     
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retardo automático de video</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Retraso de vídeo de conducción automática</string>
     <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s milisegundos</string>
     
     

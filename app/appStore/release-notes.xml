@@ -1,63 +1,63 @@
 <en-GB>
 Bugfix:
-- Corrected rotation of thumbnail previews for video files in file selection
-- Large images (e.g. 3096 * 4128) now have a thumbnail generated in file selection
+- Several, including image compression fixes.
 Changes:
-- long press failed image or video thumbnail to reload it
+- improvement to logging to assist debug of a couple of potential errors
+- Updated to the latest Android 30 build libraries
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Opravená rotace náhledů miniatur u video souborů při výběru souboru
-- Velké obrázky (např. 3096 * 4128) nyní mají při výběru souboru generovanou miniaturu
+- Několik, včetně oprav komprese obrazu.
 Změny:
-- dlouhým stisknutím selhal obrázek nebo miniatura videa jej znovu načíst
+- vylepšení protokolování, které pomůže ladit několik potenciálních chyb
+- Aktualizováno na nejnovější Android 30 build knihovny
 </cs-CZ>
 <de-DE>
 Fehlerbehebung:
-- Die Drehung der Miniaturansichten für Videodateien bei der Dateiauswahl wurde korrigiert
-- Bei großen Bildern (z. B. 3096 * 4128) wird jetzt bei der Dateiauswahl eine Miniaturansicht generiert
+- Mehrere Korrekturen, einschließlich Korrekturen der Bildkomprimierung.
 Änderungen:
-- Drücken Sie lange auf fehlgeschlagenes Bild oder Video-Miniaturbild, um es neu zu laden
+- Verbesserung der Protokollierung, um das Debuggen einiger potenzieller Fehler zu unterstützen
+- Auf die neuesten Android 30 Build-Bibliotheken aktualisiert
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Se corrigió la rotación de vistas previas en miniatura para archivos de video en la selección de archivos
-- Las imágenes grandes (por ejemplo, 3096 * 4128) ahora tienen una miniatura generada en la selección de archivos
+- Varias, incluidas correcciones de compresión de imágenes.
 Cambios:
-- Mantenga presionada la imagen fallida o la miniatura del video para volver a cargarla
+- mejora del registro para ayudar a depurar un par de errores potenciales
+- Actualizado a las últimas bibliotecas de compilación de Android 30
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Correction de la rotation des aperçus miniatures pour les fichiers vidéo dans la sélection de fichiers
-- Les grandes images (par exemple 3096 * 4128) ont maintenant une vignette générée dans la sélection de fichiers
+- Plusieurs, y compris des correctifs de compression d\'image.
 Changements:
-- appuyez longuement sur l\'image ou la vignette vidéo échouée pour la recharger
+- amélioration de la journalisation pour aider au débogage de quelques erreurs potentielles
+- Mise à jour vers les dernières bibliothèques de build Android 30
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Corretta rotazione delle anteprime in miniatura per i file video nella selezione dei file
-- Le immagini di grandi dimensioni (ad es. 3096 * 4128) ora hanno una miniatura generata nella selezione dei file
+- Diversi, comprese le correzioni alla compressione delle immagini.
 I cambiamenti:
-- premere a lungo l\'immagine non riuscita o l\'anteprima del video per ricaricarla
+- miglioramento della registrazione per assistere il debug di un paio di potenziali errori
+- Aggiornato alle ultime librerie di build di Android 30
 </it-IT>
 <ja-JP>
 バグ修正：
--ファイル選択でのビデオファイルのサムネイルプレビューの回転を修正
--大きな画像（例：3096 * 4128）のファイル選択でサムネイルが生成されるようになりました
+-画像圧縮の修正を含むいくつか。
 変更：
--失敗した画像またはビデオのサムネイルを長押ししてリロードします
+-いくつかの潜在的なエラーのデバッグを支援するためのロギングの改善
+-最新のAndroid 30ビルドライブラリに更新
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Исправлено вращение превью миниатюр для видеофайлов при выборе файла.
-- Большие изображения (например, 3096 * 4128) теперь имеют миниатюру, созданную при выборе файла
+- Несколько, включая исправления сжатия изображений.
 Изменения:
-- длительное нажатие не удалось изображение или видео, чтобы перезагрузить его
+- улучшение ведения журнала для помощи в отладке пары потенциальных ошибок
+- Обновлено до последних библиотек сборки Android 30.
 </ru-RU>
 <zh-CN>
 错误修正：
--纠正了文件选择中视频文件缩略图预览的旋转
--大图像（例如3096 * 4128）现在在文件选择中生成了缩略图
+-几个，包括图像压缩修复程序。
 变化：
--长按失败的图像或视频缩略图以重新加载
+-改进了日志记录功能，以帮助调试几个潜在的错误
+-更新到最新的Android 30构建库
 </zh-CN>

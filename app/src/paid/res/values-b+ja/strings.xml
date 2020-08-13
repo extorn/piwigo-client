@@ -7,10 +7,10 @@
     <string name="notification_text_background_upload_polling">アップロードするファイルのポーリング。</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">ジョブを実行する場合は、バックグラウンドアップロードサービスを開始することを忘れないでください。</string>
+    <string name="alert_warning_auto_upload_service_stopped">ジョブを実行する場合は、バックグラウンドアップロードサービスを開始することを忘れないでください</string>
     <string name="alert_auto_upload_service_stopped">バックグラウンドアップロードサービスが停止しました</string>
     <string name="alert_auto_upload_service_started">バックグラウンドアップロードサービスを開始しました</string>
-    <string name="alert_auto_upload_service_job_restarted">以前に完了していないジョブの%2$dファイルを含むサーバー%1$sへのアップロードを開始しました</string>
+    <string name="alert_auto_upload_service_job_restarted">以前に完了していないジョブを%2$dファイルを使用してサーバー%1$sにアップロードし始めました</string>
     <string name="alert_auto_upload_service_job_started">%2$d個のファイルを使用してサーバー%1$sへのジョブのアップロードを開始しています</string>
     <string name="alert_auto_upload_service_job_finished_success">サーバー%1$sへのバックグラウンドアップロードジョブの実行が終了しました。</string>
     <string name="alert_auto_upload_service_job_finished_partial_success">サーバー%1$sへのバックグラウンドアップロードジョブの実行が終了しました。一部のファイルはアップロードに失敗し、後で再試行されます。</string>

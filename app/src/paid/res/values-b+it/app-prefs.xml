@@ -4,7 +4,7 @@
 
     <string name="preference_page_auto_upload_jobs">Caricamento automatico</string>
     <string name="preference_data_upload_automatic_title">Caricamenti automatici</string>
-    <string name="preference_data_upload_automatic_job_title">Caricamento automatico lavoro</string>
+    <string name="preference_data_upload_automatic_job_title">Lavoro di caricamento automatico</string>
 
     
 
@@ -13,7 +13,7 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Caricamenti automatici</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilizza solo Caricamento automatico su wireless</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilizzare solo caricamento automatico su wireless</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo tramite wireless</string>
     
     
@@ -26,13 +26,13 @@
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">Visualizza lo stato del caricamento</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Visualizza lo stato dall\'ultima esecuzione del lavoro (se disponibile)</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Visualizza lo stato dell\'ultimo lavoro eseguito (se disponibile)</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">Il lavoro è valido</string>
 
     
-    <string name="preference_data_upload_automatic_job_enabled_summary">Il servizio di upload utilizzerà questo lavoro?</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Il servizio di caricamento utilizzerà questo lavoro?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Lavoro abilitato</string>
     
 
@@ -41,7 +41,7 @@
     <string name="preference_data_upload_automatic_job_server_summary">Profilo:%1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_server_album_title">Carica su album</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Carica nell\'album</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
@@ -50,8 +50,8 @@
     <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
     
-    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Elimina i file caricati correttamente</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Cancellazione automatica</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Elimina i file caricati con successo</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Eliminazione automatica</string>
     
 
     
@@ -73,13 +73,13 @@
 
     
     
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max dimensione del file caricata</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize caricato</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Estensioni di file</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Carica file con ext%1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Carica file con estensione%1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Livello di privacy</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">File caricati visibili a%1$s</string>
@@ -123,15 +123,15 @@
     <string name="preference_gallery_slideshow_auto_drive_summary">Dopo il tempo impostato, verrà visualizzata l\'immagine o il video successivo</string>
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">Ritardo dell\'immagine del drive automatico</string>
-    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecondi</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Ritardo dell\'immagine di guida automatica</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisec</string>
     
     
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Ritardo video auto drive</string>
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecondi</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Ritardo video di guida automatica</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisec</string>
     
     
     

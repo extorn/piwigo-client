@@ -198,12 +198,12 @@
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">在幻灯片中显示视频</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">以幻灯片模式浏览图库时是否应显示视频？</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">以幻灯片模式浏览图库时是否应该显示视频？</string>
     
 
     
     <string name="preference_gallery_enable_video_playback_title">允许视频播放</string>
-    <string name="preference_gallery_enable_video_playback_summary">如果您想按需下载和播放视频，请启用</string>
+    <string name="preference_gallery_enable_video_playback_summary">如果要按需下载和播放视频，请启用</string>
     
 
     

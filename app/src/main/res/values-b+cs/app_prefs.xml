@@ -174,7 +174,7 @@
     
 
     
-    <string name="preference_gallery_images_preferredColumnsLandscape_title">Krajina: Sloupce obrázků k zobrazení</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Na šířku: Sloupce obrázků k zobrazení</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
@@ -343,7 +343,7 @@
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_preferredColumnsLandscape_title">Krajina: Sloupce obrázků k zobrazení</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Na šířku: Sloupce obrázků k zobrazení</string>
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     

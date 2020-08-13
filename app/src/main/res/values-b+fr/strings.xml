@@ -120,7 +120,7 @@
     <string name="upload_files_button_title">Télécharger</string>
     <string name="upload_files_finish_job_button_title">terminer</string>
     <string name="upload_job_status_button">Statut</string>
-    <string name="alert_really_delete_upload_job">Cela supprimera l\'état de la tâche de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page des paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
+    <string name="alert_really_delete_upload_job">Cela supprimera l\'état de la tâche de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page de paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
     <string name="loading_please_wait">Chargement, veuillez patienter</string>
     <string name="alert_title_server_error">erreur du serveur</string>
     <string name="alert_server_error_pattern">Le serveur a renvoyé une erreur HTTP:%1$d (%2$s)</string>
@@ -192,7 +192,7 @@ Gareth Deli vous accorde une licence limitée révocable, non exclusive, non tra
 pour télécharger, installer et utiliser l\'Application uniquement à des fins personnelles ou commerciales
 en stricte conformité avec les termes de cet accord.
 
-LE LOGICIEL EST FOURNI «EN L\'ÉTAT», SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, DÉCOULANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU AUTRES ACTIONS DANS LE LOGICIEL
+LE LOGICIEL EST FOURNI «EN L\'ÉTAT», SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU D\'AUTRES ACTIONS DANS LE LOGICIEL
 
 
 Restrictions
@@ -269,7 +269,7 @@ Si vous avez des questions sur cet accord, veuillez nous contacter."
 Il sera mis à jour régulièrement pour ajouter plus de fonctionnalités, certaines auxquelles j\'ai pensé, d\'autres demandées par les utilisateurs.
 
 En août 2018, un utilisateur, David Klement, est revenu me voir avec des maquettes d\'écran pour une conception plus professionnelle. Depuis la version 1.3.95, j\'ai incorporé ces idées, en commençant par l\'écran d\'affichage de l\'album.
-Cette liste complète des conceptions d\'écran proposées peut être consultée sur le site Web de l\'application (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
+Cette liste complète des conceptions d\'écran proposées est disponible sur le site Web de l\'application (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
 
 REMARQUE: les traductions linguistiques sont effectuées à l\'aide des sites Web www.Deepl.com ou google translate. Si vous remarquez des erreurs évidentes, veuillez me le faire savoir afin que je puisse les corriger.
 
@@ -342,7 +342,7 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
     <string name="alert_warning">avertissement</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ "correspondance la plus proche \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, pourriez-vous prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -449,7 +449,7 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ "correspondance la plus proche \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour autoriser la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache sera en mémoire.</string>
@@ -502,7 +502,7 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Erreur lors du téléchargement</string>
     <string name="alert_message_error_uploading_end">Une erreur s\'est produite après le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer d\'où il est arrivé et effacer toutes les données temporaires résiduelles du serveur.</string>
-    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer là où il est arrivé, ou supprimez tous les fichiers restants de la tâche, puis cliquez sur le bouton Terminer pour effacer toutes les données temporaires résiduelles du serveur.</string>
+    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer là où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer les données temporaires résiduelles du serveur.</string>
     <string name="release_history">Historique des versions</string>
     <string name="planned_releases">Sorties prévues</string>
     <string name="tags_heading">Mots clés</string>
@@ -583,7 +583,7 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
     <string name="alert_server_call_in_progress_please_wait">Appel au serveur en cours. Veuillez attendre que cela se termine avant de réessayer.</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Trop d\'images orphelines existent sur le serveur pour que le téléchargement se poursuive. Veuillez les ranger avant de réessayer.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Impossible de récupérer la liste des images orphelines. Veuillez réessayer.</string>
-    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur administrateur n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de communauté (qui simule le statut d\'administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plugin approprié expose correctement les méthodes que vous attendez à l\'aide d\'un navigateur Web:%1$s / tools / ws.htm</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur administrateur n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de communauté (qui simule le statut d\'administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plug-in approprié expose correctement les méthodes que vous attendez à l\'aide d\'un navigateur Web:%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Cette fonction n\'est pas disponible. Veuillez installer le plugin PiwigoClientWsExts sur votre serveur. Si vous l\'avez déjà installé, veuillez le mettre à jour avec la dernière version.</string>
     <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste de types de fichiers pouvant être téléchargés avec les informations de session utilisateur (celles-ci sont généralement fournies uniquement pour les utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, envoyez-moi un e-mail pour m\'aider à diagnostiquer le problème pour vous.</string>
     <string name="job_not_found">Télécharger le travail introuvable</string>
@@ -614,7 +614,7 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application"</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données mises en cache?</string>
     <string name="server_connection_id_pattern">%1$s à%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -631,7 +631,7 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">Le serveur n\'acceptera pas%1$d fichiers sélectionnés pour le téléchargement. S\'il s\'agit de vidéos, vous pouvez activer la compression. Supprimer ces fichiers du téléchargement?</string>
     <string name="upload_status_tab_title_details">Détails</string>
     <string name="upload_status_tab_title_errors">les erreurs</string>
-    <string name="message_piwigo_server_inconsistent_results">L\'appel d\'API Piwigo%1$s signale que la somme de contrôle du fichier ne correspond pas, mais l\'appel d\'API%2$s indique qu\'elle correspond. Cela pourrait être un bogue dans le serveur PIWIGO ou un plugin que vous utilisez, et cela peut valoir la peine d\'être signalé.</string>
+    <string name="message_piwigo_server_inconsistent_results">L\'appel d\'API Piwigo%1$s signale que la somme de contrôle du fichier ne correspond pas, mais l\'appel d\'API%2$s indique qu\'elle correspond. Cela pourrait être un bogue dans le serveur PIWIGO ou un plugin que vous utilisez, et cela vaut la peine d\'être signalé.</string>
     <string name="alert_bulk_image_permissions_title">Définir les autorisations d\'accès</string>
     <string name="alert_bulk_image_permissions_message">Définir les niveaux d\'autorisation d\'accès pour les%1$d ressources sélectionnées</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec un type mime%1$s</string>
@@ -659,7 +659,7 @@ Les communiqués se font actuellement sur une base ad hoc. La fréquence des ver
     <string name="create_email_using_app">Créer un e-mail à l\'aide de l\'application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contenait des fichiers qui n\'ont pas pu être traités. Ces%1$d fichiers ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Tous les conseils d\'utilisation uniques seront à nouveau affichés</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d\'utilisation uniques seront à nouveau affichés"</string>
     
     
     <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>

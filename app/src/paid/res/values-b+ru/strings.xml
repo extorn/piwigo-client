@@ -2,33 +2,33 @@
 <resources>
     
     <string name="notification_title_background_upload_service">Фоновая служба загрузки Piwigo</string>
-    <string name="notification_text_background_upload_running">Запуск загрузки</string>
+    <string name="notification_text_background_upload_running">Выполняется задание загрузки</string>
     <string name="notification_text_background_upload_sleeping">Спать. Следующий запуск на%1$tR</string>
-    <string name="notification_text_background_upload_polling">Опрос для загрузки файлов.</string>
+    <string name="notification_text_background_upload_polling">Опрос файлов для загрузки.</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">Не забудьте запустить службу фоновой загрузки, если вы хотите, чтобы ваши задания запускались</string>
+    <string name="alert_warning_auto_upload_service_stopped">Не забудьте запустить службу фоновой загрузки, если хотите, чтобы ваши задания выполнялись.</string>
     <string name="alert_auto_upload_service_stopped">Служба фоновой загрузки остановлена</string>
-    <string name="alert_auto_upload_service_started">Запущена служба фоновой загрузки</string>
-    <string name="alert_auto_upload_service_job_restarted">Начата загрузка ранее незавершенного задания на сервер%1$s с файлами%2$d</string>
+    <string name="alert_auto_upload_service_started">Служба фоновой загрузки запущена</string>
+    <string name="alert_auto_upload_service_job_restarted">Началась загрузка ранее незавершенного задания на сервер%1$s с файлами%2$d</string>
     <string name="alert_auto_upload_service_job_started">Начало загрузки задания на сервер%1$s с файлами%2$d</string>
-    <string name="alert_auto_upload_service_job_finished_success">Завершено выполнение фоновой загрузки на сервер%1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Завершено выполнение фоновой загрузки на сервер%1$s. Не удалось загрузить некоторые файлы, и они будут повторены позже.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Завершено выполнение фоновой загрузки на сервер%1$s. Файлы не могут быть загружены. Работа будет повторена позже.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Фоновая загрузка службы проверки для задач</string>
+    <string name="alert_auto_upload_service_job_finished_success">Завершено выполнение задания фоновой загрузки на сервер%1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Завершено выполнение задания фоновой загрузки на сервер%1$s. Не удалось загрузить некоторые файлы, они будут повторены позже.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Завершено выполнение задания фоновой загрузки на сервер%1$s. Не удалось загрузить файлы. Работа будет повторена позже.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Проверка службы фоновой загрузки для задач</string>
     <string name="progress_creating_tag">Создание тега</string>
-    <string name="error_updating_favorites_pattern">Ошибка удаления ресурса (%1$s) из избранного:%2$s</string>
+    <string name="error_updating_favorites_pattern">Ошибка при удалении ресурса (%1$s) из избранного:%2$s</string>
     <string name="favorites_content_load_failed_text">Не удалось загрузить ресурсы, отмеченные как избранные</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Вы запросили удаление%1$d ресурсов. Вы хотите удалить их из всех альбомов (и сервера) - навсегда или просто отсоединить их от этого фаворита?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Вы запросили удаление%1$d ресурсов. Вы хотите удалить их из всех альбомов (и с сервера) навсегда или просто отсоединить их от этого избранного?</string>
     <string name="progress_remove_favorite_resources">Удаление ресурсов из списка избранного</string>
-    <string name="favorites_empty_text">У вас нет избранных</string>
+    <string name="favorites_empty_text">В настоящее время у вас нет избранного</string>
     <string name="favorites_heading">Ваше избранное</string>
     <string name="button_unfavorite">Не любимый</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Настройки сервера</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Локальные настройки</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Сжатие перед загрузкой</string>
-    <string name="ignoring_job_local_folder_not_found">Локальная папка больше не существует. Игнорирование работы</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">Не выбраны расширения файлов для загрузки. Игнорирование работы</string>
+    <string name="ignoring_job_local_folder_not_found">Локальной папки больше не существует. Игнорирование работы</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Для загрузки не выбраны расширения файлов. Игнорирование работы</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Профиль подключения установлен в автономный режим. Игнорирование работы</string>
     <string name="slideshow_auto_drive_paused">Слайд-шоу Autodrive приостановлено до следующего слайда</string>
 </resources>

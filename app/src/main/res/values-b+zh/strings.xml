@@ -84,7 +84,7 @@
     <string name="navigation_drawer_close">关闭导航抽屉</string>
 
     <string name="notification_upload_paused">PIWIGO上传已暂停</string>
-    <string name="notification_upload_resumed">PIWIGO上传恢复</string>
+    <string name="notification_upload_resumed">PIWIGO恢复上传</string>
 
     <string name="alert_items_for_upload_already_exist_message_pattern">服务器上已经存在%1$d个文件。他们的权限将被更改以反映此处选择的权限，并且如果需要的话，它们将链接到此相册。</string>
     <string name="alert_upload_success">上传完成。</string>
@@ -112,7 +112,7 @@
     <string name="createGallery_permissions_allowedGroupsTitle">允许的团体</string>
     <string name="createGallery_permissions_allowedUsersTitle">允许的用户</string>
     <string name="createGallery_createGalleryButtonTitle">建立相簿</string>
-    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">无法正确设置图库的权限。再次删除。请再试一遍。如果错误仍然存​​在，请向此应用提出问题，以便我们进行改进，然后手动执行该步骤。</string>
+    <string name="createGallery_alert_permissions_set_failed_gallery_deleted">无法正确设置图库的权限。再次删除。请再试一遍。如果错误仍然存​​在，请向此应用提出问题，以便我们进行改进，然后手动执行此步骤。</string>
 
     <string name="logging_in_to_piwigo_pattern">登录到%1$s</string>
 
@@ -125,7 +125,7 @@
     <string name="alert_title_server_error">服务器错误</string>
     <string name="alert_server_error_pattern">服务器返回HTTP错误：%1$d（%2$s）</string>
     <string name="alert_title_error_handling_response">解析Piwigo响应时出错</string>
-    <string name="alert_error_handling_response_pattern">无法回应的回应：%1$d（%2$s）</string>
+    <string name="alert_error_handling_response_pattern">无法解析的回应：%1$d（%2$s）</string>
     <string name="none_selected">没有</string>
     <string name="alert_title_error_too_many_users">错误</string>
     <string name="alert_error_too_many_users_message">用户太多，无法处理。请提交增强请求以启用用户分页。</string>
@@ -169,7 +169,7 @@
     <string formatted="false" name="eula">"最终用户许可协议（“协议”）
 上次更新时间：2018年8月7日
 
-在点击“我同意”之前，请仔细阅读此最终用户许可协议（“协议”）。
+在点击“我同意”之前，请仔细阅读本最终用户许可协议（“协议”）。
 按钮，下载或使用Piwigo Client（“应用程序”）。
 
 通过单击“我同意”按钮，下载或使用该应用程序，即表示您同意受约束
@@ -178,7 +178,7 @@
 下载或使用该应用程序。
 
 如果您正在考虑使用此应用程序访问和/或修改用于商业目的的服务器，则必须阅读并理解责任限制。
-您必须在非生产服务器上对此进行测试，以使您满意，然后再根据您的决定自行承担任何风险和责任。这个程序主要是设计
+您必须根据自己的决定在非生产服务器上对此进行测试，以使您满意，然后再承担任何风险和责任。这个程序主要是设计
 用于非商业目的。
 
 定义
@@ -192,12 +192,12 @@ Gareth Deli授予您可撤销的，非排他的，不可转让的有限许可
 仅出于个人或商业目的下载，安装和使用该应用程序
 严格按照本协议的条款。
 
-本软件按“原样”提供，不提供任何形式的明示或暗示担保，包括但不限于对适销性，特定目的的适用性和非侵权性的保证。无论是由于软件，使用或其他方式产生的，与之有关或与之有关的合同，侵权或其他形式的任何索赔，损害或其他责任，作者或版权所有者概不负责。软件
+本软件按“原样”提供，不提供任何形式的明示或暗示的保证，包括但不限于对适销性，特定目的的适用性和非侵权性的保证。无论是由于软件，使用或其他方式产生的，与之有关或与之有关的合同，侵权或其他形式的任何索赔，损害或其他责任，作者或版权所有者概不负责。软件
 
 
 限制条件
 
-您同意不这样做，也不会允许他人：
+您同意不这样做，也不会允许其他人：
 a）许可，出售，出租，租赁，转让，分发，传输，托管，外包，披露或以其他方式
 商业上利用该应用程序或使该应用程序可用于任何第三方。
 b）手动或使用工具反编译或以其他方式查看应用程序的源代码或字节码
@@ -214,7 +214,7 @@ Firebase集成已添加到此应用程序中，以促进跟踪应用程序的使
 
 该软件“按原样”提供，被许可人自负风险。Gareth Deli对使用，性能或对特定用途的适用性不做任何保证。软件总是有可能包含错误（错误）而无法正常工作。因此Gareth Deli不保证该软件完全没有错误，也不保证该软件在不中断所有计算机和配置的情况下即可正常运行。
 
-检查软件是否符合其特定目的或是否满足其功能和性能要求，完全由被许可方负责。被许可人还必须测试该软件如何在其设备及其配置上运行；测试所有用例，并检查在生产环境中使用该软件之前，是否按要求正确处理了数据。如果将该软件用于商业目的，则至关重要。
+被许可方有责任检查该软件是否符合其特定目的或是否满足其功能和性能要求。被许可人还必须测试该软件如何在其设备及其配置上运行；测试所有用例，并检查在生产环境中使用该软件之前是否按要求正确处理了数据。如果将该软件用于商业目的，则至关重要。
 
 
 责任限制
@@ -255,7 +255,7 @@ Gareth Deli可以全权酌情决定在任何时间，出于任何理由或没有
 本协议修正案
 
 Gareth Deli保留自行决定修改或替换此文件的权利。
-随时同意。如果有重大修订，我们将至少提前0天通知
+随时同意。如果有重大修改，我们将至少提前0天通知
 在任何新条款生效之前。构成重大变更的内容将由我们决定
 自行决定。
 
@@ -268,10 +268,10 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 它将定期更新以添加更多功能，其中一些我已经想到过，而其他功能则是用户要求的。
 
-在2018年8月，用户David Klement带着屏幕模型回到我身边，以获得更专业的设计。从1.3.95版本开始，我一直在结合这些想法，从专辑查看屏幕开始。
+在2018年8月，用户David Klement通过屏幕模型回到我身边，以提供更专业的设计。从1.3.95版本开始，我一直在结合这些想法，从专辑查看屏幕开始。
 可以在应用程序网站（https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html）上查看建议的屏幕设计的这些完整列表。
 
-注意：语言翻译是使用www.Deepl.com或Google翻译网站进行的。如果您发现任何明显的错误，请告诉我，以便我进行纠正。
+注意：语言翻译是使用www.Deepl.com或Google翻译网站进行的。如果您发现任何明显的错误，请让我知道，以便我进行纠正。
 
 有两个版本，一个是免费版本（带有广告），一个是付费版本（没有广告）。您可以自由选择自己喜欢的。您目前无法“升级”免费版本，安装付费版本并删除免费版本。
 注意：版本会随着时间而变化。大多数更改将针对免费版和付费版进行。
@@ -288,13 +288,13 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 我的测试库仅包含.jpg和.mp4文件。如果您的文件包含其他文件，则很可能会遇到问题-如果是这样，请告诉我，我将优先处理这些文件类型。
 
-警告：我认为Piwigo的版本低于1.9.2-视频上传取决于我对服务器应用的修订＃756。
+警告：我认为Piwigo的版本低于1.9.2-视频的上传取决于您应用到服务器的修订＃756。
 
 我一直在测试安装的piwigo_privacy插件和VideoJS插件的副本。
 我已经安装了扩展描述插件的副本，但是很遗憾，此功能尚未通过PIWIGO API公开。
 我想包括对“收藏夹”照片的支持，但此功能似乎尚未通过PIWIGO API公开。
 
-如果您遇到任何错误，请向我发送任何电子邮件。我已经在android模拟器，三星手机和三星平板电脑上进行了测试，但这是我的第一个应用程序，因此我确定有人会出错。
+如果您遇到任何错误，请向我发送任何电子邮件。我已经在android模拟器，三星手机和三星平板电脑上进行了测试，但这是我的第一个应用程序，因此，我确定有人会出错。
 
 非常感谢向我发送建议或错误的电子邮件的所有人。我将努力尽快解决您的所有建议。
 
@@ -343,7 +343,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="eula_menu_title">最终用户许可协议</string>
     <string name="alert_warning">警告</string>
     <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的缩略图大小。服务器将返回“最近匹配”大小的图像。</string>
-    <string name="rate_dialog_message">如果您喜欢使用此应用程序，请介意花点时间对其评分吗？不会超过一分钟。谢谢你的支持！</string>
+    <string name="rate_dialog_message">如果您喜欢使用此应用，请介意花点时间对其评分吗？不会超过一分钟。谢谢你的支持！</string>
     <string name="groups_menu_title">团体</string>
     <string name="group_members_pattern">（%1$d个成员）</string>
     <string name="alert_group_delete_success_pattern">组（%1$s）已成功删除</string>
@@ -433,7 +433,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_message_set_album_thumbnail">将相册缩略图更新为该图像？</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">您确定要永久删除相册（%1$s）和所有内容（除非链接到其他地方的相册）吗？</string>
     <string name="alert_confirm_really_really_delete_album_from_server_pattern">您是否确定要删除包含%2$d张照片的相册（%1$s）和永远包含另外%4$d张照片的%3$d个儿童相册？请注意，链接到其他相册的照片将保留在其中，但所有其他照片将被永久删除。此操作没有撤消功能。</string>
-    <string name="alert_confirm_copy_items_here_pattern">将购物篮中的%1$d个项目复制到这里（%2$s）？</string>
+    <string name="alert_confirm_copy_items_here_pattern">将篮子中的%1$d个项目复制到这里（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">将购物篮中的%1$d个项目移到这里（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">连结相簿</string>
     <string name="list_ok_button">好</string>
@@ -481,12 +481,12 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="x509_cert_verified_by_field_pattern">验证人：%1$s</string>
     <string name="x509_cert_valid_from_field_pattern">有效期自：%1$s</string>
     <string name="x509_cert_valid_to_field_pattern">有效期至：%1$s</string>
-    <string name="alert_warning_multiple_users_found_pattern">发现有%1$d个其他用户共享此用户名（%2$s）。选择了该Piwigo服务器的最新用户，但是如果他们有可能在相同或相似的时间使用服务器，则这是不安全的。请考虑更改这些用户名，以便用户名是给定用户类别的唯一标识符。</string>
-    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">这些权限是开始上传过程所需的，然后在屏幕关闭后保持上传过程运行</string>
+    <string name="alert_warning_multiple_users_found_pattern">发现有%1$d个其他用户共享此用户名（%2$s）。选择了该Piwigo服务器的最新用户，但是如果他们可能在相同或相似的时间使用服务器，则这是不安全的。请考虑更改这些用户名，以便用户名是给定用户类别的唯一标识符。</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">需要这些权限才能启动上传过程，然后在屏幕关闭后保持上传过程运行</string>
     <string name="alert_no_scheme_specified">您必须在服务器地址前面加上http：//或https：//。不支持其他方案。如果默认端口是可选的-HTTP为80或https为443。例如http://piwigo.org/demo或http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">以下%1$d文件超出了警告阈值：%2$s。您要从上传中删除这些内容吗？</string>
     <string name="alert_files_larger_than_upload_threshold_compress">您要在上传之前压缩任何视频吗？</string>
-    <string name="alert_trusted_certificates_polling">服务器在连接时提供的不受信任的证书将显示给您，以便您选择将它们添加到信任存储区。如果拒绝，则不会再次提示您输入相同的证书。为了再次提示，请取消选择并重新选择使用自定义受信任证书存储的选项。</string>
+    <string name="alert_trusted_certificates_polling">服务器在连接时提供的不受信任的证书将显示给您，以便您选择将这些证书添加到信任存储中。如果拒绝，则不会再次提示您输入相同的证书。为了再次提示，请取消选择并重新选择使用自定义受信任证书存储的选项。</string>
     <string name="button_copy_link">复制链接</string>
     <string name="download_link_clipboard_data_desc">下载%1$s的链接</string>
     <string name="alert_http_scheme_specified">您的服务器正在使用http。这不是一个好主意，因为用户名和密码以纯文本格式传输到服务器。我强烈建议您将服务器更改为使用https。</string>
@@ -572,7 +572,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="connection_reset_warning_pattern">服务器在过去%2$d分钟内已关闭连接%1$d次。这可能表明您的服务器配置有问题。</string>
     <string name="content_description_icon">图标</string>
     <string name="duplicates_ignored_pattern">已忽略%1$d个重复项。</string>
-    <string name="progress_loading_session_details">加载会话详细信息</string>
+    <string name="progress_loading_session_details">正在加载会话详细信息</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">Piwigo WS方法%1$s在此服务器上不再可用，并且已使用后备%2$s。您刚刚停用或删除了服务器插件吗？</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">Piwigo WS方法%1$s在此服务器上不再可用。在应用程序中禁用受影响的功能。您刚刚停用或删除了服务器插件吗？</string>
     <string name="removing_favorite">删除收藏夹</string>
@@ -584,7 +584,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_error_too_many_orphaned_files_exist_on_server">服务器上存在太多孤立图像，无法继续上载。请先整理这些，然后重试。</string>
     <string name="upload_error_orphaned_file_retrieval_failed">无法检索孤立图像列表。请重试。</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理员用户无权访问预期的功能。如果您使用社区插件（对非管理员用户伪造管理员身份）未正确安装，则会发生这种情况。使用Web浏览器检查相关插件是否正确公开了您期望的方法：%1$s / tools / ws.htm</string>
-    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">此功能不可用。请在您的服务器上安装PiwigoClientWsExts插件。如果您已经安装了此软件，请更新到最新版本。</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">此功能不可用。请在您的服务器上安装PiwigoClientWsExts插件。如果您已经安装了此软件，请将其更新为最新版本。</string>
     <string name="alert_user_session_no_allowed_filetypes">服务器尚未提供可与用户会话信息一起上传的文件类型列表（通常仅为管理员用户提供）。请检查服务器配置是否正确，然后重试。如果问题仍然存在，请给我发送电子邮件，以帮助我为您诊断问题。</string>
     <string name="job_not_found">找不到上传作业</string>
     <string name="files_mid_data_transfer_title">文件已部分复制</string>
@@ -614,7 +614,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值</string>
+    <string name="preference_corrupt_please_re_type_pattern">"首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值"</string>
     <string name="switch_to_cached_mode">该服务器目前不可用。使用缓存的数据？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">压缩影片</string>
@@ -654,12 +654,12 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_error_upload_file_compression_error_message_pattern">压缩文件以上传%1$s时出错。\n%2$s</string>
     <string name="uploading_progress_bar_message">上载中</string>
     <string name="compressing_progress_bar_message">压缩方式</string>
-    <string name="warning_missing_tags_links_removed_from_resource">并非所有链接到该项目的标签都仍然存在于数据库中。指向%1$d的链接已被删除</string>
+    <string name="warning_missing_tags_links_removed_from_resource">并非所有链接到该项目的标签都仍然存在于数据库中。指向%1$d的链接已删除</string>
     <string name="button_stop_warning_me">不要再告诉我</string>
     <string name="create_email_using_app">使用应用创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。这些%1$d文件已被忽略。要共享视频文件，必须先将其完全本地缓存。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">所有一次性用户提示将再次显示</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"所有一次性用户提示将再次显示"</string>
     
     
     <string name="delete_uploaded_files_title">删除上传的文件</string>

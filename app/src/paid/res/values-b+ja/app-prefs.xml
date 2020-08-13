@@ -26,7 +26,7 @@
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">アップロードステータスの表示</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">最後のジョブ実行のステータスを表示（利用可能な場合）</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">最後のジョブ実行からのステータスの表示（可能な場合）</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">ジョブは有効です</string>
@@ -119,7 +119,7 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">スライドショーの自動進行</string>
+    <string name="preference_gallery_slideshow_auto_drive_title">自動スライドショー進行</string>
     <string name="preference_gallery_slideshow_auto_drive_summary">設定した時間が経過すると、次の画像またはビデオが表示されます</string>
     
 
