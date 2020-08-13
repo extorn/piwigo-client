@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.util.Log;
 import android.util.LongSparseArray;
 
 import com.google.gson.JsonArray;
@@ -140,7 +141,12 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         } else if (category.has("uppercats")) {
             String[] parentage = category.get("uppercats").getAsString().split(",");
             if (parentage.length > 1) {
-                parentId = Long.valueOf(parentage[parentage.length - 2]);
+                try {
+                    parentId = Long.valueOf(parentage[parentage.length - 2]);
+                } catch(NumberFormatException e) {
+                    Logging.log(Log.ERROR, TAG, "Error retrieving parent album id from parentage str : " + category.get("uppercats"));
+                    Logging.recordException(e);
+                }
             } else {
                 parentId = 0L;
             }
