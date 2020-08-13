@@ -762,7 +762,7 @@ public abstract class UIHelper<T> {
     }
 
     protected boolean canShowDialog() {
-        return true;
+        return getParentView().getContext() != null; // if no context, then unable to build the view let alone show it.
     }
 
     public void showProgressIndicator(final String titleString, final int progress) {
