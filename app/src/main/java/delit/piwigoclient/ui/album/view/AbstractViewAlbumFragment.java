@@ -1208,6 +1208,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
+                    if(getActivity() == null) {
+                        Logging.log(Log.WARN, TAG, "Unable to action request to navigate using title album link");
+                        return; // unable to action.
+                    }
                     requireActivity().onBackPressed();
                 }
             };
