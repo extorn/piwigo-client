@@ -6,7 +6,9 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 //apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
 
-
+// Enable deobfuscation of crash reports
+//android.defaultConfig.ndk.debugSymbolLevel = 'FULL'
+//android.buildTypes.release.ndk.debugSymbolLevel = { 'FULL' } //SYMBOL_TABLE | FULL
 
 android {
 
@@ -38,7 +40,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 30
 
-        versionCode 313
+        versionCode 314
         versionName "1.4.0.78"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -46,6 +48,7 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         multiDexKeepProguard file('multidex_keep_file.pro')
+
         // configure room options
         javaCompileOptions {
             annotationProcessorOptions {
@@ -55,6 +58,11 @@ android {
                         "room.expandProjection":"true"]
             }
         }
+
+        /*android gradle plugin 4.1 and higher only (need newer intellij).
+        ndk {
+            debugSymbolLevel = 'FULL'
+        }*/
 
     }
     buildTypes {
