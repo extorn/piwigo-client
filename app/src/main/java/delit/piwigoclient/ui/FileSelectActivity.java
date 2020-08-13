@@ -134,6 +134,9 @@ public class FileSelectActivity extends MyActivity {
         folderItemSelectPrefs.withInitialFolder(event.getInitialFolder());
         folderItemSelectPrefs.withVisibleContent(event.getVisibleFileTypes(), event.getFileSortOrder());
         folderItemSelectPrefs.withVisibleMimeTypes(event.getVisibleMimeTypes());
+        if(event.getSelectedUriPermissionsForConsumerId() == null) {
+            Logging.log(Log.ERROR, TAG, "File Consumer id is null. Purpose  : " + event.getSelectedUriPermissionsForConsumerPurpose());
+        }
         folderItemSelectPrefs.withSelectedUriPermissionsForConsumerId(event.getSelectedUriPermissionsForConsumerId());
         folderItemSelectPrefs.setSelectedUriPermissionConsumerPurpose(event.getSelectedUriPermissionsForConsumerPurpose());
         folderItemSelectPrefs.setSelectedUriPermissionFlags(event.getSelectedUriPermissionsFlags());
