@@ -196,8 +196,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         if (externallyTriggeredSelectFilesActionId == stickyEvent.getActionId() || getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
+            if(getContext() != null) {
                 EventBus.getDefault().removeStickyEvent(stickyEvent);
                 new SharedFilesIntentProcessingTask(this).execute(stickyEvent);
+            } else {
+                Logging.log(Log.WARN, TAG, "Unable to handle shared files before the fragment is attached.");
+            }
         }
     }
 
