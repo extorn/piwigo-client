@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcel;
@@ -942,6 +943,9 @@ public class IOUtils {
                     return c.getLong(idx);
                 }
             }
+        } catch(CursorIndexOutOfBoundsException e) {
+            Logging.log(Log.ERROR, TAG, "Unable to retrieve column from cursor");
+            Logging.recordException(e);
         }
 
         return -1;
