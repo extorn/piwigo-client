@@ -401,14 +401,17 @@ public class ExoPlayerCompression {
          * @return
          */
         public String getOutputFileExt(Set<String> acceptableFileExts) {
-            if(isAddAudioTrack() && isAddVideoTrack()) {
-                String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
+            String ext;
+            boolean hasAudio = isAddAudioTrack();
+            boolean hasVideo = isAddVideoTrack();
+            if(hasAudio && hasVideo) {
+                ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
                 if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
                     return ext;
                 }
             }
-            if(isAddAudioTrack()) {
-                String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.AUDIO_MP4);
+            if(hasAudio) {
+                ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.AUDIO_MP4);
                 if(ext == null) {
                     ext = "m4a";
                 }
@@ -416,17 +419,17 @@ public class ExoPlayerCompression {
                     return ext;
                 }
             }
-            if(isAddVideoTrack()) {
-                String ext = "m4v";
+            if(hasVideo) {
+                ext = "m4v";
                 if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
                     return ext;
                 }
             }
-            String ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
+            ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(MimeTypes.VIDEO_MP4);
             if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
                 return ext;
             }
-            throw new IllegalStateException(String.format("No valid output file extension could be found acceptable to the server amongst options (%1$s)", CollectionUtils.toCsvList(acceptableFileExts)));
+            throw new IllegalStateException(String.format("No valid output file extension (preferred is %2$s) could be found for file (video:%3$b audio:%4$b) acceptable to the server amongst options (%1$s)", CollectionUtils.toCsvList(acceptableFileExts), ext, hasVideo, hasAudio));
         }
 
         /**
