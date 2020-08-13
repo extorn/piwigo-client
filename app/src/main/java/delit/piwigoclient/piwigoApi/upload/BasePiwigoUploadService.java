@@ -39,6 +39,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,7 +92,7 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.UploadAlbumCreateResponseHandler;
-import id.zelory.compressor.Compressor;
+import id.zelory.compressor.tweak.Compressor;
 
 import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
 
@@ -1165,16 +1166,29 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 maxHeight = imgHeight;
             }
 
-            outputPhoto = DocumentFile.fromFile(new Compressor(this)
-                    .setMaxHeight(maxHeight)
-                    .setMaxWidth(maxWidth)
-                    .setQuality(uploadJob.getImageCompressionParams().getQuality())
-                    .setCompressFormat(outputFormat)
-                    .setDestinationDirectoryPath(outputPhoto.getParentFile().getUri().getPath())
-                    .compressToFile(new File(rawImage.getPath()), outputPhoto.getName()));
+            ExifInterface originalExifData;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                FileDescriptor fd = getContentResolver().openFileDescriptor(rawImage, "r").getFileDescriptor();
+                outputPhoto = DocumentFile.fromFile(new Compressor(this)
+                        .setMaxHeight(maxHeight)
+                        .setMaxWidth(maxWidth)
+                        .setQuality(uploadJob.getImageCompressionParams().getQuality())
+                        .setCompressFormat(outputFormat)
+                        .setDestinationDirectoryPath(outputPhoto.getParentFile().getUri().getPath())
+                        .compressToFile(fd, outputPhoto.getName()));
+                originalExifData = new ExifInterface(fd);
+            } else {
+                outputPhoto = DocumentFile.fromFile(new Compressor(this)
+                        .setMaxHeight(maxHeight)
+                        .setMaxWidth(maxWidth)
+                        .setQuality(uploadJob.getImageCompressionParams().getQuality())
+                        .setCompressFormat(outputFormat)
+                        .setDestinationDirectoryPath(outputPhoto.getParentFile().getUri().getPath())
+                        .compressToFile(new File(rawImage.getPath()), outputPhoto.getName()));
+                originalExifData = new ExifInterface(rawImage.getPath());
+            }
 
             if (outputFormat == Bitmap.CompressFormat.JPEG) {
-                ExifInterface originalExifData = new ExifInterface(rawImage.getPath());
                 ExifInterface newExifData = new ExifInterface(outputPhoto.getUri().getPath());
                 Field[] fields = ExifInterface.class.getFields();
                 try {
