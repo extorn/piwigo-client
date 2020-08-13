@@ -43,7 +43,7 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
     }
 
     public T getParent() {
-        return parent.get();
+        return parent == null ? null : parent.get();
     }
 
     @Override
