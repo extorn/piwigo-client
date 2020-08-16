@@ -884,6 +884,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     void processModelRatings(ResourceItem resource) {
+        if(resource == null) {
+            Logging.log(Log.ERROR, TAG, "Resource Item unavailable to process model ratings from");
+            return;
+        }
         if (resource.getRatingsGiven() > 0) {
             averageRatingsBar.setRating(resource.getAverageRating());
             averageRatingsBar.setVisibility(VISIBLE);

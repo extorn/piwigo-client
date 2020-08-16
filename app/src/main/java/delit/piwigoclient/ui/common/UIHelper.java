@@ -73,6 +73,7 @@ import delit.libs.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.util.ViewListUtils;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.CustomSnackbar;
 import delit.libs.util.ObjectUtils;
@@ -387,7 +388,12 @@ public abstract class UIHelper<T> {
 
     private void loadProgressIndicatorIfPossible(View view) {
         if(view != null) {
-            progressIndicator = new WeakReference<>(ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator));
+            try {
+                progressIndicator = new WeakReference<>(ViewCompat.requireViewById(view.getRootView(), R.id.progressIndicator));
+            } catch(IllegalArgumentException e) {
+                Logging.recordException(new Exception().fillInStackTrace());
+                Logging.log(Log.ERROR, TAG, "Progress indicator not available in current view graph " + getParent().getClass().getName());
+            }
         } else {
             if (BuildConfig.DEBUG) {
                 Logging.recordException(new Exception().fillInStackTrace());

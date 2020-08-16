@@ -946,7 +946,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             int filesAlreadyPresent = folderItemsToBeUploaded.size() - addedItems;
             if (filesAlreadyPresent > 0) {
-                getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.duplicates_ignored_pattern, filesAlreadyPresent));
+                // need to use the context in the UIHelper because this fragment may yet not be attached itself.
+                getUiHelper().showDetailedShortMsg(R.string.alert_information, getUiHelper().getAppContext().getString(R.string.duplicates_ignored_pattern, filesAlreadyPresent));
             }
             uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
             updateActiveJobActionButtonsStatus();
@@ -1360,7 +1361,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
-            getActionParent(uiHelper).setUploadToAlbum(response.getDeepestAlbumOnDesiredPath().toStub());
+            AbstractUploadFragment parent = getActionParent(uiHelper);
+            if(parent != null) {
+                parent.setUploadToAlbum(response.getDeepestAlbumOnDesiredPath().toStub());
+            }
             return true; // to close the progress indicator
         }
     }
