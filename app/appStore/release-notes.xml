@@ -1,63 +1,27 @@
 <en-GB>
-Bugfix:
-- Several, including image compression fixes.
-Changes:
-- improvement to logging to assist debug of a couple of potential errors
-- Updated to the latest Android 30 build libraries
+Assorted Bug fixes
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-- Několik, včetně oprav komprese obrazu.
-Změny:
-- vylepšení protokolování, které pomůže ladit několik potenciálních chyb
-- Aktualizováno na nejnovější Android 30 build knihovny
+Opravy nejrůznějších chyb
 </cs-CZ>
 <de-DE>
-Fehlerbehebung:
-- Mehrere Korrekturen, einschließlich Korrekturen der Bildkomprimierung.
-Änderungen:
-- Verbesserung der Protokollierung, um das Debuggen einiger potenzieller Fehler zu unterstützen
-- Auf die neuesten Android 30 Build-Bibliotheken aktualisiert
+Verschiedene Fehlerbehebungen
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-- Varias, incluidas correcciones de compresión de imágenes.
-Cambios:
-- mejora del registro para ayudar a depurar un par de errores potenciales
-- Actualizado a las últimas bibliotecas de compilación de Android 30
+Varias correcciones de errores
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-- Plusieurs, y compris des correctifs de compression d\'image.
-Changements:
-- amélioration de la journalisation pour aider au débogage de quelques erreurs potentielles
-- Mise à jour vers les dernières bibliothèques de build Android 30
+Corrections de bogues assorties
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-- Diversi, comprese le correzioni alla compressione delle immagini.
-I cambiamenti:
-- miglioramento della registrazione per assistere il debug di un paio di potenziali errori
-- Aggiornato alle ultime librerie di build di Android 30
+Correzioni di bug assortite
 </it-IT>
 <ja-JP>
-バグ修正：
--画像圧縮の修正を含むいくつか。
-変更：
--いくつかの潜在的なエラーのデバッグを支援するためのロギングの改善
--最新のAndroid 30ビルドライブラリに更新
+各種バグ修正
 </ja-JP>
 <ru-RU>
-Исправлена ошибка:
-- Несколько, включая исправления сжатия изображений.
-Изменения:
-- улучшение ведения журнала для помощи в отладке пары потенциальных ошибок
-- Обновлено до последних библиотек сборки Android 30.
+Различные исправления ошибок
 </ru-RU>
 <zh-CN>
-错误修正：
--几个，包括图像压缩修复程序。
-变化：
--改进了日志记录功能，以帮助调试几个潜在的错误
--更新到最新的Android 30构建库
+各种错误修复
 </zh-CN>

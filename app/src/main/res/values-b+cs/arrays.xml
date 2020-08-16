@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Pokud máte s aplikací nějaké problémy, upozorněte mě prosím e-mailem. Pokud si přejete, zveřejněte na Google Play zápornou recenzi, nesnažím se to zastavit, ale prosím také e-mailem. V horní části nabídky vysouvací zásuvky je odkaz, který mi pošle e-mail. Mohu poskytnout mnohem komplexnější podporu e-mailové adresy. Mnohokrát děkuji."</item>
-        <item>"Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé"</item>
+        <item>Pokud máte s aplikací nějaké problémy, upozorněte mě prosím e-mailem. Pokud si přejete, zveřejněte na Google Play zápornou recenzi, nesnažím se to zastavit, ale prosím také e-mailem. V horní části nabídky vysouvací zásuvky je odkaz, který mi pošle e-mail. Mohu poskytnout mnohem komplexnější podporu e-mailové adresy. Mnohokrát děkuji.</item>
+        <item>Uvidíte pouze soubory, které chcete vybrat pro upload a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, nezapomeňte změnit soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než nepravdivé</item>
         <item>Pokud se nahrávání nepodaří uspět, zkuste použít předvolbu na stránce pro nahrání nastavení aplikace k odstranění veškerých zbývajících neúspěšných nahrávání ze serveru.</item>
-        <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ \"Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
+        <item>Při pokusu o aktualizaci značek dochází vždy k chybě - \ "Nemáte povoleno mazat značky \" - Zajistěte, aby uživatelé mohli přidávat i mazat značky (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání, která je připravena přejít na váš aktuální server</item>
         <item>Dlouhým kliknutím na obrázek (buď miniaturu nebo položku prezentace), který se nepodařilo načíst, je znovu načíst</item>
         <item>Dlouhým kliknutím na album odstraníte dané album a veškerý obsah</item>
@@ -164,6 +164,8 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.79</item>
+        <item>"Opravy nejrůznějších chyb"</item>
         <item>1.4.0.78</item>
         <item>"Oprava chyby:
                  - Několik, včetně oprav komprese obrazu.
