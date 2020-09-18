@@ -1,0 +1,47 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "entities": [
+      {
+        "tableName": "UploadedFile",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`parentPath` TEXT NOT NULL, `name` TEXT NOT NULL, `serverId` TEXT NOT NULL, PRIMARY KEY(`parentPath`, `name`, `serverId`))",
+        "fields": [
+          {
+            "fieldPath": "parentPath",
+            "columnName": "parentPath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "serverId",
+            "columnName": "serverId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "parentPath",
+            "name",
+            "serverId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4157ee1d6249712d8d57a859591a4b3f')"
+    ]
+  }
+}
