@@ -2,6 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
+    "identityHash": "4157ee1d6249712d8d57a859591a4b3f",
     "entities": [
       {
         "tableName": "UploadedFile",
