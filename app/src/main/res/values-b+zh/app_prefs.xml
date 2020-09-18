@@ -38,7 +38,7 @@
 
     
     <string name="preference_server_connection_force_https_title">将Http URL重写为Https</string>
-    <string name="preference_server_connection_force_https_summary">https服务器的所有http：//网址都重写为https：//</string>
+    <string name="preference_server_connection_force_https_summary">https服务器的所有http：// URL都重写为https：//</string>
     
 
     
@@ -132,7 +132,7 @@
     <string name="preference_caching_level_default">磁碟</string>
 
     
-    <string name="preference_caching_max_cache_entries_title">最大缓存数量列表</string>
+    <string name="preference_caching_max_cache_entries_title">高速缓存条目数上限</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     
 
@@ -179,7 +179,7 @@
 
     
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">显示放大的相册缩略图</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">相册缩略图被中心裁剪</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">相册缩略图被中心裁切</string>
     
 
 
@@ -198,7 +198,7 @@
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">在幻灯片中显示视频</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">以幻灯片模式浏览图库时是否应该显示视频？</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">以幻灯片模式浏览图库时是否应显示视频？</string>
     
 
     
@@ -347,7 +347,7 @@
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（MB）</string>
+    <string name="preference_data_upload_max_filesize_mb_title">最多上传文件大小而不会警告您（以MB为单位）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 

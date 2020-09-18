@@ -14,7 +14,7 @@
     
     
     <string name="preference_test_server_connection_title">Conexión de prueba</string>
-    <string name="preference_test_server_connection_summary">Prueba de conexión al servidor</string>
+    <string name="preference_test_server_connection_summary">Pruebe la conexión al servidor</string>
 
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Servidor limpio</string>
@@ -37,8 +37,8 @@
     
 
     
-    <string name="preference_server_connection_force_https_title">Reescribir URL de Http en Https</string>
-    <string name="preference_server_connection_force_https_summary">Todas las URL http:// reescritas a https:// para el servidor https</string>
+    <string name="preference_server_connection_force_https_title">Reescribir las URL de Http en Https</string>
+    <string name="preference_server_connection_force_https_summary">Todas las http:// URL reescritas a https:// para el servidor https</string>
     
 
     
@@ -223,7 +223,7 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Orden de clasificación del álbum</string>
+    <string name="preference_gallery_sort_order_title">Orden de clasificación de álbumes</string>
     <string name="preference_gallery_sort_order_summary">%1$s</string>
     
 

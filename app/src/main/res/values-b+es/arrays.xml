@@ -30,7 +30,7 @@
     <string-array name="preference_caching_level_items">
         <item>Almacenamiento en caché deshabilitado</item>
         <item>Caché a la memoria</item>
-        <item>Caché en disco</item>
+        <item>Caché a disco</item>
     </string-array>
 
 
@@ -70,7 +70,7 @@
     
     <string-array name="preference_gallery_sort_order_entries">
         <item>ID de recurso</item>
-        <item>Nombre de archivo de recursos</item>
+        <item>Nombre de archivo de recurso</item>
         <item>Nombre del recurso</item>
         <item>Número de aciertos</item>
         <item>Puntaje de calificación promedio</item>
@@ -118,52 +118,38 @@
         <item>90 grados a la izquierda</item>
         <item>Ninguna</item>
         <item>90 grados a la derecha</item>
-        <item>Derecha 180 grados</item>
+        <item>180 grados a la derecha</item>
     </string-array>
 
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
-        <item>Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
+        <item>"Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
+        <item>"Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar las etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Siempre se produce un error al intentar actualizar las etiquetas - \ \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
-        <item>Haga clic prolongadamente en una imagen (ya sea en miniatura o en un elemento de presentación de diapositivas) que no se haya podido cargar para recuperarla nuevamente</item>
+        <item>Haga clic prolongado en una imagen (ya sea en miniatura o en un elemento de presentación de diapositivas) que no se haya podido cargar para recuperarla nuevamente</item>
         <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido</item>
         <item>Haga clic largo en la imagen de un álbum para habilitar la selección masiva de imágenes para una acción</item>
-        <item>Al ver cualquier imagen en la presentación de diapositivas, haga clic largo para rotar / cambiar el tamaño de la imagen mostrada / permitir un mayor acercamiento</item>
+        <item>Al ver cualquier imagen en la presentación de diapositivas, haga clic largo para rotar / cambiar el tamaño de la imagen mostrada / permitir un mayor zoom</item>
         <item>Puede hacer zoom en una imagen cuando la ve en una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
         <item>Cuando inicie sesión como administrador, antes de entregar su dispositivo a un amigo para que vea sus fotos, active la función de bloqueo de la aplicación para evitar que se realicen cambios involuntarios en su galería.</item>
         <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos local está habilitado, es posible guardar ese video en su carpeta de descargas</item>
-        <item>Haga clic prolongadamente en el botón eliminar en un \ \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no está en progreso)</item>
+        <item>Haga clic prolongadamente en el botón eliminar en un \ \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no está en curso)</item>
         <item>Si las imágenes tardan en cargarse, compruebe que su servidor genera automáticamente el tamaño utilizado por esta aplicación cuando se cargan</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>"Arreglo del fallo:
-            - Corregir errores HTTP 401 intermitentes pero incorrectos posiblemente vinculados a la revalidación de la respuesta en caché
-            Cambios:
-         - Posiblemente:
-            - Eliminación de todos o la mayoría de los anuncios a favor de un período de prueba gratuito seguido de un modelo de pago basado en suscripción
-            - Verifique el estado de inicio de sesión actual para asegurarse de que las listas de álbumes e imágenes sean siempre correctas
-            - Verificar la compatibilidad con la carga a servidores más antiguos (por ejemplo, piwigo.com - versión 2.8a)
-            - La capacidad de eliminar un álbum, pero no su contenido (creando huérfanos)
-            - Gestión de archivos huérfanos
-            - Investigar la adición de soporte para el complemento de etiquetas de colores
-            - Soporte gif animado mejorado (transmisión de archivos grandes)
-         - Posiblemente (solo aplicación de pago):
-            - La idea de fotos aleatorias implementada en la interfaz de usuario web de piwigo
-            - Soporte para comentarios de usuarios
-            - Notificar al usuario de las actualizaciones del servidor que están disponibles
-            - Soporte para editar EXIF ​​y otros formatos de metadatos de imágenes
-            - Agregar preferencia para permitir mostrar / ocultar los campos EXIF, etc. de interés o no
-            - Proyección de pantalla de algún tipo para permitir el espejo del dispositivo en una pantalla más grande
-         - Algo más:
-            - Envíeme un correo electrónico (hay un enlace de correo electrónico en la barra de navegación) para solicitar lo que necesita o desea que esta aplicación aún no hace"</item>
+        <item>"No se planean más actualizaciones."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.80</item>
+        <item>"Cambios:
+                 - EULA simplificado y la mayoría de las restricciones eliminadas.
+                 - Código fuente publicado en github https://github.com/extorn/piwigo-client
+                 - Actualizaciones de dependencias de bibliotecas de terceros"</item>
         <item>1.4.0.79</item>
         <item>"Varias correcciones de errores"</item>
         <item>1.4.0.78</item>
@@ -188,9 +174,9 @@
         <item>1.4.0.76</item>
         <item>"Arreglo del fallo:
              - Se corrigió el intercambio de múltiples archivos descargados
-             - Mensaje que se muestra para indicar que el enlace URI del archivo remoto se ha copiado en el portapapeles
+             - Mensaje que se muestra para indicar que el enlace URI del archivo remoto se ha copiado al portapapeles
              - Las cargas fijas no funcionan debido a una alteración apresurada en 1.4.0.75
-             - Selección de archivo: archivos de video que no muestran miniaturas cuando la ruta contiene un carácter de espacio
+             - Selección de archivos: archivos de video que no muestran miniaturas cuando la ruta contiene un carácter de espacio
              - Soporte para crear miniaturas para todos los videos (incluido MOV) para todos los dispositivos Android posibles"</item>
         <item>1.4.0.75</item>
         <item>"Arreglo del fallo:
@@ -230,10 +216,10 @@
                  - Fallo en la navegación a la galería desde la carga o la configuración si la última página abierta de la galería fue una presentación de diapositivas"</item>
         <item>1.4.0.67</item>
         <item>"Arreglo del fallo:
-                 - Varias correcciones de errores para los bloqueos relacionados con la reciente revisión del código de manejo de archivos
+                 - Varias correcciones de errores por fallas relacionadas con la reciente revisión del código de manejo de archivos
                 Cambios:
                  - Gran mejora en el rendimiento de la selección de archivos para pantallas de carga
-                 - Soporte perfecto para seleccionar archivos en aplicaciones que no brindan los permisos de archivo requeridos
+                 - Soporte perfecto para seleccionar archivos en aplicaciones que no proporcionan los permisos de archivo requeridos
                  - aplicación de pago: aceleración de hardware habilitada en toda la aplicación
                  - aplicación de pago: otras aplicaciones habilitan el uso de la tarea de selección de carpetas / archivos (informe cualquier problema)"</item>
         <item>1.4.0.66.8</item>
@@ -252,7 +238,7 @@
         <item>1.4.0.66</item>
         <item>"Cambios:
                 - Reescritura importante de todo el código relacionado con el tema para simplificar y corregir radicalmente los colores en las versiones de Android
-                - Cambió el tema a uno de día / noche para que sea configurable por el usuario (en la noche, ninguna pantalla tiene fondo blanco).
+                - Se cambió el tema a uno de día / noche para que sea configurable por el usuario (en la noche, ninguna pantalla tiene fondo blanco).
                 - soporte agregado para Uri y almacenamiento con ámbito:
                     - comparte archivos fácilmente
                     - seleccione archivos usando el selector de archivos del sistema o el de la aplicación
@@ -260,7 +246,7 @@
                     - Verifique que los archivos sean únicos antes de cargarlos; esto ahora es más difícil, por lo que lleva un poco más de tiempo
                     - El selector de archivos en la aplicación es relativamente lento para cargar carpetas que contienen muchos archivos - limitaciones en las API de Android en la actualidad
                 - al comprimir videos, puede quitar la transmisión de audio o video si desea crear un archivo m4a o m4v (extensión de archivo mp4 agregada si eso es todo lo que su servidor permite).
-                - Menú del cajón disponible en la pantalla de carga para permitirle saltar a la galería o configuraciones
+                - Menú de cajón disponible en la pantalla de carga para permitirle saltar a la galería o configuraciones
                 - La aplicación está lista para la implementación de código para advertirle mientras selecciona fotos de las que ha subido anteriormente.
                Arreglo del fallo:
                 - La página de carga conserva los archivos cuando se agregan nuevos archivos desde el selector del sistema o la navegación en la galería principal
@@ -274,7 +260,7 @@
              - Fragmento de ruta de Uri del servidor convertido incorrectamente a minúsculas, lo que genera un error 404"</item>
         <item>1.4.0.64</item>
         <item>"Cambios:
-             - Se agregó un botón para ver la contraseña oculta en las preferencias.
+             - Se agregó un botón para ver la contraseña oculta en las preferencias
              - Movido al tema basado en MaterialComponents (hay algunos cambios menores)
              - Ocultar la mayoría de las preferencias de conexión de forma predeterminada: haga clic para expandirlas y acceder al resto
              - movió algunas preferencias de carga a la sección avanzada
@@ -283,10 +269,10 @@
              - Se detuvo la advertencia de que faltaban etiquetas para decir que faltaban 0"</item>
         <item>1.4.0.63</item>
         <item>"Cambios:
-                 - Se agregó la opción de seleccionar una carpeta de descarga en las preferencias de la aplicación.
+                 - Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación.
                Arreglo del fallo:
-                 - Detener las advertencias que se muestran para el auto-drive de presentación de diapositivas cuando está deshabilitado.
-                 - Seleccione el archivo actualmente visible cuando se muestra el cuadro de diálogo de descarga de archivos"</item>
+                 - Detener las advertencias que se muestran para el auto-drive de presentación de diapositivas cuando está deshabilitado
+                 - Seleccione el archivo actualmente visible cuando se muestra el diálogo de descarga de archivos"</item>
         <item>1.4.0.62</item>
         <item>"Arreglo del fallo:
                  - Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones fuera de la aplicación a la última disponible
@@ -296,7 +282,7 @@
         <item>"Arreglo del fallo:
                  - Varias pequeñas correcciones de errores
                 Cambio:
-                 - Soporte habilitado para Android 11 - Por favor, avíseme si no puede ver más archivos para cargar"</item>
+                 - Soporte habilitado para Android 11 - Por favor, avíseme si no puede ver archivos para cargar más"</item>
         <item>1.4.0.60</item>
         <item>"Cambio:
                  - Cambios en la página de preferencias de la aplicación.
@@ -333,16 +319,16 @@
                  - Posible error en el que algunos cambios en la configuración de conexión (como el uso de autenticación básica) no se utilizarían por completo hasta el próximo reinicio de la aplicación"</item>
         <item>1.4.0.52</item>
         <item>"Arreglo del fallo:
-             - Cancelar la carga de un archivo y salir de la página de carga antes de que se informe la cancelación causa un bloqueo
+             - Cancelar la carga de un archivo y salir de la página de carga antes de que se informe la cancelación provoca un bloqueo
              - aplicación paga: falla al usar ruso en la página de configuración del trabajo de carga automática
-             - aplicación de pago: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta seleccionada previamente ya no existe provoca un bloqueo (ahora advierta al usuario y elimínelas)
+             - aplicación de pago: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente seleccionada ya no existe provoca un bloqueo (ahora advierta al usuario y elimínela)
              - aplicación de pago: la aplicación puede fallar al seleccionar el álbum de destino para el trabajo de carga automática
-             - aplicación de pago: al seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática, se muestra el nombre del primer álbum como álbum seleccionado (incorrectamente)
+             - aplicación de pago: seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática muestra el nombre del primer álbum como álbum seleccionado (incorrectamente)
              - aplicación de pago: Nota: No tengo claro que seleccionar la raíz de la galería como destino de carga sea sensato, pero en caso de que lo sea en algunas circunstancias, está permitido."</item>
         <item>1.4.0.51</item>
         <item>"Cambios:
                  - Nueva preferencia de galería para permitir forzar el lenguaje utilizado dentro de la aplicación
-                 - Nueva preferencia de conexión de servidor avanzada: habilite la codificación URI de URI de recursos
+                 - Nueva preferencia de conexión de servidor avanzada: habilite la codificación URI de los URI de recursos
                 Arreglo del fallo:
                  - las preferencias del selector de números aceptan el valor al cerrar el diálogo
                  - Complemento PiwigoClientWsExt correctamente nombrado en el mensaje de usuario
@@ -374,11 +360,11 @@
         <item>1.4.0.46</item>
         <item>"Cambios:
              - Se agregó el botón de recarga de contenido a la página de selección de archivos
-             - eliminó el sufijo (pagado) del nombre de la aplicación
+             - eliminado el sufijo (pagado) del nombre de la aplicación
              - Mostrar ruta o indicación de la misma para el álbum de carga de destino
              Arreglo del fallo:
              - A la presentación de diapositivas le faltaba el último elemento del álbum
-             - Eliminar elemento en Presentación de diapositivas - página en blanco"
+             - Eliminar elemento en presentación de diapositivas - página en blanco"
         </item>
         <item>1.4.0.45</item>
         <item>"Cambios:
@@ -405,7 +391,7 @@
                  - (solo pro) Vea los detalles del estado de carga, incluidos los errores para trabajos automáticos, en cada página de configuración de trabajo de carga automática"</item>
         <item>1.4.0.38</item>
         <item>"Arreglo del fallo:
-                 - La presentación de diapositivas (vista de imagen a pantalla completa) ahora funciona de nuevo. Mis sinceras disculpas.
+                 - La presentación de diapositivas (vista de imagen a pantalla completa) ahora funciona nuevamente. Mis sinceras disculpas.
                  - Se agregaron traducciones al ruso para preferencias"
         </item>
 
@@ -413,10 +399,10 @@
         <item>1.4.0.37</item>
         <item>"Arreglo del fallo:
                  - La limpieza de la conexión ahora funciona de nuevo
-                 - La configuración de la clasificación de recursos en la configuración regional rusa ahora funciona nuevamente"</item>
+                 - La configuración de la calificación de recursos en la configuración regional rusa ahora funciona nuevamente"</item>
         <item>1.4.0.36</item>
         <item>"Cambios:
-                 - La descarga de archivos ahora ocurre en una cola rudimentaria y se administra a nivel de aplicación. Sin embargo, aún debe mantener la aplicación abierta para luego descargarla para continuar.
+                 - La descarga de archivos ahora se realiza en una cola rudimentaria y se gestiona a nivel de aplicación. Sin embargo, aún debe mantener la aplicación abierta para luego descargarla para continuar.
                 Arreglo del fallo:
                  - La descarga de archivos ahora funciona donde el servidor no informa el tamaño del archivo
                  - Los archivos agregados a la pantalla de carga de archivos ahora se muestran nuevamente (inicialmente eran invisibles)

@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     
-    <string name="notification_title_background_upload_service">Pozadí Piwigo Upload Service</string>
-    <string name="notification_text_background_upload_running">Probíhá úloha nahrávání</string>
-    <string name="notification_text_background_upload_sleeping">Spící. Další běh na%1$tR</string>
-    <string name="notification_text_background_upload_polling">Dotaz na nahrání souborů.</string>
+    <string name="notification_title_background_upload_service">Služba nahrávání na pozadí Piwigo</string>
+    <string name="notification_text_background_upload_running">Probíhá nahrávání úlohy</string>
+    <string name="notification_text_background_upload_sleeping">Spící. Další spuštění v%1$tR</string>
+    <string name="notification_text_background_upload_polling">Dotazování na soubory k nahrání.</string>
 
 
-    <string name="alert_warning_auto_upload_service_stopped">Nezapomeňte spustit službu nahrávání na pozadí, pokud chcete, aby se vaše úlohy spouštěly</string>
+    <string name="alert_warning_auto_upload_service_stopped">Pokud chcete, aby vaše úlohy běžely, nezapomeňte spustit službu nahrávání na pozadí</string>
     <string name="alert_auto_upload_service_stopped">Služba nahrávání na pozadí byla zastavena</string>
-    <string name="alert_auto_upload_service_started">Byla spuštěna služba nahrávání na pozadí</string>
+    <string name="alert_auto_upload_service_started">Služba nahrávání na pozadí byla spuštěna</string>
     <string name="alert_auto_upload_service_job_restarted">Zahájeno nahrávání dříve neúplné úlohy na server%1$s se soubory%2$d</string>
     <string name="alert_auto_upload_service_job_started">Zahájení nahrávání úlohy na server%1$s se soubory%2$d</string>
-    <string name="alert_auto_upload_service_job_finished_success">Dokončena běžící úloha odesílání na pozadí na server%1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Dokončena běžící úloha odesílání na pozadí na server%1$s. Některé soubory se nepodařilo nahrát a budou opakovány později.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Dokončena běžící úloha odesílání na pozadí na server%1$s. Nelze nahrát žádné soubory. Úloha bude opakována později.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Kontrola úkolů na pozadí</string>
+    <string name="alert_auto_upload_service_job_finished_success">Probíhá spuštění úlohy nahrávání na pozadí na server%1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Probíhá spuštění úlohy nahrávání na pozadí na server%1$s. Některé soubory se nepodařilo nahrát a budou zkuseny později.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Probíhá spuštění úlohy nahrávání na pozadí na server%1$s. Nelze nahrát žádné soubory. Úloha bude zkusena později.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Služba nahrávání na pozadí kontroluje úkoly</string>
     <string name="progress_creating_tag">Vytváření značky</string>
-    <string name="error_updating_favorites_pattern">Chyba při odebírání zdroje (%1$s) z oblíbených položek:%2$s</string>
-    <string name="favorites_content_load_failed_text">Nepodařilo se načíst zdroje označené jako oblíbené</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Požádali jste o odstranění%1$d prostředků. Přejete si je odstranit ze všech alb (a ze serveru) - natrvalo, nebo je jednoduše odpojit od této oblíbené?</string>
-    <string name="progress_remove_favorite_resources">Odebírání zdrojů ze seznamu oblíbených</string>
+    <string name="error_updating_favorites_pattern">Chyba při odstraňování zdroje (%1$s) z oblíbených položek:%2$s</string>
+    <string name="favorites_content_load_failed_text">Načtení zdrojů označených jako oblíbené se nezdařilo</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Požádali jste o smazání%1$d zdrojů. Přejete si je trvale smazat ze všech alb (a ze serveru), nebo je jednoduše odpojit od tohoto oblíbeného?</string>
+    <string name="progress_remove_favorite_resources">Odebrání zdrojů ze seznamu oblíbených</string>
     <string name="favorites_empty_text">Momentálně nemáte žádné oblíbené</string>
     <string name="favorites_heading">Vaše oblíbené</string>
-    <string name="button_unfavorite">Není oblíbený</string>
+    <string name="button_unfavorite">Není oblíbené</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">Nastavení serveru</string>
     <string name="preference_data_upload_automatic_job_category_device_settings">Místní nastavení</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Komprese před nahráním</string>
-    <string name="ignoring_job_local_folder_not_found">Místní složka již neexistuje. Ignorování úlohy</string>
-    <string name="ignoring_job_no_file_types_selected_for_upload">Pro upload nebyly vybrány žádné přípony souborů. Ignorování úlohy</string>
-    <string name="ignoring_job_connection_profile_set_for_offline_access">Profil připojení je nastaven do režimu offline. Ignorování úlohy</string>
-    <string name="slideshow_auto_drive_paused">Prezentace Autodrive pozastavena do dalšího snímku</string>
+    <string name="ignoring_job_local_folder_not_found">Místní složka již neexistuje. Ignorování práce</string>
+    <string name="ignoring_job_no_file_types_selected_for_upload">Pro nahrání nebyly vybrány žádné přípony souborů. Ignorování práce</string>
+    <string name="ignoring_job_connection_profile_set_for_offline_access">Profil připojení nastaven do režimu offline. Ignorování práce</string>
+    <string name="slideshow_auto_drive_paused">Prezentace Autodrive pozastavena až do dalšího snímku</string>
 </resources>

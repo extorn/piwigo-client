@@ -130,7 +130,7 @@
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Ritardo video di guida automatica</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Ritardo video drive automatico</string>
     <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisec</string>
     
     

@@ -86,6 +86,10 @@ public class ParcelUtils {
             Logging.log(Log.ERROR, TAG, "returning null as unable to retrieve stored value of type : " + expectedType.getName());
             Logging.recordException(e);
             return null;
+        } catch (IllegalArgumentException e) {
+            Logging.log(Log.ERROR, TAG, "returning null as error loading expectedType : " + expectedType + " loader : " + loader);
+            Logging.recordException(e);
+            return null;
         }
     }
 

@@ -281,7 +281,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         loader.resetAll();
         loader.cancelImageLoadIfRunning();
-        loader.setPlaceholderImageUri(model.getThumbnailUrl());
+        if(model != null) {
+            loader.setPlaceholderImageUri(model.getThumbnailUrl());
+        }
         if(currentImageUrlDisplayed != null) {
             char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
             String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;

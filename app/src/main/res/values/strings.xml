@@ -165,9 +165,14 @@
     <string name="other_licences_button_text">Other Licenced components</string>
     <string name="oss_licences_menu_title">OSS Licences</string>
     <string name="about_heading">About This App</string>
-    <integer name="eula_version">4</integer>
+    <integer name="eula_version">5</integer>
     <string name="eula" formatted="false">"End­User License Agreement (\"Agreement\")
-Last updated: 7 August 2018
+
+
+** Sourcecode:
+        https://github.com/extorn/piwigo-client
+
+** Last updated: 18 September 2020
 
 Please read this End­User License Agreement (\"Agreement\") carefully before clicking the \"I Agree\"
 button, downloading or using Piwigo Client (\"Application\").
@@ -181,12 +186,12 @@ If you are considering using this app to access and or amend a server used for c
 You must test this on a non production server to your satisfaction before accepting any risk and liability yourself based on your decisions. This app has been designed primarily
 for non-commercial purposes.
 
-Definitions
+** Definitions
 
 Licensee: The licensee is the person or company who intend to use the licensed software or already uses it legally or illegally. The term “licensee” does not imply that the software is legally licensed by default.
 
 
-License
+** License
 
 Gareth Deli grants you a revocable, non­exclusive, non­transferable, limited license
 to download, install and use the Application solely for your personal, or commercial purposes
@@ -195,46 +200,44 @@ strictly in accordance with the terms of this Agreement.
 THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 
 
-Restrictions
+** Restrictions
 
 You agree not to, and you will not permit others to:
 a) license, sell, rent, lease, assign, distribute, transmit, host, outsource, disclose or otherwise
 commercially exploit the Application or make the Application available to any third party.
-b) decompile or otherwise view the source code or byte code of the application either manually or using a tool
-c) run or attempt to run this application in anything other than a physical device of type phone or tablet, and that uses the android operating system as its main operating system.
-d) run or attempt to run this application in an emulator or other sandbox environment for the purposes of examining its behaviour.
-e) create derivative works based on this application.
+b) create derivative works based on this application.
 
-User Data Collection
+
+** User Data Collection
 
 Firebase integration has been added to this application to facilitate tracking use of the application with the main purposes being more efficient bug resolution and ascertaining the way the app is being used. The minimum data required to achieve this purpose will be collected.
 
 
-Limited Warranty and Disclaimer
+** Limited Warranty and Disclaimer
 
 The software is provided \“as is\” and the licensee uses it at his/her own risk. Gareth Deli makes no warranties to its use, to its performance or to its fitness for a particular purpose. It is always possible that software contains errors (bugs) and fails to work. Therefore Gareth Deli doesn't warrant that the software is completely error free, or that it works without interruption with all computers and configurations.
 
 It is solely in the licensee’s responsibility to check if the software fits his particular purpose or meets his functional and performance requirements. The licensee is also obliged to test how the software works on his devices and his configurations; test all use cases and check if data processed without errors and as desired before they use the software in production environments. This is of vital importance if using the software for commercial purposes.
 
 
-Limitations on Liability
+** Limitations on Liability
 
 The licensee is responsible for the consequences of use of the software and the thereby resulting direct and indirect damages as far as it is legally possible. The liability is limited to the purchase price as far as it is legally possible; otherwise it is limited to the legally possible minimum.
 
 
-Maintenance and Support
+** Maintenance and Support
 
 Gareth Deli provides general support for the current version of the software through email only. Older versions are not supported.
 
 
-Modifications to Application
+** Modifications to Application
 
 Gareth Deli reserves the right to modify, suspend or discontinue, temporarily or
 permanently, the Application or any service to which it connects, with or without notice and without
 liability to you.
 
 
-Term and Termination
+** Term and Termination
 
 This Agreement shall remain in effect until terminated by you or Gareth Deli.
 
@@ -246,27 +249,31 @@ Agreement by deleting the Application and all copies thereof from your mobile de
 desktop.
 Upon termination of this Agreement, you shall cease all use of the Application and delete all copies
 of the Application from your mobile device or from your desktop.
-Severability
+
+
+** Severability
+
 If any provision of this Agreement is held to be unenforceable or invalid, such provision will be
 changed and interpreted to accomplish the objectives of such provision to the greatest extent
 possible under applicable law and the remaining provisions will continue in full force and effect.
 
 
-Amendments to this Agreement
+** Amendments to this Agreement
 
 Gareth Deli reserves the right, at its sole discretion, to modify or replace this
-Agreement at any time. If a revision is material we will provide at least 0 days' notice
-prior to any new terms taking effect. What constitutes a material change will be determined at our
-sole discretion.
+Agreement at any time. You will be notified of the change on opening the application, and have the
+option to either accept the changes, or stop using the application.
 
 
-Contact Information
+** Contact Information
 
 If you have any questions about this Agreement, please contact us."
 </string>
     <string name="about_content">"This app was written to allow me easier access to my photo gallery while on the move.
 
-It will be updated regularly to add more features, some that I've thought of, others requested by users.
+Sourcecode: https://github.com/extorn/piwigo-client
+
+No further updates are planned for this app, thank you for you support if you have purchased a copy. Without paid users I would have stopped development on this app a long time ago.
 
 In August 2018, a user, David Klement, came back to me with screen mock-ups for a more professional design. Starting with release 1.3.95, I have been incorporating those ideas, starting with the album view screen.
 These full list of proposed screen designs are available to view on the app website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).

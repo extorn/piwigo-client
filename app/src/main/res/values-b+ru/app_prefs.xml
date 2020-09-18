@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
 
-    <string name="preferences_overall_heading">настройки</string>
+    <string name="preferences_overall_heading">Настройки</string>
 
     
 
@@ -19,7 +19,7 @@
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Чистый сервер</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Очистите неудачные загрузки PiwigoClient с сервера</string>
-    <string name="preference_page_connection">соединение</string>
+    <string name="preference_page_connection">Подключение</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">Базовая проверка подлинности сервера</string>
     <string name="preference_connections_category_client_certificate_auth">Проверка подлинности сертификата клиента</string>
@@ -37,7 +37,7 @@
     
 
     
-    <string name="preference_server_connection_force_https_title">Переписать URL-адреса Http на Https</string>
+    <string name="preference_server_connection_force_https_title">Перепишите URL-адреса Http в Https</string>
     <string name="preference_server_connection_force_https_summary">Все URL-адреса http:// переписаны на https:// для https-сервера</string>
     
 
@@ -62,7 +62,7 @@
     
 
     
-    <string name="preference_server_alter_cache_directives_title">Изменить директивы кеширования HTTP-сервера</string>
+    <string name="preference_server_alter_cache_directives_title">Изменить директивы сервера Http Cache</string>
     <string name="preference_server_alter_cache_directives_summary">Включите, чтобы разрешить офлайн-доступ к галерее</string>
     
 
@@ -109,7 +109,7 @@
     <string name="preference_piwigo_server_address_summary">%1$s</string>
 
     
-    <string name="preference_piwigo_server_username_title">имя пользователя</string>
+    <string name="preference_piwigo_server_username_title">Имя пользователя</string>
     <string name="preference_piwigo_server_username_summary">%1$s</string>
 
 
@@ -157,7 +157,7 @@
 
     <string name="preference_page_gallery">Галерея</string>
     <string name="preference_gallery_category_general">Общее</string>
-    <string name="preference_gallery_category_advanced">продвинутый</string>
+    <string name="preference_gallery_category_advanced">Продвинутый</string>
     <string name="preference_gallery_category_slideshow">Слайд-шоу</string>
     <string name="preference_gallery_category_resources">Ресурсы</string>
     <string name="preference_gallery_category_albums">Альбомы</string>
@@ -165,7 +165,7 @@
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Пейзаж: столбцы альбомов для отображения</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Пейзаж: столбцы альбомов для показа</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
@@ -174,7 +174,7 @@
     
 
     
-    <string name="preference_gallery_images_preferredColumnsLandscape_title">Пейзаж: столбцы изображений для показа</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Пейзаж: столбцы изображений для отображения</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
@@ -312,7 +312,7 @@
     <string name="preference_upload_category_data_upload_display">Визуальные настройки</string>
     <string name="preference_upload_category_data_upload">Загрузка данных</string>
     <string name="preference_upload_category_pre_data_upload_compression">Сжатие перед загрузкой</string>
-    <string name="preference_upload_category_advanced">продвинутый</string>
+    <string name="preference_upload_category_advanced">Продвинутый</string>
 
     
 
@@ -343,7 +343,7 @@
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_preferredColumnsLandscape_title">Пейзаж: столбцы изображений для показа</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Пейзаж: столбцы изображений для отображения</string>
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
@@ -450,7 +450,7 @@
     <string name="preference_app_always_show_status_bar_summary">Включите, чтобы запретить автоматическое скрытие строки состояния</string>
 
     
-    <string name="preference_app_desired_language_title">язык</string>
+    <string name="preference_app_desired_language_title">Язык</string>
     <string name="preference_app_desired_language_summary">%1$s</string>
 
     

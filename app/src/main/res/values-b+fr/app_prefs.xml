@@ -52,7 +52,7 @@
     
 
     
-    <string name="preference_server_connection_timeout_secs_title">Délai de connexion (secondes)</string>
+    <string name="preference_server_connection_timeout_secs_title">Délai d\'expiration de la connexion (secondes)</string>
     <string name="preference_server_connection_timeout_secs_summary">%1$d secondes</string>
     
 

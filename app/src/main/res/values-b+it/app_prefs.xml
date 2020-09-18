@@ -62,7 +62,7 @@
     
 
     
-    <string name="preference_server_alter_cache_directives_title">Modificare le direttive della cache HTTP del server</string>
+    <string name="preference_server_alter_cache_directives_title">Alterare le direttive della cache HTTP del server</string>
     <string name="preference_server_alter_cache_directives_summary">Abilita per consentire l\'accesso offline alla galleria</string>
     
 
@@ -72,7 +72,7 @@
     
 
     
-    <string name="preference_server_connection_retries_title">Tentativi di connessione prima del fallimento</string>
+    <string name="preference_server_connection_retries_title">Riprova la connessione prima del fallimento</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
@@ -89,7 +89,7 @@
 
     
     
-    <string name="preference_server_use_client_certs_title">Usa autenticazione certificato client</string>
+    <string name="preference_server_use_client_certs_title">Utilizza l\'autenticazione del certificato client</string>
     <string name="preference_server_use_client_certs_summary">Abilita se il server richiede l\'autenticazione client basata su certificato</string>
 
     
@@ -159,7 +159,7 @@
     <string name="preference_gallery_category_general">Generale</string>
     <string name="preference_gallery_category_advanced">Avanzate</string>
     <string name="preference_gallery_category_slideshow">Presentazione</string>
-    <string name="preference_gallery_category_resources">risorse</string>
+    <string name="preference_gallery_category_resources">Risorse</string>
     <string name="preference_gallery_category_albums">Album</string>
 
     
@@ -367,7 +367,7 @@
     
 
     <string name="preference_data_upload_compress_videos_audio_bitrate_title">Bitrate audio</string>
-    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Velocità in bit audio%1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Bitrate audio%1$s</string>
     
     
 

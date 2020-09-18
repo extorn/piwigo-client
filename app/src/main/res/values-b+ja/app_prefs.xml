@@ -43,12 +43,12 @@
 
     
     <string name="preference_server_connection_offline_mode_title">オフラインでの閲覧を許可する</string>
-    <string name="preference_server_connection_offline_mode_summary">可能な場合はキャッシュされたデータを使用する</string>
+    <string name="preference_server_connection_offline_mode_summary">可能な場合はキャッシュデータを使用する</string>
     
 
     
     <string name="preference_server_connection_allow_redirects_title">サーバーのリダイレクトを許可する</string>
-    <string name="preference_server_connection_allow_redirects_summary">http 3xx応答に従う</string>
+    <string name="preference_server_connection_allow_redirects_summary">http 3xx応答をフォローする</string>
     
 
     
@@ -68,7 +68,7 @@
 
     
     <string name="preference_server_connection_uri_path_segment_encoding_title">リソースのリクエストのURIパスをエンコードする</string>
-    <string name="preference_server_connection_uri_path_segment_encoding_summary">存在するファイルに対して404エラーが発生する場合は、これを有効にしてください</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">存在するファイルの404エラーを受け取った場合は、これを有効にしてください</string>
     
 
     
@@ -157,7 +157,7 @@
 
     <string name="preference_page_gallery">ギャラリー</string>
     <string name="preference_gallery_category_general">一般的な</string>
-    <string name="preference_gallery_category_advanced">高度な</string>
+    <string name="preference_gallery_category_advanced">上級</string>
     <string name="preference_gallery_category_slideshow">スライドショー</string>
     <string name="preference_gallery_category_resources">資源</string>
     <string name="preference_gallery_category_albums">アルバム</string>
@@ -272,7 +272,7 @@
 
     
     <string name="preference_gallery_slideshow_image_rotate_title">画面のアスペクト比に合わせて画像を回転させます</string>
-    <string name="preference_gallery_slideshow_image_rotate_summary">画面に合わせて回転した画像</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">画面に合わせて画像を回転</string>
     
 
     
@@ -312,7 +312,7 @@
     <string name="preference_upload_category_data_upload_display">ビジュアル設定</string>
     <string name="preference_upload_category_data_upload">データのアップロード</string>
     <string name="preference_upload_category_pre_data_upload_compression">アップロード前の圧縮</string>
-    <string name="preference_upload_category_advanced">高度な</string>
+    <string name="preference_upload_category_advanced">上級</string>
 
     
 

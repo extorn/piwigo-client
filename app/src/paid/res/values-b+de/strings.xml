@@ -19,7 +19,7 @@
     <string name="progress_creating_tag">Tag erstellen</string>
     <string name="error_updating_favorites_pattern">Fehler beim Entfernen der Ressource (%1$s) aus den Favoriten:%2$s</string>
     <string name="favorites_content_load_failed_text">Fehler beim Laden der als Favorit markierten Ressourcen</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Sie haben angefordert,%1$d Ressourcen zu löschen. Möchten Sie diese dauerhaft aus allen Alben (und dem Server) löschen oder einfach von diesem Favoriten trennen?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Sie haben angefordert,%1$d Ressourcen zu löschen. Möchten Sie diese dauerhaft aus allen Alben (und dem Server) löschen oder einfach die Verknüpfung mit diesem Favoriten aufheben?</string>
     <string name="progress_remove_favorite_resources">Ressourcen aus der Favoritenliste entfernen</string>
     <string name="favorites_empty_text">Sie haben derzeit keine Favoriten</string>
     <string name="favorites_heading">Deine Favoriten</string>

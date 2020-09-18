@@ -240,26 +240,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
-        <item>"Bugfix:
-            - fix intermittent but incorrect HTTP 401 errors possibly linked to cached response revalidation
-            Changes:
-         - Possibly:
-            - Removal of all or most adverts in favour of a free trial period followed by a subscription based payment model
-            - Verify the current login status to ensure album and image lists are always correct
-            - Verify support for upload to older servers (e.g. piwigo.com - version 2.8a)
-            - The ability to delete an album, but not its contents (creating orphans)
-            - Orphan file management
-            - Investigate adding support for coloured tag plugin
-            - Improved Animated gif support (large file streaming)
-         - Possibly (Paid App only):
-            - The random photos idea implemented on the piwigo web UI
-            - Support for user comments
-            - Notify user of server updates that are available
-            - Support for editing EXIF and other image metadata formats
-            - Add preference to allow showing/hiding the EXIF etc fields of or not of interest
-            - Screen cast of some kind to allow mirror of device on a larger screen
-         - Anything Else:
-            - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
+        <item>"No further updates are planned."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <!--
@@ -267,6 +248,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.80</item>
+        <item>"Changes:
+                - EULA simplified and most restrictions removed.
+                - Source code released on github https://github.com/extorn/piwigo-client
+                - 3rd party library dependencies updates"</item>
         <item>1.4.0.79</item>
         <item>"Assorted Bug fixes"</item>
         <item>1.4.0.78</item>

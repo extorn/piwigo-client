@@ -1,27 +1,54 @@
 <en-GB>
-Assorted Bug fixes
+Changes:
+- EULA simplified and most restrictions removed.
+- Source code released on github https://github.com/extorn/piwigo-client
+- 3rd party library dependencies updates
 </en-GB>
 <cs-CZ>
-Opravy nejrůznějších chyb
+Změny:
+- Zjednodušená smlouva EULA a většina omezení odstraněna.
+- Zdrojový kód zveřejněný na github https://github.com/extorn/piwigo-client
+- Aktualizace závislostí knihoven třetích stran
 </cs-CZ>
 <de-DE>
-Verschiedene Fehlerbehebungen
+Änderungen:
+- EULA vereinfacht und die meisten Beschränkungen aufgehoben.
+- Quellcode auf github https://github.com/extorn/piwigo-client veröffentlicht
+- Aktualisierungen der Bibliotheksabhängigkeiten von Drittanbietern
 </de-DE>
 <es-ES>
-Varias correcciones de errores
+Cambios:
+- EULA simplificado y la mayoría de las restricciones eliminadas.
+- Código fuente publicado en github https://github.com/extorn/piwigo-client
+- Actualizaciones de dependencias de bibliotecas de terceros
 </es-ES>
 <fr-FR>
-Corrections de bogues assorties
+Changements:
+- CLUF simplifié et la plupart des restrictions supprimées.
+- Code source publié sur github https://github.com/extorn/piwigo-client
+- Mises à jour des dépendances de la bibliothèque tierce
 </fr-FR>
 <it-IT>
-Correzioni di bug assortite
+I cambiamenti:
+- EULA semplificato e la maggior parte delle restrizioni rimosse.
+- Codice sorgente rilasciato su github https://github.com/extorn/piwigo-client
+- Aggiornamenti delle dipendenze della libreria di terze parti
 </it-IT>
 <ja-JP>
-各種バグ修正
+変更：
+-EULAが簡素化され、ほとんどの制限が削除されました。
+-github https://github.com/extorn/piwigo-clientでリリースされたソースコード
+-サードパーティライブラリの依存関係の更新
 </ja-JP>
 <ru-RU>
-Различные исправления ошибок
+Изменения:
+- Лицензионное соглашение упрощено, большинство ограничений снято.
+- Исходный код опубликован на github https://github.com/extorn/piwigo-client
+- Обновления зависимостей сторонних библиотек
 </ru-RU>
 <zh-CN>
-各种错误修复
+变化：
+-简化了EULA，并取消了大多数限制。
+-在github https://github.com/extorn/piwigo-client上发布的源代码
+-第三方库依赖项更新
 </zh-CN>

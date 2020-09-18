@@ -14,36 +14,36 @@
     
     
     <string name="preference_test_server_connection_title">Vyzkoušejte připojení</string>
-    <string name="preference_test_server_connection_summary">Otestujte připojení k serveru</string>
+    <string name="preference_test_server_connection_summary">Vyzkoušejte připojení k serveru</string>
 
     
-    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Čistý server</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Clean Failed PiwigoClient uploads from the server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Vyčistěte server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Vyčistěte neúspěšná nahrávání PiwigoClient ze serveru</string>
     <string name="preference_page_connection">Spojení</string>
     <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">Základní ověřování serveru</string>
     <string name="preference_connections_category_client_certificate_auth">Ověření klientského certifikátu</string>
     <string name="preference_connections_category_advanced">Pokročilé nastavení</string>
-    <string name="preference_connections_category_connections_caching">Ukládání do mezipaměti na webu</string>
-    <string name="server_connection_preference_summary_default">Vyberte hodnotu</string>
-    <string name="server_album_preference_summary_default">Vyberte hodnotu</string>
-    <string name="local_folder_preference_summary_default">Vyberte hodnotu</string>
+    <string name="preference_connections_category_connections_caching">Ukládání do mezipaměti webových odpovědí</string>
+    <string name="server_connection_preference_summary_default">Vyberte prosím hodnotu</string>
+    <string name="server_album_preference_summary_default">Vyberte prosím hodnotu</string>
+    <string name="local_folder_preference_summary_default">Vyberte prosím hodnotu</string>
     <string name="server_connection_preference_user_guest">host</string>
     
 
     
-    <string name="preference_server_connection_max_redirects_title">Maximální přesměrování serveru</string>
+    <string name="preference_server_connection_max_redirects_title">Max. Přesměrování serveru</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     
 
     
-    <string name="preference_server_connection_force_https_title">Přepište URL Http na Https</string>
-    <string name="preference_server_connection_force_https_summary">Všechny http:// adresy URL přepsány na https:// pro https server</string>
+    <string name="preference_server_connection_force_https_title">Přepište HTTP adresy na Https</string>
+    <string name="preference_server_connection_force_https_summary">Všechny adresy URL http:// přepsány na https:// pro server https</string>
     
 
     
     <string name="preference_server_connection_offline_mode_title">Povolit procházení offline</string>
-    <string name="preference_server_connection_offline_mode_summary">Použijte data v mezipaměti, jsou-li k dispozici</string>
+    <string name="preference_server_connection_offline_mode_summary">Pokud jsou k dispozici data v mezipaměti</string>
     
 
     
@@ -57,27 +57,27 @@
     
 
     
-    <string name="preference_server_response_timeout_secs_title">Časový limit odpovědi (sekundy)</string>
+    <string name="preference_server_response_timeout_secs_title">Časový limit odezvy (sekundy)</string>
     <string name="preference_server_response_timeout_secs_summary">%1$d sekund</string>
     
 
     
-    <string name="preference_server_alter_cache_directives_title">Změnit směrovací mezipaměti serveru Http</string>
-    <string name="preference_server_alter_cache_directives_summary">Povolit povolit offline přístup do galerie</string>
+    <string name="preference_server_alter_cache_directives_title">Změnit směrnice HTTP o mezipaměti serveru</string>
+    <string name="preference_server_alter_cache_directives_summary">Povolením povolíte offline přístup do galerie</string>
     
 
     
-    <string name="preference_server_connection_uri_path_segment_encoding_title">Zakódujte cestu URI pro žádosti o zdroje</string>
-    <string name="preference_server_connection_uri_path_segment_encoding_summary">Zkuste to povolit, pokud obdržíte 404 chyb pro existující soubory</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_title">Zakódujte cestu URI pro žádosti o prostředky</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">Zkuste to povolit, pokud se u existujících souborů zobrazuje chyba 404</string>
     
 
     
-    <string name="preference_server_connection_retries_title">Obnovení připojení před selháním</string>
+    <string name="preference_server_connection_retries_title">Před selháním se připojení pokusí znovu</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
     
-    <string name="preference_server_basic_auth_username_title">Uživatelské jméno pro základní ověřování</string>
+    <string name="preference_server_basic_auth_username_title">Uživatelské jméno základního ověření</string>
 
     
     <string name="preference_server_basic_auth_password_title">Základní ověřovací heslo</string>
@@ -89,15 +89,15 @@
 
     
     
-    <string name="preference_server_use_client_certs_title">Použijte ověření klientského certifikátu</string>
+    <string name="preference_server_use_client_certs_title">Použijte ověření certifikátu klienta</string>
     <string name="preference_server_use_client_certs_summary">Povolit, pokud server vyžaduje ověření klienta na základě certifikátu</string>
 
     
-    <string name="preference_select_client_certificate_title">Klientské certifikáty (a soukromé klíče)</string>
-    <string name="preference_select_client_certificate_summary">Vyberte Klientský certifikát pro ověření</string>
+    <string name="preference_select_client_certificate_title">Certifikáty klienta (a soukromé klíče)</string>
+    <string name="preference_select_client_certificate_summary">Vyberte certifikát klienta pro ověření</string>
 
     
-    <string name="preference_piwigo_connection_profile_title">Vyberte Profil připojení</string>
+    <string name="preference_piwigo_connection_profile_title">Vyberte profil připojení</string>
     <string name="preference_piwigo_connection_profile_summary">Aktivní profil připojení (%1$s)</string>
 
     
@@ -122,34 +122,34 @@
     <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
     
 
-    <string name="preference_caching_clearResponseCache_title">Vymažte vyrovnávací paměť serveru</string>
+    <string name="preference_caching_clearResponseCache_title">Vymažte mezipaměť odpovědí serveru</string>
     
-    <string name="preference_caching_clearResponseCache_summary">Odstraní všechny odpovědi serveru uložené v mezipaměti na disk</string>
+    <string name="preference_caching_clearResponseCache_summary">Odstraní všechny odpovědi serveru uložené na disk</string>
 
     
-    <string name="preference_caching_level_title">Úroveň mezipaměti odezvy</string>
+    <string name="preference_caching_level_title">Úroveň mezipaměti odpovědí</string>
     <string name="preference_caching_level_summary">%1$s</string>
     <string name="preference_caching_level_default">disk</string>
 
     
-    <string name="preference_caching_max_cache_entries_title">Maximální počet záznamů v paměti cacheListList</string>
+    <string name="preference_caching_max_cache_entries_title">Maximální počet položek v mezipaměti Seznam</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     
 
     
     <string name="preference_caching_max_cache_entry_size_title">Maximální velikost položky v mezipaměti (KB)</string>
-    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d kB</string>
     
 
-    <string name="preference_connections_category_trusted_server_ca">Certifikační autority důvěryhodných serverových certifikátů</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_summary">K ověření certifikátů serveru SSL použijte vlastní seznam důvěryhodných certifikátů CA.</string>
+    <string name="preference_connections_category_trusted_server_ca">Certifikační autority certifikátu důvěryhodného serveru</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">K ověření certifikátů SSL serveru použijte vlastní seznam důvěryhodných certifikátů CA.</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Použijte vlastní důvěryhodné certifikační autority</string>
     
     
 
     
     <string name="preference_select_trusted_certificate_title">Vyberte důvěryhodné certifikáty CA.</string>
-    <string name="preference_select_trusted_certificate_summary">Zobrazte a upravte seznam důvěryhodných certifikátů CA.</string>
+    <string name="preference_select_trusted_certificate_summary">Zobrazit a upravit seznam důvěryhodných certifikátů CA.</string>
 
     
 
@@ -165,7 +165,7 @@
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Na šířku: Sloupce alb se zobrazí</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Na šířku: Sloupce alb k zobrazení</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
@@ -178,8 +178,8 @@
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Zobrazit miniaturu zvětšeného alba</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Miniatury alba jsou oříznuty uprostřed</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Zobrazit zvětšenou miniaturu alba</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Miniatury alb jsou oříznuty na střed</string>
     
 
 
@@ -189,7 +189,7 @@
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrét: Sloupce alb, které se mají zobrazit</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrét: Sloupce alb k zobrazení</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
@@ -198,7 +198,7 @@
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">Zobrazit videa v prezentaci</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">Měla by se při procházení galerie v režimu prezentace zobrazit videa?</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Měla by se videa zobrazovat při procházení galerie v režimu prezentace?</string>
     
 
     
@@ -213,8 +213,8 @@
     
 
     
-    <string name="preference_video_cache_enabled_title">Cache videa prohlížená do souboru</string>
-    <string name="preference_video_cache_enabled_summary">Pokud je povoleno, všechna streamovaná videa budou uložena do mezipaměti pro pozdější přehrávání</string>
+    <string name="preference_video_cache_enabled_title">Ukládání videí do mezipaměti do souboru</string>
+    <string name="preference_video_cache_enabled_summary">Pokud je povoleno, všechna streamovaná videa se uloží do mezipaměti pro pozdější přehrávání</string>
     
 
     
@@ -223,71 +223,71 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Pořadí řazení alba</string>
+    <string name="preference_gallery_sort_order_title">Pořadí řazení alb</string>
     <string name="preference_gallery_sort_order_summary">%1$s</string>
     
 
 
     
-    <string name="preference_album_subalbum_sort_order_title">Pořadí třídění podřízených alb</string>
+    <string name="preference_album_subalbum_sort_order_title">Pořadí řazení dětských alb</string>
     <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
      
 
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Invertovat pořadí řazení alba</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Pokud je povoleno, obráťte vybrané pořadí zdrojů alba</string>
+    <string name="preference_gallery_sort_order_inverted_title">Invertovat pořadí řazení alb</string>
+    <string name="preference_gallery_sort_order_inverted_summary">Pokud je tato možnost povolena, obrátit vybrané pořadí řazení zdrojů alba</string>
     
 
     
-    <string name="preference_gallery_unique_id_title">Jedinečný identifikátor pro obrázky</string>
+    <string name="preference_gallery_unique_id_title">Jedinečný identifikátor obrázků</string>
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
     <string name="preference_gallery_clearMemoryCache_title">Vymažte mezipaměť v paměti</string>
     
-    <string name="preference_gallery_clearMemoryCache_summary">Vymaže všechny obrázky uložené v paměti</string>
+    <string name="preference_gallery_clearMemoryCache_summary">Odstraní všechny obrázky uložené v paměti</string>
 
     <string name="preference_gallery_clearVideoCache_title">Vymazat mezipaměť videa</string>
     
-    <string name="preference_gallery_clearVideoCache_summary">Odstraní všechna videa uložená do mezipaměti na disk</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všechna%1$.2fMB videí uložených na disk</string>
+    <string name="preference_gallery_clearVideoCache_summary">Odstraní všechna videa uložená v mezipaměti na disk</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všech%1$.2fMB videí uložených na disk</string>
 
     
     
-    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Maximální věk nedávných položek (dny)</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Maximální věk posledních položek (dny)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d dní</string>
      
     
 
     
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Zásuvka prezentace je průhledná</string>
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Zásuvka s informacemi o obrázcích je průhledná</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Zásuvka s informacemi o obrázku prezentace je průhledná</string>
     
 
-    <string name="preference_gallery_slideshow_image_scaletype_title">Typ změny měřítka prezentace</string>
+    <string name="preference_gallery_slideshow_image_scaletype_title">Typ změny velikosti prezentace</string>
     
     <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
     
 
     
-    <string name="preference_gallery_slideshow_image_rotate_title">Otočit obrázek tak, aby odpovídal poměru stran obrazovky</string>
-    <string name="preference_gallery_slideshow_image_rotate_summary">Obrázek se otočil, aby se vešel na obrazovku</string>
+    <string name="preference_gallery_slideshow_image_rotate_title">Otočte obrázek tak, aby odpovídal poměru stran obrazovky</string>
+    <string name="preference_gallery_slideshow_image_rotate_summary">Obrázek byl otočen tak, aby se vešel na obrazovku</string>
     
 
     
-    <string name="preference_groups_request_pagesize_title">Velikost stránky požadavku serveru skupiny</string>
-    <string name="preference_groups_request_pagesize_summary">Položky:%1$d</string>
+    <string name="preference_groups_request_pagesize_title">Skupinový server požaduje velikost stránky</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d položek</string>
     
 
     
-    <string name="preference_users_request_pagesize_title">Velikost stránky požadavku serveru uživatelů</string>
-    <string name="preference_users_request_pagesize_summary">Položky:%1$d</string>
+    <string name="preference_users_request_pagesize_title">Uživatelský server požaduje velikost stránky</string>
+    <string name="preference_users_request_pagesize_summary">%1$d položek</string>
     
 
     
-    <string name="preference_album_request_pagesize_title">Velikost stránky požadavku na server alba</string>
-    <string name="preference_album_request_pagesize_summary">Položky:%1$d</string>
+    <string name="preference_album_request_pagesize_title">Velikost stránky požadavku serveru alba</string>
+    <string name="preference_album_request_pagesize_summary">%1$d položek</string>
     
 
     <string name="preference_gallery_item_thumbnail_size_title">Velikost miniatury zdroje</string>
@@ -300,7 +300,7 @@
     <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
     
 
-    <string name="preference_gallery_item_slideshow_image_size_title">Výchozí velikost obrázku prezentace</string>
+    <string name="preference_gallery_item_slideshow_image_size_title">Výchozí velikost obrázku pro prezentaci</string>
     
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     
@@ -310,7 +310,7 @@
 
     <string name="preference_page_upload">nahrát</string>
     <string name="preference_upload_category_data_upload_display">Vizuální nastavení</string>
-    <string name="preference_upload_category_data_upload">Nahrávání dat</string>
+    <string name="preference_upload_category_data_upload">Nahrání dat</string>
     <string name="preference_upload_category_pre_data_upload_compression">Komprese před nahráním</string>
     <string name="preference_upload_category_advanced">Pokročilý</string>
 
@@ -318,23 +318,23 @@
 
     
     
-    <string name="preference_data_upload_delete_uploaded_summary">Odstraňte úspěšně nahrané soubory</string>
+    <string name="preference_data_upload_delete_uploaded_summary">Smažte úspěšně nahrané soubory</string>
     <string name="preference_data_upload_delete_uploaded_title">Výchozí automatické mazání</string>
 
     
 
     
-    <string name="preference_data_upload_default_privacy_level_summary">Nahrané soubory viditelné pro%1$s</string>
+    <string name="preference_data_upload_default_privacy_level_summary">Nahrané soubory jsou viditelné pro%1$s</string>
     
-    <string name="preference_data_upload_default_privacy_level_title">Výchozí úroveň ochrany osobních údajů</string>
+    <string name="preference_data_upload_default_privacy_level_title">Výchozí úroveň soukromí</string>
 
     
-    <string name="preference_data_upload_chunkSizeKb_title">Maximální velikost bloku nahrání (KB)</string>
-    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
+    <string name="preference_data_upload_chunkSizeKb_title">Max. Velikost nahraného bloku (KB)</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d kB</string>
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">Maximální počet opakovaných nahrání souborů v automatickém souboru</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">Maximální počet pokusů o automatické nahrání bloku souborů</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
@@ -347,7 +347,7 @@
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">Max. Velikost souboru pro nahrávání bez upozornění (v MB)</string>
+    <string name="preference_data_upload_max_filesize_mb_title">Maximální velikost souboru k nahrání bez varování (v MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 
@@ -366,13 +366,13 @@
     
     
 
-    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audio Bitrate</string>
-    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio Bitrate%1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Přenosová rychlost zvuku</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Přenosová rychlost zvuku%1$s</string>
     
     
 
     
-    <string name="preference_data_upload_compress_images_summary">Před odesláním komprimujte obrázky</string>
+    <string name="preference_data_upload_compress_images_summary">Před nahráním komprimujte obrázky</string>
     <string name="preference_data_upload_compress_images_title">Komprimujte obrázky</string>
     
 
@@ -390,14 +390,14 @@
     
     
 
-    <string name="preference_data_upload_compress_images_max_width_title">Maximální šířka</string>
+    <string name="preference_data_upload_compress_images_max_width_title">Max. Šířka</string>
     <string name="preference_data_upload_compress_images_max_width_summary">Maximální šířka (%1$s pixelů)</string>
     
     
     
     
 
-    <string name="preference_data_upload_compress_images_output_format_title">Formát výstupního obrázku</string>
+    <string name="preference_data_upload_compress_images_output_format_title">Výstupní formát obrazu</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Výstupní formát komprese obrazu%1$s</string>
     
     
@@ -446,15 +446,15 @@
 
     
     
-    <string name="preference_app_always_show_status_bar_title">Vždy zobrazte stavový řádek</string>
-    <string name="preference_app_always_show_status_bar_summary">Povolit zabránit automatickému skrytí stavového řádku</string>
+    <string name="preference_app_always_show_status_bar_title">Vždy zobrazit stavový řádek</string>
+    <string name="preference_app_always_show_status_bar_summary">Povolit, aby se zabránilo automatickému skrytí stavového řádku</string>
 
     
     <string name="preference_app_desired_language_title">Jazyk</string>
     <string name="preference_app_desired_language_summary">%1$s</string>
 
     
-    <string name="preference_app_clear_list_of_user_hints_shown_title">Zobrazit znovu všechny rady pro uživatele</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">Znovu zobrazit všechny tipy uživatelů</string>
 
     
 

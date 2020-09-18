@@ -26,7 +26,7 @@
 
     
     <string name="preference_data_upload_automatic_job_view_status_title">Afficher l\'état du téléchargement</string>
-    <string name="preference_data_upload_automatic_job_view_status_summary">Afficher l\'état de la dernière exécution du travail (si disponible)</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Afficher le statut de la dernière exécution du travail (si disponible)</string>
 
     
     <string name="preference_data_upload_automatic_job_is_valid_title">Le travail est valide</string>

@@ -130,7 +130,7 @@
     
     
 
-    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Автоматическая задержка видео вождения</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Автоматическая задержка видео</string>
     <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s миллисекунды</string>
     
     

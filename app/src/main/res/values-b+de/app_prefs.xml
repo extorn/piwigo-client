@@ -198,7 +198,7 @@
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">Videos in Diashow anzeigen</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">Sollten Videos beim Durchsuchen einer Galerie im Diashow-Modus angezeigt werden?</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Sollten Videos angezeigt werden, wenn Sie eine Galerie im Diashow-Modus durchsuchen?</string>
     
 
     
@@ -213,7 +213,7 @@
     
 
     
-    <string name="preference_video_cache_enabled_title">In Datei gespeicherte Videos zwischenspeichern</string>
+    <string name="preference_video_cache_enabled_title">Cache-Videos in Datei angezeigt</string>
     <string name="preference_video_cache_enabled_summary">Wenn diese Option aktiviert ist, werden alle gestreamten Videos für die spätere Wiedergabe zwischengespeichert</string>
     
 
@@ -251,7 +251,7 @@
     <string name="preference_gallery_clearVideoCache_title">Video-Cache löschen</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Löscht alle auf der Festplatte zwischengespeicherten Videos</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Löscht alle%1$.2fMB Videos, die auf der Festplatte zwischengespeichert sind</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Löscht alle%1$.2fMB der auf der Festplatte zwischengespeicherten Videos</string>
 
     
     
@@ -334,7 +334,7 @@
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">Max. Wiederholte Wiederholungsversuche für automatische Chunk-Dateien</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">Maximale Wiederholungsversuche zum automatischen Hochladen von Datei-Chunks</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
@@ -347,7 +347,7 @@
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">Maximale Dateigröße zum Hochladen ohne Vorwarnung (in MB)</string>
+    <string name="preference_data_upload_max_filesize_mb_title">Max. Dateigröße zum Hochladen ohne Vorwarnung (in MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 

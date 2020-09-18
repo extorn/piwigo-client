@@ -13,7 +13,7 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Cargas automáticas</string>
     
 
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Utilice solo la carga automática en modo inalámbrico</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Solo use la carga automática en la conexión inalámbrica</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Solo por conexión inalámbrica</string>
     
     
@@ -79,7 +79,7 @@
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensiones de archivo</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Subir archivos con ext%1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Subir archivos con la extensión%1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Nivel de privacidad</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Archivos cargados visibles para%1$s</string>
