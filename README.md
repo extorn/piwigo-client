@@ -7,7 +7,9 @@ It does NOT use best practices. I've been learning as I go along.
 By all means use access to this code to understand how things work, but please don't make the mistake of cloning this project architecture.
 
 All rights are reserved.
-Though all source code is publicly visible, this does not mean it can be cloned and forked etc. I really wouldn't recommend it in any c
+Though all source code is publicly visible, this does not mean it can be cloned and forked etc. I really wouldn't recommend it in any case.
+https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/licensing-a-repository#choosing-the-right-license
+
 If you're interested in Android development, there are elements within this project that may be interesting, but if you're totally new to Android development, equally there are a lot of things about this project that will lead you astray, so develop a few small apps using current best practices as dictated on the google android developer pages so you can view this code without confusing yourself.
 
 I hope some elements of this code are useful.
