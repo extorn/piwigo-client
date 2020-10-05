@@ -1,54 +1,36 @@
 <en-GB>
-Changes:
-- EULA simplified and most restrictions removed.
-- Source code released on github https://github.com/extorn/piwigo-client
-- 3rd party library dependencies updates
+Bugfix:
+- Preference screen overlay for automatic jobs
 </en-GB>
 <cs-CZ>
-Změny:
-- Zjednodušená smlouva EULA a většina omezení odstraněna.
-- Zdrojový kód zveřejněný na github https://github.com/extorn/piwigo-client
-- Aktualizace závislostí knihoven třetích stran
+Oprava chyby:
+- Preference překrytí obrazovky pro automatické úlohy
 </cs-CZ>
 <de-DE>
-Änderungen:
-- EULA vereinfacht und die meisten Beschränkungen aufgehoben.
-- Quellcode auf github https://github.com/extorn/piwigo-client veröffentlicht
-- Aktualisierungen der Bibliotheksabhängigkeiten von Drittanbietern
+Bug-Fix:
+- Bildschirmüberlagerung für automatische Jobs
 </de-DE>
 <es-ES>
-Cambios:
-- EULA simplificado y la mayoría de las restricciones eliminadas.
-- Código fuente publicado en github https://github.com/extorn/piwigo-client
-- Actualizaciones de dependencias de bibliotecas de terceros
+Arreglo del fallo:
+- Superposición de pantalla de preferencias para trabajos automáticos
 </es-ES>
 <fr-FR>
-Changements:
-- CLUF simplifié et la plupart des restrictions supprimées.
-- Code source publié sur github https://github.com/extorn/piwigo-client
-- Mises à jour des dépendances de la bibliothèque tierce
+Correction d\'un bug:
+- Superposition d\'écran de préférence pour les travaux automatiques
 </fr-FR>
 <it-IT>
-I cambiamenti:
-- EULA semplificato e la maggior parte delle restrizioni rimosse.
-- Codice sorgente rilasciato su github https://github.com/extorn/piwigo-client
-- Aggiornamenti delle dipendenze della libreria di terze parti
+Risoluzione del problema:
+- Sovrapposizione della schermata delle preferenze per i lavori automatici
 </it-IT>
 <ja-JP>
-変更：
--EULAが簡素化され、ほとんどの制限が削除されました。
--github https://github.com/extorn/piwigo-clientでリリースされたソースコード
--サードパーティライブラリの依存関係の更新
+バグ修正：
+-自動ジョブの設定画面オーバーレイ
 </ja-JP>
 <ru-RU>
-Изменения:
-- Лицензионное соглашение упрощено, большинство ограничений снято.
-- Исходный код опубликован на github https://github.com/extorn/piwigo-client
-- Обновления зависимостей сторонних библиотек
+Исправлена ошибка:
+- Наложение экрана настроек для автоматических заданий
 </ru-RU>
 <zh-CN>
-变化：
--简化了EULA，并取消了大多数限制。
--在github https://github.com/extorn/piwigo-client上发布的源代码
--第三方库依赖项更新
+错误修正：
+-用于自动作业的首选项屏幕叠加
 </zh-CN>

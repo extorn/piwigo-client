@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto."</item>
-        <item>"Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso"</item>
+        <item>In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto.</item>
+        <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
         <item>Se un caricamento non riesce, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
-        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \ \"Non sei autorizzato a eliminare i tag \" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plugin del server)</item>
+        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \ "Non sei autorizzato a eliminare i tag \" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
         <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per essere trasferiti al tuo server corrente</item>
         <item>Fare clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stato caricato per recuperarla di nuovo</item>
         <item>Fare clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
@@ -141,17 +141,20 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
-        <item>"Non sono previsti ulteriori aggiornamenti."</item>
+        <item>Non sono previsti ulteriori aggiornamenti.</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.81</item>
+        <item>"Risoluzione del problema:
+                 - Sovrapposizione della schermata delle preferenze per i lavori automatici"</item>
         <item>1.4.0.80</item>
         <item>"I cambiamenti:
                  - EULA semplificato e la maggior parte delle restrizioni rimosse.
                  - Codice sorgente rilasciato su github https://github.com/extorn/piwigo-client
                  - Aggiornamenti delle dipendenze della libreria di terze parti"</item>
         <item>1.4.0.79</item>
-        <item>"Correzioni di bug assortite"</item>
+        <item>Correzioni di bug assortite</item>
         <item>1.4.0.78</item>
         <item>"Risoluzione del problema:
                  - Diversi, comprese le correzioni alla compressione delle immagini.
@@ -245,7 +248,7 @@
                     - l\'eliminazione dei file dopo il caricamento ora funziona di nuovo
                     - controlla che i file siano unici prima del caricamento: ora è più difficile, quindi ci vuole un po \'più di tempo
                     - Il selettore di file in app è relativamente lento per caricare cartelle contenenti molti file - attualmente limitazioni nelle API Android
-                - durante la compressione dei video, è possibile rimuovere lo streaming audio o video se si desidera creare un file m4a o m4v (estensione del file mp4 aggiunta se è tutto ciò che il server consente).
+                - quando si comprimono i video, è possibile rimuovere lo streaming audio o video se si desidera creare un file m4a o m4v (estensione del file mp4 aggiunta se è tutto ciò che il server consente).
                 - Menu Drawer disponibile dalla schermata di caricamento per consentirti di passare alla galleria o alle impostazioni
                 - L\'app è pronta per l\'implementazione del codice per avvisarti durante la selezione delle foto di quelle che hai caricato in precedenza.
                Risoluzione del problema:
@@ -275,7 +278,7 @@
                  - Seleziona il file attualmente visibile quando mostra la finestra di dialogo per il download del file"</item>
         <item>1.4.0.62</item>
         <item>"Risoluzione del problema:
-                 - Il processo di aggiornamento delle preferenze è stato risolto per le persone che aggiornano una vecchia versione di diverse versioni dall\'app all\'ultima disponibile
+                 - Il processo di aggiornamento delle preferenze è stato corretto per le persone che aggiornano una vecchia versione di diverse versioni dall\'app all\'ultima disponibile
                  - Carica il file di stato del lavoro non salvando
                  - Lavoro di caricamento (errato) avviato mentre il video è ancora in fase di scrittura dalla fotocamera del dispositivo"</item>
         <item>1.4.0.61</item>
@@ -345,7 +348,7 @@
         <item>1.4.0.49</item>
         <item>"Risoluzione del problema:
                  - errore di compressione video
-                 - l\'ultimo lavoro di caricamento viene rieseguito (nessun danno) all\'esecuzione del caricamento successivo - richiedendo di fare nuovamente clic su Carica per avviare il nuovo lavoro
+                 - l\'ultimo lavoro di caricamento viene rieseguito (nessun danno) all\'esecuzione del caricamento successivo - richiedendo di fare di nuovo clic su Carica per avviare il nuovo lavoro
                  - visualizzazione lenta delle immagini durante lo scorrimento"
         </item>
         <item>1.4.0.48</item>

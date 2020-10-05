@@ -197,7 +197,7 @@ Gareth Deli vám uděluje odvolatelnou, nevýhradní, nepřenosnou a omezenou li
 stahovat, instalovat a používat aplikaci výhradně pro své osobní nebo komerční účely
 přísně v souladu s podmínkami této smlouvy.
 
-SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY OBCHODOVATELNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPROPOJENÍ. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, TAKŽE PŘI AKCI SMLOUVY, DĚLENÍ NEBO JINÉHO VÝSLEDKU, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
+SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPROPOJENÍ. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, KDYKOLI VE SKUTEČNÉ SMLOUVĚ, DĚLENÍ NEBO JINÉ, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
 
 
 ** Omezení
@@ -210,7 +210,7 @@ b) vytvářet odvozená díla na základě této aplikace.
 
 ** Sběr uživatelských dat
 
-Do této aplikace byla přidána integrace Firebase, aby se usnadnilo sledování používání aplikace, přičemž hlavním účelem je efektivnější řešení chyb a zjištění způsobu, jakým se aplikace používá. Budou shromážděny minimální údaje potřebné k dosažení tohoto cíle.
+Do této aplikace byla přidána integrace Firebase, aby se usnadnilo sledování používání aplikace, přičemž hlavním účelem je efektivnější řešení chyb a zjištění způsobu, jakým se aplikace používá. Budou shromážděny minimální údaje potřebné k dosažení tohoto účelu.
 
 
 ** Omezená záruka a odmítnutí odpovědnosti
@@ -231,7 +231,7 @@ Gareth Deli poskytuje obecnou podporu pro aktuální verzi softwaru pouze prost�
 ** Úpravy aplikace
 
 Gareth Deli si vyhrazuje právo upravit, pozastavit nebo přerušit, dočasně nebo
-trvale, Aplikace nebo jakákoli služba, ke které se připojuje, s oznámením nebo bez upozornění a bez
+trvale, Aplikace nebo jakákoli služba, ke které se připojuje, s oznámením nebo bez něj a bez něj
 odpovědnost vůči vám.
 
 
@@ -435,7 +435,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_title_set_album_thumbnail">Aktualizovat miniaturu alba?</string>
     <string name="alert_message_set_album_thumbnail">Aktualizovat miniaturu alba na tento obrázek?</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">Opravdu chcete trvale smazat album (%1$s) a veškerý obsah (pokud není propojen s alby jinde)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Jste si naprosto jisti, že chcete smazat album (%1$s) s%2$d fotografiemi a%3$d podřízenými alby obsahujícími ještě%4$d fotografií navždy? Fotky propojené s jinými alby zde zůstanou, ale všechny ostatní budou smazány navždy. Tuto akci nelze vrátit zpět.</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Jste si naprosto jisti, že chcete smazat album (%1$s) s%2$d fotografiemi a%3$d podřízenými alby obsahujícími další%4$d fotografie navždy? Fotky propojené s jinými alby zde zůstanou, ale všechny ostatní budou smazány navždy. Tuto akci nelze vrátit zpět.</string>
     <string name="alert_confirm_copy_items_here_pattern">Zkopírovat sem položky (%1$d) v košíku (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Přesunout sem položky (%1$d) v košíku sem (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Propojená alba</string>
@@ -463,7 +463,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="error_insufficient_permissions_for_cache_folder">Je vyžadován přístup pro čtení a zápis do složky mezipaměti. Zkontrolujte nastavení aplikace.</string>
     <string name="alert_title_error_talking_to_server">Chyba při hovoru se serverem</string>
     <string name="alert_title_error_connecting_to_server">Chyba při připojení k serveru</string>
-    <string name="alert_warning_message_self_signed_certificates">Certifikáty SSL s vlastním podpisem by se neměly používat na veřejně přístupném serveru (na internetu) - prozkoumejte to na https://letsencrypt.org nebo podobném. Toto je pouze pro účely testování.</string>
+    <string name="alert_warning_message_self_signed_certificates">Certifikáty SSL s vlastním podpisem by se neměly používat na veřejně přístupném serveru (na internetu) - prozkoumejte to na https://letsencrypt.org nebo podobném. Toto slouží pouze pro účely testování.</string>
     <string name="alert_error_adding_certificate_to_truststore">Chyba při přidávání certifikátu do úložiště důvěryhodnosti</string>
     <string name="alert_add_cert_to_truststore_pattern">Přidat řetězec certifikátů do seznamu důvěryhodných CA?</string>
     <string name="certificate_summary_pattern">Předmět:%1$s\nPlatné:%2$s -%3$s\nSériové číslo:%4$s</string>
@@ -471,7 +471,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     
     <string name="alert_clearing_certificate_use_history">Resetování seznamu certifikátů vybraných jako důvěryhodných</string>
     <string name="alert_delete_all_files_selected_for_upload">Smazat všechny soubory vybrané k nahrání?</string>
-    <string name="alert_partial_upload_deleted">Zrušení nahrávání souboru poté, co byl částečně přenesen na server, bude mít za následek, že částečné nahrávání zůstane na serveru. Ručně vyčistěte složku pro nahrávání na serveru (např. / Var / www / piwigo / upload / buffer), abyste ušetřili místo.</string>
+    <string name="alert_partial_upload_deleted">Zrušení nahrávání souboru poté, co byl částečně přenesen na server, bude mít za následek částečné nahrávání na serveru. Ručně vyčistěte složku pro nahrávání na serveru (např. / Var / www / piwigo / upload / buffer), abyste ušetřili místo.</string>
     <string name="alert_album_created">Album vytvořeno</string>
     <string name="album_create_failed">Album se nepodařilo vytvořit, zkuste to prosím znovu</string>
     <string name="alert_failure">Selhání</string>
@@ -486,7 +486,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="x509_cert_valid_to_field_pattern">Platí do:%1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">Bylo nalezeno%1$d dalších uživatelů, kteří sdílejí toto uživatelské jméno (%2$s). Byl vybrán nejnovější uživatel tohoto serveru Piwigo, ale to není bezpečné, pokud je možné, že budou server používat ve stejnou nebo podobnou dobu. Zvažte prosím změnu těchto uživatelských jmen, aby bylo uživatelské jméno jedinečným identifikátorem pro danou třídu uživatelů.</string>
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Tato oprávnění jsou potřebná k zahájení procesu nahrávání a poté po vypnutí obrazovky udržují proces nahrávání v chodu</string>
-    <string name="alert_no_scheme_specified">Musíte zadat předponu adresy serveru buď http://, nebo https://. Žádná další schémata nejsou podporována. Port je volitelný, pokud je výchozí - 80 pro http nebo 443 pro https. Příklad http://piwigo.org/demo nebo http://piwigo.org:80/demo</string>
+    <string name="alert_no_scheme_specified">Musíte zadat předponu adresy serveru buď http:// nebo https://. Žádná další schémata nejsou podporována. Port je volitelný, pokud je výchozí - 80 pro http nebo 443 pro https. Příklad http://piwigo.org/demo nebo http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Následující%1$d soubory překročily prahovou hodnotu varování:%2$s. Chcete je z nahrávání odstranit?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Chcete před nahráním komprimovat některá videa?</string>
     <string name="alert_trusted_certificates_polling">Nedůvěryhodné certifikáty poskytnuté serverem po připojení vám budou předloženy, abyste je mohli přidat do úložiště důvěryhodnosti. Pokud odmítnete, nebudete znovu vyzváni k zadání stejného certifikátu. Chcete-li být znovu vyzváni, zrušte výběr a znovu vyberte možnost použít vlastní důvěryhodnou paměť certifikátů.</string>
@@ -504,7 +504,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="heading_keystore_filename">Úložiště klíčů</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Chyba při nahrávání</string>
-    <string name="alert_message_error_uploading_end">Po úspěšném nahrání všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, a vymažte veškerá zbývající dočasná data ze serveru.</string>
+    <string name="alert_message_error_uploading_end">Po úspěšném nahrání všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, a vymažte veškerá zbytková dočasná data ze serveru.</string>
     <string name="alert_message_error_uploading_start">Před úspěšným nahráním všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, nebo odstraňte všechny zbývající soubory z úlohy a poté kliknutím na tlačítko Dokončit vymažte veškerá zbývající dočasná data ze serveru.</string>
     <string name="release_history">Historie vydání</string>
     <string name="planned_releases">Plánovaná vydání</string>
@@ -539,7 +539,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="folder_default">Výchozí</string>
     <string name="button_show_all">Ukázat vše</string>
     <string name="button_select_all">Vybrat vše</string>
-    <string name="button_show_none">Skrýt vše</string>
+    <string name="button_show_none">Schovat vše</string>
     <string name="button_select_none">Vyberte Žádný</string>
     <string name="button_reset">Resetovat</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Mělo by být povoleno monitorování sítě, aby bylo možné efektivně využívat pouze nahrávání WIFI</string>

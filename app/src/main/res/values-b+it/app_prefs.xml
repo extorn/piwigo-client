@@ -72,7 +72,7 @@
     
 
     
-    <string name="preference_server_connection_retries_title">Riprova la connessione prima del fallimento</string>
+    <string name="preference_server_connection_retries_title">Tentativi di connessione prima del fallimento</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 

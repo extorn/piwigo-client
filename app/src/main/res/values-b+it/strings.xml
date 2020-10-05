@@ -120,7 +120,7 @@
     <string name="upload_files_button_title">Caricare</string>
     <string name="upload_files_finish_job_button_title">finire</string>
     <string name="upload_job_status_button">Stato</string>
-    <string name="alert_really_delete_upload_job">Questo cancellerà lo stato del lavoro da questo dispositivo. Dovrai pulire manualmente tutti i file parzialmente caricati sul server (o utilizzare la preferenza in questa app - pagina delle impostazioni di caricamento). I lavori vengono spesso completati con successo se li riprendi in seguito. Sei sicuro di voler fare questo passo drastico?</string>
+    <string name="alert_really_delete_upload_job">Questo cancellerà lo stato del lavoro da questo dispositivo. Dovrai pulire manualmente tutti i file parzialmente caricati sul server (o utilizzare la preferenza in questa app - pagina delle impostazioni di caricamento). I lavori vengono spesso completati correttamente se li riprendi in seguito. Sei sicuro di voler fare questo passo drastico?</string>
     <string name="loading_please_wait">Attendere il caricamento prego</string>
     <string name="alert_title_server_error">Errore del server</string>
     <string name="alert_server_error_pattern">Il server ha restituito un errore HTTP:%1$d (%2$s)</string>
@@ -197,7 +197,7 @@ Gareth Deli ti concede una licenza revocabile, non esclusiva, non trasferibile e
 scaricare, installare e utilizzare l\'Applicazione esclusivamente per scopi personali o commerciali
 rigorosamente in conformità con i termini del presente Contratto.
 
-IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA ALCUN TIPO DI GARANZIA, ESPLICITA O IMPLICITA, INCLUSE MA NON LIMITATE ALLE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN UN\'AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRI TRATTAMENTI NEL SOFTWARE
+IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRE RAPPORTI SOFTWARE
 
 
 ** Restrizioni
@@ -287,7 +287,7 @@ Attualmente, la versione a pagamento ha aggiunto il supporto per i tag:
 
 Al momento, fornisce un livello di funzionalità di base per consentire la navigazione in una galleria esistente, il caricamento di nuove foto e video e la creazione di nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati, ma molti sono ancora di sola lettura .... per ora!
 
-Per favore, posso chiederti che se disinstalli l\'app, utilizzi il collegamento nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze in modo che io possa risolvere il problema.
+Per favore, posso chiederti che se disinstalli l\'app, utilizzi il collegamento nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze, così posso affrontare il problema.
 
 La versione del server PIWIGO su cui provo è attualmente 2.10.2.
 
@@ -338,14 +338,14 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_image_show_image_title">Controllo del rendering delle immagini</string>
     <string name="alert_image_show_image_message">Scegli la dimensione del file che desideri visualizzare</string>
     <string name="alert_image_download_complete_message">Download completato.</string>
-    <string name="alert_error_unsupported_piwigo_version_pattern">Il server esegue PIWIGO versione%1$s. La versione minima testata con questa app è%2$s. Alcune funzionalità dell\'app potrebbero non funzionare come previsto. Si prega di controllare la pagina Informazioni per eventuali problemi identificati.</string>
+    <string name="alert_error_unsupported_piwigo_version_pattern">Il server esegue PIWIGO versione%1$s. La versione minima testata con questa app è%2$s. Alcune funzionalità dell\'app potrebbero non funzionare come previsto. Si prega di controllare la pagina delle informazioni per eventuali problemi identificati.</string>
     <string name="notification_download_event">File scaricato</string>
     <string name="alert_image_download_cancelled_message">Hai annullato con successo il download</string>
     <string name="app_licence_heading">EULA</string>
     <string name="button_agree">Sono d\'accordo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">avvertimento</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata nativamente dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \ \"corrispondenza più vicina \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata nativamente dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \ "corrispondenza più vicina \".</string>
     <string name="rate_dialog_message">Se ti piace usare questa app, ti dispiacerebbe prenderti un momento per valutarla? Non ci vorrà più di un minuto. Grazie per il vostro sostegno!</string>
     <string name="groups_menu_title">Gruppi</string>
     <string name="group_members_pattern">(%1$d membri)</string>
@@ -416,8 +416,8 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="group_is_default_title">È predefinito?</string>
     <string name="progress_adding_group">Aggiunta di gruppo</string>
     <string name="upload_unacceptable_files_prefix">File non accettati</string>
-    <string name="alert_error_unable_to_access_local_filesystem">Senza accesso al filesystem locale, questa azione non può procedere. Scusate.</string>
-    <string name="alert_error_admin_user_required">Solo gli utenti amministratori possono caricare a meno che il plug-in della community non sia installato. Scusate.</string>
+    <string name="alert_error_unable_to_access_local_filesystem">Senza accesso al filesystem locale, questa azione non può procedere. Scusa.</string>
+    <string name="alert_error_admin_user_required">Solo gli utenti amministratori possono caricare a meno che il plug-in della community non sia installato. Scusa.</string>
     <string name="upload_username_title">Carica come</string>
     <string name="certificates_heading">Certificati</string>
 
@@ -452,7 +452,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_message_file_upload_cancelled_pattern">Caricamento del file (%1$s) annullato.</string>
     <string name="alert_message_upload_cancelled">Caricamento annullato</string>
     <string name="alert_message_upload_cancelled_message">Se non desideri riavviare il caricamento in un secondo momento. È necessario rimuovere i file dal processo di caricamento, quindi fare clic su Carica. Questo cancellerà lo stato di caricamento annullato dal server.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \ \"corrispondenza più vicina \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \ "corrispondenza più vicina \".</string>
     <string name="logging_out_of_piwigo_pattern">Disconnessione da%1$s</string>
     <string name="loading_new_server_configuration">Caricamento della nuova configurazione della connessione al server</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Per consentire la memorizzazione nella cache su disco, è necessario concedere l\'accesso in scrittura al file system. Se negato, la memorizzazione nella cache sarà in memoria.</string>
@@ -505,7 +505,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Errore durante il caricamento</string>
     <string name="alert_message_error_uploading_end">Si è verificato un errore dopo il caricamento riuscito di tutti i file. Riavvia il caricamento per continuare da dove è arrivato e cancellare eventuali dati temporanei residui dal server.</string>
-    <string name="alert_message_error_uploading_start">Si è verificato un errore prima del caricamento riuscito di tutti i file. Riavvia il caricamento per continuare da dove era arrivato oppure elimina tutti i file rimanenti dal lavoro, quindi fai clic sul pulsante Fine per cancellare eventuali dati temporanei residui dal server.</string>
+    <string name="alert_message_error_uploading_start">Si è verificato un errore prima del caricamento riuscito di tutti i file. Riavvia il caricamento per continuare dal punto in cui era arrivato oppure elimina i file rimanenti dal lavoro, quindi fai clic sul pulsante Fine per cancellare eventuali dati temporanei residui dal server.</string>
     <string name="release_history">Cronologia delle versioni</string>
     <string name="planned_releases">Rilasci pianificati</string>
     <string name="tags_heading">Tag</string>
@@ -617,7 +617,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"La preferenza%1$s è irrecuperabile ed è stata impostata su%2$s per impostazione predefinita. Reimposta questo valore nelle impostazioni dell\'app"</string>
+    <string name="preference_corrupt_please_re_type_pattern">La preferenza%1$s è irrecuperabile ed è stata impostata su%2$s per impostazione predefinita. Reimposta questo valore nelle impostazioni dell\'app</string>
     <string name="switch_to_cached_mode">Il server al momento non è disponibile. Utilizzare dati memorizzati nella cache?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Comprimi video</string>
@@ -662,7 +662,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="create_email_using_app">Crea un\'e-mail utilizzando l\'app</string>
     <string name="open_files">Apri file nell\'app</string>
     <string name="files_unavailable_to_download_removed_pattern">La tua selezione conteneva file che non potevano essere elaborati. Questi%1$d file sono stati ignorati. Per condividere un file video, è necessario prima memorizzarlo completamente nella cache locale.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Verranno visualizzati nuovamente tutti i suggerimenti utente una tantum"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">Verranno visualizzati nuovamente tutti i suggerimenti utente una tantum</string>
     
     
     <string name="delete_uploaded_files_title">Elimina i file caricati</string>

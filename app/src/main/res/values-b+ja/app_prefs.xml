@@ -14,13 +14,13 @@
     
     
     <string name="preference_test_server_connection_title">テスト接続</string>
-    <string name="preference_test_server_connection_summary">サーバーへの接続をテストする</string>
+    <string name="preference_test_server_connection_summary">サーバーへの接続をテストします</string>
 
     
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">クリーンサーバー</string>
-    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">サーバーからの失敗したPiwigoClientアップロードの消去</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">サーバーからの失敗したPiwigoClientアップロードのクリーンアップ</string>
     <string name="preference_page_connection">接続</string>
-    <string name="preference_connections_category_piwigo">ピウィゴ</string>
+    <string name="preference_connections_category_piwigo">Piwigo</string>
     <string name="preference_connections_category_server_basic_auth">サーバーの基本認証</string>
     <string name="preference_connections_category_client_certificate_auth">クライアント証明書認証</string>
     <string name="preference_connections_category_advanced">高度な設定</string>
@@ -37,18 +37,18 @@
     
 
     
-    <string name="preference_server_connection_force_https_title">Http URLをHttpsに書き換えます</string>
-    <string name="preference_server_connection_force_https_summary">すべてのhttp：// URLがhttpsサーバー用にhttps：//に書き換えられました</string>
+    <string name="preference_server_connection_force_https_title">HttpURLをHttpに書き換えます</string>
+    <string name="preference_server_connection_force_https_summary">httpsサーバーのhttps：//に書き換えられたすべてのhttp：// URL</string>
     
 
     
-    <string name="preference_server_connection_offline_mode_title">オフラインでの閲覧を許可する</string>
+    <string name="preference_server_connection_offline_mode_title">オフラインブラウジングを許可する</string>
     <string name="preference_server_connection_offline_mode_summary">可能な場合はキャッシュデータを使用する</string>
     
 
     
-    <string name="preference_server_connection_allow_redirects_title">サーバーのリダイレクトを許可する</string>
-    <string name="preference_server_connection_allow_redirects_summary">http 3xx応答をフォローする</string>
+    <string name="preference_server_connection_allow_redirects_title">サーバーリダイレクトを許可する</string>
+    <string name="preference_server_connection_allow_redirects_summary">http3xxの応答に従ってください</string>
     
 
     
@@ -62,17 +62,17 @@
     
 
     
-    <string name="preference_server_alter_cache_directives_title">サーバーのHTTPキャッシュディレクティブの変更</string>
-    <string name="preference_server_alter_cache_directives_summary">ギャラリーへのオフラインアクセスを許可します</string>
+    <string name="preference_server_alter_cache_directives_title">サーバーのHTTPキャッシュディレクティブを変更する</string>
+    <string name="preference_server_alter_cache_directives_summary">ギャラリーへのオフラインアクセスを許可するために有効にする</string>
     
 
     
     <string name="preference_server_connection_uri_path_segment_encoding_title">リソースのリクエストのURIパスをエンコードする</string>
-    <string name="preference_server_connection_uri_path_segment_encoding_summary">存在するファイルの404エラーを受け取った場合は、これを有効にしてください</string>
+    <string name="preference_server_connection_uri_path_segment_encoding_summary">存在するファイルに対して404エラーが発生する場合は、これを有効にしてみてください</string>
     
 
     
-    <string name="preference_server_connection_retries_title">失敗する前に接続を再試行する</string>
+    <string name="preference_server_connection_retries_title">接続は失敗する前に再試行します</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
@@ -84,20 +84,20 @@
 
     
     <string name="preference_server_use_basic_auth_title">基本認証を使用する</string>
-    <string name="preference_server_use_basic_auth_summary">サーバーで基本認証が必要な場合に有効にする</string>
+    <string name="preference_server_use_basic_auth_summary">サーバーが基本認証を必要とする場合に有効にする</string>
     
 
     
     
     <string name="preference_server_use_client_certs_title">クライアント証明書認証を使用する</string>
-    <string name="preference_server_use_client_certs_summary">サーバーで証明書ベースのクライアント認証が必要な場合に有効にする</string>
+    <string name="preference_server_use_client_certs_summary">サーバーが証明書ベースのクライアント認証を必要とする場合に有効にする</string>
 
     
     <string name="preference_select_client_certificate_title">クライアント証明書（および秘密鍵）</string>
-    <string name="preference_select_client_certificate_summary">認証用のクライアント証明書を選択</string>
+    <string name="preference_select_client_certificate_summary">認証用のクライアント証明書を選択します</string>
 
     
-    <string name="preference_piwigo_connection_profile_title">接続プロファイルを選択</string>
+    <string name="preference_piwigo_connection_profile_title">接続プロファイルを選択します</string>
     <string name="preference_piwigo_connection_profile_summary">アクティブな接続プロファイル（%1$s）</string>
 
     
@@ -122,9 +122,9 @@
     <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
     
 
-    <string name="preference_caching_clearResponseCache_title">サーバー応答キャッシュをクリア</string>
+    <string name="preference_caching_clearResponseCache_title">サーバー応答キャッシュのクリア</string>
     
-    <string name="preference_caching_clearResponseCache_summary">ディスクにキャッシュされたすべてのサーバー応答を削除します</string>
+    <string name="preference_caching_clearResponseCache_summary">ディスクにキャッシュされているすべてのサーバー応答を削除します</string>
 
     
     <string name="preference_caching_level_title">応答キャッシュレベル</string>
@@ -141,9 +141,9 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
-    <string name="preference_connections_category_trusted_server_ca">信頼されたサーバー証明書CA</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_summary">信頼できるCA証明書のカスタムリストを使用してサーバーのSSL証明書を検証する</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_title">カスタムの信頼された認証局を使用する</string>
+    <string name="preference_connections_category_trusted_server_ca">トラステッドサーバー証明書CA</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_summary">信頼できるCA証明書のカスタムリストを使用して、サーバーのSSL証明書を検証します</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_title">カスタムの信頼できる認証局を使用する</string>
     
     
 
@@ -156,40 +156,40 @@
     
 
     <string name="preference_page_gallery">ギャラリー</string>
-    <string name="preference_gallery_category_general">一般的な</string>
-    <string name="preference_gallery_category_advanced">上級</string>
+    <string name="preference_gallery_category_general">一般</string>
+    <string name="preference_gallery_category_advanced">高度な</string>
     <string name="preference_gallery_category_slideshow">スライドショー</string>
-    <string name="preference_gallery_category_resources">資源</string>
+    <string name="preference_gallery_category_resources">リソース</string>
     <string name="preference_gallery_category_albums">アルバム</string>
 
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">横：表示するアルバムの列</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">風景：表示するアルバムの列</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_gallery_show_image_name_title">アルバムに画像名を表示</string>
+    <string name="preference_gallery_show_image_name_title">アルバムに画像名を表示する</string>
     <string name="preference_gallery_show_image_name_summary">各画像の下に画像の名前を表示します</string>
     
 
     
-    <string name="preference_gallery_images_preferredColumnsLandscape_title">横：表示する画像の列</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">風景：表示する画像の列</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">ズームしたアルバムのサムネイルを表示</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">アルバムのサムネイルは中央がトリミングされています</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">アルバムのサムネイルは中央でトリミングされています</string>
     
 
 
     
-    <string name="preference_gallery_show_file_size_showing_title">閲覧した写真のサーバーサイズを表示</string>
-    <string name="preference_gallery_show_file_size_showing_summary">表示されている各写真のサイズを表示</string>
+    <string name="preference_gallery_show_file_size_showing_title">表示した写真のサーバーサイズを表示</string>
+    <string name="preference_gallery_show_file_size_showing_summary">表示された各写真のサイズを表示します</string>
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">ポートレート：表示するアルバムの列</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">肖像画：表示するアルバムの列</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
@@ -198,22 +198,22 @@
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">スライドショーでビデオを表示する</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">スライドショーモードでギャラリーを閲覧するときに動画を表示する必要がありますか？</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">スライドショーモードでギャラリーを閲覧するときにビデオを表示する必要がありますか？</string>
     
 
     
-    <string name="preference_gallery_enable_video_playback_title">ビデオ再生を許可する</string>
-    <string name="preference_gallery_enable_video_playback_summary">ビデオをオンデマンドでダウンロードして再生する場合に有効にします</string>
+    <string name="preference_gallery_enable_video_playback_title">ビデオの再生を許可する</string>
+    <string name="preference_gallery_enable_video_playback_summary">ビデオをオンデマンドでダウンロードして再生する場合は有効にします</string>
     
 
     
-    <string name="preference_piwigo_playable_media_extensions_title">サポートされているマルチメディア拡張</string>
+    <string name="preference_piwigo_playable_media_extensions_title">サポートされているマルチメディア拡張機能</string>
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
 
     
 
     
-    <string name="preference_video_cache_enabled_title">閲覧した動画をファイルにキャッシュ</string>
+    <string name="preference_video_cache_enabled_title">ファイルに表示されたビデオをキャッシュする</string>
     <string name="preference_video_cache_enabled_summary">有効にすると、ストリーミングされたビデオは後で再生できるようにキャッシュされます</string>
     
 
@@ -223,20 +223,20 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">アルバムのソート順</string>
+    <string name="preference_gallery_sort_order_title">アルバムの並べ替え順序</string>
     <string name="preference_gallery_sort_order_summary">%1$s</string>
     
 
 
     
-    <string name="preference_album_subalbum_sort_order_title">子アルバムのソート順</string>
+    <string name="preference_album_subalbum_sort_order_title">子アルバムの並べ替え順序</string>
     <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
      
 
 
     
-    <string name="preference_gallery_sort_order_inverted_title">アルバムの並べ替え順序を逆にする</string>
-    <string name="preference_gallery_sort_order_inverted_summary">有効にすると、選択したアルバムリソースの並べ替え順序が逆になります</string>
+    <string name="preference_gallery_sort_order_inverted_title">アルバムの並べ替え順序を反転</string>
+    <string name="preference_gallery_sort_order_inverted_summary">有効にすると、アルバムリソースの選択した並べ替え順序を逆にします</string>
     
 
     
@@ -244,18 +244,18 @@
     <string name="preference_gallery_unique_id_summary">%1$s</string>
     
 
-    <string name="preference_gallery_clearMemoryCache_title">インメモリキャッシュをクリア</string>
+    <string name="preference_gallery_clearMemoryCache_title">インメモリキャッシュをクリアする</string>
     
-    <string name="preference_gallery_clearMemoryCache_summary">メモリにキャッシュされたすべての画像を削除します</string>
+    <string name="preference_gallery_clearMemoryCache_summary">メモリにキャッシュされているすべての画像を削除します</string>
 
-    <string name="preference_gallery_clearVideoCache_title">ビデオキャッシュをクリア</string>
+    <string name="preference_gallery_clearVideoCache_title">ビデオキャッシュをクリアする</string>
     
-    <string name="preference_gallery_clearVideoCache_summary">ディスクにキャッシュされたすべてのビデオを削除します</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">ディスクにキャッシュされたすべての%1$.2fMBのビデオを削除します</string>
+    <string name="preference_gallery_clearVideoCache_summary">ディスクにキャッシュされているすべてのビデオを削除します</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">ディスクにキャッシュされたビデオの%1$.2fMBをすべて削除します</string>
 
     
     
-    <string name="preference_gallery_recentlyAlteredAgeMillis_title">最近の最大アイテム（日）</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">最近の最大年齢アイテム（日）</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d日</string>
      
     
@@ -271,7 +271,7 @@
     
 
     
-    <string name="preference_gallery_slideshow_image_rotate_title">画面のアスペクト比に合わせて画像を回転させます</string>
+    <string name="preference_gallery_slideshow_image_rotate_title">画面のアスペクト比に一致するように画像を回転します</string>
     <string name="preference_gallery_slideshow_image_rotate_summary">画面に合わせて画像を回転</string>
     
 
@@ -281,7 +281,7 @@
     
 
     
-    <string name="preference_users_request_pagesize_title">ユーザーサーバーのリクエストページサイズ</string>
+    <string name="preference_users_request_pagesize_title">ユーザーサーバーリクエストのページサイズ</string>
     <string name="preference_users_request_pagesize_summary">%1$dアイテム</string>
     
 
@@ -308,11 +308,11 @@
 
     
 
-    <string name="preference_page_upload">アップロードする</string>
-    <string name="preference_upload_category_data_upload_display">ビジュアル設定</string>
+    <string name="preference_page_upload">アップロード</string>
+    <string name="preference_upload_category_data_upload_display">視覚的な設定</string>
     <string name="preference_upload_category_data_upload">データのアップロード</string>
     <string name="preference_upload_category_pre_data_upload_compression">アップロード前の圧縮</string>
-    <string name="preference_upload_category_advanced">上級</string>
+    <string name="preference_upload_category_advanced">高度な</string>
 
     
 
@@ -334,7 +334,7 @@
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">最大ファイルチャンクアップロード再試行回数</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">自動ファイルチャンクアップロードの最大再試行</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 
@@ -343,11 +343,11 @@
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_preferredColumnsLandscape_title">横：表示する画像の列</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_title">風景：表示する画像の列</string>
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_upload_max_filesize_mb_title">警告なしにアップロードする最大ファイルサイズ（MB）</string>
+    <string name="preference_data_upload_max_filesize_mb_title">警告なしにアップロードする最大ファイルサイズ（MB単位）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     
 
@@ -366,7 +366,7 @@
     
     
 
-    <string name="preference_data_upload_compress_videos_audio_bitrate_title">音声ビットレート</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">オーディオビットレート</string>
     <string name="preference_data_upload_compress_videos_audio_bitrate_summary">オーディオビットレート%1$s</string>
     
     
@@ -383,8 +383,8 @@
     
     
 
-    <string name="preference_data_upload_compress_images_max_height_title">最高の高さ</string>
-    <string name="preference_data_upload_compress_images_max_height_summary">最大の高さ（%1$sピクセル）</string>
+    <string name="preference_data_upload_compress_images_max_height_title">最大高さ</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">最大高さ（%1$sピクセル）</string>
     
     
     
@@ -398,7 +398,7 @@
     
 
     <string name="preference_data_upload_compress_images_output_format_title">画像出力フォーマット</string>
-    <string name="preference_data_upload_compress_images_output_format_summary">画像圧縮出力フォーマット%1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">画像圧縮出力形式%1$s</string>
     
     
 
@@ -407,26 +407,26 @@
 
     
 
-    <string name="preference_page_other">その他の</string>
+    <string name="preference_page_other">その他</string>
     <string name="preference_other_category_file_selector">ファイルセレクター</string>
 
     
 
     
     
-    <string name="preference_data_file_selector_showFilenames_title">ファイル名を表示</string>
+    <string name="preference_data_file_selector_showFilenames_title">ファイル名を表示する</string>
     <string name="preference_data_file_selector_showFilenames_summary">各ファイルに表示されるファイル名</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">横：表示するファイルの列</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">横向き：表示するファイルの列</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">ポートレート：表示するファイルの列</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">縦向き：表示するファイルの列</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
     
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">横：表示するフォルダの列</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">横向き：表示するフォルダの列</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
     
@@ -438,7 +438,7 @@
     
     
     <string name="preference_app_always_show_nav_buttons_title">常にナビゲーションボタンを表示する</string>
-    <string name="preference_app_always_show_nav_buttons_summary">ナビゲーションボタンが自動的に非表示にならないようにする</string>
+    <string name="preference_app_always_show_nav_buttons_summary">ナビゲーションボタンの自動非表示を防ぐために有効にする</string>
 
     
     <string name="preference_app_default_download_folder_title">フォルダにダウンロード</string>
@@ -447,14 +447,14 @@
     
     
     <string name="preference_app_always_show_status_bar_title">常にステータスバーを表示する</string>
-    <string name="preference_app_always_show_status_bar_summary">ステータスバーが自動的に非表示にならないようにする</string>
+    <string name="preference_app_always_show_status_bar_summary">ステータスバーの自動非表示を防ぐために有効にする</string>
 
     
     <string name="preference_app_desired_language_title">言語</string>
     <string name="preference_app_desired_language_summary">%1$s</string>
 
     
-    <string name="preference_app_clear_list_of_user_hints_shown_title">すべてのユーザーヒントを再度表示</string>
+    <string name="preference_app_clear_list_of_user_hints_shown_title">すべてのユーザーヒントをもう一度表示</string>
 
     
 

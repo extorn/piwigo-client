@@ -137,7 +137,7 @@
         <item>Pokud jste přihlášeni jako správce, před podáním zařízení příteli k prohlížení vašich fotografií aktivujte funkci zámku aplikace, abyste zabránili neúmyslným změnám v galerii</item>
         <item>Jakmile je zobrazeno celé video, je-li povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
         <item>Dlouhým kliknutím na tlačítko mazání na \ \'souboru k nahrání \' vymažete všechny soubory, které se mají nahrát (pokud právě neprobíhá úloha)</item>
-        <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server při nahrávání automaticky generuje velikost používanou touto aplikací</item>
+        <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server po nahrání automaticky generuje velikost používanou touto aplikací</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
@@ -145,6 +145,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.81</item>
+        <item>"Oprava chyby:
+                 - Preference překrytí obrazovky pro automatické úlohy"</item>
         <item>1.4.0.80</item>
         <item>"Změny:
                  - Zjednodušená smlouva EULA a většina omezení odstraněna.
@@ -187,7 +190,7 @@
                   : výběr složek - oprávnění správně spravována.
                   : stahování položek - nyní funguje
                   Poznámka: Možná budete muset znovu vybrat preferovanou složku pro stahování nebo automatické nahrávání.
-               POZNÁMKA: Přestávám tuto aplikaci aktivně vyvíjet - občas ji však budu i nadále podporovat opravami chyb."</item>
+               POZNÁMKA: Přestávám aktivně vyvíjet tuto aplikaci - občas ji však budu nadále podporovat opravami chyb."</item>
         <item>1.4.0.73</item>
         <item>"Změny:
                  - stahování souboru: přidáno více protokolování, které pomůže vyřešit problémy
@@ -213,7 +216,7 @@
              - Oprávnění ke složce nejsou při nabídce správně přijata"</item>
         <item>1.4.0.68</item>
         <item>"Oprava chyby:
-                 - Selhání navigace do galerie z nahrání nebo nastavení, pokud byla poslední otevřenou stránkou galerie prezentace"</item>
+                 - Havárie při navigaci do galerie z nahrání nebo nastavení, pokud poslední otevřenou stránkou galerie byla prezentace"</item>
         <item>1.4.0.67</item>
         <item>"Oprava chyby:
                  - Řada oprav chyb pro pády související s nedávnou generální opravou kódu pro manipulaci se soubory
@@ -244,7 +247,7 @@
                     - vyberte soubory pomocí voliče systémových souborů nebo v aplikaci
                     - mazání souborů po nahrání nyní funguje znovu
                     - zkontrolujte, zda jsou soubory před nahráním jedinečné - to je nyní těžší, takže to trvá o něco déle
-                    - Selektor souborů v aplikaci načítá složky, které obsahují spoustu souborů, relativně pomalu - omezení v Android API v současnosti
+                    - Selektor souborů v aplikaci načítá složky s velkým množstvím souborů relativně pomalu - omezení v Android API v současnosti
                 - při komprimaci videí můžete odstranit zvukový nebo obrazový tok, pokud chcete vytvořit soubor m4a nebo m4v (přípona souboru mp4 byla přidána, pokud to váš server umožňuje).
                 - Nabídka zásuvek, která je k dispozici na obrazovce nahrávání, vám umožní přejít na galerii nebo nastavení
                 - Aplikace je připravena na implementaci kódu, který vás upozorní při výběru fotografií těch, které jste nahráli dříve.
@@ -276,7 +279,7 @@
         <item>1.4.0.62</item>
         <item>"Oprava chyby:
                  - Proces upgradu předvoleb opraven u lidí upgradujících starou verzi několika verzí z aplikace na nejnovější dostupnou verzi
-                 - Nahrání souboru stavu úlohy se neukládá
+                 - Uložení stavového souboru úlohy se neukládá
                  - Nahrávání úlohy (nesprávně) bylo zahájeno, zatímco se video stále zapisuje kamerou zařízení"</item>
         <item>1.4.0.61</item>
         <item>"Oprava chyby:
@@ -296,13 +299,13 @@
                  - Bezplatná verze: odstraněny všechny vsunuté reklamy na několik měsíců, takže je přípustné použití více než zkušební verze placené verze"</item>
         <item>1.4.0.57</item>
         <item>"Oprava chyby:
-                 - zatím odhlášeno z rozsahu úložiště - umožňuje aplikaci znovu zobrazit soubory pro nahrání v systému Android 10"</item>
+                 - prozatím odhlášeno z rozsahu úložiště - umožňuje aplikaci znovu zobrazit soubory pro nahrávání v systému Android 10"</item>
         <item>1.4.0.56</item>
         <item>"Oprava chyby:
                  - videa jsou někdy rozpoznána pouze jako fotografie v závislosti na případu adresy URL serveru zadané v nastavení připojení"</item>
         <item>1.4.0.55</item>
         <item>"Oprava chyby:
-                 - zatím odhlášeno z rozsahu úložiště - umožňuje aplikaci znovu zobrazit soubory pro nahrání v systému Android 10"</item>
+                 - prozatím odhlášeno z rozsahu úložiště - umožňuje aplikaci znovu zobrazit soubory pro nahrávání v systému Android 10"</item>
         <item>1.4.0.54</item>
         <item>"Změny:
                  - lze kliknout na název stránky - přejděte na nadřazené album
@@ -319,12 +322,12 @@
                  - Možná chyba, při které by se některá změna nastavení připojení (například použití základního ověřování) plně nevyužila až do dalšího restartu aplikace"</item>
         <item>1.4.0.52</item>
         <item>"Oprava chyby:
-             - Zrušení nahrávání souboru a opuštění stránky nahrávání před hlášením zrušení způsobí selhání
+             - Zrušení nahrávání souboru a opuštění stránky nahrávání před nahlášením zrušení způsobí selhání
              - placená aplikace: selhání pomocí ruštiny na stránce konfigurace úlohy automatického nahrávání
              - placená aplikace: Aktualizace seznamu značek pro zdroj, kde alespoň jedna dříve vybraná značka již neexistuje, způsobí selhání (nyní varovat uživatele a odstranit je)
              - placená aplikace: Aplikace může selhat při výběru cílového alba pro úlohu automatického nahrávání
              - placená aplikace: výběr kořenového alba jako cílového alba pro úlohu automatického nahrávání zobrazí název prvního alba jako vybrané album (nesprávně)
-             - placená aplikace: Poznámka: Nejsem si jistý, že výběr kořene galerie jako cíle nahrávání je někdy rozumný, ale v případě, že je to za určitých okolností, je povoleno."</item>
+             - placená aplikace: Poznámka: Nejsem si jistý, že výběr kořene galerie jako cíle nahrávání je někdy rozumný, ale v případě, že je to za určitých okolností, je to povoleno."</item>
         <item>1.4.0.51</item>
         <item>"Změny:
                  - Nová předvolba galerie, která umožňuje vynucení jazyka používaného v aplikaci
@@ -402,7 +405,7 @@
                  - Nastavení hodnocení zdrojů v ruském národním prostředí nyní funguje znovu"</item>
         <item>1.4.0.36</item>
         <item>"Změny:
-                 - Ke stažení souborů nyní dochází v základní frontě a je spravováno na úrovni aplikace. Stále však musíte ponechat aplikaci otevřenou, abyste mohli pokračovat v stahování.
+                 - Ke stahování souborů nyní dochází v základní frontě a je spravováno na úrovni aplikace. Stále však musíte nechat aplikaci otevřenou, abyste mohli pokračovat v stahování.
                 Oprava chyby:
                  - Stahování souborů nyní funguje tam, kde server nehlásí velikost souboru
                  - Soubory přidané na obrazovku nahrávání souborů se nyní znovu zobrazují (byly původně neviditelné)

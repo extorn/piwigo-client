@@ -28,7 +28,7 @@
     <string name="server_connection_preference_summary_default">Por favor seleccione un valor</string>
     <string name="server_album_preference_summary_default">Por favor seleccione un valor</string>
     <string name="local_folder_preference_summary_default">Por favor seleccione un valor</string>
-    <string name="server_connection_preference_user_guest">invitado</string>
+    <string name="server_connection_preference_user_guest">huésped</string>
     
 
     

@@ -90,7 +90,7 @@
         <item>administración</item>
         <item>normal</item>
         <item>genérico</item>
-        <item>invitado</item>
+        <item>huésped</item>
     </string-array>
 
     
@@ -124,34 +124,37 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
-        <item>"Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
-        <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga residual fallida del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar las etiquetas - \ \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
+        <item>Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
+        <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga fallida residual del servidor</item>
+        <item>Siempre se produce un error al intentar actualizar las etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
-        <item>Haga clic prolongado en una imagen (ya sea en miniatura o en un elemento de presentación de diapositivas) que no se haya podido cargar para recuperarla nuevamente</item>
+        <item>Haga clic largo en una imagen (ya sea en miniatura o en un elemento de presentación de diapositivas) que no se haya podido cargar para recuperarla nuevamente</item>
         <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido</item>
         <item>Haga clic largo en la imagen de un álbum para habilitar la selección masiva de imágenes para una acción</item>
         <item>Al ver cualquier imagen en la presentación de diapositivas, haga clic largo para rotar / cambiar el tamaño de la imagen mostrada / permitir un mayor zoom</item>
-        <item>Puede hacer zoom en una imagen cuando la ve en una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
+        <item>Puede acercar una imagen al ver una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
         <item>Cuando inicie sesión como administrador, antes de entregar su dispositivo a un amigo para que vea sus fotos, active la función de bloqueo de la aplicación para evitar que se realicen cambios involuntarios en su galería.</item>
         <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos local está habilitado, es posible guardar ese video en su carpeta de descargas</item>
-        <item>Haga clic prolongadamente en el botón eliminar en un \ \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no está en curso)</item>
+        <item>Haga clic largo en el botón Eliminar en un \ \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no esté en curso)</item>
         <item>Si las imágenes tardan en cargarse, compruebe que su servidor genera automáticamente el tamaño utilizado por esta aplicación cuando se cargan</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>"No se planean más actualizaciones."</item>
+        <item>No se planean más actualizaciones.</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.81</item>
+        <item>"Arreglo del fallo:
+                 - Superposición de pantalla de preferencias para trabajos automáticos"</item>
         <item>1.4.0.80</item>
         <item>"Cambios:
                  - EULA simplificado y la mayoría de las restricciones eliminadas.
                  - Código fuente publicado en github https://github.com/extorn/piwigo-client
                  - Actualizaciones de dependencias de bibliotecas de terceros"</item>
         <item>1.4.0.79</item>
-        <item>"Varias correcciones de errores"</item>
+        <item>Varias correcciones de errores</item>
         <item>1.4.0.78</item>
         <item>"Arreglo del fallo:
                  - Varias, incluidas correcciones de compresión de imágenes.
@@ -257,7 +260,7 @@
         <item>"Cambios:
              - Se corrigió el problema del tema restante para los diálogos
                 Arreglo del fallo:
-             - Fragmento de ruta de Uri del servidor convertido incorrectamente a minúsculas, lo que genera un error 404"</item>
+             - Fragmento de ruta de Uri del servidor convertido incorrectamente a minúsculas que resulta en un error 404"</item>
         <item>1.4.0.64</item>
         <item>"Cambios:
              - Se agregó un botón para ver la contraseña oculta en las preferencias
@@ -272,7 +275,7 @@
                  - Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación.
                Arreglo del fallo:
                  - Detener las advertencias que se muestran para el auto-drive de presentación de diapositivas cuando está deshabilitado
-                 - Seleccione el archivo actualmente visible cuando se muestra el diálogo de descarga de archivos"</item>
+                 - Seleccione el archivo actualmente visible cuando se muestra el cuadro de diálogo de descarga de archivos"</item>
         <item>1.4.0.62</item>
         <item>"Arreglo del fallo:
                  - Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones fuera de la aplicación a la última disponible
@@ -323,8 +326,8 @@
              - aplicación paga: falla al usar ruso en la página de configuración del trabajo de carga automática
              - aplicación de pago: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente seleccionada ya no existe provoca un bloqueo (ahora advierta al usuario y elimínela)
              - aplicación de pago: la aplicación puede fallar al seleccionar el álbum de destino para el trabajo de carga automática
-             - aplicación de pago: seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática muestra el nombre del primer álbum como álbum seleccionado (incorrectamente)
-             - aplicación de pago: Nota: No tengo claro que seleccionar la raíz de la galería como destino de carga sea sensato, pero en caso de que lo sea en algunas circunstancias, está permitido."</item>
+             - aplicación de pago: al seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática, se muestra el nombre del primer álbum como álbum seleccionado (incorrectamente)
+             - Aplicación de pago: Nota: No tengo claro que seleccionar la raíz de la galería como destino de carga sea sensato, pero en caso de que lo sea en algunas circunstancias, está permitido."</item>
         <item>1.4.0.51</item>
         <item>"Cambios:
                  - Nueva preferencia de galería para permitir forzar el lenguaje utilizado dentro de la aplicación

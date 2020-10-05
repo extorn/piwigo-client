@@ -19,13 +19,13 @@
     <string name="progress_creating_tag">创建标签</string>
     <string name="error_updating_favorites_pattern">从收藏夹中删除资源（%1$s）时出错：%2$s</string>
     <string name="favorites_content_load_failed_text">无法加载标记为收藏的资源</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">您已请求删除%1$d个资源。您是要永久删除所有相册（和服务器）中的相册，还是要将它们从收藏夹中删除？</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">您已请求删除%1$d个资源。您是要永久删除所有相册（和服务器）中的相册，还是要将它们从收藏夹中取消链接？</string>
     <string name="progress_remove_favorite_resources">从收藏夹列表中删除资源</string>
     <string name="favorites_empty_text">您目前没有收藏夹</string>
     <string name="favorites_heading">您的最爱</string>
     <string name="button_unfavorite">不喜欢</string>
     <string name="preference_data_upload_automatic_job_category_server_settings">服务器设定</string>
-    <string name="preference_data_upload_automatic_job_category_device_settings">本地设置，本地配置</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">本地设置</string>
     <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">上载前压缩</string>
     <string name="ignoring_job_local_folder_not_found">本地文件夹不再存在。忽略工作</string>
     <string name="ignoring_job_no_file_types_selected_for_upload">没有选择要上传的文件扩展名。忽略工作</string>

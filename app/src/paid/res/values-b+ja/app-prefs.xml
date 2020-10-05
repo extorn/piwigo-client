@@ -4,22 +4,22 @@
 
     <string name="preference_page_auto_upload_jobs">自動アップロード</string>
     <string name="preference_data_upload_automatic_title">自動アップロード</string>
-    <string name="preference_data_upload_automatic_job_title">ジョブの自動アップロード</string>
+    <string name="preference_data_upload_automatic_job_title">自動アップロードジョブ</string>
 
     
 
     
-    <string name="preference_data_upload_automatic_upload_enable_summary">バックグラウンドでのアップロードを有効にする</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">バックグラウンドアップロードを有効にする</string>
     <string name="preference_data_upload_automatic_upload_enable_title">自動アップロード</string>
     
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">ワイヤレスでのみ自動アップロードを使用する</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">ワイヤレスのみ</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">無線のみ</string>
     
     
 
     
-    <string name="preference_data_upload_automatic_upload_jobs_title">ジョブの自動アップロード</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">自動アップロードジョブ</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$dジョブ</string>
 
     
@@ -79,7 +79,7 @@
     
     
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">ファイル拡張子</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">拡張子%1$sのファイルをアップロード</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">ext%1$sでファイルをアップロードする</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">プライバシーレベル</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">アップロードされたファイルは%1$sに表示されます</string>
@@ -119,11 +119,11 @@
     
 
     
-    <string name="preference_gallery_slideshow_auto_drive_title">自動スライドショー進行</string>
-    <string name="preference_gallery_slideshow_auto_drive_summary">設定した時間が経過すると、次の画像またはビデオが表示されます</string>
+    <string name="preference_gallery_slideshow_auto_drive_title">スライドショーの自動進行</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">設定時間後、次の画像または動画が表示されます</string>
     
 
-    <string name="preference_gallery_slideshow_auto_drive_delay_title">自動ドライブ画像遅延</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">自動ドライブの画像遅延</string>
     <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$sミリ秒</string>
     
     

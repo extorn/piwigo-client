@@ -24,7 +24,7 @@
     <string-array name="preference_album_subalbum_sort_order_items">
         <item>Standard</item>
         <item>Albumname A-Z</item>
-        <item>Letzte Aktualisierung</item>
+        <item>Zuletzt aktualisiert</item>
     </string-array>
     
     <string-array name="preference_caching_level_items">
@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals."</item>
-        <item>"Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch"</item>
+        <item>Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals.</item>
+        <item>Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch</item>
         <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite für die App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
-        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - \"Sie dürfen Tags nicht löschen\" - Stellen Sie sicher, dass Benutzer Tags sowohl hinzufügen als auch löschen können (Server-Plugin-Einstellung).</item>
+        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - "Sie dürfen Tags nicht löschen" - Stellen Sie sicher, dass Benutzer Tags sowohl hinzufügen als auch löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen und auf Ihren aktuellen Server zu übertragen</item>
         <item>Klicken Sie lange auf ein Bild (entweder Miniaturbild oder Diashow), das nicht geladen werden konnte, um es erneut abzurufen</item>
         <item>Klicken Sie lange auf ein Album, um das Album und den gesamten Inhalt zu löschen</item>
@@ -136,53 +136,56 @@
         <item>Sie können ein Bild beim Anzeigen in einer Diashow vergrößern, indem Sie zwei Finger zusammen oder auseinander auf dem Bildschirm zeichnen</item>
         <item>Wenn Sie als Administrator angemeldet sind, aktivieren Sie die Anwendungssperrfunktion, bevor Sie Ihr Gerät einem Freund zum Anzeigen Ihrer Fotos übergeben, um zu verhindern, dass versehentlich Änderungen an Ihrer Galerie vorgenommen werden</item>
         <item>Wenn Sie ein ganzes Video angesehen haben und das lokale Datei-Caching aktiviert ist, können Sie dieses Video in Ihrem Download-Ordner speichern</item>
-        <item>Klicken Sie lange auf die Schaltfläche \"Löschen\" in einer \"Datei zum Hochladen\", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
+        <item>Klicken Sie lange auf die Schaltfläche "Löschen" in einer "Datei zum Hochladen", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
         <item>Wenn Bilder nur langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser App verwendete Größe generiert</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
-        <item>"Weitere Updates sind nicht geplant."</item>
+        <item>Weitere Updates sind nicht geplant.</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.81</item>
+        <item>"Bug-Fix:
+                 - Bildschirmüberlagerung für automatische Jobs"</item>
         <item>1.4.0.80</item>
         <item>"Änderungen:
                  - EULA vereinfacht und die meisten Beschränkungen aufgehoben.
-                 - Quellcode auf github https://github.com/extorn/piwigo-client veröffentlicht
+                 - Quellcode veröffentlicht auf github https://github.com/extorn/piwigo-client
                  - Aktualisierungen der Bibliotheksabhängigkeiten von Drittanbietern"</item>
         <item>1.4.0.79</item>
-        <item>"Verschiedene Fehlerbehebungen"</item>
+        <item>Verschiedene Fehlerbehebungen</item>
         <item>1.4.0.78</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Mehrere Korrekturen, einschließlich Korrekturen der Bildkomprimierung.
                 Änderungen:
                  - Verbesserung der Protokollierung, um das Debuggen einiger potenzieller Fehler zu unterstützen
                  - Auf die neuesten Android 30 Build-Bibliotheken aktualisiert"</item>
         <item>1.4.0.77.1</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Die Drehung der Miniaturansichten für Videodateien bei der Dateiauswahl wurde korrigiert
                  - Bei großen Bildern (z. B. 3096 * 4128) wird jetzt bei der Dateiauswahl eine Miniaturansicht generiert
                 Änderungen:
                  - Drücken Sie lange auf fehlgeschlagenes Bild oder Video, um es erneut zu laden"</item>
         <item>1.4.0.77</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Die Drehung der Miniaturansichten für Videodateien bei der Dateiauswahl wurde korrigiert
                 Änderungen:
                  - Drücken Sie lange auf fehlgeschlagenes Bild oder Video, um es erneut zu laden
                 Bekannter Fehler (in dieser Version nicht eingeführt):
                  - Bei großen Bildern (z. B. 3096 * 4128) wird keine Miniaturansicht generiert, obwohl das Bild noch hochgeladen werden kann"</item>
         <item>1.4.0.76</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
              - Freigabe mehrerer heruntergeladener Dateien behoben
              - Die angezeigte Meldung zeigt an, dass der URI-Link der Remote-Datei in die Zwischenablage kopiert wurde
              - Es wurde behoben, dass Uploads aufgrund von Änderungen in 1.4.0.75 nicht funktionierten
              - Dateiauswahl: Videodateien zeigen keine Miniaturansichten an, wenn der Pfad ein Leerzeichen enthält
              - Unterstützung für das Erstellen von Miniaturansichten für alle Videos (einschließlich MOV) für alle möglichen Android-Geräte"</item>
         <item>1.4.0.75</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
              Benachrichtigungen werden für heruntergeladene Dateien nicht korrekt angezeigt"</item>
         <item>1.4.0.74</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Android 10
                   : Auswahl von Ordnern - Berechtigungen korrekt verwaltet.
                   : Download von Artikeln - funktioniert jetzt
@@ -198,24 +201,24 @@
                  - Unterstützung für Android-Versionen vor 4.4 entfernt. Entschuldigung, wenn dies Sie betrifft, aber es sei denn, Sie können
                      Geben Sie einen zwingenden Grund an, es wird nicht zurückkommen. Die Nummernauswahl ist unterhalb dieser Version fehlerhaft
                      und ich habe zu lange versucht, es bereits zu beheben.
-             Fehlerbehebung:
+             Bug-Fix:
                  - Absturz beim Upload abgeschlossen, wenn die Upload-Seite nicht mehr sichtbar ist.
                  - Absturz bei der Navigation zwischen Alben mithilfe der Titelleiste"</item>
         <item>1.4.0.71</item>
-        <item>"Fehlerbehebung
+        <item>"Bug-Fix
                  - Absturz durch App, die mehr Berechtigungen für freigegebene Ordner erwartet als erforderlich und bereitgestellt"</item>
         <item>1.4.0.70</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Vom Benutzer gemeldete Abstürze beim Hochladen
                  - Absturz beim erneuten Anzeigen einer Diashow, die seitdem für ein Album angezeigt wurde. Ich habe versucht, das Verhalten der Zurück-Schaltfläche logischer zu gestalten, aber leider befürchte ich, dass es schlimmer geworden ist (insbesondere, seit es dieses Problem aufgedeckt hat)."</item>
         <item>1.4.0.69</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
              - Ordnerberechtigungen werden beim Angebot nicht korrekt akzeptiert"</item>
         <item>1.4.0.68</item>
-        <item>"Fehlerbehebung:
-                 - Absturz bei der Navigation zur Galerie vom Upload oder den Einstellungen, wenn die zuletzt geöffnete Seite der Galerie eine Diashow war"</item>
+        <item>"Bug-Fix:
+                 - Absturz bei der Navigation zur Galerie vom Upload oder den Einstellungen, wenn die letzte geöffnete Seite der Galerie eine Diashow war"</item>
         <item>1.4.0.67</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Eine Reihe von Fehlerkorrekturen für Abstürze im Zusammenhang mit der kürzlich erfolgten Überarbeitung des Dateibehandlungscodes
                 Änderungen:
                  - Deutliche Verbesserung der Leistung der Dateiauswahl für Upload-Bildschirme
@@ -223,16 +226,16 @@
                  - Bezahlte App: Aktivierte Hardwarebeschleunigung in der gesamten App
                  - Bezahlte App: Ermöglicht die Verwendung der Ordner- / Dateiauswahlaufgabe durch andere Apps (bitte melden Sie alle Probleme)"</item>
         <item>1.4.0.66.8</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - App-Absturz während oder nach einem Upload"</item>
         <item>1.4.0.66.7</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Probleme mit Abstürzen nach Abschluss des Uploads
                  - Fortschritt beim Hochladen einzelner Dateien nicht angezeigt
                  - Absturz beim Drehen des Geräts mit angezeigtem Upload-Bildschirm
                  - Seite kann nicht nach oben gescrollt werden, um die Upload-Schaltfläche auf der Registerkarte Upload-Einstellungen anzuzeigen"</item>
         <item>1.4.0.66.5</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Viele Probleme, die zu Abstürzen führen, wurden behoben
                  - Die ausgewählte Upload-Zielalbum-Seite ist nicht mehr transparent"</item>
         <item>1.4.0.66</item>
@@ -248,7 +251,7 @@
                 - Beim Komprimieren von Videos können Sie den Audio- oder Videostream entfernen, wenn Sie eine m4a- oder m4v-Datei erstellen möchten (MP4-Dateierweiterung hinzugefügt, wenn Ihr Server dies nur zulässt).
                 - Schubladenmenü auf dem Upload-Bildschirm verfügbar, damit Sie zur Galerie oder zu den Einstellungen springen können
                 - Die App ist bereit für die Implementierung von Code, um Sie zu warnen, während Sie Fotos von denen auswählen, die Sie zuvor hochgeladen haben.
-               Fehlerbehebung:
+               Bug-Fix:
                 - Die Upload-Seite behält Dateien bei, wenn neue Dateien aus der Systemauswahl und / oder Navigation in die Hauptgalerie hinzugefügt werden
                 - Der Videokomprimierungscode wurde grundlegend überarbeitet. Es sollte jetzt nicht einfrieren und keine Videos mehr aufgeben. (Lass es mich wissen, wenn es so ist)
                 - Schreiben Sie große Bereiche neu, um mögliche Speicherlecks zu beseitigen
@@ -256,7 +259,7 @@
         <item>1.4.0.65</item>
         <item>"Änderungen:
              - Das verbleibende Themenproblem für Dialoge wurde behoben
-                Fehlerbehebung:
+                Bug-Fix:
              - Das Server-Uri-Pfadfragment wurde fälschlicherweise in Kleinbuchstaben konvertiert, was zu einem 404-Fehler führte"</item>
         <item>1.4.0.64</item>
         <item>"Änderungen:
@@ -264,22 +267,22 @@
              - Auf MaterialComponents-basiertes Thema verschoben (es gibt einige geringfügige Änderungen)
              - Die meisten Verbindungseinstellungen standardmäßig ausblenden - Klicken Sie, um sie zu erweitern und auf den Rest zuzugreifen
              - Einige Upload-Einstellungen wurden in den erweiterten Bereich verschoben
-                Fehlerbehebung:
-             - Eine optionale URI-Codierung für das Abrufen von Fotos wurde hinzugefügt (verwendet die vorhandene Verbindungspräferenz für die Uri-Codierung).
+                Bug-Fix:
+             - Optionale URI-Codierung für das Abrufen von Fotos hinzugefügt (verwendet vorhandene Verbindungspräferenz für die Uri-Codierung)
              - Warnung vor fehlenden Tags gestoppt, um zu melden, dass 0 fehlen"</item>
         <item>1.4.0.63</item>
         <item>"Änderungen:
                  - Die Option zum Auswählen eines Download-Ordners in den App-Einstellungen wurde hinzugefügt
-               Fehlerbehebung:
+               Bug-Fix:
                  - Beenden Sie die Warnungen, die für das automatische Fahren der Diashow angezeigt werden, wenn diese deaktiviert ist.
                  - Wählen Sie die aktuell sichtbare Datei aus, wenn der Dialog zum Herunterladen von Dateien angezeigt wird"</item>
         <item>1.4.0.62</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Der bevorzugte Aktualisierungsprozess wurde für Benutzer behoben, die eine alte Version mehrerer Versionen von der App auf die neueste verfügbare Version aktualisieren
                  - Jobstatusdatei hochladen, nicht gespeichert
                  - Der Upload-Auftrag wurde (falsch) gestartet, während das Video noch von der Gerätekamera beschrieben wird"</item>
         <item>1.4.0.61</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Einige kleine Fehlerbehebungen
                 Veränderung:
                  - Unterstützung für Android 11 aktiviert - Bitte lassen Sie mich wissen, wenn Sie keine Dateien mehr zum Hochladen sehen können"</item>
@@ -287,49 +290,49 @@
         <item>"Veränderung:
                  - Änderungen an der Seite mit den App-Einstellungen
                  - Neue Einstellung hinzugefügt, um zu erzwingen, dass einmalige Benutzertipps erneut angezeigt werden
-                 - Bezahlte App: In der Diashow wurde eine automatische Laufwerksfunktion hinzugefügt. - Neue Einstellung im Diashow-Bereich der Galerieeinstellungen"</item>
+                 - Bezahlte App: Eine automatische Laufwerksfunktion in der Diashow hinzugefügt - neue Einstellung im Diashow-Bereich der Galerieeinstellungen"</item>
         <item>1.4.0.59</item>
         <item>"Veränderung:
                  - Ermöglichen Sie das Herunterladen oder Freigeben mehrerer Dateien, nachdem Sie diese in der Albumansicht ausgewählt haben"</item>
         <item>1.4.0.58</item>
         <item>"Veränderung:
-                 - Kostenlose Version: Alle Interstitial-Anzeigen wurden für ein paar Monate entfernt, sodass die Verwendung als mehr als eine Testversion der kostenpflichtigen Version tolerierbar ist"</item>
+                 - Kostenlose Version: Alle interstitiellen Anzeigen wurden für ein paar Monate entfernt, sodass die Verwendung als mehr als eine Testversion der kostenpflichtigen Version tolerierbar ist"</item>
         <item>1.4.0.57</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Vorerst aus dem Speicherbereich deaktiviert - Ermöglicht der App, Dateien zum erneuten Hochladen auf Android 10 anzuzeigen"</item>
         <item>1.4.0.56</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Videos werden manchmal nur als Fotos erkannt, abhängig von der in den Verbindungseinstellungen eingegebenen Server-URL"</item>
         <item>1.4.0.55</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Vorerst aus dem Speicherbereich deaktiviert - Ermöglicht der App, Dateien zum erneuten Hochladen auf Android 10 anzuzeigen"</item>
         <item>1.4.0.54</item>
         <item>"Änderungen:
                  - Seitentitel anklickbar - Zum übergeordneten Album navigieren
-                 Fehlerbehebung:
+                 Bug-Fix:
                  - Die Sortierreihenfolge des Albums ist nicht immer korrekt
                  - Übersetzungen möglicherweise nicht automatisch in optimaler Reihenfolge ausgewählt."</item>
         <item>1.4.0.53</item>
         <item>"Änderungen:
                  - Einstellung zur Steuerung der Anzeige von Nachrichten mit der vom Server geladenen Bildgröße hinzugefügt
-                Fehlerbehebung:
+                Bug-Fix:
                  - Aktualisieren Sie die Albumansicht sofort nach dem Ändern der Sortierreihenfolge der Ressource oder des untergeordneten Albums
                  - Fehler bei der allgemeinen Sortierung der Alben behoben
-                 - Der Zugriff auf die Diashow beim Quetschen von untergeordneten Alben wurde korrigiert (durch Berühren des Album-Headers).
+                 - Der Zugriff auf die Diashow beim Quetschen von untergeordneten Alben wurde korrigiert (durch Berühren des Albumkopfs).
                  - Möglicher Fehler, bei dem einige Änderungen der Verbindungseinstellungen (z. B. die Verwendung der Basisauthentifizierung) erst beim nächsten Neustart der App vollständig verwendet werden"</item>
         <item>1.4.0.52</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
              - Das Abbrechen eines Datei-Uploads und das Verlassen der Upload-Seite vor dem gemeldeten Abbruch führt zum Absturz
              - Bezahlte App: Absturz mit Russisch auf der Konfigurationsseite für automatische Upload-Jobs
-             - Bezahlte App: Das Aktualisieren der Tag-Liste für eine Ressource, in der mindestens ein zuvor ausgewähltes Tag nicht mehr vorhanden ist, führt zum Absturz (Benutzer jetzt warnen und entfernen)
+             - Bezahlte App: Das Aktualisieren der Tag-Liste für eine Ressource, in der mindestens ein zuvor ausgewähltes Tag nicht mehr vorhanden ist, führt zum Absturz (jetzt Benutzer warnen und entfernen)
              - Bezahlte App: Die App kann abstürzen, wenn das Zielalbum für den automatischen Upload-Auftrag ausgewählt wird
              - Bezahlte App: Wenn Sie das Stammalbum als Zielalbum für den automatischen Upload-Auftrag auswählen, wird der Name des ersten Albums als ausgewähltes Album angezeigt (falsch).
-             - Bezahlte App: Hinweis: Ich bin mir nicht sicher, ob die Auswahl des Galeriestamms als Upload-Ziel jemals sinnvoll ist, aber in bestimmten Fällen ist dies zulässig."</item>
+             - Bezahlte App: Hinweis: Ich bin mir nicht sicher, ob die Auswahl des Galeriestamms als Upload-Ziel jemals sinnvoll ist, aber unter bestimmten Umständen ist dies zulässig."</item>
         <item>1.4.0.51</item>
         <item>"Änderungen:
                  - Neue Galerieeinstellung, um das Erzwingen der in der App verwendeten Sprache zu ermöglichen
                  - Neue erweiterte Serververbindungseinstellungen - Aktivieren Sie die URI-Codierung von Ressourcen-URIs
-                Fehlerbehebung:
+                Bug-Fix:
                  - Die Einstellungen für die Nummernauswahl akzeptieren den Wert beim Schließen des Dialogfelds
                  - PiwigoClientWsExt-Plugin in der Benutzernachricht korrekt benannt
                  - Einige Übersetzungen wurden korrigiert"</item>
@@ -338,12 +341,12 @@
                  - Zulassen, dass Audio als Komprimierungsoption durchgelassen wird
                  - Aktivierte Komprimierung für Nicht-Audio / Raw-Mime-Audio-Streams
                  - Option hinzufügen, um die Audiospur vom Video zu entfernen
-                Fehlerbehebung:
+                Bug-Fix:
                  - Stoppen Sie die Videokomprimierung, wenn sie während der Komprimierung aus dem Upload gelöscht wird
                  - Stoppen Sie das Hochladen von Videos, wenn diese während der Komprimierung aus dem Upload gelöscht werden
                  - Ordnen Sie die Anzeige des Upload-Fortschritts für einzelne Dateien an"</item>
         <item>1.4.0.49</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Videokomprimierungsfehler
                  - Der letzte Upload-Job wird beim nächsten Upload erneut ausgeführt (kein Schaden). Sie müssen erneut auf Upload klicken, um den neuen Job auszuführen
                  - langsame Anzeige von Bildern beim Scrollen"
@@ -354,7 +357,7 @@
          - Zeigen Sie nur einmal an, welche Bildgrößen angezeigt werden, sofern sich dies nicht ändert"
         </item>
         <item>1.4.0.47</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
          - Verbesserungen der App-Stabilität"
         </item>
         <item>1.4.0.46</item>
@@ -362,7 +365,7 @@
              - Schaltfläche zum erneuten Laden von Inhalten zur Dateiauswahlseite hinzugefügt
              - Das (bezahlte) Suffix aus dem App-Namen entfernt
              - Pfad oder Angabe für das Ziel-Upload-Album anzeigen
-             Fehlerbehebung:
+             Bug-Fix:
              - In der Diashow fehlte der letzte Eintrag im Album
              - Element in Diashow löschen - leere Seite"
         </item>
@@ -372,38 +375,38 @@
              - Aktualisierte abhängige Bibliotheksversionen"
         </item>
         <item>1.4.0.44</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
          - Verbesserungen der App-Stabilität"
         </item>
         <item>1.4.0.43</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
          - Verbesserungen der App-Stabilität"
         </item>
         <item>1.4.0.42</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Korrekturen bei der Behandlung von Bildladefehlern
                  - Korrektur zur Behebung eines kleinen Fehlers beim Hochladen von Dateien"</item>
         <item>1.4.0.41</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Verbesserungen der App-Stabilität
                  - Der Bearbeitungsmodus wurde geschlossen, nachdem die Bilddetails aktualisiert wurden
              Änderungen:
                  - (nur für Profis) Zeigen Sie Details zum Upload-Status einschließlich Fehlern für automatische Jobs an - auf jeder Konfigurationsseite für automatische Upload-Jobs"</item>
         <item>1.4.0.38</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Die Diashow (Vollbildansicht) funktioniert jetzt wieder. Meine aufrichtige Entschuldigung.
                  - Russische Übersetzungen für Präferenzen hinzugefügt"
         </item>
 
 
         <item>1.4.0.37</item>
-        <item>"Fehlerbehebung:
+        <item>"Bug-Fix:
                  - Die Verbindungsbereinigung funktioniert jetzt wieder
                  - Das Festlegen der Ressourcenbewertung im russischen Gebietsschema funktioniert jetzt wieder"</item>
         <item>1.4.0.36</item>
         <item>"Änderungen:
                  - Der Download für Dateien erfolgt jetzt in einer rudimentären Warteschlange und wird auf App-Ebene verwaltet. Sie müssen die App jedoch weiterhin geöffnet lassen, damit der Download fortgesetzt werden kann.
-                Fehlerbehebung:
+                Bug-Fix:
                  - Das Herunterladen von Dateien funktioniert jetzt, wenn der Server keine Dateigröße meldet
                  - Dateien, die dem Bildschirm zum Hochladen von Dateien hinzugefügt wurden, werden jetzt wieder angezeigt (waren anfangs unsichtbar).
                  - Andere verschiedene Fehler"</item>
