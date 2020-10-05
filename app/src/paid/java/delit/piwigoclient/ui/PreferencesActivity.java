@@ -81,4 +81,5 @@ public class PreferencesActivity extends AbstractPreferencesActivity {
         RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }
+
 }

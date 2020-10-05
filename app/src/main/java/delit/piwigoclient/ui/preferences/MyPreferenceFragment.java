@@ -30,6 +30,7 @@ import delit.libs.ui.view.preference.MappedListPreferenceDialogFragmentCompat;
 import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.libs.ui.view.preference.NumberPickerPreferenceDialogFragmentCompat;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -71,6 +72,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
+        v.setBackgroundColor(DisplayUtils.getColor(container.getContext(), R.attr.colorSurface));
         initialiseCoreComponents(savedInstanceState, container);
         return v;
     }

@@ -134,11 +134,4 @@ public class MainActivity extends AbstractMainActivity {
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(AutoUploadJobViewRequestedEvent event) {
-        AutoUploadJobPreferenceFragment fragment = AutoUploadJobPreferenceFragment.newInstance(event.getActionId(), event.getJobId());
-        showFragmentNow(fragment);
-    }
-
-
 }
