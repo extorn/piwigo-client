@@ -10,16 +10,31 @@ import android.util.AttributeSet;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDataStore;
 
-import java.util.ArrayList;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.TrackableEventManager;
+import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 
 public class AutoUploadJobsPreference extends DialogPreference {
 
+    private static final String STATE_ACTIVE_VALS = "active_state";
     private boolean mValueSet;
     private String mValue;
+    private ActiveState currentState;
 
     public AutoUploadJobsPreference(Context context, AttributeSet attrs, int defStyleAttr,  int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -43,6 +58,7 @@ public class AutoUploadJobsPreference extends DialogPreference {
 
     private void initPreference(Context context, AttributeSet attrs) {
         setPositiveButtonText(R.string.gallery_details_save_button);
+        currentState = new ActiveState(); // init this to store all user progress.
     }
 
     /**
@@ -121,6 +137,43 @@ public class AutoUploadJobsPreference extends DialogPreference {
         return CollectionUtils.integersFromCsvList(mValue);
     }
 
+    private boolean hasChanged(AutoUploadJobConfig cfg) {
+        String newSummary = cfg.getSummary(getSharedPreferences(), getContext());
+        return !ObjectUtils.areEqual(getActiveState().getActiveUploadJobConfigSummary(), newSummary);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(AutoUploadJobViewCompleteEvent event) {
+        if(!getActiveState().isTrackingEvent(event)) {
+            return;
+        }
+        AutoUploadJobConfig cfg = new AutoUploadJobConfig(event.getJobId());
+        if(hasChanged(cfg) || !getActiveState().hasUploadJobId(cfg.getJobId())) {
+            getActiveState().setJobsHaveChanged(true);
+        }
+        addAutoUploadJobConfigToListIfNew(cfg);
+        onClick();
+    }
+
+    @Override
+    protected void onClick() {
+        if(getActiveState() == null) {
+            this.currentState = new ActiveState();
+            getActiveState().setJobIds(getUploadJobIdsFromValue()); // we're not in the middle of changing things.
+        }
+        if(!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+            getActiveState().setJobIds(getUploadJobIdsFromValue()); // we're not in the middle of changing things.
+        }
+        super.onClick();
+    }
+
+    private void addAutoUploadJobConfigToListIfNew(AutoUploadJobConfig cfg) {
+        if(cfg.exists(getContext())) {
+            getActiveState().addJobCfg(cfg);
+        }
+    }
+
     @Override
     protected Parcelable onSaveInstanceState() {
         final Parcelable superState = super.onSaveInstanceState();
@@ -131,6 +184,7 @@ public class AutoUploadJobsPreference extends DialogPreference {
 
         final AutoUploadJobsPreference.SavedState myState = new AutoUploadJobsPreference.SavedState(superState);
         myState.value = getValue();
+        myState.activeState = currentState;
         return myState;
     }
 
@@ -145,6 +199,29 @@ public class AutoUploadJobsPreference extends DialogPreference {
         AutoUploadJobsPreference.SavedState myState = (AutoUploadJobsPreference.SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
         setValue(myState.value);
+        currentState = myState.activeState;
+    }
+
+    public void persistActiveState() {
+        String val = CollectionUtils.toCsvList(getActiveState().getUploadJobIds());
+
+        if (callChangeListener(val)) {
+            // persist any changes
+            setValue(val, getActiveState().isJobsHaveChanged());
+            // delete any deleted.
+            for(AutoUploadJobConfig deletedJob : getActiveState().deletedItems) {
+                deletedJob.deletePreferences(getContext());
+            }
+            getActiveState().deletedItems.clear();
+        } else {
+            // revert the changes.
+            getActiveState().undeleteAll();
+        }
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void clearActiveState() {
+        currentState = null;
     }
 
 
@@ -162,10 +239,12 @@ public class AutoUploadJobsPreference extends DialogPreference {
                 };
 
         private String value;
+        private ActiveState activeState;
 
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
+            activeState = source.readParcelable(SavedState.class.getClassLoader());
         }
 
         public SavedState(Parcelable superState) {
@@ -176,8 +255,132 @@ public class AutoUploadJobsPreference extends DialogPreference {
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
+            dest.writeParcelable(activeState, flags);
         }
     }
 
+    protected ActiveState getActiveState() {
+        return currentState;
+    }
+
+    protected static class ActiveState implements Parcelable {
+        private boolean jobsHaveChanged;
+        private TrackableEventManager trackableEventManager = new TrackableEventManager();
+        private HashSet<AutoUploadJobConfig> currentItems = new HashSet<>();
+        private ArrayList<AutoUploadJobConfig> deletedItems = new ArrayList<>();
+        private String activeUploadJobConfigSummary;
+
+        protected ActiveState(){}
+
+        protected ActiveState(Parcel in) {
+            jobsHaveChanged = in.readByte() != 0;
+            currentItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+            deletedItems = in.createTypedArrayList(AutoUploadJobConfig.CREATOR);
+            activeUploadJobConfigSummary = in.readString();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeByte((byte) (jobsHaveChanged ? 1 : 0));
+            ParcelUtils.writeSet(dest, currentItems);
+            dest.writeTypedList(deletedItems);
+            dest.writeString(activeUploadJobConfigSummary);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ActiveState> CREATOR = new Creator<ActiveState>() {
+            @Override
+            public ActiveState createFromParcel(Parcel in) {
+                return new ActiveState(in);
+            }
+
+            @Override
+            public ActiveState[] newArray(int size) {
+                return new ActiveState[size];
+            }
+        };
+
+        public boolean isJobsHaveChanged() {
+            return jobsHaveChanged;
+        }
+
+        public void postTrackableEvent(TrackableRequestEvent event) {
+            trackableEventManager.postTrackedEvent(event);
+        }
+
+        public void setJobsHaveChanged(boolean jobsHaveChanged) {
+            this.jobsHaveChanged = jobsHaveChanged;
+        }
+
+        public void recordItemForDelete(AutoUploadJobConfig item) {
+            deletedItems.add(item);
+            currentItems.remove(item);
+        }
+
+        /**
+         * @return A sorted set
+         */
+        public SortedSet<Long> getUploadJobIds() {
+            return new TreeSet<>(PiwigoUtils.toSetOfIds(currentItems));
+        }
+
+        /**
+         * @return An unsorted set
+         */
+        public Set<Long> getDeletedUploadJobIds() {
+            return PiwigoUtils.toSetOfIds(deletedItems);
+        }
+
+        public void setActiveUploadJobConfigSummaryText(String activeJobText) {
+            activeUploadJobConfigSummary = activeJobText;
+        }
+
+        public boolean isJobConfigShowing() {
+            return activeUploadJobConfigSummary != null;
+        }
+
+        public String getActiveUploadJobConfigSummary() {
+            return activeUploadJobConfigSummary;
+        }
+
+        protected int getNextJobId() {
+            long nextJobId = 0;
+            while(getUploadJobIds().contains(nextJobId)) {
+                nextJobId += 1;
+            }
+            while(getDeletedUploadJobIds().contains(nextJobId)) {
+                nextJobId += 1;
+            }
+            return (int) nextJobId;
+        }
+
+        public boolean isTrackingEvent(AutoUploadJobViewCompleteEvent event) {
+            return trackableEventManager.isTrackingEvent(event);
+        }
+
+        public boolean hasUploadJobId(int jobId) {
+            return getUploadJobIds().contains(Long.valueOf(jobId));
+        }
+
+        public void addJobCfg(AutoUploadJobConfig cfg) {
+            currentItems.add(cfg);
+        }
+
+        public void undeleteAll() {
+            currentItems.addAll(deletedItems);
+            deletedItems.clear();
+        }
+
+        public void setJobIds(ArrayList<Integer> uploadJobIdsFromValue) {
+            for(Integer jobId : uploadJobIdsFromValue) {
+                currentItems.add(new AutoUploadJobConfig(jobId));
+            }
+        }
+
+    }
 
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,13 +28,15 @@ import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
+import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 
-public class AutoUploadJobConfig implements Parcelable {
+public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable {
     private int jobId;
     private SharedPreferences jobPreferences;
 
@@ -43,6 +46,11 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public AutoUploadJobConfig(Parcel in) {
         jobId = in.readInt();
+    }
+
+    @Override
+    public long getId() {
+        return jobId;
     }
 
     public static final Creator<AutoUploadJobConfig> CREATOR = new Creator<AutoUploadJobConfig>() {
@@ -100,7 +108,9 @@ public class AutoUploadJobConfig implements Parcelable {
     }
 
     public void deletePreferences(Context c) {
-        getJobPreferences(c).edit().clear().commit();
+        SharedPreferences.Editor editor = getJobPreferences(c).edit();
+        editor.clear();
+        editor.commit();
     }
 
 
@@ -271,6 +281,27 @@ public class AutoUploadJobConfig implements Parcelable {
             return params;
         }
         return null;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(o instanceof AutoUploadJobConfig) {
+            return Integer.compare(jobId,((AutoUploadJobConfig) o).jobId);
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AutoUploadJobConfig that = (AutoUploadJobConfig) o;
+        return jobId == that.jobId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jobId);
     }
 
     public static class PriorUploads implements Parcelable {

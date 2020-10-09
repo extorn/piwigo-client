@@ -145,6 +145,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.82</item>
+        <item>"Changements:
+                 - Le basculement d\'une autorisation de fichier Android vers un sous-dossier n\'est pas autorisé par Android 30. (suppression de cette fonctionnalité).
+                Correction d\'un bug:
+                 - La modification et l\'enregistrement des travaux de téléchargement automatique ne fonctionnent pas"</item>
         <item>1.4.0.81</item>
         <item>"Correction d\'un bug:
                  - Superposition d\'écran de préférence pour les travaux automatiques"</item>

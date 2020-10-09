@@ -617,7 +617,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください"</string>
+    <string name="preference_corrupt_please_re_type_pattern">プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください</string>
     <string name="switch_to_cached_mode">サーバーは現在利用できません。キャッシュされたデータを使用しますか？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">ビデオを圧縮する</string>
@@ -662,7 +662,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="create_email_using_app">アプリを使用してメールを作成する</string>
     <string name="open_files">アプリでファイルを開く</string>
     <string name="files_unavailable_to_download_removed_pattern">選択したファイルには、処理できなかったファイルが含まれていました。これらの%1$dファイルは無視されています。ビデオファイルを共有するには、最初にローカルで完全にキャッシュする必要があります。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"すべての1回限りのユーザーヒントが再び表示されます"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">すべての1回限りのユーザーヒントが再び表示されます</string>
     
     
     <string name="delete_uploaded_files_title">アップロードしたファイルを削除する</string>

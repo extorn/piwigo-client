@@ -56,7 +56,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals(connectionProfileNamePreferenceKey)) {
+                if(key != null && key.equals(connectionProfileNamePreferenceKey)) {
                     String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
                     setEnabled(connectionProfileName != null && ConnectionPreferences.getPreferences(connectionProfileName, sharedPreferences, context).isValid(getContext()));
                 }

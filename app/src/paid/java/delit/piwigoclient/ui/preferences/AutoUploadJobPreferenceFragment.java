@@ -348,7 +348,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public void onStop() {
-        EventBus.getDefault().postSticky(new AutoUploadJobViewCompleteEvent(actionId, jobConfigId));
+        EventBus.getDefault().post(new AutoUploadJobViewCompleteEvent(actionId, jobConfigId));
         super.onStop();
     }
 

@@ -248,6 +248,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.82</item>
+        <item>"Changes:
+                - Switching an android file permissions grant to a subfolder is not permitted by android 30. (removing this feature).
+               Bugfix:
+                - Editing and saving automatic upload jobs not working"</item>
         <item>1.4.0.81</item>
         <item>"Bugfix:
                 - Preference screen overlay for automatic jobs"</item>

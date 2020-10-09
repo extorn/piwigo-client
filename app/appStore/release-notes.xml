@@ -1,36 +1,54 @@
 <en-GB>
+Changes:
+- Switching an android file permissions grant to a subfolder is not permitted by android 30. (removing this feature).
 Bugfix:
-- Preference screen overlay for automatic jobs
+- Editing and saving automatic upload jobs not working
 </en-GB>
 <cs-CZ>
+Změny:
+- Přepínání přidělení oprávnění souboru Android do podsložky není povoleno Androidem 30. (odebrání této funkce).
 Oprava chyby:
-- Preference překrytí obrazovky pro automatické úlohy
+- Úpravy a ukládání úloh automatického nahrávání nefungují
 </cs-CZ>
 <de-DE>
+Änderungen:
+- Das Wechseln der Berechtigungen für Android-Dateien zu einem Unterordner ist von Android 30 nicht zulässig (Entfernen dieser Funktion).
 Bug-Fix:
-- Bildschirmüberlagerung für automatische Jobs
+- Das Bearbeiten und Speichern von automatischen Upload-Jobs funktioniert nicht
 </de-DE>
 <es-ES>
+Cambios:
+- Android 30 no permite cambiar una concesión de permisos de archivos de Android a una subcarpeta (eliminando esta función).
 Arreglo del fallo:
-- Superposición de pantalla de preferencias para trabajos automáticos
+- Editar y guardar trabajos de carga automática no funciona
 </es-ES>
 <fr-FR>
+Changements:
+- Le basculement d\'une autorisation de fichier Android vers un sous-dossier n\'est pas autorisé par Android 30. (suppression de cette fonctionnalité).
 Correction d\'un bug:
-- Superposition d\'écran de préférence pour les travaux automatiques
+- La modification et l\'enregistrement des travaux de téléchargement automatique ne fonctionnent pas
 </fr-FR>
 <it-IT>
+I cambiamenti:
+- Il passaggio da una concessione di autorizzazioni file Android a una sottocartella non è consentito da Android 30. (rimozione di questa funzione).
 Risoluzione del problema:
-- Sovrapposizione della schermata delle preferenze per i lavori automatici
+- La modifica e il salvataggio dei lavori di caricamento automatico non funzionano
 </it-IT>
 <ja-JP>
+変更点：
+-Androidファイルのアクセス許可の付与をサブフォルダーに切り替えることはAndroid30では許可されていません（この機能を削除します）。
 バグ修正：
--自動ジョブの設定画面オーバーレイ
+-自動アップロードジョブの編集と保存が機能しない
 </ja-JP>
 <ru-RU>
+Изменения:
+- Переключение разрешения на доступ к файлам Android в подпапку запрещено в Android 30 (удаление этой функции).
 Исправлена ошибка:
-- Наложение экрана настроек для автоматических заданий
+- Редактирование и сохранение заданий автоматической загрузки не работают
 </ru-RU>
 <zh-CN>
+变化：
+-android 30不允许将android文件权限授予切换到子文件夹。（删除此功能）。
 错误修正：
--用于自动作业的首选项屏幕叠加
+-编辑和保存自动上传作业不起作用
 </zh-CN>

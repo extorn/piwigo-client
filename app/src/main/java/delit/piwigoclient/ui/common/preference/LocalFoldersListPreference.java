@@ -181,6 +181,10 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
                         Logging.log(Log.WARN, TAG, "Raw file cannot be converted to tree uri. Leaving as is.");
                     }
                 }
+                if(newValue != null) {
+                    // only remove the old permission if we were able to take the more specific one. //TODO why is this not allowed by Android / working?
+                    removingOldPermissions &= thisPref.takePersistableUriPermission(selectedFolder);
+                }
                 if(removingOldPermissions) {
                     Uri oldFolder = IOUtils.getLocalFileUri(oldValue);
                     if(!"file".equals(oldFolder.getScheme())) {
@@ -193,22 +197,21 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
                         }
                     }
                 }
-                if(newValue != null) {
-                    thisPref.takePersistableUriPermission(selectedFolder);
-                }
             }
             return true;
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    private void takePersistableUriPermission(Uri selectedFolder) {
+    private boolean takePersistableUriPermission(Uri selectedFolder) {
         int flags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
         try {
             appSettingsViewModel.takePersistableUriPermissions(getContext(), selectedFolder, flags, getUriPermissionsKey(), getContext().getString(R.string.preference_uri_consumer_description_pattern, getTitle()));
         } catch(SecurityException e) {
             Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for folder URI : " + selectedFolder);
             Logging.recordException(e);
+            return false;
         }
+        return true;
     }
 }

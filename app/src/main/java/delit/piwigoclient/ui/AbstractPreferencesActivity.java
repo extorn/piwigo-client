@@ -122,6 +122,9 @@ public abstract class AbstractPreferencesActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final ViewJobStatusDetailsEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
         UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
         showFragmentNow(fragment);
     }
