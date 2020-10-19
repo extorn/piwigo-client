@@ -1,54 +1,36 @@
 <en-GB>
-Changes:
-- Switching an android file permissions grant to a subfolder is not permitted by android 30. (removing this feature).
 Bugfix:
-- Editing and saving automatic upload jobs not working
+- Corrected button position in item actions bar when editing a resource item
 </en-GB>
 <cs-CZ>
-Změny:
-- Přepínání přidělení oprávnění souboru Android do podsložky není povoleno Androidem 30. (odebrání této funkce).
 Oprava chyby:
-- Úpravy a ukládání úloh automatického nahrávání nefungují
+- Opravená poloha tlačítka na liště akcí položky při úpravách položky zdroje
 </cs-CZ>
 <de-DE>
-Änderungen:
-- Das Wechseln der Berechtigungen für Android-Dateien zu einem Unterordner ist von Android 30 nicht zulässig (Entfernen dieser Funktion).
 Bug-Fix:
-- Das Bearbeiten und Speichern von automatischen Upload-Jobs funktioniert nicht
+- Die Schaltflächenposition in der Elementaktionsleiste beim Bearbeiten eines Ressourcenelements wurde korrigiert
 </de-DE>
 <es-ES>
-Cambios:
-- Android 30 no permite cambiar una concesión de permisos de archivos de Android a una subcarpeta (eliminando esta función).
 Arreglo del fallo:
-- Editar y guardar trabajos de carga automática no funciona
+- Se corrigió la posición del botón en la barra de acciones del elemento al editar un elemento de recurso
 </es-ES>
 <fr-FR>
-Changements:
-- Le basculement d\'une autorisation de fichier Android vers un sous-dossier n\'est pas autorisé par Android 30. (suppression de cette fonctionnalité).
 Correction d\'un bug:
-- La modification et l\'enregistrement des travaux de téléchargement automatique ne fonctionnent pas
+- Correction de la position du bouton dans la barre d\'actions de l\'élément lors de la modification d\'un élément de ressource
 </fr-FR>
 <it-IT>
-I cambiamenti:
-- Il passaggio da una concessione di autorizzazioni file Android a una sottocartella non è consentito da Android 30. (rimozione di questa funzione).
 Risoluzione del problema:
-- La modifica e il salvataggio dei lavori di caricamento automatico non funzionano
+- Corretta la posizione del pulsante nella barra delle azioni degli elementi durante la modifica di un elemento risorsa
 </it-IT>
 <ja-JP>
-変更点：
--Androidファイルのアクセス許可の付与をサブフォルダーに切り替えることはAndroid30では許可されていません（この機能を削除します）。
 バグ修正：
--自動アップロードジョブの編集と保存が機能しない
+-リソースアイテムを編集するときのアイテムアクションバーのボタン位置を修正しました
 </ja-JP>
 <ru-RU>
-Изменения:
-- Переключение разрешения на доступ к файлам Android в подпапку запрещено в Android 30 (удаление этой функции).
 Исправлена ошибка:
-- Редактирование и сохранение заданий автоматической загрузки не работают
+- Исправлено положение кнопки в панели действий элемента при редактировании элемента ресурса.
 </ru-RU>
 <zh-CN>
-变化：
--android 30不允许将android文件权限授予切换到子文件夹。（删除此功能）。
 错误修正：
--编辑和保存自动上传作业不起作用
+-更正了编辑资源项目时项目操作栏中的按钮位置
 </zh-CN>

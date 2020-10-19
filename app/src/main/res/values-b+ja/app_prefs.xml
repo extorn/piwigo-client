@@ -141,7 +141,7 @@
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     
 
-    <string name="preference_connections_category_trusted_server_ca">トラステッドサーバー証明書CA</string>
+    <string name="preference_connections_category_trusted_server_ca">信頼できるサーバー証明書CA</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">信頼できるCA証明書のカスタムリストを使用して、サーバーのSSL証明書を検証します</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">カスタムの信頼できる認証局を使用する</string>
     
@@ -189,7 +189,7 @@
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">肖像画：表示するアルバムの列</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">ポートレート：表示するアルバムの列</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     
@@ -334,7 +334,7 @@
     
 
     
-    <string name="preference_data_upload_chunk_auto_retries_title">自動ファイルチャンクアップロードの最大再試行</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">最大自動ファイルチャンクアップロード再試行</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     
 

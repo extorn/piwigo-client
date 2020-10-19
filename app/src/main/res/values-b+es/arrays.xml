@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
-        <item>Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
+        <item>"Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
+        <item>"Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga fallida residual del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar las etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Siempre se produce un error al intentar actualizar las etiquetas - \ \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
         <item>Haga clic largo en una imagen (ya sea en miniatura o en un elemento de presentación de diapositivas) que no se haya podido cargar para recuperarla nuevamente</item>
         <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido</item>
@@ -141,10 +141,13 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>No se planean más actualizaciones.</item>
+        <item>"No se planean más actualizaciones."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.83</item>
+        <item>"Arreglo del fallo:
+                 - Se corrigió la posición del botón en la barra de acciones del elemento al editar un elemento de recurso"</item>
         <item>1.4.0.82</item>
         <item>"Cambios:
                  - Android 30 no permite cambiar una concesión de permisos de archivos de Android a una subcarpeta (eliminando esta función).
@@ -159,7 +162,7 @@
                  - Código fuente publicado en github https://github.com/extorn/piwigo-client
                  - Actualizaciones de dependencias de bibliotecas de terceros"</item>
         <item>1.4.0.79</item>
-        <item>Varias correcciones de errores</item>
+        <item>"Varias correcciones de errores"</item>
         <item>1.4.0.78</item>
         <item>"Arreglo del fallo:
                  - Varias, incluidas correcciones de compresión de imágenes.
@@ -265,7 +268,7 @@
         <item>"Cambios:
              - Se corrigió el problema del tema restante para los diálogos
                 Arreglo del fallo:
-             - Fragmento de ruta de Uri del servidor convertido incorrectamente a minúsculas que resulta en un error 404"</item>
+             - Fragmento de ruta de Uri del servidor convertido incorrectamente a minúsculas, lo que genera un error 404"</item>
         <item>1.4.0.64</item>
         <item>"Cambios:
              - Se agregó un botón para ver la contraseña oculta en las preferencias
@@ -283,8 +286,8 @@
                  - Seleccione el archivo actualmente visible cuando se muestra el cuadro de diálogo de descarga de archivos"</item>
         <item>1.4.0.62</item>
         <item>"Arreglo del fallo:
-                 - Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones fuera de la aplicación a la última disponible
-                 - Subir el archivo de estado del trabajo no se guarda
+                 - Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones de la aplicación a la última disponible
+                 - Subir archivo de estado del trabajo no se guarda
                  - El trabajo de carga se inició (incorrectamente) mientras la cámara del dispositivo aún estaba escribiendo el video"</item>
         <item>1.4.0.61</item>
         <item>"Arreglo del fallo:
@@ -344,7 +347,7 @@
         <item>1.4.0.50</item>
         <item>"Cambios:
                  - Permitir el paso de audio como opción de compresión
-                 - Compresión habilitada para transmisiones de audio mime que no son \'audio / raw\'
+                 - Compresión habilitada para transmisiones de audio mime no \'audio / raw\'
                  - Agregar opción para quitar la pista de audio del video
                 Arreglo del fallo:
                  - Detenga la compresión de video si se elimina de la carga durante la compresión
@@ -399,7 +402,7 @@
                  - (solo pro) Vea los detalles del estado de carga, incluidos los errores para trabajos automáticos, en cada página de configuración de trabajo de carga automática"</item>
         <item>1.4.0.38</item>
         <item>"Arreglo del fallo:
-                 - La presentación de diapositivas (vista de imagen a pantalla completa) ahora funciona nuevamente. Mis sinceras disculpas.
+                 - La presentación de diapositivas (vista de imagen a pantalla completa) ahora funciona de nuevo. Mis sinceras disculpas.
                  - Se agregaron traducciones al ruso para preferencias"
         </item>
 

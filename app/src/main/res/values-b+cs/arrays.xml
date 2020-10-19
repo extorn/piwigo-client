@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji.</item>
-        <item>Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro nahrání na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné</item>
+        <item>"Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji."</item>
+        <item>"Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro nahrání na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné"</item>
         <item>Pokud nahrávání právě neproběhne úspěšně, zkuste pomocí předvoleb na stránce nahrávání nastavení aplikace vymazat zbytková neúspěšná nahrávání ze serveru</item>
-        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - \ "Nemáte oprávnění mazat značky \" - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
+        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - \ \"Nemáte oprávnění mazat značky \" - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání připravené k přechodu na aktuální server</item>
         <item>Dlouhým kliknutím na obrázek (miniaturu nebo položku prezentace), který se nepodařilo načíst, jej znovu načtete</item>
         <item>Dlouhým kliknutím na album toto album a veškerý obsah odstraníte</item>
@@ -141,10 +141,13 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
-        <item>Žádné další aktualizace nejsou plánovány.</item>
+        <item>"Žádné další aktualizace nejsou plánovány."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.83</item>
+        <item>"Oprava chyby:
+                 - Opravená poloha tlačítka na liště akcí položky při úpravách položky zdroje"</item>
         <item>1.4.0.82</item>
         <item>"Změny:
                  - Přepínání přidělení oprávnění souboru Android do podsložky není povoleno Androidem 30. (odebrání této funkce).
@@ -159,7 +162,7 @@
                  - Zdrojový kód zveřejněný na github https://github.com/extorn/piwigo-client
                  - Aktualizace závislostí knihoven třetích stran"</item>
         <item>1.4.0.79</item>
-        <item>Opravy nejrůznějších chyb</item>
+        <item>"Opravy nejrůznějších chyb"</item>
         <item>1.4.0.78</item>
         <item>"Oprava chyby:
                  - Několik, včetně oprav komprese obrazu.
@@ -195,7 +198,7 @@
                   : výběr složek - oprávnění správně spravována.
                   : stahování položek - nyní funguje
                   Poznámka: Možná budete muset znovu vybrat preferovanou složku pro stahování nebo automatické nahrávání.
-               POZNÁMKA: Přestávám aktivně vyvíjet tuto aplikaci - občas ji však budu nadále podporovat opravami chyb."</item>
+               POZNÁMKA: Přestávám tuto aplikaci aktivně vyvíjet - občas ji však budu i nadále podporovat opravami chyb."</item>
         <item>1.4.0.73</item>
         <item>"Změny:
                  - stahování souboru: přidáno více protokolování, které pomůže vyřešit problémy
@@ -221,7 +224,7 @@
              - Oprávnění ke složce nejsou při nabídce správně přijata"</item>
         <item>1.4.0.68</item>
         <item>"Oprava chyby:
-                 - Havárie při navigaci do galerie z nahrání nebo nastavení, pokud poslední otevřenou stránkou galerie byla prezentace"</item>
+                 - Selhání navigace do galerie z nahrání nebo nastavení, pokud byla poslední otevřenou stránkou galerie prezentace"</item>
         <item>1.4.0.67</item>
         <item>"Oprava chyby:
                  - Řada oprav chyb pro pády související s nedávnou generální opravou kódu pro manipulaci se soubory
@@ -324,7 +327,7 @@
                  - Obnovte zobrazení alba ihned po změně pořadí řazení zdrojů nebo podřízených alb
                  - opravit chybu s obecným tříděním alb
                  - opravený přístup k prezentaci, když jsou podřízená alba stlačena (dotykem záhlaví alba)
-                 - Možná chyba, při které by se některá změna nastavení připojení (například použití základního ověřování) plně nevyužila až do dalšího restartu aplikace"</item>
+                 - Možná chyba, při které by se některá změna nastavení připojení (například použití základního ověření) plně nevyužila až do dalšího restartu aplikace"</item>
         <item>1.4.0.52</item>
         <item>"Oprava chyby:
              - Zrušení nahrávání souboru a opuštění stránky nahrávání před nahlášením zrušení způsobí selhání

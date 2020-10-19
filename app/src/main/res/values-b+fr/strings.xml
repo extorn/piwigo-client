@@ -197,7 +197,7 @@ Gareth Deli vous accorde une licence limitée révocable, non exclusive, non tra
 pour télécharger, installer et utiliser l\'Application uniquement à des fins personnelles ou commerciales
 en stricte conformité avec les termes de cet accord.
 
-LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU D\'AUTRES ACTIONS DANS LE LOGICIEL
+LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU AUTRES ACTIONS DANS LOGICIEL
 
 
 ** Restrictions
@@ -220,7 +220,7 @@ Le logiciel est fourni «tel quel» et le licencié l\'utilise à ses risques et
 
 ** Limitations de responsabilité
 
-Le licencié est responsable des conséquences de l\'utilisation du logiciel et des dommages directs et indirects en résultant dans la mesure où cela est légalement possible. La responsabilité est limitée au prix d\'achat dans la mesure où cela est légalement possible; sinon, il est limité au minimum légalement possible.
+Le licencié est responsable des conséquences de l\'utilisation du logiciel et des dommages directs et indirects qui en résultent dans la mesure où cela est légalement possible. La responsabilité est limitée au prix d\'achat dans la mesure où cela est légalement possible; sinon, il est limité au minimum légalement possible.
 
 
 ** Maintenance et assistance
@@ -287,13 +287,13 @@ Actuellement, la version payante a ajouté la prise en charge des balises:
 
 Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation dans une galerie existante, le téléchargement de nouvelles photos et vidéos et la création de nouvelles catégories dans une galerie. Certains champs peuvent être modifiés une fois créés, mais beaucoup sont encore en lecture seule .... pour l\'instant!
 
-S\'il vous plaît, puis-je vous demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail m\'indiquant pourquoi l\'application ne répond pas à vos besoins afin que je puisse y remédier.
+S\'il vous plaît, puis-je demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail en m\'expliquant pourquoi l\'application ne répond pas à vos besoins afin que je puisse y remédier.
 
 La version du serveur PIWIGO sur laquelle je teste est actuellement la 2.10.2.
 
 Ma galerie de tests contient uniquement des fichiers .jpg et .mp4. Si le vôtre en contient d\'autres, vous risquez de rencontrer des problèmes - si oui, dites-le-moi et je prioriserai le travail sur ces types de fichiers.
 
-AVERTISSEMENT: Versions de Piwigo inférieures à 1.9.2 - je pense que le téléchargement de vidéos dépend de l\'application du correctif n ° 756 à votre serveur.
+AVERTISSEMENT: Versions de Piwigo inférieures à 1.9.2 - je pense que le téléchargement de vidéos dépend du correctif # 756 appliqué à votre serveur.
 
 J\'ai testé avec une copie du plugin piwigo_privacy installé et aussi le plugin VideoJS installé.
 J\'ai une copie du plugin Extended Description installé, mais malheureusement, cette fonctionnalité n\'est pas encore exposée via l\'API PIWIGO.
@@ -345,7 +345,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
     <string name="alert_warning">avertissement</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ "correspondance la plus proche \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, pourriez-vous prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -435,7 +435,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_title_set_album_thumbnail">Mettre à jour la vignette de l\'album?</string>
     <string name="alert_message_set_album_thumbnail">Mettre à jour la vignette de l\'album sur cette image?</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">Voulez-vous vraiment supprimer l\'album (%1$s) et tout le contenu de façon permanente (sauf s\'il est lié à des albums ailleurs)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Êtes-vous absolument certain de vouloir supprimer l\'album (%1$s) avec%2$d photos et%3$d albums enfants contenant encore%4$d photos à jamais? Notez que les photos liées à d\'autres albums y resteront, mais toutes les autres seront supprimées pour toujours. Il n\'y a pas de fonction d\'annulation pour cette action.</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Êtes-vous absolument certain de vouloir supprimer l\'album (%1$s) avec%2$d photos et%3$d albums enfants contenant%4$d photos supplémentaires pour toujours? Notez que les photos liées à d\'autres albums y resteront, mais toutes les autres seront supprimées pour toujours. Il n\'y a pas de fonction d\'annulation pour cette action.</string>
     <string name="alert_confirm_copy_items_here_pattern">Copier les%1$d élément (s) dans le panier ici (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Déplacer le ou les éléments%1$d dans le panier ici (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Albums liés</string>
@@ -452,7 +452,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ "correspondance la plus proche \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour autoriser la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache sera en mémoire.</string>
@@ -505,7 +505,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Erreur lors du téléchargement</string>
     <string name="alert_message_error_uploading_end">Une erreur s\'est produite après le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer d\'où il est arrivé et effacer toutes les données temporaires résiduelles du serveur.</string>
-    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer là où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer toutes les données temporaires résiduelles du serveur.</string>
+    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer là où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer les données temporaires résiduelles du serveur.</string>
     <string name="release_history">Historique des versions</string>
     <string name="planned_releases">Sorties prévues</string>
     <string name="tags_heading">Mots clés</string>
@@ -617,7 +617,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application"</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données mises en cache?</string>
     <string name="server_connection_id_pattern">%1$s à%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -662,7 +662,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="create_email_using_app">Créer un e-mail à l\'aide de l\'application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contenait des fichiers qui n\'ont pas pu être traités. Ces%1$d fichiers ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Tous les conseils d\'utilisation uniques seront à nouveau affichés</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d\'utilisation uniques seront à nouveau affichés"</string>
     
     
     <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>

@@ -97,7 +97,7 @@
     <string name="alert_error_upload_file_read_error_message_pattern">上载文件%1$s时出错。\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">服务器上已经存在上载的文件%1$s，操作已取消。</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">将上传的文件%1$s添加到相册时出错。重试？</string>
-    <string name="alert_upload_file_failed_piwigo_message_pattern">由于PIWIGO服务器错误（%2$d：%3$s），上传文件%1$s失败。</string>
+    <string name="alert_upload_file_failed_piwigo_message_pattern">由于PIWIGO服务器（%2$d：%3$s）中的错误，上传文件%1$s失败。</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">由于网络服务器错误（%2$d：%3$s），上传文件%1$s失败。</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">由于处理PIWIGO响应出错，上载文件%1$s失败。这可能是由于PIWIGO API更改所致。无法回答：%2$s。</string>
     <string name="action_settings">设定值</string>
@@ -197,7 +197,7 @@ Gareth Deli授予您可撤销的，非排他的，不可转让的有限许可
 仅出于个人或商业目的下载，安装和使用该应用程序
 严格按照本协议的条款。
 
-该软件按“原样”提供，不提供任何形式的明示或暗示担保，包括但不限于对适销性，特定目的的适用性和非侵权性的担保。无论是由于软件，使用或其他方式产生的，与之有关或与之有关的合同，侵权或其他形式的任何索赔，损害或其他责任，作者或版权所有者概不负责。软件
+本软件按“原样”提供，不提供任何形式的明示或暗示担保，包括但不限于对适销性，特定目的的适用性和非侵权性的保证。无论是由于软件，使用或其他方式产生的，与之有关或与之有关的合同，侵权或其他形式的任何索赔，损害或其他责任，作者或版权所有者概不负责。软件
 
 
 **限制
@@ -210,7 +210,7 @@ b）基于此应用程序创建派生作品。
 
 **用户数据收集
 
-Firebase集成已添加到此应用程序中，以促进跟踪应用程序的使用，其主要目的是更有效地解决错误并确定应用程序的使用方式。将收集达到此目的所需的最少数据。
+Firebase集成已添加到此应用程序中，以便于跟踪应用程序的使用，其主要目的是更有效地解决问题并确定应用程序的使用方式。将收集达到此目的所需的最少数据。
 
 
 **有限保修和免责声明
@@ -287,7 +287,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 目前，它提供了基本功能级别，以允许在现有图库中导航，上传新照片和视频以及在图库中创建新类别。创建后，某些字段可以修改，但许多字段目前仍是只读的。
 
-请问如果您卸载应用程序，可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。
+请问如果您卸载该应用程序，可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。
 
 我测试的PIWIGO服务器的版本当前为2.10.2。
 
@@ -299,11 +299,11 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 我已经安装了扩展描述插件的副本，但是很遗憾，此功能尚未通过PIWIGO API公开。
 我想支持“收藏夹”照片，但此功能似乎尚未通过PIWIGO API公开。
 
-如果您遇到任何错误，请向我发送任何电子邮件通知。我已经在android模拟器，三星手机和三星平板电脑上进行了测试，但这是我的第一个应用程序，因此，我确定有人会出错。
+如果您遇到任何错误，请向我发送任何电子邮件通知。我已经在android模拟器，三星手机和三星平板电脑上进行了测试，但这是我的第一个应用程序，因此我确定有人会出错。
 
 非常感谢向我发送建议或错误的电子邮件的所有人。我将努力尽快解决您的所有建议。请选择报告每次发生的崩溃。 如果您发现该错误在下次更新后仍然存在，请花点时间给我发送电子邮件。 在错误发生之前，我可能需要更多有关周围情况的上下文。
 
-目前，发布是临时的。 随着应用程序的成熟，发布的频率有望降低。 发布时间表和历史记录如下所示。 这可能会改变，事情可能会延迟，但是您可以看到列表中的内容。"</string>
+目前，发布是临时的。 随着应用程序的成熟，发布频率有望降低。 发布时间表和历史记录如下所示。 这可能会改变，事情可能会延迟，但是您可以看到列表中的内容。"</string>
     <string name="licences_heading">此应用内使用的资源的许可</string>
     
     <string name="slideshow_image_details_name_title">资源名称</string>
@@ -353,7 +353,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_user_delete_success_pattern">用户（%1$s）已成功删除</string>
     <string name="alert_group_delete_failed_pattern">删除组（%1$s）时出错。请重试。</string>
     <string name="alert_user_delete_failed_pattern">删除用户（%1$s）时出错。请重试。</string>
-    <string name="alert_confirm_really_delete_group">您确定要删除该组吗？属于它的任何用户都不会被删除，但是可能会失去对该组所拥有画廊区域的访问权限。</string>
+    <string name="alert_confirm_really_delete_group">您确定要删除该组吗？属于该用户的任何用户都不会被删除，但是可能会失去对该用户组具有的画廊区域的访问权限。</string>
     <string name="alert_confirm_really_delete_user">您确定要删除该用户吗？</string>
     <string name="users_menu_title">用户数</string>
     <string name="alert_error_unable_to_delete_yourself_pattern">抱歉，您无法删除以（%1$s）身份登录的用户。</string>
@@ -617,7 +617,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值</string>
+    <string name="preference_corrupt_please_re_type_pattern">"首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值"</string>
     <string name="switch_to_cached_mode">该服务器目前不可用。使用缓存的数据？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">压缩影片</string>
@@ -634,7 +634,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">服务器将不接受选择上载的%1$d个文件。如果这些是视频，则可以启用压缩。从上传中删除这些文件？</string>
     <string name="upload_status_tab_title_details">细节</string>
     <string name="upload_status_tab_title_errors">失误</string>
-    <string name="message_piwigo_server_inconsistent_results">Piwigo API调用%1$s报告文件校验和不匹配，但是API调用%2$s报告它匹配。这可能是PIWIGO服务器中的错误或您使用的插件，可能值得报告。</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API调用%1$s报告文件校验和不匹配，但API调用%2$s报告它匹配。这可能是PIWIGO服务器中的错误或您使用的插件，可能值得报告。</string>
     <string name="alert_bulk_image_permissions_title">设置访问权限</string>
     <string name="alert_bulk_image_permissions_message">设置%1$d个所选资源的访问权限级别</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与%1$s MIME类型共享的文件</string>
@@ -662,7 +662,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="create_email_using_app">使用应用创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。这些%1$d文件已被忽略。要共享视频文件，必须先将其完全本地缓存。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">所有一次性用户提示将再次显示</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"所有一次性用户提示将再次显示"</string>
     
     
     <string name="delete_uploaded_files_title">删除上传的文件</string>
@@ -695,7 +695,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="no_adverts_label">喜欢这个应用程序的免费广告版吗？</string>
     <string name="view_the_paid_version">带我去看免费广告版</string>
     <string name="advert_providers">使用中的广告提供者</string>
-    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">抱歉，该文件无法使用，因为它是由未授权对该文件的请求的扩展访问权且该访问权已到期的应用共享的。</string>
+    <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">抱歉，该文件无法使用，因为它是由未授权对此文件的请求的扩展访问权且该访问权已过期的应用共享的。</string>
     <string name="files_shared_without_required_permissions_error">您用来选择文件的应用程序尚未将必要的文件权限委派给Piwigo Client。在Piwigo Client的付费版本中已添加了针对此问题的解决方案，但您也可以使用其他方法来选择文件。</string>
     <string name="files_cached_from_other_apps">缓存的共享</string>
     <string name="progress_copying_imported_files">复制导入的文件</string>

@@ -5,7 +5,7 @@
     <string name="button_buy">アプリを購入する</string>
     <string name="unlicensed_dialog_retry_body">アプリケーションがライセンスされていることを確認できません。 Androidマーケットから購入してください。ある場合は、利用可能なネットワーク接続があることを確認し、このライセンスチェックを再試行してください。</string>
     <string name="unlicensed_dialog_body">ライセンスを検証できません。ネットワーク接続が利用可能かどうかを確認してください。</string>
-    <string name="unlicensed_dialog_title">アプリケーションはライセンスされていません</string>
+    <string name="unlicensed_dialog_title">ライセンスされていないアプリケーション</string>
     <string name="application_error">アプリケーションエラー：%1$d</string>
     
 
@@ -120,7 +120,7 @@
     <string name="upload_files_button_title">アップロード</string>
     <string name="upload_files_finish_job_button_title">終了</string>
     <string name="upload_job_status_button">状態</string>
-    <string name="alert_really_delete_upload_job">これにより、このデバイスからジョブステータスが削除されます。サーバーに部分的にアップロードされたファイルを手動でクリーンアップする必要があります（または、このアプリの設定を使用して、設定ページをアップロードします）。後で再開すると、ジョブは正常に完了することがよくあります。この抜本的な一歩を踏み出してよろしいですか？</string>
+    <string name="alert_really_delete_upload_job">これにより、このデバイスからジョブステータスが削除されます。サーバーに部分的にアップロードされたファイルを手動でクリーンアップする必要があります（または、このアプリの設定-アップロード設定ページを使用します）。後で再開すると、ジョブは正常に完了することがよくあります。この抜本的な一歩を踏み出してもよろしいですか？</string>
     <string name="loading_please_wait">読み込み中。。。待って下さい</string>
     <string name="alert_title_server_error">サーバーエラー</string>
     <string name="alert_server_error_pattern">サーバーがHTTPエラーを返しました：%1$d（%2$s）</string>
@@ -157,10 +157,10 @@
     <string name="alert_confirm_title">確認</string>
     <string name="alert_question_title">質問</string>
     <string name="alert_confirm_really_delete_from_server">これにより、アイテムがサーバーから完全に削除されます。継続する？</string>
-    <string name="alert_confirm_really_delete_items_from_server">これにより、アイテムがサーバーから完全に削除されます。継続する？</string>
+    <string name="alert_confirm_really_delete_items_from_server">これにより、サーバーからアイテムが完全に削除されます。継続する？</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">他のアルバムと共有されている%1$dリソースの削除をリクエストしました。これらをすべてのアルバム（およびサーバー-永久に）から削除しますか、それともこのアルバムからリンクを解除しますか？</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">%1$dリソースの削除をリクエストしました。これらをすべてのアルバム（およびサーバー）から完全に削除しますか、それともこのタグからリンクを解除しますか？</string>
-    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">%1$dリソースの削除をリクエストしました。これらをすべてのアルバム（およびサーバー）から完全に削除しますか？ （サーバーにUserTagsプラグインがインストールされていない場合、画像からタグを削除することはできません）</string>
+    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">%1$dリソースの削除をリクエストしました。これらをすべてのアルバム（およびサーバー）から完全に削除しますか？ （サーバーにUserTagsプラグインがインストールされていないと、画像からタグを削除できません）</string>
     <string name="about_menu_title">約</string>
     <string name="other_licences_button_text">その他のライセンスコンポーネント</string>
     <string name="oss_licences_menu_title">OSSライセンス</string>
@@ -210,12 +210,12 @@ b）このアプリケーションに基づいて派生物を作成します。
 
 **ユーザーデータ収集
 
-このアプリケーションにFirebase統合が追加され、アプリケーションの使用状況の追跡が容易になりました。主な目的は、より効率的なバグ解決と、アプリの使用方法の確認です。この目的を達成するために必要な最小限のデータが収集されます。
+Firebase統合がこのアプリケーションに追加され、アプリケーションの使用状況の追跡が容易になりました。主な目的は、より効率的なバグ解決と、アプリの使用方法の確認です。この目的を達成するために必要な最小限のデータが収集されます。
 
 
 **限定保証および免責事項
 
-ソフトウェアは「現状有姿」で提供され、ライセンシーは自己責任で使用します。 Gareth Deliは、その使用、パフォーマンス、または特定の目的への適合性についていかなる保証も行いません。ソフトウェアにエラー（バグ）が含まれていて、機能しない可能性は常にあります。したがって、Gareth Deliは、ソフトウェアに完全なエラーがないこと、またはすべてのコンピューターと構成で中断することなく動作することを保証しません。ソフトウェアが特定の目的に適合しているかどうか、または機能要件とパフォーマンス要件を満たしているかどうかを確認するのは、ライセンシーの責任です。ライセンシーは、ソフトウェアが自分のデバイスと構成でどのように機能するかをテストする義務もあります。すべてのユースケースをテストし、本番環境でソフトウェアを使用する前に、データがエラーなしで必要に応じて処理されたかどうかを確認します。これは、ソフトウェアを商用目的で使用する場合に非常に重要です。
+ソフトウェアは「現状有姿」で提供され、ライセンシーは自己責任で使用します。 Gareth Deliは、その使用、パフォーマンス、または特定の目的への適合性についていかなる保証も行いません。ソフトウェアにエラー（バグ）が含まれていて、機能しない可能性は常にあります。したがって、Gareth Deliは、ソフトウェアに完全なエラーがないこと、またはすべてのコンピューターと構成で中断することなく動作することを保証しません。ソフトウェアがライセンシーの特定の目的に適合しているかどうか、または機能要件とパフォーマンス要件を満たしているかどうかを確認するのは、ライセンシーの責任です。ライセンシーは、ソフトウェアが自分のデバイスと構成でどのように機能するかをテストする義務もあります。すべてのユースケースをテストし、本番環境でソフトウェアを使用する前に、データがエラーなしで必要に応じて処理されたかどうかを確認します。これは、ソフトウェアを商用目的で使用する場合に非常に重要です。
 
 
 **責任の制限
@@ -271,7 +271,7 @@ Gareth Deliは、独自の裁量により、これを変更または置換する
 
 ソースコード：https：//github.com/extorn/piwigo-client
 
-このアプリの今後のアップデートは予定されていません。コピーを購入された場合は、サポートに感謝します。有料ユーザーがいなかったら、ずっと前にこのアプリの開発をやめていたでしょう。
+このアプリのアップデートは予定されていません。コピーを購入された場合は、サポートに感謝します。有料ユーザーがいなければ、私はずっと前にこのアプリの開発をやめていただろう。
 
 2018年8月、ユーザーのDavid Klementが、よりプロフェッショナルなデザインの画面モックアップを持って戻ってきました。リリース1.3.95から、アルバムの表示画面から始めて、それらのアイデアを取り入れてきました。
 提案された画面デザインのこれらの完全なリストは、アプリのWebサイト（https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html）で表示できます。
@@ -282,12 +282,12 @@ Gareth Deliは、独自の裁量により、これを変更または置換する
 注：バージョンは時間の経過とともに分岐します。ほとんどの変更は、無料版と有料版の両方に加えられます。
 
 現在、有料版ではタグのサポートが追加されています。
-        Piwigoは箱から出してすぐにタグをサポートしますが、ユーザータグプラグインはより多くの機能を追加します（基本的なテストが実行されます）。
+        Piwigoは、箱から出してすぐにタグをサポートしますが、ユーザータグプラグインはより多くの機能を追加します（基本的なテストが実行されます）。
 
 
 現時点では、既存のギャラリー内を移動したり、新しい写真やビデオをアップロードしたり、ギャラリー内に新しいカテゴリを作成したりできる基本レベルの機能を提供しています。一部のフィールドは作成後に修正できますが、多くはまだ読み取り専用です....今のところ！
 
-アプリをアンインストールする場合は、アプリメニューのリンクを使用して、アプリがニーズを満たしていない理由をメールでお知らせください。これに対処します。
+アプリをアンインストールする場合は、アプリメニューのリンクを使用して、アプリがニーズを満たしていない理由をメールで知らせてください。これに対処できます。
 
 私がテストするPIWIGOサーバーのバージョンは現在2.10.2です。
 
@@ -303,7 +303,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 提案やバグをメールで送ってくれたすべての人に感謝します。私はあなたの提案のすべてにできるだけ早く対処するよう努めます。発生するすべてのクラッシュを報告することを選択してください。 次回のアップデート後もバグが発生する場合は、時間をかけてメールでお問い合わせください。 バグが発生する直前に何が起こっているかについて、もう少しコンテキストが必要になる可能性があります。
 
-現時点では、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
+現在、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
     <string name="licences_heading">このアプリ内で使用されるリソースのライセンス</string>
     
     <string name="slideshow_image_details_name_title">リソース名</string>
@@ -498,7 +498,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="title_editing_item">アイテムの編集</string>
     <string name="alert_error_item_not_unique">申し訳ありませんが、そのアイテムはすでに存在します。</string>
     <string name="alert_warning_no_server_url_specified">サーバーURIが指定されていません。サーバーの場所を追加して、再試行してください。</string>
-    <string name="error_heading_unloadable_certificate_files">次の証明書ファイルをロードできませんでした。</string>
+    <string name="error_heading_unloadable_certificate_files">次の証明書ファイルを読み込めませんでした。</string>
     <string name="error_heading_unloadable_keystore_files">次のキーストアファイルを読み込めませんでした。</string>
     <string name="error_heading_unloadable_keystore_aliases">次のキーストアエイリアスを読み込めませんでした。</string>
     <string name="heading_keystore_filename">キーストア</string>
@@ -570,7 +570,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="album_section_heading_resources">このアルバムの写真</string>
     <string name="album_title_home">家</string>
     <string name="upload_file_rating">私の評価</string>
-    <string name="slideshow_image_details_rating_score_title">評価スコア</string>
+    <string name="slideshow_image_details_rating_score_title">格付けスコア</string>
     <string name="rating_score_pattern">%1$.2f（%2$dレート）</string>
     <string name="connection_reset_warning_pattern">サーバーは、過去%2$d分間に接続を%1$d回閉じました。これは、サーバー構成に問題があることを示している可能性があります。</string>
     <string name="content_description_icon">アイコン</string>
@@ -580,13 +580,13 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_msg_piwigo_method_not_available_pattern">Piwigo WSメソッド%1$sは、このサーバーでは使用できなくなりました。アプリの影響を受ける機能を無効にします。サーバープラグインを非アクティブ化または削除しましたか？</string>
     <string name="removing_favorite">お気に入りを削除する</string>
     <string name="adding_favorite">お気に入りの追加</string>
-    <string name="alert_error_unsupported_features_pattern">このアプリがサポートする一部の機能は、サーバーでは利用できません。 有効にする：\n1.PiwigoClientWsExtsプラグインをインストールします。\n2.このアプリからログアウトして再度ログインします。\n\n1週間後に通知されます。</string>
+    <string name="alert_error_unsupported_features_pattern">このアプリがサポートする一部の機能は、サーバーでは利用できません。 有効にする：\n1.PiwigoClientWsExtsプラグインをインストールします。\n2.このアプリからログアウトして再度ログインします。\n\n1週間以内に通知されます。</string>
     <string name="tag_will_be_created_when_resource_is_saved">ユーザータグプラグインを使用して新しいタグを追加します。タグは、リソースが保存された後にのみ作成されます。</string>
     <string name="resource_details_updated_message">リソースの詳細が更新されました</string>
     <string name="alert_server_call_in_progress_please_wait">サーバー呼び出しが進行中です。これが完了するのを待ってから、再試行してください。</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">アップロードを続行するには、サーバー上に孤立したイメージが多すぎます。再試行する前に、これらを整理してください。</string>
     <string name="upload_error_orphaned_file_retrieval_failed">孤立した画像のリストを取得できません。再試行してください。</string>
-    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理者ユーザーは、予想される機能にアクセスできません。これは、コミュニティプラグイン（管理者以外のユーザーの管理者ステータスを偽造する）が正しくインストールされていない場合に発生する可能性があります。関連するプラグインがWebブラウザを使用して期待するメソッドを正しく公開していることを確認してください：%1$s / tools / ws.htm</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理者ユーザーは、予想される機能にアクセスできません。これは、コミュニティプラグイン（管理者以外のユーザーの管理ステータスを偽造する）を使用すると、それ自体が正しくインストールされていない場合に発生する可能性があります。関連するプラグインがWebブラウザを使用して期待するメソッドを正しく公開していることを確認してください：%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">この機能は利用できません。 PiwigoClientWsExtsプラグインをサーバーにインストールしてください。すでにインストールされている場合は、最新バージョンに更新してください。</string>
     <string name="alert_user_session_no_allowed_filetypes">サーバーは、ユーザーセッション情報とともにアップロードできるファイルタイプのリストを提供していません（これは通常、管理者ユーザーにのみ提供されます）。サーバーが正しく構成されていることを確認して、再試行してください。問題が解決しない場合は、問題の診断に役立てるためにメールでお問い合わせください。</string>
     <string name="job_not_found">アップロードジョブが見つかりません</string>
@@ -617,7 +617,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください</string>
+    <string name="preference_corrupt_please_re_type_pattern">"プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください"</string>
     <string name="switch_to_cached_mode">サーバーは現在利用できません。キャッシュされたデータを使用しますか？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">ビデオを圧縮する</string>
@@ -634,7 +634,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">サーバーは、アップロード用に選択された%1$dファイルを受け入れません。これらがビデオの場合、圧縮を有効にすることができます。これらのファイルをアップロードから削除しますか？</string>
     <string name="upload_status_tab_title_details">詳細</string>
     <string name="upload_status_tab_title_errors">エラー</string>
-    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sはそれが一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある可能性があります。</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sは一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある可能性があります。</string>
     <string name="alert_bulk_image_permissions_title">アクセス許可を設定する</string>
     <string name="alert_bulk_image_permissions_message">選択した%1$dリソースのアクセス許可レベルを設定します</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">%1$sのMIMEタイプと共有されているファイルを処理できません</string>
@@ -662,7 +662,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="create_email_using_app">アプリを使用してメールを作成する</string>
     <string name="open_files">アプリでファイルを開く</string>
     <string name="files_unavailable_to_download_removed_pattern">選択したファイルには、処理できなかったファイルが含まれていました。これらの%1$dファイルは無視されています。ビデオファイルを共有するには、最初にローカルで完全にキャッシュする必要があります。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">すべての1回限りのユーザーヒントが再び表示されます</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"すべての1回限りのユーザーヒントが再度表示されます"</string>
     
     
     <string name="delete_uploaded_files_title">アップロードしたファイルを削除する</string>
@@ -679,7 +679,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="group_is_default_field">このグループに新しいユーザーを割り当てます</string>
     <string name="createGallery_galleryCommentsAllowed_title">ユーザーコメント</string>
     <string name="uri_permission_justification_to_upload">サーバーへのアップロード用</string>
-    <string name="progress_loading_folder_content">フォルダコンテンツの読み込み</string>
+    <string name="progress_loading_folder_content">フォルダの内容を読み込んでいます</string>
     <string name="adding_files">ファイルの追加</string>
     <string name="calculating_file_checksums">ファイルチェックサムの計算</string>
     <string name="alert_error_starting_download">ファイルのダウンロード開始中にエラーが発生しました</string>
