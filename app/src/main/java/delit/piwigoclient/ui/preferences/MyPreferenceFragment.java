@@ -29,6 +29,7 @@ import delit.libs.ui.view.preference.IntListPreference;
 import delit.libs.ui.view.preference.MappedListPreferenceDialogFragmentCompat;
 import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.libs.ui.view.preference.NumberPickerPreferenceDialogFragmentCompat;
+import delit.libs.ui.view.preference.StringListPreference;
 import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -244,6 +245,8 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
             } else if (preference instanceof ServerAlbumListPreference) {
                 f = ServerAlbumListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof IntListPreference) {
+                f = MappedListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof StringListPreference) {
                 f = MappedListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof EditableListPreference) {
                 f = EditableListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
