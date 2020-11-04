@@ -3,9 +3,11 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.os.ConfigurationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -18,7 +20,7 @@ public class AppPreferences {
         return prefs.getBoolean(context.getString(R.string.preference_app_always_show_nav_buttons_key), context.getResources().getBoolean(R.bool.preference_app_always_show_nav_buttons_default));
     }
 
-    public static DocumentFile getAppDownloadFolder(@NonNull SharedPreferences prefs, @NonNull Context context) {
+    public static @Nullable DocumentFile getAppDownloadFolder(@NonNull SharedPreferences prefs, @NonNull Context context) {
 
         String folder = prefs.getString(context.getString(R.string.preference_app_default_download_folder_key), null);
         if(folder != null) {
@@ -34,6 +36,9 @@ public class AppPreferences {
             if(docFile != null && docFile.exists()) {
                 return docFile;
             }
+        }
+        if(Build.VERSION.SDK_INT >= 29) {
+            return null;
         }
         return DocumentFile.fromFile(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS));
     }

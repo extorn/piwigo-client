@@ -1059,5 +1059,6 @@ SOFTWARE.
     <string name="selected_files">Selected Files</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Slideshow out of sync with the loaded album contents. Resetting at start.</string>
     <string name="uri_permission_justification_file_selection">To select files or folders for use by this app</string>
+    <string name="alert_error_please_select_download_folder_and_retry">Please select a folder to download files to in the app settings, then retry.</string>
 
 </resources>

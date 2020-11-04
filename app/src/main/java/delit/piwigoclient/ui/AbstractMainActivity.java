@@ -409,8 +409,12 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
     }
 
-    private DocumentFile getDestinationFile(@NonNull String mimeType, @NonNull String outputFilename) {
-        return AppPreferences.getAppDownloadFolder(getSharedPrefs(), this).createFile(mimeType, IOUtils.getFileNameWithoutExt(outputFilename));
+    private @Nullable DocumentFile getDestinationFile(@NonNull String mimeType, @NonNull String outputFilename) {
+        DocumentFile folder = AppPreferences.getAppDownloadFolder(getSharedPrefs(), this);
+        if(folder == null) {
+            return null;
+        }
+        return folder.createFile(mimeType, IOUtils.getFileNameWithoutExt(outputFilename));
     }
 
     private void processDownloadEvent(DownloadFileRequestEvent event) {
@@ -431,16 +435,27 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     }
                     if(mimeType == null) {
                         Logging.log(Log.ERROR, TAG, "Unable to establish mime type for download");
+                        removeActionDownloadEvent(); // sink the event from the queue to allow others to download
+                        processNextQueuedDownloadEvent();
+                    } else {
+                        DocumentFile destFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
+                        if(destFile == null) {
+                            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_download_folder_and_retry));
+                            removeActionDownloadEvent(); // sink the event from the queue to allow others to download
+                            processNextQueuedDownloadEvent();
+                        } else {
+                            IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
+                            Uri mediaStoreUri = IOUtils.addFileToMediaStore(this, destFile.getUri());
+                            fileDetail.setDownloadedFile(mediaStoreUri);
+                            notifyUserFileDownloadComplete(getUiHelper(), mediaStoreUri);
+                            processDownloadEvent(event);
+                        }
                     }
-                    DocumentFile destFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
-                    IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
-                    Uri mediaStoreUri = IOUtils.addFileToMediaStore(this, destFile.getUri());
-                    fileDetail.setDownloadedFile(mediaStoreUri);
-                    notifyUserFileDownloadComplete(getUiHelper(), mediaStoreUri);
-                    processDownloadEvent(event);
                 } catch (IOException e) {
                     Logging.recordException(e);
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
+                    removeActionDownloadEvent(); // sink the event from the queue to allow others to download
+                    processNextQueuedDownloadEvent();
                 }
             } else {
                 // invoke a download of this file
@@ -456,18 +471,27 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                 }
                 if(mimeType == null) {
                     Logging.log(Log.ERROR, TAG, "Unable to establish mime type for download");
-                }
-                String downloadToFile = fileDetail.getOutputFilename();
-                boolean noFileExt = downloadToFile.lastIndexOf('.') < downloadToFile.length() - 5;
-                if(noFileExt) {
-                    if(mimeType != null) {
-                        mimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-                        Logging.log(Log.ERROR, TAG, "Added mime type for download " + mimeType);
-                        downloadToFile = downloadToFile + '.' + mimeType;
+                    onFileDownloadEventProcessed(event); // sink the event from the queue to allow others to download
+                    processNextQueuedDownloadEvent();
+                } else {
+                    String downloadToFile = fileDetail.getOutputFilename();
+                    boolean noFileExt = downloadToFile.lastIndexOf('.') < downloadToFile.length() - 5;
+                    if (noFileExt) {
+                        if (mimeType != null) {
+                            mimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                            Logging.log(Log.ERROR, TAG, "Added mime type for download " + mimeType);
+                            downloadToFile = downloadToFile + '.' + mimeType;
+                        }
+                    }
+                    DocumentFile destinationFile = getDestinationFile(mimeType, downloadToFile);
+                    if(destinationFile == null) {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_download_folder_and_retry));
+                        removeActionDownloadEvent(); // sink the event from the queue to allow others to download
+                        processNextQueuedDownloadEvent();
+                    } else {
+                        event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction(event)));
                     }
                 }
-                DocumentFile destinationFile = getDestinationFile(mimeType, downloadToFile);
-                event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction(event)));
             }
         } else {
             // all items downloaded - process them as needed.

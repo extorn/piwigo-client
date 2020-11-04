@@ -997,6 +997,15 @@ public class IOUtils {
             values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
             values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
             values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
+//            if(MimeTypeFilter.matches(mimeType,"video/*")) {
+//                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES);
+//            } else if(MimeTypeFilter.matches(mimeType,"image/*")) {
+//                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
+//            } else {
+//                //TODO maybe work out how to always use this when downloaded file....
+//                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+//            }
+//            values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
             try {
                 Uri uri = context.getContentResolver().insert(mediaStoreUri, values);
                 if(uri != null) {
