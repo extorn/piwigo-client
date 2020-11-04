@@ -73,7 +73,6 @@ import delit.libs.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.util.ViewListUtils;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.CustomSnackbar;
 import delit.libs.util.ObjectUtils;
@@ -648,6 +647,8 @@ public abstract class UIHelper<T> {
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
+            } else if(simpleMessageQueue.size() > 0 && !toastShowing) {
+                showQueuedMsg();
             }
         }
     }

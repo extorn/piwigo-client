@@ -28,6 +28,7 @@ import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomViewPager;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -111,20 +112,16 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(resourceContainer));
     }
 
+
+
     @Override
     public void onResume() {
+        boolean showOutOfDateWarn = false;
         if (resourceContainer == null) {
             loadModelFromArguments();
         } else {
             if(galleryItemAdapter.isOutOfDate()) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_reset_as_out_of_sync_with_album));
-                /*getUiHelper().showOrQueueDialogMessage(R.string.alert_information, "Slideshow out of sync. Triggering data load", R.string.button_ok, new UIHelper.QuestionResultAdapter<>(){
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                        super.onDismiss(dialog);
-                        getParentFragmentManager().popBackStack();
-                    }
-                });*/
+                showOutOfDateWarn = true;
                 try {
                     galleryItemAdapter.getItemByPagerPosition(viewPager.getCurrentItem());
                 } catch(IndexOutOfBoundsException e) {
@@ -134,8 +131,18 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             }
         }
         super.onResume();
-        getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_base_view_1);
-        getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_base_view_2);
+        if(showOutOfDateWarn) {
+            // don't show this at all. It isn't needed any more.
+//            DisplayUtils.postOnUiThread(()->{
+////            downgraded from clickable dialog to a toast message due to user feedback.
+//                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_slideshow_reset_as_out_of_sync_with_album));
+//            });
+
+        }
+        DisplayUtils.postOnUiThread(()-> {
+            getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_base_view_1);
+            getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_base_view_2);
+        });
     }
 
     @Override

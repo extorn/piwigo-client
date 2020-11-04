@@ -169,7 +169,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private HashSet<Long> userIdsInSelectedGroups;
     private List<CategoryItem> adminCategories;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
-    private boolean reopening;
+    private boolean isReopening;
     private String currentResourceSortOrder;
 
     //****** Start fields maintained in saved session state.
@@ -284,7 +284,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     protected void onReopenModelRetrieved(CategoryItem rootAlbum, CategoryItem album) {
         try {
-            reopening = false;
+            isReopening = false;
             galleryIsDirty = true;
             albumDetails = album;
             addArguments(albumDetails); // ensure we don't reopen next time - just handle as usual!
@@ -454,7 +454,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
             if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
                 ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
-                reopening = true;
+                isReopening = true;
                 String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
                 AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
                 getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
@@ -472,7 +472,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             currentResourceSortOrder = sortOrder;
         }
 
-        if (!reopening) {
+        if (!isReopening) {
             populateViewFromModelEtc(view, savedInstanceState);
         } else {
             Basket basket = getBasket();
@@ -780,7 +780,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return true; // consume the event
         });
 
-        if (!reopening && showBulkPermissionsAction(basket)) {
+        if (!isReopening && showBulkPermissionsAction(basket)) {
             bulkActionButtonPermissions.show();
         } else {
             bulkActionButtonPermissions.hide();
@@ -792,27 +792,27 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         if (!isAlbumDataLoading()) {
             // if gallery is dirty, then the album contents are being reloaded and won't yet be available. This method is recalled once it is
 
-            if (!reopening && showBulkDeleteAction(basket)) {
+            if (!isReopening && showBulkDeleteAction(basket)) {
                 bulkActionButtonDelete.show();
             } else {
                 bulkActionButtonDelete.hide();
             }
-            if (!reopening && showBulkDownloadAction(basket)) {
+            if (!isReopening && showBulkDownloadAction(basket)) {
                 bulkActionButtonDownload.show();
             } else {
                 bulkActionButtonDownload.hide();
             }
-            if (!reopening && showBulkCopyAction(basket)) {
+            if (!isReopening && showBulkCopyAction(basket)) {
                 bulkActionButtonCopy.show();
             } else {
                 bulkActionButtonCopy.hide();
             }
-            if (!reopening && showBulkCutAction(basket)) {
+            if (!isReopening && showBulkCutAction(basket)) {
                 bulkActionButtonCut.show();
             } else {
                 bulkActionButtonCut.hide();
             }
-            if (!reopening && showBulkPasteAction(basket)) {
+            if (!isReopening && showBulkPasteAction(basket)) {
                 bulkActionButtonPaste.show();
             } else {
                 bulkActionButtonPaste.hide();
@@ -1176,7 +1176,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         galleryPrivacyStatusField = editFields.findViewById(R.id.gallery_details_status);
         privacyStatusFieldListener = (buttonView, isChecked) -> {
-            if (!reopening && isChecked && !galleryModel.getContainerDetails().isPrivate()) {
+            if (!isReopening && isChecked && !galleryModel.getContainerDetails().isPrivate()) {
                 // when reopening, this will be called once the gallery model has been loaded.
                 loadAlbumPermissionsIfNeeded();
             }
@@ -1208,7 +1208,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    if(getActivity() == null) {
+                    if(getActivity() == null || isReopening) { // block the action if the page is reopening.
                         Logging.log(Log.WARN, TAG, "Unable to action request to navigate using title album link");
                         return; // unable to action.
                     }
@@ -1238,7 +1238,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 String currentAlbumName = "... / " + catItem.getName();
                 return currentAlbumName;
             }
-        } else if (reopening) {
+        } else if (isReopening) {
             SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
             if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
                 return resumePrefs.getString("reopenAlbumName", "");
@@ -1259,7 +1259,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return;
         }
 
-        if (!reopening) {
+        if (!isReopening) {
             populateViewFromModelEtcOnResume();
         }
     }
@@ -1311,7 +1311,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PiwigoLoginSuccessEvent event) {
-        if (!reopening) {
+        if (!isReopening) {
             loadAlbumPermissionsIfNeeded();
             displayControlsBasedOnSessionState();
             setEditItemDetailsControlsStatus();
