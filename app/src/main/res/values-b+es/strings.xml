@@ -57,7 +57,7 @@
 
     <string name="button_unlink">Desconectar</string>
     <string name="button_untag">Remover etiqueta</string>
-    <string name="button_close">Cerca</string>
+    <string name="button_close">Cerrar</string>
     <string name="tools_menu_title">Herramientas</string>
     <string name="settings_menu_title">Ajustes de Aplicacion</string>
     <string name="offline_mode_menu_title">Modo offline</string>
@@ -159,7 +159,7 @@
     <string name="alert_confirm_really_delete_from_server">Esto eliminará el elemento de forma permanente del servidor. ¿Seguir?</string>
     <string name="alert_confirm_really_delete_items_from_server">Esto eliminará los elementos de forma permanente del servidor. ¿Seguir?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Solicitaste eliminar%1$d recursos que se comparten con otros álbumes. ¿Desea eliminarlos de todos los álbumes (y del servidor, de forma permanente) o simplemente desvincularlos de este álbum?</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Has solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y del servidor) de forma permanente o simplemente desvincularlos de esta etiqueta?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Has solicitado eliminar%1$d recursos. ¿Deseas eliminarlos de todos los álbumes (y del servidor) de forma permanente o simplemente desvincularlos de esta etiqueta?</string>
     <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Has solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y del servidor) de forma permanente? (No puede eliminar etiquetas de imágenes sin el complemento UserTags instalado en su servidor)</string>
     <string name="about_menu_title">Acerca de</string>
     <string name="other_licences_button_text">Otros componentes con licencia</string>
@@ -182,7 +182,7 @@ por los términos y condiciones de este Acuerdo.
 Si no está de acuerdo con los términos de este Acuerdo, no haga clic en el botón \"Acepto\" y no
 descargar o utilizar la aplicación.
 
-Si está considerando usar esta aplicación para acceder o modificar un servidor utilizado con fines comerciales, es esencial que lea y comprenda las limitaciones de responsabilidad.
+Si está considerando utilizar esta aplicación para acceder o modificar un servidor utilizado con fines comerciales, es esencial que lea y comprenda las limitaciones de responsabilidad.
 Debe probar esto en un servidor que no sea de producción a su satisfacción antes de aceptar cualquier riesgo y responsabilidad usted mismo en función de sus decisiones. Esta aplicación ha sido diseñada principalmente
 para fines no comerciales.
 
@@ -210,12 +210,12 @@ b) crear trabajos derivados basados ​​en esta aplicación.
 
 ** Recopilación de datos del usuario
 
-La integración de Firebase se ha agregado a esta aplicación para facilitar el seguimiento del uso de la aplicación con el propósito principal de ser una resolución de errores más eficiente y determinar la forma en que se está utilizando la aplicación. Se recopilarán los datos mínimos necesarios para lograr este propósito.
+La integración de Firebase se ha agregado a esta aplicación para facilitar el seguimiento del uso de la aplicación con el propósito principal de ser una resolución de errores más eficiente y determinar la forma en que se usa la aplicación. Se recopilarán los datos mínimos necesarios para lograr este propósito.
 
 
 ** Garantía limitada y exención de responsabilidad
 
-El software se proporciona \ \"tal cual \" y el licenciatario lo utiliza bajo su propio riesgo. Gareth Deli no ofrece ninguna garantía sobre su uso, rendimiento o idoneidad para un propósito en particular. Siempre es posible que el software contenga errores (errores) y no funcione. Por lo tanto, Gareth Deli no garantiza que el software esté completamente libre de errores o que funcione sin interrupciones con todas las computadoras y configuraciones.Es responsabilidad exclusiva del licenciatario comprobar si el software se ajusta a su propósito particular o cumple con sus requisitos funcionales y de rendimiento. El licenciatario también está obligado a probar cómo funciona el software en sus dispositivos y sus configuraciones; pruebe todos los casos de uso y verifique si los datos se procesaron sin errores y como se desea antes de usar el software en entornos de producción. Esto es de vital importancia si se utiliza el software con fines comerciales.
+El software se proporciona \ \"tal cual \" y el licenciatario lo utiliza bajo su propio riesgo. Gareth Deli no ofrece ninguna garantía sobre su uso, rendimiento o idoneidad para un propósito en particular. Siempre es posible que el software contenga errores (errores) y no funcione. Por lo tanto, Gareth Deli no garantiza que el software esté completamente libre de errores o que funcione sin interrupciones con todas las computadoras y configuraciones.Es responsabilidad exclusiva del licenciatario verificar si el software se ajusta a su propósito particular o cumple con sus requisitos funcionales y de rendimiento. El licenciatario también está obligado a probar cómo funciona el software en sus dispositivos y sus configuraciones; pruebe todos los casos de uso y verifique si los datos se procesaron sin errores y como se desea antes de usar el software en entornos de producción. Esto es de vital importancia si se utiliza el software con fines comerciales.
 
 
 ** Limitaciones de responsabilidad
@@ -297,9 +297,9 @@ ADVERTENCIA: Versiones de Piwigo por debajo de 1.9.2: la carga de videos creo qu
 
 He estado probando con una copia del complemento piwigo_privacy instalado y también con el complemento VideoJS instalado.
 Tengo una copia del complemento de descripción extendida instalado, pero desafortunadamente, esta funcionalidad aún no está expuesta a través de la API de PIWIGO.
-Me gustaría incluir soporte para fotos \"favoritas\", pero esta funcionalidad aún no parece estar expuesta a través de la API de PIWIGO.
+Me gustaría incluir soporte para fotos \"favoritas\" pero esta funcionalidad aún no parece estar expuesta a través de la API de PIWIGO.
 
-Por favor, infórmeme de cualquier mensaje de correo electrónico si encuentra algún error. He probado esto en el emulador de Android, un teléfono Samsung y una tableta Samsung, pero es mi primera aplicación, así que estoy seguro de que a alguien le saldrá mal.
+Por favor, infórmeme de cualquier mensaje de correo electrónico si encuentra algún error. Probé esto en el emulador de Android, un teléfono Samsung y una tableta Samsung, pero es mi primera aplicación, así que estoy seguro de que a alguien le saldrá mal.
 
 Un gran agradecimiento a todos los que me enviaron correos electrónicos con sugerencias o errores. Me esforzaré por abordar todas sus sugerencias tan pronto como sea posible.Elija informar cada bloqueo que ocurra. Si encuentra que el error persiste después de la próxima actualización, tómese el tiempo para enviarme un correo electrónico. Es probable que necesite un poco más de contexto sobre lo que está sucediendo justo antes de que ocurra el error.
 
@@ -476,7 +476,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="album_create_failed">No se pudo crear el álbum. Vuelve a intentarlo.</string>
     <string name="alert_failure">Fracaso</string>
     <string name="album_created_but_permissions_set_failed">Se creó el álbum, pero no se pudieron establecer los permisos. Error al intentar eliminar el álbum parcialmente configurado. Compruebe el servidor directamente.</string>
-    <string name="filelist_item_prefix">Expediente:</string>
+    <string name="filelist_item_prefix">Archivo:</string>
     <string name="alert_loading_certificates_from_selected_files">Cargando certificados de archivos seleccionados.</string>
     <string name="x509_key_type_field_pattern">Clave privada%1$s</string>
     <string name="x509_key_strength_field_pattern">Fuerza:%1$d bits</string>
@@ -560,7 +560,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_show_details">Mostrar detalle</string>
     <string name="button_hide_details">Ocultar detalle</string>
     <string name="alert_message_max_upload_file_count_reached">Se alcanzó el número máximo de archivos que se pueden cargar. Para cargar más a la vez, compre y use la versión paga de esta aplicación.</string>
-    <string name="alert_message_advert_load_error">Los anuncios tienen problemas para cargarse constantemente. Por favor infórmeme de esto, ya que constituyen una fuente de ingresos importante, aunque muy pequeña, para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta atrás se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación con normalidad.</string>
+    <string name="alert_message_advert_load_error">Los anuncios tienen problemas para cargarse constantemente. Por favor infórmeme de esto, ya que estos constituyen una fuente de ingresos importante aunque muy pequeña para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta atrás se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación con normalidad.</string>
     <string name="alert_temporary_upload_album_deleted">El álbum de carga temporal se eliminó correctamente</string>
     <string name="alert_deleting_temporary_upload_album">Eliminando el álbum de carga temporal</string>
     <string name="alert_invalid_uri_pattern">URI no válido. %1$s</string>
@@ -568,7 +568,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="album_section_heading_albums">álbumes</string>
     <string name="album_section_heading_albums_pattern">álbumes (%1$d)</string>
     <string name="album_section_heading_resources">fotos en este album</string>
-    <string name="album_title_home">casa</string>
+    <string name="album_title_home">hogar</string>
     <string name="upload_file_rating">Mi clasificación</string>
     <string name="slideshow_image_details_rating_score_title">Puntaje de calificación</string>
     <string name="rating_score_pattern">%1$.2f (tarifas de%2$d)</string>
@@ -647,7 +647,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="hint_slideshow_base_view_2">Desliza el dedo hacia la izquierda o hacia la derecha para navegar entre recursos</string>
     <string name="hint_slideshow_item_view_1">La calificación se puede ajustar tocando o deslizando el dedo sobre la calificación de estrellas deseada. Esto tiene un efecto inmediato.</string>
     <string name="hint_slideshow_paid_view_3">Para marcar este recurso como favorito, toque el icono del corazón a la derecha del nombre del recurso de imagen</string>
-    <string name="hint_navigation_panel_1">Toque el icono de la aplicación de arriba para forzar el cierre de sesión e inicio de sesión de un servidor</string>
+    <string name="hint_navigation_panel_1">Toque el icono de la aplicación de arriba para forzar el cierre de sesión del servidor e iniciar sesión</string>
     <string name="user_details_not_found_on_server">No se pueden encontrar los detalles del usuario en el servidor</string>
     <string name="resource_queued_for_download">Recurso en cola para descargar. Es la posición%1$d en la cola.</string>
     <string name="alert_message_showing_images_of_size">Mostrando imágenes del servidor de tamaño%1$s</string>
@@ -674,7 +674,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, se han eliminado los permisos de archivo requeridos por las siguientes partes de la aplicación\n\n%1$s\n\nSeleccione nuevos permisos para esta configuración para que todo funcione como se esperaba."</string>
     <string name="folder_selection_title">Seleccione la carpeta</string>
     <string name="files_selection_title">Selecciona archivos</string>
-    <string name="all">Todos</string>
+    <string name="all">Todas</string>
     <string name="user_high_definition_field">Permitir el acceso a archivos originales (tamaño completo)</string>
     <string name="group_is_default_field">Asignar nuevos usuarios a este grupo</string>
     <string name="createGallery_galleryCommentsAllowed_title">Comentarios del usuario</string>
@@ -702,5 +702,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="selected_files">Archivos seleccionados</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">La presentación de diapositivas no está sincronizada con el contenido del álbum cargado. Restableciendo al inicio.</string>
     <string name="uri_permission_justification_file_selection">Para seleccionar archivos o carpetas para usar con esta aplicación</string>
+    <string name="alert_error_please_select_download_folder_and_retry">Seleccione una carpeta para descargar archivos en la configuración de la aplicación, luego vuelva a intentarlo.</string>
 
 </resources>

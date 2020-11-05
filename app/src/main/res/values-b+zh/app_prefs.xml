@@ -28,7 +28,7 @@
     <string name="server_connection_preference_summary_default">请选择一个值</string>
     <string name="server_album_preference_summary_default">请选择一个值</string>
     <string name="local_folder_preference_summary_default">请选择一个值</string>
-    <string name="server_connection_preference_user_guest">客人</string>
+    <string name="server_connection_preference_user_guest">来宾</string>
     
 
     

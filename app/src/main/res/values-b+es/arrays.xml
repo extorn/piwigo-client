@@ -49,7 +49,7 @@
         <item>pulgar</item>
         <item>2pequeña</item>
         <item>pequeño</item>
-        <item>pequeña</item>
+        <item>pequeño</item>
         <item>medio</item>
         <item>grande</item>
         <item>xlarge</item>
@@ -64,7 +64,7 @@
         <item>pulgar</item>
         <item>2pequeña</item>
         <item>pequeño</item>
-        <item>pequeña</item>
+        <item>pequeño</item>
     </string-array>
 
     
@@ -90,7 +90,7 @@
         <item>administración</item>
         <item>normal</item>
         <item>genérico</item>
-        <item>huésped</item>
+        <item>invitado</item>
     </string-array>
 
     
@@ -145,6 +145,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.84</item>
+        <item>"Cambio:
+                 - Se eliminó la advertencia en la pantalla de girar cuando se encuentra a mitad de una presentación de diapositivas.
+                Arreglo del fallo:
+                 - La descarga de archivos o el uso compartido de recursos pueden fallar y luego bloquear la función hasta que se reinicie en Android 10
+                 - Preferencias corregidas que aparecen invisibles en el modo oscuro de Android (ahora utilizable)
+                 - problema de contraste solucionado en la ventana emergente de diálogo en la aplicación principal (modo oscuro)"</item>
         <item>1.4.0.83</item>
         <item>"Arreglo del fallo:
                  - Se corrigió la posición del botón en la barra de acciones del elemento al editar un elemento de recurso"</item>
@@ -153,270 +160,5 @@
                  - Android 30 no permite cambiar una concesión de permisos de archivos de Android a una subcarpeta (eliminando esta función).
                 Arreglo del fallo:
                  - Editar y guardar trabajos de carga automática no funciona"</item>
-        <item>1.4.0.81</item>
-        <item>"Arreglo del fallo:
-                 - Superposición de pantalla de preferencias para trabajos automáticos"</item>
-        <item>1.4.0.80</item>
-        <item>"Cambios:
-                 - EULA simplificado y la mayoría de las restricciones eliminadas.
-                 - Código fuente publicado en github https://github.com/extorn/piwigo-client
-                 - Actualizaciones de dependencias de bibliotecas de terceros"</item>
-        <item>1.4.0.79</item>
-        <item>"Varias correcciones de errores"</item>
-        <item>1.4.0.78</item>
-        <item>"Arreglo del fallo:
-                 - Varias, incluidas correcciones de compresión de imágenes.
-                Cambios:
-                 - mejora del registro para ayudar a depurar un par de errores potenciales
-                 - Actualizado a las últimas bibliotecas de compilación de Android 30"</item>
-        <item>1.4.0.77.1</item>
-        <item>"Arreglo del fallo:
-                 - Se corrigió la rotación de vistas previas en miniatura para archivos de video en la selección de archivos
-                 - Las imágenes grandes (por ejemplo, 3096 * 4128) ahora tienen una miniatura generada en la selección de archivos
-                Cambios:
-                 - Mantenga presionada la imagen fallida o la miniatura del video para volver a cargarla"</item>
-        <item>1.4.0.77</item>
-        <item>"Arreglo del fallo:
-                 - Se corrigió la rotación de vistas previas en miniatura para archivos de video en la selección de archivos
-                Cambios:
-                 - Mantenga presionada la imagen fallida o la miniatura del video para volver a cargarla
-                Error conocido (no introducido en esta versión):
-                 - las imágenes grandes (por ejemplo, 3096 * 4128) no tendrán una miniatura generada, aunque la imagen se puede cargar todavía"</item>
-        <item>1.4.0.76</item>
-        <item>"Arreglo del fallo:
-             - Se corrigió el intercambio de múltiples archivos descargados
-             - Mensaje que se muestra para indicar que el enlace URI del archivo remoto se ha copiado al portapapeles
-             - Las cargas fijas no funcionan debido a una alteración apresurada en 1.4.0.75
-             - Selección de archivos: archivos de video que no muestran miniaturas cuando la ruta contiene un carácter de espacio
-             - Soporte para crear miniaturas para todos los videos (incluido MOV) para todos los dispositivos Android posibles"</item>
-        <item>1.4.0.75</item>
-        <item>"Arreglo del fallo:
-             Las notificaciones no se muestran correctamente para los archivos descargados"</item>
-        <item>1.4.0.74</item>
-        <item>"Arreglo del fallo:
-                 - Android 10
-                  : selección de carpetas - permisos gestionados correctamente.
-                  : descarga de elementos - ahora funciona
-                  Nota: es posible que deba volver a seleccionar la carpeta de descarga o carga automática que prefiera.
-               NOTA: Dejo de desarrollar activamente esta aplicación, aunque continuaré apoyándola con correcciones de errores de forma intermitente."</item>
-        <item>1.4.0.73</item>
-        <item>"Cambios:
-                 - descarga de archivos: se agregaron más registros para ayudar a la resolución de problemas
-                 - descarga de archivo: código agregado para adivinar el tipo de mime para el archivo descargado si no hay una extensión de archivo
-                 - El correo electrónico de solicitud de elemento de punta agregado agregado se usa para resolver problemas con la aplicación"</item>
-        <item>1.4.0.72</item>
-        <item>"Cambios:
-                 - Se eliminó el soporte para versiones de Android anteriores a la 4.4. Lo siento si esto te afecta, pero a menos que puedas
-                     proporcione una razón convincente, no volverá. El selector de números tiene errores debajo de esta versión
-                     y ya he pasado demasiado tiempo intentando arreglarlo.
-             Arreglo del fallo:
-                 - Fallo al completar la carga si la página de carga ya no está visible.
-                 - Bloqueo en la navegación entre álbumes usando la barra de título"</item>
-        <item>1.4.0.71</item>
-        <item>"Arreglo del fallo
-                 - Bloqueo causado por la aplicación que espera más permisos para la carpeta compartida de los necesarios y proporcionados"</item>
-        <item>1.4.0.70</item>
-        <item>"Arreglo del fallo:
-                 - Fallos en la carga informados por el usuario
-                 - Fallo al volver a mostrar una presentación de diapositivas vista para un álbum desde que se vio. Traté de hacer que el comportamiento del botón de retroceso fuera más lógico, pero, lamentablemente, me temo que ha empeorado (especialmente desde que ha expuesto este problema)."</item>
-        <item>1.4.0.69</item>
-        <item>"Arreglo del fallo:
-             - Los permisos de carpeta no se aceptan correctamente cuando se ofrecen"</item>
-        <item>1.4.0.68</item>
-        <item>"Arreglo del fallo:
-                 - Fallo en la navegación a la galería desde la carga o la configuración si la última página abierta de la galería fue una presentación de diapositivas"</item>
-        <item>1.4.0.67</item>
-        <item>"Arreglo del fallo:
-                 - Varias correcciones de errores por fallas relacionadas con la reciente revisión del código de manejo de archivos
-                Cambios:
-                 - Gran mejora en el rendimiento de la selección de archivos para pantallas de carga
-                 - Soporte perfecto para seleccionar archivos en aplicaciones que no proporcionan los permisos de archivo requeridos
-                 - aplicación de pago: aceleración de hardware habilitada en toda la aplicación
-                 - aplicación de pago: otras aplicaciones habilitan el uso de la tarea de selección de carpetas / archivos (informe cualquier problema)"</item>
-        <item>1.4.0.66.8</item>
-        <item>"Arreglo del fallo:
-                 - La aplicación falla durante o después de una carga"</item>
-        <item>1.4.0.66.7</item>
-        <item>"Arreglo del fallo:
-                 - Problemas con fallas después de que se completa la carga
-                 - no se muestra el progreso de la carga de archivos individuales
-                 - falla al girar el dispositivo con la pantalla de carga mostrada
-                 - no se puede desplazar la página hacia arriba para ver el botón de carga en la pestaña de configuración de carga"</item>
-        <item>1.4.0.66.5</item>
-        <item>"Arreglo del fallo:
-                 - Se han corregido muchas molestias que provocaban accidentes
-                 - La página del álbum de destino de carga seleccionada ya no es transparente"</item>
-        <item>1.4.0.66</item>
-        <item>"Cambios:
-                - Reescritura importante de todo el código relacionado con el tema para simplificar y corregir radicalmente los colores en las versiones de Android
-                - Se cambió el tema a uno de día / noche para que sea configurable por el usuario (en la noche, ninguna pantalla tiene fondo blanco).
-                - soporte agregado para Uri y almacenamiento con ámbito:
-                    - comparte archivos fácilmente
-                    - seleccione archivos usando el selector de archivos del sistema o el de la aplicación
-                    - la eliminación de archivos después de la carga ahora está funcionando nuevamente
-                    - Verifique que los archivos sean únicos antes de cargarlos; esto ahora es más difícil, por lo que lleva un poco más de tiempo
-                    - El selector de archivos en la aplicación es relativamente lento para cargar carpetas que contienen muchos archivos - limitaciones en las API de Android en la actualidad
-                - al comprimir videos, puede quitar la transmisión de audio o video si desea crear un archivo m4a o m4v (extensión de archivo mp4 agregada si eso es todo lo que su servidor permite).
-                - Menú de cajón disponible en la pantalla de carga para permitirle saltar a la galería o configuraciones
-                - La aplicación está lista para la implementación de código para advertirle mientras selecciona fotos de las que ha subido anteriormente.
-               Arreglo del fallo:
-                - La página de carga conserva los archivos cuando se agregan nuevos archivos desde el selector del sistema o la navegación en la galería principal
-                - El código de compresión de video se ha revisado radicalmente. No debería congelarse y renunciar a ningún video ahora. (Avísame si lo hace)
-                - Reescritura de grandes áreas para eliminar posibles fugas de memoria
-                - Debería ser mucho menos propenso a fallar en versiones antiguas de Android (pre Lollipop)"</item>
-        <item>1.4.0.65</item>
-        <item>"Cambios:
-             - Se corrigió el problema del tema restante para los diálogos
-                Arreglo del fallo:
-             - Fragmento de ruta de Uri del servidor convertido incorrectamente a minúsculas, lo que genera un error 404"</item>
-        <item>1.4.0.64</item>
-        <item>"Cambios:
-             - Se agregó un botón para ver la contraseña oculta en las preferencias
-             - Movido al tema basado en MaterialComponents (hay algunos cambios menores)
-             - Ocultar la mayoría de las preferencias de conexión de forma predeterminada: haga clic para expandirlas y acceder al resto
-             - movió algunas preferencias de carga a la sección avanzada
-                Arreglo del fallo:
-             - Se agregó una codificación URI opcional para la recuperación de fotos (usa la preferencia de conexión de codificación uri existente)
-             - Se detuvo la advertencia de que faltaban etiquetas para decir que faltaban 0"</item>
-        <item>1.4.0.63</item>
-        <item>"Cambios:
-                 - Se agregó la opción para seleccionar una carpeta de descarga en las preferencias de la aplicación.
-               Arreglo del fallo:
-                 - Detener las advertencias que se muestran para el auto-drive de presentación de diapositivas cuando está deshabilitado
-                 - Seleccione el archivo actualmente visible cuando se muestra el cuadro de diálogo de descarga de archivos"</item>
-        <item>1.4.0.62</item>
-        <item>"Arreglo del fallo:
-                 - Se corrigió el proceso de actualización de preferencias para las personas que actualizan una versión anterior de varias versiones de la aplicación a la última disponible
-                 - Subir archivo de estado del trabajo no se guarda
-                 - El trabajo de carga se inició (incorrectamente) mientras la cámara del dispositivo aún estaba escribiendo el video"</item>
-        <item>1.4.0.61</item>
-        <item>"Arreglo del fallo:
-                 - Varias pequeñas correcciones de errores
-                Cambio:
-                 - Soporte habilitado para Android 11 - Por favor, avíseme si no puede ver archivos para cargar más"</item>
-        <item>1.4.0.60</item>
-        <item>"Cambio:
-                 - Cambios en la página de preferencias de la aplicación.
-                 - Se agregó una nueva preferencia para forzar que las sugerencias de usuario únicas se muestren nuevamente
-                 - aplicación de pago: se agregó una función de conducción automática en la presentación de diapositivas - nueva configuración en la sección de presentación de diapositivas de las preferencias de la galería"</item>
-        <item>1.4.0.59</item>
-        <item>"Cambio:
-                 - Permitir descargar o compartir varios archivos después de seleccionarlos en la vista de álbum"</item>
-        <item>1.4.0.58</item>
-        <item>"Cambio:
-                 - Versión gratuita: eliminó todos los anuncios intersticiales durante un par de meses, por lo que su uso como más que una prueba de la versión paga es tolerable"</item>
-        <item>1.4.0.57</item>
-        <item>"Arreglo del fallo:
-                 - excluido el almacenamiento de alcance por ahora - permite que la aplicación vea los archivos para cargarlos nuevamente en Android 10"</item>
-        <item>1.4.0.56</item>
-        <item>"Arreglo del fallo:
-                 - los videos a veces solo se reconocen como fotos dependiendo del caso de la URL del servidor ingresada en la configuración de conexión"</item>
-        <item>1.4.0.55</item>
-        <item>"Arreglo del fallo:
-                 - excluido el almacenamiento de alcance por ahora - permite que la aplicación vea los archivos para cargarlos nuevamente en Android 10"</item>
-        <item>1.4.0.54</item>
-        <item>"Cambios:
-                 - título de la página en el que se puede hacer clic - navegar al álbum principal
-                 Arreglo del fallo:
-                 - El orden de clasificación del álbum no siempre es correcto
-                 - traducciones posiblemente no seleccionadas en el orden óptimo automáticamente."</item>
-        <item>1.4.0.53</item>
-        <item>"Cambios:
-                 - Se agregó preferencia para controlar la visualización del mensaje que muestra el tamaño de la imagen cargada desde el servidor
-                Arreglo del fallo:
-                 - Actualizar la vista del álbum inmediatamente después de cambiar el recurso o el orden de clasificación del álbum secundario
-                 - corregir un error con la clasificación general de álbumes
-                 - acceso fijo a la presentación de diapositivas cuando los álbumes secundarios se aplastan (al tocar el encabezado de los álbumes)
-                 - Posible error en el que algunos cambios en la configuración de conexión (como el uso de autenticación básica) no se utilizarían por completo hasta el próximo reinicio de la aplicación"</item>
-        <item>1.4.0.52</item>
-        <item>"Arreglo del fallo:
-             - Cancelar la carga de un archivo y salir de la página de carga antes de que se informe la cancelación provoca un bloqueo
-             - aplicación paga: falla al usar ruso en la página de configuración del trabajo de carga automática
-             - aplicación de pago: la actualización de la lista de etiquetas para un recurso donde al menos una etiqueta previamente seleccionada ya no existe provoca un bloqueo (ahora advierta al usuario y elimínela)
-             - aplicación de pago: la aplicación puede fallar al seleccionar el álbum de destino para el trabajo de carga automática
-             - aplicación de pago: al seleccionar el álbum raíz como álbum de destino para el trabajo de carga automática, se muestra el nombre del primer álbum como álbum seleccionado (incorrectamente)
-             - Aplicación de pago: Nota: No tengo claro que seleccionar la raíz de la galería como destino de carga sea sensato, pero en caso de que lo sea en algunas circunstancias, está permitido."</item>
-        <item>1.4.0.51</item>
-        <item>"Cambios:
-                 - Nueva preferencia de galería para permitir forzar el lenguaje utilizado dentro de la aplicación
-                 - Nueva preferencia de conexión de servidor avanzada: habilite la codificación URI de los URI de recursos
-                Arreglo del fallo:
-                 - las preferencias del selector de números aceptan el valor al cerrar el diálogo
-                 - Complemento PiwigoClientWsExt correctamente nombrado en el mensaje de usuario
-                 - Corregidas algunas traducciones"</item>
-        <item>1.4.0.50</item>
-        <item>"Cambios:
-                 - Permitir el paso de audio como opción de compresión
-                 - Compresión habilitada para transmisiones de audio mime no \'audio / raw\'
-                 - Agregar opción para quitar la pista de audio del video
-                Arreglo del fallo:
-                 - Detenga la compresión de video si se elimina de la carga durante la compresión
-                 - Detenga la carga del video si se elimina de la carga durante la compresión
-                 - ordenar la pantalla de progreso de carga para archivos individuales"</item>
-        <item>1.4.0.49</item>
-        <item>"Arreglo del fallo:
-                 - falla de compresión de video
-                 - el último trabajo de carga se vuelve a ejecutar (sin daños) al ejecutar la próxima carga, lo que requiere que haga clic en cargar nuevamente para que se ejecute el nuevo trabajo
-                 - visualización lenta de imágenes al desplazarse"
-        </item>
-        <item>1.4.0.48</item>
-        <item>"Cambios:
-         - Nueva preferencia en la configuración de la galería para deshabilitar el botón de navegación o la función de ocultación automática de la barra de estado
-         - Mostrar solo qué tamaños de imagen se muestran una vez a menos que cambie"
-        </item>
-        <item>1.4.0.47</item>
-        <item>"Arreglo del fallo:
-         - Mejoras en la estabilidad de la aplicación."
-        </item>
-        <item>1.4.0.46</item>
-        <item>"Cambios:
-             - Se agregó el botón de recarga de contenido a la página de selección de archivos
-             - eliminado el sufijo (pagado) del nombre de la aplicación
-             - Mostrar ruta o indicación de la misma para el álbum de carga de destino
-             Arreglo del fallo:
-             - A la presentación de diapositivas le faltaba el último elemento del álbum
-             - Eliminar elemento en presentación de diapositivas - página en blanco"
-        </item>
-        <item>1.4.0.45</item>
-        <item>"Cambios:
-             - Aumento del tamaño máximo de archivo de carga compatible con aplicaciones arbitrarias a 10 GB
-             - Versiones actualizadas de la biblioteca dependiente"
-        </item>
-        <item>1.4.0.44</item>
-        <item>"Arreglo del fallo:
-         - Mejoras en la estabilidad de la aplicación."
-        </item>
-        <item>1.4.0.43</item>
-        <item>"Arreglo del fallo:
-         - Mejoras en la estabilidad de la aplicación."
-        </item>
-        <item>1.4.0.42</item>
-        <item>"Arreglo del fallo:
-                 - Correcciones al manejo de errores de carga de imágenes
-                 - Corrección para corregir un error menor en el proceso de carga de archivos"</item>
-        <item>1.4.0.41</item>
-        <item>"Arreglo del fallo:
-                 - Mejoras en la estabilidad de la aplicación.
-                 - modo de edición cerrado después de actualizar los detalles de la imagen
-             Cambios:
-                 - (solo pro) Vea los detalles del estado de carga, incluidos los errores para trabajos automáticos, en cada página de configuración de trabajo de carga automática"</item>
-        <item>1.4.0.38</item>
-        <item>"Arreglo del fallo:
-                 - La presentación de diapositivas (vista de imagen a pantalla completa) ahora funciona de nuevo. Mis sinceras disculpas.
-                 - Se agregaron traducciones al ruso para preferencias"
-        </item>
-
-
-        <item>1.4.0.37</item>
-        <item>"Arreglo del fallo:
-                 - La limpieza de la conexión ahora funciona de nuevo
-                 - La configuración de la calificación de recursos en la configuración regional rusa ahora funciona nuevamente"</item>
-        <item>1.4.0.36</item>
-        <item>"Cambios:
-                 - La descarga de archivos ahora se realiza en una cola rudimentaria y se gestiona a nivel de aplicación. Sin embargo, aún debe mantener la aplicación abierta para luego descargarla para continuar.
-                Arreglo del fallo:
-                 - La descarga de archivos ahora funciona donde el servidor no informa el tamaño del archivo
-                 - Los archivos agregados a la pantalla de carga de archivos ahora se muestran nuevamente (inicialmente eran invisibles)
-                 - Otros errores variados"</item>
     </string-array>
 </resources>

@@ -120,7 +120,7 @@
     <string name="upload_files_button_title">アップロード</string>
     <string name="upload_files_finish_job_button_title">終了</string>
     <string name="upload_job_status_button">状態</string>
-    <string name="alert_really_delete_upload_job">これにより、このデバイスからジョブステータスが削除されます。サーバーに部分的にアップロードされたファイルを手動でクリーンアップする必要があります（または、このアプリの設定-アップロード設定ページを使用します）。後で再開すると、ジョブは正常に完了することがよくあります。この抜本的な一歩を踏み出してもよろしいですか？</string>
+    <string name="alert_really_delete_upload_job">これにより、このデバイスからジョブステータスが削除されます。サーバーに部分的にアップロードされたファイルを手動でクリーンアップする必要があります（または、このアプリの設定を使用して、設定ページをアップロードします）。後で再開すると、ジョブは正常に完了することがよくあります。この抜本的な一歩を踏み出してもよろしいですか？</string>
     <string name="loading_please_wait">読み込み中。。。待って下さい</string>
     <string name="alert_title_server_error">サーバーエラー</string>
     <string name="alert_server_error_pattern">サーバーがHTTPエラーを返しました：%1$d（%2$s）</string>
@@ -142,7 +142,7 @@
     <string name="progress_resource_details_updating">リソースの詳細の更新</string>
     <string name="gallery_details_name_title">アルバム名</string>
     <string name="gallery_details_description_title">アルバムの説明</string>
-    <string name="gallery_details_save_button">保存する</string>
+    <string name="gallery_details_save_button">セーブ</string>
     <string name="gallery_details_discard_button">破棄</string>
     <string name="gallery_action_delete_progress_title">アルバムを削除しています</string>
     <string name="gallery_action_delete_error_subcategories_present">サブアルバムを含むアルバムを削除できません。最初にこれらを削除してください。</string>
@@ -153,7 +153,7 @@
     <string name="button_ok">はい</string>
     <string name="button_yes">はい</string>
     <string name="button_no">番号</string>
-    <string name="button_save">保存する</string>
+    <string name="button_save">セーブ</string>
     <string name="alert_confirm_title">確認</string>
     <string name="alert_question_title">質問</string>
     <string name="alert_confirm_really_delete_from_server">これにより、アイテムがサーバーから完全に削除されます。継続する？</string>
@@ -203,7 +203,7 @@ Gareth Deliは、取り消し可能、非独占的、譲渡不可、制限付き
 **制限
 
 あなたは同意しないことに同意し、他の人に次のことを許可しません。
-a）ライセンス供与、販売、賃貸、リース、割り当て、配布、送信、ホスト、アウトソーシング、開示、またはその他
+a）ライセンス、販売、賃貸、リース、割り当て、配布、送信、ホスト、アウトソーシング、開示、またはその他
 アプリケーションを商業的に悪用するか、アプリケーションを第三者が利用できるようにします。
 b）このアプリケーションに基づいて派生物を作成します。
 
@@ -303,7 +303,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 提案やバグをメールで送ってくれたすべての人に感謝します。私はあなたの提案のすべてにできるだけ早く対処するよう努めます。発生するすべてのクラッシュを報告することを選択してください。 次回のアップデート後もバグが発生する場合は、時間をかけてメールでお問い合わせください。 バグが発生する直前に何が起こっているかについて、もう少しコンテキストが必要になる可能性があります。
 
-現在、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
+現時点では、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
     <string name="licences_heading">このアプリ内で使用されるリソースのライセンス</string>
     
     <string name="slideshow_image_details_name_title">リソース名</string>
@@ -435,7 +435,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_title_set_album_thumbnail">アルバムのサムネイルを更新しますか？</string>
     <string name="alert_message_set_album_thumbnail">アルバムのサムネイルをこの画像に更新しますか？</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">アルバム（%1$s）とすべてのコンテンツを完全に削除してもよろしいですか（他の場所のアルバムにリンクされている場合を除く）。</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">%2$dの写真を含むアルバム（%1$s）と、さらに%4$dの写真を含む%3$dの子アルバムを永久に削除することを絶対に確信していますか？他のアルバムにリンクされている写真はそのまま残りますが、他の写真は完全に削除されます。このアクションには元に戻す機能はありません。</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">%2$dの写真を含むアルバム（%1$s）と、さらに%4$dの写真を含む%3$dの子アルバムを完全に削除しますか？他のアルバムにリンクされている写真はそのまま残りますが、他の写真は完全に削除されます。このアクションには元に戻す機能はありません。</string>
     <string name="alert_confirm_copy_items_here_pattern">ここのバスケットにある%1$dアイテムをコピーしますか（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">バスケット内の%1$dアイテムをここに移動しますか（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">リンクされたアルバム</string>
@@ -499,7 +499,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_error_item_not_unique">申し訳ありませんが、そのアイテムはすでに存在します。</string>
     <string name="alert_warning_no_server_url_specified">サーバーURIが指定されていません。サーバーの場所を追加して、再試行してください。</string>
     <string name="error_heading_unloadable_certificate_files">次の証明書ファイルを読み込めませんでした。</string>
-    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルを読み込めませんでした。</string>
+    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルをロードできませんでした。</string>
     <string name="error_heading_unloadable_keystore_aliases">次のキーストアエイリアスを読み込めませんでした。</string>
     <string name="heading_keystore_filename">キーストア</string>
     <string name="heading_keystore_alias">エイリアス</string>
@@ -634,7 +634,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">サーバーは、アップロード用に選択された%1$dファイルを受け入れません。これらがビデオの場合、圧縮を有効にすることができます。これらのファイルをアップロードから削除しますか？</string>
     <string name="upload_status_tab_title_details">詳細</string>
     <string name="upload_status_tab_title_errors">エラー</string>
-    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sは一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある可能性があります。</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sはそれが一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある可能性があります。</string>
     <string name="alert_bulk_image_permissions_title">アクセス許可を設定する</string>
     <string name="alert_bulk_image_permissions_message">選択した%1$dリソースのアクセス許可レベルを設定します</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">%1$sのMIMEタイプと共有されているファイルを処理できません</string>
@@ -702,5 +702,6 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="selected_files">選択したファイル</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">ロードされたアルバムのコンテンツと同期していないスライドショー。開始時にリセットします。</string>
     <string name="uri_permission_justification_file_selection">このアプリで使用するファイルまたはフォルダーを選択するには</string>
+    <string name="alert_error_please_select_download_folder_and_retry">アプリの設定でファイルをダウンロードするフォルダを選択して、再試行してください。</string>
 
 </resources>

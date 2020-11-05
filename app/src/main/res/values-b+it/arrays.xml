@@ -127,7 +127,7 @@
         <item>"In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto."</item>
         <item>"Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso"</item>
         <item>Se un caricamento non riesce, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
-        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \ \"Non sei autorizzato a eliminare i tag \" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
+        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \ \"Non è consentito eliminare i tag \" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plugin del server)</item>
         <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per essere trasferiti al tuo server corrente</item>
         <item>Fare clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stato caricato per recuperarla di nuovo</item>
         <item>Fare clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
@@ -137,7 +137,7 @@
         <item>Dopo aver effettuato l\'accesso come amministratore, prima di consegnare il dispositivo a un amico per visualizzare le foto, attivare la funzione di blocco dell\'applicazione per evitare modifiche involontarie alla tua galleria</item>
         <item>Dopo aver visualizzato un intero video, se la memorizzazione nella cache dei file locali è abilitata, è possibile salvare quel video nella cartella dei download</item>
         <item>Fare clic a lungo sul pulsante Elimina su un \ \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
-        <item>Se il caricamento delle immagini è lento, verifica che il tuo server generi automaticamente la dimensione utilizzata da questa app quando vengono caricate</item>
+        <item>Se le immagini si caricano lentamente, verifica che il tuo server generi automaticamente le dimensioni utilizzate da questa app quando vengono caricate</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
@@ -145,278 +145,20 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.84</item>
+        <item>"Modificare:
+                 - Rimosso l\'avviso sulla rotazione dello schermo a metà di una presentazione.
+                Risoluzione del problema:
+                 - Il download di file o la condivisione di risorse può non riuscire e quindi bloccare la funzione fino al riavvio su Android 10
+                 - Preferenze corrette che apparivano invisibili in modalità Android Dark (ora utilizzabile)
+                 - risolto il problema di contrasto nel popup di dialogo nell\'app principale (modalità scura)"</item>
         <item>1.4.0.83</item>
         <item>"Risoluzione del problema:
                  - Corretta la posizione del pulsante nella barra delle azioni degli elementi durante la modifica di un elemento risorsa"</item>
         <item>1.4.0.82</item>
         <item>"I cambiamenti:
-                 - Il passaggio da una concessione di autorizzazioni file Android a una sottocartella non è consentito da Android 30. (rimozione di questa funzione).
+                 - Il passaggio da una concessione di autorizzazioni di file Android a una sottocartella non è consentito da Android 30 (rimozione di questa funzione).
                 Risoluzione del problema:
                  - La modifica e il salvataggio dei lavori di caricamento automatico non funzionano"</item>
-        <item>1.4.0.81</item>
-        <item>"Risoluzione del problema:
-                 - Sovrapposizione della schermata delle preferenze per i lavori automatici"</item>
-        <item>1.4.0.80</item>
-        <item>"I cambiamenti:
-                 - EULA semplificato e la maggior parte delle restrizioni rimosse.
-                 - Codice sorgente rilasciato su github https://github.com/extorn/piwigo-client
-                 - Aggiornamenti delle dipendenze della libreria di terze parti"</item>
-        <item>1.4.0.79</item>
-        <item>"Correzioni di bug assortite"</item>
-        <item>1.4.0.78</item>
-        <item>"Risoluzione del problema:
-                 - Diversi, comprese le correzioni alla compressione delle immagini.
-                I cambiamenti:
-                 - miglioramento della registrazione per assistere il debug di un paio di potenziali errori
-                 - Aggiornato alle ultime librerie di build di Android 30"</item>
-        <item>1.4.0.77.1</item>
-        <item>"Risoluzione del problema:
-                 - Corretta la rotazione delle anteprime delle miniature per i file video nella selezione dei file
-                 - Le immagini di grandi dimensioni (ad esempio 3096 * 4128) ora hanno una miniatura generata nella selezione del file
-                I cambiamenti:
-                 - premere a lungo l\'immagine o la miniatura del video non riuscita per ricaricarla"</item>
-        <item>1.4.0.77</item>
-        <item>"Risoluzione del problema:
-                 - Corretta la rotazione delle anteprime delle miniature per i file video nella selezione dei file
-                I cambiamenti:
-                 - premere a lungo l\'immagine o la miniatura del video non riuscita per ricaricarla
-                Bug noto (non introdotto in questa versione):
-                 - le immagini di grandi dimensioni (ad esempio 3096 * 4128) non avranno una miniatura generata, sebbene l\'immagine possa essere caricata ancora"</item>
-        <item>1.4.0.76</item>
-        <item>"Risoluzione del problema:
-             - Risolto il problema con la condivisione di più file scaricati
-             - Messaggio mostrato per indicare che il collegamento URI del file remoto è stato copiato negli appunti
-             - Risolto il problema con i caricamenti che non funzionavano a causa di una rapida modifica nella 1.4.0.75
-             - Selezione file: i file video non mostrano miniature quando il percorso contiene uno spazio
-             - Supporto per la creazione di miniature per tutti i video (incluso MOV) per tutti i possibili dispositivi Android"</item>
-        <item>1.4.0.75</item>
-        <item>"Risoluzione del problema:
-             Notifiche non visualizzate correttamente per i file scaricati"</item>
-        <item>1.4.0.74</item>
-        <item>"Risoluzione del problema:
-                 - Android 10
-                  : selezione delle cartelle - permessi gestiti correttamente.
-                  : download di elementi - ora funziona
-                  Nota: potrebbe essere necessario selezionare nuovamente la cartella di download o caricamento automatico preferita.
-               NOTA: Sto smettendo di sviluppare attivamente questa app, ma continuerò a supportarla con correzioni di bug a intermittenza."</item>
-        <item>1.4.0.73</item>
-        <item>"I cambiamenti:
-                 - download di file: più registrazione aggiunta per aiutare la risoluzione dei problemi
-                 - download del file: aggiunto codice per indovinare il tipo MIME del file scaricato se non è presente l\'estensione del file
-                 - L\'elemento di punta aggiunto che richiede l\'e-mail viene utilizzato per risolvere i problemi con l\'app"</item>
-        <item>1.4.0.72</item>
-        <item>"I cambiamenti:
-                 - Rimosso il supporto per le versioni di Android precedenti alla 4.4. Scusa se questo ti riguarda, ma a meno che tu non possa
-                     fornire una ragione convincente, non tornerà. Il selettore di numeri è bacato sotto questa versione
-                     e ho già passato troppo tempo a cercare di risolverlo.
-             Risoluzione del problema:
-                 - Blocco al caricamento completato se la pagina di caricamento non è più visibile.
-                 - Blocco durante la navigazione tra gli album utilizzando la barra del titolo"</item>
-        <item>1.4.0.71</item>
-        <item>"Risoluzione del problema
-                 - Arresto anomalo causato dall\'app che si aspettava più autorizzazioni per la cartella condivisa del necessario e fornito"</item>
-        <item>1.4.0.70</item>
-        <item>"Risoluzione del problema:
-                 - Arresti anomali durante il caricamento segnalati dall\'utente
-                 - Blocco durante la rivisualizzazione di una presentazione visualizzata per un album da quando è stata visualizzata. Ho provato a rendere più logico il comportamento del pulsante Indietro, ma purtroppo temo che sia peggiorato (soprattutto da quando ha esposto questo problema)."</item>
-        <item>1.4.0.69</item>
-        <item>"Risoluzione del problema:
-             - Autorizzazioni della cartella non accettate correttamente quando offerte"</item>
-        <item>1.4.0.68</item>
-        <item>"Risoluzione del problema:
-                 - Blocco durante la navigazione nella galleria dal caricamento o dalle impostazioni se l\'ultima pagina aperta della galleria era una presentazione"</item>
-        <item>1.4.0.67</item>
-        <item>"Risoluzione del problema:
-                 - Numerose correzioni di bug per arresti anomali relativi alla recente revisione del codice di gestione dei file
-                I cambiamenti:
-                 - Ampio miglioramento delle prestazioni della selezione dei file per le schermate di caricamento
-                 - Supporto continuo per la selezione dei file nelle app che non forniscono le autorizzazioni file richieste
-                 - App a pagamento: accelerazione hardware abilitata in tutta l\'app
-                 - app a pagamento: utilizzo abilitato dell\'attività di selezione di cartelle / file da parte di altre app (segnalare eventuali problemi)"</item>
-        <item>1.4.0.66.8</item>
-        <item>"Risoluzione del problema:
-                 - Arresto anomalo dell\'app durante o dopo un caricamento"</item>
-        <item>1.4.0.66.7</item>
-        <item>"Risoluzione del problema:
-                 - Problemi con arresti anomali dopo il completamento del caricamento
-                 - l\'avanzamento del caricamento dei singoli file non viene mostrato
-                 - crash sul dispositivo di rotazione con la schermata di caricamento visualizzata
-                 - impossibile scorrere la pagina verso l\'alto per visualizzare il pulsante di caricamento nella scheda delle impostazioni di caricamento"</item>
-        <item>1.4.0.66.5</item>
-        <item>"Risoluzione del problema:
-                 - Sono stati risolti molti problemi che causavano arresti anomali
-                 - La pagina di selezione dell\'album di destinazione del caricamento non è più trasparente"</item>
-        <item>1.4.0.66</item>
-        <item>"I cambiamenti:
-                - Importante riscrittura di tutto il codice relativo al tema per semplificare e correggere radicalmente i colori nelle versioni di Android
-                - Cambiato il tema in uno giorno / notte in modo che sia configurabile dall\'utente (di notte, nessuno schermo ha lo sfondo bianco).
-                - aggiunto supporto per Uri e archiviazione con ambito:
-                    - condividere facilmente i file
-                    - seleziona i file utilizzando il selettore di file di sistema o quello in app
-                    - l\'eliminazione dei file dopo il caricamento ora funziona di nuovo
-                    - controlla che i file siano unici prima del caricamento: ora è più difficile, quindi ci vuole un po \'più di tempo
-                    - Il selettore di file in app è relativamente lento per caricare cartelle contenenti molti file - attualmente limitazioni nelle API Android
-                - quando si comprimono i video, è possibile rimuovere lo streaming audio o video se si desidera creare un file m4a o m4v (estensione del file mp4 aggiunta se è tutto ciò che il server consente).
-                - Menu Drawer disponibile dalla schermata di caricamento per consentirti di passare alla galleria o alle impostazioni
-                - L\'app è pronta per l\'implementazione del codice per avvisarti durante la selezione delle foto di quelle che hai caricato in precedenza.
-               Risoluzione del problema:
-                - La pagina di caricamento conserva i file quando si aggiungono nuovi file dal selettore di sistema e / o dalla navigazione nella galleria principale
-                - Il codice di compressione video è stato radicalmente revisionato. Non dovrebbe bloccarsi e rinunciare a nessun video ora. (Fammi sapere se lo fa)
-                - Riscrittura di grandi aree per rimuovere potenziali perdite di memoria
-                - Dovrebbe essere molto meno soggetto a crash sulle vecchie versioni di Android (pre Lollipop)"</item>
-        <item>1.4.0.65</item>
-        <item>"I cambiamenti:
-             - Risolto il problema del tema rimanente per i dialoghi
-                Risoluzione del problema:
-             - Frammento del percorso Uri del server convertito in modo errato in minuscolo con conseguente errore 404"</item>
-        <item>1.4.0.64</item>
-        <item>"I cambiamenti:
-             - Aggiunto un pulsante per visualizzare la password nascosta nelle preferenze
-             - Spostato al tema basato su MaterialComponents (ci sono alcune modifiche minori)
-             - Nascondi la maggior parte delle preferenze di connessione per impostazione predefinita: fai clic per espanderle per accedere al resto
-             - spostate alcune preferenze di caricamento nella sezione avanzata
-                Risoluzione del problema:
-             - Aggiunta una codifica URI opzionale per il recupero delle foto (utilizza la preferenza di connessione della codifica uri esistente)
-             - Interrotto l\'avviso di tag mancanti in arrivo per dire che mancava 0"</item>
-        <item>1.4.0.63</item>
-        <item>"I cambiamenti:
-                 - Aggiunta l\'opzione per selezionare una cartella di download nelle preferenze dell\'app
-               Risoluzione del problema:
-                 - Interrompi la visualizzazione degli avvisi per la guida automatica della presentazione quando è disabilitata.
-                 - Seleziona il file attualmente visibile quando mostra la finestra di dialogo per il download del file"</item>
-        <item>1.4.0.62</item>
-        <item>"Risoluzione del problema:
-                 - Il processo di aggiornamento delle preferenze è stato risolto per le persone che aggiornano una vecchia versione di diverse versioni dall\'app all\'ultima disponibile
-                 - Carica il file di stato del lavoro non salvando
-                 - Lavoro di caricamento (errato) avviato mentre il video è ancora in fase di scrittura dalla fotocamera del dispositivo"</item>
-        <item>1.4.0.61</item>
-        <item>"Risoluzione del problema:
-                 - Diverse piccole correzioni di bug
-                Modificare:
-                 - Supporto abilitato per Android 11 - Fammi sapere se non riesci più a vedere i file da caricare"</item>
-        <item>1.4.0.60</item>
-        <item>"Modificare:
-                 - Modifiche alla pagina delle preferenze dell\'app
-                 - Aggiunta una nuova preferenza per forzare la visualizzazione di nuovi suggerimenti utente una tantum
-                 - App a pagamento: aggiunta una funzione di guida automatica sulla presentazione - nuova impostazione nella sezione presentazione delle preferenze della galleria"</item>
-        <item>1.4.0.59</item>
-        <item>"Modificare:
-                 - Consenti il download o la condivisione di più file dopo averli selezionati nella visualizzazione album"</item>
-        <item>1.4.0.58</item>
-        <item>"Modificare:
-                 - Versione gratuita: rimossi tutti gli annunci interstitial per un paio di mesi quindi il suo utilizzo come più di una prova della versione a pagamento è tollerabile"</item>
-        <item>1.4.0.57</item>
-        <item>"Risoluzione del problema:
-                 - disattivato per ora l\'archiviazione con ambito - consente all\'app di vedere i file per il caricamento di nuovo su Android 10"</item>
-        <item>1.4.0.56</item>
-        <item>"Risoluzione del problema:
-                 - i video a volte vengono riconosciuti solo come foto a seconda del caso dell\'URL del server inserito nelle impostazioni di connessione"</item>
-        <item>1.4.0.55</item>
-        <item>"Risoluzione del problema:
-                 - disattivato per ora l\'archiviazione con ambito - consente all\'app di vedere i file per il caricamento di nuovo su Android 10"</item>
-        <item>1.4.0.54</item>
-        <item>"I cambiamenti:
-                 - titolo della pagina cliccabile - vai all\'album principale
-                 Risoluzione del problema:
-                 - L\'ordinamento degli album non è sempre corretto
-                 - traduzioni possibilmente non selezionate automaticamente in ordine ottimale."</item>
-        <item>1.4.0.53</item>
-        <item>"I cambiamenti:
-                 - Aggiunta la preferenza per controllare la visualizzazione del messaggio che mostra la dimensione dell\'immagine caricata dal server
-                Risoluzione del problema:
-                 - Aggiorna la visualizzazione degli album immediatamente dopo aver modificato l\'ordinamento delle risorse o degli album secondari
-                 - corretto bug con l\'ordinamento generale degli album
-                 - Risolto l\'accesso alla presentazione quando gli album secondari sono schiacciati (toccando l\'intestazione degli album)
-                 - Possibile bug in cui alcune modifiche alle impostazioni di connessione (come l\'utilizzo dell\'autenticazione di base) non sarebbero state utilizzate completamente fino al successivo riavvio dell\'app"</item>
-        <item>1.4.0.52</item>
-        <item>"Risoluzione del problema:
-             - L\'annullamento del caricamento di un file e l\'abbandono della pagina di caricamento prima della segnalazione dell\'annullamento causano l\'arresto anomalo
-             - app a pagamento: arresto anomalo utilizzando il russo nella pagina di configurazione del lavoro di caricamento automatico
-             - App a pagamento: l\'aggiornamento dell\'elenco dei tag per una risorsa in cui almeno un tag precedentemente selezionato non esiste più causa l\'arresto anomalo (ora avvisa l\'utente e rimuovilo)
-             - App a pagamento: l\'app può bloccarsi quando si seleziona l\'album di destinazione per il lavoro di caricamento automatico
-             - app a pagamento: selezionando l\'album principale come album di destinazione per il lavoro di caricamento automatico viene visualizzato il nome del primo album come album selezionato (errato)
-             - app a pagamento: Nota: non mi è chiaro che selezionare la radice della galleria come destinazione di caricamento sia mai sensato, ma nel caso in cui lo sia in alcune circostanze, è consentito."</item>
-        <item>1.4.0.51</item>
-        <item>"I cambiamenti:
-                 - Nuova preferenza per la galleria per consentire la forzatura della lingua utilizzata all\'interno dell\'app
-                 - Nuova preferenza di connessione avanzata al server: abilita la codifica URI degli URI delle risorse
-                Risoluzione del problema:
-                 - le preferenze del selettore di numeri accettano il valore alla chiusura della finestra di dialogo
-                 - Plugin PiwigoClientWsExt correttamente denominato nel messaggio utente
-                 - Corrette alcune traduzioni"</item>
-        <item>1.4.0.50</item>
-        <item>"I cambiamenti:
-                 - Consenti il passthrough dell\'audio come opzione di compressione
-                 - Compressione abilitata per flussi audio mime non \"audio / raw\"
-                 - Aggiungi l\'opzione per rimuovere la traccia audio dal video
-                Risoluzione del problema:
-                 - Interrompi la compressione video se viene eliminato dal caricamento durante la compressione
-                 - Interrompi il caricamento del video se viene eliminato dal caricamento durante la compressione
-                 - riordinare la visualizzazione dell\'avanzamento del caricamento per i singoli file"</item>
-        <item>1.4.0.49</item>
-        <item>"Risoluzione del problema:
-                 - errore di compressione video
-                 - l\'ultimo lavoro di caricamento viene rieseguito (nessun danno) all\'esecuzione del caricamento successivo - richiede di fare nuovamente clic su Carica per avviare il nuovo lavoro
-                 - visualizzazione lenta delle immagini durante lo scorrimento"
-        </item>
-        <item>1.4.0.48</item>
-        <item>"I cambiamenti:
-         - Nuova preferenza nelle impostazioni della galleria per disabilitare il pulsante di navigazione e / o la funzione di nascondere automaticamente la barra di stato
-         - Mostra solo le dimensioni dell\'immagine mostrate una volta a meno che non cambi"
-        </item>
-        <item>1.4.0.47</item>
-        <item>"Risoluzione del problema:
-         - Miglioramenti alla stabilità dell\'app"
-        </item>
-        <item>1.4.0.46</item>
-        <item>"I cambiamenti:
-             - Aggiunto il pulsante di ricarica dei contenuti alla pagina di selezione dei file
-             - rimosso il suffisso (a pagamento) dal nome dell\'app
-             - Mostra il percorso o l\'indicazione di esso per l\'album di caricamento della destinazione
-             Risoluzione del problema:
-             - Nella presentazione mancava l\'ultimo elemento nell\'album
-             - Elimina elemento nella presentazione - pagina vuota"
-        </item>
-        <item>1.4.0.45</item>
-        <item>"I cambiamenti:
-             - Aumentata la dimensione massima del file di caricamento supportata dall\'app arbitraria a 10 GB
-             - Aggiornate le versioni della libreria dipendente"
-        </item>
-        <item>1.4.0.44</item>
-        <item>"Risoluzione del problema:
-         - Miglioramenti alla stabilità dell\'app"
-        </item>
-        <item>1.4.0.43</item>
-        <item>"Risoluzione del problema:
-         - Miglioramenti alla stabilità dell\'app"
-        </item>
-        <item>1.4.0.42</item>
-        <item>"Risoluzione del problema:
-                 - Correzioni alla gestione degli errori di caricamento delle immagini
-                 - Correzione per correggere bug minori nel processo di caricamento dei file"</item>
-        <item>1.4.0.41</item>
-        <item>"Risoluzione del problema:
-                 - Miglioramenti alla stabilità dell\'app
-                 - modalità di modifica chiusa dopo l\'aggiornamento dei dettagli dell\'immagine
-             I cambiamenti:
-                 - (solo pro) Visualizza i dettagli sullo stato del caricamento, inclusi gli errori per i lavori automatici, su ciascuna pagina di configurazione del lavoro di caricamento automatico"</item>
-        <item>1.4.0.38</item>
-        <item>"Risoluzione del problema:
-                 - La presentazione (visualizzazione dell\'immagine a schermo intero) ora funziona di nuovo. Le mie sincere scuse.
-                 - Aggiunte traduzioni in russo per le preferenze"
-        </item>
-
-
-        <item>1.4.0.37</item>
-        <item>"Risoluzione del problema:
-                 - La pulizia della connessione ora funziona di nuovo
-                 - L\'impostazione della classificazione delle risorse in lingua russa ora funziona di nuovo"</item>
-        <item>1.4.0.36</item>
-        <item>"I cambiamenti:
-                 - Il download dei file ora avviene in una coda rudimentale ed è gestito a livello di app. Tuttavia, al momento devi ancora tenere l\'app aperta per poi scaricarla per continuare.
-                Risoluzione del problema:
-                 - Il download dei file ora funziona dove il server non segnala la dimensione del file
-                 - I file aggiunti alla schermata di caricamento dei file vengono ora visualizzati di nuovo (inizialmente erano invisibili)
-                 - Altri insetti assortiti"</item>
     </string-array>
 </resources>

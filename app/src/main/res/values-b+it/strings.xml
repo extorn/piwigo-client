@@ -197,7 +197,7 @@ Gareth Deli ti concede una licenza revocabile, non esclusiva, non trasferibile e
 scaricare, installare e utilizzare l\'Applicazione esclusivamente per scopi personali o commerciali
 rigorosamente in conformità con i termini del presente Contratto.
 
-IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN UN\'AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRI TRATTAMENTI NEL SOFTWARE
+IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRE RAPPORTI SOFTWARE
 
 
 ** Restrizioni
@@ -220,7 +220,7 @@ Il software viene fornito \"così com\'è\" e il licenziatario lo utilizza a pro
 
 ** Limitazioni di responsabilità
 
-Il licenziatario è responsabile delle conseguenze dell\'uso del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
+Il licenziatario è responsabile delle conseguenze dell\'utilizzo del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
 
 
 ** Manutenzione e supporto
@@ -287,7 +287,7 @@ Attualmente, la versione a pagamento ha aggiunto il supporto per i tag:
 
 Al momento, fornisce un livello di funzionalità di base per consentire la navigazione in una galleria esistente, il caricamento di nuove foto e video e la creazione di nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati, ma molti sono ancora di sola lettura .... per ora!
 
-Per favore, posso chiederti che se disinstalli l\'app, utilizzi il collegamento nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze in modo che io possa risolvere il problema.
+Per favore, posso chiederti che se disinstalli l\'app, utilizzi il link nel menu dell\'app per inviarmi un\'e-mail dicendomi perché l\'app non ha soddisfatto le tue esigenze, in modo che io possa risolvere il problema.
 
 La versione del server PIWIGO su cui provo è attualmente 2.10.2.
 
@@ -416,8 +416,8 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="group_is_default_title">È predefinito?</string>
     <string name="progress_adding_group">Aggiunta di gruppo</string>
     <string name="upload_unacceptable_files_prefix">File non accettati</string>
-    <string name="alert_error_unable_to_access_local_filesystem">Senza accesso al filesystem locale, questa azione non può procedere. Scusa.</string>
-    <string name="alert_error_admin_user_required">Solo gli utenti amministratori possono caricare a meno che il plug-in della community non sia installato. Scusa.</string>
+    <string name="alert_error_unable_to_access_local_filesystem">Senza accesso al filesystem locale, questa azione non può procedere. Scusate.</string>
+    <string name="alert_error_admin_user_required">Solo gli utenti amministratori possono caricare a meno che il plug-in della community non sia installato. Scusate.</string>
     <string name="upload_username_title">Carica come</string>
     <string name="certificates_heading">Certificati</string>
 
@@ -702,5 +702,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="selected_files">File selezionati</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Presentazione non sincronizzata con i contenuti dell\'album caricato. Ripristino all\'avvio.</string>
     <string name="uri_permission_justification_file_selection">Per selezionare file o cartelle da utilizzare con questa app</string>
+    <string name="alert_error_please_select_download_folder_and_retry">Seleziona una cartella in cui scaricare i file nelle impostazioni dell\'app, quindi riprova.</string>
 
 </resources>

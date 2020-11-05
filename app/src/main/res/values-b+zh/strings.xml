@@ -97,7 +97,7 @@
     <string name="alert_error_upload_file_read_error_message_pattern">上载文件%1$s时出错。\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">服务器上已经存在上载的文件%1$s，操作已取消。</string>
     <string name="alert_error_upload_add_file_failed_message_pattern">将上传的文件%1$s添加到相册时出错。重试？</string>
-    <string name="alert_upload_file_failed_piwigo_message_pattern">由于PIWIGO服务器（%2$d：%3$s）中的错误，上传文件%1$s失败。</string>
+    <string name="alert_upload_file_failed_piwigo_message_pattern">由于PIWIGO服务器错误（%2$d：%3$s），上传文件%1$s失败。</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">由于网络服务器错误（%2$d：%3$s），上传文件%1$s失败。</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">由于处理PIWIGO响应出错，上载文件%1$s失败。这可能是由于PIWIGO API更改所致。无法回答：%2$s。</string>
     <string name="action_settings">设定值</string>
@@ -210,7 +210,7 @@ b）基于此应用程序创建派生作品。
 
 **用户数据收集
 
-Firebase集成已添加到此应用程序中，以便于跟踪应用程序的使用，其主要目的是更有效地解决问题并确定应用程序的使用方式。将收集达到此目的所需的最少数据。
+Firebase集成已添加到此应用程序中，以促进跟踪应用程序的使用，其主要目的是更有效地解决错误并确定应用程序的使用方式。将收集达到此目的所需的最少数据。
 
 
 **有限保修和免责声明
@@ -303,7 +303,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 非常感谢向我发送建议或错误的电子邮件的所有人。我将努力尽快解决您的所有建议。请选择报告每次发生的崩溃。 如果您发现该错误在下次更新后仍然存在，请花点时间给我发送电子邮件。 在错误发生之前，我可能需要更多有关周围情况的上下文。
 
-目前，发布是临时的。 随着应用程序的成熟，发布频率有望降低。 发布时间表和历史记录如下所示。 这可能会改变，事情可能会延迟，但是您可以看到列表中的内容。"</string>
+目前，发布是临时的。 随着应用程序的成熟，发布的频率有望降低。 发布时间表和历史记录如下所示。 这可能会改变，事情可能会延迟，但是您可以看到列表中的内容。"</string>
     <string name="licences_heading">此应用内使用的资源的许可</string>
     
     <string name="slideshow_image_details_name_title">资源名称</string>
@@ -346,7 +346,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="eula_menu_title">最终用户许可协议</string>
     <string name="alert_warning">警告</string>
     <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的缩略图大小。服务器将返回“最近匹配”尺寸的图像。</string>
-    <string name="rate_dialog_message">如果您喜欢使用此应用程序，您是否愿意花点时间对其进行评分？不会超过一分钟。谢谢你的支持！</string>
+    <string name="rate_dialog_message">如果您喜欢使用此应用程序，您是否愿意花点时间对其进行评分？不会超过一分钟。谢谢您的支持！</string>
     <string name="groups_menu_title">团体</string>
     <string name="group_members_pattern">（%1$d个成员）</string>
     <string name="alert_group_delete_success_pattern">组（%1$s）已成功删除</string>
@@ -367,15 +367,15 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="group_heading">组</string>
     <string name="group_name_title">名称</string>
     <string name="group_members_title">会员</string>
-    <string name="user_access_rights_title">访问权</string>
-    <string name="group_access_rights_title">访问权</string>
+    <string name="user_access_rights_title">访问权限</string>
+    <string name="group_access_rights_title">访问权限</string>
     <string name="groups_heading">团体</string>
     <string name="users_heading">用户数</string>
     <string name="albums_heading">专辑</string>
     <string name="user_high_definition_title">高画质</string>
     <string name="user_email_title">电子邮件地址</string>
     <string name="none_value">没有</string>
-    <string name="access_rights_heading">访问权</string>
+    <string name="access_rights_heading">访问权限</string>
     <string name="progress_loading_album_content">加载相册内容</string>
     <string name="progress_loading_resource_details">加载资源详细信息</string>
     <string name="progress_delete_album">删除相册和内容</string>
@@ -505,7 +505,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="heading_keystore_alias">别名</string>
     <string name="alert_title_error_upload">上载错误</string>
     <string name="alert_message_error_uploading_end">成功上传所有文件后发生错误。重新开始上载以从其到达的地方继续进行，并从服务器清除所有残留的临时数据。</string>
-    <string name="alert_message_error_uploading_start">成功上传所有文件之前发生错误。重新启动上传以继续进行操作，或者从作业中删除所有剩余的文件，然后单击完成按钮以清除服务器上的所有剩余临时数据。</string>
+    <string name="alert_message_error_uploading_start">成功上传所有文件之前发生错误。重新启动上传以继续进行操作，或者从作业中删除所有剩余的文件，然后单击“完成”按钮从服务器清除所有剩余的临时数据。</string>
     <string name="release_history">发行历史</string>
     <string name="planned_releases">计划发行</string>
     <string name="tags_heading">标签</string>
@@ -588,7 +588,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_error_orphaned_file_retrieval_failed">无法检索孤立图像列表。请重试。</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理员用户无权访问预期的功能。如果您使用社区插件（对非管理员用户伪造管理员身份）未正确安装，则会发生这种情况。使用Web浏览器检查相关插件是否正确公开了您期望的方法：%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">此功能不可用。请在您的服务器上安装PiwigoClientWsExts插件。如果您已经安装了此软件，请将其更新为最新版本。</string>
-    <string name="alert_user_session_no_allowed_filetypes">服务器未提供可与用户会话信息一起上传的文件类型列表（通常仅为管理员用户提供）。请检查服务器配置是否正确，然后重试。如果问题仍然存在，请给我发送电子邮件，以帮助我为您诊断问题。</string>
+    <string name="alert_user_session_no_allowed_filetypes">服务器尚未提供可与用户会话信息一起上传的文件类型列表（通常仅为管理员用户提供）。请检查服务器配置是否正确，然后重试。如果问题仍然存在，请给我发送电子邮件，以帮助我为您诊断问题。</string>
     <string name="job_not_found">找不到上传作业</string>
     <string name="files_mid_data_transfer_title">文件已部分复制</string>
     <string name="files_awaiting_verification_title">等待数据完整性检查的文件</string>
@@ -702,5 +702,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="selected_files">选定文件</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">幻灯片与加载的相册内容不同步。开始复位。</string>
     <string name="uri_permission_justification_file_selection">选择此应用程序要使用的文件或文件夹</string>
+    <string name="alert_error_please_select_download_folder_and_retry">请在应用程序设置中选择一个文件夹下载文件，然后重试。</string>
 
 </resources>

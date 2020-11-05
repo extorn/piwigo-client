@@ -142,7 +142,7 @@
     <string name="progress_resource_details_updating">Ressourcendetails aktualisieren</string>
     <string name="gallery_details_name_title">Albumname</string>
     <string name="gallery_details_description_title">Albumbeschreibung</string>
-    <string name="gallery_details_save_button">speichern</string>
+    <string name="gallery_details_save_button">sparen</string>
     <string name="gallery_details_discard_button">Verwerfen</string>
     <string name="gallery_action_delete_progress_title">Album löschen</string>
     <string name="gallery_action_delete_error_subcategories_present">Ein Album mit Unteralben kann nicht gelöscht werden. Bitte löschen Sie diese zuerst.</string>
@@ -150,10 +150,10 @@
     <string name="notification_upload_event">Piwigo Upload</string>
     <string name="progress_downloading">Datei wird heruntergeladen</string>
     <string name="alert_error_unimplemented">Funktion noch nicht implementiert.</string>
-    <string name="button_ok">okay</string>
+    <string name="button_ok">In Ordnung</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
-    <string name="button_save">speichern</string>
+    <string name="button_save">sparen</string>
     <string name="alert_confirm_title">Bestätigen</string>
     <string name="alert_question_title">Frage</string>
     <string name="alert_confirm_really_delete_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Fortsetzen?</string>
@@ -182,7 +182,7 @@ durch die Bedingungen dieser Vereinbarung.
 Wenn Sie den Bedingungen dieser Vereinbarung nicht zustimmen, klicken Sie nicht auf die Schaltfläche \"Ich stimme zu\" und nicht
 Laden Sie die Anwendung herunter oder verwenden Sie sie.
 
-Wenn Sie erwägen, mit dieser App auf einen Server zuzugreifen oder diesen zu ändern, der für kommerzielle Zwecke verwendet wird, müssen Sie unbedingt die Haftungsbeschränkungen lesen und verstehen.
+Wenn Sie erwägen, mit dieser App auf einen für kommerzielle Zwecke verwendeten Server zuzugreifen oder diesen zu ändern, müssen Sie die Haftungsbeschränkungen unbedingt lesen und verstehen.
 Sie müssen dies zu Ihrer Zufriedenheit auf einem Nicht-Produktionsserver testen, bevor Sie selbst ein Risiko und eine Haftung aufgrund Ihrer Entscheidungen übernehmen. Diese App wurde in erster Linie entwickelt
 für nichtkommerzielle Zwecke.
 
@@ -263,7 +263,7 @@ Vereinbarung jederzeit. Sie werden beim Öffnen der Anwendung über die Änderun
 Option, um entweder die Änderungen zu akzeptieren oder die Verwendung der Anwendung zu beenden.
 
 
-** Kontakt Informationen
+** Kontaktinformation
 
 Wenn Sie Fragen zu dieser Vereinbarung haben, wenden Sie sich bitte an uns."
 </string>
@@ -439,7 +439,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_confirm_copy_items_here_pattern">Kopieren Sie die%1$d Artikel in den Warenkorb hier (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Verschieben Sie die%1$d-Artikel im Warenkorb hierher (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Verknüpfte Alben</string>
-    <string name="list_ok_button">in Ordnung</string>
+    <string name="list_ok_button">OK</string>
     <string name="alert_confirm_really_remove_album_permissions_pattern">Sie haben ausgewählt, den Zugriff auf dieses Album und den navigierbaren Zugriff auf alle untergeordneten Alben von%1$d-Gruppen und%2$d-Benutzern zu entfernen. Mit dieser Aktion fortfahren?</string>
     <string name="alert_confirm_add_album_permissions_recursively_pattern">Sie haben ausgewählt, dass für%1$d-Gruppen und%2$d-Benutzer Zugriff auf dieses Album hinzugefügt werden soll. Möchten Sie diese Änderungen auf die%3$d-Kinderalben anwenden?</string>
     <string name="alert_information_own_user_readded_to_permissions_list">Ihre Änderungen hätten Sie daran gehindert, auf dieses Album zuzugreifen. Ihr Benutzername wurde der Liste der Personen mit ausdrücklicher Genehmigung hinzugefügt.</string>
@@ -462,7 +462,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_unexpected_error_calling_server">Unerwarteter Fehler beim Aufrufen des Servers oder beim Analysieren der Antwort</string>
     <string name="error_insufficient_permissions_for_cache_folder">Lese- / Schreibzugriff auf den Cache-Ordner ist erforderlich. Überprüfen Sie die App-Einstellungen.</string>
     <string name="alert_title_error_talking_to_server">Fehler beim Sprechen mit dem Server</string>
-    <string name="alert_title_error_connecting_to_server">Fehler beim Verbinden mit dem Server</string>
+    <string name="alert_title_error_connecting_to_server">Fehler bei der Verbindung zum Server</string>
     <string name="alert_warning_message_self_signed_certificates">Selbstsignierte SSL-Zertifikate sollten nicht auf einem öffentlich zugänglichen Server (im Internet) verwendet werden. Weitere Informationen finden Sie unter https://letsencrypt.org oder ähnlichem. Dies dient nur zu Testzwecken.</string>
     <string name="alert_error_adding_certificate_to_truststore">Fehler beim Hinzufügen eines Zertifikats zum Trust Store</string>
     <string name="alert_add_cert_to_truststore_pattern">Zertifikatkette zur Liste der vertrauenswürdigen Zertifizierungsstellen hinzufügen?</string>
@@ -674,7 +674,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="missing_permissions_warning_message_pattern">"Seit dem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
     <string name="folder_selection_title">Ordner auswählen</string>
     <string name="files_selection_title">Dateien auswählen</string>
-    <string name="all">Alle</string>
+    <string name="all">Alles</string>
     <string name="user_high_definition_field">Ermöglichen Sie den Zugriff auf Originaldateien (in voller Größe)</string>
     <string name="group_is_default_field">Weisen Sie dieser Gruppe neue Benutzer zu</string>
     <string name="createGallery_galleryCommentsAllowed_title">Benutzerkommentare</string>
@@ -702,5 +702,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="selected_files">Ausgewählte Dateien</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diashow nicht synchron mit dem geladenen Albuminhalt. Beim Start zurücksetzen.</string>
     <string name="uri_permission_justification_file_selection">Auswählen von Dateien oder Ordnern zur Verwendung durch diese App</string>
+    <string name="alert_error_please_select_download_folder_and_retry">Bitte wählen Sie in den App-Einstellungen einen Ordner zum Herunterladen von Dateien aus und versuchen Sie es erneut.</string>
 
 </resources>

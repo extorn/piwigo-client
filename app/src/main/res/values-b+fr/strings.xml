@@ -45,14 +45,14 @@
     <string name="alert_title_login">S\'identifier</string>
     <string name="alert_title_connectionTest">Test de connexion</string>
     <string name="alert_message_success_connectionTest">Succès\nType d\'utilisateur:%1$s.</string>
-    <string name="alert_message_no_available_image_sizes">avertissement\nLe serveur n\'a pas signalé les tailles d\'image disponibles.</string>
+    <string name="alert_message_no_available_image_sizes">Attention\nLe serveur n\'a pas signalé les tailles d\'image disponibles.</string>
     <string name="alert_success">SUCCÈS!</string>
     <string name="alert_partial_success">INCOMPLET</string>
     <string name="alert_error">Erreur</string>
     <string name="alert_error_no_app_available_to_handle_action">Aucune application n\'a été trouvée pour gérer cette action.</string>
     <string name="alert_error_no_app_available_to_rate_app">Aucune application n\'a pu être trouvée pour évaluer cette application. Merci d\'avoir essayé.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Téléchargement annulé. Les autorisations requises ne sont pas accordées.</string>
-    <string name="button_retry">Recommencez</string>
+    <string name="button_retry">Réessayez</string>
 
 
     <string name="button_unlink">Dissocier</string>
@@ -96,7 +96,7 @@
     <string name="alert_error_upload_file_no_longer_available_message_pattern">Le fichier%1$s n\'est plus disponible sur l\'appareil. Il a peut-être été supprimé ou déplacé.\n%2$s</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Erreur lors du téléchargement du fichier%1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Le fichier téléchargé%1$s est déjà présent sur le serveur, action annulée.</string>
-    <string name="alert_error_upload_add_file_failed_message_pattern">Erreur lors de l\'ajout du fichier téléversé%1$s à l\'album. Recommencez?</string>
+    <string name="alert_error_upload_add_file_failed_message_pattern">Erreur lors de l\'ajout du fichier téléversé%1$s à l\'album. Réessayez?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Le téléchargement du fichier%1$s a échoué en raison d\'une erreur sur le serveur PIWIGO (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Échec du téléchargement du fichier%1$s en raison d\'une erreur du serveur Web (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">Le téléchargement du fichier%1$s a échoué en raison d\'une erreur de traitement de la réponse PIWIGO. Cela est probablement dû à un changement d\'API PIWIGO. Réponse impossible à analyser:%2$s.</string>
@@ -131,7 +131,7 @@
     <string name="alert_error_too_many_users_message">Trop d\'utilisateurs à gérer. Veuillez soumettre une demande d\'amélioration pour activer la pagination des utilisateurs.</string>
 
     <string name="slideshow_resource_action_download">Télécharger un fichier</string>
-    <string name="slideshow_resource_action_delete">Effacer</string>
+    <string name="slideshow_resource_action_delete">Supprimer</string>
     <string name="slideshow_resource_action_copy">Copier dans l\'album</string>
     <string name="slideshow_resource_action_move">Déplacer vers l\'album</string>
     <string name="slideshow_image_details_actions">Actions</string>
@@ -161,7 +161,7 @@
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Vous avez demandé la suppression de%1$d ressources partagées avec d’autres albums. Souhaitez-vous les supprimer de tous les albums (et du serveur - de façon permanente), ou simplement les dissocier de cet album?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Vous avez demandé la suppression de%1$d ressources. Souhaitez-vous les supprimer de tous les albums (et du serveur) - de manière permanente, ou simplement les dissocier de cette balise?</string>
     <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Vous avez demandé la suppression de%1$d ressources. Souhaitez-vous les supprimer de tous les albums (et du serveur) - définitivement? (Vous ne pouvez pas supprimer les balises des images sans le plugin UserTags installé sur votre serveur)</string>
-    <string name="about_menu_title">Sur</string>
+    <string name="about_menu_title">À propos</string>
     <string name="other_licences_button_text">Autres composants sous licence</string>
     <string name="oss_licences_menu_title">Licences OSS</string>
     <string name="about_heading">À propos de cette appli</string>
@@ -197,7 +197,7 @@ Gareth Deli vous accorde une licence limitée révocable, non exclusive, non tra
 pour télécharger, installer et utiliser l\'Application uniquement à des fins personnelles ou commerciales
 en stricte conformité avec les termes de cet accord.
 
-LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU AUTRES ACTIONS DANS LOGICIEL
+LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU D\'AUTRES ACTIONS DANS LE LOGICIEL
 
 
 ** Restrictions
@@ -285,7 +285,7 @@ Actuellement, la version payante a ajouté la prise en charge des balises:
         Piwigo prend en charge les balises dans une certaine mesure, mais le plugin User Tags ajoute plus de fonctionnalités (tests de base effectués).
 
 
-Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation dans une galerie existante, le téléchargement de nouvelles photos et vidéos et la création de nouvelles catégories dans une galerie. Certains champs peuvent être modifiés une fois créés, mais beaucoup sont encore en lecture seule .... pour l\'instant!
+Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation dans une galerie existante, le téléchargement de nouvelles photos et vidéos et la création de nouvelles catégories dans une galerie. Certains champs peuvent être modifiés une fois créés, mais beaucoup sont encore en lecture seule ... pour l\'instant!
 
 S\'il vous plaît, puis-je demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail en m\'expliquant pourquoi l\'application ne répond pas à vos besoins afin que je puisse y remédier.
 
@@ -344,8 +344,8 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="app_licence_heading">CLUF</string>
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
-    <string name="alert_warning">avertissement</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
+    <string name="alert_warning">Attention</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \"la plus proche\".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, pourriez-vous prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -357,7 +357,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_confirm_really_delete_user">Voulez-vous vraiment supprimer cet utilisateur?</string>
     <string name="users_menu_title">Utilisateurs</string>
     <string name="alert_error_unable_to_delete_yourself_pattern">Désolé, vous ne pouvez pas supprimer l\'utilisateur sous lequel vous êtes connecté (%1$s).</string>
-    <string name="alert_information_coming_soon">Cette fonctionnalité sera bientôt disponible.</string>
+    <string name="alert_information_coming_soon">Cette option sera disponible sous peu.</string>
 
     <string name="user_username_title">Nom d\'utilisateur</string>
     <string name="user_lastvisit_title">Dernière visite sur le site</string>
@@ -452,7 +452,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \"la plus proche\".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour autoriser la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache sera en mémoire.</string>
@@ -555,7 +555,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_bad_request_follow_redirects">Le serveur a renvoyé une réponse de redirection 302. Voulez-vous autoriser le suivi de ces derniers pour ce serveur?</string>
     <string name="picture_resource_exif_data_unavailable">Aucune métadonnée d\'image disponible pour le moment</string>
     <string name="video_caching_disabled_not_recommended">La désactivation du cache vidéo aura un impact important sur les performances</string>
-    <string name="video_caching_disabled_warning">Avertissement. Le cache vidéo est désactivé. Téléchargement à la demande.</string>
+    <string name="video_caching_disabled_warning">Attention. Le cache vidéo est désactivé. Téléchargement à la demande.</string>
     <string name="alert_error_album_no_longer_on_server">Cet album n\'a pas pu être chargé à partir du serveur. Passage à l\'album parent.</string>
     <string name="button_show_details">Montrer les détails</string>
     <string name="button_hide_details">Masquer les détails</string>
@@ -702,5 +702,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="selected_files">Fichiers sélectionnés</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diaporama désynchronisé avec le contenu de l\'album chargé. Réinitialisation au démarrage.</string>
     <string name="uri_permission_justification_file_selection">Pour sélectionner des fichiers ou des dossiers à utiliser par cette application</string>
+    <string name="alert_error_please_select_download_folder_and_retry">Veuillez sélectionner un dossier dans lequel télécharger les fichiers dans les paramètres de l\'application, puis réessayer.</string>
 
 </resources>

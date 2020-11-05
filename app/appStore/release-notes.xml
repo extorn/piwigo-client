@@ -1,36 +1,72 @@
 <en-GB>
+Change:
+- Removed the warning on screen rotate when mid way through a slideshow.
 Bugfix:
-- Corrected button position in item actions bar when editing a resource item
+- File download or share of resources can fail and then lock the feature until restart on Android 10+
+- Corrected preferences appearing invisible in Android Dark mode (now usable)
+- fixed contrast issue on dialog popup in main app (Dark mode)
 </en-GB>
 <cs-CZ>
+Změna:
+- Odstraněno varování na obrazovce otočit, když v polovině prezentace.
 Oprava chyby:
-- Opravená poloha tlačítka na liště akcí položky při úpravách položky zdroje
+- Stahování souborů nebo sdílení zdrojů může selhat a poté tuto funkci uzamknout až do restartu v systému Android 10
+- Opravené předvolby, které se v režimu Android Dark zobrazují jako neviditelné (nyní použitelné)
+- opravený problém s kontrastem v dialogovém okně v hlavní aplikaci (tmavý režim)
 </cs-CZ>
 <de-DE>
+Veränderung:
+- Die Warnung auf dem Bildschirm wurde entfernt, wenn Sie sich in der Mitte einer Diashow drehen.
 Bug-Fix:
-- Die Schaltflächenposition in der Elementaktionsleiste beim Bearbeiten eines Ressourcenelements wurde korrigiert
+- Das Herunterladen von Dateien oder das Teilen von Ressourcen kann fehlschlagen und die Funktion bis zum Neustart unter Android 10 sperren
+- Korrigierte Einstellungen, die im Android Dark-Modus unsichtbar erscheinen (jetzt verwendbar)
+- Kontrastproblem im Dialogfeld-Popup in der Haupt-App behoben (Dunkler Modus)
 </de-DE>
 <es-ES>
+Cambio:
+- Se eliminó la advertencia en la pantalla de girar cuando se encuentra a mitad de una presentación de diapositivas.
 Arreglo del fallo:
-- Se corrigió la posición del botón en la barra de acciones del elemento al editar un elemento de recurso
+- La descarga de archivos o el uso compartido de recursos pueden fallar y luego bloquear la función hasta que se reinicie en Android 10
+- Preferencias corregidas que aparecen invisibles en el modo oscuro de Android (ahora utilizable)
+- problema de contraste solucionado en la ventana emergente de diálogo en la aplicación principal (modo oscuro)
 </es-ES>
 <fr-FR>
+Changement:
+- Suppression de l\'avertissement sur la rotation de l\'écran au milieu d\'un diaporama.
 Correction d\'un bug:
-- Correction de la position du bouton dans la barre d\'actions de l\'élément lors de la modification d\'un élément de ressource
+- Le téléchargement de fichiers ou le partage de ressources peut échouer, puis verrouiller la fonctionnalité jusqu\'au redémarrage sur Android 10
+- Correction des préférences apparaissant invisibles en mode Android Dark (maintenant utilisable)
+- Correction du problème de contraste sur la fenêtre de dialogue dans l\'application principale (mode sombre)
 </fr-FR>
 <it-IT>
+Modificare:
+- Rimosso l\'avviso sulla rotazione dello schermo a metà di una presentazione.
 Risoluzione del problema:
-- Corretta la posizione del pulsante nella barra delle azioni degli elementi durante la modifica di un elemento risorsa
+- Il download di file o la condivisione di risorse può non riuscire e quindi bloccare la funzione fino al riavvio su Android 10
+- Preferenze corrette che apparivano invisibili in modalità Android Dark (ora utilizzabile)
+- risolto il problema di contrasto nel popup di dialogo nell\'app principale (modalità scura)
 </it-IT>
 <ja-JP>
+変化する：
+-スライドショーの途中で画面が回転するときの警告を削除しました。
 バグ修正：
--リソースアイテムを編集するときのアイテムアクションバーのボタン位置を修正しました
+-ファイルのダウンロードまたはリソースの共有が失敗し、Android10で再起動するまで機能がロックされる可能性があります
+-Androidダークモードで非表示に表示される修正された設定（現在使用可能）
+-メインアプリのダイアログポップアップのコントラストの問題を修正しました（ダークモード）
 </ja-JP>
 <ru-RU>
+Изменить:
+- Убрано предупреждение о повороте экрана во время слайд-шоу.
 Исправлена ошибка:
-- Исправлено положение кнопки в панели действий элемента при редактировании элемента ресурса.
+- Загрузка файла или совместное использование ресурсов может завершиться ошибкой, а затем заблокировать функцию до перезапуска на Android 10.
+- Исправлены настройки, невидимые в темном режиме Android (теперь можно использовать).
+- исправлена проблема с контрастом во всплывающем диалоговом окне в основном приложении (темный режим)
 </ru-RU>
 <zh-CN>
+更改：
+-删除了在幻灯片播放中途出现的屏幕旋转警告。
 错误修正：
--更正了编辑资源项目时项目操作栏中的按钮位置
+-文件下载或资源共享可能会失败，然后锁定功能，直到在Android 10上重新启动
+-更正的首选项在Android Dark模式下显示为不可见（现已可用）
+-修复了主应用中对话框弹出对话框的对比度问题（黑暗模式）
 </zh-CN>

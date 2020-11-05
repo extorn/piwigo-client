@@ -28,7 +28,7 @@
     <string name="server_connection_preference_summary_default">Por favor seleccione un valor</string>
     <string name="server_album_preference_summary_default">Por favor seleccione un valor</string>
     <string name="local_folder_preference_summary_default">Por favor seleccione un valor</string>
-    <string name="server_connection_preference_user_guest">huésped</string>
+    <string name="server_connection_preference_user_guest">invitado</string>
     
 
     
@@ -72,7 +72,7 @@
     
 
     
-    <string name="preference_server_connection_retries_title">Reintentos de conexión antes del fallo</string>
+    <string name="preference_server_connection_retries_title">Reintentos de conexión antes de la falla</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
@@ -376,7 +376,7 @@
     <string name="preference_data_upload_compress_images_title">Comprimir imágenes</string>
     
 
-    <string name="preference_data_upload_compress_images_quality_title">Calidad de la imagen</string>
+    <string name="preference_data_upload_compress_images_quality_title">La calidad de imagen</string>
     <string name="preference_data_upload_compress_images_quality_summary">Calidad de compresión de imagen%1$s</string>
     
     

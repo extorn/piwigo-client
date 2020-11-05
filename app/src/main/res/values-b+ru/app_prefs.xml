@@ -156,7 +156,7 @@
     
 
     <string name="preference_page_gallery">Галерея</string>
-    <string name="preference_gallery_category_general">Общее</string>
+    <string name="preference_gallery_category_general">Генеральная</string>
     <string name="preference_gallery_category_advanced">Продвинутый</string>
     <string name="preference_gallery_category_slideshow">Слайд-шоу</string>
     <string name="preference_gallery_category_resources">Ресурсы</string>
@@ -407,7 +407,7 @@
 
     
 
-    <string name="preference_page_other">Другой</string>
+    <string name="preference_page_other">Другие</string>
     <string name="preference_other_category_file_selector">Селектор файлов</string>
 
     
