@@ -5,8 +5,20 @@
     <style name="Theme.App" parent="Theme.App.Dark.Base"/>
 
     <!-- used at activity level -->
+    <style name="Theme.App.Light" parent="Theme.App.Light.Base"/>
+
+    <!-- used at activity level -->
     <style name="Theme.App.EditPages" parent="Theme.App.EditPages.Base"/>
 
+    <style name="Theme.App.Light.Base" parent="Theme.App.Base">
+        <!-- these colors MUST be applied here else it isn't taken by the top level activity for some reason -->
+        <item name="android:colorBackground">@color/app_color_background</item>
+        <item name="colorPrimary">@color/app_primary</item>
+        <!-- Note: this theme overlay will only work if the style is applied directly to a component it seems (in xml?). -->
+        <item name="android:theme">@style/ThemeOverlay.App.Dark</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Dark</item>
+        <item name="colorControlHighlight">@color/ripple_dark</item>
+    </style>
 
     <style name="Theme.App.Dark.Base" parent="Theme.App.Base">
         <!-- these colors MUST be applied here else it isn't taken by the top level activity for some reason -->
