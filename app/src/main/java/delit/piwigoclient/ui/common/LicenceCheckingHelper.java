@@ -13,12 +13,16 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.Task;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.BuildConfig;
 import com.google.android.vending.licensing.LicenseChecker;
 import com.google.android.vending.licensing.LicenseCheckerCallback;
 import com.google.android.vending.licensing.Policy;
 import com.google.android.vending.licensing.ServerManagedPolicy;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import java.util.Date;
 import java.util.Random;
@@ -42,18 +46,28 @@ public class LicenceCheckingHelper {
     private LicenseChecker mChecker;
     // A handler on the UI thread.
     private Handler mHandler;
-    private BaseMyActivity activity;
+    private BaseMyActivity<?> activity;
     private Date lastChecked;
 
-    public void onCreate(BaseMyActivity activity) {
+    public void onCreate(BaseMyActivity<?> activity) {
 
         this.activity = activity;
 
         mHandler = new Handler();
 
-        // Try to use more data here. ANDROID_ID is a single point of attack.
-        String deviceId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
+        idTask.addOnSuccessListener(this::withInstallGuid);
+        idTask.addOnFailureListener(e -> {
+            Logging.log(Log.ERROR,TAG, "Unable to retrieve App Install GUID from Firebase");
+            Logging.recordException(e);
+            // Try to use more data here. ANDROID_ID is a single point of attack.
+            String deviceId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
+            withInstallGuid(deviceId);
+        });
 
+    }
+
+    private void withInstallGuid(String appInstallGuid) {
         // Library calls this when it's done.
         mLicenseCheckerCallback = new MyLicenseCheckerCallback();
 
@@ -63,18 +77,19 @@ public class LicenceCheckingHelper {
 
         mChecker = new LicenseChecker(
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
-                new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, deviceId, true)),
+                new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, appInstallGuid, true)),
                 BASE64_PUBLIC_KEY);
         doVisualCheck(activity.getApplicationContext());
     }
 
-    private long getVersionCode(BaseMyActivity activity) {
+    private long getVersionCode(@NonNull BaseMyActivity<?> activity) {
         try {
             PackageInfo pInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
             // fill the salt with new random data (seeded from the current app version number)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 return pInfo.getLongVersionCode();
             } else {
+                //noinspection deprecation
                 return pInfo.versionCode;
             }
         } catch (PackageManager.NameNotFoundException e) {
@@ -129,21 +144,21 @@ public class LicenceCheckingHelper {
             return 0;
         }
 
-        public static final Creator<LicenceCheckAction> CREATOR = new Creator<LicenceCheckAction>() {
+        public static final Creator<LicenceCheckAction<?,?>> CREATOR = new Creator<LicenceCheckAction<?,?>>() {
             @Override
-            public LicenceCheckAction createFromParcel(Parcel in) {
+            public LicenceCheckAction<?,?> createFromParcel(Parcel in) {
                 return new LicenceCheckAction(in);
             }
 
             @Override
-            public LicenceCheckAction[] newArray(int size) {
+            public LicenceCheckAction<?,?>[] newArray(int size) {
                 return new LicenceCheckAction[size];
             }
         };
 
         @Override
         public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
-            MyActivity activity = getUiHelper().getParent();
+            MyActivity<?> activity = getUiHelper().getParent();
             if (Boolean.TRUE == positiveAnswer) {
                 if (allowRetry) {
                     activity.getLicencingHelper().forceCheck();
@@ -184,19 +199,11 @@ public class LicenceCheckingHelper {
     }
 
     private void displayResult(final String result) {
-        mHandler.post(new Runnable() {
-            public void run() {
-                activity.getUiHelper().showDetailedMsg(R.string.alert_information, result);
-            }
-        });
+        mHandler.post(() -> activity.getUiHelper().showDetailedMsg(R.string.alert_information, result));
     }
 
     private void displayDialog(final boolean showRetry) {
-        mHandler.post(new Runnable() {
-            public void run() {
-                showDialog(showRetry);
-            }
-        });
+        mHandler.post(() -> showDialog(showRetry));
     }
 
     protected void onDestroy() {
