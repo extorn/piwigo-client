@@ -625,7 +625,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             DocumentFile outputVideo;
             int i = 0;
             DocumentFile inputDocFile = IOUtils.getSingleDocFile(requireContext(), fileForCompression);
-            String compressedFileExt = compressionSettings.getOutputFileExt();
+            String compressedFileExt = compressionSettings.getOutputFileExt(requireContext());
             String outputFilenameSuffixWithoutExt = IOUtils.getFileNameWithoutExt(inputDocFile.getName());
             String outputFilenameSuffix = outputFilenameSuffixWithoutExt + '.' + compressedFileExt;
 

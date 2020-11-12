@@ -345,7 +345,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_agree">Estoy de acuerdo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Advertencia</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \ \"coincidencia más cercana \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \ "coincidencia más cercana \".</string>
     <string name="rate_dialog_message">Si le gusta usar esta aplicación, ¿le importaría tomarse un momento para calificarla? No tomará más de un minuto. ¡Gracias por su apoyo!</string>
     <string name="groups_menu_title">Grupos</string>
     <string name="group_members_pattern">(%1$d miembros)</string>
@@ -452,7 +452,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_message_file_upload_cancelled_pattern">Se canceló la carga del archivo (%1$s).</string>
     <string name="alert_message_upload_cancelled">Subida cancelada</string>
     <string name="alert_message_upload_cancelled_message">Si no desea reiniciar la carga más tarde. Debe eliminar los archivos del trabajo de carga y luego hacer clic en cargar. Esto limpiará el estado de carga cancelada del servidor.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \ \"coincidencia más cercana \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \ "coincidencia más cercana \".</string>
     <string name="logging_out_of_piwigo_pattern">Cerrar sesión en%1$s</string>
     <string name="loading_new_server_configuration">Cargando nueva configuración de conexión al servidor</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Para permitir el almacenamiento en caché en el disco, se debe otorgar acceso de escritura al sistema de archivos. Si se deniega, el almacenamiento en caché estará en la memoria.</string>
@@ -617,7 +617,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"La preferencia%1$s es irrecuperable y se ha establecido de forma predeterminada en%2$s. Restablezca este valor en la configuración de la aplicación"</string>
+    <string name="preference_corrupt_please_re_type_pattern">La preferencia%1$s es irrecuperable y se ha establecido de forma predeterminada en%2$s. Restablezca este valor en la configuración de la aplicación</string>
     <string name="switch_to_cached_mode">El servidor no está disponible actualmente. ¿Usar datos en caché?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Comprimir videos</string>
@@ -662,7 +662,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="create_email_using_app">Crear un correo electrónico usando la aplicación</string>
     <string name="open_files">Abrir archivos en la aplicación</string>
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no se pudieron procesar. Estos%1$d archivos se han ignorado. Para compartir un archivo de video, primero debe almacenarse en caché localmente.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Todas las sugerencias de usuario únicas se mostrarán nuevamente"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">Todas las sugerencias de usuario únicas se mostrarán nuevamente</string>
     
     
     <string name="delete_uploaded_files_title">Eliminar archivos cargados</string>
@@ -703,5 +703,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">La presentación de diapositivas no está sincronizada con el contenido del álbum cargado. Restableciendo al inicio.</string>
     <string name="uri_permission_justification_file_selection">Para seleccionar archivos o carpetas para usar con esta aplicación</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleccione una carpeta para descargar archivos en la configuración de la aplicación, luego vuelva a intentarlo.</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">No se pudo encontrar una extensión de archivo de salida válida (la preferida es%2$s) para el archivo (video:%3$b audio:%4$b) aceptable para el servidor entre las opciones (%1$s)</string>
 
 </resources>

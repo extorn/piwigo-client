@@ -1052,7 +1052,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
         Set<String> serverAcceptedFileExts = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs()).getAllowedFileTypes();
 
-        String outputFileExt = compressionSettings.getOutputFileExt(serverAcceptedFileExts);
+        String outputFileExt = compressionSettings.getOutputFileExt(this, serverAcceptedFileExts);
         DocumentFile outputVideo;
 
         if(outputFileExt == null) {

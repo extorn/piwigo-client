@@ -42,6 +42,7 @@ import delit.libs.core.util.Logging;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.R;
 
 import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 
@@ -391,8 +392,8 @@ public class ExoPlayerCompression {
             return audioCompressionParameters;
         }
 
-        public String getOutputFileExt() {
-            return getOutputFileExt(null);
+        public String getOutputFileExt(Context context) {
+            return getOutputFileExt(context, null);
         }
 
         /**
@@ -400,7 +401,7 @@ public class ExoPlayerCompression {
          * @param acceptableFileExts
          * @return
          */
-        public String getOutputFileExt(Set<String> acceptableFileExts) {
+        public String getOutputFileExt(Context context, Set<String> acceptableFileExts) {
             String ext;
             boolean hasAudio = isAddAudioTrack();
             boolean hasVideo = isAddVideoTrack();
@@ -429,7 +430,7 @@ public class ExoPlayerCompression {
             if(acceptableFileExts == null || acceptableFileExts.contains(ext)) {
                 return ext;
             }
-            throw new IllegalStateException(String.format("No valid output file extension (preferred is %2$s) could be found for file (video:%3$b audio:%4$b) acceptable to the server amongst options (%1$s)", CollectionUtils.toCsvList(acceptableFileExts), ext, hasVideo, hasAudio));
+            throw new IllegalStateException(String.format(context.getString(R.string.no_acceptable_file_ext_found_for_video_pattern), CollectionUtils.toCsvList(acceptableFileExts), ext, hasVideo, hasAudio));
         }
 
         /**
