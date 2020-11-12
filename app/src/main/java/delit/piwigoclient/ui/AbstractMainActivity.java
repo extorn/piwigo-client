@@ -1230,6 +1230,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         FirebaseCrashlytics.getInstance().setCustomKey("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
+        FirebaseCrashlytics.getInstance().setCustomKey("AppLanguage", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
 
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
