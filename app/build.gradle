@@ -59,8 +59,8 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            // android gradle plugin 4.1 and higher only (need newer intellij).
-            //ndk.debugSymbolLevel = "FULL"
+            // android gradle plugin 4.1 and higher only
+            ndk.debugSymbolLevel = "FULL"
         }
         debug {
             versionNameSuffix = "-DEBUG"
