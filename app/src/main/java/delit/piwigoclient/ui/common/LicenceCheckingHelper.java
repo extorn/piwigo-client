@@ -2,8 +2,11 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -56,13 +59,28 @@ public class LicenceCheckingHelper {
 
         //Force the licence response to be invalidated every time a new version is installed.
         byte[] salt = new byte[20];
-        new Random(BuildConfig.VERSION_CODE).nextBytes(salt);
+        new Random(getVersionCode(activity)).nextBytes(salt);
 
         mChecker = new LicenseChecker(
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
                 new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, deviceId, true)),
                 BASE64_PUBLIC_KEY);
         doVisualCheck(activity.getApplicationContext());
+    }
+
+    private long getVersionCode(BaseMyActivity activity) {
+        try {
+            PackageInfo pInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
+            // fill the salt with new random data (seeded from the current app version number)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                return pInfo.getLongVersionCode();
+            } else {
+                return pInfo.versionCode;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Logging.log(Log.ERROR,TAG, "Unable to extract app version for activity : " + activity);
+            return -1;
+        }
     }
 
     private void showDialog(final boolean showRetryButton) {
