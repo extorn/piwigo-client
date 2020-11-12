@@ -1,72 +1,63 @@
 <en-GB>
 Change:
-- Removed the warning on screen rotate when mid way through a slideshow.
+- added translations for an error that can occur during video compression
+- Use Firebase App Installation GUID for message encryption where available
 Bugfix:
-- File download or share of resources can fail and then lock the feature until restart on Android 10+
-- Corrected preferences appearing invisible in Android Dark mode (now usable)
-- fixed contrast issue on dialog popup in main app (Dark mode)
+- Corrected string translation for russian causing crash in slideshow
 </en-GB>
 <cs-CZ>
 Změna:
-- Odstraněno varování na obrazovce otočit, když v polovině prezentace.
+- přidány překlady pro chybu, ke které může dojít během komprese videa
+- Použijte šifrování GUID instalace aplikace Firebase pro šifrování zpráv, pokud je k dispozici
 Oprava chyby:
-- Stahování souborů nebo sdílení zdrojů může selhat a poté tuto funkci uzamknout až do restartu v systému Android 10
-- Opravené předvolby, které se v režimu Android Dark zobrazují jako neviditelné (nyní použitelné)
-- opravený problém s kontrastem v dialogovém okně v hlavní aplikaci (tmavý režim)
+- Opravený překlad řetězců pro ruštinu způsobující pád v prezentaci
 </cs-CZ>
 <de-DE>
 Veränderung:
-- Die Warnung auf dem Bildschirm wurde entfernt, wenn Sie sich in der Mitte einer Diashow drehen.
+- Übersetzungen für einen Fehler hinzugefügt, der während der Videokomprimierung auftreten kann
+- Verwenden Sie die Firebase App-Installations-GUID für die Nachrichtenverschlüsselung, sofern verfügbar
 Bug-Fix:
-- Das Herunterladen von Dateien oder das Teilen von Ressourcen kann fehlschlagen und die Funktion bis zum Neustart unter Android 10 sperren
-- Korrigierte Einstellungen, die im Android Dark-Modus unsichtbar erscheinen (jetzt verwendbar)
-- Kontrastproblem im Dialogfeld-Popup in der Haupt-App behoben (Dunkler Modus)
+- Die String-Übersetzung für Russisch wurde korrigiert und verursacht einen Absturz in der Diashow
 </de-DE>
 <es-ES>
 Cambio:
-- Se eliminó la advertencia en la pantalla de girar cuando se encuentra a mitad de una presentación de diapositivas.
+- traducciones agregadas para un error que puede ocurrir durante la compresión de video
+- Use el GUID de instalación de la aplicación Firebase para el cifrado de mensajes cuando esté disponible
 Arreglo del fallo:
-- La descarga de archivos o el uso compartido de recursos pueden fallar y luego bloquear la función hasta que se reinicie en Android 10
-- Preferencias corregidas que aparecen invisibles en el modo oscuro de Android (ahora utilizable)
-- problema de contraste solucionado en la ventana emergente de diálogo en la aplicación principal (modo oscuro)
+- Se corrigió la traducción de cadenas para el ruso causando un bloqueo en la presentación
 </es-ES>
 <fr-FR>
 Changement:
-- Suppression de l\'avertissement sur la rotation de l\'écran au milieu d\'un diaporama.
+- ajout de traductions pour une erreur pouvant survenir lors de la compression vidéo
+- Utilisez le GUID d\'installation de l\'application Firebase pour le chiffrement des messages, le cas échéant
 Correction d\'un bug:
-- Le téléchargement de fichiers ou le partage de ressources peut échouer, puis verrouiller la fonctionnalité jusqu\'au redémarrage sur Android 10
-- Correction des préférences apparaissant invisibles en mode Android Dark (maintenant utilisable)
-- Correction du problème de contraste sur la fenêtre de dialogue dans l\'application principale (mode sombre)
+- Correction de la traduction des chaînes pour le russe provoquant un crash dans le diaporama
 </fr-FR>
 <it-IT>
 Modificare:
-- Rimosso l\'avviso sulla rotazione dello schermo a metà di una presentazione.
+- aggiunte traduzioni per un errore che può verificarsi durante la compressione video
+- Utilizza il GUID di installazione dell\'app Firebase per la crittografia dei messaggi, se disponibile
 Risoluzione del problema:
-- Il download di file o la condivisione di risorse può non riuscire e quindi bloccare la funzione fino al riavvio su Android 10
-- Preferenze corrette che apparivano invisibili in modalità Android Dark (ora utilizzabile)
-- risolto il problema di contrasto nel popup di dialogo nell\'app principale (modalità scura)
+- Correzione della traduzione della stringa per il russo che causava un arresto anomalo nella presentazione
 </it-IT>
 <ja-JP>
 変化する：
--スライドショーの途中で画面が回転するときの警告を削除しました。
+-ビデオ圧縮中に発生する可能性のあるエラーの翻訳を追加しました
+-可能な場合は、メッセージの暗号化にFirebaseアプリのインストールGUIDを使用します
 バグ修正：
--ファイルのダウンロードまたはリソースの共有が失敗し、Android10で再起動するまで機能がロックされる可能性があります
--Androidダークモードで非表示に表示される修正された設定（現在使用可能）
--メインアプリのダイアログポップアップのコントラストの問題を修正しました（ダークモード）
+-スライドショーでクラッシュを引き起こすロシア語の文字列変換を修正しました
 </ja-JP>
 <ru-RU>
 Изменить:
-- Убрано предупреждение о повороте экрана во время слайд-шоу.
+- добавлены переводы для ошибки, которая может возникнуть при сжатии видео
+- Используйте GUID установки приложения Firebase для шифрования сообщений, если это возможно.
 Исправлена ошибка:
-- Загрузка файла или совместное использование ресурсов может завершиться ошибкой, а затем заблокировать функцию до перезапуска на Android 10.
-- Исправлены настройки, невидимые в темном режиме Android (теперь можно использовать).
-- исправлена проблема с контрастом во всплывающем диалоговом окне в основном приложении (темный режим)
+- Исправлен перевод строки на русский язык, вызывающий сбой в слайд-шоу.
 </ru-RU>
 <zh-CN>
 更改：
--删除了在幻灯片播放中途出现的屏幕旋转警告。
+-添加了翻译，以解决视频压缩期间可能发生的错误
+-使用Firebase应用程序安装GUID进行消息加密（如果可用）
 错误修正：
--文件下载或资源共享可能会失败，然后锁定功能，直到在Android 10上重新启动
--更正的首选项在Android Dark模式下显示为不可见（现已可用）
--修复了主应用中对话框弹出对话框的对比度问题（黑暗模式）
+-更正了俄语导致的幻灯片翻译崩溃导致的字符串翻译
 </zh-CN>
