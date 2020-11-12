@@ -571,7 +571,7 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="album_title_home">дом</string>
     <string name="upload_file_rating">Мой рейтинг</string>
     <string name="slideshow_image_details_rating_score_title">Рейтинг</string>
-    <string name="rating_score_pattern">% 1 $ 0,2f (%2$d ставки)</string>
+    <string name="rating_score_pattern">%1$.2f (%2$d ставки)</string>
     <string name="connection_reset_warning_pattern">Сервер закрыл соединение%1$d раз за последние%2$d минут. Это может указывать на проблему с конфигурацией вашего сервера.</string>
     <string name="content_description_icon">икона</string>
     <string name="duplicates_ignored_pattern">%1$d дубликатов проигнорированы.</string>
