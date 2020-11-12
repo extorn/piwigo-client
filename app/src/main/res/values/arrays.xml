@@ -248,6 +248,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.85</item>
+        <item>"Change:
+                - added translations for an error that can occur during video compression
+                - Use Firebase App Installation GUID for message encryption where available
+               Bugfix:
+                - Corrected string translation for russian causing crash in slideshow"</item>
         <item>1.4.0.84</item>
         <item>"Change:
                 - Removed the warning on screen rotate when mid way through a slideshow.
