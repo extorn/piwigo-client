@@ -175,7 +175,10 @@ public class LicenceCheckingHelper {
     }
 
     private synchronized void doCheck() {
-
+        if(mLicenseCheckerCallback == null || mChecker == null) {
+            Logging.log(Log.DEBUG, TAG, "Skipping licence check");
+            return;
+        }
         long maxInterval = 1000 * 60 * 60 * 6;
         // check again a maximum of every 6 hours apart.
         if (lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval < System.currentTimeMillis()) {
@@ -207,7 +210,9 @@ public class LicenceCheckingHelper {
     }
 
     protected void onDestroy() {
-        mChecker.onDestroy();
+        if(mChecker != null) {
+            mChecker.onDestroy();
+        }
     }
 
     private class MyLicenseCheckerCallback implements LicenseCheckerCallback {

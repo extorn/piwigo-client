@@ -183,9 +183,9 @@ public class CachingAsyncHttpClient implements Closeable {
      * @return encoded url if requested with params appended if any available
      */
     public static String getUrlWithQueryString(boolean shouldEncodeUrl, String url, RequestParams params) {
-        if (url == null)
+        if (url == null) {
             return null;
-
+        }
         if (shouldEncodeUrl) {
             try {
                 String decodedURL = URLDecoder.decode(url, "UTF-8");
