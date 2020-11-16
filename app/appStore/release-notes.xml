@@ -1,63 +1,63 @@
 <en-GB>
 Change:
-- added translations for an error that can occur during video compression
-- Use Firebase App Installation GUID for message encryption where available
-Bugfix:
-- Corrected string translation for russian causing crash in slideshow
+- App Support added for the Extended Description Plugin (note: this plugin doesn't support the WS-API yet)
+- Much better handling of HTML style comments display
+- Scrolling for ultra long album descriptions
+- Max of 10 lines for sub-album descriptions
 </en-GB>
 <cs-CZ>
 Změna:
-- přidány překlady pro chybu, ke které může dojít během komprese videa
-- Použijte šifrování GUID instalace aplikace Firebase pro šifrování zpráv, pokud je k dispozici
-Oprava chyby:
-- Opravený překlad řetězců pro ruštinu způsobující pád v prezentaci
+- Přidána podpora aplikací pro rozšířený popisový modul (poznámka: tento plugin zatím nepodporuje WS-API)
+- Mnohem lepší zpracování zobrazení komentářů ve stylu HTML
+- Rolování pro ultra dlouhé popisy alb
+- Maximálně 10 řádků pro popisy subalba
 </cs-CZ>
 <de-DE>
 Veränderung:
-- Übersetzungen für einen Fehler hinzugefügt, der während der Videokomprimierung auftreten kann
-- Verwenden Sie die Firebase App-Installations-GUID für die Nachrichtenverschlüsselung, sofern verfügbar
-Bug-Fix:
-- Die String-Übersetzung für Russisch wurde korrigiert und verursacht einen Absturz in der Diashow
+- App-Unterstützung für das Extended Description Plugin hinzugefügt (Hinweis: Dieses Plugin unterstützt die WS-API noch nicht)
+- Viel bessere Handhabung der Anzeige von Kommentaren im HTML-Stil
+- Scrollen für extrem lange Albumbeschreibungen
+- Maximal 10 Zeilen für Unteralbumbeschreibungen
 </de-DE>
 <es-ES>
 Cambio:
-- traducciones agregadas para un error que puede ocurrir durante la compresión de video
-- Use el GUID de instalación de la aplicación Firebase para el cifrado de mensajes cuando esté disponible
-Arreglo del fallo:
-- Se corrigió la traducción de cadenas para el ruso causando un bloqueo en la presentación
+- Soporte de aplicaciones agregado para el complemento de descripción extendida (nota: este complemento aún no es compatible con WS-API)
+- Manejo mucho mejor de la visualización de comentarios de estilo HTML
+- Desplazamiento para descripciones de álbumes ultralargas
+- Máximo de 10 líneas para descripciones de sublbumes
 </es-ES>
 <fr-FR>
 Changement:
-- ajout de traductions pour une erreur pouvant survenir lors de la compression vidéo
-- Utilisez le GUID d\'installation de l\'application Firebase pour le chiffrement des messages, le cas échéant
-Correction d\'un bug:
-- Correction de la traduction des chaînes pour le russe provoquant un crash dans le diaporama
+- Prise en charge de l\'application ajoutée pour le plugin de description étendue (note: ce plugin ne prend pas encore en charge le WS-API)
+- Meilleure gestion de l\'affichage des commentaires de style HTML
+- Faire défiler les descriptions d\'albums ultra longues
+- Maximum de 10 lignes pour les descriptions de sous-albums
 </fr-FR>
 <it-IT>
 Modificare:
-- aggiunte traduzioni per un errore che può verificarsi durante la compressione video
-- Utilizza il GUID di installazione dell\'app Firebase per la crittografia dei messaggi, se disponibile
-Risoluzione del problema:
-- Correzione della traduzione della stringa per il russo che causava un arresto anomalo nella presentazione
+- Supporto app aggiunto per Extended Description Plugin (nota: questo plugin non supporta ancora WS-API)
+- Gestione molto migliore della visualizzazione dei commenti in stile HTML
+- Scorrimento per descrizioni di album ultra lunghe
+- Max 10 righe per le descrizioni dei sottoalbum
 </it-IT>
 <ja-JP>
 変化する：
--ビデオ圧縮中に発生する可能性のあるエラーの翻訳を追加しました
--可能な場合は、メッセージの暗号化にFirebaseアプリのインストールGUIDを使用します
-バグ修正：
--スライドショーでクラッシュを引き起こすロシア語の文字列変換を修正しました
+-拡張記述プラグインのアプリサポートが追加されました（注：このプラグインはまだWS-APIをサポートしていません）
+-HTMLスタイルのコメント表示の処理が大幅に改善されました
+-超長いアルバムの説明をスクロールする
+-サブアルバムの説明は最大10行
 </ja-JP>
 <ru-RU>
 Изменить:
-- добавлены переводы для ошибки, которая может возникнуть при сжатии видео
-- Используйте GUID установки приложения Firebase для шифрования сообщений, если это возможно.
-Исправлена ошибка:
-- Исправлен перевод строки на русский язык, вызывающий сбой в слайд-шоу.
+- Добавлена поддержка приложений для подключаемого модуля расширенного описания (примечание: этот подключаемый модуль еще не поддерживает WS-API)
+- Значительно улучшена обработка комментариев в стиле HTML.
+- Прокрутка для сверхдлинных описаний альбомов
+- Максимум 10 строк для описания субальбомов
 </ru-RU>
 <zh-CN>
 更改：
--添加了翻译，以解决视频压缩期间可能发生的错误
--使用Firebase应用程序安装GUID进行消息加密（如果可用）
-错误修正：
--更正了俄语导致的幻灯片翻译崩溃导致的字符串翻译
+-为扩展描述插件添加了应用程序支持（注意：此插件尚不支持WS-API）
+-更好地处理HTML样式的注释显示
+-滚动查看超长专辑说明
+-最多10行用于子相册描述
 </zh-CN>

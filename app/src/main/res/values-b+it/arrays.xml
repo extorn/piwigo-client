@@ -145,6 +145,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.86</item>
+        <item>"Modificare:
+             - Supporto app aggiunto per Extended Description Plugin (nota: questo plugin non supporta ancora WS-API)
+             - Gestione molto migliore della visualizzazione dei commenti in stile HTML
+             - Scorrimento per descrizioni di album ultra lunghe
+             - Max 10 righe per le descrizioni dei sottoalbum"</item>
         <item>1.4.0.85</item>
         <item>"Modificare:
                  - aggiunte traduzioni per un errore che può verificarsi durante la compressione video

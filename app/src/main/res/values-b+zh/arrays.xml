@@ -145,6 +145,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.86</item>
+        <item>"更改：
+             -为扩展描述插件添加了应用程序支持（注意：此插件尚不支持WS-API）
+             -更好地处理HTML样式的注释显示
+             -滚动查看超长专辑说明
+             -最多10行用于子相册描述"</item>
         <item>1.4.0.85</item>
         <item>"更改：
                  -添加了翻译，以解决视频压缩期间可能发生的错误

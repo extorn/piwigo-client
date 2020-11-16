@@ -145,6 +145,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.86</item>
+        <item>"Cambio:
+             - Soporte de aplicaciones agregado para el complemento de descripción extendida (nota: este complemento aún no es compatible con WS-API)
+             - Manejo mucho mejor de la visualización de comentarios de estilo HTML
+             - Desplazamiento para descripciones de álbumes ultralargas
+             - Máximo de 10 líneas para descripciones de sublbumes"</item>
         <item>1.4.0.85</item>
         <item>"Cambio:
                  - traducciones agregadas para un error que puede ocurrir durante la compresión de video
