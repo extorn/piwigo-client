@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
@@ -27,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.text.HtmlCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -1722,7 +1726,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
 
         if (galleryModel.getContainerDetails().getDescription() != null && !galleryModel.getContainerDetails().getDescription().isEmpty() && CategoryItem.ROOT_ALBUM != galleryModel.getContainerDetails()) {
-            galleryDescriptionHeader.setText(galleryModel.getContainerDetails().getDescription());
+            // support for the extended description plugin.
+            String description = PiwigoUtils.getResourceDescriptionInsideAlbum(galleryModel.getContainerDetails().getDescription());
+            Spanned spannedText = PiwigoUtils.getSpannedHtmlText(description);
+            galleryDescriptionHeader.setText(spannedText);
         }
 
         if (galleryModel.getContainerDetails().getDescription() != null && !galleryModel.getContainerDetails().getDescription().isEmpty()) {

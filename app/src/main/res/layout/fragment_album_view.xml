@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,46 +12,71 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         ads:adSize="SMART_BANNER"
-        ads:adUnitId="@string/ad_id_album_banner"/>
+        ads:adUnitId="@string/ad_id_album_banner"
+        ads:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/album_header_bar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/gallery_adView"
+        app:layout_constrainedHeight="true"
         android:layout_alignWithParentIfMissing="true"
+        android:paddingBottom="4dp"
         android:visibility="visible"
-        android:paddingBottom="4dp">
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toBottomOf="@id/gallery_adView"
+        app:layout_constraintBottom_toTopOf="@id/guideline_album_header_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/gallery_details_name_header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textAppearance="?textAppearanceHeadline5"
-            app:layout_constraintBottom_toTopOf="@id/gallery_details_description_header"
             app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Gallery name" />
 
-        <TextView
-            android:id="@+id/gallery_details_description_header"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="8dp"
-            android:textAppearance="?textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/show_information_action_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/gallery_details_name_header"
-            tools:text="Gallery Description" />
+            app:layout_constrainedHeight="true"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
+            app:layout_constraintVertical_bias="0"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <TextView
+            android:id="@+id/gallery_details_description_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="?textAppearanceBody2"
+            tools:text="Gallery Description\n\n
+adsfasfs
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asfd\n\n
+asdfafsf\n\n
+END"
+            android:nestedScrollingEnabled="true"/>
+
+        </androidx.core.widget.NestedScrollView>
 
         <Button
             android:id="@+id/show_information_action_button"
@@ -70,114 +95,120 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
     <TextView
         android:id="@+id/album_empty_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/album_header_bar"
         android:layout_margin="5dp"
         android:padding="5dp"
         android:textAppearance="?textAppearanceHeadline5"
         android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_header_bar"
         tools:text="A Reason that this gallery is empty or which calls need repeating"
         tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/gallery_retryAction_actionButton"
-        android:layout_centerHorizontal="true"
-        android:layout_alignTop="@+id/gallery_list"
+        style="?extendedFloatingActionButtonStyle"
         android:layout_margin="10dp"
         android:clickable="true"
         android:focusable="true"
         app:fabSize="mini"
         app:icon="@drawable/ic_refresh_black_24dp"
-        style="?extendedFloatingActionButtonStyle" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gallery_list" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gallery_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@id/album_empty_content"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline_margin_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_empty_content" />
 
     <include
         layout="@layout/layout_basket_summary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/album_header_bar"
-        android:layout_margin="20dp" />
+        android:layout_margin="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/album_header_bar" />
 
     <RelativeLayout
         android:id="@+id/gallery_actions_bulk_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/basket"
-        android:layout_alignParentStart="true"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="80dp">
+        android:layout_marginBottom="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/basket">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_permissions_bulk"
+            style="?extendedFloatingActionButtonStyle"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="10dp"
-            app:icon="@drawable/ic_vpn_key_black_24dp"
-            style="?extendedFloatingActionButtonStyle"/>
+            app:icon="@drawable/ic_vpn_key_black_24dp" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_tag_bulk"
+            style="?extendedFloatingActionButtonStyle"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_permissions_bulk"
-            app:icon="@drawable/ic_add_tag_black_24dp"
-            style="?extendedFloatingActionButtonStyle" />
+            app:icon="@drawable/ic_add_tag_black_24dp" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_paste_bulk"
+            style="?extendedFloatingActionButtonStyle"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_tag_bulk"
-            app:icon="@drawable/ic_content_paste_black_24dp"
-            style="?extendedFloatingActionButtonStyle" />
+            app:icon="@drawable/ic_content_paste_black_24dp" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_cut_bulk"
+            style="?extendedFloatingActionButtonStyle"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_paste_bulk"
-            app:icon="@drawable/ic_content_cut_black_24px"
-            style="?extendedFloatingActionButtonStyle" />
+            app:icon="@drawable/ic_content_cut_black_24px" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_copy_bulk"
+            style="?extendedFloatingActionButtonStyle"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_cut_bulk"
-            app:icon="@drawable/ic_content_copy_black_24px"
-            style="?extendedFloatingActionButtonStyle"/>
+            app:icon="@drawable/ic_content_copy_black_24px" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_download_bulk"
+            style="?extendedFloatingActionButtonStyle"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_copy_bulk"
-            app:icon="@drawable/ic_file_download_black_24px"
-            style="?extendedFloatingActionButtonStyle" />
+            app:icon="@drawable/ic_file_download_black_24px" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/gallery_action_delete_bulk"
+            style="?extendedFloatingActionButtonStyle"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@+id/gallery_action_download_bulk"
-            app:icon="@drawable/ic_delete_black_24px"
-            style="?extendedFloatingActionButtonStyle" />
+            app:icon="@drawable/ic_delete_black_24px" />
 
     </RelativeLayout>
 
     <delit.libs.ui.view.slidingsheet.SlidingBottomSheet
         android:id="@+id/slidingDetailBottomSheet"
-        android:theme="@style/Theme.App.EditPages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:theme="@style/Theme.App.EditPages"
         app:appBarViewId="@id/appbar"
-        tools:stateExpanded="true">
+        tools:stateExpanded="false">
 
         <LinearLayout
             android:id="@+id/gallery_bottom_sheet_content"
@@ -250,12 +281,13 @@
 
                     <TextView
                         android:id="@+id/gallery_details_name_label"
+                        style="?editableFieldLabel"
                         android:labelFor="@id/gallery_details_name"
-                        android:text="@string/gallery_details_name_title"
-                        style="?editableFieldLabel"/>
+                        android:text="@string/gallery_details_name_title" />
 
                     <EditText
                         android:id="@+id/gallery_details_name"
+                        style="?editableFieldText"
                         android:clickable="true"
                         android:focusable="true"
                         android:importantForAutofill="no"
@@ -263,78 +295,77 @@
                         android:maxLines="3"
                         tools:enabled="false"
                         tools:targetApi="o"
-                        tools:text="Gallery name"
-                        style="?editableFieldText"/>
+                        tools:text="Gallery name" />
 
                     <TextView
                         android:id="@+id/gallery_details_description_label"
+                        style="?editableFieldLabel"
                         android:labelFor="@id/gallery_details_description"
-                        android:text="@string/gallery_details_description_title"
-                        style="?editableFieldLabel" />
+                        android:text="@string/gallery_details_description_title" />
 
                     <EditText
                         android:id="@+id/gallery_details_description"
+                        style="?editableFieldText"
                         android:importantForAutofill="no"
                         android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="10"
                         tools:targetApi="o"
-                        tools:text="Gallery description"
-                        style="?editableFieldText"/>
+                        tools:text="Gallery description" />
 
                     <TextView
                         android:id="@+id/gallery_details_comments_allowed_label"
+                        style="?editableFieldLabel"
                         android:labelFor="@id/gallery_details_status"
                         android:text="@string/createGallery_galleryCommentsAllowed_title"
-                        android:visibility="gone"
-                        style="?editableFieldLabel" />
+                        android:visibility="gone" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/gallery_details_comments_allowed"
-                        tools:checked="true"
-                        android:visibility="gone"
+                        style="?editableFieldSwitch"
                         android:text="@string/createGallery_galleryCommentsAllowed"
-                        style="?editableFieldSwitch"/>
+                        android:visibility="gone"
+                        tools:checked="true" />
 
                     <TextView
                         android:id="@+id/gallery_details_status_label"
+                        style="?editableFieldLabel"
                         android:labelFor="@id/gallery_details_status"
-                        android:text="@string/gallery_details_status_title"
-                        style="?editableFieldLabel" />
+                        android:text="@string/gallery_details_status_title" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/gallery_details_status"
-                        android:text="@string/gallery_details_status"
-                        style="?editableFieldSwitch"/>
+                        style="?editableFieldSwitch"
+                        android:text="@string/gallery_details_status" />
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_groups_label"
+                        style="?editableFieldLabel"
                         android:labelFor="@id/gallery_details_allowed_groups"
-                        android:text="@string/gallery_details_allowed_groups_title"
-                        style="?editableFieldLabel" />
+                        android:text="@string/gallery_details_allowed_groups_title" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/gallery_details_allowed_groups"
+                        style="?editableFieldTextClickable"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        style="?editableFieldTextClickable"
                         tools:backgroundTint="?attr/scrimLight"
-                        tools:backgroundTintMode="src_in"/>
+                        tools:backgroundTintMode="src_in" />
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_users_label"
+                        style="?editableFieldLabel"
                         android:labelFor="@id/gallery_details_allowed_users"
-                        android:text="@string/gallery_details_allowed_users_title"
-                        style="?editableFieldLabel" />
+                        android:text="@string/gallery_details_allowed_users_title" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/gallery_details_allowed_users"
+                        style="?editableFieldTextClickable"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        style="?editableFieldTextClickable"
                         tools:backgroundTint="?attr/scrimHeavy"
-                        tools:backgroundTintMode="src_in"/>
+                        tools:backgroundTintMode="src_in" />
 
                 </LinearLayout>
 
@@ -343,5 +374,45 @@
 
         </LinearLayout>
     </delit.libs.ui.view.slidingsheet.SlidingBottomSheet>
-</RelativeLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_album_header_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".4"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_top"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_bottom"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/fragment_margin_start"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_margin_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/fragment_margin_end"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 

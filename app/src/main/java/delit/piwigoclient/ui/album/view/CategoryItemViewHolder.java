@@ -6,6 +6,7 @@ import android.widget.TextView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 
 import static android.view.View.INVISIBLE;
@@ -58,7 +59,9 @@ public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
 
         if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
             mDescView.setVisibility(View.VISIBLE);
-            mDescView.setText(newItem.getDescription());
+            // support for the extended description plugin.
+            String desc = PiwigoUtils.getResourceDescriptionOutsideAlbum(newItem.getDescription());
+            mDescView.setText(PiwigoUtils.getSpannedHtmlText(desc));
         } else {
             mDescView.setVisibility(INVISIBLE);
         }

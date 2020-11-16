@@ -339,7 +339,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void fillHeaderFields() {
         resourceTitleView.setText(model.getName());
-        resourceDescTitleView.setText(model.getDescription());
+        String desc = model.getDescription();
+        resourceDescTitleView.setText(PiwigoUtils.getSpannedHtmlText(desc));
     }
 
     @NonNull

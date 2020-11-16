@@ -53,25 +53,52 @@
             app:layout_constraintTop_toTopOf="@id/resource_thumbnail"
             tools:text="Album Name. This one is really long!" />
 
+        <!--<androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constrainedHeight="true"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toTopOf="@+id/album_photoCount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintTop_toBottomOf="@id/resource_name"
+            app:layout_constraintHeight_max="150dp">-->
         <TextView
             android:id="@+id/resource_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:maxLines="10"
             android:ellipsize="end"
             android:paddingStart="3dp"
             android:paddingTop="3dp"
             android:paddingEnd="3dp"
             android:paddingBottom="0dp"
-            android:textAppearance="?textAppearanceBody2"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintBottom_toTopOf="@+id/album_photoCount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
             app:layout_constraintTop_toBottomOf="@id/resource_name"
-            tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description. What do you think?" />
+            android:textAppearance="?textAppearanceBody2"
+            tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description. What do you think?
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+asdadfasd\n
+\n
+END" />
+        <!--</androidx.core.widget.NestedScrollView>-->
 
         <TextView
             android:id="@+id/album_photoCount"
