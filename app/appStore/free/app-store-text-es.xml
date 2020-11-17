@@ -2,7 +2,8 @@
 <resources>
     
     <string name="shortDesc">Explore y modifique el contenido en la galería de fotos de Piwigo de su elección</string>
-    <string name="longDesc">Utilícelo para explorar una galería de fotos de PIWIGO.
+    <string name="longDesc">
+Utilícelo para explorar una galería de fotos de PIWIGO.
 
 NOTA: El EULA debe aceptarse en la descarga.
 
@@ -33,7 +34,7 @@ Seleccione imágenes para cargar usando otras aplicaciones y compártalas con PI
 Modo de solo lectura de la aplicación especial disponible para evitar alteraciones no deseadas en la galería
 Algún control sobre el diseño de las pantallas en la aplicación (utilícelo para personalizar la pantalla de su dispositivo)
 
-Complementos de servidor compatibles: comunidad, piwigo_privacy, videojs.
+Complementos de servidor compatibles: community, piwigo_privacy, videojs, extended descriptions.
 
 ¿Quieres algo más que no esté en la lista? Prueba la aplicación. Si no hace exactamente lo que necesita. Envíeme un correo electrónico utilizando el enlace de la aplicación y buscaré agregar las funciones que faltan.
 
@@ -45,5 +46,6 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 Limitaciones conocidas:
 
 1. Actualmente, los comentarios no son compatibles; no puede verlos ni agregarlos. Si esta función que falta es importante para usted, hable conmigo.
-2. La cantidad de archivos que se pueden agregar a un trabajo de carga está limitada a 5 en esta versión gratuita (use la versión paga para eliminar este límite)</string>
+2. La cantidad de archivos que se pueden agregar a un trabajo de carga está limitada a 5 en esta versión gratuita (use la versión paga para eliminar este límite)
+</string>
 </resources>

@@ -2,7 +2,8 @@
 <resources>
     
     <string name="shortDesc">Parcourez et modifiez le contenu de la galerie de photos Piwigo de votre choix</string>
-    <string name="longDesc">Utilisez pour parcourir une galerie de photos PIWIGO.
+    <string name="longDesc">
+Utilisez pour parcourir une galerie de photos PIWIGO.
 
 REMARQUE: le CLUF doit être accepté lors du téléchargement.
 
@@ -33,7 +34,7 @@ Sélectionnez les images à télécharger à l\'aide d\'autres applications et p
 Mode lecture seule de l\'application spéciale disponible pour éviter toute modification indésirable de la galerie
 Un certain contrôle sur la disposition des écrans sur l\'application (à utiliser pour personnaliser l\'écran de votre appareil)
 
-Plugins de serveur pris en charge: communauté, piwigo_privacy, videojs.
+Plugins de serveur pris en charge: community, piwigo_privacy, videojs, extended descriptions.
 
 Vous voulez quelque chose d\'autre non répertorié? Essayez l\'appli. Si cela ne fait pas exactement ce dont vous avez besoin. Envoyez-moi un e-mail en utilisant le lien dans l\'application et je chercherai à ajouter la ou les fonctionnalités manquantes.
 
@@ -45,5 +46,6 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 Limitations connues:
 
 1. Les commentaires ne sont actuellement pas pris en charge - vous ne pouvez ni voir les commentaires ni les ajouter. Si cette fonctionnalité manquante est importante pour vous, parlez-moi s\'il vous plaît.
-2. Le nombre de fichiers pouvant être ajoutés à une tâche de téléchargement est limité à 5 dans cette version gratuite (utilisez la version payante pour supprimer cette limite)</string>
+2. Le nombre de fichiers pouvant être ajoutés à une tâche de téléchargement est limité à 5 dans cette version gratuite (utilisez la version payante pour supprimer cette limite)
+</string>
 </resources>

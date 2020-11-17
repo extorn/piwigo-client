@@ -36,7 +36,7 @@ Select image(s) for upload using other apps and share them with PIWIGO
 Special app read-only mode available to prevent any unwanted alterations to the gallery
 Some control over the layout of screens on the app (use to customise for the screen on your device)
 
-Supported server plugins : community, piwigo_privacy, videojs.
+Supported server plugins : community, piwigo_privacy, videojs, extended descriptions.
 
 Want something else not listed? Try the app. If it doesn't do exactly what you need. Drop me an email using the link in the app and I'll look into adding the missing feature(s).
 
@@ -49,5 +49,6 @@ Known limitations:
 
 1. Comments are currently unsupported - you can neither see comments nor add them. If this missing feature is important to you - please talk to me.
 2. The number of files that can be added to an upload job is limited to 5 in this free version (use the paid version to remove this limit)
-    </string>
+
+</string>
 </resources>

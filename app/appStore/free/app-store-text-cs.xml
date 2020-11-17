@@ -2,7 +2,8 @@
 <resources>
     
     <string name="shortDesc">Procházejte a upravujte obsah ve fotogalerii Piwigo podle vašeho výběru</string>
-    <string name="longDesc">Slouží k procházení fotogalerie PIWIGO.
+    <string name="longDesc">
+Slouží k procházení fotogalerie PIWIGO.
 
 POZNÁMKA: Při stahování musí být přijata smlouva EULA.
 
@@ -33,7 +34,7 @@ Vyberte obrázky pro nahrání pomocí jiných aplikací a sdílejte je s PIWIGO
 K dispozici je speciální režim jen pro čtení, který zabraňuje nežádoucím změnám v galerii
 Určitá kontrola nad rozložením obrazovek v aplikaci (slouží k přizpůsobení obrazovky na vašem zařízení)
 
-Podporované doplňky serveru: komunita, piwigo_privacy, videojs.
+Podporované doplňky serveru: community, piwigo_privacy, videojs, extended descriptions.
 
 Chcete něco jiného, ​​co není uvedeno? Vyzkoušejte aplikaci. Pokud to nedělá přesně to, co potřebujete. Napište mi e-mail pomocí odkazu v aplikaci a já se podívám na přidání chybějících funkcí.
 
@@ -45,5 +46,6 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 Známá omezení:
 
 1. Komentáře nejsou aktuálně podporovány - komentáře nevidíte ani nepřidáváte. Pokud je pro vás tato chybějící funkce důležitá - promluvte si se mnou.
-2. Počet souborů, které lze přidat do úlohy nahrávání, je v této bezplatné verzi omezen na 5 (k odstranění tohoto limitu použijte placenou verzi)</string>
+2. Počet souborů, které lze přidat do úlohy nahrávání, je v této bezplatné verzi omezen na 5 (k odstranění tohoto limitu použijte placenou verzi)
+</string>
 </resources>

@@ -2,7 +2,8 @@
 <resources>
     
     <string name="shortDesc">Sfoglia e modifica i contenuti della galleria fotografica di Piwigo che preferisci</string>
-    <string name="longDesc">Utilizzare per sfogliare una galleria fotografica PIWIGO.
+    <string name="longDesc">
+Utilizzare per sfogliare una galleria fotografica PIWIGO.
 
 NOTA: è necessario accettare l\'EULA durante il download.
 
@@ -36,7 +37,7 @@ Seleziona le immagini da caricare utilizzando altre app e condividile con PIWIGO
 App speciale modalità di sola lettura disponibile per evitare alterazioni indesiderate alla galleria
 Alcuni controlli sul layout degli schermi sull\'app (utilizzare per personalizzare lo schermo sul dispositivo)
 
-Plugin del server supportati: community, piwigo_privacy, videojs, user-tags.
+Plugin del server supportati: community, piwigo_privacy, videojs, user-tags, extended descriptions.
 
 Vuoi qualcos\'altro non elencato? Prova l\'app. Se non fa esattamente quello che ti serve. Inviami un\'e-mail utilizzando il collegamento nell\'app e cercherò di aggiungere le funzionalità mancanti.
 
@@ -47,5 +48,6 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 
 Limitazioni note:
 
-1. I commenti non sono attualmente supportati: non puoi né vederli né aggiungerli. Se questa funzione mancante è importante per te, parlami.</string>
+1. I commenti non sono attualmente supportati: non puoi né vederli né aggiungerli. Se questa funzione mancante è importante per te, parlami.
+</string>
 </resources>
