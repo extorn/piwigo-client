@@ -145,6 +145,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.87</item>
+        <item>"変更点：
+             -最新のPiwigoClientExtプラグインバージョンがインストールされている場合の拡張記述プラグインのサポート。
+             バグ修正：
+             --Htmlスタイルのコメントの新しいコードはnullをサポートしていませんでした-申し訳ありません！"
+        </item>
+
         <item>1.4.0.86</item>
         <item>"変化する：
              -拡張記述プラグインのアプリサポートが追加されました（注：このプラグインはまだWS-APIをサポートしていません）

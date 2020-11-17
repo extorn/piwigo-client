@@ -37,6 +37,11 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
+    public String getPiwigoMethod() {
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.categories.getList");
+    }
+
+    @Override
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());

@@ -248,6 +248,13 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.87</item>
+        <item>"Changes:
+            - Support for Extended Description Plugin when latest PiwigoClientExt plugin version installed.
+            Bugfix:
+            - New code for Html style comments didn't support nulls - Sorry!"
+        </item>
+
         <item>1.4.0.86</item>
         <item>"Change:
             - App Support added for the Extended Description Plugin (note: this plugin doesn't support the WS-API yet)

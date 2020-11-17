@@ -25,6 +25,11 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
     }
 
     @Override
+    public String getPiwigoMethod() {
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.categories.getAdminList");
+    }
+
+    @Override
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());

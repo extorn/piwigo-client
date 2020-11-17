@@ -1,63 +1,54 @@
 <en-GB>
-Change:
-- App Support added for the Extended Description Plugin (note: this plugin doesn't support the WS-API yet)
-- Much better handling of HTML style comments display
-- Scrolling for ultra long album descriptions
-- Max of 10 lines for sub-album descriptions
+Changes:
+- Support for Extended Description Plugin when latest PiwigoClientExt plugin version installed.
+Bugfix:
+- New code for Html style comments didn't support nulls - Sorry!
 </en-GB>
 <cs-CZ>
-Změna:
-- Přidána podpora aplikací pro rozšířený popisový modul (poznámka: tento plugin zatím nepodporuje WS-API)
-- Mnohem lepší zpracování zobrazení komentářů ve stylu HTML
-- Rolování pro ultra dlouhé popisy alb
-- Maximálně 10 řádků pro popisy subalba
+Změny:
+- Podpora pluginu s rozšířeným popisem, když je nainstalována nejnovější verze pluginu PiwigoClientExt.
+Oprava chyby:
+- Nový kód pro komentáře ve stylu HTML nepodporoval nuly - Omlouváme se!
 </cs-CZ>
 <de-DE>
-Veränderung:
-- App-Unterstützung für das Extended Description Plugin hinzugefügt (Hinweis: Dieses Plugin unterstützt die WS-API noch nicht)
-- Viel bessere Handhabung der Anzeige von Kommentaren im HTML-Stil
-- Scrollen für extrem lange Albumbeschreibungen
-- Maximal 10 Zeilen für Unteralbumbeschreibungen
+Änderungen:
+- Unterstützung für Extended Description Plugin, wenn die neueste Version des PiwigoClientExt-Plugins installiert ist.
+Bug-Fix:
+- Neuer Code für Kommentare im HTML-Stil unterstützt keine Nullen - Entschuldigung!
 </de-DE>
 <es-ES>
-Cambio:
-- Soporte de aplicaciones agregado para el complemento de descripción extendida (nota: este complemento aún no es compatible con WS-API)
-- Manejo mucho mejor de la visualización de comentarios de estilo HTML
-- Desplazamiento para descripciones de álbumes ultralargas
-- Máximo de 10 líneas para descripciones de sublbumes
+Cambios:
+- Soporte para el complemento de descripción extendida cuando se instala la última versión del complemento PiwigoClientExt.
+Arreglo del fallo:
+- El nuevo código para comentarios de estilo Html no admitía nulos - ¡Lo sentimos!
 </es-ES>
 <fr-FR>
-Changement:
-- Prise en charge de l\'application ajoutée pour le plugin de description étendue (note: ce plugin ne prend pas encore en charge le WS-API)
-- Meilleure gestion de l\'affichage des commentaires de style HTML
-- Faire défiler les descriptions d\'albums ultra longues
-- Maximum de 10 lignes pour les descriptions de sous-albums
+Changements:
+- Prise en charge du plugin de description étendue lorsque la dernière version du plugin PiwigoClientExt est installée.
+Correction d\'un bug:
+- Le nouveau code pour les commentaires de style Html ne supportait pas les nulls - Désolé!
 </fr-FR>
 <it-IT>
-Modificare:
-- Supporto app aggiunto per Extended Description Plugin (nota: questo plugin non supporta ancora WS-API)
-- Gestione molto migliore della visualizzazione dei commenti in stile HTML
-- Scorrimento per descrizioni di album ultra lunghe
-- Max 10 righe per le descrizioni dei sottoalbum
+I cambiamenti:
+- Supporto per Extended Description Plugin quando è installata l\'ultima versione del plugin PiwigoClientExt.
+Risoluzione del problema:
+- Il nuovo codice per i commenti in stile Html non supportava i valori nulli - Scusa!
 </it-IT>
 <ja-JP>
-変化する：
--拡張記述プラグインのアプリサポートが追加されました（注：このプラグインはまだWS-APIをサポートしていません）
--HTMLスタイルのコメント表示の処理が大幅に改善されました
--超長いアルバムの説明をスクロールする
--サブアルバムの説明は最大10行
+変更点：
+-最新のPiwigoClientExtプラグインバージョンがインストールされている場合の拡張記述プラグインのサポート。
+バグ修正：
+--Htmlスタイルのコメントの新しいコードはnullをサポートしていませんでした-申し訳ありません！
 </ja-JP>
 <ru-RU>
-Изменить:
-- Добавлена поддержка приложений для подключаемого модуля расширенного описания (примечание: этот подключаемый модуль еще не поддерживает WS-API)
-- Значительно улучшена обработка комментариев в стиле HTML.
-- Прокрутка для сверхдлинных описаний альбомов
-- Максимум 10 строк для описания субальбомов
+Изменения:
+- Поддержка плагина расширенного описания при установке последней версии плагина PiwigoClientExt.
+Исправлена ошибка:
+- Новый код для комментариев в стиле Html не поддерживает нули - Извините!
 </ru-RU>
 <zh-CN>
-更改：
--为扩展描述插件添加了应用程序支持（注意：此插件尚不支持WS-API）
--更好地处理HTML样式的注释显示
--滚动查看超长专辑说明
--最多10行用于子相册描述
+变化：
+-安装最新的PiwigoClientExt插件版本时，支持扩展描述插件。
+错误修正：
+-HTML样式注释的新代码不支持null-抱歉！
 </zh-CN>

@@ -2009,6 +2009,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     item.setUsers(galleryModel.getContainerDetails().getUsers());
                     // now update the reference.
                     galleryModel.setContainerDetails(item);
+                    // update the display.
+                    setGalleryHeadings();
                 }
             }
             if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !loadingMessageIds.containsValue("AL")) {
