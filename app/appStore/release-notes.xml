@@ -1,54 +1,36 @@
 <en-GB>
-Changes:
-- Support for Extended Description Plugin when latest PiwigoClientExt plugin version installed.
 Bugfix:
-- New code for Html style comments didn't support nulls - Sorry!
+- Fixed problem with the image compressor not working on recent versions of Android
 </en-GB>
 <cs-CZ>
-Změny:
-- Podpora pluginu s rozšířeným popisem, když je nainstalována nejnovější verze pluginu PiwigoClientExt.
 Oprava chyby:
-- Nový kód pro komentáře ve stylu HTML nepodporoval nuly - Omlouváme se!
+- Opravený problém s nefunkčním kompresorem obrazu v posledních verzích systému Android
 </cs-CZ>
 <de-DE>
-Änderungen:
-- Unterstützung für Extended Description Plugin, wenn die neueste Version des PiwigoClientExt-Plugins installiert ist.
 Bug-Fix:
-- Neuer Code für Kommentare im HTML-Stil unterstützt keine Nullen - Entschuldigung!
+- Problem behoben, bei dem der Bildkomprimierer auf neueren Android-Versionen nicht funktioniert
 </de-DE>
 <es-ES>
-Cambios:
-- Soporte para el complemento de descripción extendida cuando se instala la última versión del complemento PiwigoClientExt.
 Arreglo del fallo:
-- El nuevo código para comentarios de estilo Html no admitía nulos - ¡Lo sentimos!
+- Se solucionó el problema con el compresor de imágenes que no funcionaba en versiones recientes de Android
 </es-ES>
 <fr-FR>
-Changements:
-- Prise en charge du plugin de description étendue lorsque la dernière version du plugin PiwigoClientExt est installée.
 Correction d\'un bug:
-- Le nouveau code pour les commentaires de style Html ne supportait pas les nulls - Désolé!
+- Correction d\'un problème avec le compresseur d\'image ne fonctionnant pas sur les versions récentes d\'Android
 </fr-FR>
 <it-IT>
-I cambiamenti:
-- Supporto per Extended Description Plugin quando è installata l\'ultima versione del plugin PiwigoClientExt.
 Risoluzione del problema:
-- Il nuovo codice per i commenti in stile Html non supportava i valori nulli - Scusa!
+- Risolto il problema con il compressore di immagini che non funzionava sulle versioni recenti di Android
 </it-IT>
 <ja-JP>
-変更点：
--最新のPiwigoClientExtプラグインバージョンがインストールされている場合の拡張記述プラグインのサポート。
 バグ修正：
---Htmlスタイルのコメントの新しいコードはnullをサポートしていませんでした-申し訳ありません！
+-Androidの最近のバージョンで画像コンプレッサーが機能しない問題を修正しました
 </ja-JP>
 <ru-RU>
-Изменения:
-- Поддержка плагина расширенного описания при установке последней версии плагина PiwigoClientExt.
 Исправлена ошибка:
-- Новый код для комментариев в стиле Html не поддерживает нули - Извините!
+- Исправлена проблема, когда компрессор изображений не работал в последних версиях Android.
 </ru-RU>
 <zh-CN>
-变化：
--安装最新的PiwigoClientExt插件版本时，支持扩展描述插件。
 错误修正：
--HTML样式注释的新代码不支持null-抱歉！
+-修复了图像压缩器在最新版本的Android上不起作用的问题
 </zh-CN>
