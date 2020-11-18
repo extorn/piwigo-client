@@ -147,7 +147,8 @@
         
         <item>1.4.0.88</item>
         <item>"Risoluzione del problema:
-             - Risolto il problema con il compressore di immagini che non funzionava sulle versioni recenti di Android"
+             - Il compressore di immagini non funziona sulle versioni recenti di Android
+             - Problemi di layout con i pulsanti di azione collettiva dopo aver premuto a lungo in un album"
         </item>
         <item>1.4.0.87</item>
         <item>"I cambiamenti:

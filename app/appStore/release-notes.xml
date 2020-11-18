@@ -1,36 +1,45 @@
 <en-GB>
 Bugfix:
-- Fixed problem with the image compressor not working on recent versions of Android
+- Image compressor not working on recent versions of Android
+- Layout issues with bulk action buttons after long press in an album
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Opravený problém s nefunkčním kompresorem obrazu v posledních verzích systému Android
+- Kompresor obrazu nefunguje v posledních verzích systému Android
+- Problémy s rozložením tlačítek hromadné akce po dlouhém stisknutí alba
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Problem behoben, bei dem der Bildkomprimierer auf neueren Android-Versionen nicht funktioniert
+- Der Bildkomprimierer funktioniert nicht mit neueren Android-Versionen
+- Layoutprobleme mit Massenaktionsschaltflächen nach langem Drücken in einem Album
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Se solucionó el problema con el compresor de imágenes que no funcionaba en versiones recientes de Android
+- El compresor de imágenes no funciona en versiones recientes de Android
+- Problemas de diseño con botones de acción masiva después de una pulsación larga en un álbum
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Correction d\'un problème avec le compresseur d\'image ne fonctionnant pas sur les versions récentes d\'Android
+- Le compresseur d\'image ne fonctionne pas sur les versions récentes d\'Android
+- Problèmes de mise en page avec les boutons d\'action en masse après un appui long sur un album
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Risolto il problema con il compressore di immagini che non funzionava sulle versioni recenti di Android
+- Il compressore di immagini non funziona sulle versioni recenti di Android
+- Problemi di layout con i pulsanti di azione collettiva dopo aver premuto a lungo in un album
 </it-IT>
 <ja-JP>
 バグ修正：
--Androidの最近のバージョンで画像コンプレッサーが機能しない問題を修正しました
+-Androidの最近のバージョンで画像コンプレッサーが機能しない
+-アルバムを長押しした後の一括アクションボタンのレイアウトの問題
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Исправлена проблема, когда компрессор изображений не работал в последних версиях Android.
+- Компрессор изображений не работает в последних версиях Android.
+- Проблемы с макетом с кнопками массового действия после длительного нажатия в альбоме
 </ru-RU>
 <zh-CN>
 错误修正：
--修复了图像压缩器在最新版本的Android上不起作用的问题
+-图片压缩器不适用于最新版本的Android
+-长按相册后，批量操作按钮的布局问题
 </zh-CN>

@@ -250,7 +250,8 @@
         -->
         <item>1.4.0.88</item>
         <item>"Bugfix:
-            - Fixed problem with the image compressor not working on recent versions of Android"
+            - Image compressor not working on recent versions of Android
+            - Layout issues with bulk action buttons after long press in an album"
         </item>
         <item>1.4.0.87</item>
         <item>"Changes:

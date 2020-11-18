@@ -147,7 +147,8 @@
         
         <item>1.4.0.88</item>
         <item>"Bug-Fix:
-             - Problem behoben, bei dem der Bildkomprimierer auf neueren Android-Versionen nicht funktioniert"
+             - Der Bildkomprimierer funktioniert nicht mit neueren Android-Versionen
+             - Layoutprobleme mit Massenaktionsschaltflächen nach langem Drücken in einem Album"
         </item>
         <item>1.4.0.87</item>
         <item>"Änderungen:

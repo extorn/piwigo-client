@@ -147,7 +147,8 @@
         
         <item>1.4.0.88</item>
         <item>"Correction d\'un bug:
-             - Correction d\'un problème avec le compresseur d\'image ne fonctionnant pas sur les versions récentes d\'Android"
+             - Le compresseur d\'image ne fonctionne pas sur les versions récentes d\'Android
+             - Problèmes de mise en page avec les boutons d\'action en masse après un appui long sur un album"
         </item>
         <item>1.4.0.87</item>
         <item>"Changements:

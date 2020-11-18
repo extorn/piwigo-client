@@ -147,7 +147,8 @@
         
         <item>1.4.0.88</item>
         <item>"Arreglo del fallo:
-             - Se solucionó el problema con el compresor de imágenes que no funcionaba en versiones recientes de Android"
+             - El compresor de imágenes no funciona en versiones recientes de Android
+             - Problemas de diseño con botones de acción masiva después de una pulsación larga en un álbum"
         </item>
         <item>1.4.0.87</item>
         <item>"Cambios:

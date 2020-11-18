@@ -147,7 +147,8 @@
         
         <item>1.4.0.88</item>
         <item>"Oprava chyby:
-             - Opravený problém s nefunkčním kompresorem obrazu v posledních verzích systému Android"
+             - Kompresor obrazu nefunguje v posledních verzích systému Android
+             - Problémy s rozložením tlačítek hromadné akce po dlouhém stisknutí alba"
         </item>
         <item>1.4.0.87</item>
         <item>"Změny:
