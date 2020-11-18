@@ -36,8 +36,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 30
 
-        versionCode 326
-        versionName "1.4.0.87"
+        versionCode 327
+        versionName "1.4.0.88"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -192,7 +192,7 @@ dependencies {
     //implementation 'com.google.firebase:firebase-core:17.4.3'
     implementation 'com.google.firebase:firebase-iid:21.0.0'
     //implementation 'com.google.firebase:firebase-messaging:20.2.1'
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
     implementation 'com.google.firebase:firebase-ads:19.5.0'
     // don't think I need these
@@ -202,7 +202,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.5.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     // firebase-perf must be lower version than firebase-core and play-services*
-    implementation 'com.google.firebase:firebase-perf:19.0.9'
+    implementation 'com.google.firebase:firebase-perf:19.0.10'
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -213,7 +213,7 @@ dependencies {
     implementation 'net.ypresto.qtfaststartjava:qtfaststart:0.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
-    implementation 'id.zelory:compressor:2.1.0' //3.0.0 is kotlin. Need to learn that to use it!
+    implementation 'id.zelory:compressor:2.1.0' //3.0.x is kotlin. Need to learn that to use it!
     api 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation project(path: ':delit-core-libs')// image compression library apache2

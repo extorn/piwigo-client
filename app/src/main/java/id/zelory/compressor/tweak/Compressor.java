@@ -2,12 +2,13 @@ package id.zelory.compressor.tweak;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.exifinterface.media.ExifInterface;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -67,8 +68,8 @@ public class Compressor {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public File compressToFile(FileDescriptor imageFd, String compressedFileName) throws IOException {
-        return ImageUtil.compressImage(imageFd, maxWidth, maxHeight, compressFormat, quality,
+    public File compressToFile(Context c, Uri imageUri, ExifInterface exif, String compressedFileName) throws IOException {
+        return ImageUtil.compressImage(c, imageUri, exif, maxWidth, maxHeight, compressFormat, quality,
                 destinationDirectoryPath + File.separator + compressedFileName);
     }
 

@@ -1169,14 +1169,15 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             ExifInterface originalExifData;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 FileDescriptor fd = getContentResolver().openFileDescriptor(rawImage, "r").getFileDescriptor();
+                originalExifData = new ExifInterface(fd);
                 outputPhoto = DocumentFile.fromFile(new Compressor(this)
                         .setMaxHeight(maxHeight)
                         .setMaxWidth(maxWidth)
                         .setQuality(uploadJob.getImageCompressionParams().getQuality())
                         .setCompressFormat(outputFormat)
                         .setDestinationDirectoryPath(outputPhoto.getParentFile().getUri().getPath())
-                        .compressToFile(fd, outputPhoto.getName()));
-                originalExifData = new ExifInterface(fd);
+                        .compressToFile(this, rawImage, originalExifData, outputPhoto.getName()));
+
             } else {
                 outputPhoto = DocumentFile.fromFile(new Compressor(this)
                         .setMaxHeight(maxHeight)

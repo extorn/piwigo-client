@@ -248,6 +248,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.88</item>
+        <item>"Bugfix:
+            - Fixed problem with the image compressor not working on recent versions of Android"
+        </item>
         <item>1.4.0.87</item>
         <item>"Changes:
             - Support for Extended Description Plugin when latest PiwigoClientExt plugin version installed.
