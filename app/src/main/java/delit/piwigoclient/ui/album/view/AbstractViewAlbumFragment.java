@@ -30,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.text.HtmlCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -209,7 +210,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private SwitchMaterial galleryPrivacyStatusField;
     private MaterialTextView allowedGroupsField;
     private MaterialTextView allowedUsersField;
-    private RelativeLayout bulkActionsContainer;
+    private ConstraintLayout bulkActionsContainer;
     private ExtendedFloatingActionButton bulkActionButtonPermissions;
     private ExtendedFloatingActionButton bulkActionButtonDelete;
     private ExtendedFloatingActionButton bulkActionButtonDownload;
