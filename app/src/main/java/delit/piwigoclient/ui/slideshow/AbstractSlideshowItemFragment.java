@@ -239,7 +239,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         configureItemContent(itemContent, model, savedInstanceState);
 
-        if (model.isResourceDetailsLikelyOutdated() || model.isLikelyOutdated()) {
+        if(model == null) {
+            Logging.log(Log.ERROR, TAG, "Resource Item unavailable to process multimedia info from");
+        } else if (model.isResourceDetailsLikelyOutdated() || model.isLikelyOutdated()) {
             // call this quietly in the background to avoid it ruining the slideshow experience.
             Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
             long messageId = new ImageGetInfoResponseHandler<>(model, multimediaExtensionList).invokeAsync(getContext());
