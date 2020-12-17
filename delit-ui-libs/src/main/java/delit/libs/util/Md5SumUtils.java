@@ -83,12 +83,12 @@ public class Md5SumUtils {
 
         } catch (FileNotFoundException e) {
             Logging.recordException(e);
-            Logging.log(Log.ERROR, TAG, "Exception while getting FileInputStream");
-            throw new Md5SumException("Exception while getting FileInputStream", e);
+            Logging.log(Log.ERROR, TAG, "Exception while getting FileInputStream for uri " + uri);
+            throw new Md5SumException("Exception while getting FileInputStream for uri " + uri, e);
         } catch (IOException e) {
             Logging.recordException(e);
-            Logging.log(Log.ERROR, TAG, "Unable to process file for MD5");
-            throw new Md5SumException("Unable to process file for MD5", e);
+            Logging.log(Log.ERROR, TAG, "Unable to process file for MD5 (uri" + uri +")");
+            throw new Md5SumException("Unable to process file for MD5 (uri" + uri +")", e);
         }
     }
 

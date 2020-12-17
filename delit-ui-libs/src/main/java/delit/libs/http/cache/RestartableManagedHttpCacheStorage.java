@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.ReferenceQueue;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -169,26 +170,36 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
 
     public CacheMap loadCacheFromDisk(int maxCacheEntries) {
         synchronized (this) {
+            File sourceFile = new File(cacheFolder, cacheFilename);
+            boolean oversizedCache = false;
             if (cacheFolder != null) {
-                File sourceFile = new File(cacheFolder, cacheFilename);
                 if (sourceFile.exists()) {
                     if (sourceFile.length() > MAX_EXPECTED_CACHE_SIZE) {
+                        oversizedCache  = true;
                         Logging.recordException(new Exception("Cache index size larger than anticipated! - " + IOUtils.bytesToNormalizedText(sourceFile.length())));
                     }
                     entries = LegacyIOUtils.readObjectFromFile(sourceFile);
-
+                    if(entries == null && oversizedCache) {
+                        Logging.log(Log.DEBUG, TAG, "Cache file was corrupt");
+                    }
                 }
             }
             if (entries != null) {
-                if (BuildConfig.DEBUG) {
-                    Log.d(TAG, String.format("Loaded %1$d cache entries from file", entries.size()));
+                if (oversizedCache) {
+                    Logging.log(Log.DEBUG, TAG, String.format(Locale.UK, "Loaded %1$d cache entries from file. Max entries: %2$d", entries.size(), maxCacheEntries));
                 }
                 entries.setMaxEntries(maxCacheEntries);
                 if (entries.needsResize()) {
                     entries = new CacheMap(entries);
+                    Logging.log(Log.DEBUG, TAG, String.format(Locale.UK, "Resized cache to %1$d entries", entries.size()));
                 }
             } else {
                 entries = new CacheMap(maxCacheEntries);
+                if (oversizedCache) {
+                    LegacyIOUtils.saveObjectToFile(sourceFile, entries);
+                    Logging.log(Log.DEBUG, TAG, "Saved empty cache object to file");
+                }
+
             }
         }
         return entries;
@@ -223,7 +234,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
                 }
             }
             if (destination.length() > MAX_EXPECTED_CACHE_SIZE) {
-                Logging.recordException(new Exception("Cache index size larger than anticipated! - " + IOUtils.bytesToNormalizedText(destination.length())));
+                Logging.recordException(new Exception(String.format(Locale.UK, "Cache index size larger than anticipated! (%1$s). %2$d entries", IOUtils.bytesToNormalizedText(destination.length()), entries.size())));
             }
         }
     }

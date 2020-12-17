@@ -122,7 +122,8 @@ public class AppSettingsViewModel extends AndroidViewModel {
                         try {
                             context.getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
                         } catch(SecurityException e) {
-                            Logging.log(Log.WARN, TAG, "unable to release permission");
+                            String mimeType = context.getContentResolver().getType(uri);
+                            Logging.log(Log.WARN, TAG, "unable to release permission for uri. Uri Mime type : "  + mimeType);
                             Logging.recordException(e);
                         }
                     } else if(removeTreeToo) {

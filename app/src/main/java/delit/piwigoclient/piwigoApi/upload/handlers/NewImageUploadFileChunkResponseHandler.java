@@ -64,8 +64,8 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
             String fileType = originalFile.isDirectory() ? "dir" : "file";
             String filePath = originalFile.getUri().toString();
             String mimeType = fileChunk.getMimeType();
-            String filesize = IOUtils.bytesToNormalizedText(originalFile.length());
-            Logging.log(Log.ERROR,TAG, String.format("Json Syntax error while trying to upload %4$s %1$s : %2$s (Mime: %3$s)", fileType, filePath, mimeType, filesize));
+            String fileSize = IOUtils.bytesToNormalizedText(originalFile.length());
+            Logging.log(Log.ERROR,TAG, String.format("Json Syntax error while trying to upload %4$s %1$s : %2$s (Mime: %3$s)", fileType, filePath, mimeType, fileSize));
             super.logJsonSyntaxError(responseBodyStr + " (file: " + filePath + ")");
         } else {
             super.logJsonSyntaxError(responseBodyStr);
