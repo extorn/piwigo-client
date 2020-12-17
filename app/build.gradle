@@ -128,7 +128,7 @@ android {
 
 dependencies {
     // room database persistence libs used to track files previously uploaded
-    def room_version = "2.2.5"
+    def room_version = "2.2.6"
 
     // debugImplementation because LeakCanary should only run in debug builds.
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
@@ -141,7 +141,7 @@ dependencies {
     implementation project(path: ':delit-ui-libs')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     // prevent side loading (validate if this is attempted)
-    implementation 'com.google.android.play:core:1.8.3'
+    implementation 'com.google.android.play:core:1.9.0'
     //implementation 'com.android.tools.build:bundletool:0.9.0'
 
     // third party libraries
@@ -171,13 +171,13 @@ dependencies {
     //- use this once they have increased the version number to remove awt dependency https://github.com/drewnoakes/metadata-extractor
 
     // custom tab support
-    implementation 'androidx.browser:browser:1.2.0'
+    implementation 'androidx.browser:browser:1.3.0'
     //EXIF Support
-    implementation 'androidx.exifinterface:exifinterface:1.3.1'
+    implementation 'androidx.exifinterface:exifinterface:1.3.2'
     // v7 appcompat stuff
     implementation 'androidx.mediarouter:mediarouter:1.2.0'
     //implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
-    implementation 'com.google.android.gms:play-services-ads:19.5.0'
+    implementation 'com.google.android.gms:play-services-ads:19.6.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.ads.consent:consent-library:1.0.8'
     implementation 'androidx.preference:preference:1.1.1'
@@ -190,11 +190,11 @@ dependencies {
     implementation 'androidx.documentfile:documentfile:1.0.1'
     //implementation 'androidx.webkit:webkit:1.2.0' // to use webview on old versions of android
     //implementation 'com.google.firebase:firebase-core:17.4.3'
-    implementation 'com.google.firebase:firebase-iid:21.0.0'
+    implementation 'com.google.firebase:firebase-iid:21.0.1'
     //implementation 'com.google.firebase:firebase-messaging:20.2.1'
     implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
-    implementation 'com.google.firebase:firebase-ads:19.5.0'
+    implementation 'com.google.firebase:firebase-ads:19.6.0'
     // don't think I need these
     //implemenation 'com.google.firebase:firebase-inappmessaging:19.0.7'
     //implemenation 'com.google.firebase:firebase-inappmessaging-display:19.0.7'
@@ -202,7 +202,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.5.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     // firebase-perf must be lower version than firebase-core and play-services*
-    implementation 'com.google.firebase:firebase-perf:19.0.10'
+    implementation 'com.google.firebase:firebase-perf:19.0.11'
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
