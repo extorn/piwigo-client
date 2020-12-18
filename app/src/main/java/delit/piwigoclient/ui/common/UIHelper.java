@@ -452,11 +452,11 @@ public abstract class UIHelper<T> {
     }
 
     private void setupDialogBoxes() {
-        buildAlertDialog();
+        buildAlertDialog(getParentView().getContext());
     }
 
-    protected void buildAlertDialog() {
-        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(getParentView().getContext(), R.style.Theme_App_EditPages));
+    protected void buildAlertDialog(Context c) {
+        MaterialAlertDialogBuilder builder1 = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(c, R.style.Theme_App_EditPages));
         builder1.setCancelable(true);
         dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);
@@ -468,7 +468,7 @@ public abstract class UIHelper<T> {
     }
 
     protected void showDialog(final QueuedQuestionMessage nextMessage) {
-        buildAlertDialog();
+        buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
         alertDialog.setMessage(nextMessage.getMessage());
@@ -500,7 +500,7 @@ public abstract class UIHelper<T> {
     }
 
     protected void showDialog(final QueuedDialogMessage nextMessage) {
-        buildAlertDialog();
+        buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
         alertDialog.setMessage(nextMessage.getMessage());
@@ -1605,7 +1605,13 @@ public abstract class UIHelper<T> {
                 dialogClosingForUrgentMessage = false;
                 if (buildNewDialogOnDismiss) {
                     // build a new dialog (needed if the view was altered)
-                    buildAlertDialog();
+                    Context c;
+                    if(getParentView() != null) {
+                        c = getParentView().getContext();
+                    } else {
+                        c = ((AlertDialog)dialog).getContext();
+                    }
+                    buildAlertDialog(c);
                 }
                 return;
             }
@@ -1623,7 +1629,13 @@ public abstract class UIHelper<T> {
 
             if (buildNewDialogOnDismiss) {
                 // build a new dialog (needed if the view was altered)
-                buildAlertDialog();
+                Context c;
+                if(getParentView() != null) {
+                    c = getParentView().getContext();
+                } else {
+                    c = ((AlertDialog)dialog).getContext();
+                }
+                buildAlertDialog(c);
             }
 
             if (canShowDialog()) {
