@@ -52,12 +52,12 @@
     <string name="alert_error_no_app_available_to_handle_action">Aucune application n\'a été trouvée pour gérer cette action.</string>
     <string name="alert_error_no_app_available_to_rate_app">Aucune application n\'a pu être trouvée pour évaluer cette application. Merci d\'avoir essayé.</string>
     <string name="alert_error_download_cancelled_insufficient_permissions">Téléchargement annulé. Les autorisations requises ne sont pas accordées.</string>
-    <string name="button_retry">Réessayez</string>
+    <string name="button_retry">Retenter</string>
 
 
     <string name="button_unlink">Dissocier</string>
     <string name="button_untag">Enlever l\'étiquette</string>
-    <string name="button_close">proche</string>
+    <string name="button_close">Fermer</string>
     <string name="tools_menu_title">Outils</string>
     <string name="settings_menu_title">Paramètres de l\'application</string>
     <string name="offline_mode_menu_title">Mode hors-ligne</string>
@@ -96,7 +96,7 @@
     <string name="alert_error_upload_file_no_longer_available_message_pattern">Le fichier%1$s n\'est plus disponible sur l\'appareil. Il a peut-être été supprimé ou déplacé.\n%2$s</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Erreur lors du téléchargement du fichier%1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Le fichier téléchargé%1$s est déjà présent sur le serveur, action annulée.</string>
-    <string name="alert_error_upload_add_file_failed_message_pattern">Erreur lors de l\'ajout du fichier téléversé%1$s à l\'album. Réessayez?</string>
+    <string name="alert_error_upload_add_file_failed_message_pattern">Erreur lors de l\'ajout du fichier téléversé%1$s à l\'album. Retenter?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Le téléchargement du fichier%1$s a échoué en raison d\'une erreur sur le serveur PIWIGO (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Échec du téléchargement du fichier%1$s en raison d\'une erreur du serveur Web (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">Le téléchargement du fichier%1$s a échoué en raison d\'une erreur de traitement de la réponse PIWIGO. Cela est probablement dû à un changement d\'API PIWIGO. Réponse impossible à analyser:%2$s.</string>
@@ -120,7 +120,7 @@
     <string name="upload_files_button_title">Télécharger</string>
     <string name="upload_files_finish_job_button_title">terminer</string>
     <string name="upload_job_status_button">Statut</string>
-    <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page de paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
+    <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page des paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
     <string name="loading_please_wait">Chargement, veuillez patienter</string>
     <string name="alert_title_server_error">erreur du serveur</string>
     <string name="alert_server_error_pattern">Le serveur a renvoyé une erreur HTTP:%1$d (%2$s)</string>
@@ -131,7 +131,7 @@
     <string name="alert_error_too_many_users_message">Trop d\'utilisateurs à gérer. Veuillez soumettre une demande d\'amélioration pour activer la pagination des utilisateurs.</string>
 
     <string name="slideshow_resource_action_download">Télécharger un fichier</string>
-    <string name="slideshow_resource_action_delete">Supprimer</string>
+    <string name="slideshow_resource_action_delete">Effacer</string>
     <string name="slideshow_resource_action_copy">Copier dans l\'album</string>
     <string name="slideshow_resource_action_move">Déplacer vers l\'album</string>
     <string name="slideshow_image_details_actions">Actions</string>
@@ -142,7 +142,7 @@
     <string name="progress_resource_details_updating">Mise à jour des détails des ressources</string>
     <string name="gallery_details_name_title">Nom de l\'album</string>
     <string name="gallery_details_description_title">Description de l\'album</string>
-    <string name="gallery_details_save_button">sauvegarder</string>
+    <string name="gallery_details_save_button">sauver</string>
     <string name="gallery_details_discard_button">Jeter</string>
     <string name="gallery_action_delete_progress_title">Suppression de l\'album</string>
     <string name="gallery_action_delete_error_subcategories_present">Impossible de supprimer un album contenant des sous-albums. Veuillez d\'abord les supprimer.</string>
@@ -153,7 +153,7 @@
     <string name="button_ok">d\'accord</string>
     <string name="button_yes">Oui</string>
     <string name="button_no">Non</string>
-    <string name="button_save">sauvegarder</string>
+    <string name="button_save">sauver</string>
     <string name="alert_confirm_title">Confirmer</string>
     <string name="alert_question_title">Question</string>
     <string name="alert_confirm_really_delete_from_server">Cela supprimera définitivement l\'élément du serveur. Continuer?</string>
@@ -197,7 +197,7 @@ Gareth Deli vous accorde une licence limitée révocable, non exclusive, non tra
 pour télécharger, installer et utiliser l\'Application uniquement à des fins personnelles ou commerciales
 en stricte conformité avec les termes de cet accord.
 
-LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU D\'AUTRES ACTIONS DANS LE LOGICIEL
+LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU AUTRES ACTIONS DANS LOGICIEL
 
 
 ** Restrictions
@@ -285,9 +285,9 @@ Actuellement, la version payante a ajouté la prise en charge des balises:
         Piwigo prend en charge les balises dans une certaine mesure, mais le plugin User Tags ajoute plus de fonctionnalités (tests de base effectués).
 
 
-Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation dans une galerie existante, le téléchargement de nouvelles photos et vidéos et la création de nouvelles catégories dans une galerie. Certains champs peuvent être modifiés une fois créés, mais beaucoup sont encore en lecture seule ... pour l\'instant!
+Pour le moment, il fournit un niveau de fonctionnalité de base pour permettre la navigation dans une galerie existante, le téléchargement de nouvelles photos et vidéos et la création de nouvelles catégories dans une galerie. Certains champs peuvent être modifiés une fois créés, mais beaucoup sont encore en lecture seule .... pour l\'instant!
 
-S\'il vous plaît, puis-je demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail en m\'expliquant pourquoi l\'application ne répond pas à vos besoins afin que je puisse y remédier.
+S\'il vous plaît, puis-je vous demander que si vous désinstallez l\'application, vous utilisez le lien dans le menu de l\'application pour m\'envoyer un e-mail en me disant pourquoi l\'application ne répond pas à vos besoins afin que je puisse résoudre ce problème.
 
 La version du serveur PIWIGO sur laquelle je teste est actuellement la 2.10.2.
 
@@ -297,13 +297,13 @@ AVERTISSEMENT: Versions de Piwigo inférieures à 1.9.2 - je pense que le télé
 
 J\'ai testé avec une copie du plugin piwigo_privacy installé et aussi le plugin VideoJS installé.
 J\'ai une copie du plugin Extended Description installé, mais malheureusement, cette fonctionnalité n\'est pas encore exposée via l\'API PIWIGO.
-Je voudrais inclure le support des photos \"favorites\" mais cette fonctionnalité ne semble pas encore être exposée via l \ \'API PIWIGO.
+Je voudrais inclure le support des photos \"favorites\" mais cette fonctionnalité ne semble pas encore être exposée via l \'API PIWIGO.
 
 Veuillez me signaler tout bogue par e-mail si vous rencontrez des bogues. J\'ai testé cela sur l\'émulateur Android, un téléphone Samsung et une tablette Samsung, mais c\'est ma première application, donc je suis sûr que les choses iront mal pour quelqu\'un.
 
 Un grand merci à tous ceux qui m\'ont envoyé des suggestions ou des bugs. Je m\'efforcerai de répondre à toutes vos suggestions dès que possible.Veuillez choisir de signaler chaque plantage qui se produit. Si vous constatez que le bogue persiste après la prochaine mise à jour, veuillez prendre le temps de m\'envoyer un e-mail. Il est probable que j\'ai besoin d\'un peu plus de contexte sur ce qui se passe juste avant que le bogue ne se produise.
 
-Les communiqués sont pour le moment ponctuels. La fréquence des versions devrait diminuer au fur et à mesure que l\'application mûrit. Le calendrier et l\'historique des versions sont indiqués ci-dessous. Cela peut changer et les choses peuvent être retardées, mais vous pouvez voir ce qui est sur la liste."</string>
+Les communiqués sont pour le moment sur une base ad hoc. La fréquence des versions devrait diminuer au fur et à mesure que l\'application mûrit. Le calendrier et l\'historique des versions sont indiqués ci-dessous. Cela peut changer et les choses peuvent être retardées, mais vous pouvez voir ce qui est sur la liste."</string>
     <string name="licences_heading">Licences pour les ressources utilisées dans cette application</string>
     
     <string name="slideshow_image_details_name_title">Nom de la ressource</string>
@@ -345,7 +345,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
     <string name="alert_warning">Attention</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille "la plus proche".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \"correspondance la plus proche \".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, pourriez-vous prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -373,7 +373,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="users_heading">Utilisateurs</string>
     <string name="albums_heading">Les albums</string>
     <string name="user_high_definition_title">Haute définition</string>
-    <string name="user_email_title">Adresse électronique</string>
+    <string name="user_email_title">Adresse e-mail</string>
     <string name="none_value">Aucun</string>
     <string name="access_rights_heading">Des droits d\'accès</string>
     <string name="progress_loading_album_content">Chargement du contenu de l\'album</string>
@@ -416,8 +416,8 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="group_is_default_title">Est-ce par défaut?</string>
     <string name="progress_adding_group">Ajout d\'un groupe</string>
     <string name="upload_unacceptable_files_prefix">Fichiers non acceptés</string>
-    <string name="alert_error_unable_to_access_local_filesystem">Sans accès au système de fichiers local, cette action ne peut pas se poursuivre. Pardon.</string>
-    <string name="alert_error_admin_user_required">Seuls les utilisateurs administrateurs peuvent télécharger à moins que le plugin de communauté ne soit installé. Pardon.</string>
+    <string name="alert_error_unable_to_access_local_filesystem">Sans accès au système de fichiers local, cette action ne peut pas se poursuivre. Désolé.</string>
+    <string name="alert_error_admin_user_required">Seuls les utilisateurs administrateurs peuvent télécharger à moins que le plugin de communauté ne soit installé. Désolé.</string>
     <string name="upload_username_title">Télécharger en tant que</string>
     <string name="certificates_heading">Certificats</string>
 
@@ -435,7 +435,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_title_set_album_thumbnail">Mettre à jour la vignette de l\'album?</string>
     <string name="alert_message_set_album_thumbnail">Mettre à jour la vignette de l\'album sur cette image?</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">Voulez-vous vraiment supprimer l\'album (%1$s) et tout le contenu de façon permanente (sauf s\'il est lié à des albums ailleurs)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Êtes-vous absolument certain de vouloir supprimer l\'album (%1$s) avec%2$d photos et%3$d albums enfants contenant%4$d photos supplémentaires pour toujours? Notez que les photos liées à d\'autres albums y resteront, mais toutes les autres seront supprimées pour toujours. Il n\'y a pas de fonction d\'annulation pour cette action.</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Êtes-vous absolument certain de vouloir supprimer l\'album (%1$s) avec%2$d photos et%3$d albums enfants contenant encore%4$d photos à jamais? Notez que les photos liées à d\'autres albums y resteront, mais toutes les autres seront supprimées pour toujours. Il n\'y a pas de fonction d\'annulation pour cette action.</string>
     <string name="alert_confirm_copy_items_here_pattern">Copier les%1$d élément (s) dans le panier ici (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Déplacer le ou les éléments%1$d dans le panier ici (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Albums liés</string>
@@ -452,7 +452,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille "la plus proche".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \"correspondance la plus proche \".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour autoriser la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache sera en mémoire.</string>
@@ -588,7 +588,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="upload_error_orphaned_file_retrieval_failed">Impossible de récupérer la liste des images orphelines. Veuillez réessayer.</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur administrateur n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de communauté (qui simule le statut d\'administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plug-in approprié expose correctement les méthodes que vous attendez à l\'aide d\'un navigateur Web:%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Cette fonction n\'est pas disponible. Veuillez installer le plugin PiwigoClientWsExts sur votre serveur. Si vous l\'avez déjà installé, veuillez le mettre à jour avec la dernière version.</string>
-    <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste des types de fichiers pouvant être téléchargés avec les informations de session utilisateur (celles-ci sont généralement fournies uniquement pour les utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, envoyez-moi un e-mail pour m\'aider à diagnostiquer le problème pour vous.</string>
+    <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste de types de fichiers pouvant être téléchargés avec les informations de session utilisateur (celles-ci sont généralement fournies uniquement pour les utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, envoyez-moi un e-mail pour m\'aider à diagnostiquer le problème pour vous.</string>
     <string name="job_not_found">Télécharger le travail introuvable</string>
     <string name="files_mid_data_transfer_title">Fichiers partiellement copiés</string>
     <string name="files_awaiting_verification_title">Fichiers en attente de vérification de l\'intégrité des données</string>
@@ -617,7 +617,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application"</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données mises en cache?</string>
     <string name="server_connection_id_pattern">%1$s à%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -662,7 +662,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="create_email_using_app">Créer un e-mail à l\'aide de l\'application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contenait des fichiers qui n\'ont pas pu être traités. Ces%1$d fichiers ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Tous les conseils d\'utilisation uniques seront à nouveau affichés</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d\'utilisation uniques seront à nouveau affichés"</string>
     
     
     <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>
@@ -704,5 +704,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="uri_permission_justification_file_selection">Pour sélectionner des fichiers ou des dossiers à utiliser par cette application</string>
     <string name="alert_error_please_select_download_folder_and_retry">Veuillez sélectionner un dossier dans lequel télécharger les fichiers dans les paramètres de l\'application, puis réessayer.</string>
     <string name="no_acceptable_file_ext_found_for_video_pattern">Aucune extension de fichier de sortie valide (la préférence est%2$s) n\'a pu être trouvée pour le fichier (vidéo:%3$b audio:%4$b) acceptable pour le serveur parmi les options (%1$s)</string>
+    <string name="uuid_title">Installez UUID</string>
 
 </resources>

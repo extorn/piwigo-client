@@ -124,27 +124,32 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto.</item>
-        <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
+        <item>"In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto."</item>
+        <item>"Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso"</item>
         <item>Se un caricamento non riesce, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
-        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \ "Non è consentito eliminare i tag \" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plugin del server)</item>
+        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \"Non è consentito eliminare i tag \" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
         <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per essere trasferiti al tuo server corrente</item>
-        <item>Fare clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stato caricato per recuperarla di nuovo</item>
+        <item>Fare clic a lungo su un\'immagine (miniatura o elemento di presentazione) che non è stato caricato per recuperarla di nuovo</item>
         <item>Fare clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
         <item>Fare clic a lungo sull\'immagine di un album per abilitare la selezione in blocco di immagini per un\'azione</item>
-        <item>Durante la visualizzazione di qualsiasi immagine nella presentazione, fare clic lungo per ruotare / modificare la dimensione dell\'immagine mostrata / consentire un ulteriore ingrandimento</item>
+        <item>Durante la visualizzazione di qualsiasi immagine nella presentazione, fare clic lungo per ruotare / modificare la dimensione dell\'immagine mostrata / consentire un ulteriore zoom</item>
         <item>È possibile ingrandire un\'immagine durante la visualizzazione in una presentazione avvicinando o allontanando due dita sullo schermo</item>
         <item>Dopo aver effettuato l\'accesso come amministratore, prima di consegnare il dispositivo a un amico per visualizzare le foto, attivare la funzione di blocco dell\'applicazione per evitare modifiche involontarie alla tua galleria</item>
         <item>Dopo aver visualizzato un intero video, se la memorizzazione nella cache dei file locali è abilitata, è possibile salvare quel video nella cartella dei download</item>
-        <item>Fare clic a lungo sul pulsante Elimina su un \ \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
+        <item>Fare clic a lungo sul pulsante Elimina su un \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
         <item>Se le immagini si caricano lentamente, verifica che il tuo server generi automaticamente le dimensioni utilizzate da questa app quando vengono caricate</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
-        <item>Non sono previsti ulteriori aggiornamenti.</item>
+        <item>"Non sono previsti ulteriori aggiornamenti."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.89</item>
+        <item>"Risoluzione del problema:
+                 - Risolti un paio di problemi che causavano arresti anomali per alcuni utenti
+                I cambiamenti:
+                 - Aggiunto un UUID ai log e alla schermata delle informazioni che mi consente di tenere traccia dei log di un utente specifico se mi danno il loro UUID (per risolvere bug specifici che riscontrano)."</item>
         <item>1.4.0.88</item>
         <item>"Risoluzione del problema:
              - Il compressore di immagini non funziona sulle versioni recenti di Android

@@ -57,7 +57,7 @@
 
     <string name="button_unlink">Desconectar</string>
     <string name="button_untag">Remover etiqueta</string>
-    <string name="button_close">Cerrar</string>
+    <string name="button_close">Cerca</string>
     <string name="tools_menu_title">Herramientas</string>
     <string name="settings_menu_title">Ajustes de Aplicacion</string>
     <string name="offline_mode_menu_title">Modo offline</string>
@@ -159,7 +159,7 @@
     <string name="alert_confirm_really_delete_from_server">Esto eliminará el elemento de forma permanente del servidor. ¿Seguir?</string>
     <string name="alert_confirm_really_delete_items_from_server">Esto eliminará los elementos de forma permanente del servidor. ¿Seguir?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Solicitaste eliminar%1$d recursos que se comparten con otros álbumes. ¿Desea eliminarlos de todos los álbumes (y del servidor, de forma permanente) o simplemente desvincularlos de este álbum?</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Has solicitado eliminar%1$d recursos. ¿Deseas eliminarlos de todos los álbumes (y del servidor) de forma permanente o simplemente desvincularlos de esta etiqueta?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Has solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y del servidor) de forma permanente o simplemente desvincularlos de esta etiqueta?</string>
     <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Has solicitado eliminar%1$d recursos. ¿Desea eliminarlos de todos los álbumes (y del servidor) de forma permanente? (No puede eliminar etiquetas de imágenes sin el complemento UserTags instalado en su servidor)</string>
     <string name="about_menu_title">Acerca de</string>
     <string name="other_licences_button_text">Otros componentes con licencia</string>
@@ -203,7 +203,7 @@ EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA 
 ** Restricciones
 
 Usted acepta no hacerlo y no permitirá que otros:
-a) licenciar, vender, alquilar, arrendar, asignar, distribuir, transmitir, alojar, subcontratar, divulgar o de otra manera
+a) licenciar, vender, alquilar, arrendar, asignar, distribuir, transmitir, alojar, subcontratar, divulgar o de otro modo
 explotar comercialmente la Aplicación o poner la Aplicación a disposición de terceros.
 b) crear trabajos derivados basados ​​en esta aplicación.
 
@@ -215,7 +215,7 @@ La integración de Firebase se ha agregado a esta aplicación para facilitar el 
 
 ** Garantía limitada y exención de responsabilidad
 
-El software se proporciona \ \"tal cual \" y el licenciatario lo utiliza bajo su propio riesgo. Gareth Deli no ofrece ninguna garantía sobre su uso, rendimiento o idoneidad para un propósito en particular. Siempre es posible que el software contenga errores (errores) y no funcione. Por lo tanto, Gareth Deli no garantiza que el software esté completamente libre de errores o que funcione sin interrupciones con todas las computadoras y configuraciones.Es responsabilidad exclusiva del licenciatario verificar si el software se ajusta a su propósito particular o cumple con sus requisitos funcionales y de rendimiento. El licenciatario también está obligado a probar cómo funciona el software en sus dispositivos y sus configuraciones; pruebe todos los casos de uso y verifique si los datos se procesaron sin errores y como se desea antes de usar el software en entornos de producción. Esto es de vital importancia si se utiliza el software con fines comerciales.
+El software se proporciona \"tal cual \" y el licenciatario lo utiliza bajo su propio riesgo. Gareth Deli no ofrece ninguna garantía sobre su uso, rendimiento o idoneidad para un propósito en particular. Siempre es posible que el software contenga errores (errores) y no funcione. Por lo tanto, Gareth Deli no garantiza que el software esté completamente libre de errores o que funcione sin interrupciones con todas las computadoras y configuraciones.Es responsabilidad exclusiva del licenciatario verificar si el software se ajusta a su propósito particular o cumple con sus requisitos funcionales y de rendimiento. El licenciatario también está obligado a probar cómo funciona el software en sus dispositivos y sus configuraciones; pruebe todos los casos de uso y verifique si los datos se procesaron sin errores y como se desea antes de usar el software en entornos de producción. Esto es de vital importancia si se utiliza el software con fines comerciales.
 
 
 ** Limitaciones de responsabilidad
@@ -291,7 +291,7 @@ Por favor, ¿puedo pedirle que si desinstala la aplicación, use el enlace en el
 
 La versión del servidor PIWIGO con la que pruebo es actualmente 2.10.2.
 
-Mi galería de prueba solo contiene archivos .jpg y .mp4. Si el tuyo contiene otros, es posible que tengas problemas; de ser así, dímelo y daré prioridad al trabajo en esos tipos de archivos.
+Mi galería de prueba solo contiene archivos .jpg y .mp4. Si el tuyo contiene otros, es posible que encuentres problemas; de ser así, dímelo y daré prioridad al trabajo en esos tipos de archivos.
 
 ADVERTENCIA: Versiones de Piwigo por debajo de 1.9.2: la carga de videos creo que depende de la corrección # 756 que se aplique a su servidor.
 
@@ -345,7 +345,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_agree">Estoy de acuerdo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Advertencia</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \ "coincidencia más cercana \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \"coincidencia más cercana \".</string>
     <string name="rate_dialog_message">Si le gusta usar esta aplicación, ¿le importaría tomarse un momento para calificarla? No tomará más de un minuto. ¡Gracias por su apoyo!</string>
     <string name="groups_menu_title">Grupos</string>
     <string name="group_members_pattern">(%1$d miembros)</string>
@@ -452,7 +452,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_message_file_upload_cancelled_pattern">Se canceló la carga del archivo (%1$s).</string>
     <string name="alert_message_upload_cancelled">Subida cancelada</string>
     <string name="alert_message_upload_cancelled_message">Si no desea reiniciar la carga más tarde. Debe eliminar los archivos del trabajo de carga y luego hacer clic en cargar. Esto limpiará el estado de carga cancelada del servidor.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \ "coincidencia más cercana \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \"coincidencia más cercana \".</string>
     <string name="logging_out_of_piwigo_pattern">Cerrar sesión en%1$s</string>
     <string name="loading_new_server_configuration">Cargando nueva configuración de conexión al servidor</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Para permitir el almacenamiento en caché en el disco, se debe otorgar acceso de escritura al sistema de archivos. Si se deniega, el almacenamiento en caché estará en la memoria.</string>
@@ -560,7 +560,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_show_details">Mostrar detalle</string>
     <string name="button_hide_details">Ocultar detalle</string>
     <string name="alert_message_max_upload_file_count_reached">Se alcanzó el número máximo de archivos que se pueden cargar. Para cargar más a la vez, compre y use la versión paga de esta aplicación.</string>
-    <string name="alert_message_advert_load_error">Los anuncios tienen problemas para cargarse constantemente. Por favor infórmeme de esto, ya que estos constituyen una fuente de ingresos importante aunque muy pequeña para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta atrás se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación con normalidad.</string>
+    <string name="alert_message_advert_load_error">Los anuncios tienen problemas para cargarse constantemente. Por favor infórmeme de esto, ya que constituyen una fuente de ingresos importante, aunque muy pequeña, para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta atrás se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación con normalidad.</string>
     <string name="alert_temporary_upload_album_deleted">El álbum de carga temporal se eliminó correctamente</string>
     <string name="alert_deleting_temporary_upload_album">Eliminando el álbum de carga temporal</string>
     <string name="alert_invalid_uri_pattern">URI no válido. %1$s</string>
@@ -568,7 +568,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="album_section_heading_albums">álbumes</string>
     <string name="album_section_heading_albums_pattern">álbumes (%1$d)</string>
     <string name="album_section_heading_resources">fotos en este album</string>
-    <string name="album_title_home">hogar</string>
+    <string name="album_title_home">casa</string>
     <string name="upload_file_rating">Mi clasificación</string>
     <string name="slideshow_image_details_rating_score_title">Puntaje de calificación</string>
     <string name="rating_score_pattern">%1$.2f (tarifas de%2$d)</string>
@@ -617,7 +617,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La preferencia%1$s es irrecuperable y se ha establecido de forma predeterminada en%2$s. Restablezca este valor en la configuración de la aplicación</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La preferencia%1$s es irrecuperable y se ha establecido de forma predeterminada en%2$s. Restablezca este valor en la configuración de la aplicación"</string>
     <string name="switch_to_cached_mode">El servidor no está disponible actualmente. ¿Usar datos en caché?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Comprimir videos</string>
@@ -647,7 +647,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="hint_slideshow_base_view_2">Desliza el dedo hacia la izquierda o hacia la derecha para navegar entre recursos</string>
     <string name="hint_slideshow_item_view_1">La calificación se puede ajustar tocando o deslizando el dedo sobre la calificación de estrellas deseada. Esto tiene un efecto inmediato.</string>
     <string name="hint_slideshow_paid_view_3">Para marcar este recurso como favorito, toque el icono del corazón a la derecha del nombre del recurso de imagen</string>
-    <string name="hint_navigation_panel_1">Toque el icono de la aplicación de arriba para forzar el cierre de sesión del servidor e iniciar sesión</string>
+    <string name="hint_navigation_panel_1">Toque el icono de la aplicación de arriba para forzar el cierre de sesión e inicio de sesión de un servidor</string>
     <string name="user_details_not_found_on_server">No se pueden encontrar los detalles del usuario en el servidor</string>
     <string name="resource_queued_for_download">Recurso en cola para descargar. Es la posición%1$d en la cola.</string>
     <string name="alert_message_showing_images_of_size">Mostrando imágenes del servidor de tamaño%1$s</string>
@@ -662,7 +662,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="create_email_using_app">Crear un correo electrónico usando la aplicación</string>
     <string name="open_files">Abrir archivos en la aplicación</string>
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no se pudieron procesar. Estos%1$d archivos se han ignorado. Para compartir un archivo de video, primero debe almacenarse en caché localmente.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Todas las sugerencias de usuario únicas se mostrarán nuevamente</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Todas las sugerencias de usuario únicas se mostrarán nuevamente"</string>
     
     
     <string name="delete_uploaded_files_title">Eliminar archivos cargados</string>
@@ -696,7 +696,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="view_the_paid_version">Llévame a la versión gratuita de anuncios</string>
     <string name="advert_providers">Proveedores de anuncios en uso</string>
     <string name="sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions">Lo sentimos, este archivo no se pudo usar porque fue compartido por una aplicación que no autorizó el acceso extendido solicitado a este archivo y ese acceso ha expirado.</string>
-    <string name="files_shared_without_required_permissions_error">La aplicación que usó para seleccionar los archivos no ha delegado los permisos de archivo necesarios al cliente Piwigo. Se ha agregado una solución para este problema en la versión paga de Piwigo Client, pero alternativamente, puede usar un método diferente para seleccionar los archivos.</string>
+    <string name="files_shared_without_required_permissions_error">La aplicación que usó para seleccionar los archivos no ha delegado los permisos de archivo necesarios a Piwigo Client. Se ha agregado una solución para este problema en la versión paga de Piwigo Client, pero como alternativa, puede usar un método diferente para seleccionar los archivos.</string>
     <string name="files_cached_from_other_apps">Recursos compartidos en caché</string>
     <string name="progress_copying_imported_files">Copiar archivos importados</string>
     <string name="selected_files">Archivos seleccionados</string>
@@ -704,5 +704,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="uri_permission_justification_file_selection">Para seleccionar archivos o carpetas para usar con esta aplicación</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleccione una carpeta para descargar archivos en la configuración de la aplicación, luego vuelva a intentarlo.</string>
     <string name="no_acceptable_file_ext_found_for_video_pattern">No se pudo encontrar una extensión de archivo de salida válida (la preferida es%2$s) para el archivo (video:%3$b audio:%4$b) aceptable para el servidor entre las opciones (%1$s)</string>
+    <string name="uuid_title">Instalar UUID</string>
 
 </resources>

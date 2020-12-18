@@ -42,7 +42,7 @@
     <string name="gallery_photos_summary_text_pattern">%1$d Fotos</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$d Unteralben und%2$d Fotos</string>
     
-    <string name="alert_title_login">Einloggen</string>
+    <string name="alert_title_login">Anmeldung</string>
     <string name="alert_title_connectionTest">Verbindungstest</string>
     <string name="alert_message_success_connectionTest">Erfolg\nBenutzertyp:%1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warnung\nDer Server hat keine verfügbaren Bildgrößen gemeldet.</string>
@@ -66,7 +66,7 @@
     <string name="upload_menu_title">Hochladen</string>
     <string name="upload_page_title">Piwigo Upload</string>
     <string name="gallery_to_alter_title">Etwas hochladen auf</string>
-    <string name="login_button_title">Einloggen</string>
+    <string name="login_button_title">Anmeldung</string>
 
     <string name="alert_question_enable_network_access">Datenabruf vom Server zulassen?</string>
     <string name="alert_question_disable_network_access">Nur Daten verwenden, die bereits auf diesem Gerät zwischengespeichert sind?</string>
@@ -150,7 +150,7 @@
     <string name="notification_upload_event">Piwigo Upload</string>
     <string name="progress_downloading">Datei wird heruntergeladen</string>
     <string name="alert_error_unimplemented">Funktion noch nicht implementiert.</string>
-    <string name="button_ok">In Ordnung</string>
+    <string name="button_ok">okay</string>
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
     <string name="button_save">sparen</string>
@@ -263,7 +263,7 @@ Vereinbarung jederzeit. Sie werden beim Öffnen der Anwendung über die Änderun
 Option, um entweder die Änderungen zu akzeptieren oder die Verwendung der Anwendung zu beenden.
 
 
-** Kontaktinformation
+** Kontakt Informationen
 
 Wenn Sie Fragen zu dieser Vereinbarung haben, wenden Sie sich bitte an uns."
 </string>
@@ -345,7 +345,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="button_agree">Genau</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Warnung</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe "Nächste Übereinstimmung" zurück.</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
     <string name="rate_dialog_message">Wenn Sie diese App gerne nutzen, würde es Ihnen etwas ausmachen, sich einen Moment Zeit zu nehmen, um sie zu bewerten? Es wird nicht länger als eine Minute dauern. Danke für deine Unterstützung!</string>
     <string name="groups_menu_title">Gruppen</string>
     <string name="group_members_pattern">(%1$d Mitglieder)</string>
@@ -439,7 +439,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_confirm_copy_items_here_pattern">Kopieren Sie die%1$d Artikel in den Warenkorb hier (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Verschieben Sie die%1$d-Artikel im Warenkorb hierher (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Verknüpfte Alben</string>
-    <string name="list_ok_button">OK</string>
+    <string name="list_ok_button">in Ordnung</string>
     <string name="alert_confirm_really_remove_album_permissions_pattern">Sie haben ausgewählt, den Zugriff auf dieses Album und den navigierbaren Zugriff auf alle untergeordneten Alben von%1$d-Gruppen und%2$d-Benutzern zu entfernen. Mit dieser Aktion fortfahren?</string>
     <string name="alert_confirm_add_album_permissions_recursively_pattern">Sie haben ausgewählt, dass für%1$d-Gruppen und%2$d-Benutzer Zugriff auf dieses Album hinzugefügt werden soll. Möchten Sie diese Änderungen auf die%3$d-Kinderalben anwenden?</string>
     <string name="alert_information_own_user_readded_to_permissions_list">Ihre Änderungen hätten Sie daran gehindert, auf dieses Album zuzugreifen. Ihr Benutzername wurde der Liste der Personen mit ausdrücklicher Genehmigung hinzugefügt.</string>
@@ -452,7 +452,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_file_upload_cancelled_pattern">Hochladen der Datei (%1$s) abgebrochen.</string>
     <string name="alert_message_upload_cancelled">Upload abgebrochen</string>
     <string name="alert_message_upload_cancelled_message">Wenn Sie den Upload später nicht neu starten möchten. Sie sollten die Dateien aus dem Upload-Auftrag entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe "Nächste Übereinstimmung" zurück.</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
     <string name="logging_out_of_piwigo_pattern">Abmelden von%1$s</string>
     <string name="loading_new_server_configuration">Laden einer neuen Serververbindungskonfiguration</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Um das Caching auf der Festplatte zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn dies abgelehnt wird, wird das Caching gespeichert.</string>
@@ -505,7 +505,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Fehler beim Hochladen</string>
     <string name="alert_message_error_uploading_end">Nach dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload neu, um dort fortzufahren, wo er angekommen ist, und löschen Sie alle temporären Restdaten vom Server.</string>
-    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload entweder neu, um dort fortzufahren, wo er hingekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Job und klicken Sie dann auf die Schaltfläche "Fertig stellen", um alle verbleibenden temporären Daten vom Server zu löschen.</string>
+    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload entweder neu, um dort fortzufahren, wo er hingekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Job und klicken Sie dann auf die Schaltfläche \"Fertig stellen\", um alle verbleibenden temporären Daten vom Server zu löschen.</string>
     <string name="release_history">Release-Verlauf</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
     <string name="tags_heading">Stichworte</string>
@@ -617,7 +617,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">Die Einstellung%1$s ist unwiederbringlich und wurde standardmäßig auf%2$s gesetzt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück</string>
+    <string name="preference_corrupt_please_re_type_pattern">"Die Einstellung%1$s ist unwiederbringlich und wurde standardmäßig auf%2$s gesetzt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück"</string>
     <string name="switch_to_cached_mode">Der Server ist derzeit nicht verfügbar. Zwischengespeicherte Daten verwenden?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Videos komprimieren</string>
@@ -662,7 +662,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="create_email_using_app">Erstellen Sie eine E-Mail mit der App</string>
     <string name="open_files">Öffnen Sie Dateien in der App</string>
     <string name="files_unavailable_to_download_removed_pattern">Ihre Auswahl enthielt Dateien, die nicht verarbeitet werden konnten. Diese%1$d-Dateien wurden ignoriert. Um eine Videodatei freizugeben, muss sie zuerst lokal vollständig zwischengespeichert werden.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Alle einmaligen Benutzertipps werden erneut angezeigt</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Alle einmaligen Benutzertipps werden erneut angezeigt"</string>
     
     
     <string name="delete_uploaded_files_title">Hochgeladene Dateien löschen</string>
@@ -674,7 +674,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="missing_permissions_warning_message_pattern">"Seit dem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
     <string name="folder_selection_title">Ordner auswählen</string>
     <string name="files_selection_title">Dateien auswählen</string>
-    <string name="all">Alles</string>
+    <string name="all">Alle</string>
     <string name="user_high_definition_field">Ermöglichen Sie den Zugriff auf Originaldateien (in voller Größe)</string>
     <string name="group_is_default_field">Weisen Sie dieser Gruppe neue Benutzer zu</string>
     <string name="createGallery_galleryCommentsAllowed_title">Benutzerkommentare</string>
@@ -703,6 +703,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diashow nicht synchron mit dem geladenen Albuminhalt. Beim Start zurücksetzen.</string>
     <string name="uri_permission_justification_file_selection">Auswählen von Dateien oder Ordnern zur Verwendung durch diese App</string>
     <string name="alert_error_please_select_download_folder_and_retry">Bitte wählen Sie in den App-Einstellungen einen Ordner zum Herunterladen von Dateien aus und versuchen Sie es erneut.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Es wurde keine gültige Ausgabedateierweiterung (bevorzugt ist%2$s) für eine Datei gefunden (Video:%3$b Audio:%4$b), die für den Server unter den Optionen akzeptabel ist (%1$s).</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Für die Datei (Video:%3$b Audio:%4$b), die unter den Optionen für den Server akzeptabel ist (%1$s), konnte keine gültige Ausgabedateierweiterung gefunden werden (bevorzugt%2$s).</string>
+    <string name="uuid_title">Installieren Sie die UUID</string>
 
 </resources>

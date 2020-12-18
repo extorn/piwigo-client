@@ -188,7 +188,7 @@ per scopi non commerciali.
 
 ** Definizioni
 
-Licenziatario: il licenziatario è la persona o l\'azienda che intende utilizzare il software concesso in licenza o lo utilizza già legalmente o illegalmente. Il termine \"licenziatario\" non implica che il software sia legalmente concesso in licenza per impostazione predefinita.
+Licenziatario: il licenziatario è la persona o azienda che intende utilizzare il software concesso in licenza o lo utilizza già legalmente o illegalmente. Il termine \"licenziatario\" non implica che il software sia legalmente concesso in licenza per impostazione predefinita.
 
 
 ** Licenza
@@ -203,7 +203,7 @@ IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLI
 ** Restrizioni
 
 Accetti di non farlo e non consentirai ad altri di:
-a) concedere in licenza, vendere, affittare, affittare, assegnare, distribuire, trasmettere, ospitare, esternalizzare, divulgare o altro
+a) concedere in licenza, vendere, affittare, noleggiare, assegnare, distribuire, trasmettere, ospitare, esternalizzare, divulgare o altro
 sfruttare commercialmente l\'Applicazione o rendere l\'Applicazione disponibile a terzi.
 b) creare opere derivate basate su questa applicazione.
 
@@ -220,7 +220,7 @@ Il software viene fornito \"così com\'è\" e il licenziatario lo utilizza a pro
 
 ** Limitazioni di responsabilità
 
-Il licenziatario è responsabile delle conseguenze dell\'utilizzo del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
+Il licenziatario è responsabile delle conseguenze dell\'uso del software e dei danni diretti e indiretti che ne derivano per quanto legalmente possibile. La responsabilità è limitata al prezzo di acquisto per quanto legalmente possibile; altrimenti è limitato al minimo legalmente possibile.
 
 
 ** Manutenzione e supporto
@@ -282,7 +282,7 @@ Esistono due versioni, una versione gratuita (con pubblicità) e una versione a 
 Nota: le versioni divergeranno nel tempo. La maggior parte delle modifiche verrà apportata sia alla versione gratuita che a quella a pagamento.
 
 Attualmente, la versione a pagamento ha aggiunto il supporto per i tag:
-        Piwigo supporta i tag a un livello fuori dagli schemi, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
+        Piwigo supporta i tag a un livello fuori dalla scatola, ma il plug-in Tag utente aggiunge più funzionalità (test di base eseguiti).
 
 
 Al momento, fornisce un livello di funzionalità di base per consentire la navigazione in una galleria esistente, il caricamento di nuove foto e video e la creazione di nuove categorie all\'interno di una galleria. Alcuni campi possono essere modificati una volta creati, ma molti sono ancora di sola lettura .... per ora!
@@ -291,7 +291,7 @@ Per favore, posso chiederti che se disinstalli l\'app, utilizzi il link nel menu
 
 La versione del server PIWIGO su cui provo è attualmente 2.10.2.
 
-La mia galleria di prova contiene solo file .jpg e .mp4. Se il tuo ne contiene altri, potresti incontrare dei problemi: in tal caso, dimmelo e darò la priorità al lavoro su questi tipi di file.
+La mia galleria di prova contiene solo file .jpg e .mp4. Se il tuo ne contiene altri, potresti incontrare dei problemi - in tal caso, per favore dimmelo e darò la priorità al lavoro su quei tipi di file.
 
 ATTENZIONE: Versioni di Piwigo precedenti alla 1.9.2 - il caricamento di video credo dipenda dalla correzione # 756 applicata al tuo server.
 
@@ -301,7 +301,7 @@ Vorrei includere il supporto per le foto \"preferite\" ma questa funzionalità n
 
 Si prega di segnalare qualsiasi messaggio di posta elettronica se si riscontrano bug. L\'ho testato su un emulatore Android, un telefono Samsung e un tablet Samsung, ma è la mia prima app, quindi sono sicuro che le cose andranno storte per qualcuno.
 
-Un grande grazie a tutti coloro che mi hanno inviato un\'email con suggerimenti o bug. Cercherò di rispondere a tutti i tuoi suggerimenti non appena possibile.Scegli di segnalare ogni arresto anomalo che si verifica. Se trovi che il bug persiste anche dopo il prossimo aggiornamento, ti preghiamo di inviarmi un\'e-mail. È probabile che abbia bisogno di un po \'più di contesto su ciò che sta accadendo appena prima che si verifichi il bug.
+Un grande grazie a tutti coloro che mi hanno inviato un\'email con suggerimenti o bug. Cercherò di rispondere a tutti i tuoi suggerimenti non appena possibile.Scegli di segnalare ogni arresto anomalo che si verifica. Se trovi che il bug persiste dopo il prossimo aggiornamento, prenditi il tempo per inviarmi un\'e-mail. È probabile che abbia bisogno di un po \'più di contesto su ciò che sta accadendo appena prima che si verifichi il bug.
 
 I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridursi con la maturazione dell\'app. La pianificazione e la cronologia del rilascio sono mostrate di seguito. Questo potrebbe cambiare e le cose potrebbero subire ritardi, ma puoi vedere cosa c\'è nell\'elenco."</string>
     <string name="licences_heading">Licenze per le risorse utilizzate all\'interno di questa app</string>
@@ -345,7 +345,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="button_agree">Sono d\'accordo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">avvertimento</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata nativamente dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \ "corrispondenza più vicina \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata nativamente dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \"corrispondenza più vicina \".</string>
     <string name="rate_dialog_message">Se ti piace usare questa app, ti dispiacerebbe prenderti un momento per valutarla? Non ci vorrà più di un minuto. Grazie per il vostro sostegno!</string>
     <string name="groups_menu_title">Gruppi</string>
     <string name="group_members_pattern">(%1$d membri)</string>
@@ -356,7 +356,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_confirm_really_delete_group">Sei sicuro di voler eliminare questo gruppo? Tutti gli utenti che ne sono membri non verranno eliminati, ma potrebbero perdere l\'accesso alle aree della galleria di cui dispone questo gruppo.</string>
     <string name="alert_confirm_really_delete_user">Sei sicuro di voler eliminare questo utente?</string>
     <string name="users_menu_title">Utenti</string>
-    <string name="alert_error_unable_to_delete_yourself_pattern">Spiacenti, non puoi eliminare l \ \'utente con cui hai effettuato l \' accesso (%1$s).</string>
+    <string name="alert_error_unable_to_delete_yourself_pattern">Spiacenti, non puoi eliminare l \'utente con cui hai effettuato l \' accesso (%1$s).</string>
     <string name="alert_information_coming_soon">Questa funzionalità arriverà presto.</string>
 
     <string name="user_username_title">Nome utente</string>
@@ -423,7 +423,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
 
     <string name="alert_slideshow_out_of_sync_with_album">Questa presentazione non riflette più accuratamente i contenuti dell\'album corrente</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Questa presentazione non riflette più accuratamente il contenuto del tag corrente</string>
-    <string name="alert_error_app_not_yet_configured">App non ancora configurata e connessa a un server PIWIGO. Apri l\'app manualmente e configurala prima di provare a condividere elementi con essa.</string>
+    <string name="alert_error_app_not_yet_configured">App non ancora configurata e connessa a un server PIWIGO. Si prega di aprire l\'app manualmente e configurarla prima di provare a condividere elementi con essa.</string>
     <string name="error_server_configuration_invalid">Dettagli del server piwigo inaccettabili, controlla la configurazione della connessione dell\'app</string>
     <string name="alert_image_show_image_select_max_zoom">Consente uno zoom fino a 100x</string>
     <string name="alert_image_show_image_select_rotation">Ruota immagine</string>
@@ -452,7 +452,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_message_file_upload_cancelled_pattern">Caricamento del file (%1$s) annullato.</string>
     <string name="alert_message_upload_cancelled">Caricamento annullato</string>
     <string name="alert_message_upload_cancelled_message">Se non desideri riavviare il caricamento in un secondo momento. È necessario rimuovere i file dal processo di caricamento, quindi fare clic su Carica. Questo cancellerà lo stato di caricamento annullato dal server.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \ "corrispondenza più vicina \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \"corrispondenza più vicina \".</string>
     <string name="logging_out_of_piwigo_pattern">Disconnessione da%1$s</string>
     <string name="loading_new_server_configuration">Caricamento della nuova configurazione della connessione al server</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Per consentire la memorizzazione nella cache su disco, è necessario concedere l\'accesso in scrittura al file system. Se negato, la memorizzazione nella cache sarà in memoria.</string>
@@ -463,7 +463,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="error_insufficient_permissions_for_cache_folder">È necessario l\'accesso in lettura e scrittura alla cartella della cache. Controlla le impostazioni dell\'app.</string>
     <string name="alert_title_error_talking_to_server">Errore durante la comunicazione con il server</string>
     <string name="alert_title_error_connecting_to_server">Errore durante la connessione al server</string>
-    <string name="alert_warning_message_self_signed_certificates">I certificati SSL autofirmati non devono essere utilizzati su un server accessibile al pubblico (su Internet): indagare su https://letsencrypt.org o simile. Questo è solo a scopo di test.</string>
+    <string name="alert_warning_message_self_signed_certificates">I certificati SSL autofirmati non devono essere utilizzati su un server pubblico (su Internet) - indagare su https://letsencrypt.org o simile. Questo è solo a scopo di test.</string>
     <string name="alert_error_adding_certificate_to_truststore">Errore durante l\'aggiunta del certificato al truststore</string>
     <string name="alert_add_cert_to_truststore_pattern">Aggiungere la catena di certificati all\'elenco delle CA attendibili?</string>
     <string name="certificate_summary_pattern">Oggetto:%1$s\nValido:%2$s -%3$s\nSeriale:%4$s</string>
@@ -489,7 +489,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_no_scheme_specified">È necessario anteporre al proprio indirizzo server http:// o https://. Non sono supportati altri schemi. La porta è facoltativa se l\'impostazione predefinita è 80 per http o 443 per https. Esempio http://piwigo.org/demo o http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">I seguenti%1$d file hanno superato la soglia di avviso:%2$s. Vuoi rimuoverli dal caricamento?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Desideri comprimere i video prima del caricamento?</string>
-    <string name="alert_trusted_certificates_polling">Verranno presentati certificati non attendibili forniti dal server al momento della connessione in modo che tu possa scegliere di aggiungerli al truststore. Se rifiuti, non ti verrà chiesto di nuovo lo stesso certificato. Per essere nuovamente richiesto, deseleziona e riseleziona l\'opzione per utilizzare un archivio certificati attendibile personalizzato.</string>
+    <string name="alert_trusted_certificates_polling">Verranno presentati certificati non attendibili forniti dal server al momento della connessione in modo da poter scegliere di aggiungerli al truststore. Se rifiuti, non ti verrà chiesto di nuovo lo stesso certificato. Per essere nuovamente richiesto, deseleziona e riseleziona l\'opzione per utilizzare un archivio certificati attendibile personalizzato.</string>
     <string name="button_copy_link">Copia link</string>
     <string name="download_link_clipboard_data_desc">Link per il download per%1$s</string>
     <string name="alert_http_scheme_specified">Il tuo server utilizza http. Questa non è una buona idea perché il nome utente e la password vengono trasmessi al server in testo normale. Ti consiglio vivamente di cambiare il tuo server per utilizzare https.</string>
@@ -505,7 +505,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Errore durante il caricamento</string>
     <string name="alert_message_error_uploading_end">Si è verificato un errore dopo il caricamento riuscito di tutti i file. Riavvia il caricamento per continuare da dove è arrivato e cancellare eventuali dati temporanei residui dal server.</string>
-    <string name="alert_message_error_uploading_start">Si è verificato un errore prima del caricamento riuscito di tutti i file. Riavviare il caricamento per continuare da dove era arrivato oppure eliminare tutti i file rimanenti dal lavoro, quindi fare clic sul pulsante Fine per cancellare eventuali dati temporanei residui dal server.</string>
+    <string name="alert_message_error_uploading_start">Si è verificato un errore prima del caricamento riuscito di tutti i file. Riavvia il caricamento per continuare da dove era arrivato oppure elimina tutti i file rimanenti dal lavoro, quindi fai clic sul pulsante Fine per cancellare eventuali dati temporanei residui dal server.</string>
     <string name="release_history">Cronologia delle versioni</string>
     <string name="planned_releases">Rilasci pianificati</string>
     <string name="tags_heading">Tag</string>
@@ -617,7 +617,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La preferenza%1$s è irrecuperabile ed è stata impostata su%2$s per impostazione predefinita. Reimposta questo valore nelle impostazioni dell\'app</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La preferenza%1$s è irrecuperabile ed è stata impostata su%2$s per impostazione predefinita. Reimposta questo valore nelle impostazioni dell\'app"</string>
     <string name="switch_to_cached_mode">Il server al momento non è disponibile. Utilizzare dati memorizzati nella cache?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Comprimi video</string>
@@ -662,7 +662,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="create_email_using_app">Crea un\'e-mail utilizzando l\'app</string>
     <string name="open_files">Apri file nell\'app</string>
     <string name="files_unavailable_to_download_removed_pattern">La tua selezione conteneva file che non potevano essere elaborati. Questi%1$d file sono stati ignorati. Per condividere un file video, è necessario prima memorizzarlo completamente nella cache locale.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Verranno visualizzati nuovamente tutti i suggerimenti utente una tantum</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Verranno visualizzati nuovamente tutti i suggerimenti utente una tantum"</string>
     
     
     <string name="delete_uploaded_files_title">Elimina i file caricati</string>
@@ -703,6 +703,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Presentazione non sincronizzata con i contenuti dell\'album caricato. Ripristino all\'avvio.</string>
     <string name="uri_permission_justification_file_selection">Per selezionare file o cartelle da utilizzare con questa app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleziona una cartella in cui scaricare i file nelle impostazioni dell\'app, quindi riprova.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione di file di output valida (la preferenza è%2$s) per il file (video:%3$b audio:%4$b) accettabile dal server tra le opzioni (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione di file di output valida (preferibilmente%2$s) per il file (video:%3$b audio:%4$b) accettabile dal server tra le opzioni (%1$s)</string>
+    <string name="uuid_title">Installa UUID</string>
 
 </resources>

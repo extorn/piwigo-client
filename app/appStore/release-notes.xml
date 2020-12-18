@@ -1,45 +1,54 @@
 <en-GB>
 Bugfix:
-- Image compressor not working on recent versions of Android
-- Layout issues with bulk action buttons after long press in an album
+- Fixed a couple of issues causing crashes for some users
+Changes:
+- Added a UUID to logs and the about screen allowing me to track logs to specific user if they give me their UUID (for solving specific bugs they experience).
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Kompresor obrazu nefunguje v posledních verzích systému Android
-- Problémy s rozložením tlačítek hromadné akce po dlouhém stisknutí alba
+- Opraveno několik problémů způsobujících selhání některých uživatelů
+Změny:
+- Přidáno UUID do protokolů a na obrazovku about, což mi umožňuje sledovat protokoly ke konkrétnímu uživateli, pokud mi dá svůj UUID (pro řešení konkrétních chyb, se kterými se setkávají).
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Der Bildkomprimierer funktioniert nicht mit neueren Android-Versionen
-- Layoutprobleme mit Massenaktionsschaltflächen nach langem Drücken in einem Album
+- Einige Probleme wurden behoben, die bei einigen Benutzern zu Abstürzen führten
+Änderungen:
+- Den Protokollen und dem Info-Bildschirm wurde eine UUID hinzugefügt, mit der ich Protokolle für bestimmte Benutzer verfolgen kann, wenn diese mir ihre UUID geben (um bestimmte aufgetretene Fehler zu beheben).
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- El compresor de imágenes no funciona en versiones recientes de Android
-- Problemas de diseño con botones de acción masiva después de una pulsación larga en un álbum
+- Se corrigieron un par de problemas que causaban bloqueos para algunos usuarios.
+Cambios:
+- Se agregó un UUID a los registros y la pantalla Acerca de, lo que me permite rastrear los registros de un usuario específico si me dan su UUID (para resolver errores específicos que experimentan).
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Le compresseur d\'image ne fonctionne pas sur les versions récentes d\'Android
-- Problèmes de mise en page avec les boutons d\'action en masse après un appui long sur un album
+- Correction de quelques problèmes provoquant des plantages pour certains utilisateurs
+Changements:
+- Ajout d\'un UUID aux journaux et à l\'écran à propos me permettant de suivre les journaux d\'un utilisateur spécifique s\'ils me donnent leur UUID (pour résoudre des bogues spécifiques qu\'ils rencontrent).
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Il compressore di immagini non funziona sulle versioni recenti di Android
-- Problemi di layout con i pulsanti di azione collettiva dopo aver premuto a lungo in un album
+- Risolti un paio di problemi che causavano arresti anomali per alcuni utenti
+I cambiamenti:
+- Aggiunto un UUID ai log e alla schermata delle informazioni che mi consente di tenere traccia dei log di un utente specifico se mi danno il loro UUID (per risolvere bug specifici che riscontrano).
 </it-IT>
 <ja-JP>
 バグ修正：
--Androidの最近のバージョンで画像コンプレッサーが機能しない
--アルバムを長押しした後の一括アクションボタンのレイアウトの問題
+-一部のユーザーにクラッシュを引き起こすいくつかの問題を修正しました
+変更点：
+-ログにUUIDを追加し、バージョン情報画面を追加して、特定のユーザーがUUIDを提供した場合に、特定のユーザーのログを追跡できるようにしました（ユーザーが経験する特定のバグを解決するため）。
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Компрессор изображений не работает в последних версиях Android.
-- Проблемы с макетом с кнопками массового действия после длительного нажатия в альбоме
+- Исправлена пара проблем, вызывающих сбои у некоторых пользователей.
+Изменения:
+- Добавлен UUID в журналы и экран «О программе», позволяющий мне отслеживать журналы конкретного пользователя, если они сообщают мне свой UUID (для решения конкретных ошибок, с которыми они сталкиваются).
 </ru-RU>
 <zh-CN>
 错误修正：
--图片压缩器不适用于最新版本的Android
--长按相册后，批量操作按钮的布局问题
+-修复了一些导致某些用户崩溃的问题
+变化：
+-在日志和“关于”屏幕中添加了一个UUID，如果他们给我UUID，我可以跟踪特定用户的日志（用于解决他们遇到的特定错误）。
 </zh-CN>

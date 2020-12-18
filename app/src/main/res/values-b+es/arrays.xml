@@ -49,7 +49,7 @@
         <item>pulgar</item>
         <item>2pequeña</item>
         <item>pequeño</item>
-        <item>pequeño</item>
+        <item>pequeña</item>
         <item>medio</item>
         <item>grande</item>
         <item>xlarge</item>
@@ -64,7 +64,7 @@
         <item>pulgar</item>
         <item>2pequeña</item>
         <item>pequeño</item>
-        <item>pequeño</item>
+        <item>pequeña</item>
     </string-array>
 
     
@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias.</item>
-        <item>Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso</item>
+        <item>"Si tiene algún problema con la aplicación, utilice el correo electrónico para notificarme. Si lo desea, publique una reseña negativa en Google Play, no estoy tratando de detener eso, pero envíe un correo electrónico también. Hay un enlace para enviarme un correo electrónico en la parte superior del menú del cajón deslizable. Puedo proporcionar un soporte mucho más completo a una dirección de correo electrónico. Muchas gracias."</item>
+        <item>"Solo puede ver los archivos para seleccionar para cargar que sean aceptables para cargar en su servidor. Si desea cargar videos, asegúrese de modificar el archivo config.inc.php de su servidor para incluir $ conf [\'upload_form_all_types\'] = true; en lugar de falso"</item>
         <item>Si una carga simplemente no tiene éxito, intente usar la preferencia en la página de carga de la configuración de la aplicación para borrar cualquier carga fallida residual del servidor</item>
-        <item>Siempre se produce un error al intentar actualizar las etiquetas - \ "No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
+        <item>Siempre se produce un error al intentar actualizar las etiquetas - \"No está permitido eliminar etiquetas \" - Asegúrese de que los usuarios puedan agregar y eliminar etiquetas (configuración del complemento del servidor)</item>
         <item>Comparta archivos de una aplicación diferente con esta aplicación para agregarlos a la pantalla de carga listos para ir a su servidor actual</item>
         <item>Haga clic largo en una imagen (ya sea en miniatura o en un elemento de presentación de diapositivas) que no se haya podido cargar para recuperarla nuevamente</item>
         <item>Haga clic largo en un álbum para eliminar ese álbum y todo el contenido</item>
@@ -136,15 +136,20 @@
         <item>Puede acercar una imagen al ver una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
         <item>Cuando inicie sesión como administrador, antes de entregar su dispositivo a un amigo para que vea sus fotos, active la función de bloqueo de la aplicación para evitar que se realicen cambios involuntarios en su galería.</item>
         <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos local está habilitado, es posible guardar ese video en su carpeta de descargas</item>
-        <item>Haga clic largo en el botón Eliminar en un \ \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no esté en curso)</item>
-        <item>Si las imágenes tardan en cargarse, compruebe que su servidor genera automáticamente el tamaño utilizado por esta aplicación cuando se cargan</item>
+        <item>Haga clic largo en el botón Eliminar en un \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no esté en curso)</item>
+        <item>Si las imágenes tardan en cargarse, compruebe que su servidor genera automáticamente el tamaño que utiliza esta aplicación cuando se cargan</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>El futuro</item>
-        <item>No se planean más actualizaciones.</item>
+        <item>"No se planean más actualizaciones."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.89</item>
+        <item>"Arreglo del fallo:
+                 - Se corrigieron un par de problemas que causaban bloqueos para algunos usuarios.
+                Cambios:
+                 - Se agregó un UUID a los registros y la pantalla Acerca de, lo que me permite rastrear los registros de un usuario específico si me dan su UUID (para resolver errores específicos que experimentan)."</item>
         <item>1.4.0.88</item>
         <item>"Arreglo del fallo:
              - El compresor de imágenes no funciona en versiones recientes de Android
@@ -168,7 +173,7 @@
                  - traducciones agregadas para un error que puede ocurrir durante la compresión de video
                  - Use el GUID de instalación de la aplicación Firebase para el cifrado de mensajes cuando esté disponible
                 Arreglo del fallo:
-                 - Se corrigió la traducción de cadenas para el ruso causando un bloqueo en la presentación"</item>
+                 - Se corrigió la traducción de cadenas para el ruso que causaba un bloqueo en la presentación de diapositivas"</item>
         <item>1.4.0.84</item>
         <item>"Cambio:
                  - Se eliminó la advertencia en la pantalla de girar cuando se encuentra a mitad de una presentación de diapositivas.
@@ -181,7 +186,7 @@
                  - Se corrigió la posición del botón en la barra de acciones del elemento al editar un elemento de recurso"</item>
         <item>1.4.0.82</item>
         <item>"Cambios:
-                 - Android 30 no permite cambiar una concesión de permisos de archivos de Android a una subcarpeta (eliminando esta función).
+                 - Android 30 no permite cambiar una concesión de permisos de archivos de Android a una subcarpeta (eliminar esta función).
                 Arreglo del fallo:
                  - Editar y guardar trabajos de carga automática no funciona"</item>
     </string-array>

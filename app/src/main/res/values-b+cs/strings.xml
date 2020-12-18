@@ -183,12 +183,12 @@ Pokud nesouhlasíte s podmínkami této smlouvy, neklikejte na tlačítko „Sou
 stáhnout nebo použít aplikaci.
 
 Pokud uvažujete o použití této aplikace pro přístup a úpravu serveru používaného pro komerční účely, je nutné si přečíst a porozumět omezení odpovědnosti.
-Před přijetím jakéhokoli rizika a odpovědnosti sami na základě vašich rozhodnutí musíte toto otestovat na neprodukčním serveru. Tato aplikace byla navržena primárně
+To musíte otestovat na neprodukčním serveru k vaší spokojenosti, než sami přijmete jakékoli riziko a odpovědnost na základě vašich rozhodnutí. Tato aplikace byla navržena primárně
 pro nekomerční účely.
 
 ** Definice
 
-Držitel licence: Držitel licence je osoba nebo společnost, která má v úmyslu používat licencovaný software nebo jej již používá legálně nebo nelegálně. Výraz „držitel licence“ neznamená, že software je ve výchozím nastavení legálně licencován.
+Držitel licence: Držitel licence je osoba nebo společnost, která má v úmyslu používat licencovaný software nebo jej již používá legálně nebo nelegálně. Pojem „nabyvatel licence“ neznamená, že software je ve výchozím nastavení legálně licencován.
 
 
 ** Licence
@@ -197,7 +197,7 @@ Gareth Deli vám uděluje odvolatelnou, nevýhradní, nepřenosnou a omezenou li
 stahovat, instalovat a používat aplikaci výhradně pro své osobní nebo komerční účely
 přísně v souladu s podmínkami této smlouvy.
 
-SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPLATNOST. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, TAKŽE PŘI AKCI SMLOUVY, DĚLENÍ NEBO JINÉHO VÝSLEDKU, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
+SOFTWARE JE POSKYTOVÁN „TAK, JAK JE“, BEZ ZÁRUKY JAKÉHOKOLI DRUHU, VÝSLOVNÉ NEBO PŘEDPOKLÁDANÉ, VČETNĚ, ALE NENÍ OMEZENO NA ZÁRUKY PRODEJNOSTI, VHODNOSTI PRO KONKRÉTNÍ ÚČEL A NEPROPOJENÍ. AUTORI NEBO DRŽITELÉ AUTORSKÝCH PRÁV V ŽÁDNÉM PŘÍPADĚ NEBUDOU ODPOVĚDNÍ ZA JAKÝKOLI NÁROK, ŠKODY NEBO JINOU ODPOVĚDNOST, KDYKOLI VE SKUTEČNÉ SMLOUVĚ, DĚLENÍ NEBO JINÉ, VYPLÝVAJÍCÍ Z SOFTWARU NEBO POUŽITÍ NEBO JINÉHO OBCHODOVÁNÍ SOFTWARE
 
 
 ** Omezení
@@ -258,7 +258,7 @@ možné podle platných zákonů a zbývající ustanovení budou pokračovat v 
 
 ** Změny této smlouvy
 
-Gareth Deli si vyhrazuje právo podle vlastního uvážení toto upravit nebo nahradit
+Gareth Deli si vyhrazuje právo podle svého výhradního uvážení toto upravit nebo nahradit
 Dohoda kdykoli. O změně budete informováni při otevření aplikace a budete mít
 možnost buď přijmout změny, nebo přestat aplikaci používat.
 
@@ -299,7 +299,7 @@ Testoval jsem s nainstalovanou kopií pluginu piwigo_privacy a také nainstalova
 Mám nainstalovanou kopii pluginu Extended Description, ale bohužel tato funkce ještě není vystavena prostřednictvím PIWIGO API.
 Chtěl bych zahrnout podporu pro „oblíbené“ fotografie, ale tato funkce se zatím nezdá být odhalena prostřednictvím PIWIGO API.
 
-Pokud narazíte na nějaké chyby, nahlaste nám prosím jakýkoli dotaz. Testoval jsem to na emulátoru Androidu, telefonu Samsung a tabletu Samsung, ale je to moje první aplikace, takže jsem si jistý, že se někomu něco pokazí.
+Pokud narazíte na nějaké chyby, nahlaste nám prosím jakýkoli e-mail. Testoval jsem to na emulátoru Androidu, telefonu Samsung a tabletu Samsung, ale je to moje první aplikace, takže jsem si jistý, že se někomu něco pokazí.
 
 Velké poděkování všem, kteří mi poslali e-mail s návrhy nebo chybami. Budu se snažit vyřešit všechny vaše návrhy, jakmile to bude praktické.Rozhodněte se hlásit každou havárii, která nastane. Pokud zjistíte, že k chybě stále dochází i po další aktualizaci, udělejte si prosím čas a pošlete mi e-mail. Je pravděpodobné, že potřebuji trochu více kontextu ohledně toho, co se děje těsně předtím, než dojde k chybě.
 
@@ -345,7 +345,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="button_agree">Souhlasím</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Varování</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Vybraná velikost miniatury není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti \ "nejbližší shoda \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Vybraná velikost miniatury není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti \"nejbližší shoda \".</string>
     <string name="rate_dialog_message">Pokud vás tato aplikace baví, nevadilo by vám ji chvíli hodnotit? Netrvá to déle než minutu. Děkuji za vaši podporu!</string>
     <string name="groups_menu_title">Skupiny</string>
     <string name="group_members_pattern">(%1$d členů)</string>
@@ -356,7 +356,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_confirm_really_delete_group">Opravdu chcete tuto skupinu smazat? Uživatelé, kteří jsou jejími členy, nebudou smazáni, ale mohou ztratit přístup do oblastí galerie, které tato skupina má.</string>
     <string name="alert_confirm_really_delete_user">Opravdu chcete tohoto uživatele smazat?</string>
     <string name="users_menu_title">Uživatelé</string>
-    <string name="alert_error_unable_to_delete_yourself_pattern">Litujeme, nemůžete smazat uživatele, ke kterému jste přihlášeni (%1$s).</string>
+    <string name="alert_error_unable_to_delete_yourself_pattern">Je nám líto, ale nemůžete smazat uživatele, ke kterému jste přihlášeni (%1$s).</string>
     <string name="alert_information_coming_soon">Tato funkce bude brzy k dispozici.</string>
 
     <string name="user_username_title">Uživatelské jméno</string>
@@ -435,7 +435,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_title_set_album_thumbnail">Aktualizovat miniaturu alba?</string>
     <string name="alert_message_set_album_thumbnail">Aktualizovat miniaturu alba na tento obrázek?</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">Opravdu chcete trvale smazat album (%1$s) a veškerý obsah (pokud není propojen s alby jinde)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Jste si absolutně jisti, že chcete smazat album (%1$s) s%2$d fotografiemi a%3$d podřízenými alby obsahujícími další%4$d fotografie navždy? Fotky propojené s jinými alby zde zůstanou, ale všechny ostatní budou smazány navždy. Tuto akci nelze vrátit zpět.</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Jste si naprosto jisti, že chcete smazat album (%1$s) s%2$d fotografiemi a%3$d podřízenými alby obsahujícími další%4$d fotografie navždy? Fotky propojené s jinými alby zde zůstanou, ale všechny ostatní budou smazány navždy. Tuto akci nelze vrátit zpět.</string>
     <string name="alert_confirm_copy_items_here_pattern">Zkopírovat sem položky (%1$d) v košíku (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Přesunout sem položky (%1$d) v košíku sem (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Propojená alba</string>
@@ -452,7 +452,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_message_file_upload_cancelled_pattern">Nahrávání souboru (%1$s) bylo zrušeno.</string>
     <string name="alert_message_upload_cancelled">Nahrávání bylo zrušeno</string>
     <string name="alert_message_upload_cancelled_message">Pokud nechcete nahrávání znovu spustit později. Odeberte soubory z úlohy nahrávání a poté klikněte na upload. Tím se vymaže stav zrušeného nahrávání ze serveru.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Vybraná velikost obrázku není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti \ "nejbližší shoda \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Vybraná velikost obrázku není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti \"nejbližší shoda \".</string>
     <string name="logging_out_of_piwigo_pattern">Odhlášení z%1$s</string>
     <string name="loading_new_server_configuration">Načítání nové konfigurace připojení k serveru</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Chcete-li povolit ukládání do mezipaměti na disk, je třeba udělit přístup pro zápis do systému souborů. Pokud je zamítnuto, ukládání do mezipaměti bude v paměti.</string>
@@ -504,7 +504,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="heading_keystore_filename">Úložiště klíčů</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Chyba při nahrávání</string>
-    <string name="alert_message_error_uploading_end">Po úspěšném nahrání všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, a vymažte veškerá zbývající dočasná data ze serveru.</string>
+    <string name="alert_message_error_uploading_end">Po úspěšném nahrání všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, a vymažte veškerá zbytková dočasná data ze serveru.</string>
     <string name="alert_message_error_uploading_start">Před úspěšným nahráním všech souborů došlo k chybě. Restartujte nahrávání a pokračujte od místa, kam se dostalo, nebo odstraňte všechny zbývající soubory z úlohy a poté kliknutím na tlačítko Dokončit vymažte veškerá zbývající dočasná data ze serveru.</string>
     <string name="release_history">Historie vydání</string>
     <string name="planned_releases">Plánovaná vydání</string>
@@ -589,7 +589,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Správce nemá přístup k očekávaným funkcím. K tomu může dojít, pokud používáte plugin komunity (který předstírá stav správce pro uživatele, kteří nejsou administrátory), který se nenainstaluje správně. Zkontrolujte, zda příslušný plugin správně vystavuje metody, které očekáváte od webového prohlížeče:%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Tato funkce není k dispozici. Nainstalujte si prosím na svůj server plugin PiwigoClientWsExts. Pokud ji již máte nainstalovanou, aktualizujte ji na nejnovější verzi.</string>
     <string name="alert_user_session_no_allowed_filetypes">Server neposkytl seznam typů souborů, které lze nahrát s informacemi o relaci uživatele (obvykle je k dispozici pouze pro uživatele správce). Zkontrolujte, zda je server správně nakonfigurován, a zkuste to znovu. Pokud problém přetrvává, pošlete mi e-mail, který mi pomůže problém diagnostikovat.</string>
-    <string name="job_not_found">Nahrát Job nebyl nalezen</string>
+    <string name="job_not_found">Nahrát Úloha nebyla nalezena</string>
     <string name="files_mid_data_transfer_title">Soubory částečně zkopírovány</string>
     <string name="files_awaiting_verification_title">Soubory čekající na kontrolu integrity dat</string>
     <string name="files_awaiting_transfer_title">Soubory čekající na přenos dat</string>
@@ -617,7 +617,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">Předvolba%1$s je nenávratná a byla nastavena na%2$s. Resetujte tuto hodnotu v nastavení aplikace</string>
+    <string name="preference_corrupt_please_re_type_pattern">"Předvolba%1$s je nenávratná a byla nastavena na%2$s. Resetujte tuto hodnotu v nastavení aplikace"</string>
     <string name="switch_to_cached_mode">Server v současné době není k dispozici. Použít data v mezipaměti?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Komprimujte videa</string>
@@ -662,7 +662,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="create_email_using_app">Vytvořte e-mail pomocí aplikace</string>
     <string name="open_files">Otevřete soubory v aplikaci</string>
     <string name="files_unavailable_to_download_removed_pattern">Váš výběr obsahoval soubory, které nelze zpracovat. Tyto%1$d soubory byly ignorovány. Chcete-li sdílet video soubor, musí být nejprve plně místně uložen do mezipaměti.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Všechny jednorázové tipy uživatelů se znovu zobrazí</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Všechny jednorázové tipy uživatelů se znovu zobrazí"</string>
     
     
     <string name="delete_uploaded_files_title">Odstraňte nahrané soubory</string>
@@ -703,6 +703,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Prezentace není synchronizována s načteným obsahem alba. Resetování při spuštění.</string>
     <string name="uri_permission_justification_file_selection">Výběr souborů nebo složek pro použití v této aplikaci</string>
     <string name="alert_error_please_select_download_folder_and_retry">V nastavení aplikace vyberte složku, do které chcete stáhnout soubory, a zkuste to znovu.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Pro soubor nebyla nalezena žádná platná přípona výstupního souboru (upřednostňováno je%2$s) (video:%3$b audio:%4$b) mezi serverem přijatelné (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Nebyla nalezena žádná platná přípona výstupního souboru (preferováno je%2$s) pro soubor (video:%3$b audio:%4$b) přijatelné pro server mezi možnostmi (%1$s)</string>
+    <string name="uuid_title">Nainstalujte UUID</string>
 
 </resources>

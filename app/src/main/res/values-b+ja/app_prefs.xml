@@ -124,7 +124,7 @@
 
     <string name="preference_caching_clearResponseCache_title">サーバー応答キャッシュのクリア</string>
     
-    <string name="preference_caching_clearResponseCache_summary">ディスクにキャッシュされているすべてのサーバー応答を削除します</string>
+    <string name="preference_caching_clearResponseCache_summary">ディスクにキャッシュされたすべてのサーバー応答を削除します</string>
 
     
     <string name="preference_caching_level_title">応答キャッシュレベル</string>
@@ -157,7 +157,7 @@
 
     <string name="preference_page_gallery">ギャラリー</string>
     <string name="preference_gallery_category_general">一般</string>
-    <string name="preference_gallery_category_advanced">高度</string>
+    <string name="preference_gallery_category_advanced">高度な</string>
     <string name="preference_gallery_category_slideshow">スライドショー</string>
     <string name="preference_gallery_category_resources">リソース</string>
     <string name="preference_gallery_category_albums">アルバム</string>
@@ -312,7 +312,7 @@
     <string name="preference_upload_category_data_upload_display">視覚的な設定</string>
     <string name="preference_upload_category_data_upload">データのアップロード</string>
     <string name="preference_upload_category_pre_data_upload_compression">アップロード前の圧縮</string>
-    <string name="preference_upload_category_advanced">高度</string>
+    <string name="preference_upload_category_advanced">高度な</string>
 
     
 

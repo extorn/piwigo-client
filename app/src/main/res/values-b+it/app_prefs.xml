@@ -447,7 +447,7 @@
     
     
     <string name="preference_app_always_show_status_bar_title">Mostra sempre la barra di stato</string>
-    <string name="preference_app_always_show_status_bar_summary">Abilita per impedire il nascondimento automatico della barra di stato</string>
+    <string name="preference_app_always_show_status_bar_summary">Abilita per impedire l\'occultamento automatico della barra di stato</string>
 
     
     <string name="preference_app_desired_language_title">linguaggio</string>

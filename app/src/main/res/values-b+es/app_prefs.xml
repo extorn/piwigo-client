@@ -376,7 +376,7 @@
     <string name="preference_data_upload_compress_images_title">Comprimir imágenes</string>
     
 
-    <string name="preference_data_upload_compress_images_quality_title">La calidad de imagen</string>
+    <string name="preference_data_upload_compress_images_quality_title">Calidad de la imagen</string>
     <string name="preference_data_upload_compress_images_quality_summary">Calidad de compresión de imagen%1$s</string>
     
     
@@ -447,7 +447,7 @@
     
     
     <string name="preference_app_always_show_status_bar_title">Mostrar siempre la barra de estado</string>
-    <string name="preference_app_always_show_status_bar_summary">Habilite para evitar el ocultamiento automático de la barra de estado</string>
+    <string name="preference_app_always_show_status_bar_summary">Habilite para evitar la ocultación automática de la barra de estado</string>
 
     
     <string name="preference_app_desired_language_title">Idioma</string>

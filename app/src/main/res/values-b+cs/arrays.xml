@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji.</item>
-        <item>Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro upload na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné</item>
+        <item>"Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji."</item>
+        <item>"Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro nahrání na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné"</item>
         <item>Pokud nahrávání právě neproběhne úspěšně, zkuste pomocí předvoleb na stránce nahrávání nastavení aplikace vymazat zbytková neúspěšná nahrávání ze serveru</item>
-        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - \ "Nemáte oprávnění mazat značky \" - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
+        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - \"Nemáte oprávnění mazat značky \" - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání připravené k přechodu na aktuální server</item>
         <item>Dlouhým kliknutím na obrázek (miniaturu nebo položku prezentace), který se nepodařilo načíst, jej znovu načtete</item>
         <item>Dlouhým kliknutím na album toto album a veškerý obsah odstraníte</item>
@@ -136,15 +136,20 @@
         <item>Při prohlížení v prezentaci můžete obraz přiblížit tak, že na obrazovce přitáhnete dva prsty k sobě nebo od sebe</item>
         <item>Pokud jste přihlášeni jako správce, před podáním zařízení příteli k prohlížení vašich fotografií aktivujte funkci zámku aplikace, abyste zabránili neúmyslným změnám v galerii</item>
         <item>Jakmile je zobrazeno celé video, je-li povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
-        <item>Dlouhým kliknutím na tlačítko mazání na \ \'souboru k nahrání \' vymažete všechny soubory, které se mají nahrát (pokud právě neprobíhá úloha)</item>
+        <item>Dlouhým kliknutím na tlačítko mazání na \'souboru k nahrání \' vymažete všechny soubory, které se mají nahrát (pokud právě neprobíhá úloha)</item>
         <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server po nahrání automaticky generuje velikost používanou touto aplikací</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
-        <item>Žádné další aktualizace nejsou plánovány.</item>
+        <item>"Žádné další aktualizace nejsou plánovány."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.89</item>
+        <item>"Oprava chyby:
+                 - Opraveno několik problémů způsobujících selhání některých uživatelů
+                Změny:
+                 - Přidáno UUID do protokolů a na obrazovku about, což mi umožňuje sledovat protokoly ke konkrétnímu uživateli, pokud mi dá svůj UUID (pro řešení konkrétních chyb, se kterými se setkávají)."</item>
         <item>1.4.0.88</item>
         <item>"Oprava chyby:
              - Kompresor obrazu nefunguje v posledních verzích systému Android
@@ -181,7 +186,7 @@
                  - Opravená poloha tlačítka na liště akcí položky při úpravách položky zdroje"</item>
         <item>1.4.0.82</item>
         <item>"Změny:
-                 - Přepínání přidělení oprávnění souboru Android na podsložku není povoleno Androidem 30. (odstranění této funkce).
+                 - Přepínání přidělení oprávnění souboru Android do podsložky není povoleno Androidem 30. (odebrání této funkce).
                 Oprava chyby:
                  - Úpravy a ukládání úloh automatického nahrávání nefungují"</item>
     </string-array>

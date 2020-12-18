@@ -124,27 +124,32 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Si vous rencontrez des problèmes avec l\'application, veuillez m\'en informer par e-mail. Si vous le souhaitez, publiez un avis négatif sur Google Play, je n\'essaie pas d\'arrêter cela, mais veuillez également envoyer un e-mail. Il y a un lien pour m\'envoyer un e-mail en haut du menu du tiroir coulissant. Je peux fournir une assistance beaucoup plus complète à une adresse e-mail. Merci beaucoup.</item>
-        <item>Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, assurez-vous de modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux</item>
+        <item>"Si vous rencontrez des problèmes avec l\'application, veuillez m\'en informer par e-mail. Si vous le souhaitez, publiez un avis négatif sur Google Play, je n\'essaie pas d\'arrêter cela, mais veuillez également envoyer un e-mail. Il y a un lien pour m\'envoyer un e-mail en haut du menu du tiroir coulissant. Je peux fournir une assistance beaucoup plus complète à une adresse e-mail. Merci beaucoup."</item>
+        <item>"Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux"</item>
         <item>Si un téléchargement ne réussit pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel ayant échoué depuis le serveur.</item>
-        <item>Une erreur se produit toujours lors de la tentative de mise à jour des balises - \ "Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre du plug-in de serveur)</item>
+        <item>Une erreur se produit toujours lors de la tentative de mise à jour des balises - \"Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre du plug-in de serveur)</item>
         <item>Partagez des fichiers d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à être envoyés sur votre serveur actuel</item>
         <item>Cliquez longuement sur une image (miniature ou élément de diaporama) qui n\'a pas pu se charger afin de la récupérer à nouveau</item>
         <item>Cliquez longuement sur un album pour supprimer cet album et tout son contenu</item>
         <item>Cliquez longuement sur une image d\'album pour activer la sélection en bloc d\'images pour une action</item>
         <item>Lors de la visualisation d\'une image dans le diaporama, cliquez longuement pour faire pivoter / modifier la taille de l\'image affichée / permettre un zoom supplémentaire</item>
         <item>Vous pouvez zoomer sur une image lors de la visualisation dans un diaporama en dessinant deux doigts ensemble ou en écartant sur l\'écran</item>
-        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de confier votre appareil à un ami pour voir vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications involontaires soient apportées à votre galerie</item>
+        <item>Lorsque vous êtes connecté en tant qu\'administrateur, avant de confier votre appareil à un ami pour qu\'il affiche vos photos, activez la fonction de verrouillage de l\'application pour éviter que des modifications involontaires soient apportées à votre galerie</item>
         <item>Une fois que vous avez visionné une vidéo entière, si la mise en cache des fichiers locaux est activée, il est possible d\'enregistrer cette vidéo dans votre dossier de téléchargements</item>
-        <item>Cliquez longuement sur le bouton de suppression sur un \ \'fichier à télécharger \' pour supprimer tous les fichiers à télécharger (lorsque le travail n\'est pas en cours)</item>
+        <item>Cliquez longuement sur le bouton de suppression sur un \'fichier à télécharger \' pour supprimer tous les fichiers à télécharger (lorsque le travail n\'est pas en cours)</item>
         <item>Si les images sont lentes à charger, vérifiez que votre serveur génère automatiquement la taille utilisée par cette application lors de leur téléchargement</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>L\'avenir</item>
-        <item>Aucune autre mise à jour n\'est prévue.</item>
+        <item>"Aucune autre mise à jour n\'est prévue."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.89</item>
+        <item>"Correction d\'un bug:
+                 - Correction de quelques problèmes provoquant des plantages pour certains utilisateurs
+                Changements:
+                 - Ajout d\'un UUID aux journaux et à l\'écran à propos me permettant de suivre les journaux d\'un utilisateur spécifique s\'ils me donnent leur UUID (pour résoudre des bogues spécifiques qu\'ils rencontrent)."</item>
         <item>1.4.0.88</item>
         <item>"Correction d\'un bug:
              - Le compresseur d\'image ne fonctionne pas sur les versions récentes d\'Android
@@ -168,7 +173,7 @@
                  - ajout de traductions pour une erreur pouvant survenir lors de la compression vidéo
                  - Utilisez le GUID d\'installation de l\'application Firebase pour le chiffrement des messages, le cas échéant
                 Correction d\'un bug:
-                 - Correction de la traduction des chaînes pour le russe provoquant un crash dans le diaporama"</item>
+                 - Correction de la traduction de la chaîne pour le russe provoquant un crash dans le diaporama"</item>
         <item>1.4.0.84</item>
         <item>"Changement:
                  - Suppression de l\'avertissement sur la rotation de l\'écran au milieu d\'un diaporama.
