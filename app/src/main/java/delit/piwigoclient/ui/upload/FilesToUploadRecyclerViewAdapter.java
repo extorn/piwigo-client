@@ -17,19 +17,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.material.button.MaterialButton;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -148,10 +148,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
             holder.fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
             if(MimeTypes.isVideo(item.getMimeType())) {
-                holder.fileForUploadMimeTypeImageView.setImageDrawable(holder.mView.getResources().getDrawable(R.drawable.ic_movie_filter_black_24px));
+                holder.fileForUploadMimeTypeImageView.setImageDrawable(ResourcesCompat.getDrawable(holder.mView.getResources(), R.drawable.ic_movie_filter_black_24px, holder.mView.getContext().getTheme()));
                 holder.fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
             } else if(MimeTypes.isAudio(item.getMimeType())) {
-                holder.fileForUploadMimeTypeImageView.setImageDrawable(holder.mView.getResources().getDrawable(R.drawable.ic_audiotrack_black_24dp));
+                holder.fileForUploadMimeTypeImageView.setImageDrawable(ResourcesCompat.getDrawable(holder.mView.getResources(), R.drawable.ic_audiotrack_black_24dp, holder.mView.getContext().getTheme()));
                 holder.fileForUploadMimeTypeImageView.setVisibility(View.VISIBLE);
             } else {
                 holder.fileForUploadMimeTypeImageView.setVisibility(View.GONE);
@@ -245,15 +245,15 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
      * Note that this will not invoke a media scanner call.
      *
      *
-     * @param uploadDataItem
-     * @return
+     * @param uploadDataItem metadata for an item being uploaded, its upload progress, etc
+     * @return true if the item was added (will be false if a matching item is already present based on file hashcode)
      */
     public boolean add(@NonNull UploadDataItem uploadDataItem) {
         return uploadDataItemsModel.add(uploadDataItem);
     }
 
     /**
-     * @param filesForUpload
+     * @param filesForUpload files to be uploaded
      * @return List of all files that were not already present
      */
     public int addAll(List<UploadDataItem> filesForUpload) {
@@ -275,12 +275,12 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         private static long nextUid;
         private final long uid;
-        private String mimeType;
-        private Uri uri;
+        private final String mimeType;
+        private final Uri uri;
         private String dataHashcode = null;
         private long dataLength = -1;
         private String filename;
-        private UploadProgressInfo uploadProgress;
+        private final UploadProgressInfo uploadProgress;
 
         public UploadDataItem(Uri uri, String filename, String mimeType) {
             this.uri = uri;
@@ -380,7 +380,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 return new UploadDataItemModel[size];
             }
         };
-        private ArrayList<UploadDataItem> uploadDataItems;
+        private final ArrayList<UploadDataItem> uploadDataItems;
 
         public UploadDataItemModel(Parcel p) {
             uploadDataItems = ParcelUtils.readArrayList(p, UploadDataItem.class.getClassLoader());
@@ -426,7 +426,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
 
         /**
-         * @param filesForUpload
+         * @param filesForUpload list of files to be uploaded
          * @return count of items actually added
          */
         public int addAll(List<UploadDataItem> filesForUpload) {
@@ -487,7 +487,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingCompressed);
             if (uploadDataItem == null) {
                 String filename = fileBeingCompressed == null ? null : fileBeingCompressed.toString();
-                Logging.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                Logging.log(Log.ERROR, TAG, "Update Compression Progress : Unable to locate upload progress object for file : " + filename);
             } else {
                 UploadProgressInfo progress = uploadDataItem.uploadProgress;
                 if (progress != null) {
@@ -501,20 +501,20 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             UploadDataItem uploadDataItem = getUploadDataItemForFileSelectedForUpload(fileBeingUploaded);
             if (uploadDataItem == null) {
                 String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
-                Logging.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                Logging.log(Log.ERROR, TAG, "Update Upload Progress (no data item) : Unable to locate upload progress object for file : %1$s %2$d%%", filename, percentageComplete);
             } else {
                 UploadProgressInfo progress = uploadDataItem.uploadProgress;
                 if (progress != null) {
                     progress.uploadProgress = percentageComplete;
                 } else {
                     // we're uploading a compressed file
-                    uploadDataItem = getUploadDataItemForFileBeingUploaded(fileBeingUploaded);
+                    uploadDataItem = Objects.requireNonNull(getUploadDataItemForFileBeingUploaded(fileBeingUploaded));
                     progress = uploadDataItem.uploadProgress;
                     if (progress != null) {
                         progress.uploadProgress = percentageComplete;
                     } else {
                         String filename = fileBeingUploaded == null ? null : fileBeingUploaded.toString();
-                        Logging.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
+                        Logging.log(Log.ERROR, TAG, "Update Upload Progress : Unable to locate upload progress object for file : " + filename);
                     }
                 }
             }
@@ -580,14 +580,14 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         void onRemove(FilesToUploadRecyclerViewAdapter adapter, Uri itemToRemove, boolean longClick);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements PicassoLoader.PictureItemImageLoaderListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements PicassoLoader.PictureItemImageLoaderListener<ImageView> {
         public final View mView;
         private final ProgressIndicator progressBar;
         private final TextView fileNameField;
         private final TextView itemHeading;
         private final MaterialButton deleteButton;
         private final AppCompatImageView fileForUploadImageView;
-        private final ResizingPicassoLoader imageLoader;
+        private final ResizingPicassoLoader<ImageView> imageLoader;
         private final ImageView fileForUploadMimeTypeImageView;
         // data!
         private UploadDataItem mItem;
@@ -612,17 +612,17 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
 
         @Override
-        public void onBeforeImageLoad(PicassoLoader loader) {
+        public void onBeforeImageLoad(PicassoLoader<ImageView> loader) {
             fileForUploadImageView.setBackgroundColor(Color.TRANSPARENT);
         }
 
         @Override
-        public void onImageLoaded(PicassoLoader loader, boolean success) {
+        public void onImageLoaded(PicassoLoader<ImageView> loader, boolean success) {
             fileForUploadImageView.setBackgroundColor(Color.TRANSPARENT);
         }
 
         @Override
-        public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+        public void onImageUnavailable(PicassoLoader<ImageView> loader, String lastLoadError) {
             fileForUploadImageView.setBackgroundColor(ContextCompat.getColor(fileForUploadImageView.getContext(), R.color.color_scrim_heavy));
         }
 
