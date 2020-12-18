@@ -77,25 +77,33 @@ public class AboutFragment extends MyFragment<AboutFragment> {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        view.setClickable(false);
         Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
-        idTask.addOnSuccessListener(this::withInstallGuid);
+        idTask.addOnCompleteListener(this::withInstallGuid);
     }
 
-    private void withInstallGuid(String installGuid) {
+    private void withInstallGuid(Task<String> uuidTask) {
+        String installGuid;
         TextView uuidField = getView().findViewById(R.id.install_guid_field);
-        uuidField.setText(installGuid);
-        uuidField.setOnClickListener(v -> {
-            Context context = v.getContext();
-            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            if(mgr != null) {
-                ClipData clipData = ClipData.newPlainText(getString(R.string.uuid_title), ((TextView)v).getText());
-                mgr.setPrimaryClip(clipData);
-                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
-            } else {
-                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+        try {
+            if (uuidTask.isSuccessful()) {
+                installGuid = uuidTask.getResult();
+                uuidField.setText(installGuid);
+                uuidField.setOnClickListener(v -> {
+                    Context context = v.getContext();
+                    ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                    if (mgr != null) {
+                        ClipData clipData = ClipData.newPlainText(getString(R.string.uuid_title), ((TextView) v).getText());
+                        mgr.setPrimaryClip(clipData);
+                        getUiHelper().showShortMsg(R.string.copied_to_clipboard);
+                    } else {
+                        FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+                    }
+                });
             }
-        });
-
+        } finally {
+            uuidField.setClickable(true);
+        }
     }
 
     @Override

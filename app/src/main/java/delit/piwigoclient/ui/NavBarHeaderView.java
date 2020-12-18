@@ -188,8 +188,10 @@ public class NavBarHeaderView extends FrameLayout {
 
         @Override
         public void onComplete(@NonNull Task<String> uuidTask) {
-            String uuid = uuidTask.getResult();
-
+            String uuid = null;
+            if(uuidTask.isSuccessful()) {
+                uuid = uuidTask.getResult();
+            }
             final String appVersion = ProjectUtils.getVersionName(getContext());
 
             Intent intent = new Intent(Intent.ACTION_SEND);
