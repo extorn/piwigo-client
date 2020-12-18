@@ -248,6 +248,11 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.89</item>
+        <item>"Bugfix:
+                - Fixed a couple of issues causing crashes for some users
+               Changes:
+                - Added a UUID to logs and the about screen allowing me to track logs to specific user if they give me their UUID (for solving specific bugs they experience)."</item>
         <item>1.4.0.88</item>
         <item>"Bugfix:
             - Image compressor not working on recent versions of Android
