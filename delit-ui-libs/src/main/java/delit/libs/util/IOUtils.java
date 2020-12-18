@@ -431,7 +431,7 @@ public class IOUtils {
             }
         }
         try {
-            Thread.sleep(timePeriodMillis);
+            Thread.sleep(timePeriodMillis); // wait x milliseconds before double checking the file size etc (if its in use, it will have altered)
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

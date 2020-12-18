@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -280,16 +281,26 @@ public class FolderItem implements Parcelable {
             return true;
         }
         ThreadPoolExecutor executor = new ThreadPoolExecutor(4, 32, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(items.size()));
-        AtomicInteger completeTasks = new AtomicInteger(0);
+        Semaphore sem = new Semaphore(items.size());
         for(FolderItem item : items) {
-            executor.execute(() -> {
-                if(!item.isFieldsCached()) {
-                    if(!item.cacheFields(context)) {
-                        Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + item.getContentUri());
+            try {
+                sem.acquire();
+                executor.execute(() -> {
+                    try {
+
+                        if(!item.isFieldsCached()) {
+                            if(!item.cacheFields(context)) {
+                                Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + item.getContentUri());
+                            }
+                        }
+                    } finally {
+                        sem.release();
                     }
-                }
-                completeTasks.incrementAndGet();
-            });
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
         int lastUpdateAt = 0;
         int tasksProcessed = 0;
@@ -298,34 +309,29 @@ public class FolderItem implements Parcelable {
         // Wait for the tasks to finish.
 
         if(taskListener != null) {
-            while (!cancelled && tasksProcessed < items.size()) {
+            while (!cancelled && sem.availablePermits() < items.size()) {
                 tasksProcessed = (int)executor.getCompletedTaskCount();
                 if (lastUpdateAt < tasksProcessed) {
                     lastUpdateAt = tasksProcessed;
                     double progress = ((double) lastUpdateAt) / items.size();
                     DisplayUtils.postOnUiThread(() -> taskListener.onProgress((int)Math.rint(100 * progress)));
                     try {
-                        Thread.sleep(50);
+                        sem.tryAcquire(tasksProcessed + 1, 1, TimeUnit.SECONDS);
                     } catch (InterruptedException e) {
                         cancelled = true;
                     }
                 }
             }
-            int outstandingTasks = items.size() - completeTasks.get();
+            int outstandingTasks = items.size() - sem.availablePermits();
             Logging.log(Log.INFO,TAG, "Finished waiting for executor to end (cancelled : "+cancelled+") while listening to progress. Outstanding Task Count : " + outstandingTasks);
         } else {
-            int maxWait = 60; // sec
-            for(int i = 1; i <= maxWait && !cancelled; i++) {
-                try {
-                    executor.awaitTermination(1, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    cancelled = true;
-                    if(i == maxWait) {
-                        Logging.log(Log.ERROR, TAG, "Timeout (60sec!) while waiting for folder content fields to be cached");
-                    }
-                }
+            try {
+                executor.awaitTermination(100, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                cancelled = true;
+                Logging.log(Log.ERROR, TAG, "Timeout (60sec!) while waiting for folder content fields to be cached");
             }
-            int outstandingTasks = items.size() - completeTasks.get();
+            int outstandingTasks = items.size() - sem.availablePermits();
             Logging.log(Log.INFO,TAG, "Finished waiting for executor to end (cancelled : "+cancelled+") . Outstanding Task Count : " + outstandingTasks);
         }
         executor.shutdown();
@@ -336,12 +342,11 @@ public class FolderItem implements Parcelable {
             Logging.log(Log.ERROR, TAG, "Timeout while waiting for folder content field loading executor to end");
         }
         int maxWait = 60; // sec
-        for(int i = 1; i <= maxWait && completeTasks.get() < items.size(); i++) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                Logging.log(Log.DEBUG, TAG, "Ignoring InterruptedException - not ideal.");
-            }
+
+        try {
+            sem.tryAcquire(items.size(), 60, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Logging.log(Log.DEBUG, TAG, "Ignoring InterruptedException - not ideal.");
         }
         return !cancelled;
     }

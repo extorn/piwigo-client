@@ -478,7 +478,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         if (matchingFiles.isEmpty()) {
             return null;
         }
-        matchingFiles = IOUtils.getFilesNotBeingWritten(matchingFiles, 1000);
+        matchingFiles = IOUtils.getFilesNotBeingWritten(matchingFiles, 5000); // wait 5 seconds before double checking the file size etc (if its in use, it will have altered)
         if(matchingFiles.isEmpty()) {
             return null;
         }
@@ -575,7 +575,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 long len = eventSourceFile.length();
                 long lastMod = eventSourceFile.lastModified();
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(5000); // wait 5 seconds before double checking the file size etc (if its in use, it will have altered)
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -691,7 +691,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 long len = file.length();
                 long lastMod = file.lastModified();
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(5000); // wait 5 seconds before double checking the file size etc (if its in use, it will have altered)
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
