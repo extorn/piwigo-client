@@ -40,6 +40,7 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -624,8 +625,11 @@ public class DisplayUtils {
         }
     }
 
-    public static String getPathToView(View v) {
+    public static @NonNull String getPathToView(@Nullable View v) {
         List<String> path = new ArrayList<>();
+        if(v == null) {
+            return "<null>";
+        }
         path.add(v.getClass().getName());
         ViewParent currentV = v.getParent();
         if (currentV != null) {

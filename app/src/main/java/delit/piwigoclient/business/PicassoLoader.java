@@ -290,6 +290,8 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
             Logging.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
         } catch (IllegalStateException e) {
             if (!placeholderLoaded) {
+                Logging.log(Log.WARN, TAG, "All picasso loaders are currently busy, or picasso is not started. Please retry later");
+                Logging.recordException(e);
                 throw e;
             }
         }
@@ -376,9 +378,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         if (usePlaceholderIfNothingToLoad) {
             return picassoSingleton.load(placeholderPlaceholderId);
         }
-
-        Logging.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image");
-        throw new IllegalStateException("No valid source specified from which to load image");
+        String loadIntoPath = DisplayUtils.getPathToView(loadInto);
+        Logging.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image into " + loadIntoPath);
+        throw new IllegalStateException("No valid source specified from which to load image into " + loadIntoPath);
     }
 
     protected RequestCreator customiseLoader(RequestCreator placeholder) {
