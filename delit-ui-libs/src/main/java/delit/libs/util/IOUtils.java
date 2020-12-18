@@ -746,29 +746,25 @@ public class IOUtils {
     }
 
     public static Uri getTreeUri(Uri uri) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            if(!"file".equals(uri.getScheme())) {
-                return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
-            } else {
-                return uri; // can't do more. its a raw file.
-            }
-        } else {
-            if(!"file".equals(uri.getScheme())) {
-                List<String> pathSegments = uri.getPathSegments();
-
-                int toIdx = pathSegments.size() - 1;
-                if (pathSegments.size() > 3 && pathSegments.get(toIdx - 1).equals("document")) {
-                    toIdx -= 1;
-                    Uri.Builder b = new Uri.Builder();
-                    b.authority(uri.getAuthority());
-                    b.scheme(uri.getScheme());
-                    for (int i = 0; i < toIdx; i++) {
-                        b.appendPath(pathSegments.get(i));
-                    }
-                    return b.build();
-                }
-            }
+        if("file".equals(uri.getScheme()) || uri.toString().startsWith("/")) {
             // already a tree URI
+            return uri;
+        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
+        } else {
+            List<String> pathSegments = uri.getPathSegments();
+            int toIdx = pathSegments.size() - 1;
+            if (pathSegments.size() > 3 && pathSegments.get(toIdx - 1).equals("document")) {
+                toIdx -= 1;
+                Uri.Builder b = new Uri.Builder();
+                b.authority(uri.getAuthority());
+                b.scheme(uri.getScheme());
+                for (int i = 0; i < toIdx; i++) {
+                    b.appendPath(pathSegments.get(i));
+                }
+                return b.build();
+            }
             return uri;
         }
     }
