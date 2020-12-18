@@ -6,10 +6,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorSurface">
 
+    <TextView
+        android:id="@+id/install_guid_field_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/uuid_title"
+        style="?editableFieldLabel"/>/>
+
+    <TextView
+        android:id="@+id/install_guid_field"
+        android:layout_below="@+id/install_guid_field_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/uuid_title"
+        style="?editableFieldTextClickable"/>
+
 
     <delit.libs.ui.view.CustomViewPager
         android:nestedScrollingEnabled="true"
         android:id="@+id/slideshow_resource_details_tabs_content"
+        android:layout_below="@+id/install_guid_field"
         android:layout_above="@id/about_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"

@@ -14,8 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,11 +50,13 @@ public class NavBarHeaderView extends FrameLayout {
             "Version of Piwigo Server Connected to: %1$s\n" +
             "Version of PIWIGO Client: %2$s\n" +
             "Android version of this device: %3$s\n" +
+            "App Install UUID:%4$s\n" +
             "Type and model of Device Being Used:\n";
+
     private boolean refreshSessionInProgress;
     private TextView currentUsernameField;
     private TextView currentServerField;
-    private ViewGroupUIHelper uiHelper;
+    private ViewGroupUIHelper<NavBarHeaderView> uiHelper;
 
     public NavBarHeaderView(Context context) {
         super(context);
@@ -82,7 +89,7 @@ public class NavBarHeaderView extends FrameLayout {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
             // don't do this if showing in the IDE.
             uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
-            BasicPiwigoResponseListener listener = new BasicPiwigoResponseListener();
+            BasicPiwigoResponseListener<NavBarHeaderView> listener = new BasicPiwigoResponseListener<>();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
@@ -166,22 +173,40 @@ public class NavBarHeaderView extends FrameLayout {
         super.onRestoreInstanceState(((SavedState) savedState).getSuperState());
     }
 
-    private void sendEmail(String email) {
+    private void sendEmail(String emailToAddress) {
+        Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
+        idTask.addOnCompleteListener(new EmailSender(emailToAddress));
+    }
 
-        final String appVersion = ProjectUtils.getVersionName(getContext());
+    private class EmailSender implements OnCompleteListener<String> {
 
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain"); // send email as plain text
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-        intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
-        String serverVersion = "Unknown";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            serverVersion = sessionDetails.getPiwigoVersion();
+        private final String toEmailAddress;
+
+        public EmailSender(String toEmailAddress) {
+            this.toEmailAddress = toEmailAddress;
         }
-        String emailContent = String.format(EMAIL_TEMPLATE_PATTERN, serverVersion, appVersion, Build.VERSION.CODENAME + "(" + Build.VERSION.SDK_INT + ")");
-        intent.putExtra(Intent.EXTRA_TEXT, emailContent);
-        getContext().startActivity(Intent.createChooser(intent, ""));
+
+        @Override
+        public void onComplete(@NonNull Task<String> uuidTask) {
+            String uuid = uuidTask.getResult();
+
+            final String appVersion = ProjectUtils.getVersionName(getContext());
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain"); // send email as plain text
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{toEmailAddress});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
+            String serverVersion = "Unknown";
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+            if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+                serverVersion = sessionDetails.getPiwigoVersion();
+            }
+            String emailContent = String.format(EMAIL_TEMPLATE_PATTERN, serverVersion, appVersion, Build.VERSION.CODENAME + "(" + Build.VERSION.SDK_INT + ")", uuid);
+            intent.putExtra(Intent.EXTRA_TEXT, emailContent);
+            getContext().startActivity(Intent.createChooser(intent, ""));
+        }
+
+
     }
 
     private void markRefreshSessionComplete() {
@@ -246,7 +271,7 @@ public class NavBarHeaderView extends FrameLayout {
 
         SavedState(Parcel in) {
             super(in);
-            uiHelperState = in.readBundle();
+            uiHelperState = in.readBundle(getClass().getClassLoader());
         }
 
         @Override
@@ -257,8 +282,6 @@ public class NavBarHeaderView extends FrameLayout {
     }
 
     private static class OnLoginAction extends UIHelper.Action<UIHelper<NavBarHeaderView>, NavBarHeaderView, LoginResponseHandler.PiwigoOnLoginResponse> {
-
-        private static final long serialVersionUID = -7833712274332972824L;
 
         @Override
         public boolean onFailure(UIHelper<NavBarHeaderView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
@@ -287,8 +310,6 @@ public class NavBarHeaderView extends FrameLayout {
 
     private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<UIHelper<NavBarHeaderView>, NavBarHeaderView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
 
-        private static final long serialVersionUID = 3430739984652782596L;
-
         @Override
         public boolean onFailure(UIHelper<NavBarHeaderView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().markRefreshSessionComplete();
@@ -310,8 +331,6 @@ public class NavBarHeaderView extends FrameLayout {
     }
 
     private static class OnLogoutAction extends UIHelper.Action<UIHelper<NavBarHeaderView>, NavBarHeaderView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
-
-        private static final long serialVersionUID = 116040811981634247L;
 
         @Override
         public boolean onSuccess(UIHelper<NavBarHeaderView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {

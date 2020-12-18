@@ -16,8 +16,10 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.multidex.MultiDexApplication;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.installations.FirebaseInstallations;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -145,6 +147,8 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         registerActivityLifecycleCallbacks(this);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
+        Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
+        idTask.addOnSuccessListener(this::withInstallGuid);
 
         upgradeAnyPreferencesIfRequired();
         sanityCheckTheTempUploadFolder();
@@ -152,6 +156,12 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         onAppCreate();
 
 //        TooLargeTool.startLogging(this);
+    }
+
+    private void withInstallGuid(String userGuid) {
+        //This is used so that I can identify the logs that pertain to a given user having issues they want me to look at.
+        // It will be displayed in the app about screen.
+        FirebaseAnalytics.getInstance(this).setUserProperty("userId", userGuid);
     }
 
     private void sanityCheckTheTempUploadFolder() {

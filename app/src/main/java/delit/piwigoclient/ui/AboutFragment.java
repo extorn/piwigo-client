@@ -1,16 +1,26 @@
 package delit.piwigoclient.ui;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.installations.FirebaseInstallations;
+
+import org.w3c.dom.Text;
 
 import java.util.Map;
 
@@ -62,6 +72,30 @@ public class AboutFragment extends MyFragment<AboutFragment> {
         }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
+        idTask.addOnSuccessListener(this::withInstallGuid);
+    }
+
+    private void withInstallGuid(String installGuid) {
+        TextView uuidField = getView().findViewById(R.id.install_guid_field);
+        uuidField.setText(installGuid);
+        uuidField.setOnClickListener(v -> {
+            Context context = v.getContext();
+            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            if(mgr != null) {
+                ClipData clipData = ClipData.newPlainText(getString(R.string.uuid_title), ((TextView)v).getText());
+                mgr.setPrimaryClip(clipData);
+                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
+            } else {
+                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+            }
+        });
+
     }
 
     @Override
