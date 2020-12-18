@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,6 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -77,6 +75,7 @@ import delit.libs.util.security.LoadOperationResult;
 import delit.libs.util.security.SecurityOperationException;
 import delit.libs.util.security.X509LoadOperation;
 import delit.piwigoclient.R;
+import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -204,7 +203,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         allowedFileTypes.addAll(getPreference().getAllowedKeyFileTypes());
         fileSelectionEvent.withInitialFolder(Uri.fromFile(requireContext().getExternalFilesDir(null)));
         fileSelectionEvent.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.ALPHABETICAL);
-//        fileSelectionEvent.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey()); Not currently needed as permissions are transient.
+        fileSelectionEvent.withSelectedUriPermissionsForConsumerId(UriPermissionUse.TRANSIENT); //Not currently needed as permissions are transient.
 
         setTrackingRequest(fileSelectionEvent.getActionId());
         EventBus.getDefault().post(fileSelectionEvent);

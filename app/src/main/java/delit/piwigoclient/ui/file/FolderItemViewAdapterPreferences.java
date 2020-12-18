@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.file;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.MimeTypeMap;
@@ -8,7 +7,6 @@ import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
-import androidx.documentfile.provider.DocumentFile;
 
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +16,7 @@ import java.util.TreeSet;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
-import delit.libs.util.IOUtils;
+import delit.piwigoclient.database.UriPermissionUse;
 
 public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
 
@@ -38,7 +36,7 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     private int columnsOfFiles = 2;
     private boolean showFilenames = true;
     private SortedSet<String> visibleMimeTypes;
-    private String selectedUriPermissionsForConsumerId;
+    private @NonNull String selectedUriPermissionsForConsumerId = UriPermissionUse.TRANSIENT;
     private String selectedUriPermissionConsumerPurpose;
     private int selectedUriPermissionFlags;
 
@@ -200,11 +198,11 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return showFilenames;
     }
 
-    public void withSelectedUriPermissionsForConsumerId(String selectedUriPermissionsForConsumerId) {
+    public void withSelectedUriPermissionsForConsumerId(@NonNull String selectedUriPermissionsForConsumerId) {
         this.selectedUriPermissionsForConsumerId = selectedUriPermissionsForConsumerId;
     }
 
-    public String getSelectedUriPermissionConsumerId() {
+    public @NonNull String getSelectedUriPermissionConsumerId() {
         return selectedUriPermissionsForConsumerId;
     }
 

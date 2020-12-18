@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.ViewModelProvider;
@@ -135,7 +136,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
      * Use the preference key as the uri permissions key - if this isn't unique, you might want to change it.
      * @return
      */
-    private String getUriPermissionsKey() {
+    private @NonNull String getUriPermissionsKey() {
         return getKey();
     }
 

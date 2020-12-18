@@ -7,6 +7,7 @@ import androidx.room.Ignore;
 @Entity(primaryKeys = {"uri", "consumerId"})
 public class UriPermissionUse {
     public static final String CONSUMER_ID_FILE_SELECT = "fileSelect";
+    public static final String TRANSIENT = "transient";
 
     public UriPermissionUse() {}
 

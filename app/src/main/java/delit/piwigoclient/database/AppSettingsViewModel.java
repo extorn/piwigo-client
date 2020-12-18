@@ -71,6 +71,10 @@ public class AppSettingsViewModel extends AndroidViewModel {
         if("file".equals(uri.getScheme())) {
             return; // no need to get permissions (would cause error anyway)
         }
+        if(UriPermissionUse.TRANSIENT.equals(use.consumerId)) {
+            Logging.log(Log.WARN, TAG, "Taking persistable Uri permissions when should be transient only");
+            Logging.recordException(new Throwable("Unneeded Uri permissions taken").fillInStackTrace());
+        }
         context.getContentResolver().takePersistableUriPermission(uri, use.flags);
         appSettingsRepository.insert(use);
     }

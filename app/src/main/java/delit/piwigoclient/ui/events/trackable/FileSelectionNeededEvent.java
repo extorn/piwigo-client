@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.piwigoclient.database.UriPermissionUse;
 
 /**
  * Created by gareth on 13/06/17.
@@ -20,12 +21,12 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent implements P
 
     public final static int ALPHABETICAL = 1;
     public final static int LAST_MODIFIED_DATE = 2;
-    private String selectedUriPermissionsForConsumerId;
-    private boolean multiSelectAllowed;
+    private @NonNull String selectedUriPermissionsForConsumerId = UriPermissionUse.TRANSIENT;
+    private final boolean multiSelectAllowed;
     private Uri initialFolder;
     private boolean showFolderContents;
-    private boolean allowFolderSelection;
-    private boolean allowFileSelection;
+    private final boolean allowFolderSelection;
+    private final boolean allowFileSelection;
     private Set<String> visibleFileTypes;
     private int fileSortOrder = ALPHABETICAL;
     private Set<Uri> initialSelection;
@@ -99,7 +100,7 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent implements P
         return visibleMimeTypes;
     }
 
-    public String getSelectedUriPermissionsForConsumerId() {
+    public @NonNull String getSelectedUriPermissionsForConsumerId() {
         return selectedUriPermissionsForConsumerId;
     }
 

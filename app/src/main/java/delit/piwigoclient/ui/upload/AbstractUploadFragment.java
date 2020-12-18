@@ -80,6 +80,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
 import delit.piwigoclient.database.AppSettingsViewModel;
+import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -696,7 +697,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 event.withInitialFolder(Objects.requireNonNull(IOUtils.getLocalFileUri(initialFolder)));
             }
             event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
-            //        event.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey()); Not currently needed as permissions are transient.
+            event.withSelectedUriPermissionsForConsumerId(UriPermissionUse.TRANSIENT); //Not currently needed as permissions are transient.
 
             Set<String> visibleMimeTypes = new HashSet<>();
             visibleMimeTypes.add("video/*");
