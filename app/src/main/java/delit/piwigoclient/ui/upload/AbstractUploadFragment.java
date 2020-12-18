@@ -223,7 +223,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             TaskProgressTracker mainTaskProgressListener = new TaskProgressTracker() {
                 @Override
                 protected void reportProgress(int newOverallProgress) {
-                    getOwner().overallUploadProgressBar.post(() -> getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress));
+                    try {
+                        getOwner().overallUploadProgressBar.post(() -> getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress));
+                    } catch (NullPointerException e) {
+                        Logging.log(Log.ERROR, TAG, "Error updating upload progress");
+                    }
                 }
             };
             FileSelectionCompleteEvent event = objects[0];
