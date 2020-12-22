@@ -345,7 +345,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="button_agree">Genau</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Warnung</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe "Nächste Übereinstimmung" zurück.</string>
     <string name="rate_dialog_message">Wenn Sie diese App gerne nutzen, würde es Ihnen etwas ausmachen, sich einen Moment Zeit zu nehmen, um sie zu bewerten? Es wird nicht länger als eine Minute dauern. Danke für deine Unterstützung!</string>
     <string name="groups_menu_title">Gruppen</string>
     <string name="group_members_pattern">(%1$d Mitglieder)</string>
@@ -452,7 +452,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_file_upload_cancelled_pattern">Hochladen der Datei (%1$s) abgebrochen.</string>
     <string name="alert_message_upload_cancelled">Upload abgebrochen</string>
     <string name="alert_message_upload_cancelled_message">Wenn Sie den Upload später nicht neu starten möchten. Sie sollten die Dateien aus dem Upload-Auftrag entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe "Nächste Übereinstimmung" zurück.</string>
     <string name="logging_out_of_piwigo_pattern">Abmelden von%1$s</string>
     <string name="loading_new_server_configuration">Laden einer neuen Serververbindungskonfiguration</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Um das Caching auf der Festplatte zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn dies abgelehnt wird, wird das Caching gespeichert.</string>
@@ -505,7 +505,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Fehler beim Hochladen</string>
     <string name="alert_message_error_uploading_end">Nach dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload neu, um dort fortzufahren, wo er angekommen ist, und löschen Sie alle temporären Restdaten vom Server.</string>
-    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload entweder neu, um dort fortzufahren, wo er hingekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Job und klicken Sie dann auf die Schaltfläche \"Fertig stellen\", um alle verbleibenden temporären Daten vom Server zu löschen.</string>
+    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload entweder neu, um dort fortzufahren, wo er hingekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Job und klicken Sie dann auf die Schaltfläche "Fertig stellen", um alle verbleibenden temporären Daten vom Server zu löschen.</string>
     <string name="release_history">Release-Verlauf</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
     <string name="tags_heading">Stichworte</string>
@@ -617,7 +617,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Die Einstellung%1$s ist unwiederbringlich und wurde standardmäßig auf%2$s gesetzt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Die Einstellung%1$s ist unwiederbringlich und wurde standardmäßig auf%2$s gesetzt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück</string>
     <string name="switch_to_cached_mode">Der Server ist derzeit nicht verfügbar. Zwischengespeicherte Daten verwenden?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Videos komprimieren</string>
@@ -662,7 +662,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="create_email_using_app">Erstellen Sie eine E-Mail mit der App</string>
     <string name="open_files">Öffnen Sie Dateien in der App</string>
     <string name="files_unavailable_to_download_removed_pattern">Ihre Auswahl enthielt Dateien, die nicht verarbeitet werden konnten. Diese%1$d-Dateien wurden ignoriert. Um eine Videodatei freizugeben, muss sie zuerst lokal vollständig zwischengespeichert werden.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Alle einmaligen Benutzertipps werden erneut angezeigt"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">Alle einmaligen Benutzertipps werden erneut angezeigt</string>
     
     
     <string name="delete_uploaded_files_title">Hochgeladene Dateien löschen</string>
