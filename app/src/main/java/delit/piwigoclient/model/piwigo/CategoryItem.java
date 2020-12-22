@@ -4,9 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,13 +20,12 @@ import delit.libs.util.CollectionUtils;
 /**
  * An item representing a piece of content.
  */
-public class CategoryItem extends GalleryItem implements Cloneable, PhotoContainer {
+public class CategoryItem extends GalleryItem implements Cloneable, PhotoContainer, Parcelable {
     private static final String TAG = "CategoryItem";
     private static final String BLANK_TAG = "PIWIGO_CLIENT_INTERNAL_BLANK";
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, BLANK_TAG, null, true, null, 0, 0, 0, null);
     public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 100, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
-        private static final long serialVersionUID = -8930057350023020736L;
 
         @Override
         public int getType() {
@@ -35,7 +33,6 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         }
     };
     public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
-        private static final long serialVersionUID = 1280192865683046512L;
 
         @Override
         public int getType() {
@@ -43,7 +40,6 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         }
     };
 
-    private static final long serialVersionUID = 6967613449661498517L;
     private List<CategoryItem> childAlbums;
     private int photoCount;
     private long totalPhotoCount;

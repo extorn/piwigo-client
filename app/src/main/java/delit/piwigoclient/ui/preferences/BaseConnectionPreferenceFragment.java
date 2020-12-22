@@ -7,8 +7,11 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -16,6 +19,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,9 +28,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
@@ -54,9 +58,9 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment<BaseConnectionPreferenceFragment> {
     private static final String TAG = "Connection Settings";
     protected Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
-    private Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
+    private final Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
     protected Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
-    private Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
+    private final Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
     private String preferencesKey;
     private ResponseCacheButtonTextRetriever responseCacheButtonTextRetriever;
@@ -210,16 +214,15 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
         Preference button = findPreference(R.string.preference_test_server_connection_key);
         Drawable icon = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_sync_black_24dp);
-        DrawableCompat.setTint(icon, ContextCompat.getColor(requireContext(), R.color.app_secondary));
+        if(icon != null) {
+            DrawableCompat.setTint(icon, ContextCompat.getColor(requireContext(), R.color.app_secondary));
+        }
         button.setIcon(icon);
 
-        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-                refreshSession(null);
-                return true;
-            }
+        button.setOnPreferenceClickListener(preference -> {
+            ConnectionPreferences.getActiveProfile();
+            refreshSession(null);
+            return true;
         });
 
         EditableListPreference playableMultimediaExts = (EditableListPreference) findPreference(R.string.preference_piwigo_playable_media_extensions_key);
@@ -257,7 +260,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                     if (!initialising) {
                         forceHttpConnectionCleanupAndRebuild();
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                            getListView().getAdapter().notifyDataSetChanged();
+                            RecyclerView.Adapter<?> adapter = getListView().getAdapter();
+                            if(adapter != null) {
+                                adapter.notifyDataSetChanged();
+                            }
                         }
                     }
                     getPrefs().unregisterOnSharedPreferenceChangeListener(this);
@@ -336,7 +342,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         EventBus.getDefault().register(this);
     }
@@ -362,7 +368,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
@@ -370,7 +376,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext(), true).start();
-            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(null));
+            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction());
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
 
             return true;
@@ -421,8 +427,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         return new CustomPiwigoResponseListener();
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> {
-        private static final long serialVersionUID = -8551766853138956387L;
+    private static class OnLogoutAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -433,6 +438,37 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         public OnLogoutAction(String loginAsProfileAfterLogout) {
             this.loginAsProfileAfterLogout = loginAsProfileAfterLogout;
         }
+
+        protected OnLogoutAction(Parcel in) {
+            super(in);
+            loginAsProfileAfterLogout = in.readString();
+            byte tmpLoginAgain = in.readByte();
+            loginAgain = tmpLoginAgain == 0 ? null : tmpLoginAgain == 1;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(loginAsProfileAfterLogout);
+            dest.writeByte((byte) (loginAgain == null ? 0 : loginAgain ? 1 : 2));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnLogoutAction> CREATOR = new Creator<OnLogoutAction>() {
+            @Override
+            public OnLogoutAction createFromParcel(Parcel in) {
+                return new OnLogoutAction(in);
+            }
+
+            @Override
+            public OnLogoutAction[] newArray(int size) {
+                return new OnLogoutAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
@@ -456,8 +492,35 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
-        private static final long serialVersionUID = -4028888774159894551L;
+    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse>implements Parcelable {
+
+        protected OnLoginAction(){}
+
+        protected OnLoginAction(Parcel in) {
+            super(in);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
+            @Override
+            public OnLoginAction createFromParcel(Parcel in) {
+                return new OnLoginAction(in);
+            }
+
+            @Override
+            public OnLoginAction[] newArray(int size) {
+                return new OnLoginAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
@@ -477,8 +540,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action<FragmentUIHelper<BaseConnectionPreferenceFragment>, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
-        private static final long serialVersionUID = -2910419463800889829L;
+    private static class OnHttpClientShutdownAction extends UIHelper.Action<FragmentUIHelper<BaseConnectionPreferenceFragment>, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -489,6 +551,36 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         public OnHttpClientShutdownAction(String loginAsProfileAfterLogout) {
             this.loginAsProfileAfterLogout = loginAsProfileAfterLogout;
         }
+
+        protected OnHttpClientShutdownAction(Parcel in) {
+            super(in);
+            loginAsProfileAfterLogout = in.readString();
+            loginAgain = in.readByte() != 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(loginAsProfileAfterLogout);
+            dest.writeByte((byte) (loginAgain ? 1 : 0));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<OnHttpClientShutdownAction> CREATOR = new Creator<OnHttpClientShutdownAction>() {
+            @Override
+            public OnHttpClientShutdownAction createFromParcel(Parcel in) {
+                return new OnHttpClientShutdownAction(in);
+            }
+
+            @Override
+            public OnHttpClientShutdownAction[] newArray(int size) {
+                return new OnHttpClientShutdownAction[size];
+            }
+        };
 
         @Override
         public boolean onSuccess(FragmentUIHelper<BaseConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
@@ -552,7 +644,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 // clear the existing session - it's not valid any more.
                 logoutSession();
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    getListView().getAdapter().notifyDataSetChanged();
+                    RecyclerView.Adapter<?> adapter = getListView().getAdapter();
+                    if(adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             }
             return true;
@@ -600,7 +695,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                     logoutSession();
                     AdsManager.getInstance(getContext()).updateShowAdvertsSetting(getContext());
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                        getListView().getAdapter().notifyDataSetChanged();
+                        RecyclerView.Adapter<?> adapter = getListView().getAdapter();
+                        if(adapter != null) {
+                            adapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
@@ -615,7 +713,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
 
                         // tweak user entered preference
-                        String prefValue = sharedPreferences.getString(key, "");
+                        String prefValue = Objects.requireNonNull(sharedPreferences.getString(key, ""));
                         prefValue = prefValue.replaceAll(" ", "");
 
                         String lowerPref = prefValue.toLowerCase();

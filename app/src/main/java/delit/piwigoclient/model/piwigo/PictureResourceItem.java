@@ -13,9 +13,8 @@ import delit.libs.core.util.Logging;
 /**
  * Created by gareth on 12/07/17.
  */
-public class PictureResourceItem extends ResourceItem {
+public class PictureResourceItem extends ResourceItem implements Parcelable {
     private static final String TAG = "PicResItem";
-    private static final long serialVersionUID = -3520532146377850518L;
 
     public PictureResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String baseResourceUrl) {
         super(id, name, description, dateCreated, lastAltered, baseResourceUrl);

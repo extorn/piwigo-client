@@ -3,7 +3,6 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import delit.libs.ui.util.ParcelUtils;
@@ -11,8 +10,7 @@ import delit.libs.ui.util.ParcelUtils;
 /**
  * Created by gareth on 26/06/17.
  */
-public class Tag implements Identifiable, Parcelable, Serializable, PhotoContainer {
-    private static final long serialVersionUID = -4862555895243635372L;
+public class Tag implements Identifiable, Parcelable, PhotoContainer {
     private long id = -1;
     private String name;
     private int usageCount;

@@ -153,7 +153,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     public static <S extends ResourceItem> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long itemId, int albumItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
-        b.putSerializable(ARG_GALLERY_TYPE, modelType);
+        AbstractSlideshowFragment.storeGalleryModelClassToBundle(b, modelType);
         b.putLong(ARG_GALLERY_ID, albumId);
         b.putLong(ARG_GALLERY_ITEM_ID, itemId);
         b.putInt(ARG_AND_STATE_ALBUM_ITEM_IDX, albumItemIdx);
@@ -253,16 +253,20 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if (b == null) {
             return;
         }
-        Class<? extends ViewModelContainer> galleryModelClass = (Class<? extends ViewModelContainer>) b.getSerializable(ARG_GALLERY_TYPE);
+        Class<? extends ViewModelContainer> galleryModelClass = AbstractSlideshowFragment.loadGalleryModelClassFromBundle(b);
         long galleryModelId = b.getLong(ARG_GALLERY_ID);
-        ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
-        ResourceContainer<?, T> modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
+        ResourceContainer<?, T> modelStore = null;
+        if (galleryModelClass != null) {
+            ViewModelContainer viewModelContainer = new ViewModelProvider(requireActivity()).get("" + galleryModelId, galleryModelClass);
+            modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
+        }
         if (modelStore == null) {
             Bundle errBundle = new Bundle();
-            errBundle.putString("class", galleryModelClass.getName());
+            String modelClassname = galleryModelClass == null ? null : galleryModelClass.getName();
+            errBundle.putString("class", modelClassname);
             errBundle.putLong("modelId", galleryModelId);
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelNull", errBundle);
-            Logging.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
+            Logging.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", modelClassname, galleryModelId));
             throw new ModelUnavailableException();
         }
         long galleryItemId = b.getLong(ARG_GALLERY_ITEM_ID);

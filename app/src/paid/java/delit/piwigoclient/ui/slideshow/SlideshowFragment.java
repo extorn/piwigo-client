@@ -105,8 +105,6 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     private static class ReloadTagSlideshowModelAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>,
             AbstractSlideshowFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
 
-        private static final long serialVersionUID = -6583690122415893790L;
-
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
             boolean updated = false;

@@ -28,9 +28,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 
-import androidx.annotation.NonNull;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -175,12 +172,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 // user input was invalid
             }
         });
-        b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        b.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
         b.show();
     }
 
@@ -298,7 +290,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         return new DefaultListContentsAdapter(entries, entryValues, currentValues);
     }
 
-    public static class ListAction implements Serializable, Parcelable {
+    public static class ListAction implements Parcelable {
         public static final Parcelable.Creator<ListAction> CREATOR
                 = new Parcelable.Creator<ListAction>() {
             public ListAction createFromParcel(Parcel in) {
@@ -309,7 +301,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 return new ListAction[size];
             }
         };
-        private static final long serialVersionUID = -7463648316529068440L;
         final String entryValue;
 
         ListAction(String entryValue) {
@@ -331,7 +322,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         }
     }
 
-    public static class Removal extends ListAction {
+    public static class Removal extends ListAction implements Parcelable {
         public static final Parcelable.Creator<Removal> CREATOR
                 = new Parcelable.Creator<Removal>() {
             public Removal createFromParcel(Parcel in) {
@@ -342,7 +333,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 return new Removal[size];
             }
         };
-        private static final long serialVersionUID = 5648116100268737949L;
 
         Removal(String entryValue) {
             super(entryValue);
@@ -362,7 +352,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         return fragment;
     }
 
-    public static class Addition extends ListAction {
+    public static class Addition extends ListAction implements Parcelable {
         public static final Parcelable.Creator<Addition> CREATOR
                 = new Parcelable.Creator<Addition>() {
             public Addition createFromParcel(Parcel in) {
@@ -373,7 +363,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 return new Addition[size];
             }
         };
-        private static final long serialVersionUID = -993006485259188330L;
 
         Addition(String entryValue) {
             super(entryValue);
@@ -384,7 +373,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         }
     }
 
-    public static class Replacement extends ListAction {
+    public static class Replacement extends ListAction implements Parcelable {
         public static final Parcelable.Creator<Replacement> CREATOR
                 = new Parcelable.Creator<Replacement>() {
             public Replacement createFromParcel(Parcel in) {
@@ -395,7 +384,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 return new Replacement[size];
             }
         };
-        private static final long serialVersionUID = -3693887286489829970L;
         final String newEntryValue;
 
         Replacement(String entryValue, String newValue) {
@@ -463,12 +451,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             viewHolder.itemName.setActivated(isSelectedValue);
             viewHolder.selected.setChecked(isSelectedValue);
             viewHolder.itemDescription.setVisibility(View.GONE);
-            viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItem(holder.getAdapterPosition(), v);
-                }
-            });
+            viewHolder.deleteButton.setOnClickListener(v -> onDeleteItem(holder.getAdapterPosition(), v));
         }
 
         protected void onDeleteItem(int position, View v) {

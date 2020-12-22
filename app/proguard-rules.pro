@@ -114,6 +114,9 @@
     public static final <fields>;
 }
 
+# attempt to ensure that between versions, classes can still be loaded.
+-keepnames class * extends delit.piwigoclient.ui.model.ViewModelContainer
+
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
      # <init>(...);
 -keepnames class * implements java.io.Serializable

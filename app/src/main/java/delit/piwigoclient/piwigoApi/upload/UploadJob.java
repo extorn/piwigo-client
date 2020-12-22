@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -842,8 +841,7 @@ public class UploadJob implements Parcelable {
         }
     }
 
-    public static class ImageCompressionParams implements Serializable, Parcelable {
-        private static final long serialVersionUID = -646493907951140373L;
+    public static class ImageCompressionParams implements Parcelable {
         private String outputFormat;
         private @IntRange(from = 0, to = 100)
         int quality;
@@ -918,8 +916,7 @@ public class UploadJob implements Parcelable {
         }
     }
 
-    public static class VideoCompressionParams implements Serializable, Parcelable {
-        private static final long serialVersionUID = -2089863017299368689L;
+    public static class VideoCompressionParams implements Parcelable {
         private double quality = -1;
         private int audioBitrate = -1;
 

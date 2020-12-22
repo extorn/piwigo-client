@@ -1569,7 +1569,6 @@ public abstract class UIHelper<T> {
     }
 
     private static class ActivityPermissionRequester implements PermissionRequester {
-        private static final long serialVersionUID = -2215788562967783868L;
         private final Activity activity;
 
         public ActivityPermissionRequester(Activity activity) {

@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -80,7 +79,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     public static <T extends Identifiable & Parcelable> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> resourceContainer, GalleryItem currentItem) {
         Bundle args = new Bundle();
-        args.putSerializable(ARG_GALLERY_TYPE, modelType);
+        storeGalleryModelClassToBundle(args, modelType);
         args.putLong(ARG_GALLERY_ID, resourceContainer.getId());
         args.putInt(ARG_GALLERY_ITEM_DISPLAYED, resourceContainer.getDisplayIdx(currentItem));
         return args;
@@ -167,12 +166,34 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
     }
 
+    protected static void storeGalleryModelClassToBundle(Bundle b, Class<? extends ViewModelContainer> modelClassname) {
+        //b.putSerializable(ARG_GALLERY_TYPE, modelType);
+        b.putString(ARG_GALLERY_TYPE, modelClassname.getName());
+        Logging.log(Log.DEBUG, TAG, "Stored MVC type "+ modelClassname);
+    }
+
+    protected static Class<? extends ViewModelContainer> loadGalleryModelClassFromBundle(Bundle b) {
+        String modelClassname =  b.getString(ARG_GALLERY_TYPE);
+        if(modelClassname == null) {
+            Logging.log(Log.ERROR, TAG, "Failed to load MVC type. Bundle does not contain required key");
+            return null;
+        }
+        Logging.log(Log.DEBUG, TAG, "Loaded MVC type "+ modelClassname);
+        try {
+            return Class.forName(modelClassname, true, ViewModelContainer.class.getClassLoader()).asSubclass(ViewModelContainer.class);
+        } catch (ClassNotFoundException e) {
+            Logging.log(Log.ERROR, TAG, "Failed to load MVC type. Class not found");
+            Logging.recordException(e);
+            return null;
+        }
+    }
+
     private void loadModelFromArguments() {
         Bundle arguments = getArguments();
         if(arguments == null) {
             throw new IllegalStateException("Unable to load model from null arguments");
         }
-        Class<? extends ViewModelContainer> galleryModelClass = (Class) arguments.getSerializable(ARG_GALLERY_TYPE);
+        Class<? extends ViewModelContainer> galleryModelClass = loadGalleryModelClassFromBundle(arguments);
         long galleryModelId = arguments.getLong(ARG_GALLERY_ID);
 
         if(galleryModelClass == null) {
@@ -223,8 +244,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, requireContext());
 
-        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
-        int rawCurrentGalleryItemPosition = getArguments().getInt(ARG_GALLERY_ITEM_DISPLAYED);
+        Bundle arguments = getArguments();
+        if(arguments == null) {
+            throw new IllegalStateException("Unable to load model from null arguments");
+        }
+        Class<? extends ViewModelContainer> galleryModelClass = loadGalleryModelClassFromBundle(arguments);
+        int rawCurrentGalleryItemPosition = arguments.getInt(ARG_GALLERY_ITEM_DISPLAYED);
 
         if (galleryItemAdapter == null) {
             galleryItemAdapter = new GalleryItemAdapter<>(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
@@ -292,7 +317,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     }
 
     private void reloadAlbumSlideshowModel(CategoryItem album, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new AlbumLoadResponseAction();
+        AlbumLoadResponseAction action = new AlbumLoadResponseAction();
         getUiHelper().invokeActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, false), action);
     }
 
@@ -434,8 +459,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     }
 
     private static class AlbumLoadResponseAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>, AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
-
-        private static final long serialVersionUID = 459249485419954062L;
 
         @Override
         public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
