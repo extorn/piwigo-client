@@ -828,6 +828,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
         PiwigoSessionDetails.writeToBundle(b, connectionPrefs);
         FirebaseAnalytics.getInstance(this).logEvent("uploadError", b);
+        Logging.log(Log.WARN, TAG, "PwgMethod: %1$s, ReqP: %2$s, RespT: %3$s", handler.getPiwigoMethod(), handler.getRequestParameters(), handler.getResponse().getClass());
+        if(handler.getError() != null) {
+            Logging.recordException(handler.getError());
+        }
     }
 
     private ArrayList<CategoryItemStub> retrieveListOfAlbumsOnServer(UploadJob thisUploadJob, PiwigoSessionDetails sessionDetails) {
