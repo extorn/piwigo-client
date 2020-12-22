@@ -72,11 +72,12 @@ public class AppSettingsViewModel extends AndroidViewModel {
             return; // no need to get permissions (would cause error anyway)
         }
         if(UriPermissionUse.TRANSIENT.equals(use.consumerId)) {
-            Logging.log(Log.WARN, TAG, "Taking persistable Uri permissions when should be transient only");
-            Logging.recordException(new Throwable("Unneeded Uri permissions taken").fillInStackTrace());
+            Logging.log(Log.WARN, TAG, "Blocked requesting persistable Uri permissions when should be transient only");
+            Logging.recordException(new Throwable("Unneeded persistent Uri permissions requested").fillInStackTrace());
+        } else {
+            context.getContentResolver().takePersistableUriPermission(uri, use.flags);
+            appSettingsRepository.insert(use);
         }
-        context.getContentResolver().takePersistableUriPermission(uri, use.flags);
-        appSettingsRepository.insert(use);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
