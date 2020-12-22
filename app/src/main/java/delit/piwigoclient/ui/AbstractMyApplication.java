@@ -19,6 +19,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.missingsplits.MissingSplitsManagerFactory;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.installations.FirebaseInstallations;
 
 import java.io.File;
@@ -145,6 +146,8 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         PicassoFactory.initialise();
 //        AdsManager.getInstance(this).updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
+        FirebaseCrashlytics.getInstance().setCustomKey("global_app_version", BuildConfig.VERSION_NAME);
+        FirebaseCrashlytics.getInstance().setCustomKey("global_app_version_code", "" + BuildConfig.VERSION_CODE);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
         Task<String> idTask = FirebaseInstallations.getInstance().getId(); //This is a globally unique id for the app installation instance.
@@ -161,7 +164,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     private void withInstallGuid(String userGuid) {
         //This is used so that I can identify the logs that pertain to a given user having issues they want me to look at.
         // It will be displayed in the app about screen.
-        FirebaseAnalytics.getInstance(this).setUserProperty("userId", userGuid);
+        FirebaseCrashlytics.getInstance().setCustomKey("userId", userGuid);
     }
 
     private void sanityCheckTheTempUploadFolder() {

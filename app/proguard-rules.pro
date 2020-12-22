@@ -116,6 +116,7 @@
 
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
      # <init>(...);
+-keepnames class * implements java.io.Serializable
 -keepclassmembers class * implements java.io.Serializable {
      static final long serialVersionUID;
      private static final java.io.ObjectStreamField[] serialPersistentFields;
