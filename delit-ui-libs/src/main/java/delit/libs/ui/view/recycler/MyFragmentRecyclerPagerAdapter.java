@@ -208,6 +208,8 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
     public final void onDeleteItem(ViewGroup container, int position) {
 
+        Logging.log(Log.INFO, TAG, "Deleting item at position " + position);
+
         T fragment = getActiveFragment(position);
         fragment.onPageDeselected();
         onItemDeleted(fragment);
