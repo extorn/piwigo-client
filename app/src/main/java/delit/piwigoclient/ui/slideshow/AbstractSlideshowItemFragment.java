@@ -335,8 +335,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     public void onStart() {
         super.onStart();
         // need to do this here because text fields don't update correctly when set in onCreateView / onViewCreated
-        fillHeaderFields();
-        fillResourceEditFields();
+        if(model != null) {
+            fillHeaderFields();
+            fillResourceEditFields();
+        }
     }
 
     private void fillHeaderFields() {
