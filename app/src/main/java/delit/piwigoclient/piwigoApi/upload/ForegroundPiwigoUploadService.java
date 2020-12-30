@@ -103,7 +103,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     }
 
     @Override
-    protected void doWork(Intent intent) {
+    protected void doWork(@NonNull Intent intent) {
         long jobId = intent.getLongExtra(INTENT_ARG_JOB_ID, -1);
         runJob(jobId);
     }

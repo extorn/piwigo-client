@@ -22,7 +22,6 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.installations.FirebaseInstallations;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +30,6 @@ import java.util.Locale;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -134,9 +132,11 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
     @Override
     public final void onCreate() {
-        if (MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
-            // Skip app initialization.
-            return;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if(MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
+                // Skip app initialization.
+                return;
+            }
         }
 
         super.onCreate();
@@ -168,16 +168,9 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     }
 
     private void sanityCheckTheTempUploadFolder() {
-        long folderSizeBytes = 0;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            File tmpUploadFolder = BasePiwigoUploadService.getTmpUploadFolderAsFile(this);
-            if(tmpUploadFolder != null) {
-                folderSizeBytes = LegacyIOUtils.getFolderSize(tmpUploadFolder, true);
-            }
-        } else {
-            DocumentFile tmpUploadFolder = BasePiwigoUploadService.getTmpUploadFolder(this);
-            folderSizeBytes = IOUtils.getFolderSize(tmpUploadFolder, true);
-        }
+        long folderSizeBytes;
+        DocumentFile tmpUploadFolder = BasePiwigoUploadService.getTmpUploadFolder(this);
+        folderSizeBytes = IOUtils.getFolderSize(tmpUploadFolder, true);
 
         long folderMaxSizeBytes = 25 * 1024 * 1024;
         if (folderSizeBytes > folderMaxSizeBytes) {

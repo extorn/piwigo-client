@@ -167,7 +167,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     }
 
     @Override
-    protected void doWork(Intent intent) {
+    protected void doWork(@NonNull Intent intent) {
 
         Context context = getApplicationContext();
 

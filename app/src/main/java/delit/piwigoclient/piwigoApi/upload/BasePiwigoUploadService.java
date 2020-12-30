@@ -387,8 +387,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static DocumentFile getTmpUploadFolder(Context context) {
-        return DocumentFile.fromFile(context.getExternalCacheDir()).createDirectory("piwigo-upload");
+    public static DocumentFile getTmpUploadFolder(@NonNull Context context) {
+        return DocumentFile.fromFile(Objects.requireNonNull(context.getExternalCacheDir())).createDirectory("piwigo-upload");
     }
 
     private void runPostJobCleanup(UploadJob uploadJob) {
@@ -992,7 +992,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     getImageInfoHandler.invokeAndWait(this, thisUploadJob.getConnectionPrefs());
                     if (getImageInfoHandler.isSuccess()) {
                         success = true;
-                        BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse rsp = (BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) getImageInfoHandler.getResponse();
+                        BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> rsp = (BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) getImageInfoHandler.getResponse();
                         thisUploadJob.addFileUploaded(entry.getKey(), rsp.getResource());
                     } else if (sessionDetails.isUseCommunityPlugin() && getImageInfoHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
                         PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse rsp = (PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) getImageInfoHandler.getResponse();
@@ -1705,7 +1705,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             ImageGetInfoResponseHandler<ResourceItem> imageDetailsHandler = new ImageGetInfoResponseHandler<>(uploadedResourceDummy, multimediaExtensionList);
             invokeWithRetries(uploadJob, imageDetailsHandler, 2);
             if (imageDetailsHandler.isSuccess()) {
-                BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse rsp = (ImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) imageDetailsHandler.getResponse();
+                BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> rsp = (ImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) imageDetailsHandler.getResponse();
                 val = ObjectUtils.areEqual(uploadedResource.getFileChecksum(), rsp.getResource().getFileChecksum());
                 if (val) {
                     String msgStr = String.format(getString(R.string.message_piwigo_server_inconsistent_results), imageFileCheckHandler.getPiwigoMethod(), imageDetailsHandler.getPiwigoMethod());
@@ -1778,8 +1778,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     private static class UploadFileCompressionListener implements ExoPlayerCompression.CompressionListener {
 
         private boolean compressionComplete;
-        private BasePiwigoUploadService uploadService;
-        private UploadJob job;
+        private final BasePiwigoUploadService uploadService;
+        private final UploadJob job;
         private Exception compressionError;
 
         UploadFileCompressionListener(BasePiwigoUploadService uploadService, UploadJob job) {
