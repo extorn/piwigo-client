@@ -182,7 +182,7 @@ durch die Bedingungen dieser Vereinbarung.
 Wenn Sie den Bedingungen dieser Vereinbarung nicht zustimmen, klicken Sie nicht auf die Schaltfläche \"Ich stimme zu\" und nicht
 Laden Sie die Anwendung herunter oder verwenden Sie sie.
 
-Wenn Sie erwägen, mit dieser App auf einen für kommerzielle Zwecke verwendeten Server zuzugreifen oder diesen zu ändern, müssen Sie die Haftungsbeschränkungen unbedingt lesen und verstehen.
+Wenn Sie erwägen, mit dieser App auf einen für kommerzielle Zwecke verwendeten Server zuzugreifen oder diesen zu ändern, müssen Sie unbedingt die Haftungsbeschränkungen lesen und verstehen.
 Sie müssen dies zu Ihrer Zufriedenheit auf einem Nicht-Produktionsserver testen, bevor Sie selbst ein Risiko und eine Haftung aufgrund Ihrer Entscheidungen übernehmen. Diese App wurde in erster Linie entwickelt
 für nichtkommerzielle Zwecke.
 
@@ -703,7 +703,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diashow nicht synchron mit dem geladenen Albuminhalt. Beim Start zurücksetzen.</string>
     <string name="uri_permission_justification_file_selection">Auswählen von Dateien oder Ordnern zur Verwendung durch diese App</string>
     <string name="alert_error_please_select_download_folder_and_retry">Bitte wählen Sie in den App-Einstellungen einen Ordner zum Herunterladen von Dateien aus und versuchen Sie es erneut.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Für die Datei (Video:%3$b Audio:%4$b), die unter den Optionen für den Server akzeptabel ist (%1$s), konnte keine gültige Ausgabedateierweiterung gefunden werden (bevorzugt%2$s).</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Für die Datei (Video:%3$b Audio:%4$b) konnte keine gültige Ausgabedateierweiterung gefunden werden (bevorzugt%2$s).</string>
     <string name="uuid_title">Installieren Sie die UUID</string>
+    <string name="alert_error_unable_add_files_previous_job_still_running">Dateien zum Hochladen können nicht hinzugefügt werden. Ein Upload-Auftrag wird ausgeführt.</string>
+    <string name="alert_error_unable_add_files_previous_job_unfinished">Dateien zum Hochladen können nicht hinzugefügt werden. Der aktuelle Upload-Job muss zuerst beendet werden.</string>
 
 </resources>

@@ -1,36 +1,45 @@
 <en-GB>
 Bugfix:
-- Caches can become unreadable between versions unnecessarily
+- Image compression format change caused crash during upload
+- File selection for upload issue
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Mezipaměti mohou být mezi verzemi zbytečně nečitelné
+- Změna formátu komprese obrazu způsobila selhání během nahrávání
+- Výběr souboru pro vydání uploadu
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Caches können zwischen Versionen unnötig unlesbar werden
+- Die Änderung des Bildkomprimierungsformats verursachte einen Absturz beim Hochladen
+- Dateiauswahl für Upload-Problem
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Los cachés pueden volverse ilegibles entre versiones innecesariamente
+- El cambio de formato de compresión de la imagen provocó un bloqueo durante la carga
+- Selección de archivos para problemas de carga
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Les caches peuvent devenir illisibles entre les versions inutilement
+- Le changement de format de compression d\'image a provoqué un crash pendant le téléchargement
+- Sélection de fichiers pour problème de téléchargement
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Le cache possono diventare illeggibili tra le versioni inutilmente
+- La modifica del formato di compressione dell\'immagine ha causato un arresto anomalo durante il caricamento
+- Selezione dei file per problemi di caricamento
 </it-IT>
 <ja-JP>
 バグ修正：
--キャッシュはバージョン間で不必要に読み取れなくなる可能性があります
+-画像圧縮形式の変更により、アップロード中にクラッシュが発生しました
+-アップロードの問題のファイル選択
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Кеши могут стать нечитаемыми между версиями без необходимости
+- Изменение формата сжатия изображения вызвало сбой во время загрузки
+- Выбор файла для загрузки
 </ru-RU>
 <zh-CN>
 错误修正：
--缓存可能在版本之间不必要地变得不可读
+-图像压缩格式更改导致上传期间崩溃
+-上传问题的文件选择
 </zh-CN>

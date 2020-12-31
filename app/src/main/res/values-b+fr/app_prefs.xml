@@ -271,7 +271,7 @@
     
 
     
-    <string name="preference_gallery_slideshow_image_rotate_title">Faire pivoter l\'image pour correspondre au format de l\'écran</string>
+    <string name="preference_gallery_slideshow_image_rotate_title">Faites pivoter l\'image pour qu\'elle corresponde au rapport hauteur / largeur de l\'écran</string>
     <string name="preference_gallery_slideshow_image_rotate_summary">Image pivotée pour s\'adapter à l\'écran</string>
     
 

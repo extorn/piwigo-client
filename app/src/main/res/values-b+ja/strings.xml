@@ -188,7 +188,7 @@
 
 **定義
 
-ライセンシー：ライセンシーとは、ライセンスされたソフトウェアを使用することを意図している、またはすでに合法または違法に使用している個人または企業です。 「ライセンシー」という用語は、ソフトウェアがデフォルトで合法的にライセンスされていることを意味するものではありません。
+ライセンシー：ライセンシーとは、ライセンス対象のソフトウェアを使用する予定のある、またはすでに合法または違法に使用している個人または企業です。 「ライセンシー」という用語は、ソフトウェアがデフォルトで合法的にライセンスされていることを意味するものではありません。
 
 
 **ライセンス
@@ -303,7 +303,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 提案やバグをメールで送ってくれたすべての人に感謝します。私はあなたの提案のすべてにできるだけ早く対処するよう努めます。発生するすべてのクラッシュを報告することを選択してください。 次回のアップデート後もバグが発生する場合は、時間をかけてメールでお問い合わせください。 バグが発生する直前に何が起こっているかについて、もう少しコンテキストが必要になる可能性があります。
 
-現在、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
+現時点では、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
     <string name="licences_heading">このアプリ内で使用されるリソースのライセンス</string>
     
     <string name="slideshow_image_details_name_title">リソース名</string>
@@ -435,7 +435,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_title_set_album_thumbnail">アルバムのサムネイルを更新しますか？</string>
     <string name="alert_message_set_album_thumbnail">アルバムのサムネイルをこの画像に更新しますか？</string>
     <string name="alert_confirm_really_delete_album_from_server_pattern">アルバム（%1$s）とすべてのコンテンツを完全に削除してもよろしいですか（他の場所のアルバムにリンクされている場合を除く）。</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">%2$dの写真を含むアルバム（%1$s）と、さらに%4$dの写真を含む%3$dの子アルバムを完全に削除しますか？他のアルバムにリンクされている写真はそのまま残りますが、他の写真は完全に削除されます。このアクションには元に戻す機能はありません。</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">%2$dの写真を含むアルバム（%1$s）と、さらに%4$dの写真を含む%3$dの子アルバムを永久に削除することを絶対に確信していますか？他のアルバムにリンクされている写真はそのまま残りますが、他の写真は完全に削除されます。このアクションには元に戻す機能はありません。</string>
     <string name="alert_confirm_copy_items_here_pattern">ここのバスケットにある%1$dアイテムをコピーしますか（%2$s）？</string>
     <string name="alert_confirm_move_items_here_pattern">バスケット内の%1$dアイテムをここに移動しますか（%2$s）？</string>
     <string name="slideshow_image_details_linked_albums_title">リンクされたアルバム</string>
@@ -499,7 +499,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_error_item_not_unique">申し訳ありませんが、そのアイテムはすでに存在します。</string>
     <string name="alert_warning_no_server_url_specified">サーバーURIが指定されていません。サーバーの場所を追加して、再試行してください。</string>
     <string name="error_heading_unloadable_certificate_files">次の証明書ファイルを読み込めませんでした。</string>
-    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルをロードできませんでした。</string>
+    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルを読み込めませんでした。</string>
     <string name="error_heading_unloadable_keystore_aliases">次のキーストアエイリアスを読み込めませんでした。</string>
     <string name="heading_keystore_filename">キーストア</string>
     <string name="heading_keystore_alias">エイリアス</string>
@@ -617,7 +617,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください</string>
+    <string name="preference_corrupt_please_re_type_pattern">"プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください"</string>
     <string name="switch_to_cached_mode">サーバーは現在利用できません。キャッシュされたデータを使用しますか？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">ビデオを圧縮する</string>
@@ -662,7 +662,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="create_email_using_app">アプリを使用してメールを作成する</string>
     <string name="open_files">アプリでファイルを開く</string>
     <string name="files_unavailable_to_download_removed_pattern">選択したファイルには、処理できなかったファイルが含まれていました。これらの%1$dファイルは無視されています。ビデオファイルを共有するには、最初にローカルで完全にキャッシュする必要があります。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">すべての1回限りのユーザーヒントが再度表示されます</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"すべての1回限りのユーザーヒントが再度表示されます"</string>
     
     
     <string name="delete_uploaded_files_title">アップロードしたファイルを削除する</string>
@@ -705,5 +705,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_error_please_select_download_folder_and_retry">アプリの設定でファイルをダウンロードするフォルダを選択して、再試行してください。</string>
     <string name="no_acceptable_file_ext_found_for_video_pattern">オプション（%1$s）の中でサーバーに受け入れられるファイル（ビデオ：%3$bオーディオ：%4$b）の有効な出力ファイル拡張子（推奨は%2$s）が見つかりませんでした</string>
     <string name="uuid_title">UUIDをインストールします</string>
+    <string name="alert_error_unable_add_files_previous_job_still_running">アップロードするファイルを追加できません。アップロードジョブが進行中です。</string>
+    <string name="alert_error_unable_add_files_previous_job_unfinished">アップロードするファイルを追加できません。現在のアップロードジョブを最初に終了する必要があります。</string>
 
 </resources>

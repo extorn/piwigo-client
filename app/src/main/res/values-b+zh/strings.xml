@@ -215,7 +215,7 @@ Firebase集成已添加到此应用程序中，以促进跟踪应用程序的使
 
 **有限保修和免责声明
 
-该软件“按原样”提供，被许可人自负风险。 Gareth Deli对使用，性能或对特定用途的适用性不做任何保证。软件总是有可能包含错误（错误）而无法正常工作。因此Gareth Deli不保证该软件完全没有错误，也不保证该软件在不中断所有计算机和配置的情况下即可正常运行。被许可方有责任检查该软件是否符合其特定目的或满足其功能和性能要求。被许可人还必须测试该软件如何在其设备及其配置上运行；测试所有用例，并检查在生产环境中使用该软件之前，是否按要求正确处理了数据。如果将该软件用于商业目的，则至关重要。
+该软件“按原样”提供，被许可人自负风险。 Gareth Deli对使用，性能或对特定用途的适用性不做任何保证。软件总是有可能包含错误（错误）而无法正常工作。因此Gareth Deli不保证该软件完全没有错误，也不保证该软件在不中断所有计算机和配置的情况下即可正常运行。被许可方有责任检查该软件是否符合其特定目的或是否满足其功能和性能要求。被许可人还必须测试该软件如何在其设备及其配置上运行；测试所有用例，并检查在生产环境中使用该软件之前，是否按要求正确处理了数据。如果将该软件用于商业目的，则至关重要。
 
 
 **责任限制
@@ -223,7 +223,7 @@ Firebase集成已添加到此应用程序中，以促进跟踪应用程序的使
 被许可方对使用软件的后果以及由此造成的直接和间接损害（在法律上可能的范围内）负责。在法律允许的范围内，责任仅限于购买价格；否则，将其限制为法律上可能的最小值。
 
 
-**维护和支持
+**维护与支持
 
 Gareth Deli仅通过电子邮件为软件的当前版本提供常规支持。不支持旧版本。
 
@@ -251,8 +251,8 @@ Gareth Deli可以全权酌情决定在任何时间，出于任何理由或没有
 
 **可分割性
 
-如果本协议的任何条款被裁定为不可执行或无效，则该条款应为
-进行了更改和解释以最大程度地实现此类规定的目标
+如果本协议的任何条款被裁定为不可执行或无效，则该条款将为
+更改和解释以最大程度地实现此类规定的目标
 根据适用法律的规定，其余条款将继续完全有效。
 
 
@@ -287,7 +287,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 目前，它提供了基本功能级别，以允许在现有图库中导航，上传新照片和视频以及在图库中创建新类别。创建后，某些字段可以修改，但许多字段目前仍是只读的。
 
-请问如果您卸载应用程序，可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。
+请问如果您卸载该应用程序，可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。
 
 我测试的PIWIGO服务器的版本当前为2.10.2。
 
@@ -299,7 +299,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 我已经安装了扩展描述插件的副本，但是很遗憾，此功能尚未通过PIWIGO API公开。
 我想支持“收藏夹”照片，但此功能似乎尚未通过PIWIGO API公开。
 
-如果您遇到任何错误，请向我发送任何电子邮件通知。我已经在android模拟器，三星手机和三星平板电脑上进行了测试，但这是我的第一个应用程序，因此，我确定有人会出错。
+如果您遇到任何错误，请向我发送任何电子邮件通知。我已经在android模拟器，三星手机和三星平板电脑上进行了测试，但这是我的第一个应用程序，因此我确定有人会出错。
 
 非常感谢向我发送建议或错误的电子邮件的所有人。我将努力尽快解决您的所有建议。请选择报告每次发生的崩溃。 如果您发现该错误在下次更新后仍然存在，请花点时间给我发送电子邮件。 在错误发生之前，我可能需要更多有关周围情况的上下文。
 
@@ -353,7 +353,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_user_delete_success_pattern">用户（%1$s）已成功删除</string>
     <string name="alert_group_delete_failed_pattern">删除组（%1$s）时出错。请重试。</string>
     <string name="alert_user_delete_failed_pattern">删除用户（%1$s）时出错。请重试。</string>
-    <string name="alert_confirm_really_delete_group">您确定要删除该组吗？属于该成员的任何用户都不会被删除，但是可能会失去对该组所拥有画廊区域的访问权限。</string>
+    <string name="alert_confirm_really_delete_group">您确定要删除该组吗？属于该用户的任何用户都不会被删除，但是可能会失去对该用户组具有的画廊区域的访问权限。</string>
     <string name="alert_confirm_really_delete_user">您确定要删除该用户吗？</string>
     <string name="users_menu_title">用户数</string>
     <string name="alert_error_unable_to_delete_yourself_pattern">抱歉，您无法删除以（%1$s）身份登录的用户。</string>
@@ -489,7 +489,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_no_scheme_specified">您必须在服务器地址前面加上http：//或https：//。不支持其他方案。如果默认端口是可选的-HTTP为80或https为443。例如http://piwigo.org/demo或http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">以下%1$d文件超出了警告阈值：%2$s。您要从上传中删除这些内容吗？</string>
     <string name="alert_files_larger_than_upload_threshold_compress">您要在上传之前压缩任何视频吗？</string>
-    <string name="alert_trusted_certificates_polling">服务器在连接时提供的不受信任的证书将显示给您，以便您选择将它们添加到信任存储区。如果拒绝，则不会再次提示您输入相同的证书。为了再次提示，请取消选择并重新选择使用自定义受信任证书存储的选项。</string>
+    <string name="alert_trusted_certificates_polling">服务器在连接时提供的不受信任的证书将显示给您，以便您选择将其添加到信任存储区。如果拒绝，则不会再次提示您输入相同的证书。为了再次提示，请取消选择并重新选择使用自定义受信任证书存储的选项。</string>
     <string name="button_copy_link">复制链接</string>
     <string name="download_link_clipboard_data_desc">下载%1$s的链接</string>
     <string name="alert_http_scheme_specified">您的服务器正在使用http。这不是一个好主意，因为用户名和密码以纯文本格式传输到服务器。我强烈建议您将服务器更改为使用https。</string>
@@ -588,7 +588,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="upload_error_orphaned_file_retrieval_failed">无法检索孤立图像列表。请重试。</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理员用户无权访问预期的功能。如果您使用社区插件（对非管理员用户伪造管理员身份）未正确安装，则会发生这种情况。使用Web浏览器检查相关插件是否正确公开了您期望的方法：%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">此功能不可用。请在您的服务器上安装PiwigoClientWsExts插件。如果您已经安装了此软件，请将其更新为最新版本。</string>
-    <string name="alert_user_session_no_allowed_filetypes">服务器未提供可与用户会话信息一起上传的文件类型列表（通常仅为管理员用户提供）。请检查服务器配置是否正确，然后重试。如果问题仍然存在，请给我发送电子邮件，以帮助我为您诊断问题。</string>
+    <string name="alert_user_session_no_allowed_filetypes">服务器尚未提供可与用户会话信息一起上传的文件类型列表（通常仅为管理员用户提供）。请检查服务器配置是否正确，然后重试。如果问题仍然存在，请给我发送电子邮件，以帮助我为您诊断问题。</string>
     <string name="job_not_found">找不到上传作业</string>
     <string name="files_mid_data_transfer_title">文件已部分复制</string>
     <string name="files_awaiting_verification_title">等待数据完整性检查的文件</string>
@@ -617,7 +617,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值</string>
+    <string name="preference_corrupt_please_re_type_pattern">"首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值"</string>
     <string name="switch_to_cached_mode">该服务器目前不可用。使用缓存的数据？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">压缩影片</string>
@@ -638,7 +638,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_bulk_image_permissions_title">设置访问权限</string>
     <string name="alert_bulk_image_permissions_message">设置%1$d个所选资源的访问权限级别</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与%1$s MIME类型共享的文件</string>
-    <string name="alert_error_unsupported_file_extensions_pattern">具有以下扩展名的文件无法上传并已被删除：%1$s</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">具有以下扩展名的文件无法上载并已删除：%1$s</string>
     <string name="please_select_a_parent_album">请选择一个父相册</string>
     <string name="unsupported_device">抱歉，不支持此设备。访问Google Play服务时出现问题。</string>
     <string name="hint_album_view">点按屏幕底部以显示该相册的详细信息</string>
@@ -662,7 +662,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="create_email_using_app">使用应用创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。这些%1$d文件已被忽略。要共享视频文件，必须先将其完全本地缓存。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">所有一次性用户提示将再次显示</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"所有一次性用户提示将再次显示"</string>
     
     
     <string name="delete_uploaded_files_title">删除上传的文件</string>
@@ -685,7 +685,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_error_starting_download">开始下载文件时出错</string>
     <string name="progress_importing_files">导入文件</string>
     <string name="content_filter">内容过滤</string>
-    <string name="alert_advert_importance_message">广告收入对我来说很重要。对不起，它们使您感到沮丧（他们也对我如此），但是如果您观看它们，它们将一直出现，直到您观看一个。为避免此问题，请看着他们，直到他们提供关闭选项为止。或者，购买此应用程序的付费版本。非常感谢您的支持。</string>
+    <string name="alert_advert_importance_message">广告收入对我来说很重要。很抱歉，它们使您感到沮丧（他们也对我如此），但是如果您观看它们，它们将一直出现，直到您观看一个。为避免此问题，请看着他们，直到他们提供关闭选项为止。或者，购买此应用程序的付费版本。非常感谢您的支持。</string>
     <string name="eula_privacy_title">隐私</string>
     <string name="privacy_policy_label">我们的隐私政策</string>
     <string name="title_advert_consent">您的隐私</string>
@@ -705,5 +705,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_error_please_select_download_folder_and_retry">请在应用程序设置中选择一个文件夹下载文件，然后重试。</string>
     <string name="no_acceptable_file_ext_found_for_video_pattern">在选项（%1$s）中找不到服务器可接受的文件（视频：%3$b音频：%4$b）的有效输出文件扩展名（优选为%2$s）</string>
     <string name="uuid_title">安装UUID</string>
+    <string name="alert_error_unable_add_files_previous_job_still_running">无法添加文件进行上传。上载作业正在进行中。</string>
+    <string name="alert_error_unable_add_files_previous_job_unfinished">无法添加文件进行上传。当前的上传作业需要先完成。</string>
 
 </resources>

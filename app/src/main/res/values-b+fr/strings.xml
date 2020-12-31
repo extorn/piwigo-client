@@ -90,7 +90,7 @@
     <string name="alert_upload_success">Téléchargement complet.</string>
     <string name="alert_upload_partial_success">Téléchargement complet. Les fichiers qui n\'ont pas pu être téléchargés restent dans la liste pour réessayer si vous le souhaitez. Si des actions sont incomplètes, vous ne pouvez pas ajouter de nouveaux fichiers à la liste de téléchargement. Cliquez sur le bouton de téléchargement pour les terminer.</string>
     <string name="alert_upload_failed_piwigo">Le téléchargement a échoué en raison d\'une erreur sur le serveur PIWIGO (%1$d:%2$s).</string>
-    <string name="alert_upload_failed_webserver">Le téléchargement a échoué en raison d\'une erreur du serveur Web (%1$d:%2$s).</string>
+    <string name="alert_upload_failed_webserver">Échec du téléchargement en raison d\'une erreur du serveur Web (%1$d:%2$s).</string>
     <string name="alert_upload_failed_webresponse">Le téléchargement a échoué en raison d\'une erreur de traitement de la réponse PIWIGO. Cela est probablement dû à un changement d\'API PIWIGO. Réponse impossible à analyser:%1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Échec du téléchargement du bloc pour le fichier%1$s. Abandon du téléchargement du fichier.</string>
     <string name="alert_error_upload_file_no_longer_available_message_pattern">Le fichier%1$s n\'est plus disponible sur l\'appareil. Il a peut-être été supprimé ou déplacé.\n%2$s</string>
@@ -120,7 +120,7 @@
     <string name="upload_files_button_title">Télécharger</string>
     <string name="upload_files_finish_job_button_title">terminer</string>
     <string name="upload_job_status_button">Statut</string>
-    <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page des paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
+    <string name="alert_really_delete_upload_job">Cela supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - page de paramètres de téléchargement). Les travaux se termineront souvent avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir franchir cette étape radicale?</string>
     <string name="loading_please_wait">Chargement, veuillez patienter</string>
     <string name="alert_title_server_error">erreur du serveur</string>
     <string name="alert_server_error_pattern">Le serveur a renvoyé une erreur HTTP:%1$d (%2$s)</string>
@@ -197,7 +197,7 @@ Gareth Deli vous accorde une licence limitée révocable, non exclusive, non tra
 pour télécharger, installer et utiliser l\'Application uniquement à des fins personnelles ou commerciales
 en stricte conformité avec les termes de cet accord.
 
-LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU AUTRES ACTIONS DANS LOGICIEL
+LE LOGICIEL EST FOURNI \"EN L\'ÉTAT\", SANS GARANTIE D\'AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS MAIS SANS S\'Y LIMITER LES GARANTIES DE QUALITÉ MARCHANDE, D\'ADÉQUATION À UN USAGE PARTICULIER ET D\'ABSENCE DE CONTREFAÇON. EN AUCUN CAS, LES AUTEURS OU LES TITULAIRES DES DROITS D\'AUTEUR NE SERONT RESPONSABLES DE TOUTE RÉCLAMATION, DOMMAGE OU AUTRE RESPONSABILITÉ, QUE CE SOIT DANS UNE ACTION DE CONTRAT, DE TORT OU AUTRE, RÉSULTANT DE, HORS OU EN LIEN AVEC LE LOGICIEL OU L\'UTILISATION OU D\'AUTRES ACTIONS DANS LE LOGICIEL
 
 
 ** Restrictions
@@ -303,7 +303,7 @@ Veuillez me signaler tout bogue par e-mail si vous rencontrez des bogues. J\'ai 
 
 Un grand merci à tous ceux qui m\'ont envoyé des suggestions ou des bugs. Je m\'efforcerai de répondre à toutes vos suggestions dès que possible.Veuillez choisir de signaler chaque plantage qui se produit. Si vous constatez que le bogue persiste après la prochaine mise à jour, veuillez prendre le temps de m\'envoyer un e-mail. Il est probable que j\'ai besoin d\'un peu plus de contexte sur ce qui se passe juste avant que le bogue ne se produise.
 
-Les communiqués sont pour le moment sur une base ad hoc. La fréquence des versions devrait diminuer au fur et à mesure que l\'application mûrit. Le calendrier et l\'historique des versions sont indiqués ci-dessous. Cela peut changer et les choses peuvent être retardées, mais vous pouvez voir ce qui est sur la liste."</string>
+Les communiqués sont pour le moment ponctuels. La fréquence des versions devrait diminuer au fur et à mesure que l\'application mûrit. Le calendrier et l\'historique des versions sont indiqués ci-dessous. Cela peut changer et les choses peuvent être retardées, mais vous pouvez voir ce qui est sur la liste."</string>
     <string name="licences_heading">Licences pour les ressources utilisées dans cette application</string>
     
     <string name="slideshow_image_details_name_title">Nom de la ressource</string>
@@ -345,7 +345,7 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
     <string name="alert_warning">Attention</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ "correspondance la plus proche \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, pourriez-vous prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -440,7 +440,7 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
     <string name="alert_confirm_move_items_here_pattern">Déplacer le ou les éléments%1$d dans le panier ici (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Albums liés</string>
     <string name="list_ok_button">D\'accord</string>
-    <string name="alert_confirm_really_remove_album_permissions_pattern">Vous avez choisi de supprimer l\'accès à cet album et l\'accès navigable à tous les albums enfants de%1$d groupes et%2$d utilisateurs. Continuer cette action?</string>
+    <string name="alert_confirm_really_remove_album_permissions_pattern">Vous avez choisi de supprimer l \ \'accès à cet album et l \' accès navigable à tous les albums enfants de%1$d groupes et de%2$d utilisateurs. Continuer cette action?</string>
     <string name="alert_confirm_add_album_permissions_recursively_pattern">Vous avez choisi d\'ajouter l\'accès à cet album pour%1$d groupes et%2$d utilisateurs. Souhaitez-vous appliquer ces modifications aux albums enfants de%3$d?</string>
     <string name="alert_information_own_user_readded_to_permissions_list">Vos modifications vous auraient empêché d\'accéder à cet album. Votre nom d\'utilisateur a été ajouté à la liste de ceux avec une autorisation explicite.</string>
     <string name="alert_information_add_album_permissions_recursively_pattern">Ajout d\'autorisations à%1$d albums enfants également.</string>
@@ -452,7 +452,7 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ "correspondance la plus proche \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \ \"correspondance la plus proche \".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour autoriser la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache sera en mémoire.</string>
@@ -505,7 +505,7 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Erreur lors du téléchargement</string>
     <string name="alert_message_error_uploading_end">Une erreur s\'est produite après le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer d\'où il est arrivé et effacer toutes les données temporaires résiduelles du serveur.</string>
-    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer là où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer les données temporaires résiduelles du serveur.</string>
+    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer là où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer toutes les données temporaires résiduelles du serveur.</string>
     <string name="release_history">Historique des versions</string>
     <string name="planned_releases">Sorties prévues</string>
     <string name="tags_heading">Mots clés</string>
@@ -588,7 +588,7 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
     <string name="upload_error_orphaned_file_retrieval_failed">Impossible de récupérer la liste des images orphelines. Veuillez réessayer.</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur administrateur n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de communauté (qui simule le statut d\'administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plug-in approprié expose correctement les méthodes que vous attendez à l\'aide d\'un navigateur Web:%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Cette fonction n\'est pas disponible. Veuillez installer le plugin PiwigoClientWsExts sur votre serveur. Si vous l\'avez déjà installé, veuillez le mettre à jour avec la dernière version.</string>
-    <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste de types de fichiers pouvant être téléchargés avec les informations de session utilisateur (celles-ci sont généralement fournies uniquement pour les utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, envoyez-moi un e-mail pour m\'aider à diagnostiquer le problème pour vous.</string>
+    <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste des types de fichiers pouvant être téléchargés avec les informations de session utilisateur (celles-ci sont généralement fournies uniquement pour les utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, envoyez-moi un e-mail pour m\'aider à diagnostiquer le problème pour vous.</string>
     <string name="job_not_found">Télécharger le travail introuvable</string>
     <string name="files_mid_data_transfer_title">Fichiers partiellement copiés</string>
     <string name="files_awaiting_verification_title">Fichiers en attente de vérification de l\'intégrité des données</string>
@@ -617,7 +617,7 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application"</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données mises en cache?</string>
     <string name="server_connection_id_pattern">%1$s à%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -662,7 +662,7 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
     <string name="create_email_using_app">Créer un e-mail à l\'aide de l\'application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contenait des fichiers qui n\'ont pas pu être traités. Ces%1$d fichiers ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Tous les conseils d\'utilisation uniques seront à nouveau affichés</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d\'utilisation uniques seront à nouveau affichés"</string>
     
     
     <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>
@@ -703,7 +703,9 @@ Les communiqués sont pour le moment sur une base ad hoc. La fréquence des vers
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diaporama désynchronisé avec le contenu de l\'album chargé. Réinitialisation au démarrage.</string>
     <string name="uri_permission_justification_file_selection">Pour sélectionner des fichiers ou des dossiers à utiliser par cette application</string>
     <string name="alert_error_please_select_download_folder_and_retry">Veuillez sélectionner un dossier dans lequel télécharger les fichiers dans les paramètres de l\'application, puis réessayer.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Aucune extension de fichier de sortie valide (la préférence est%2$s) n\'a pu être trouvée pour le fichier (vidéo:%3$b audio:%4$b) acceptable pour le serveur parmi les options (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Aucune extension de fichier de sortie valide (la préférence est%2$s) n\'a été trouvée pour le fichier (vidéo:%3$b audio:%4$b) acceptable pour le serveur parmi les options (%1$s)</string>
     <string name="uuid_title">Installez UUID</string>
+    <string name="alert_error_unable_add_files_previous_job_still_running">Impossible d\'ajouter des fichiers à télécharger. Un travail de téléchargement est en cours.</string>
+    <string name="alert_error_unable_add_files_previous_job_unfinished">Impossible d\'ajouter des fichiers à télécharger. La tâche de téléchargement en cours doit se terminer en premier.</string>
 
 </resources>

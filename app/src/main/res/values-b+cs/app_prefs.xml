@@ -72,7 +72,7 @@
     
 
     
-    <string name="preference_server_connection_retries_title">Před selháním se připojení pokusí znovu</string>
+    <string name="preference_server_connection_retries_title">Připojení se pokusí před selháním</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
@@ -251,7 +251,7 @@
     <string name="preference_gallery_clearVideoCache_title">Vymazat mezipaměť videa</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Odstraní všechna videa uložená v mezipaměti na disk</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všech%1$.2fMB videí uložených na disk</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Odstraní všechna%1$.2fMB videí uložených na disk</string>
 
     
     

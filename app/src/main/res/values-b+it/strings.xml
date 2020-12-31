@@ -197,7 +197,7 @@ Gareth Deli ti concede una licenza revocabile, non esclusiva, non trasferibile e
 scaricare, installare e utilizzare l\'Applicazione esclusivamente per scopi personali o commerciali
 rigorosamente in conformità con i termini del presente Contratto.
 
-IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UNO SCOPO PARTICOLARE E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRE RAPPORTI SOFTWARE
+IL SOFTWARE VIENE FORNITO \"COSÌ COM\'È\", SENZA GARANZIA DI ALCUN TIPO, ESPLICITA O IMPLICITA, INCLUSE, MA NON SOLO, LE GARANZIE DI COMMERCIABILITÀ, IDONEITÀ PER UN PARTICOLARE SCOPO E NON VIOLAZIONE. IN NESSUN CASO GLI AUTORI OI TITOLARI DEL COPYRIGHT SARANNO RESPONSABILI PER QUALSIASI RIVENDICAZIONE, DANNO O ALTRA RESPONSABILITÀ, SIA IN UN\'AZIONE DI CONTRATTO, TORTO O ALTRO, DERIVANTE DAL, O IN CONNESSIONE CON IL SOFTWARE O L\'USO O ALTRI TRATTAMENTI NEL SOFTWARE
 
 
 ** Restrizioni
@@ -356,7 +356,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_confirm_really_delete_group">Sei sicuro di voler eliminare questo gruppo? Tutti gli utenti che ne sono membri non verranno eliminati, ma potrebbero perdere l\'accesso alle aree della galleria di cui dispone questo gruppo.</string>
     <string name="alert_confirm_really_delete_user">Sei sicuro di voler eliminare questo utente?</string>
     <string name="users_menu_title">Utenti</string>
-    <string name="alert_error_unable_to_delete_yourself_pattern">Spiacenti, non puoi eliminare l \ \'utente con cui hai effettuato l \' accesso (%1$s).</string>
+    <string name="alert_error_unable_to_delete_yourself_pattern">Spiacenti, non puoi eliminare l\'utente con cui hai effettuato l\'accesso (%1$s).</string>
     <string name="alert_information_coming_soon">Questa funzionalità arriverà presto.</string>
 
     <string name="user_username_title">Nome utente</string>
@@ -423,7 +423,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
 
     <string name="alert_slideshow_out_of_sync_with_album">Questa presentazione non riflette più accuratamente i contenuti dell\'album corrente</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Questa presentazione non riflette più accuratamente il contenuto del tag corrente</string>
-    <string name="alert_error_app_not_yet_configured">App non ancora configurata e connessa a un server PIWIGO. Si prega di aprire l\'app manualmente e configurarla prima di provare a condividere elementi con essa.</string>
+    <string name="alert_error_app_not_yet_configured">App non ancora configurata e connessa a un server PIWIGO. Apri l\'app manualmente e configurala prima di provare a condividere elementi con essa.</string>
     <string name="error_server_configuration_invalid">Dettagli del server piwigo inaccettabili, controlla la configurazione della connessione dell\'app</string>
     <string name="alert_image_show_image_select_max_zoom">Consente uno zoom fino a 100x</string>
     <string name="alert_image_show_image_select_rotation">Ruota immagine</string>
@@ -484,12 +484,12 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="x509_cert_verified_by_field_pattern">Verificato da:%1$s</string>
     <string name="x509_cert_valid_from_field_pattern">Valido da:%1$s</string>
     <string name="x509_cert_valid_to_field_pattern">Valido per:%1$s</string>
-    <string name="alert_warning_multiple_users_found_pattern">Sono stati trovati%1$d altri utenti che condividono questo nome utente (%2$s). È stato selezionato l\'utente più recente di questo server Piwigo, ma ciò non è sicuro se è possibile che utilizzerà il server nello stesso momento o in un momento simile. Valuta la possibilità di modificare questi nomi utente in modo che il nome utente sia un identificatore univoco per una determinata classe di utenti.</string>
+    <string name="alert_warning_multiple_users_found_pattern">Sono stati trovati%1$d altri utenti che condividono questo nome utente (%2$s). È stato selezionato l\'utente più recente di questo server Piwigo, ma ciò non è sicuro se è possibile che utilizzerà il server nello stesso momento o in un momento simile. Considera la possibilità di modificare questi nomi utente in modo che il nome utente sia un identificatore univoco per una determinata classe di utenti.</string>
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Queste autorizzazioni sono necessarie per avviare un processo di caricamento e quindi mantenere il processo di caricamento in esecuzione una volta che lo schermo si è spento</string>
-    <string name="alert_no_scheme_specified">È necessario anteporre al proprio indirizzo server http:// o https://. Non sono supportati altri schemi. La porta è facoltativa se l\'impostazione predefinita è 80 per http o 443 per https. Esempio http://piwigo.org/demo o http://piwigo.org:80/demo</string>
+    <string name="alert_no_scheme_specified">È necessario anteporre all\'indirizzo del server http:// o https://. Non sono supportati altri schemi. La porta è facoltativa se l\'impostazione predefinita è 80 per http o 443 per https. Esempio http://piwigo.org/demo o http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">I seguenti%1$d file hanno superato la soglia di avviso:%2$s. Vuoi rimuoverli dal caricamento?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Desideri comprimere i video prima del caricamento?</string>
-    <string name="alert_trusted_certificates_polling">Verranno presentati certificati non attendibili forniti dal server al momento della connessione in modo da poter scegliere di aggiungerli al truststore. Se rifiuti, non ti verrà chiesto di nuovo lo stesso certificato. Per essere nuovamente richiesto, deseleziona e riseleziona l\'opzione per utilizzare un archivio certificati attendibile personalizzato.</string>
+    <string name="alert_trusted_certificates_polling">Verranno presentati certificati non attendibili forniti dal server al momento della connessione in modo da poter scegliere di aggiungerli al truststore. Se rifiuti, non ti verrà richiesto di nuovo lo stesso certificato. Per essere nuovamente richiesto, deseleziona e riseleziona l\'opzione per utilizzare un archivio certificati attendibile personalizzato.</string>
     <string name="button_copy_link">Copia link</string>
     <string name="download_link_clipboard_data_desc">Link per il download per%1$s</string>
     <string name="alert_http_scheme_specified">Il tuo server utilizza http. Questa non è una buona idea perché il nome utente e la password vengono trasmessi al server in testo normale. Ti consiglio vivamente di cambiare il tuo server per utilizzare https.</string>
@@ -560,7 +560,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="button_show_details">Mostra i dettagli</string>
     <string name="button_hide_details">Nascondi dettagli</string>
     <string name="alert_message_max_upload_file_count_reached">Numero massimo di file da caricare raggiunto. Per caricarne di più contemporaneamente, acquista e utilizza la versione a pagamento di questa app.</string>
-    <string name="alert_message_advert_load_error">Gli annunci hanno costantemente problemi di caricamento. Per favore, segnalacelo, poiché per me costituiscono un\'importante, anche se molto piccola, fonte di entrate. Si prega di considerare l\'acquisto della versione a pagamento per rimuovere completamente gli annunci. L\'app si blocca ora per 5 secondi durante i quali questa schermata deve rimanere visibile. Il conto alla rovescia ricomincerà se il messaggio è nascosto. Dopo 5 secondi puoi chiudere questo messaggio e continuare a utilizzare l\'app normalmente.</string>
+    <string name="alert_message_advert_load_error">Gli annunci hanno costantemente problemi di caricamento. Per favore, segnalacelo, in quanto per me costituiscono una fonte di entrate importante, sebbene molto piccola. Si prega di considerare l\'acquisto della versione a pagamento per rimuovere completamente gli annunci. L\'app si blocca ora per 5 secondi durante i quali questa schermata deve rimanere visibile. Il conto alla rovescia ricomincerà se il messaggio è nascosto. Dopo 5 secondi puoi chiudere questo messaggio e continuare a utilizzare l\'app normalmente.</string>
     <string name="alert_temporary_upload_album_deleted">Album di caricamento temporaneo eliminato correttamente</string>
     <string name="alert_deleting_temporary_upload_album">Eliminazione dell\'album di caricamento temporaneo</string>
     <string name="alert_invalid_uri_pattern">URI non valido. %1$s</string>
@@ -703,7 +703,9 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">Presentazione non sincronizzata con i contenuti dell\'album caricato. Ripristino all\'avvio.</string>
     <string name="uri_permission_justification_file_selection">Per selezionare file o cartelle da utilizzare con questa app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleziona una cartella in cui scaricare i file nelle impostazioni dell\'app, quindi riprova.</string>
-    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione di file di output valida (preferibilmente%2$s) per il file (video:%3$b audio:%4$b) accettabile dal server tra le opzioni (%1$s)</string>
+    <string name="no_acceptable_file_ext_found_for_video_pattern">Impossibile trovare un\'estensione di file di output valida (la preferenza è%2$s) per il file (video:%3$b audio:%4$b) accettabile dal server tra le opzioni (%1$s)</string>
     <string name="uuid_title">Installa UUID</string>
+    <string name="alert_error_unable_add_files_previous_job_still_running">Impossibile aggiungere file per il caricamento. È in corso un processo di caricamento.</string>
+    <string name="alert_error_unable_add_files_previous_job_unfinished">Impossibile aggiungere file per il caricamento. Il processo di caricamento corrente deve essere completato per primo.</string>
 
 </resources>
