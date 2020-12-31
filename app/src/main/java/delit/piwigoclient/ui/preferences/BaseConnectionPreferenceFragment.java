@@ -785,7 +785,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         @Override
         public boolean onPreferenceClick(Preference preference) {
             fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheClearingStarted_message));
-            new ClearCacheInBackgroundTask(fragment).execute();
+            new ClearCacheInBackgroundTask(fragment).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             return true;
 
         }

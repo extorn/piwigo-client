@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -248,7 +249,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
                 if(placeholderUri != null && placeholderLoaded && isLoadingGif()) {
                     GifLoaderTask task = new GifLoaderTask(this);
                     if (DisplayUtils.isRunningOnUIThread()) {
-                        task.execute();
+                        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
                         task.doInBackgroundSafely();
                     }

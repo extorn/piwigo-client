@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -199,7 +200,23 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (externallyTriggeredSelectFilesActionId == stickyEvent.getActionId() || getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
             if(getContext() != null) {
                 EventBus.getDefault().removeStickyEvent(stickyEvent);
-                new SharedFilesIntentProcessingTask(this).execute(stickyEvent);
+                Long uploadJobId = getUploadJobId();
+                UploadJob activeJob = null;
+                if(uploadJobId != null) {
+                    activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+                }
+                if(activeJob != null && !activeJob.isFinished()) {
+                    if(!activeJob.isRunningNow()) {
+                        submitUploadJob(activeJob);
+                        getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_add_files_previous_job_unfinished);
+                        Logging.log(Log.INFO, TAG, "Resubmitted previously failed job as user attempted to add new files");
+                    } else {
+                        getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_add_files_previous_job_still_running);
+                        Logging.log(Log.INFO, TAG, "Cancelled user attempt to add files to currently running job");
+                    }
+                } else {
+                    new SharedFilesIntentProcessingTask(this).execute(stickyEvent);
+                }
             } else {
                 Logging.log(Log.WARN, TAG, "Unable to handle shared files before the fragment is attached.");
             }
@@ -864,7 +881,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private void updateUiUploadStatusFromJobIfRun(Context context) {
         UploadJob uploadJob = getActiveJob(context);
         if (uploadJob != null) {
-            new ReloadDataFromUploadJobTask(this, uploadJob).execute();
+            new ReloadDataFromUploadJobTask(this, uploadJob).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             allowUserUploadConfiguration(null);
         }

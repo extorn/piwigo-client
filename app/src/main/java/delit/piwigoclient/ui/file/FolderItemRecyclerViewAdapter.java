@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -150,7 +151,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         Logging.log(Log.DEBUG, TAG, "Invoking Background task - UpdateFolderContentTask");
 //        Logging.recordException(new Exception().fillInStackTrace());
         activeTask = new UpdateFolderContentTask(this, newContent, force).withContext(context);
-        activeTask.execute();
+        activeTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     protected List<FolderItem> getNewDisplayContentInternal(@NonNull Context context, DocumentFile newContent) {
@@ -467,7 +468,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             Logging.log(Log.DEBUG, TAG, "Invoking Background task (afterAddingFolderItemsToInternalStore) - UpdateContentListAndSortContentAfterAdd");
 //            Logging.recordException(new Exception().fillInStackTrace());
             activeTask = new UpdateContentListAndSortContentAfterAdd(this).withContext(context);
-            activeTask.execute();
+            activeTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
