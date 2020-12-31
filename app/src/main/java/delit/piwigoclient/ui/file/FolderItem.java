@@ -315,8 +315,10 @@ public class FolderItem implements Parcelable {
                     lastUpdateAt = tasksProcessed;
                     double progress = ((double) lastUpdateAt) / items.size();
                     DisplayUtils.postOnUiThread(() -> taskListener.onProgress((int)Math.rint(100 * progress)));
+                    int permits = tasksProcessed + 1;
                     try {
-                        sem.tryAcquire(tasksProcessed + 1, 1, TimeUnit.SECONDS);
+                        sem.tryAcquire(permits, 1, TimeUnit.SECONDS);
+                        sem.release(permits); // release the permits if we acquired them.
                     } catch (InterruptedException e) {
                         cancelled = true;
                     }
