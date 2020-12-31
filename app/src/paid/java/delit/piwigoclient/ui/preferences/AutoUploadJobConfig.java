@@ -258,7 +258,7 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
     }
 
     private String getImageCompressionOutputFormat(Context c) {
-        return getStringValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.string.preference_data_upload_automatic_job_compress_images_output_format_default);
+        return getStringValue(c, R.string.preference_data_upload_automatic_job_compress_images_output_format_key, R.string.preference_data_upload_automatic_job_compress_images_output_format_default);
     }
 
     public UploadJob.VideoCompressionParams getVideoCompressionParams(Context c) {
