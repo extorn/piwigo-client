@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -61,6 +62,7 @@ public class LicenceCheckingHelper {
             Logging.log(Log.ERROR,TAG, "Unable to retrieve App Install GUID from Firebase");
             Logging.recordException(e);
             // Try to use more data here. ANDROID_ID is a single point of attack.
+            @SuppressLint("HardwareIds")
             String deviceId = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
             withInstallGuid(deviceId);
         });
@@ -74,6 +76,7 @@ public class LicenceCheckingHelper {
         //Force the licence response to be invalidated every time a new version is installed.
         byte[] salt = new byte[20];
         new Random(getVersionCode(activity)).nextBytes(salt);
+
 
         mChecker = new LicenseChecker(
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
@@ -147,7 +150,7 @@ public class LicenceCheckingHelper {
         public static final Creator<LicenceCheckAction<?,?>> CREATOR = new Creator<LicenceCheckAction<?,?>>() {
             @Override
             public LicenceCheckAction<?,?> createFromParcel(Parcel in) {
-                return new LicenceCheckAction(in);
+                return new LicenceCheckAction<>(in);
             }
 
             @Override
@@ -193,6 +196,7 @@ public class LicenceCheckingHelper {
                 if (activeNetworkInfo == null || !activeNetworkInfo.isAvailable()) {
                     // allow access for the next 6 hours.
                     mLicenseCheckerCallback.allow(-1);
+                    Logging.log(Log.DEBUG, TAG, "Licence checked within allowable period");
                     return;
                 }
             }
@@ -230,6 +234,7 @@ public class LicenceCheckingHelper {
                 return;
             }
             AdsManager.getInstance(activity).setAppLicensed(true);
+            Logging.log(Log.DEBUG, TAG, "App confirmed as licensed");
             // Should allow user access.
 //            displayResult(activity.getString(R.string.allow));
         }
@@ -241,6 +246,7 @@ public class LicenceCheckingHelper {
             }
             AdsManager.getInstance(activity).setAppLicensed(false);
             if (policyReason == Policy.NOT_LICENSED) {
+                Logging.log(Log.DEBUG, TAG, "App unlicensed - preferences wiped");
                 PreferenceUtils.wipeAppPreferences(activity);
             }
 
@@ -267,6 +273,7 @@ public class LicenceCheckingHelper {
             // Please examine the error code and fix the error.
             String result = String.format(activity.getString(R.string.application_error), errorCode);
             displayResult(result);
+            Logging.log(Log.ERROR, TAG, "Licence check encountered error");
         }
     }
 }
