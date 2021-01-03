@@ -617,7 +617,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值"</string>
+    <string name="preference_corrupt_please_re_type_pattern">首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值</string>
     <string name="switch_to_cached_mode">该服务器目前不可用。使用缓存的数据？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">压缩影片</string>
@@ -662,7 +662,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="create_email_using_app">使用应用创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。这些%1$d文件已被忽略。要共享视频文件，必须先将其完全本地缓存。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"所有一次性用户提示将再次显示"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">所有一次性用户提示将再次显示</string>
     
     
     <string name="delete_uploaded_files_title">删除上传的文件</string>

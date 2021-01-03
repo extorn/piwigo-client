@@ -145,6 +145,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.92</item>
+        <item>"Bug-Fix:
+                 - Code behoben, der Probleme beim erneuten Laden von Klassen aus alten Versionen verursachte"</item>
         <item>1.4.0.91</item>
         <item>"Bug-Fix:
                  - Die Änderung des Bildkomprimierungsformats verursachte einen Absturz beim Hochladen

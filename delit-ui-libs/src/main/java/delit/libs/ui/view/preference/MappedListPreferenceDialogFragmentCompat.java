@@ -29,7 +29,7 @@ public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> ex
 
 
     @Override
-    public Preference findPreference(CharSequence key) {
+    public Preference findPreference(@NonNull CharSequence key) {
         return getPreference();
     }
 

@@ -10,6 +10,9 @@
 -renamesourcefileattribute SourceFile
 -keep class delit.libs.ui.view.SlidingTabLayout$TabColorizer { public *; }
 
+# Allow re-load of parcelable classes from old versions of the app.
+-keepnames class * implements android.os.Parcelable
+
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
      # <init>(...);
 -keepnames class * implements java.io.Serializable

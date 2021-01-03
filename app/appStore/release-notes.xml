@@ -1,45 +1,36 @@
 <en-GB>
 Bugfix:
-- Image compression format change caused crash during upload
-- File selection for upload issue
+- Fixed code causing issues reloading classes from old versions
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Změna formátu komprese obrazu způsobila selhání během nahrávání
-- Výběr souboru pro vydání uploadu
+- Opravený kód způsobující problémy s opětovným načítáním tříd ze starých verzí
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Die Änderung des Bildkomprimierungsformats verursachte einen Absturz beim Hochladen
-- Dateiauswahl für Upload-Problem
+- Code behoben, der Probleme beim erneuten Laden von Klassen aus alten Versionen verursachte
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- El cambio de formato de compresión de la imagen provocó un bloqueo durante la carga
-- Selección de archivos para problemas de carga
+- Se corrigió el código que causaba problemas al recargar clases de versiones anteriores
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Le changement de format de compression d\'image a provoqué un crash pendant le téléchargement
-- Sélection de fichiers pour problème de téléchargement
+- Correction du code causant des problèmes de rechargement des classes à partir d\'anciennes versions
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- La modifica del formato di compressione dell\'immagine ha causato un arresto anomalo durante il caricamento
-- Selezione dei file per problemi di caricamento
+- Risolto il problema con il codice che causava problemi nel ricaricare le classi da vecchie versioni
 </it-IT>
 <ja-JP>
 バグ修正：
--画像圧縮形式の変更により、アップロード中にクラッシュが発生しました
--アップロードの問題のファイル選択
+-古いバージョンからクラスをリロードする際に問題が発生するコードを修正しました
 </ja-JP>
 <ru-RU>
 Исправлена ошибка:
-- Изменение формата сжатия изображения вызвало сбой во время загрузки
-- Выбор файла для загрузки
+- Исправлен код, вызывающий проблемы с перезагрузкой классов из старых версий.
 </ru-RU>
 <zh-CN>
 错误修正：
--图像压缩格式更改导致上传期间崩溃
--上传问题的文件选择
+-修复了导致从旧版本重新加载类的代码的问题
 </zh-CN>

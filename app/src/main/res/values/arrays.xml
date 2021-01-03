@@ -248,6 +248,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.92</item>
+        <item>"Bugfix:
+                - Fixed code causing issues reloading classes from old versions"</item>
         <item>1.4.0.91</item>
         <item>"Bugfix:
                 - Image compression format change caused crash during upload

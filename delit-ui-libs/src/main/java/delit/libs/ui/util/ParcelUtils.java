@@ -1,5 +1,6 @@
 package delit.libs.ui.util;
 
+import android.os.BadParcelableException;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -292,7 +293,14 @@ public class ParcelUtils {
     }
 
     public static <T extends Parcelable> T readParcelable(Parcel in, @NonNull Class<T> clazz) {
-        Object value = in.readValue(clazz.getClassLoader());
+        Object value = null;
+        try {
+            value = in.readValue(clazz.getClassLoader());
+        } catch (BadParcelableException e) {
+            if(e.getCause() instanceof ClassNotFoundException) {
+                Logging.log(Log.WARN, TAG, "Class not found while reading parcelable. %1$s", e.toString());
+            }
+        }
         if(value == null || clazz.isInstance(value)) {
             return clazz.cast(value);
         }

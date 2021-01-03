@@ -10,11 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
-import androidx.annotation.NonNull;
-
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -36,7 +34,8 @@ public class ConnectionPreferences {
     }
 
     public static Set<String> getConnectionProfileList(SharedPreferences prefs, Context context) {
-        return new HashSet<>(prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<>(0)));
+        Set<String> val = prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<>(0));
+        return new HashSet<>(Objects.requireNonNull(val));
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
@@ -92,9 +91,8 @@ public class ConnectionPreferences {
         return actor;
     }
 
-    public static class ProfilePreferences implements Serializable, Parcelable, Comparable<ProfilePreferences> {
+    public static class ProfilePreferences implements Parcelable, Comparable<ProfilePreferences> {
 
-        private static final long serialVersionUID = -839430660180276975L;
         private final String prefix;
         private boolean asGuest;
 
