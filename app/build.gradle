@@ -31,13 +31,13 @@ android {
     compileSdkVersion 30
 
     defaultConfig {
-        buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.11\""
+        buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.13\""
         applicationId "delit.piwigoclient"
         minSdkVersion 19
         targetSdkVersion 30
 
-        versionCode 333
-        versionName "1.4.0.92"
+        versionCode 334
+        versionName "1.4.0.93"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config

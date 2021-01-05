@@ -164,7 +164,8 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     private void withInstallGuid(String userGuid) {
         //This is used so that I can identify the logs that pertain to a given user having issues they want me to look at.
         // It will be displayed in the app about screen.
-        FirebaseCrashlytics.getInstance().setCustomKey("userId", userGuid);
+        FirebaseCrashlytics.getInstance().setUserId(userGuid);
+        FirebaseAnalytics.getInstance(this).setUserId(userGuid);
     }
 
     private void sanityCheckTheTempUploadFolder() {

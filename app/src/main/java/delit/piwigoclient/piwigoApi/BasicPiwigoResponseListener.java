@@ -14,6 +14,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.drew.lang.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 
 import cz.msebera.android.httpclient.HttpStatus;
@@ -34,7 +36,7 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
     private static final String TAG = "BasicPiwigoLsnr";
     private static final String HANDLER_ID = "handlerId";
     private long handlerId;
-    private UIHelper uiHelper;
+    private UIHelper<?> uiHelper;
     private WeakReference<T> parent;
 
 
@@ -42,7 +44,7 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
         handlerId = PiwigoResponseBufferingHandler.getNextHandlerId();
     }
 
-    public T getParent() {
+    public @Nullable T getParent() {
         return parent == null ? null : parent.get();
     }
 
@@ -55,7 +57,7 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
         handlerId = newHandlerId;
     }
 
-    public void withUiHelper(T parent, UIHelper uiHelper) {
+    public void withUiHelper(T parent, UIHelper<?> uiHelper) {
         this.uiHelper = uiHelper;
         this.parent = new WeakReference<>(parent);
     }
@@ -72,13 +74,13 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
         uiHelper.showOrQueueDialogMessage(title, message);
     }
 
-    private void showOrQueueRetryDialogMessageWithDetail(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
+    private void showOrQueueRetryDialogMessageWithDetail(final PiwigoResponseBufferingHandler.RemoteErrorResponse<?> errorResponse, int title, String msg, String detail) {
         handleErrorRetryPossible(errorResponse, title, msg, detail);
     }
 
     private void showOrQueueRetryDialogMessage(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
         if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
-            final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse) response;
+            final PiwigoResponseBufferingHandler.RemoteErrorResponse<?> errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse<?>) response;
             handleErrorRetryPossible(errorResponse, title, msg, null);
 
         } else {
@@ -98,10 +100,10 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
         //TODO These items are not really sensible to cache if the app is serialized as such. Instead we check if they're null and don't try to use them.
         // Find some way of dealing with this situation in a more pleasant way.
         private final AbstractPiwigoDirectResponseHandler handler;
-        private final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse;
+        private final PiwigoResponseBufferingHandler.RemoteErrorResponse<?> errorResponse;
         private final long handlerId;
 
-        public ErrorRetryQuestionResultHandler(UIHelper uiHelper, AbstractPiwigoDirectResponseHandler handler, PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, long handlerId) {
+        public ErrorRetryQuestionResultHandler(UIHelper<?> uiHelper, AbstractPiwigoDirectResponseHandler handler, PiwigoResponseBufferingHandler.RemoteErrorResponse<?> errorResponse, long handlerId) {
             super(uiHelper);
             this.handlerId = handlerId;
             this.handler = handler;
@@ -155,7 +157,7 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
                 }
 
             } else {
-                BasicPiwigoResponseListener listener = (BasicPiwigoResponseListener) PiwigoResponseBufferingHandler.getDefault().getRegisteredHandler(handlerId);
+                BasicPiwigoResponseListener<?> listener = (BasicPiwigoResponseListener<?>) PiwigoResponseBufferingHandler.getDefault().getRegisteredHandler(handlerId);
                 if (listener == null) {
                     Logging.log(Log.ERROR, TAG, "attempt to process alert message for handler after app pause resume (listener is now not available)");
                     Logging.recordException(new NullPointerException("unable to handle negative dialog answer"));
@@ -166,9 +168,9 @@ public class BasicPiwigoResponseListener<T> implements PiwigoResponseBufferingHa
         }
     }
 
-    protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
+    protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse<?> errorResponse, int title, String msg, String detail) {
         final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
-        UIHelper.QuestionResultListener dialogListener = new ErrorRetryQuestionResultHandler(uiHelper, handler, errorResponse, handlerId);
+        ErrorRetryQuestionResultHandler dialogListener = new ErrorRetryQuestionResultHandler(uiHelper, handler, errorResponse, handlerId);
 
         if(detail == null) {
             uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, dialogListener);

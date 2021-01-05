@@ -60,7 +60,7 @@ public class MainActivity extends AbstractMainActivity {
         if(versionSupported) {
             showFragmentNow(ViewFavoritesFragment.newInstance());
         } else {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_plugin_required_pattern, "PiwigoClientWsExt", "1.0.8"), R.string.button_close);
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_plugin_required_pattern, "PiwigoClientWsExts", "1.0.8"), R.string.button_close);
         }
     }
 
