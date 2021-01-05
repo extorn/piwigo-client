@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    
+
+    <string name="preference_page_auto_upload_jobs">Automatische upload</string>
+    <string name="preference_data_upload_automatic_title">Automatische uploads</string>
+    <string name="preference_data_upload_automatic_job_title">Automatische uploadtaak</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_enable_summary">Schakel uploaden op de achtergrond in</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatische uploads</string>
+    
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Gebruik alleen automatisch uploaden op draadloos</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Alleen via draadloos</string>
+    
+    
+
+    
+    <string name="preference_data_upload_automatic_upload_jobs_title">Taken automatisch uploaden</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d banen</string>
+
+    
+
+    
+    <string name="preference_data_upload_automatic_job_view_status_title">Bekijk de uploadstatus</string>
+    <string name="preference_data_upload_automatic_job_view_status_summary">Bekijk de status van de laatste uitgevoerde taak (indien beschikbaar)</string>
+
+    
+    <string name="preference_data_upload_automatic_job_is_valid_title">Job is geldig</string>
+
+    
+    <string name="preference_data_upload_automatic_job_enabled_summary">Zal de uploadservice deze taak gebruiken?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Taak ingeschakeld</string>
+    
+
+    <string name="preference_data_upload_automatic_job_server_title">Upload naar server</string>
+    
+    <string name="preference_data_upload_automatic_job_server_summary">Profiel:%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_server_album_title">Uploaden naar album</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">Uploaden vanuit map</string>
+    
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+    
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Verwijder succesvol geüploade bestanden</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatisch verwijderen</string>
+    
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max. Bestandsgrootte geüpload</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+    
+    
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Bestandsextensies</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload bestanden met ext%1$s</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Privacyniveau</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Geüploade bestanden zichtbaar voor%1$s</string>
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+    <string name="preference_gallery_slideshow_auto_drive_title">Automatische voortgang van de diavoorstelling</string>
+    <string name="preference_gallery_slideshow_auto_drive_summary">Na de ingestelde tijd wordt de volgende afbeelding of video weergegeven</string>
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_delay_title">Automatische beeldvertraging</string>
+    <string name="preference_gallery_slideshow_auto_drive_delay_summary">%1$s millisecs</string>
+    
+    
+    
+    
+
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_title">Automatische video-vertraging</string>
+    <string name="preference_gallery_slideshow_auto_drive_video_delay_summary">%1$s millisecs</string>
+    
+    
+    
+    
+</resources>

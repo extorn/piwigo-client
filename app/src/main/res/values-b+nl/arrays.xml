@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    
+
+    
+
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>0bps (--X)</item>
+        <item>zeer laag (frame van 0,025 b / pixels *)</item>
+        <item>lager (0,05 b / pixels * frame)</item>
+        <item>laag (0,1 b / pixels * frame)</item>
+        <item>gemiddeld (0,15 b / pixels * frame)</item>
+        <item>hoog (0,2 b / pixels * frame)</item>
+        <item>zeer hoog (0,25 b / pixels * frame)</item>
+        <item>ultrahoog (0,3 b / pixels * frame)</item>
+    </string-array>
+
+    
+    
+
+    
+
+    <string-array name="preference_album_subalbum_sort_order_items">
+        <item>Standaard</item>
+        <item>Albumnaam A-Z</item>
+        <item>Laatst bijgewerkt</item>
+    </string-array>
+    
+    <string-array name="preference_caching_level_items">
+        <item>Caching uitgeschakeld</item>
+        <item>Cache naar geheugen</item>
+        <item>Cache naar schijf</item>
+    </string-array>
+
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+        <item>Standaard</item>
+        <item>passen op schermgrootte</item>
+        <item>vergroten en bijsnijden om op het scherm te passen</item>
+        <item>midden op het scherm</item>
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_slideshow_image_size_array">
+        <item>best passend</item>
+        <item>vierkant</item>
+        <item>duim</item>
+        <item>2klein</item>
+        <item>xsmall</item>
+        <item>klein</item>
+        <item>medium</item>
+        <item>groot</item>
+        <item>xlarge</item>
+        <item>xxlarge</item>
+        
+    </string-array>
+
+    
+
+    <string-array name="preference_gallery_item_thumbnail_size_array">
+        <item>vierkant</item>
+        <item>duim</item>
+        <item>2klein</item>
+        <item>xsmall</item>
+        <item>klein</item>
+    </string-array>
+
+    
+    <string-array name="preference_gallery_sort_order_entries">
+        <item>Bron-ID</item>
+        <item>Resource bestandsnaam</item>
+        <item>Naam van de bron</item>
+        <item>Aantal treffers</item>
+        <item>Gemiddelde beoordelingsscore</item>
+        <item>Aanmaakdatum</item>
+        <item>Datum beschikbaar</item>
+        <item>willekeurig</item>
+    </string-array>
+    
+    <string-array name="server_ssl_certificate_hostname_verification_entries">
+        <item>Strikt</item>
+        <item>Browser compatibel</item>
+        <item>Uit</item>
+    </string-array>
+    
+    <string-array name="user_types_array">
+        <item>webmaster</item>
+        <item>beheerder</item>
+        <item>normaal</item>
+        <item>algemeen</item>
+        <item>gast</item>
+    </string-array>
+
+    
+
+    <string-array name="privacy_levels_groups_array">
+        <item>Admins</item>
+        <item>Beheerders, familie</item>
+        <item>Beheerders, familie, vrienden</item>
+        <item>Beheerders, familie, vrienden, contacten</item>
+        <item>Iedereen</item>
+    </string-array>
+
+    
+
+    
+
+    <string-array name="preference_gallery_unique_id_entries">
+        <item>md5sum</item>
+        <item>naam</item>
+    </string-array>
+
+    
+
+    <string-array name="rotation_array">
+        <item>Links 90 graden</item>
+        <item>Geen</item>
+        <item>Rechts 90 graden</item>
+        <item>Rechts 180 graden</item>
+    </string-array>
+
+    
+
+    <string-array name="top_tips" translatable="true">
+        <item>"Als je problemen hebt met de app, gebruik dan een e-mail om me op de hoogte te stellen. Plaats desgewenst een negatieve recensie op Google Play, ik probeer dat niet te stoppen, maar stuur ook een e-mail. Bovenaan het uitschuifbare lademenu staat een link om mij een e-mail te sturen. Ik kan veel uitgebreidere ondersteuning bieden op een e-mailadres. Erg bedankt."</item>
+        <item>"U kunt alleen bestanden zien die u kunt selecteren om te uploaden en die op uw server kunnen worden geüpload. Als je video\'s wilt uploaden, zorg er dan voor dat je je server config.inc.php-bestand wijzigt en $ conf [\'upload_form_all_types\'] = true bevat; in plaats van onwaar"</item>
+        <item>Als een upload niet lukt, probeer dan de voorkeur op de uploadpagina van de app-instellingen te gebruiken om resterende mislukte uploads van de server te wissen</item>
+        <item>Er treedt altijd een fout op bij het updaten van tags - \ \"U mag geen tags verwijderen \" - Zorg ervoor dat gebruikers zowel tags kunnen toevoegen als verwijderen (instelling voor serverplug-in)</item>
+        <item>Deel bestanden van een andere app met deze app om ze toe te voegen aan het uploadscherm, klaar om naar je huidige server te gaan</item>
+        <item>Klik lang op een afbeelding (miniatuur of diashow-item) die niet is geladen om deze opnieuw op te halen</item>
+        <item>Klik lang op een album om dat album en alle inhoud te verwijderen</item>
+        <item>Klik lang op een albumafbeelding om bulkselectie van afbeeldingen voor een actie mogelijk te maken</item>
+        <item>Wanneer u een afbeelding in de diavoorstelling bekijkt, klikt u lang om de weergegeven afbeelding te draaien / wijzigen / verder zoomen toe te staan</item>
+        <item>U kunt tijdens het bekijken van een diavoorstelling op een afbeelding inzoomen door twee vingers naar elkaar toe of uit elkaar te trekken op het scherm</item>
+        <item>Wanneer u bent aangemeld als beheerder, schakelt u de toepassingsvergrendelingsfunctie in voordat u uw apparaat aan een vriend geeft om uw foto\'s te bekijken om te voorkomen dat er onbedoelde wijzigingen in uw galerij worden aangebracht</item>
+        <item>Als je eenmaal een volledige video hebt bekeken en lokale bestandscaching is ingeschakeld, is het mogelijk om die video op te slaan in je downloadmap</item>
+        <item>Klik lang op de verwijderknop op een \ \'bestand voor uploaden \' om alle te uploaden bestanden te verwijderen (wanneer de taak niet in uitvoering is)</item>
+        <item>Als afbeeldingen traag worden geladen, controleer dan of uw server automatisch de grootte genereert die door deze app wordt gebruikt wanneer ze worden geüpload</item>
+    </string-array>
+    <string-array name="planned_releases" translatable="true">
+        <item>De toekomst</item>
+        <item>"Er zijn geen verdere updates gepland."</item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
+        
+        <item>1.4.0.93</item>
+        <item>"Veranderingen:
+                 - Update van de PiwigoClientWsExts-plug-in (update uw server). Dit lost de categorienamen op als je geen ExtendedDescription-plug-in hebt geïnstalleerd."</item>
+        <item>1.4.0.92</item>
+        <item>"Bugfix:
+                 - Vaste code die problemen veroorzaakte bij het herladen van klassen uit oude versies"</item>
+        <item>1.4.0.91</item>
+        <item>"Bugfix:
+                 - Verandering van het formaat van de compressie van afbeeldingen veroorzaakte een crash tijdens het uploaden
+                 - Bestandsselectie voor uploadprobleem"</item>
+        <item>1.4.0.90</item>
+        <item>"Bugfix:
+                 - Caches kunnen onnodig onleesbaar worden tussen versies"</item>
+        <item>1.4.0.89</item>
+        <item>"Bugfix:
+                 - Een aantal problemen opgelost waardoor sommige gebruikers crashten
+                Veranderingen:
+                 - Een UUID toegevoegd aan logs en het over-scherm waardoor ik logs kan volgen naar een specifieke gebruiker als ze me hun UUID geven (voor het oplossen van specifieke bugs die ze ervaren)."</item>
+        <item>1.4.0.88</item>
+        <item>"Bugfix:
+             - Beeldcompressor werkt niet op recente versies van Android
+             - Lay-outproblemen met bulkactieknoppen na lang indrukken in een album"
+        </item>
+        <item>1.4.0.87</item>
+        <item>"Veranderingen:
+             - Ondersteuning voor plug-in met uitgebreide beschrijving wanneer de nieuwste versie van de PiwigoClientExt-plug-in is geïnstalleerd.
+             Bugfix:
+             - Nieuwe code voor opmerkingen in Html-stijl ondersteunde geen null-waarden - Sorry!"
+        </item>
+
+        <item>1.4.0.86</item>
+        <item>"Verandering:
+             - App-ondersteuning toegevoegd voor de Extended Description-plug-in (opmerking: deze plug-in ondersteunt de WS-API nog niet)
+             - Veel betere afhandeling van opmerkingen in HTML-stijl
+             - Scrollen voor zeer lange albumbeschrijvingen
+             - Max. 10 regels voor beschrijvingen van subalbums"</item>
+        <item>1.4.0.85</item>
+        <item>"Verandering:
+                 - vertalingen toegevoegd voor een fout die kan optreden tijdens videocompressie
+                 - Gebruik Firebase App Installation GUID voor berichtversleuteling indien beschikbaar
+                Bugfix:
+                 - Stringvertaling voor Russisch gecorrigeerd waardoor de diavoorstelling vastloopt"</item>
+        <item>1.4.0.84</item>
+        <item>"Verandering:
+                 - De waarschuwing op het scherm roteren verwijderd halverwege een diavoorstelling.
+                Bugfix:
+                 - Het downloaden van bestanden of het delen van bronnen kan mislukken en vervolgens de functie vergrendelen totdat deze opnieuw wordt opgestart op Android 10
+                 - Gecorrigeerde voorkeuren verschijnen onzichtbaar in Android Dark-modus (nu bruikbaar)
+                 - opgelost contrastprobleem bij pop-upvenster in hoofdapp (donkere modus)"</item>
+        <item>1.4.0.83</item>
+        <item>"Bugfix:
+                 - Knoppositie in itemactiebalk gecorrigeerd bij het bewerken van een resource-item"</item>
+        <item>1.4.0.82</item>
+        <item>"Veranderingen:
+                 - Het overschakelen van een Android-bestandsmachtiging naar een submap is niet toegestaan door Android 30. (deze functie verwijderen).
+                Bugfix:
+                 - Bewerken en opslaan van automatische uploadtaken werkt niet"</item>
+    </string-array>
+</resources>

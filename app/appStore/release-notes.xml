@@ -26,6 +26,10 @@ I cambiamenti:
 変更点：
 -PiwigoClientWsExtsプラグインの更新（サーバーを更新してください）。 これにより、ExtendedDescriptionプラグインがインストールされていない場合のカテゴリ名が修正されます。
 </ja-JP>
+<nl-NL>
+Veranderingen:
+- Update van de PiwigoClientWsExts-plug-in (update uw server). Dit lost de categorienamen op als je geen ExtendedDescription-plug-in hebt geïnstalleerd.
+</nl-NL>
 <ru-RU>
 Изменения:
 - Обновление плагина PiwigoClientWsExts (пожалуйста, обновите свой сервер). Это исправляет имена категорий, если у вас не установлен плагин ExtendedDescription.
