@@ -345,7 +345,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="button_agree">同意する</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">警告</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">選択したサムネイルサイズは、接続しているサーバーでネイティブにサポートされていません。サーバーは「最も近い」サイズの画像を返します。</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">選択したサムネイルサイズは、接続しているサーバーでネイティブにサポートされていません。 サーバーは「最も近い」サイズの画像を返します。</string>
     <string name="rate_dialog_message">このアプリの使用を楽しんでいる場合は、少し時間を取って評価していただけませんか。 1分以上かかることはありません。ご協力ありがとうございました！</string>
     <string name="groups_menu_title">グループ</string>
     <string name="group_members_pattern">（%1$dメンバー）</string>
@@ -452,7 +452,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_message_file_upload_cancelled_pattern">ファイル（%1$s）のアップロードがキャンセルされました。</string>
     <string name="alert_message_upload_cancelled">アップロードがキャンセルされました</string>
     <string name="alert_message_upload_cancelled_message">後でアップロードを再開したくない場合。アップロードジョブからファイルを削除してから、[アップロード]をクリックする必要があります。これにより、キャンセルされたアップロード状態がサーバーから削除されます。</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">選択した画像サイズは、接続しているサーバーでネイティブにサポートされていません。サーバーは「最も近い」サイズの画像を返します。</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">選択した画像サイズは、接続しているサーバーでネイティブにサポートされていません。 サーバーは「最も近い」サイズの画像を返します。</string>
     <string name="logging_out_of_piwigo_pattern">%1$sからのログアウト</string>
     <string name="loading_new_server_configuration">新しいサーバー接続構成のロード</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">ディスクへのキャッシュを許可するには、ファイルシステムへの書き込みアクセスを許可する必要があります。拒否された場合、キャッシュはメモリに保存されます。</string>

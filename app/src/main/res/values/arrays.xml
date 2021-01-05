@@ -250,7 +250,8 @@
         -->
         <item>1.4.0.93</item>
         <item>"Changes:
-                - Update of the PiwigoClientWsExts plugin (Please update your server). This fixes the category names if you don't have ExtendedDescription plugin installed."</item>
+                - Update of the PiwigoClientWsExts plugin (Please update your server). This fixes the category names if you don't have ExtendedDescription plugin installed.
+                - Added Dutch Translations"</item>
         <item>1.4.0.92</item>
         <item>"Bugfix:
                 - Fixed code causing issues reloading classes from old versions"</item>

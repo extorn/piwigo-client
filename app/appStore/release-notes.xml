@@ -1,40 +1,50 @@
 <en-GB>
 Changes:
 - Update of the PiwigoClientWsExts plugin (Please update your server). This fixes the category names if you don't have ExtendedDescription plugin installed.
+- Added Dutch Translations
 </en-GB>
 <cs-CZ>
 Změny:
 - Aktualizace pluginu PiwigoClientWsExts (aktualizujte prosím svůj server). To opravuje názvy kategorií, pokud nemáte nainstalovaný plugin ExtendedDescription.
+- Přidány holandské překlady
 </cs-CZ>
 <de-DE>
 Änderungen:
 - Update des PiwigoClientWsExts-Plugins (Bitte aktualisieren Sie Ihren Server). Dies behebt die Kategorienamen, wenn Sie das ExtendedDescription-Plugin nicht installiert haben.
+- Niederländische Übersetzungen hinzugefügt
 </de-DE>
 <es-ES>
 Cambios:
 - Actualización del complemento PiwigoClientWsExts (Actualice su servidor). Esto corrige los nombres de las categorías si no tiene instalado el complemento ExtendedDescription.
+- Añadidas traducciones al holandés
 </es-ES>
 <fr-FR>
 Changements:
 - Mise à jour du plugin PiwigoClientWsExts (Veuillez mettre à jour votre serveur). Cela corrige les noms de catégories si vous n\'avez pas installé le plugin ExtendedDescription.
+- Ajout de traductions en néerlandais
 </fr-FR>
 <it-IT>
 I cambiamenti:
 - Aggiornamento del plugin PiwigoClientWsExts (aggiorna il tuo server). Questo risolve i nomi delle categorie se non hai installato il plugin ExtendedDescription.
+- Aggiunte traduzioni in olandese
 </it-IT>
 <ja-JP>
 変更点：
 -PiwigoClientWsExtsプラグインの更新（サーバーを更新してください）。 これにより、ExtendedDescriptionプラグインがインストールされていない場合のカテゴリ名が修正されます。
+-オランダ語の翻訳を追加
 </ja-JP>
 <nl-NL>
 Veranderingen:
 - Update van de PiwigoClientWsExts-plug-in (update uw server). Dit lost de categorienamen op als je geen ExtendedDescription-plug-in hebt geïnstalleerd.
+- Nederlandse vertalingen toegevoegd
 </nl-NL>
 <ru-RU>
 Изменения:
 - Обновление плагина PiwigoClientWsExts (пожалуйста, обновите свой сервер). Это исправляет имена категорий, если у вас не установлен плагин ExtendedDescription.
+- Добавлены голландские переводы
 </ru-RU>
 <zh-CN>
 变化：
 -更新了PiwigoClientWsExts插件（请更新您的服务器）。 如果您没有安装ExtendedDescription插件，这将修复类别名称。
+-添加了荷兰语翻译
 </zh-CN>

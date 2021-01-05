@@ -345,7 +345,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="button_agree">Souhlasím</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Varování</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Vybraná velikost miniatury není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti \"nejbližší shoda \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Vybraná velikost miniatury není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti „nejbližší shody“.</string>
     <string name="rate_dialog_message">Pokud vás tato aplikace baví, nevadilo by vám ji chvíli hodnotit? Netrvá to déle než minutu. Děkuji za vaši podporu!</string>
     <string name="groups_menu_title">Skupiny</string>
     <string name="group_members_pattern">(%1$d členů)</string>
@@ -452,7 +452,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_message_file_upload_cancelled_pattern">Nahrávání souboru (%1$s) bylo zrušeno.</string>
     <string name="alert_message_upload_cancelled">Nahrávání bylo zrušeno</string>
     <string name="alert_message_upload_cancelled_message">Pokud nechcete nahrávání znovu spustit později. Odeberte soubory z úlohy nahrávání a poté klikněte na upload. Tím se vymaže stav zrušeného nahrávání ze serveru.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Vybraná velikost obrázku není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti \"nejbližší shoda \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Vybraná velikost obrázku není serverem, ke kterému jste připojeni, nativně podporována. Server vrátí obrázek ve velikosti „nejbližší shody“.</string>
     <string name="logging_out_of_piwigo_pattern">Odhlášení z%1$s</string>
     <string name="loading_new_server_configuration">Načítání nové konfigurace připojení k serveru</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Chcete-li povolit ukládání do mezipaměti na disk, je třeba udělit přístup pro zápis do systému souborů. Pokud je zamítnuto, ukládání do mezipaměti bude v paměti.</string>

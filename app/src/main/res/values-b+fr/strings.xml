@@ -345,7 +345,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
     <string name="alert_warning">Attention</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \"correspondance la plus proche \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \"la plus proche\".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, pourriez-vous prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -452,7 +452,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille de la \"correspondance la plus proche \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \"la plus proche\".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour autoriser la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache sera en mémoire.</string>

@@ -345,7 +345,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="button_agree">Genau</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Warnung</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe "Nächste Übereinstimmung" zurück.</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Miniaturbildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
     <string name="rate_dialog_message">Wenn Sie diese App gerne nutzen, würde es Ihnen etwas ausmachen, sich einen Moment Zeit zu nehmen, um sie zu bewerten? Es wird nicht länger als eine Minute dauern. Danke für deine Unterstützung!</string>
     <string name="groups_menu_title">Gruppen</string>
     <string name="group_members_pattern">(%1$d Mitglieder)</string>
@@ -452,7 +452,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_file_upload_cancelled_pattern">Hochladen der Datei (%1$s) abgebrochen.</string>
     <string name="alert_message_upload_cancelled">Upload abgebrochen</string>
     <string name="alert_message_upload_cancelled_message">Wenn Sie den Upload später nicht neu starten möchten. Sie sollten die Dateien aus dem Upload-Auftrag entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe "Nächste Übereinstimmung" zurück.</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen ausgewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild mit der Größe \"Nächste Übereinstimmung\" zurück.</string>
     <string name="logging_out_of_piwigo_pattern">Abmelden von%1$s</string>
     <string name="loading_new_server_configuration">Laden einer neuen Serververbindungskonfiguration</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Um das Caching auf der Festplatte zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn dies abgelehnt wird, wird das Caching gespeichert.</string>

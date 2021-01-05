@@ -345,7 +345,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="button_agree">Sono d\'accordo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">avvertimento</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata nativamente dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \"corrispondenza più vicina \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La dimensione della miniatura che hai selezionato non è supportata nativamente dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \"corrispondenza più vicina\".</string>
     <string name="rate_dialog_message">Se ti piace usare questa app, ti dispiacerebbe prenderti un momento per valutarla? Non ci vorrà più di un minuto. Grazie per il vostro sostegno!</string>
     <string name="groups_menu_title">Gruppi</string>
     <string name="group_members_pattern">(%1$d membri)</string>
@@ -452,7 +452,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_message_file_upload_cancelled_pattern">Caricamento del file (%1$s) annullato.</string>
     <string name="alert_message_upload_cancelled">Caricamento annullato</string>
     <string name="alert_message_upload_cancelled_message">Se non desideri riavviare il caricamento in un secondo momento. È necessario rimuovere i file dal processo di caricamento, quindi fare clic su Carica. Questo cancellerà lo stato di caricamento annullato dal server.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \"corrispondenza più vicina \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La dimensione dell\'immagine che hai selezionato non è supportata in modo nativo dal server a cui sei connesso. Il server restituirà l\'immagine della dimensione \"corrispondenza più vicina\".</string>
     <string name="logging_out_of_piwigo_pattern">Disconnessione da%1$s</string>
     <string name="loading_new_server_configuration">Caricamento della nuova configurazione della connessione al server</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Per consentire la memorizzazione nella cache su disco, è necessario concedere l\'accesso in scrittura al file system. Se negato, la memorizzazione nella cache sarà in memoria.</string>

@@ -345,7 +345,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="button_agree">我同意</string>
     <string name="eula_menu_title">最终用户许可协议</string>
     <string name="alert_warning">警告</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的缩略图大小。服务器将返回“最近匹配”尺寸的图像。</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的缩略图大小。 服务器将返回“最近匹配”尺寸的图像。</string>
     <string name="rate_dialog_message">如果您喜欢使用此应用程序，您是否愿意花点时间对其进行评分？不会超过一分钟。谢谢你的支持！</string>
     <string name="groups_menu_title">团体</string>
     <string name="group_members_pattern">（%1$d个成员）</string>
@@ -452,7 +452,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_message_file_upload_cancelled_pattern">文件（%1$s）的上传已取消。</string>
     <string name="alert_message_upload_cancelled">上载已取消</string>
     <string name="alert_message_upload_cancelled_message">如果您不希望以后再重新开始上传。您应该从上载作业中删除文件，然后单击上载。这将从服务器中清除已取消的上传状态。</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的图像尺寸。服务器将返回“最近匹配”尺寸的图像。</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">您所连接的服务器本身不支持您选择的图像尺寸。 服务器将返回“最近匹配”尺寸的图像。</string>
     <string name="logging_out_of_piwigo_pattern">登出%1$s</string>
     <string name="loading_new_server_configuration">加载新的服务器连接配置</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">要允许缓存到磁盘，必须授予对文件系统的写访问权限。如果被拒绝，缓存将在内存中。</string>

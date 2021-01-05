@@ -147,7 +147,8 @@
         
         <item>1.4.0.93</item>
         <item>"変更点：
-                 -PiwigoClientWsExtsプラグインの更新（サーバーを更新してください）。 これにより、ExtendedDescriptionプラグインがインストールされていない場合のカテゴリ名が修正されます。"</item>
+                 -PiwigoClientWsExtsプラグインの更新（サーバーを更新してください）。 これにより、ExtendedDescriptionプラグインがインストールされていない場合のカテゴリ名が修正されます。
+                 -オランダ語の翻訳を追加"</item>
         <item>1.4.0.92</item>
         <item>"バグ修正：
                  -古いバージョンからクラスをリロードする際に問題が発生するコードを修正しました"</item>

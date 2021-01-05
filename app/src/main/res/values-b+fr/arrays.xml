@@ -127,7 +127,7 @@
         <item>Si vous rencontrez des problèmes avec l\'application, veuillez m\'en informer par e-mail. Si vous le souhaitez, publiez un avis négatif sur Google Play, je n\'essaie pas d\'arrêter cela, mais veuillez également envoyer un e-mail. Il y a un lien pour m\'envoyer un e-mail en haut du menu du tiroir coulissant. Je peux fournir une assistance beaucoup plus complète à une adresse e-mail. Merci beaucoup.</item>
         <item>Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui peuvent être téléchargés sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier le fichier config.inc.php de votre serveur pour inclure $ conf [\'upload_form_all_types\'] = true; plutôt que faux</item>
         <item>Si un téléchargement ne réussit tout simplement pas, essayez d\'utiliser la préférence dans la page de téléchargement des paramètres de l\'application pour effacer tout téléchargement résiduel échoué depuis le serveur.</item>
-        <item>Une erreur se produit toujours lors de la tentative de mise à jour des balises - \ "Vous n\'êtes pas autorisé à supprimer des balises \" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre du plug-in de serveur)</item>
+        <item>Une erreur se produit toujours lors de la tentative de mise à jour des balises - \"Vous n\'êtes pas autorisé à supprimer des balises\" - Assurez-vous que les utilisateurs peuvent à la fois ajouter et supprimer des balises (paramètre du plug-in de serveur)</item>
         <item>Partagez des fichiers d\'une autre application avec cette application pour les ajouter à l\'écran de téléchargement, prêts à être envoyés sur votre serveur actuel</item>
         <item>Cliquez longuement sur une image (miniature ou élément de diaporama) qui n\'a pas pu se charger afin de la récupérer à nouveau</item>
         <item>Cliquez longuement sur un album pour supprimer cet album et tout son contenu</item>
@@ -147,7 +147,8 @@
         
         <item>1.4.0.93</item>
         <item>"Changements:
-                 - Mise à jour du plugin PiwigoClientWsExts (Veuillez mettre à jour votre serveur). Cela corrige les noms de catégories si vous n\'avez pas installé le plugin ExtendedDescription."</item>
+                 - Mise à jour du plugin PiwigoClientWsExts (Veuillez mettre à jour votre serveur). Cela corrige les noms de catégories si vous n\'avez pas installé le plugin ExtendedDescription.
+                 - Ajout de traductions en néerlandais"</item>
         <item>1.4.0.92</item>
         <item>"Correction d\'un bug:
                  - Correction du code causant des problèmes de rechargement des classes à partir d\'anciennes versions"</item>

@@ -345,7 +345,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_agree">Estoy de acuerdo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Advertencia</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \"coincidencia más cercana \".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de la \"coincidencia más cercana\".</string>
     <string name="rate_dialog_message">Si le gusta usar esta aplicación, ¿le importaría tomarse un momento para calificarla? No tomará más de un minuto. ¡Gracias por su apoyo!</string>
     <string name="groups_menu_title">Grupos</string>
     <string name="group_members_pattern">(%1$d miembros)</string>
@@ -452,7 +452,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_message_file_upload_cancelled_pattern">Se canceló la carga del archivo (%1$s).</string>
     <string name="alert_message_upload_cancelled">Subida cancelada</string>
     <string name="alert_message_upload_cancelled_message">Si no desea reiniciar la carga más tarde. Debe eliminar los archivos del trabajo de carga y luego hacer clic en cargar. Esto limpiará el estado de carga cancelada del servidor.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de \"coincidencia más cercana \".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de la \"coincidencia más cercana\".</string>
     <string name="logging_out_of_piwigo_pattern">Cerrar sesión en%1$s</string>
     <string name="loading_new_server_configuration">Cargando nueva configuración de conexión al servidor</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Para permitir el almacenamiento en caché en el disco, se debe otorgar acceso de escritura al sistema de archivos. Si se deniega, el almacenamiento en caché estará en la memoria.</string>
