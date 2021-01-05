@@ -145,6 +145,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.93</item>
+        <item>"変更点：
+                 -PiwigoClientWsExtsプラグインの更新（サーバーを更新してください）。 これにより、ExtendedDescriptionプラグインがインストールされていない場合のカテゴリ名が修正されます。"</item>
         <item>1.4.0.92</item>
         <item>"バグ修正：
                  -古いバージョンからクラスをリロードする際に問題が発生するコードを修正しました"</item>

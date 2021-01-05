@@ -127,7 +127,7 @@
         <item>Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji.</item>
         <item>Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro nahrání na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné</item>
         <item>Pokud nahrávání právě neproběhne úspěšně, zkuste pomocí předvoleb na stránce nahrávání nastavení aplikace vymazat zbytková neúspěšná nahrávání ze serveru</item>
-        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - \"Nemáte oprávnění mazat značky \" - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
+        <item>Při pokusu o aktualizaci značek vždy dojde k chybě - \ "Nemáte oprávnění mazat značky \" - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání připravené k přechodu na aktuální server</item>
         <item>Dlouhým kliknutím na obrázek (miniaturu nebo položku prezentace), který se nepodařilo načíst, jej znovu načtete</item>
         <item>Dlouhým kliknutím na album toto album a veškerý obsah odstraníte</item>
@@ -145,6 +145,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.93</item>
+        <item>"Změny:
+                 - Aktualizace pluginu PiwigoClientWsExts (aktualizujte prosím svůj server). To opravuje názvy kategorií, pokud nemáte nainstalovaný plugin ExtendedDescription."</item>
         <item>1.4.0.92</item>
         <item>"Oprava chyby:
                  - Opravený kód způsobující problémy s opětovným načítáním tříd ze starých verzí"</item>

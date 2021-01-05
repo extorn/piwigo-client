@@ -1,36 +1,36 @@
 <en-GB>
-Bugfix:
-- Fixed code causing issues reloading classes from old versions
+Changes:
+- Update of the PiwigoClientWsExts plugin (Please update your server). This fixes the category names if you don't have ExtendedDescription plugin installed.
 </en-GB>
 <cs-CZ>
-Oprava chyby:
-- Opravený kód způsobující problémy s opětovným načítáním tříd ze starých verzí
+Změny:
+- Aktualizace pluginu PiwigoClientWsExts (aktualizujte prosím svůj server). To opravuje názvy kategorií, pokud nemáte nainstalovaný plugin ExtendedDescription.
 </cs-CZ>
 <de-DE>
-Bug-Fix:
-- Code behoben, der Probleme beim erneuten Laden von Klassen aus alten Versionen verursachte
+Änderungen:
+- Update des PiwigoClientWsExts-Plugins (Bitte aktualisieren Sie Ihren Server). Dies behebt die Kategorienamen, wenn Sie das ExtendedDescription-Plugin nicht installiert haben.
 </de-DE>
 <es-ES>
-Arreglo del fallo:
-- Se corrigió el código que causaba problemas al recargar clases de versiones anteriores
+Cambios:
+- Actualización del complemento PiwigoClientWsExts (Actualice su servidor). Esto corrige los nombres de las categorías si no tiene instalado el complemento ExtendedDescription.
 </es-ES>
 <fr-FR>
-Correction d\'un bug:
-- Correction du code causant des problèmes de rechargement des classes à partir d\'anciennes versions
+Changements:
+- Mise à jour du plugin PiwigoClientWsExts (Veuillez mettre à jour votre serveur). Cela corrige les noms de catégories si vous n\'avez pas installé le plugin ExtendedDescription.
 </fr-FR>
 <it-IT>
-Risoluzione del problema:
-- Risolto il problema con il codice che causava problemi nel ricaricare le classi da vecchie versioni
+I cambiamenti:
+- Aggiornamento del plugin PiwigoClientWsExts (aggiorna il tuo server). Questo risolve i nomi delle categorie se non hai installato il plugin ExtendedDescription.
 </it-IT>
 <ja-JP>
-バグ修正：
--古いバージョンからクラスをリロードする際に問題が発生するコードを修正しました
+変更点：
+-PiwigoClientWsExtsプラグインの更新（サーバーを更新してください）。 これにより、ExtendedDescriptionプラグインがインストールされていない場合のカテゴリ名が修正されます。
 </ja-JP>
 <ru-RU>
-Исправлена ошибка:
-- Исправлен код, вызывающий проблемы с перезагрузкой классов из старых версий.
+Изменения:
+- Обновление плагина PiwigoClientWsExts (пожалуйста, обновите свой сервер). Это исправляет имена категорий, если у вас не установлен плагин ExtendedDescription.
 </ru-RU>
 <zh-CN>
-错误修正：
--修复了导致从旧版本重新加载类的代码的问题
+变化：
+-更新了PiwigoClientWsExts插件（请更新您的服务器）。 如果您没有安装ExtendedDescription插件，这将修复类别名称。
 </zh-CN>
