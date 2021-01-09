@@ -363,13 +363,13 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if (resultCode != Activity.RESULT_OK || resultData == null) {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
         } else {
-            new SharedFilesIntentProcessingTask(this).execute(resultData);
+            new SharedFilesIntentProcessingTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, resultData);
         }
     }
 
     private void processOpenDocumentsWithoutPermissions(List<FolderItem> itemsShared) {
         if(BuildConfig.PAID_VERSION) {
-            new SharedFilesClonedIntentProcessingTask(this).execute(itemsShared);
+            new SharedFilesClonedIntentProcessingTask(this).executeNow(itemsShared);
         } else {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_shared_without_required_permissions_error), R.string.button_ok);
         }
@@ -826,8 +826,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             withContext(parent.requireContext());
         }
 
-        public AsyncTask<List<FolderItem>, Integer, List<FolderItem>> execute(List<FolderItem> param) {
-            return super.execute(param);
+        public AsyncTask<List<FolderItem>, Integer, List<FolderItem>> executeNow(List<FolderItem> param) {
+            return super.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, param);
         }
 
         @Override

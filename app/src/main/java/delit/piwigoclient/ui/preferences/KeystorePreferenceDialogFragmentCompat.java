@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.preferences;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -218,7 +219,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             List<X509LoadOperation> loadOperations = keystoreLoadOperationResult.getRemainingLoadOperations();
             if (loadOperations.size() > 0) {
                 keystoreLoadOperationResult = null;
-                new AsyncX509LoaderTask(this).execute(loadOperations.toArray(new X509LoadOperation[0]));
+                new AsyncX509LoaderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, loadOperations.toArray(new X509LoadOperation[0]));
             }
             return;
         }
@@ -542,7 +543,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
         keystoreLoadOperationResult = null;
         keystoreLoadProgress = 0;
-        new AsyncX509LoaderTask(this).execute(params);
+        new AsyncX509LoaderTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
     }
 
     private void onKeystoreLoadFinished(LoadOperationResult loadOperationResult, boolean wasLoadCancelled) {

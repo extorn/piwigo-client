@@ -215,7 +215,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         Logging.log(Log.INFO, TAG, "Cancelled user attempt to add files to currently running job");
                     }
                 } else {
-                    new SharedFilesIntentProcessingTask(this).execute(stickyEvent);
+                    new SharedFilesIntentProcessingTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, stickyEvent);
                 }
             } else {
                 Logging.log(Log.WARN, TAG, "Unable to handle shared files before the fragment is attached.");

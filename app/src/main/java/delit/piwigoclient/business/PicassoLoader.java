@@ -591,7 +591,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, PicassoFact
         @Override
         public void invokePostProcessing(Bitmap bitmap, Picasso.LoadedFrom from) {
             task = new PostProcessorTargetBitmapVoidBitmapOwnedSafeAsyncTask(this, from);
-            task.execute(bitmap);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, bitmap);
         }
 
         @Override
