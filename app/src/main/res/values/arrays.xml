@@ -248,6 +248,9 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.94</item>
+        <item>"Bugfix:
+                - Ensure the files selected in app for upload are processed on a background thread on sending to Upload page so the UI remains visible."</item>
         <item>1.4.0.93</item>
         <item>"Changes:
                 - Update of the PiwigoClientWsExts plugin (Please update your server). This fixes the category names if you don't have ExtendedDescription plugin installed.

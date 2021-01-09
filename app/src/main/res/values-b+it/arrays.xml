@@ -127,7 +127,7 @@
         <item>In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto.</item>
         <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
         <item>Se un caricamento non riesce, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
-        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \"Non sei autorizzato a eliminare i tag\" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
+        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - "Non sei autorizzato a eliminare i tag" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
         <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per essere trasferiti al tuo server corrente</item>
         <item>Fare clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stato caricato per recuperarla di nuovo</item>
         <item>Fare clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
@@ -145,6 +145,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.94</item>
+        <item>"Risoluzione del problema:
+                 - Assicurati che i file selezionati nell\'app per il caricamento vengano elaborati su un thread in background durante l\'invio alla pagina di caricamento in modo che l\'interfaccia utente rimanga visibile."</item>
         <item>1.4.0.93</item>
         <item>"I cambiamenti:
                  - Aggiornamento del plugin PiwigoClientWsExts (aggiorna il tuo server). Questo risolve i nomi delle categorie se non hai installato il plugin ExtendedDescription.

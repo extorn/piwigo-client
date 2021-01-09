@@ -345,7 +345,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="button_agree">Ik ga akkoord</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Waarschuwing</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">De miniatuurgrootte die u hebt geselecteerd, wordt niet standaard ondersteund door de server waarmee u bent verbonden. De server retourneert de afbeelding met de grootte van de \"dichtstbijzijnde overeenkomst\".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">De miniatuurgrootte die u hebt geselecteerd, wordt niet standaard ondersteund door de server waarmee u bent verbonden. De server retourneert de afbeelding met de grootte van de "dichtstbijzijnde overeenkomst".</string>
     <string name="rate_dialog_message">Als u deze app graag gebruikt, zou u dan even de tijd willen nemen om deze te beoordelen? Het duurt niet langer dan een minuut. Bedankt voor uw steun!</string>
     <string name="groups_menu_title">Groepen</string>
     <string name="group_members_pattern">(%1$d leden)</string>
@@ -452,7 +452,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="alert_message_file_upload_cancelled_pattern">Upload van bestand (%1$s) geannuleerd.</string>
     <string name="alert_message_upload_cancelled">Upload geannuleerd</string>
     <string name="alert_message_upload_cancelled_message">Als je het uploaden later niet wilt herstarten. U moet de bestanden uit de uploadtaak verwijderen en vervolgens op uploaden klikken. Hiermee wordt de geannuleerde uploadstatus van de server verwijderd.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Het afbeeldingsformaat dat u hebt geselecteerd, wordt niet standaard ondersteund door de server waarmee u bent verbonden. De server retourneert de afbeelding met de grootte van de \"dichtstbijzijnde overeenkomst\".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Het afbeeldingsformaat dat u hebt geselecteerd, wordt niet standaard ondersteund door de server waarmee u bent verbonden. De server retourneert de afbeelding met de grootte van de "dichtstbijzijnde overeenkomst".</string>
     <string name="logging_out_of_piwigo_pattern">Uitloggen bij%1$s</string>
     <string name="loading_new_server_configuration">Nieuwe serververbindingsconfiguratie laden</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Om caching naar schijf toe te staan, moet schrijftoegang tot het bestandssysteem worden verleend. Indien geweigerd, wordt caching in het geheugen bewaard.</string>

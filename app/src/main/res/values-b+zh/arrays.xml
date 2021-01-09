@@ -145,6 +145,9 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.94</item>
+        <item>"错误修正：
+                 -确保在应用程序中选择要上传的文件在发送到“上传”页面时在后台线程上进行处理，以便用户界面保持可见。"</item>
         <item>1.4.0.93</item>
         <item>"变化：
                  -更新了PiwigoClientWsExts插件（请更新您的服务器）。 如果您没有安装ExtendedDescription插件，这将修复类别名称。

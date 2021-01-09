@@ -1,50 +1,40 @@
 <en-GB>
-Changes:
-- Update of the PiwigoClientWsExts plugin (Please update your server). This fixes the category names if you don't have ExtendedDescription plugin installed.
-- Added Dutch Translations
+Bugfix:
+- Ensure the files selected in app for upload are processed on a background thread on sending to Upload page so the UI remains visible.
 </en-GB>
 <cs-CZ>
-Změny:
-- Aktualizace pluginu PiwigoClientWsExts (aktualizujte prosím svůj server). To opravuje názvy kategorií, pokud nemáte nainstalovaný plugin ExtendedDescription.
-- Přidány holandské překlady
+Oprava chyby:
+- Zajistěte, aby soubory vybrané v aplikaci pro nahrávání byly zpracovány na vlákně na pozadí při odesílání na stránku pro nahrávání, takže uživatelské rozhraní zůstane viditelné.
 </cs-CZ>
 <de-DE>
-Änderungen:
-- Update des PiwigoClientWsExts-Plugins (Bitte aktualisieren Sie Ihren Server). Dies behebt die Kategorienamen, wenn Sie das ExtendedDescription-Plugin nicht installiert haben.
-- Niederländische Übersetzungen hinzugefügt
+Bug-Fix:
+- Stellen Sie sicher, dass die in der App zum Hochladen ausgewählten Dateien beim Senden an die Upload-Seite in einem Hintergrund-Thread verarbeitet werden, damit die Benutzeroberfläche sichtbar bleibt.
 </de-DE>
 <es-ES>
-Cambios:
-- Actualización del complemento PiwigoClientWsExts (Actualice su servidor). Esto corrige los nombres de las categorías si no tiene instalado el complemento ExtendedDescription.
-- Añadidas traducciones al holandés
+Arreglo del fallo:
+- Asegúrese de que los archivos seleccionados en la aplicación para cargar se procesen en un hilo en segundo plano al enviarlos a la página de carga para que la interfaz de usuario permanezca visible.
 </es-ES>
 <fr-FR>
-Changements:
-- Mise à jour du plugin PiwigoClientWsExts (Veuillez mettre à jour votre serveur). Cela corrige les noms de catégories si vous n\'avez pas installé le plugin ExtendedDescription.
-- Ajout de traductions en néerlandais
+Correction d\'un bug:
+- Assurez-vous que les fichiers sélectionnés dans l\'application pour le téléchargement sont traités sur un fil d\'arrière-plan lors de l\'envoi vers la page de téléchargement afin que l\'interface utilisateur reste visible.
 </fr-FR>
 <it-IT>
-I cambiamenti:
-- Aggiornamento del plugin PiwigoClientWsExts (aggiorna il tuo server). Questo risolve i nomi delle categorie se non hai installato il plugin ExtendedDescription.
-- Aggiunte traduzioni in olandese
+Risoluzione del problema:
+- Assicurati che i file selezionati nell\'app per il caricamento vengano elaborati su un thread in background durante l\'invio alla pagina di caricamento in modo che l\'interfaccia utente rimanga visibile.
 </it-IT>
 <ja-JP>
-変更点：
--PiwigoClientWsExtsプラグインの更新（サーバーを更新してください）。 これにより、ExtendedDescriptionプラグインがインストールされていない場合のカテゴリ名が修正されます。
--オランダ語の翻訳を追加
+バグ修正：
+-アップロード用にアプリで選択されたファイルが、アップロードページに送信するときにバックグラウンドスレッドで処理され、UIが表示されたままになるようにします。
 </ja-JP>
 <nl-NL>
-Veranderingen:
-- Update van de PiwigoClientWsExts-plug-in (update uw server). Dit lost de categorienamen op als je geen ExtendedDescription-plug-in hebt geïnstalleerd.
-- Nederlandse vertalingen toegevoegd
+Bugfix:
+- Zorg ervoor dat de bestanden die in de app zijn geselecteerd om te uploaden, worden verwerkt in een achtergrondthread bij verzending naar de uploadpagina, zodat de gebruikersinterface zichtbaar blijft.
 </nl-NL>
 <ru-RU>
-Изменения:
-- Обновление плагина PiwigoClientWsExts (пожалуйста, обновите свой сервер). Это исправляет имена категорий, если у вас не установлен плагин ExtendedDescription.
-- Добавлены голландские переводы
+Исправлена ошибка:
+- Убедитесь, что файлы, выбранные в приложении для загрузки, обрабатываются в фоновом потоке при отправке на страницу загрузки, чтобы пользовательский интерфейс оставался видимым.
 </ru-RU>
 <zh-CN>
-变化：
--更新了PiwigoClientWsExts插件（请更新您的服务器）。 如果您没有安装ExtendedDescription插件，这将修复类别名称。
--添加了荷兰语翻译
+错误修正：
+-确保在应用程序中选择要上传的文件在发送到“上传”页面时在后台线程上进行处理，以便用户界面保持可见。
 </zh-CN>
