@@ -707,5 +707,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="uuid_title">Installieren Sie die UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Dateien zum Hochladen können nicht hinzugefügt werden. Ein Upload-Auftrag wird ausgeführt.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Dateien zum Hochladen können nicht hinzugefügt werden. Der aktuelle Upload-Job muss zuerst beendet werden.</string>
+    <string name="removing_files_from_job">Entfernen von Dateien aus dem Upload-Job</string>
 
 </resources>

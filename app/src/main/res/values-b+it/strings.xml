@@ -707,5 +707,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="uuid_title">Installa UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossibile aggiungere file per il caricamento. È in corso un processo di caricamento.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossibile aggiungere file per il caricamento. Il processo di caricamento corrente deve essere completato per primo.</string>
+    <string name="removing_files_from_job">Rimozione di file dal processo di caricamento</string>
 
 </resources>

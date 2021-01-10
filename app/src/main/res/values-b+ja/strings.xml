@@ -707,5 +707,6 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="uuid_title">UUIDをインストールします</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">アップロードするファイルを追加できません。アップロードジョブが進行中です。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">アップロードするファイルを追加できません。現在のアップロードジョブを最初に終了する必要があります。</string>
+    <string name="removing_files_from_job">アップロードジョブからのファイルの削除</string>
 
 </resources>

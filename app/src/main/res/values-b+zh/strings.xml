@@ -707,5 +707,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="uuid_title">安装UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">无法添加文件进行上传。上载作业正在进行中。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">无法添加文件进行上传。当前的上传作业需要先完成。</string>
+    <string name="removing_files_from_job">从上载作业中删除文件</string>
 
 </resources>

@@ -707,5 +707,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="uuid_title">Installez UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossible d\'ajouter des fichiers à télécharger. Un travail de téléchargement est en cours.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossible d\'ajouter des fichiers à télécharger. La tâche de téléchargement en cours doit se terminer en premier.</string>
+    <string name="removing_files_from_job">Suppression de fichiers de la tâche de téléchargement</string>
 
 </resources>

@@ -707,5 +707,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="uuid_title">Installeer UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Kan geen bestanden toevoegen om te uploaden. Er wordt een uploadtaak uitgevoerd.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Kan geen bestanden toevoegen om te uploaden. De huidige uploadtaak moet eerst worden voltooid.</string>
+    <string name="removing_files_from_job">Bestanden verwijderen uit Upload Job</string>
 
 </resources>

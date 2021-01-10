@@ -707,5 +707,6 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="uuid_title">Nainstalujte UUID</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">Nelze přidat soubory k nahrání. Probíhá nahrávání úlohy.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Nelze přidat soubory k nahrání. Nejprve je třeba dokončit aktuální úlohu nahrávání.</string>
+    <string name="removing_files_from_job">Odebírání souborů z úlohy nahrávání</string>
 
 </resources>
