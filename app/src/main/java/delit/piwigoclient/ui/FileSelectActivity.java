@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
@@ -35,6 +34,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.OtherPreferences;
+import delit.piwigoclient.ui.common.BaseMyActivity;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
@@ -57,6 +57,7 @@ public class FileSelectActivity extends MyActivity {
     public static final String INTENT_SELECTED_FILES = "FileSelectActivity.selectedFiles";
     public static final String ACTION_TIME_MILLIS = "FileSelectActivity.actionTimeMillis";
     public static String INTENT_DATA = "configData";
+    private FolderItemViewAdapterPreferences folderItemSelectPrefs;
 
     public FileSelectActivity() {
         super(R.layout.activity_file_select);
@@ -153,6 +154,7 @@ public class FileSelectActivity extends MyActivity {
             folderItemSelectPrefs.withInitialFolder(null);
         }
         fragment = RecyclerViewDocumentFileFolderItemSelectFragment.newInstance(folderItemSelectPrefs, uniqueEventId);
+        this.folderItemSelectPrefs = folderItemSelectPrefs;
 
         setTrackedIntent(uniqueEventId, event.getActionId());
         showFragmentNow(fragment, false);
@@ -221,7 +223,12 @@ public class FileSelectActivity extends MyActivity {
 //            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
                 result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
                 if (event.getSelectedFolderItems() != null) {
-                    result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
+                    // need to make sure the caller can read and write any items selected as requested.
+                    result.setFlags(folderItemSelectPrefs.getSelectedUriPermissionFlags());
+                    ClipData clipData = buildClipData(event);
+                    result.setClipData(clipData);
+                    //result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
+                    BaseMyActivity.relayFileSelectionCompleteEvent(sourceEventId, event);
                     setResult(Activity.RESULT_OK, result);
                 } else {
                     setResult(Activity.RESULT_CANCELED, result);
@@ -229,7 +236,7 @@ public class FileSelectActivity extends MyActivity {
                 finish();
             } else {
                 Intent result = this.getIntent();
-                result.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION & Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                result.setFlags(folderItemSelectPrefs.getSelectedUriPermissionFlags());
                 if(event.getSelectedFolderItems() != null) {
                     if (!event.getSelectedFolderItems().isEmpty()) {
                         ClipData clipData = buildClipData(event);

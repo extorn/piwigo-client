@@ -242,7 +242,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 @Override
                 protected void reportProgress(int newOverallProgress) {
                     try {
-                        getOwner().overallUploadProgressBar.post(() -> getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress));
+                        getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress);
                     } catch (NullPointerException e) {
                         Logging.log(Log.ERROR, TAG, "Error updating upload progress");
                     }
@@ -297,15 +297,17 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 double progressForThisItem = sizeOfThisFileAsPercentageOfThoseToProcess * thisStageAsPercOfTotal;
 
                 if(BuildConfig.DEBUG) {
-                    Log.e(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
+                    Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
                 }
                 FilesToUploadRecyclerViewAdapter.UploadDataItem item = new FilesToUploadRecyclerViewAdapter.UploadDataItem(f.getContentUri(), f.getName(), f.getMime());
                 try {
 
-                    double fromProgress = mainTaskProgressListener.getLastReportedProgress(); // gets current progress
+                    double fromProgress = mainTaskProgressListener.getOverallTaskProgress(); // gets current progress
                     double toProgress = Math.min(fromProgress + progressForThisItem, 100);
+//                    Log.d(TAG, String.format("%1$.2f - %2$.2f", fromProgress, toProgress));
                     mainTaskProgressListener.withStage(fromProgress, toProgress, 1);
                     item.calculateDataHashCode(getContext(), mainTaskProgressListener);
+                    mainTaskProgressListener.onTick(1);
                     uploadDataItems.add(item);
                 } catch (Md5SumUtils.Md5SumException e) {
                     Logging.recordException(e);
@@ -953,26 +955,31 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     protected void updateFilesForUploadList(List<FilesToUploadRecyclerViewAdapter.UploadDataItem> folderItemsToBeUploaded) {
-        if (folderItemsToBeUploaded.size() > 0) {
-            FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
-            int addedItems = 0;
+        overallUploadProgressBar.showProgressIndicator(R.string.progress_importing_files, -1);
+        try {
+            if (folderItemsToBeUploaded.size() > 0) {
+                FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
+                int addedItems = 0;
 
-            for (FilesToUploadRecyclerViewAdapter.UploadDataItem item : folderItemsToBeUploaded) {
-                if (adapter.add(item)) {
-                    addedItems++;
+                for (FilesToUploadRecyclerViewAdapter.UploadDataItem item : folderItemsToBeUploaded) {
+                    if (adapter.add(item)) {
+                        addedItems++;
+                    }
                 }
-            }
-            if(addedItems > 0) {
-                adapter.notifyDataSetChanged();
-            }
+                if (addedItems > 0) {
+                    adapter.notifyDataSetChanged();
+                }
 
-            int filesAlreadyPresent = folderItemsToBeUploaded.size() - addedItems;
-            if (filesAlreadyPresent > 0) {
-                // need to use the context in the UIHelper because this fragment may yet not be attached itself.
-                getUiHelper().showDetailedShortMsg(R.string.alert_information, getUiHelper().getAppContext().getString(R.string.duplicates_ignored_pattern, filesAlreadyPresent));
+                int filesAlreadyPresent = folderItemsToBeUploaded.size() - addedItems;
+                if (filesAlreadyPresent > 0) {
+                    // need to use the context in the UIHelper because this fragment may yet not be attached itself.
+                    getUiHelper().showDetailedShortMsg(R.string.alert_information, getUiHelper().getAppContext().getString(R.string.duplicates_ignored_pattern, filesAlreadyPresent));
+                }
+                uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
+                updateActiveJobActionButtonsStatus();
             }
-            uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
-            updateActiveJobActionButtonsStatus();
+        } finally {
+            overallUploadProgressBar.hideProgressIndicator();
         }
     }
 
@@ -1493,14 +1500,53 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
+                getParent().overallUploadProgressBar.showProgressIndicator(R.string.removing_files_from_job, 0);
                 AbstractUploadFragment fragment = getUiHelper().getParent();
                 List<Uri> uris = fragment.getFilesForUploadViewAdapter().getFiles();
+                RemoveAllFilesFromUploadTask task = new RemoveAllFilesFromUploadTask(fragment, uris);
+                task.execute();
+            }
+        }
+
+        private static class RemoveAllFilesFromUploadTask extends OwnedSafeAsyncTask<AbstractUploadFragment, Void, Void, Void> {
+
+            private final AbstractUploadFragment fragment;
+            private final List<Uri> uris;
+
+            public RemoveAllFilesFromUploadTask(AbstractUploadFragment fragment, List<Uri> uris) {
+                super(fragment);
+                this.fragment = fragment;
+                this.uris = uris;
+            }
+
+            @Override
+            protected Void doInBackgroundSafely(Void... voids) {
+                TaskProgressTracker tracker = new TaskProgressTracker(5) {
+                    @Override
+                    protected void reportProgress(int newOverallProgress) {
+                        fragment.overallUploadProgressBar.showProgressIndicator(R.string.removing_files_from_job, newOverallProgress);
+                    }
+                };
+                tracker.withStage(0 ,100, uris.size());
+                int i = 0;
                 for(Uri uri : uris) {
-                    fragment.getFilesForUploadViewAdapter().remove(uri);
-                    fragment.releaseUriPermissionsForUploadItem(uri);
+                    i++;
+                    final int currentTick = i;
+
+                    DisplayUtils.postOnUiThread(() -> {
+                        fragment.getFilesForUploadViewAdapter().remove(uri);
+                        fragment.releaseUriPermissionsForUploadItem(uri);
+                        tracker.onTick(currentTick);
+                    });
                 }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecuteSafely(Void aVoid) {
                 fragment.uploadFilesNowButton.setEnabled(fragment.getFilesForUploadViewAdapter().getItemCount() > 0);
                 fragment.updateActiveJobActionButtonsStatus();
+                getOwner().overallUploadProgressBar.hideProgressIndicator();
             }
         }
     }

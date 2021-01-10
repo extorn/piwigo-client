@@ -166,6 +166,12 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         }
     }
 
+    protected static void relayFileSelectionCompleteEvent(int sourceEventId, FileSelectionCompleteEvent event) {
+        FileSelectionCompleteEvent evt;
+        evt = new FileSelectionCompleteEvent(sourceEventId, event.getActionTimeMillis()).withFolderItems(event.getSelectedFolderItems());
+        EventBus.getDefault().postSticky(evt);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -173,10 +179,14 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
             if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
-                ArrayList<FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
-                // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
-                EventBus.getDefault().postSticky(event);
+                if(data.hasExtra(FileSelectActivity.INTENT_SELECTED_FILES)) {
+                    ArrayList<FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
+                    FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
+                    // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
+                    EventBus.getDefault().postSticky(event);
+                } else {
+                    // using the FileSelectionCompleteEvent posted by the FileSelectActivity to avoid TransactionTooLargeException.
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

@@ -13,6 +13,7 @@ public abstract class TaskProgressTracker implements ProgressListener {
     private double mainTaskProgressPerPercentOfThisTask;
     private int ticksInTask;
     private double progressPerTick;
+    private double stageStart;
 
     public TaskProgressTracker() {
         this(1);
@@ -69,6 +70,7 @@ public abstract class TaskProgressTracker implements ProgressListener {
         this.lastProgressReportAt = overallTaskProgress;
         this.ticksInTask = ticksInTask;
         this.progressPerTick = mainTaskProgressPerPercentOfThisTask * 100 / ticksInTask;
+        this.stageStart = overallTaskProgress;
         return this;
     }
 
@@ -77,7 +79,7 @@ public abstract class TaskProgressTracker implements ProgressListener {
     }
 
     public double getOverallTaskProgress() {
-        return overallTaskProgress;
+        return overallTaskProgress * 100;
     }
 
     /**
@@ -120,10 +122,11 @@ public abstract class TaskProgressTracker implements ProgressListener {
     }
 
     private void onProgressIncrement(double overallProgressIncrement) {
-        double actualCurrentOverallTaskProgress = (overallTaskProgress + overallProgressIncrement);
-        if (100 * actualCurrentOverallTaskProgress >= lastProgressReportAt + reportAtIncrement) {
-            lastProgressReportAt = actualCurrentOverallTaskProgress;
-            reportProgress((int)Math.rint(actualCurrentOverallTaskProgress * 100));
+        overallTaskProgress = (stageStart + overallProgressIncrement);
+//        Log.w("Progress", ""+overallProgressIncrement);
+        if (100 * overallTaskProgress >= lastProgressReportAt + reportAtIncrement) {
+            lastProgressReportAt = overallTaskProgress;
+            reportProgress((int)Math.rint(overallTaskProgress * 100));
         }
     }
 
@@ -141,7 +144,14 @@ public abstract class TaskProgressTracker implements ProgressListener {
      * @return progress through task - between 0 and 100.
      */
     public int getLastReportedProgress() {
-        return (int)Math.rint(lastProgressReportAt * 100);
+        return (int)Math.rint(getActualLastReportedProgress());
+    }
+
+    /**
+     * @return progress through task - between 0 and 100.
+     */
+    public double getActualLastReportedProgress() {
+        return lastProgressReportAt * 100;
     }
 
 }
