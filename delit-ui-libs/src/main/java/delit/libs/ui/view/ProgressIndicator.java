@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
 
+import java.util.Objects;
+
 import delit.libs.R;
 
 public class ProgressIndicator extends FrameLayout {
@@ -107,8 +109,12 @@ public class ProgressIndicator extends FrameLayout {
         actionButton.setOnClickListener(actionListener);
 
         if(progressText != null) {
-            descriptionField.setText(progressText);
-            descriptionField.setVisibility(VISIBLE);
+            if(!Objects.equals(descriptionField.getText(), progressText)) {
+                descriptionField.setText(progressText);
+            }
+            if(descriptionField.getVisibility() != VISIBLE) {
+                descriptionField.setVisibility(VISIBLE);
+            }
         } else {
             descriptionField.setVisibility(GONE);
         }
