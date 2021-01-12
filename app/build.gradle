@@ -27,7 +27,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    buildToolsVersion '30.0.1'
+    buildToolsVersion '30.0.3'
     compileSdkVersion 30
 
     defaultConfig {
@@ -36,8 +36,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 30
 
-        versionCode 336
-        versionName "1.4.0.94.1"
+        versionCode 337
+        versionName "1.4.0.94.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config

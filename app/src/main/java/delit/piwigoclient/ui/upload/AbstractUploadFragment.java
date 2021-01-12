@@ -130,7 +130,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final boolean ENABLE_COMPRESSION_BUTTON = true;
     private static final int TAB_IDX_SETTINGS = 1;
     private static final int TAB_IDX_FILES = 0;
-    private static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
+//    private static final String FILES_TO_UPLOAD_ADAPTER_STATE = "filesToUploadAdapter";
     private static final String URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD = "foregroundUpload";
 
     private AppSettingsViewModel appSettingsViewModel;
@@ -160,6 +160,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private NumberPicker compressImagesMaxHeightNumberPicker;
     private NumberPicker compressImagesMaxWidthNumberPicker;
     private ProgressIndicator overallUploadProgressBar;
+    private FilesForUploadViewModel filesForUploadViewModel; //TODO I don't think this is required, but it's not doing any harm that I can see.
 
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
@@ -172,11 +173,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (uploadJobId != null) {
+            if (uploadJobId != null) {
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
         }
         if (filesToUploadAdapter != null) {
-            filesToUploadAdapter.onSaveInstanceState(outState, FILES_TO_UPLOAD_ADAPTER_STATE);
+            filesForUploadViewModel.setFilesForUpload(filesToUploadAdapter.getUploadDataItemsModel());
+//            filesToUploadAdapter.onSaveInstanceState(outState, FILES_TO_UPLOAD_ADAPTER_STATE);
         }
         outState.putParcelable(SAVED_STATE_UPLOAD_TO_ALBUM, uploadToAlbum);
         outState.putLong(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID, externallyTriggeredSelectFilesActionId);
@@ -242,7 +244,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 @Override
                 protected void reportProgress(int newOverallProgress) {
                     try {
-                        getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress);
+                        DisplayUtils.runOnUiThread(() -> {getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress);});
                     } catch (NullPointerException e) {
                         Logging.log(Log.ERROR, TAG, "Error updating upload progress");
                     }
@@ -359,6 +361,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         super.onCreate(savedInstanceState);
         ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
         appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
+        filesForUploadViewModel = new ViewModelProvider(viewModelProvider).get(FilesForUploadViewModel.class);
     }
 
     @Override
@@ -548,8 +551,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
             // override the upload to album value (used to set clickable text field)
             uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
-            filesToUploadAdapter.onRestoreInstanceState(savedInstanceState, FILES_TO_UPLOAD_ADAPTER_STATE);
+            filesToUploadAdapter.setUploadDataItemsModel(filesForUploadViewModel.getUploadDataItemModel());
+//            filesToUploadAdapter.onRestoreInstanceState(savedInstanceState, FILES_TO_UPLOAD_ADAPTER_STATE);
         }
+
 
         if (uploadToAlbum == null) {
             uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
@@ -1504,7 +1509,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 AbstractUploadFragment fragment = getUiHelper().getParent();
                 List<Uri> uris = fragment.getFilesForUploadViewAdapter().getFiles();
                 RemoveAllFilesFromUploadTask task = new RemoveAllFilesFromUploadTask(fragment, uris);
-                task.execute();
+                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
 
@@ -1524,7 +1529,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 TaskProgressTracker tracker = new TaskProgressTracker(5) {
                     @Override
                     protected void reportProgress(int newOverallProgress) {
-                        fragment.overallUploadProgressBar.showProgressIndicator(R.string.removing_files_from_job, newOverallProgress);
+                        DisplayUtils.runOnUiThread(() -> {fragment.overallUploadProgressBar.showProgressIndicator(R.string.removing_files_from_job, newOverallProgress);});
                     }
                 };
                 tracker.withStage(0 ,100, uris.size());

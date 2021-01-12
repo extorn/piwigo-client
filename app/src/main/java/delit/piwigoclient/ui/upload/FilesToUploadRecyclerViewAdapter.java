@@ -368,7 +368,15 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
     }
 
-    private static class UploadDataItemModel implements Parcelable {
+    public void setUploadDataItemsModel(UploadDataItemModel uploadDataItemsModel) {
+        this.uploadDataItemsModel = uploadDataItemsModel;
+    }
+
+    public UploadDataItemModel getUploadDataItemsModel() {
+        return uploadDataItemsModel;
+    }
+
+    static class UploadDataItemModel implements Parcelable {
 
         public static final Parcelable.Creator<UploadDataItemModel> CREATOR
                 = new Parcelable.Creator<UploadDataItemModel>() {
