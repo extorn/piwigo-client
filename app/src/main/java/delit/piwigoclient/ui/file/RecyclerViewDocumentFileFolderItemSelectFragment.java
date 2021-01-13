@@ -371,7 +371,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if(BuildConfig.PAID_VERSION) {
             new SharedFilesClonedIntentProcessingTask(this).executeNow(itemsShared);
         } else {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_shared_without_required_permissions_error), R.string.button_ok);
+            // this is called from a background thread.
+            DisplayUtils.runOnUiThread(() -> {getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_shared_without_required_permissions_error), R.string.button_ok);});
         }
     }
 

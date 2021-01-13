@@ -270,7 +270,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     currentItem++;
                     FolderItem f = iter.next();
                     //TODO check this is correct to assume that upper case extensions are okay (server isn't case sensitive!).
-                    if (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase())) {
+                    if (f.getExt() == null || (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase()))) {
                         String mimeType = f.getMime();
                         if (mimeType == null || !MimeTypeFilter.matches(mimeType, "video/*")) {
                             iter.remove();
@@ -551,7 +551,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
             // override the upload to album value (used to set clickable text field)
             uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
-            filesToUploadAdapter.setUploadDataItemsModel(filesForUploadViewModel.getUploadDataItemModel());
+            FilesToUploadRecyclerViewAdapter.UploadDataItemModel model = filesForUploadViewModel.getUploadDataItemModel();
+            if(model != null) {
+                filesToUploadAdapter.setUploadDataItemsModel(model);
+            }
 //            filesToUploadAdapter.onRestoreInstanceState(savedInstanceState, FILES_TO_UPLOAD_ADAPTER_STATE);
         }
 
