@@ -20,7 +20,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.core.util.Logging;
@@ -276,7 +275,7 @@ public class FolderItem implements Parcelable {
         return cached;
     }
 
-    public static boolean cacheDocumentInformation(@NonNull Context context, @NonNull List<FolderItem> items, ProgressListener taskListener) {
+    public static <T extends FolderItem> boolean  cacheDocumentInformation(@NonNull Context context, @NonNull List<T> items, ProgressListener taskListener) {
         if(items.size() == 0) {
             return true;
         }

@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
@@ -90,6 +91,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         });
 
         LocalFoldersListPreference uploadFromFolder = (LocalFoldersListPreference) findPreference(R.string.preference_data_upload_automatic_job_local_folder_key);
+        uploadFromFolder.setRequiredPermissions(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         uploadFromFolder.setOnPreferenceChangeListener(new LocalFoldersListPreference.PersistablePermissionsChangeListener(getUiHelper()));
 
         //ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);

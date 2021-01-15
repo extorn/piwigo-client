@@ -5,10 +5,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
-
-import androidx.annotation.NonNull;
 
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
@@ -20,24 +19,24 @@ import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 
-public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, P extends AlbumItemViewHolder<S, Q, P, M>, M extends ResourceContainer<? extends S, GalleryItem>> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> implements PicassoLoader.PictureItemImageLoaderListener {
+public abstract class AlbumItemViewHolder<VH extends AlbumItemViewHolder<VH,LVA, T,MSL, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, RC extends ResourceContainer<?, T>> extends CustomViewHolder<VH, LVA, AlbumItemRecyclerViewAdapterPreferences, T,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
     protected final int viewType;
     public AppCompatImageView mImageView;
     public TextView mNameView;
     public TextView mDescView;
     public ImageView mRecentlyAlteredMarkerView;
     protected ResizingPicassoLoader<ImageView> imageLoader;
-    protected AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter;
+    protected LVA parentAdapter;
     protected View mItemContainer;
 
-    public AlbumItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter, int viewType) {
+    public AlbumItemViewHolder(View view, LVA parentAdapter, int viewType) {
         super(view);
         this.parentAdapter = parentAdapter;
         this.viewType = viewType;
 
     }
 
-    public AlbumItemRecyclerViewAdapter<S, Q, P, M> getParentAdapter() {
+    public LVA getParentAdapter() {
         return parentAdapter;
     }
 
@@ -49,7 +48,7 @@ public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends Album
     }
 
     @Override
-    public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
+    public void fillValues(T newItem, boolean allowItemDeletion) {
         setItem(newItem);
         getItemActionListener().onFillValues();
     }

@@ -3,10 +3,12 @@ package delit.libs.ui.view.recycler;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import delit.libs.R;
 import delit.libs.ui.view.button.MaterialCheckboxTriState;
 
-public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreferences, A> extends CustomViewHolder<P, A> {
+public abstract class BaseViewHolder<VH extends BaseViewHolder<VH, P, T, LVA,MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, LVA extends BaseRecyclerViewAdapter<LVA,P, T, VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends CustomViewHolder<VH, LVA, P, T, MSL> {
     private TextView txtTitle;
     private TextView detailsTitle;
     private View deleteButton;
@@ -32,12 +34,13 @@ public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreference
         return deleteButton;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return super.toString() + " '" + txtTitle.getText() + "'";
     }
 
-    public abstract void fillValues(A newItem, boolean allowItemDeletion);
+    public abstract void fillValues(T newItem, boolean allowItemDeletion);
 
     @Override
     public void setChecked(boolean checked) {
@@ -49,7 +52,7 @@ public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreference
 
         checkBox = itemView.findViewById(R.id.list_item_checked);
         checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
-        checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
+        checkBox.setOnCheckedChangeListener(new BaseRecyclerViewAdapter.ItemSelectionListener<LVA,VH,P,T,MSL>((LVA)getItemActionListener().getParentAdapter(), (VH)this));
         if (adapterPrefs.isMultiSelectionEnabled()) {
             checkBox.setButtonDrawable(R.drawable.checkbox);
         } else {
@@ -65,6 +68,6 @@ public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreference
     }
 
     private void onDeleteItemButtonClick(View v) {
-        getItemActionListener().getParentAdapter().onDeleteItem(this, v);
+        getItemActionListener().getParentAdapter().onDeleteItem((VH)this, v);
     }
 }

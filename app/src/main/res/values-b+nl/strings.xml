@@ -636,8 +636,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_status_tab_title_errors">Fouten</string>
     <string name="message_piwigo_server_inconsistent_results">Piwigo API-oproep%1$s meldt dat de bestandscontrolesom niet overeenkomt, maar API-oproep%2$s meldt dat het overeenkomt. Dit kan een bug zijn in de PIWIGO-server of een plug-in die u gebruikt, en het kan de moeite waard zijn om dit te melden.</string>
     <string name="alert_bulk_image_permissions_title">Stel toegangsrechten in</string>
-    <string name="alert_bulk_image_permissions_message">Stel toegangsmachtigingsniveaus in voor de%1$d geselecteerde bronnen</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Kan bestanden die zijn gedeeld met een%1$s mime-type niet verwerken</string>
+    <string name="alert_bulk_image_permissions_message">Stel toegangsmachtigingsniveaus in voor de %1$d geselecteerde bronnen</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Kan bestanden die zijn gedeeld met een %1$s mime-type niet verwerken</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Bestanden met de volgende extensies kunnen niet worden geüpload en zijn verwijderd:%1$s</string>
     <string name="please_select_a_parent_album">Selecteer een bovenliggend album</string>
     <string name="unsupported_device">Sorry, dit apparaat wordt niet ondersteund. Er is een probleem met het openen van Google Play-services.</string>

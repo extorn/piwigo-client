@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapterPreferences> {
+public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapterPreferences<Q>> {
     private boolean allowItemSelection;
     private boolean initialSelectionLocked;
     private boolean multiSelectionEnabled;
@@ -16,29 +16,29 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
     public BaseRecyclerViewAdapterPreferences() {
     }
 
-    public BaseRecyclerViewAdapterPreferences readonly() {
+    public BaseRecyclerViewAdapterPreferences<Q> readonly() {
         readonly = true;
         return this;
     }
 
-    public BaseRecyclerViewAdapterPreferences<Q> notSelectable() {
+    public Q notSelectable() {
         allowItemSelection = false;
-        return this;
+        return (Q) this;
     }
 
-    public BaseRecyclerViewAdapterPreferences<Q> selectable(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
+    public Q selectable(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
         allowItemSelection = true;
         this.initialSelectionLocked = initialSelectionLocked;
         this.multiSelectionEnabled = multiSelectionAllowed;
         allowItemDeletion = false;
         allowItemAddition = false;
         enabled = true;
-        return this;
+        return (Q) this;
     }
 
-    public BaseRecyclerViewAdapterPreferences<Q> deletable() {
+    public Q deletable() {
         allowItemDeletion = true;
-        return this;
+        return (Q) this;
     }
 
     public Bundle storeToBundle(@NonNull Bundle bundle) {
@@ -54,9 +54,9 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
         return bundle;
     }
 
-    public BaseRecyclerViewAdapterPreferences loadFromBundle(Bundle parent) {
+    public Q loadFromBundle(Bundle parent) {
         if(parent == null) {
-            return this;
+            return (Q) this;
         }
         Bundle b = parent.getBundle("BaseRecyclerViewAdapterPreferences");
         if(b != null) {
@@ -68,7 +68,7 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
             enabled = b.getBoolean("enabled");
             readonly = b.getBoolean("readonly");
         }
-        return this;
+        return (Q) this;
     }
 
     public boolean isReadOnly() {

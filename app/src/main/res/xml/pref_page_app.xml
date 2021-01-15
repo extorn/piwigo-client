@@ -46,6 +46,14 @@
             android:key="@string/preference_app_clear_list_of_user_hints_shown_key"
             android:title="@string/preference_app_clear_list_of_user_hints_shown_title" />
 
+        <delit.piwigoclient.ui.common.preference.UriPermissionsListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/preference_app_uri_permissions_held_key"
+            android:summary="@string/preference_app_uri_permissions_held_summary"
+            android:title="@string/preference_app_uri_permissions_held_title"
+            app:allowItemEdit="false"/>
+
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory

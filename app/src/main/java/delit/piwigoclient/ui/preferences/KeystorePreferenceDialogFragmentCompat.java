@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
@@ -76,7 +78,7 @@ import delit.libs.util.security.LoadOperationResult;
 import delit.libs.util.security.SecurityOperationException;
 import delit.libs.util.security.X509LoadOperation;
 import delit.piwigoclient.R;
-import delit.piwigoclient.database.UriPermissionUse;
+import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -98,6 +100,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private ExtendedFloatingActionButton addListItemButton;
     private KeyStore keystore;
     private ProgressIndicator progressIndicator;
+    private AppSettingsViewModel appSettingsViewModel;
 
     @Override
     public <T extends Preference> T findPreference(@NonNull CharSequence key) {
@@ -122,6 +125,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     @Override
     public void onDialogClosed(boolean positiveResult) {
 
+        appSettingsViewModel = null;
         EventBus.getDefault().unregister(this);
 
         if (positiveResult) {
@@ -134,6 +138,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     @Override
     protected View onCreateDialogView(Context context) {
+        ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
+        appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
         return buildCertificateListView(context, keystore);
     }
 
@@ -204,10 +210,19 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         allowedFileTypes.addAll(getPreference().getAllowedKeyFileTypes());
         fileSelectionEvent.withInitialFolder(Uri.fromFile(requireContext().getExternalFilesDir(null)));
         fileSelectionEvent.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.ALPHABETICAL);
-        fileSelectionEvent.withSelectedUriPermissionsForConsumerId(UriPermissionUse.TRANSIENT); //Not currently needed as permissions are transient.
+        fileSelectionEvent.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey());
+        fileSelectionEvent.requestUriReadPermission();
 
         setTrackingRequest(fileSelectionEvent.getActionId());
         EventBus.getDefault().post(fileSelectionEvent);
+    }
+
+    /**
+     * Use the preference key as the uri permissions key - if this isn't unique, you might want to change it.
+     * @return
+     */
+    public @NonNull String getUriPermissionsKey() {
+        return getPreference().getKey();
     }
 
     private void processRecoverableErrors(Context context) {
@@ -518,6 +533,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                 }
                 currentFile++;
                 publishProgress((int) Math.rint(100 * ((double) currentFile / loadOps.length)));
+                getOwner().appSettingsViewModel.releasePersistableUriPermission(getContext(), loadOp.getFileUri(), getOwner().getUriPermissionsKey(), true);
             }
             return loadOperationResult;
         }

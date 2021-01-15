@@ -4,10 +4,10 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferences, T> extends RecyclerView.ViewHolder {
+public abstract class CustomViewHolder<VH extends CustomViewHolder<VH, LVA, P,T,MSL>, LVA extends BaseRecyclerViewAdapter<LVA, P,T,VH,MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends RecyclerView.ViewHolder {
 
     private T item;
-    private CustomClickListener itemActionListener;
+    private CustomClickListener<MSL, LVA, P,T,VH> itemActionListener;
 
     public CustomViewHolder(View view) {
         super(view);
@@ -15,7 +15,7 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
 
     public abstract void fillValues(T item, boolean allowItemDeletion);
 
-    public abstract void cacheViewFieldsAndConfigure(V adapterPrefs);
+    public abstract void cacheViewFieldsAndConfigure(P adapterPrefs);
 
     public abstract void setChecked(boolean checked);
 
@@ -27,14 +27,14 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
         this.item = item;
     }
 
-    public void internalCacheViewFieldsAndConfigure(CustomClickListener<V, T, ? extends CustomViewHolder<V, T>> itemActionListener, V adapterPrefs) {
+    public void internalCacheViewFieldsAndConfigure(CustomClickListener<MSL, LVA, P, T, VH> itemActionListener, P adapterPrefs) {
         this.itemActionListener = itemActionListener;
         itemView.setOnClickListener(itemActionListener);
         itemView.setOnLongClickListener(itemActionListener);
         cacheViewFieldsAndConfigure(adapterPrefs);
     }
 
-    public CustomClickListener getItemActionListener() {
+    public CustomClickListener<MSL,LVA, P,T,VH> getItemActionListener() {
         return itemActionListener;
     }
 

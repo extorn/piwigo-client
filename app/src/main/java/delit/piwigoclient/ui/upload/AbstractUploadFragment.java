@@ -81,7 +81,6 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
 import delit.piwigoclient.database.AppSettingsViewModel;
-import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -724,28 +723,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 event.withInitialFolder(Objects.requireNonNull(IOUtils.getLocalFileUri(initialFolder)));
             }
             event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
-            event.withSelectedUriPermissionsForConsumerId(UriPermissionUse.TRANSIENT); //Not currently needed as permissions are transient.
+            event.withSelectedUriPermissionsForConsumerId(URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
+            event.setSelectedUriPermissionsForConsumerPurpose(getString(R.string.uri_permission_justification_to_upload));
+            //event.requestUriReadWritePermissions();
+            event.requestUriReadPermission();
 
             Set<String> visibleMimeTypes = new HashSet<>();
             visibleMimeTypes.add("video/*");
-            MimeTypeMap map = MimeTypeMap.getSingleton();
-            for(String fileExt : allowedFileTypes) {
-                String mimeType = map.getMimeTypeFromExtension(fileExt.toLowerCase());
-                if(mimeType == null) {
-                    if(fileExt.equals("webmv")) {
-                        mimeType = "video/webm";
-                    }
-                }
-                if(mimeType != null) {
-                    visibleMimeTypes.add(mimeType);
-                } else {
-                    Logging.log(Log.WARN, TAG, "Unrecognised file extension - no mime type found : " + fileExt);
-                }
-            }
+            IOUtils.getMimeTypesFromFileExts(visibleMimeTypes, allowedFileTypes);
             event.withVisibleMimeTypes(visibleMimeTypes);
-            event.withSelectedUriPermissionsForConsumerId(URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
-            event.setSelectedUriPermissionsForConsumerPurpose(getString(R.string.uri_permission_justification_to_upload));
-            event.requestUriReadWritePermissions();
 
             getUiHelper().setTrackingRequest(event.getActionId());
             EventBus.getDefault().post(event);

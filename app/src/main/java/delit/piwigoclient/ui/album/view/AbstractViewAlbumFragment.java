@@ -4,12 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.Html;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
@@ -21,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,7 +27,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.text.HtmlCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -170,7 +165,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
 
     private static PiwigoAlbumAdminList albumAdminList;
-    private PiwigoAlbum galleryModel;
+    private PiwigoAlbum<GalleryItem> galleryModel;
     private HashSet<Long> userIdsInSelectedGroups;
     private List<CategoryItem> adminCategories;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
@@ -2199,7 +2194,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             Logging.log(Log.WARN, TAG, "Attempt to reopen parent but is null");
             return null;
         }
-        PiwigoAlbum nextPiwigoAlbum = new ViewModelProvider(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        PiwigoAlbum<GalleryItem> nextPiwigoAlbum = new ViewModelProvider(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
         if (nextPiwigoAlbum == null) {
             Logging.log(Log.WARN, TAG, "Attempt to reopen parent but parent is not available. Returning null");
             return null;
@@ -2300,7 +2295,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    protected PiwigoAlbum getGalleryModel() {
+    protected PiwigoAlbum<GalleryItem> getGalleryModel() {
         return galleryModel;
     }
 
@@ -2927,7 +2922,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
                 AbstractViewAlbumFragment fragment = getUiHelper().getParent();
-                PiwigoAlbum galleryModel = fragment.getGalleryModel();
+                PiwigoAlbum<GalleryItem> galleryModel = fragment.getGalleryModel();
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
             } else {
                 getUiHelper().getParent().onAlbumUpdateFinished();

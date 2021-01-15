@@ -18,22 +18,34 @@ import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
  * {@link RecyclerView.Adapter} that can display a {@link Group}
  */
 
-public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> {
+//public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> {
+public class GroupRecyclerViewAdapter<RVA extends GroupRecyclerViewAdapter<RVA, VH,MSL>, VH extends GroupRecyclerViewAdapter.GroupViewHolder<VH, RVA,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> extends IdentifiableListViewAdapter<RVA, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group, PiwigoGroups, VH, MSL> {
 
-    public GroupRecyclerViewAdapter(Context context, final PiwigoGroups groups, MultiSelectStatusListener<Group> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+    public GroupRecyclerViewAdapter(Context context, final PiwigoGroups groups, MSL multiSelectStatusListener, GroupViewAdapterPreferences prefs) {
         super(context, null, groups, multiSelectStatusListener, prefs);
     }
 
     @NonNull
     @Override
-    public GroupViewHolder buildViewHolder(View view, int viewType) {
-        return new GroupViewHolder(view);
+    public VH buildViewHolder(View view, int viewType) {
+        return (VH) new GroupViewHolder<>(view);
     }
 
-    public class GroupViewHolder extends BaseViewHolder<BaseRecyclerViewAdapterPreferences, Group> {
+    public static class GroupViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupViewAdapterPreferences> {
+    }
+
+    public static class GroupViewHolder<VH extends GroupViewHolder<VH, LVA,MSL>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> extends BaseViewHolder<VH, GroupViewAdapterPreferences, Group, LVA,MSL> {
+
+        private GroupViewAdapterPreferences adapterPrefs;
 
         public GroupViewHolder(View view) {
             super(view);
+        }
+
+        @Override
+        public void cacheViewFieldsAndConfigure(GroupViewAdapterPreferences adapterPrefs) {
+            super.cacheViewFieldsAndConfigure(adapterPrefs);
+            this.adapterPrefs = adapterPrefs;
         }
 
         public void fillValues(Group newItem, boolean allowItemDeletion) {
@@ -43,9 +55,9 @@ public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRe
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(isMultiSelectionAllowed() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItemIds().contains(newItem.getId()));
-            getCheckBox().setEnabled(isEnabled());
+            getCheckBox().setVisibility(adapterPrefs.isMultiSelectionEnabled() ? View.VISIBLE : View.GONE);
+//            getCheckBox().setChecked(adapterPrefs.getSelectedItemIds().contains(newItem.getId()));
+            getCheckBox().setEnabled(adapterPrefs.isEnabled());
         }
     }
 

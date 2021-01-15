@@ -19,7 +19,6 @@ import java.util.HashSet;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
@@ -37,7 +36,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
+public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter<?,Username,?,?>, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, Username> {
 
     private static final String USER_NAMES_MODEL = "usernamesModel";
     private static final String STATE_INDIRECT_SELECTION = "indirectlySelectedUsernames";
@@ -45,7 +44,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     private PiwigoUsernames usernamesModel;
     private HashSet<Long> indirectSelection;
 
-    public static UsernameSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+    public static UsernameSelectFragment newInstance(UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         UsernameSelectFragment fragment = new UsernameSelectFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
@@ -68,8 +67,8 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences();
     }
 
     @Override

@@ -148,6 +148,7 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
         videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey(), R.bool.preference_video_cache_enabled_default));
 
         LocalFoldersListPreference appDownloadFolder = (LocalFoldersListPreference) findPreference(R.string.preference_app_default_download_folder_key);
+        appDownloadFolder.setRequiredPermissions(IOUtils.URI_PERMISSION_READ_WRITE);
         appDownloadFolder.setOnPreferenceChangeListener(new LocalFoldersListPreference.PersistablePermissionsChangeListener(getUiHelper()));
 
         if(appDownloadFolder.getValue() == null) {

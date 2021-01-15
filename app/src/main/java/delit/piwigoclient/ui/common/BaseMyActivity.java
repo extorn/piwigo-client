@@ -366,9 +366,9 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(this);
         AppSettingsViewModel appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
         LiveData<List<UriPermissionUse>> uriPermissionsData = appSettingsViewModel.getAll();
-        uriPermissionsData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
-            @Override
-            public void onChanged(List<UriPermissionUse> permissionsHeld) {
+                uriPermissionsData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
+                    @Override
+                    public void onChanged(List<UriPermissionUse> permissionsHeld) {
                 uriPermissionsData.removeObserver(this);
                 Set<Uri> heldPerms = new HashSet<>();
                 for(UriPermission actualHeldPerm : getContentResolver().getPersistedUriPermissions()) {

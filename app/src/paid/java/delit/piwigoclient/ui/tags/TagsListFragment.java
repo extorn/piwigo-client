@@ -34,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
@@ -66,14 +65,14 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     private static final String TAGS_MODEL = "tagsModel";
     private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
     private ExtendedFloatingActionButton retryActionButton;
-    private PiwigoTags tagsModel;
-    private TagRecyclerViewAdapter viewAdapter;
+    private PiwigoTags<Tag> tagsModel;
+    private TagRecyclerViewAdapter<?,?,?,Tag> viewAdapter;
     private ExtendedFloatingActionButton addListItemButton;
     private AlertDialog addNewTagDialog;
-    private BaseRecyclerViewAdapterPreferences viewPrefs;
+    private TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs;
     private RecyclerView recyclerView;
 
-    public static TagsListFragment newInstance(BaseRecyclerViewAdapterPreferences viewPrefs) {
+    public static TagsListFragment newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs) {
         TagsListFragment fragment = new TagsListFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(viewPrefs.storeToBundle(new Bundle()));
@@ -94,7 +93,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
+        viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences().loadFromBundle(getArguments());
         super.onCreate(savedInstanceState);
     }
 
@@ -120,7 +119,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             if(!isSessionDetailsChanged()) {
                 tagsModel = savedInstanceState.getParcelable(TAGS_MODEL);
             }
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
+            viewPrefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
         if(tagsModel == null) {
             tagsModel = new PiwigoTags();

@@ -11,7 +11,7 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 
-public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<CategoryItemViewAdapterPreferences> {
 
     private String connectionProfileKey;
     private CategoryItemStub initialRoot;

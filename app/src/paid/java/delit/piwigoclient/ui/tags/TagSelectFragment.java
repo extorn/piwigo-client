@@ -29,7 +29,6 @@ import java.util.HashSet;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.libs.util.CollectionUtils;
@@ -52,14 +51,14 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
  * Created by gareth on 26/05/17.
  */
 
-public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
+public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter<?,?,?,Tag>, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private static final String ARGS_UNSAVED_TAGS = "unsavedTags";
     private static final String TAG = "TagSelFrag";
     private PiwigoTags tagsModel;
 
-    public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection, HashSet<Tag> unsavedNewTags) {
+    public static TagSelectFragment newInstance(TagRecyclerViewAdapter.TagViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection, HashSet<Tag> unsavedNewTags) {
         TagSelectFragment fragment = new TagSelectFragment();
         Bundle b = buildArgsBundle(prefs, actionId, initialSelection);
         BundleUtils.putSet(b, ARGS_UNSAVED_TAGS, unsavedNewTags);
@@ -68,8 +67,8 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected TagRecyclerViewAdapter.TagViewAdapterPreferences createEmptyPrefs() {
+        return new TagRecyclerViewAdapter.TagViewAdapterPreferences();
     }
 
     @Override
@@ -84,8 +83,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             return false;
         }
         boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails.isAdminUser();
-        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails.isUseUserTagPluginForUpdate());
-        return allowTagEdit;
+        return allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails.isUseUserTagPluginForUpdate());
     }
 
     @Override

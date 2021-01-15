@@ -5,16 +5,15 @@ import android.widget.TextView;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
-import delit.piwigoclient.model.piwigo.ResourceContainer;
 
 import static android.view.View.INVISIBLE;
 
-public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends AlbumItemViewHolder<CategoryItem, Q, CategoryItemViewHolder<Q, M>, M> {
+public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, MSL, RC,T>, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, RC extends PiwigoAlbum<T>, T extends CategoryItem> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
     public TextView mPhotoCountView;
 
-    public CategoryItemViewHolder(View view, AlbumItemRecyclerViewAdapter<CategoryItem, Q, CategoryItemViewHolder<Q, M>, M> parentAdapter, int viewType) {
+    public CategoryItemViewHolder(View view, LVA parentAdapter, int viewType) {
         super(view, parentAdapter, viewType);
     }
 
@@ -28,7 +27,7 @@ public class CategoryItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.Album
     }
 
     @Override
-    public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
+    public void fillValues(T newItem, boolean allowItemDeletion) {
         super.fillValues(newItem, allowItemDeletion);
         updateRecentlyViewedMarker(newItem);
 

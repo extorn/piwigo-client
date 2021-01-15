@@ -65,9 +65,6 @@ public class EditableListPreference extends DialogPreference {
         TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.EditableListPreference, 0, defStyleRes);
         entriesPref = a.getResourceId(R.styleable.EditableListPreference_entriesPref, -1);
-        if (entriesPref < 0) {
-            throw new IllegalArgumentException("entriesPref is a mandatory field");
-        }
 
         allowItemEdit = a.getBoolean(R.styleable.EditableListPreference_allowItemEdit, false);
 
@@ -76,6 +73,10 @@ public class EditableListPreference extends DialogPreference {
         a.recycle();
 
         summary = String.valueOf(super.getSummary());
+
+        if (entriesPref < 0) {
+            throw new IllegalArgumentException("entriesPref is a mandatory field");
+        }
     }
 
     public void setListener(EditableListPreferenceChangeListener listener) {

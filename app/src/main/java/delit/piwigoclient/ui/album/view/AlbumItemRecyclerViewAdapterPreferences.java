@@ -7,7 +7,7 @@ import java.util.Date;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
-public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<AlbumItemRecyclerViewAdapterPreferences> {
     private Date recentlyAlteredThresholdDate;
     private String preferredThumbnailSize;
     private String preferredAlbumThumbnailSize;

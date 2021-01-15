@@ -25,9 +25,9 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  */
-public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, S extends AlbumItemViewHolder<T, Q, S, M>, M extends ResourceContainer<? extends T, GalleryItem>> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, M, S, Q> {
+public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends IdentifiableListViewAdapter<LVA, AlbumItemRecyclerViewAdapterPreferences, T, RC, VH, MSL> {
 
-    public AlbumItemRecyclerViewAdapter(@NonNull final Context context, final Class<? extends ViewModelContainer> modelType, final M gallery, Q multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
+    public AlbumItemRecyclerViewAdapter(@NonNull final Context context, final Class<? extends ViewModelContainer> modelType, final RC gallery, MSL multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
         super(context, modelType, gallery, multiSelectStatusListener, prefs);
     }
 
@@ -78,17 +78,17 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
 
     @NonNull
     @Override
-    public S buildViewHolder(View view, int viewType) {
+    public VH buildViewHolder(View view, int viewType) {
 
         switch (viewType) {
             case GalleryItem.CATEGORY_TYPE:
-                return (S) new CategoryItemViewHolder(view, this, viewType);
+                return (VH) new CategoryItemViewHolder(view, this, viewType);
             case GalleryItem.VIDEO_RESOURCE_TYPE:
             case GalleryItem.PICTURE_RESOURCE_TYPE:
-                return (S) new ResourceItemViewHolder(view, this, viewType);
+                return (VH) new ResourceItemViewHolder(view, this, viewType);
             case GalleryItem.ALBUM_HEADING_TYPE:
             case GalleryItem.PICTURE_HEADING_TYPE:
-                return (S) new AlbumHeadingViewHolder(view, this, viewType);
+                return (VH) new AlbumHeadingViewHolder(view, this, viewType);
             default:
                 return null;
         }
@@ -105,8 +105,8 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
     }
 
     @Override
-    public void onBindViewHolder(@NonNull S holder, int position) {
-        GalleryItem newItem = getItemByPosition(position);
+    public void onBindViewHolder(@NonNull VH holder, int position) {
+        T newItem = getItemByPosition(position);
         if (!isHolderOutOfSync(holder, newItem)) {
             // rendering the same item
             switch (newItem.getType()) {
@@ -124,7 +124,7 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
         }
     }
 
-    public void redrawItem(S vh, CategoryItem item) {
+    public void redrawItem(VH vh, CategoryItem item) {
         // clone the item into the view holder item (will not be same object if serialization has occurred)
         vh.getItem().copyFrom(item, true);
         // find item index.
@@ -137,23 +137,23 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
     }
 
     @Override
-    protected CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, S> buildCustomClickListener(S viewHolder) {
-        return new AlbumItemCustomClickListener(getModelType(), viewHolder, this);
+    protected CustomClickListener<MSL, LVA, AlbumItemRecyclerViewAdapterPreferences, T, VH> buildCustomClickListener(VH viewHolder) {
+        return new AlbumItemCustomClickListener<T, LVA, MSL, VH, RC>(getModelType(), viewHolder, (LVA) this);
     }
 
-    public abstract static class AlbumItemMultiSelectStatusAdapter extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<GalleryItem> {
+    public abstract static class AlbumItemMultiSelectStatusAdapter<T extends GalleryItem> extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<T> {
 
         protected abstract void onCategoryLongClick(CategoryItem album);
 
         protected abstract void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem);
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, GalleryItem item) {
+        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, T item) {
             super.onItemClick(adapter, item);
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, GalleryItem item) {
+        public <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item) {
             if (item instanceof CategoryItem) {
                 onCategoryLongClick((CategoryItem) item);
             }
@@ -162,19 +162,19 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
         protected abstract void onCategoryClick(CategoryItem item);
     }
 
-    private static class AlbumItemCustomClickListener<T extends GalleryItem, Q extends AlbumItemMultiSelectStatusAdapter, S extends AlbumItemViewHolder<T, Q, S, M>, M extends ResourceContainer<T, GalleryItem>> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, S> {
+    private static class AlbumItemCustomClickListener<T extends GalleryItem, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH,RC>, MSL extends AlbumItemMultiSelectStatusAdapter<T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends CustomClickListener<MSL,LVA, AlbumItemRecyclerViewAdapterPreferences, T, VH> {
 
         private final int maxManualRetries = 2;
         private final Class<ViewModelContainer> modelType;
         private int manualRetries = 0;
 
-        public AlbumItemCustomClickListener(Class<ViewModelContainer> modelType, S viewHolder, AlbumItemRecyclerViewAdapter<T, Q, S, M> adapter) {
+        public AlbumItemCustomClickListener(Class<ViewModelContainer> modelType, VH viewHolder, LVA adapter) {
             super(viewHolder, adapter);
             this.modelType = modelType;
         }
 
         @Override
-        public AlbumItemRecyclerViewAdapter<T, Q, S, M> getParentAdapter() {
+        public LVA getParentAdapter() {
             return super.getParentAdapter();
         }
 
@@ -183,14 +183,14 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
                 AlbumItemMultiSelectStatusAdapter multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
                 multiSelectListener.onCategoryClick((CategoryItem) getViewHolder().getItem());
             }
-            AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, getParentAdapter().getItemStore(), getViewHolder().getItem());
+            AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, (ResourceContainer<?, GalleryItem>) getParentAdapter().getItemStore(), getViewHolder().getItem());
             EventBus.getDefault().post(event);
         }
 
         private void onNonCategoryClick() {
             if (!getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
                 //If not currently in multiselect mode
-                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, getParentAdapter().getItemStore(), getViewHolder().getItem());
+                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, (ResourceContainer<?, GalleryItem>) getParentAdapter().getItemStore(), getViewHolder().getItem());
                 EventBus.getDefault().post(event);
             } else if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled()) {
                 // Are allowing access to admin functions within the album
@@ -239,12 +239,13 @@ public class AlbumItemRecyclerViewAdapter<T extends GalleryItem, Q extends Album
         }
 
         private void onAlbumsHeadingClick() {
-            ResourceContainer<T, GalleryItem> itemStore = getParentAdapter().getItemStore();
+            RC itemStore = getParentAdapter().getItemStore();
             if (itemStore instanceof PiwigoAlbum) {
-                boolean hideAlbums = !((PiwigoAlbum) itemStore).isHideAlbums();
-                ((PiwigoAlbum) itemStore).setHideAlbums(hideAlbums);
-                AlbumHeadingViewHolder viewHolder = (AlbumHeadingViewHolder) getViewHolder();
-                viewHolder.setSubAlbumCount(((PiwigoAlbum) itemStore).getSubAlbumCount());
+                PiwigoAlbum album = (PiwigoAlbum)itemStore;
+                boolean hideAlbums = !album.isHideAlbums();
+                album.setHideAlbums(hideAlbums);
+                AlbumHeadingViewHolder<?,LVA,T,MSL,RC> viewHolder = (AlbumHeadingViewHolder<?,LVA,T,MSL,RC>) getViewHolder();
+                viewHolder.setSubAlbumCount(album.getSubAlbumCount());
                 viewHolder.setShowAlbumCount(hideAlbums);
                 getParentAdapter().notifyDataSetChanged();
             }

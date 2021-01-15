@@ -71,6 +71,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         this.allowedKeyFileTypes = allowedKeyFileTypes;
     }
 
+
     @Override
     protected void onSetInitialValue(Object defaultValue) {
         setKeystore(loadKeystore());

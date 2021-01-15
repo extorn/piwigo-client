@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
-public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapterPreferences<AlbumSelectionListAdapterPreferences> {
     private boolean flattenAlbumHierarchy = true;
     private boolean showThumbnails;
     private boolean allowRootAlbumSelection;

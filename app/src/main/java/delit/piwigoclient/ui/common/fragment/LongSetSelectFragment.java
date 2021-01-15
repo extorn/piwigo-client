@@ -42,7 +42,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences> extends MyFragment {
+public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences<Z>> extends MyFragment {
 
     private static final String ARG_ACTION_ID = "actionId";
     private static final String ARG_INITIAL_SELECTION = "initialSelection";
@@ -63,7 +63,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private ExtendedFloatingActionButton addListItemButton;
     private Z viewPrefs;
 
-    public static Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static <Z extends BaseRecyclerViewAdapterPreferences<Z>> Bundle buildArgsBundle(Z prefs, int actionId, HashSet<Long> initialSelection) {
 
         Bundle args = new Bundle();
 

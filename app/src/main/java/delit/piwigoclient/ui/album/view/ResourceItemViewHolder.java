@@ -10,25 +10,25 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 
-public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, M extends ResourceContainer<? extends ResourceItem, GalleryItem>> extends AlbumItemViewHolder<ResourceItem, Q, ResourceItemViewHolder<Q, M>, M> {
+public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL,T, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, T extends ResourceItem, RC extends PiwigoAlbum<T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
     public AppCompatImageView mTypeIndicatorImg;
     public AppCompatCheckBox checkBox;
 
-    public ResourceItemViewHolder(View view, AlbumItemRecyclerViewAdapter<ResourceItem, Q, ResourceItemViewHolder<Q, M>, M> parentAdapter, int viewType) {
+    public ResourceItemViewHolder(View view, LVA parentAdapter, int viewType) {
         super(view, parentAdapter, viewType);
     }
 
     @Override
-    public void fillValues(GalleryItem newItem, boolean allowItemDeletion) {
+    public void fillValues(T newItem, boolean allowItemDeletion) {
         super.fillValues(newItem, allowItemDeletion);
         updateCheckableStatus();
-        checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener(this));
+        checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener((VH)this));
         updateRecentlyViewedMarker(newItem);
 
         if (!(newItem.getName() == null || newItem.getName().isEmpty()) && parentAdapter.getAdapterPrefs().isShowResourceNames()) {

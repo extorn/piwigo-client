@@ -8,7 +8,7 @@ import android.os.Parcelable;
  * Created by gareth on 02/01/18.
  */
 
-public class PiwigoUsernames extends IdentifiablePagedList<Username> {
+public class PiwigoUsernames<T extends Username> extends IdentifiablePagedList<T> {
     public PiwigoUsernames() {
         super("Username");
     }

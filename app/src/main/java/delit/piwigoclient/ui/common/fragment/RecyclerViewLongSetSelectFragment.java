@@ -15,7 +15,7 @@ import delit.piwigoclient.R;
  * Created by gareth on 03/01/18.
  */
 
-public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter<?>, Z extends BaseRecyclerViewAdapterPreferences> extends LongSelectableSetSelectFragment<RecyclerView, X, Z> {
+public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter<T>, Z extends BaseRecyclerViewAdapterPreferences<Z>, T> extends LongSelectableSetSelectFragment<RecyclerView, X, Z,T> {
 
     @Override
     @LayoutRes

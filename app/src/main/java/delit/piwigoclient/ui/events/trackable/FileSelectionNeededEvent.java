@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.events.trackable;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,6 +10,7 @@ import androidx.annotation.Nullable;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.database.UriPermissionUse;
 
 /**
@@ -173,10 +173,10 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent implements P
     }
 
     public void requestUriReadPermission() {
-        this.selectedUriPermissionsFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+        this.selectedUriPermissionsFlags = IOUtils.URI_PERMISSION_READ;
     }
 
     public void requestUriReadWritePermissions() {
-        this.selectedUriPermissionsFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION & Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+        this.selectedUriPermissionsFlags = IOUtils.URI_PERMISSION_READ_WRITE;
     }
 }

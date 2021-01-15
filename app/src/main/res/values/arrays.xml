@@ -248,6 +248,15 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.95</item>
+        <item>"Bugfix:
+                - Insufficient file permissions used, causing failing uploads
+               Changes:
+                - New preference in app settings listing all Uri permissions held and their purpose
+               Recommendation:
+                - 1. Viewing all file permissions held by the app in the new preference, removing any you don't wish the app to hold.
+                - 2. Check each of your background upload jobs, reselect the folder to upload
+                - 3. Reselect the folder to download files from your server to"</item>
         <item>1.4.0.94</item>
         <item>"Bugfix:
                 - Ensure the files selected in app for upload are processed on a background thread on sending to Upload page so the UI remains visible."</item>

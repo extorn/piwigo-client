@@ -463,6 +463,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_key" translatable="false">preference_clear_list_of_user_hints_shown</string>
     <string name="preference_app_clear_list_of_user_hints_shown_title">Show All user hints again</string>
 
+    <string name="preference_app_uri_permissions_held_key" translatable="false">preference_app_uri_permissions_held_key</string>
+    <string name="preference_app_uri_permissions_held_title">URI Permissions Held</string>
+    <string name="preference_app_uri_permissions_held_summary">The purpose for all URI permissions held</string>
+
+
     <!-- TODO implement this concept - Don't forget to make translatable again! -->
 
     <string name="preference_user_hint_display_time_millis_key" translatable="false">preference_user_hint_display_time_millis</string>

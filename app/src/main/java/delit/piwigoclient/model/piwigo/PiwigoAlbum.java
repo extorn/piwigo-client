@@ -20,7 +20,7 @@ import delit.piwigoclient.BuildConfig;
  * Android template wizards.
  * <p>
  */
-public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Parcelable {
+public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<CategoryItem, T> implements Parcelable {
 
     private static final String TAG = "PwgAlb";
     public static final int DEFAULT_ALBUM_SORT_ORDER = 0;
@@ -93,7 +93,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     @Override
-    public int getDisplayIdx(GalleryItem item) {
+    public int getDisplayIdx(T item) {
         int rawIdx = super.getDisplayIdx(item);
         if (hideAlbums) {
             int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
@@ -105,7 +105,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     @Override
-    public GalleryItem getItemByIdx(final int idx) {
+    public T getItemByIdx(final int idx) {
         int adjustedIdx = idx;
         if (hideAlbums) {
             int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
@@ -149,11 +149,11 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     @Override
     public void addItem(GalleryItem item) {
         boolean replaced = false;
-        if (containsItem(item)) {
-            remove(item);
+        if (containsItem((T) item)) {
+            remove((T) item);
             replaced = true;
         }
-        super.addItem(item);
+        super.addItem((T) item);
         if (item == GalleryItem.PICTURE_HEADING && !replaced) {
             bannerCount++;
         }
@@ -169,22 +169,22 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     public void addItem(CategoryItem item) {
-        if (!containsItem(item)) {
+        if (!containsItem((T) item)) {
             if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
                 subAlbumCount++;
             } else {
                 bannerCount++;
             }
         } else {
-            remove(item);
+            remove((T) item);
         }
-        super.addItem(item);
+        super.addItem((T) item);
         // ensure these are always placed first.
         sortItems();
 //        Log.d("Order", getItems().toString());
     }
 
-    public void addItemPage(int page, int pageSize, List<GalleryItem> newItems) {
+    public void addItemPage(int page, int pageSize, List<T> newItems) {
         super.addItemPage(page, pageSize, newItems);
         for (GalleryItem item : newItems) {
             if (item == CategoryItem.ALBUM_HEADING || item == GalleryItem.PICTURE_HEADING) {
@@ -214,7 +214,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
 
     public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
         // remove all spacers
-        ArrayList<GalleryItem> items = getItems();
+        ArrayList<T> items = getItems();
         while (items.remove(CategoryItem.BLANK)) {
             if(BuildConfig.DEBUG) {
                 Log.d(TAG, "removing spacer album");
@@ -226,7 +226,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             // add correct number of spacers
             long blankId = CategoryItem.BLANK.getId();
             for (int i = 0; i < spacerAlbumsNeeded; i++) {
-                items.add(CategoryItem.BLANK.clone().withId(blankId++));
+                items.add((T)CategoryItem.BLANK.clone().withId(blankId++));
             }
             // ensure spacers are always placed before images etc.
             sortItems();
@@ -328,7 +328,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     public boolean addMissingAlbums(List<CategoryItem> adminCategories) {
-        boolean changed =  super.addMissingItems(adminCategories);
+        boolean changed =  super.addMissingItems((List<? extends T>) adminCategories);
         if(changed) {
             sortItems();
         }
@@ -343,8 +343,8 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         setSpacerAlbumCount(spacerAlbumsNeeded);
     }
 
-    public GalleryItem remove(int idx) {
-        GalleryItem removedItem = super.remove(idx);
+    public T remove(int idx) {
+        T removedItem = super.remove(idx);
         if (removedItem instanceof CategoryItem) {
             if (removedItem == CategoryItem.ADVERT || removedItem == GalleryItem.PICTURE_HEADING || removedItem == CategoryItem.ALBUM_HEADING) {
                 bannerCount--;

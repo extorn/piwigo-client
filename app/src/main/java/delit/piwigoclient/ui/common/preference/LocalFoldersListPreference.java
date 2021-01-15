@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -36,6 +35,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
 
     private static final String TAG = "LocalFolderPref";
     private AppSettingsViewModel appSettingsViewModel;
+    int requiredUriFlagsForSelectedItems = IOUtils.URI_PERMISSION_READ_WRITE; // default permissions
 
     public LocalFoldersListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -48,6 +48,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     public LocalFoldersListPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
 
     public LocalFoldersListPreference(Context context) {
         super(context);
@@ -69,12 +70,21 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
         return getContext().getString(R.string.local_folder_preference_summary_default);
     }
 
-    private boolean hasPermissionForUri(Uri folderUri) {
+    public void setRequiredPermissions(int requiredUriFlagsForSelectedItems) {
+        this.requiredUriFlagsForSelectedItems = requiredUriFlagsForSelectedItems;
+    }
 
-        boolean hasPermission = IOUtils.hasUriPermissions(getContext(), folderUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        if(!hasPermission) {
+    private boolean hasPermissionForUri(Uri folderUri) {
+        int permissionsHeld = IOUtils.getUriPermissionsFlags(getContext(), folderUri);
+        boolean hasPermission = (requiredUriFlagsForSelectedItems & permissionsHeld) == requiredUriFlagsForSelectedItems;
+        if(permissionsHeld == 0) {
             // need to remove this permission from our list of stored ones.
+            Logging.log(Log.WARN, TAG, "Deleting all records of permissions uses for uri %1$s as app no longer has permissions", folderUri);
             appSettingsViewModel.deleteAllForUri(folderUri);
+        } else if(!hasPermission) {
+            // need to remove this permission from our list of stored ones against this use key. It doesn't reflect reality
+            Logging.log(Log.WARN, TAG, "Deleting record of permissions use for uri %1$s by %2$s. Correct permissions not held", folderUri, getUriPermissionsKey());
+            appSettingsViewModel.releasePersistableUriPermission(getContext(), folderUri, getUriPermissionsKey(), false);
         }
         return hasPermission;
     }
@@ -205,9 +215,8 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private boolean takePersistableUriPermission(Uri selectedFolder) {
-        int flags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
         try {
-            appSettingsViewModel.takePersistableUriPermissions(getContext(), selectedFolder, flags, getUriPermissionsKey(), getContext().getString(R.string.preference_uri_consumer_description_pattern, getTitle()));
+            appSettingsViewModel.takePersistableUriPermissions(getContext(), selectedFolder, requiredUriFlagsForSelectedItems, getUriPermissionsKey(), getContext().getString(R.string.preference_uri_consumer_description_pattern, getTitle()));
         } catch(SecurityException e) {
             Logging.log(Log.WARN, TAG, "Unable to take persistable permissions for folder URI : " + selectedFolder);
             Logging.recordException(e);

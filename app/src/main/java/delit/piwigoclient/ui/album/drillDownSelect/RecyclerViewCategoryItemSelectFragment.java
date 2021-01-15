@@ -51,7 +51,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 
-public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter, CategoryItemViewAdapterPreferences> implements BackButtonHandler {
+public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter<?,?,?,?>, CategoryItemViewAdapterPreferences, CategoryItem> implements BackButtonHandler {
     private static final String TAG = "RecViewCatItemSelFr";
     private static final String ACTIVE_ITEM = "RecyclerViewCategoryItemSelectFragment.activeCategory";
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";

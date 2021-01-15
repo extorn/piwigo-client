@@ -18,7 +18,7 @@ import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.database.UriPermissionUse;
 
-public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<FolderItemViewAdapterPreferences> {
 
     public final static int ALPHABETICAL = 1;
     public final static int LAST_MODIFIED_DATE = 2;

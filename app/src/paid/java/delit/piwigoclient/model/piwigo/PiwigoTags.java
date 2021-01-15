@@ -15,7 +15,7 @@ import java.util.HashSet;
 /**
  * Created by gareth on 02/01/18.
  */
-public class PiwigoTags extends IdentifiablePagedList<Tag> {
+public class PiwigoTags<T extends Tag> extends IdentifiablePagedList<T> {
 
     private int pageSources = 1;
 
@@ -77,12 +77,12 @@ public class PiwigoTags extends IdentifiablePagedList<Tag> {
     }
 
     @Override
-    public int addItemPage(int page, int pageSize, Collection<Tag> newItems) {
+    public int addItemPage(int page, int pageSize, Collection<T> newItems) {
         throw new UnsupportedOperationException("use addItemPage specifying a page source indicator");
     }
 
-    public int addItemPage(@IntRange(from = 0, to = 5) int pageSourceId, boolean preferExistingItems, int page, int pageSize, Collection<Tag> newItems) {
-        ArrayList<Tag> items = getItems();
+    public int addItemPage(@IntRange(from = 0, to = 5) int pageSourceId, boolean preferExistingItems, int page, int pageSize, Collection<T> newItems) {
+        ArrayList<T> items = getItems();
         int realPage = (page * pageSources) + pageSourceId;
         if (items.size() == 0) {
             super.addItemPage(realPage, pageSize, newItems);
@@ -105,7 +105,7 @@ public class PiwigoTags extends IdentifiablePagedList<Tag> {
      * @param tags new items
      * @param preferExistingItems should existing items be left alone if already present
      */
-    public void addRandomItems(HashSet<Tag> tags, boolean preferExistingItems) {
+    public void addRandomItems(HashSet<T> tags, boolean preferExistingItems) {
         if(preferExistingItems) {
             tags.removeAll(getItems());
         } else {

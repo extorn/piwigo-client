@@ -95,6 +95,10 @@ public class AppSettingsViewModel extends AndroidViewModel {
         });
     }
 
+    public void releasePersistableUriPermission(@NonNull Context context, @NonNull UriPermissionUse uriPermissionUse) {
+        releasePersistableUriPermission(context, Uri.parse(uriPermissionUse.uri), uriPermissionUse.consumerId, false);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId, boolean removeTreeToo) {
         LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
@@ -123,7 +127,7 @@ public class AppSettingsViewModel extends AndroidViewModel {
                 if ((flagsToRemove != 0 || flagsStillUsed == 0) && consumers.size() == 0) {
                     // remove the Uri permission if it is no longer in use
                     List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, new ArrayList<>(Arrays.asList(uri)));//DO NOT USE SINGLETON LIST
-                    if(uriPermsHeld.indexOf(uri) >= 0) {
+                    if(uriPermsHeld.contains(uri)) {
                         try {
                             context.getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
                         } catch(SecurityException e) {
@@ -166,5 +170,4 @@ public class AppSettingsViewModel extends AndroidViewModel {
     public void deleteAllForUri(@NonNull Uri folderUri) {
         appSettingsRepository.deleteAllForUri(folderUri);
     }
-
 }

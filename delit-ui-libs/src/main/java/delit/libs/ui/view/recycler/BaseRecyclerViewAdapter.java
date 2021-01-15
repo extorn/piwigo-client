@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashSet;
@@ -22,46 +23,47 @@ import delit.libs.ui.view.list.SelectableItemsAdapter;
  * {@link RecyclerView.Adapter} that can display items
  *
  * @param <T> Item
- * @param <S> ViewHolder for each Item
+ * @param <VH> ViewHolder for each Item
  */
-public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>, P extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends RecyclerView.Adapter<S> implements Enableable, SelectableItemsAdapter<T> {
+public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapter<LVA, P,T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends RecyclerView.Adapter<VH> implements Enableable, SelectableItemsAdapter<T> {
 
     private static final String TAG = "BaseRecyclerViewAdapter";
-    private final P multiSelectStatusListener;
-    private V prefs;
-    private HashSet<Long> selectedResourceIds = new HashSet<>(0);
+    final MSL multiSelectStatusListener;
+    private P prefs;
+    HashSet<Long> selectedResourceIds = new HashSet<>(0);
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
 
-    public BaseRecyclerViewAdapter(P multiSelectStatusListener, V prefs) {
+    public BaseRecyclerViewAdapter(MSL multiSelectStatusListener, P prefs) {
         this.setHasStableIds(true);
         this.multiSelectStatusListener = multiSelectStatusListener;
         this.prefs = prefs;
     }
 
-    public V getAdapterPrefs() {
+    public P getAdapterPrefs() {
         return prefs;
     }
 
     @Override
     public abstract long getItemId(int position);
 
-    public abstract @NonNull S buildViewHolder(View view, int viewType);
+    public abstract @NonNull
+    VH buildViewHolder(View view, int viewType);
 
-    protected abstract T getItemById(Long selectedId);
+    protected abstract @Nullable T getItemById(@NonNull Long selectedId);
 
-    public abstract int getItemPosition(T item);
+    public abstract int getItemPosition(@NonNull T item);
 
     protected abstract void removeItemFromInternalStore(int idxToRemove);
 
-    protected abstract void replaceItemInInternalStore(int idxToReplace, T newItem);
+    protected abstract void replaceItemInInternalStore(int idxToReplace, @NonNull T newItem);
 
-    protected abstract T getItemFromInternalStoreMatching(T item);
+    protected abstract @NonNull T getItemFromInternalStoreMatching(@NonNull T item);
 
-    protected abstract void addItemToInternalStore(T item);
+    protected abstract void addItemToInternalStore(@NonNull T item);
 
-    public abstract T getItemByPosition(int position);
+    public abstract @NonNull T getItemByPosition(int position);
 
-    public abstract boolean isHolderOutOfSync(S holder, T newItem);
+    public abstract boolean isHolderOutOfSync(VH holder, T newItem);
 
     public abstract HashSet<Long> getItemsSelectedButNotLoaded();
 
@@ -82,23 +84,23 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
      * @param holder
      * @return true if this holder has never been used before (or is totally clean)
      */
-    protected boolean isDirtyItemViewHolder(S holder, T newItem) {
+    protected boolean isDirtyItemViewHolder(VH holder, T newItem) {
         return holder.getItem() == null || !holder.getItem().equals(newItem);
     }
 
     @NonNull
     @Override
-    public S onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflateView(parent, viewType);
 
-        final S viewHolder = buildViewHolder(view, viewType);
-        CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
+        final VH viewHolder = buildViewHolder(view, viewType);
+        CustomClickListener<MSL,LVA, P, T, VH> clickListener = buildCustomClickListener(viewHolder);
         viewHolder.internalCacheViewFieldsAndConfigure(clickListener, getAdapterPrefs());
         return viewHolder;
     }
 
-    protected CustomClickListener<V, T, S> buildCustomClickListener(S viewHolder) {
-        return new CustomClickListener<>(viewHolder, this);
+    protected CustomClickListener<MSL,LVA, P, T, VH> buildCustomClickListener(VH viewHolder) {
+        return new CustomClickListener<>(viewHolder, (LVA) this);
     }
 
     @Override
@@ -109,7 +111,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     }
 
     @Override
-    public void onBindViewHolder(@NonNull S holder, int position) {
+    public void onBindViewHolder(@NonNull VH holder, int position) {
         T newItem = getItemByPosition(position);
         if (isHolderOutOfSync(holder, newItem)) {
             // store the item in this recyclable holder.
@@ -183,6 +185,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     @Override
     public void clearSelectedItemIds() {
         selectedResourceIds.clear();
+        multiSelectStatusListener.onItemSelectionCountChanged(this,selectedResourceIds.size());
         notifyItemRangeChanged(0, getItemCount());
     }
 
@@ -191,6 +194,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         for (int i = 0; i < getItemCount(); i++) {
             selectedResourceIds.add(getItemId(i));
         }
+        multiSelectStatusListener.onItemSelectionCountChanged(this,selectedResourceIds.size());
         notifyItemRangeChanged(0, getItemCount());
     }
 
@@ -277,8 +281,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    public ItemSelectionListener<? extends BaseRecyclerViewAdapter<V, T, S, P>> buildItemSelectionListener(S viewHolder) {
-        return new ItemSelectionListener<>(this, viewHolder);
+    public ItemSelectionListener<LVA, VH,P,T,MSL> buildItemSelectionListener(VH viewHolder) {
+        return new ItemSelectionListener<>((LVA)this, viewHolder);
     }
 
     @Override
@@ -290,11 +294,11 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         return prefs.isMultiSelectionEnabled();
     }
 
-    public void onDeleteItem(S viewHolder, View v) {
+    public void onDeleteItem(VH viewHolder, View v) {
         multiSelectStatusListener.onItemDeleteRequested(this, viewHolder.getItem());
     }
 
-    public P getMultiSelectStatusListener() {
+    public MSL getMultiSelectStatusListener() {
         return multiSelectStatusListener;
     }
 
@@ -345,12 +349,12 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    protected class ItemSelectionListener<X extends BaseRecyclerViewAdapter<V, T, S, P>> implements CompoundButton.OnCheckedChangeListener {
+    public static class ItemSelectionListener<LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> implements CompoundButton.OnCheckedChangeListener {
 
-        private final S holder;
-        private X adapter;
+        private final VH holder;
+        private final LVA adapter;
 
-        public ItemSelectionListener(X adapter, S holder) {
+        public ItemSelectionListener(LVA adapter, VH holder) {
             this.adapter = adapter;
             this.holder = holder;
         }
@@ -359,14 +363,14 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             boolean changed = false;
             if (isChecked) {
-                changed = selectedResourceIds.add(holder.getItemId());
-                if (selectedResourceIds.size() > 1 && !isMultiSelectionAllowed()) {
+                changed = adapter.selectedResourceIds.add(holder.getItemId());
+                if (adapter.selectedResourceIds.size() > 1 && !adapter.isMultiSelectionAllowed()) {
                     changed |= deselectAllOtherItems();
                 }
             } else {
-                if (selectedResourceIds.contains(holder.getItemId())) {
-                    if (isAllowItemDeselection(holder.getItemId())) {
-                        changed = selectedResourceIds.remove(holder.getItemId());
+                if (adapter.selectedResourceIds.contains(holder.getItemId())) {
+                    if (adapter.isAllowItemDeselection(holder.getItemId())) {
+                        changed = adapter.selectedResourceIds.remove(holder.getItemId());
                     } else {
                         // re-check the button.
                         buttonView.setChecked(true);
@@ -374,18 +378,18 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
                 }
             }
             if (changed) {
-                multiSelectStatusListener.onItemSelectionCountChanged(adapter, selectedResourceIds.size());
+                adapter.multiSelectStatusListener.onItemSelectionCountChanged(adapter, adapter.selectedResourceIds.size());
             }
         }
 
         private boolean deselectAllOtherItems() {
             boolean changed = false;
-            Iterator<Long> iter = selectedResourceIds.iterator();
+            Iterator<Long> iter = adapter.selectedResourceIds.iterator();
             while (iter.hasNext()) {
                 Long selectedId = iter.next();
-                if (!selectedId.equals(holder.getItemId()) && isAllowItemDeselection(selectedId)) {
+                if (!selectedId.equals(holder.getItemId()) && adapter.isAllowItemDeselection(selectedId)) {
                     iter.remove();
-                    notifyItemChanged(getItemPosition(getItemById(selectedId)));
+                    adapter.notifyItemChanged(adapter.getItemPosition(adapter.getItemById(selectedId)));
                     changed = true;
                 }
             }

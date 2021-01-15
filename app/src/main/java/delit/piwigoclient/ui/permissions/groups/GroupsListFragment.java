@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
@@ -64,10 +63,10 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
     private ExtendedFloatingActionButton retryActionButton;
     private PiwigoGroups groupsModel;
     private GroupRecyclerViewAdapter viewAdapter;
-    private BaseRecyclerViewAdapterPreferences viewPrefs;
+    private GroupRecyclerViewAdapter.GroupViewAdapterPreferences viewPrefs;
 
     public static GroupsListFragment newInstance() {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().deletable();
+        GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().deletable();
         prefs.setAllowItemAddition(true);
         prefs.setEnabled(true);
         Bundle args = new Bundle();
@@ -85,7 +84,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
             b = getArguments();
         }
         if (b != null) {
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(b);
+            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().loadFromBundle(b);
         }
         super.onCreate(savedInstanceState);
     }
@@ -124,7 +123,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
         if (isSessionDetailsChanged()) {
             groupsModel.clear();
         } else if (savedInstanceState != null) {
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
+            viewPrefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);

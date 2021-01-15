@@ -17,8 +17,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
-import androidx.annotation.NonNull;
-
 import java.util.Locale;
 
 import delit.libs.core.util.Logging;
@@ -40,6 +38,8 @@ import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreferenceDialogFragmentCompat;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.UriPermissionsListPreference;
+import delit.piwigoclient.ui.common.preference.UriPermissionsListPreferenceDialogFragmentCompat;
 
 /**
  * Created by gareth on 26/05/17.
@@ -242,6 +242,8 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
         if(f == null) {
             if (preference instanceof ServerConnectionsListPreference) {
                 f = ServerConnectionsListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } if(preference instanceof UriPermissionsListPreference) {
+                f = UriPermissionsListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof ServerAlbumListPreference) {
                 f = ServerAlbumListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof IntListPreference) {

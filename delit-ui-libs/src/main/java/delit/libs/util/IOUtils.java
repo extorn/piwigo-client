@@ -66,6 +66,10 @@ import static android.os.Build.VERSION_CODES.KITKAT;
 
 public class IOUtils {
 
+    public static final int URI_PERMISSION_READ_WRITE = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+    public static final int URI_PERMISSION_READ = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+    public static final int URI_PERMISSION_WRITE = Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+
     private static final String TAG = "IOUtils";
 
     public static void write(InputStream src, OutputStream dst) throws IOException {
@@ -608,6 +612,8 @@ public class IOUtils {
             return rootDocFile;
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+        } catch(SecurityException e) {
+            return null; // no longer have permission to access this path
         }
     }
 
@@ -769,32 +775,35 @@ public class IOUtils {
         }
     }
 
-    public static boolean hasUriPermissions(Context context, Uri uri, int permissions) {
-        if (uri == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return true;
-        }
-        if("file".equals(uri.getScheme())) {
-            return Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q;
-        }
-        List<UriPermission> uriPerms = context.getContentResolver().getPersistedUriPermissions();
-        int readPerm = permissions & Intent.FLAG_GRANT_READ_URI_PERMISSION;
-        int writePerm = permissions & Intent.FLAG_GRANT_READ_URI_PERMISSION;
 
+    public static int getUriPermissionsFlags(Context context, Uri uri) {
+        // we have read write for any file uri
+        if("file".equals(uri.getScheme())) {
+            return URI_PERMISSION_READ_WRITE;
+        }
+        // for all other uris we must check
+        List<UriPermission> uriPerms = context.getContentResolver().getPersistedUriPermissions();
         Uri treeUri = IOUtils.getTreeUri(uri);
+        int permissionFlags = 0;
         for(UriPermission p : uriPerms) {
             if(p.getUri().equals(uri) || p.getUri().equals(treeUri)) {
                 if(p.isReadPermission()) {
-                    readPerm = 0;
+                    permissionFlags |= Intent.FLAG_GRANT_READ_URI_PERMISSION;
                 }
                 if(p.isWritePermission()) {
-                    writePerm = 0;
-                }
-                if(readPerm == 0 && readPerm == writePerm) {
-                    return true; // all permissions found.
+                    permissionFlags |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
                 }
             }
         }
-        return false;
+        return permissionFlags;
+    }
+
+    public static boolean appHoldsAllUriPermissionsForUri(Context context, Uri uri, int permissions) {
+        if (uri == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return true;
+        }
+        int permissionsHeld = getUriPermissionsFlags(context, uri);
+        return (permissions & permissionsHeld) == permissions;
     }
 
     /**
@@ -1077,5 +1086,58 @@ public class IOUtils {
             return DocumentFile.fromFile(new File(uri.getPath()));
         }
         return DocumentFile.fromSingleUri(context, uri);
+    }
+
+    public static Set<String> getMimeTypesFromFileExts(Set<String> mimeTypes, Set<String> fileExts) {
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        for(String fileExt : fileExts) {
+            String mimeType = map.getMimeTypeFromExtension(fileExt.toLowerCase());
+            if(mimeType == null) {
+                if(fileExt.equals("webmv")) {
+                    mimeType = "video/webm";
+                }
+            }
+            if(mimeType != null) {
+                mimeTypes.add(mimeType);
+            } else {
+                Logging.log(Log.WARN, TAG, "Unrecognised file extension - no mime type found : " + fileExt);
+            }
+        }
+        return mimeTypes;
+    }
+
+    /**
+     * @param input a combined set of flags
+     * @param filterFlags flags to filter the input to (remove everything else)
+     * @return a set of combined filterFlags less any that wern't found in the input
+     */
+    public static int filterToCombinedFlags(int input, int ... filterFlags) {
+        int combinedFilter = combineIntFlags(filterFlags);
+        return input & combinedFilter;
+    }
+
+    /**
+     * @param permFlags a set of individual flags that are ORd together
+     * @return a combined (ORd set of the flags)
+     */
+    public static int combineIntFlags(int ... permFlags) {
+        int flags = 0;
+        if(permFlags != null && permFlags.length > 0) {
+            for(int flag : permFlags) {
+                flags |= flag;
+            }
+        }
+        return flags;
+    }
+
+    /**
+     * @param input a mix of flags to test
+     * @param permFlags the flags wanted
+     * @return true if all the flags wanted are contained in the input
+     */
+    public static boolean allUriFlagsAreSet(int input, int ... permFlags) {
+        int expectedFlags = combineIntFlags(permFlags);
+        int filteredPerms = input & expectedFlags; // filter everything not expected out
+        return expectedFlags == filteredPerms; // is what is left matching what was expected or are bits of expected missing?
     }
 }

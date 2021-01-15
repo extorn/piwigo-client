@@ -19,7 +19,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 
 import delit.libs.ui.view.ProgressIndicator;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -27,10 +26,9 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
-import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 import delit.piwigoclient.ui.favorites.ViewFavoritesFragment;
-import delit.piwigoclient.ui.preferences.AutoUploadJobPreferenceFragment;
+import delit.piwigoclient.ui.tags.TagRecyclerViewAdapter;
 import delit.piwigoclient.ui.tags.TagSelectFragment;
 import delit.piwigoclient.ui.tags.TagsListFragment;
 import delit.piwigoclient.ui.tags.ViewTagFragment;
@@ -66,7 +64,7 @@ public class MainActivity extends AbstractMainActivity {
 
     @Override
     protected void showTags() {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences();
+        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences();
         prefs.setEnabled(true);
         prefs.setAllowItemAddition(true);
         //TODO tags deletion is not working (unsupported in piwigo server at the moment)
@@ -77,14 +75,14 @@ public class MainActivity extends AbstractMainActivity {
         showFragmentNow(fragment);
     }
 
-    private void showTagSelectionFragment(int actionId, BaseRecyclerViewAdapterPreferences prefs, HashSet<Long> initialSelection, HashSet<Tag> unsavedTags) {
+    private void showTagSelectionFragment(int actionId, TagRecyclerViewAdapter.TagViewAdapterPreferences prefs, HashSet<Long> initialSelection, HashSet<Tag> unsavedTags) {
         TagSelectFragment fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection, unsavedTags);
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TagSelectionNeededEvent event) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        TagRecyclerViewAdapter.TagViewAdapterPreferences prefs = new TagRecyclerViewAdapter.TagViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         prefs.setAllowItemAddition(true);
         if(!event.isAllowEditing()) {
             prefs.readonly();

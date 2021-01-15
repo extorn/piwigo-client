@@ -316,7 +316,7 @@ public class BundleUtils {
         return readSet(in, key, set);
     }
 
-    public static <T extends Parcelable> SortedSet<T> readSet(@NonNull Bundle in, @NonNull String key, @NonNull SortedSet<T> set) {
+    public static <T extends Parcelable, S extends Set<T>> S readSet(@NonNull Bundle in, @NonNull String key, @NonNull S set) {
         try {
             Parcelable[] data = in.getParcelableArray(key);
             if (data != null) {

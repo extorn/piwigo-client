@@ -80,7 +80,7 @@ import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 import static android.view.View.GONE;
 
 //@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
+public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter<?,FolderItem,?,?>, FolderItemViewAdapterPreferences, FolderItem> implements BackButtonHandler {
     private static final String TAG = "RVFolderSelFrg";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
     private DocumentFileBreadcrumbsView folderPathView;
@@ -179,9 +179,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int perms;
             if(!getViewPrefs().isAllowFolderSelection()) {
-                perms = getViewPrefs().getSelectedUriPermissionFlags();
+                perms = Intent.FLAG_GRANT_READ_URI_PERMISSION; // only need read permission for the folders
             } else {
-                perms = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                perms = getViewPrefs().getSelectedUriPermissionFlags();
             }
             addRootButton.setOnClickListener(v1 -> retrievePermissionsForUri(null, perms));
         } else {
@@ -411,42 +411,32 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
      *
      * @param resultData
      * @param itemUri
-     * @param permFlags default is READ WRITE if not provided
-     * @return
+     * @return true if a permission needed was missing.
      */
-    private boolean takePersistablePermissionsIfNeeded(Intent resultData, Uri itemUri, int ... permFlags) {
-        boolean permissionsMissing = true;
-        int desiredPerms = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
-        int takeFlags = resultData.getFlags() & (desiredPerms);
-        if(permFlags != null && permFlags.length > 0) {
-            desiredPerms = 0;
-            for(int flag : permFlags) {
-                desiredPerms |= flag;
-            }
-            takeFlags &= desiredPerms;
-        } else {
-            permissionsMissing = takeFlags != desiredPerms;
-            if(permissionsMissing) {
-                Logging.log(Log.ERROR, TAG, "Wanted permissions %1$d but received %2$d for uri %3$s", desiredPerms, takeFlags, itemUri);
-            }
-        }
+    private boolean takePersistablePermissionsIfNeeded(Intent resultData, Uri itemUri) {
+        boolean allUriFlagsAreSet = true;
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int desiredFlags = getViewPrefs().getSelectedUriPermissionFlags();
+            //resultData.getFlags();
+            int flagsProvided = IOUtils.filterToCombinedFlags(resultData.getFlags(), desiredFlags);
+            allUriFlagsAreSet = flagsProvided == desiredFlags;
+
+            if(!allUriFlagsAreSet) {
+                Logging.log(Log.ERROR, TAG, "Wanted permissions %1$d but received %2$d for uri %3$s", desiredFlags, flagsProvided, itemUri);
+            }
+
             try {
-                appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, takeFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
-                //TODO take permissions just for file selection perhaps - is this desirable?
-//                if(IOUtils.getTreeUri(itemUri).equals(itemUri)) {
-                    // take permission for file select too.
-//                    appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), itemUri, takeFlags, getString(R.string.uri_permission_justification_file_selection));
-//                }
-                permissionsMissing = false;
+                appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, desiredFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
+                if(IOUtils.getTreeUri(itemUri).equals(itemUri)) {
+//                     take Read permission for file select too.
+                    appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), itemUri, Intent.FLAG_GRANT_READ_URI_PERMISSION, getString(R.string.uri_permission_justification_file_selection));
+                }
             } catch(SecurityException e) {
-                Logging.log(Log.WARN, TAG, "Unable to take persistable permissions %2$d for URI : %1$s", itemUri, takeFlags, resultData.getFlags());
+                Logging.log(Log.WARN, TAG, "Unable to take persistable permissions %2$d for URI : %1$s", itemUri, desiredFlags);
 //                Logging.recordException(e);
             }
-        } else {
-            permissionsMissing = false;
         }
-        return permissionsMissing;
+        return !allUriFlagsAreSet;
     }
 
     private List<FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
@@ -465,8 +455,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             try {
                 DocumentFile docFile = DocumentFile.fromTreeUri(context, permittedUri);
                 if(docFile != null) {
-                    final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, permittedUri, takeFlags);
+                    boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, permittedUri);
                     if(!permissionsMissing) {
                         FolderItem folderItem = new FolderItem(permittedUri, docFile);
                         folderItem.cacheFields(context);
@@ -482,8 +471,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             } catch(IllegalArgumentException e) {
                 // this is most likely because it is not a folder.
                 DocumentFile docFile = IOUtils.getSingleDocFile(context, permittedUri);
-                final int takeFlags = resultData.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri(), takeFlags);
+                boolean permissionsMissing = takePersistablePermissionsIfNeeded(resultData, docFile.getUri());
 
                 FolderItem folderItem = new FolderItem(permittedUri, docFile);
                 folderItem.cacheFields(context);
@@ -542,7 +530,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             fileExtFilters.setListener(new FileExtFilterControlListener(getListAdapter()));
 
             DocumentFile initialFolder = null;
-            if(getViewPrefs().getInitialFolder() != null) {
+            Uri lastFolderUsed = getViewPrefs().getInitialFolder();
+            if(lastFolderUsed != null) {
+                //Only open the last opened Uri if we have access to it.
                 initialFolder = IOUtils.getDocumentFileForUriLinkedToAnAccessibleRoot(requireContext(), getViewPrefs().getInitialFolder());
             }
             if (initialFolder != null) {
@@ -709,9 +699,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
     private static class FileExtFilterControlListener implements FilterControl.FilterListener {
 
-        private final FolderItemRecyclerViewAdapter listAdapter;
+        private final FolderItemRecyclerViewAdapter<?,?,?,?> listAdapter;
 
-        public FileExtFilterControlListener(FolderItemRecyclerViewAdapter adapter) {
+        public FileExtFilterControlListener(FolderItemRecyclerViewAdapter<?,?,?,?> adapter) {
             this.listAdapter = adapter;
         }
 
@@ -743,9 +733,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private static class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
         private final int spanCount;
-        private final FolderItemRecyclerViewAdapter viewAdapter;
+        private final FolderItemRecyclerViewAdapter<?,?,?,?> viewAdapter;
 
-        public SpanSizeLookup(FolderItemRecyclerViewAdapter viewAdapter, int spanCount) {
+        public SpanSizeLookup(FolderItemRecyclerViewAdapter<?,?,?,?> viewAdapter, int spanCount) {
             this.viewAdapter = viewAdapter;
             this.spanCount = spanCount;
         }

@@ -1,11 +1,14 @@
 package delit.piwigoclient.database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
 @Entity(primaryKeys = {"uri", "consumerId"})
-public class UriPermissionUse {
+public class UriPermissionUse implements Parcelable {
     public static final String CONSUMER_ID_FILE_SELECT = "fileSelect";
     public static final String TRANSIENT = "transient";
 
@@ -38,4 +41,35 @@ public class UriPermissionUse {
     public int flags;
 
 
+    protected UriPermissionUse(Parcel in) {
+        uri = in.readString();
+        consumerId = in.readString();
+        localizedConsumerName = in.readString();
+        flags = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uri);
+        dest.writeString(consumerId);
+        dest.writeString(localizedConsumerName);
+        dest.writeInt(flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<UriPermissionUse> CREATOR = new Creator<UriPermissionUse>() {
+        @Override
+        public UriPermissionUse createFromParcel(Parcel in) {
+            return new UriPermissionUse(in);
+        }
+
+        @Override
+        public UriPermissionUse[] newArray(int size) {
+            return new UriPermissionUse[size];
+        }
+    };
 }

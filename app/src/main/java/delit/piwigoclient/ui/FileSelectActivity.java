@@ -263,9 +263,12 @@ public class FileSelectActivity extends MyActivity {
             clipItems.add(clipItem);
         }
         ClipDescription desc = new ClipDescription(getString(R.string.selected_files), mimes.toArray(new String[0]));
-        ClipData clipData = new ClipData(desc, clipItems.remove(0));
-        for (ClipData.Item clipItem : clipItems) {
-            clipData.addItem(clipItem);
+        ClipData clipData = null;
+        if(clipItems.size() > 0) {
+            clipData = new ClipData(desc, clipItems.remove(0));
+            for (ClipData.Item clipItem : clipItems) {
+                clipData.addItem(clipItem);
+            }
         }
         return clipData;
     }

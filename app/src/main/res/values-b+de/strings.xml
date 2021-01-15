@@ -637,7 +637,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="message_piwigo_server_inconsistent_results">Die Prüfsumme der Piwigo-API-Aufruf%1$s-Datei stimmt nicht überein, aber der API-Aufruf%2$s meldet, dass sie übereinstimmt. Dies kann ein Fehler im PIWIGO-Server oder ein von Ihnen verwendetes Plugin sein und möglicherweise eine Meldung wert sein.</string>
     <string name="alert_bulk_image_permissions_title">Festlegen von Zugriffsberechtigungen</string>
     <string name="alert_bulk_image_permissions_message">Legen Sie die Zugriffsberechtigungsstufen für die ausgewählten Ressourcen%1$d fest</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die für einen MIME-Typ von%1$freigegeben wurden, können nicht verarbeitet werden</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die für einen MIME-Typ von %1$s freigegeben wurden, können nicht verarbeitet werden</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit den folgenden Erweiterungen können nicht hochgeladen werden und wurden entfernt:%1$s</string>
     <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album aus</string>
     <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Beim Zugriff auf Google Play Services ist ein Problem aufgetreten.</string>

@@ -1065,5 +1065,7 @@ SOFTWARE.
     <string name="alert_error_unable_add_files_previous_job_still_running">Unable to add files for upload. An upload job is in progress.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Unable to add files for upload. The current  upload job needs to finish first.</string>
     <string name="removing_files_from_job">Removing files from Upload Job</string>
+    <string name="permission_write">Write</string>
+    <string name="permission_read">Read</string>
 
 </resources>

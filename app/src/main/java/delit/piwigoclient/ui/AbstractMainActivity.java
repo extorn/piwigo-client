@@ -56,7 +56,6 @@ import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomToolbar;
 import delit.libs.ui.view.ProgressIndicator;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.VersionUtils;
@@ -112,9 +111,11 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
+import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
 import delit.piwigoclient.ui.permissions.users.UserFragment;
+import delit.piwigoclient.ui.permissions.users.UsernameRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
@@ -1110,7 +1111,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences prefs = new UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
             prefs.readonly();
         }
@@ -1137,7 +1138,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs = new GroupRecyclerViewAdapter.GroupViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
             prefs.readonly();
         }

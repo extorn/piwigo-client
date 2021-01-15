@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.file;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -47,27 +48,29 @@ import delit.piwigoclient.business.ResizingPicassoLoader;
 
 import static delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences.ALPHABETICAL;
 
-
-public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, FolderItem, FolderItemRecyclerViewAdapter.FolderItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<FolderItem>> {
-
+public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends BaseRecyclerViewAdapter<LVA, FolderItemViewAdapterPreferences, T, VH, MSL> {
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
     private static final String TAG = "FolderItemRecAdap";
     private Comparator<? super FolderItem> fileComparator;
-    private NavigationListener navigationListener;
+    private final NavigationListener navigationListener;
     private TreeMap<String, String> currentVisibleDocumentFileExts;
-    private List<FolderItem> currentFullContent;
-    private List<FolderItem> currentDisplayContent;
+    private List<T> currentFullContent;
+    private List<T> currentDisplayContent;
     private DocumentFile activeFolder;
     private Uri activeRootUri;
     private boolean isBusy;
     private SafeAsyncTask activeTask;
     private TaskProgressListener taskListener;
 
-    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MultiSelectStatusListener<FolderItem> multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
+    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MSL multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
+    }
+
+    public boolean isBusy() {
+        return isBusy;
     }
 
     protected SavedState saveState() {
@@ -154,9 +157,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         activeTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    protected List<FolderItem> getNewDisplayContentInternal(@NonNull Context context, DocumentFile newContent) {
+    protected List<T> getNewDisplayContentInternal(@NonNull Context context, DocumentFile newContent) {
 
-        List<FolderItem> currentDisplayContent;
+        List<T> currentDisplayContent;
         activeFolder = newContent;
         getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
         // load all the children.
@@ -284,19 +287,19 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return true;
     }
 
-    private List<FolderItem> buildDisplayContent(Context context, @NonNull List<DocumentFile> folderContent) {
+    private List<T> buildDisplayContent(Context context, @NonNull List<DocumentFile> folderContent) {
 
         if(folderContent.isEmpty()) {
             return new ArrayList<>();
         }
 
-        List<FolderItem> displayContent = new ArrayList<>(folderContent.size());
+        List<T> displayContent = new ArrayList<>(folderContent.size());
         int itemCount = folderContent.size();
 //        String[] permissableMimeTypes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
 
         for (int i = 0; i < itemCount; i++) {
             DocumentFile f = folderContent.get(i);
-            FolderItem folderItem = new FolderItem(activeRootUri, f);
+            T folderItem = (T)new FolderItem(activeRootUri, f);
             displayContent.add(folderItem);
         }
 
@@ -316,9 +319,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return displayContent;
     }
 
+
+
     @Override
-    protected CustomClickListener<FolderItemViewAdapterPreferences, FolderItem, FolderItemViewHolder> buildCustomClickListener(FolderItemViewHolder viewHolder) {
-        return new FolderItemCustomClickListener(viewHolder, this);
+    protected CustomClickListener<MSL,LVA, FolderItemViewAdapterPreferences, T, VH> buildCustomClickListener(VH viewHolder) {
+        return new FolderItemCustomClickListener<>(viewHolder, (LVA)this);
     }
 
     public DocumentFile getActiveFolder() {
@@ -375,15 +380,15 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     @Override
-    protected FolderItem getItemById(Long selectedId) {
+    protected T getItemById(@NonNull Long selectedId) {
         if(selectedId == null) {
             return null;
         }
-        List<FolderItem> content = currentFullContent;
+        List<T> content = currentFullContent;
         if(content == null || content.size() < currentDisplayContent.size()) {
             content = currentDisplayContent;
         }
-        for(FolderItem item : content) {
+        for(T item : content) {
             if(item.getUid() == selectedId) {
                 return item;
             }
@@ -408,11 +413,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @NonNull
     @Override
-    public FolderItemViewHolder buildViewHolder(View view, int viewType) {
+    public VH buildViewHolder(View view, int viewType) {
         if (viewType == VIEW_TYPE_FOLDER) {
-            return new FolderItemFolderViewHolder(view);
+            return (VH)new FolderItemFolderViewHolder(view);
         } else {
-            return new FolderItemDocumentFileViewHolder(view);
+            return (VH)new FolderItemDocumentFileViewHolder(view);
         }
         //TODO allow blank "folder" spacer items to correct the visual display.
     }
@@ -429,7 +434,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     @Override
-    public int getItemPosition(FolderItem item) {
+    public int getItemPosition(@NonNull FolderItem item) {
         if (currentDisplayContent == null) {
             throw new IllegalStateException("Please set the initial folder and initialise the list before attempting to access the items in the list");
         }
@@ -446,19 +451,20 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     @Override
-    protected void replaceItemInInternalStore(int idxToReplace, FolderItem newItem) {
+    protected void replaceItemInInternalStore(int idxToReplace, @NonNull FolderItem newItem) {
         throw new UnsupportedOperationException("This makes no sense for a file structure traversal");
     }
 
+    @NonNull
     @Override
-    protected FolderItem getItemFromInternalStoreMatching(FolderItem item) {
+    protected T getItemFromInternalStoreMatching(@NonNull FolderItem item) {
         // they'll always be the same
-        return item;
+        return (T) item;
     }
 
     @Override
-    protected void addItemToInternalStore(FolderItem item) {
-        addFolderItemToInternalStore(item);
+    protected void addItemToInternalStore(@NonNull FolderItem item) {
+        addFolderItemToInternalStore((T) item);
     }
 
 
@@ -472,7 +478,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    private TreeMap<String, String> buildListOfFileExtsAndMimesInCurrentFolder(@Nullable List<FolderItem> currentDisplayContent) {
+    private TreeMap<String, String> buildListOfFileExtsAndMimesInCurrentFolder(@Nullable List<T> currentDisplayContent) {
         TreeMap<String, String> currentVisibleDocumentFileExts = new TreeMap<>();
         if(currentDisplayContent == null) {
             return currentVisibleDocumentFileExts;
@@ -489,7 +495,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return currentVisibleDocumentFileExts;
     }
 
-    private void addFolderItemToInternalStore(FolderItem item) {
+    private void addFolderItemToInternalStore(T item) {
         DocumentFile docFile = item.getDocumentFile();
         if (!docFile.exists()) {
             throw new IllegalStateException("Cannot add DocumentFile to display that does not yet exist");
@@ -509,8 +515,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         currentDisplayContent.add(item);
     }
 
+    @NonNull
     @Override
-    public FolderItem getItemByPosition(int position) {
+    public T getItemByPosition(int position) {
         if(currentDisplayContent.size() <= position) {
             return null;
         }
@@ -518,7 +525,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     @Override
-    public boolean isHolderOutOfSync(FolderItemViewHolder holder, FolderItem newItem) {
+    public boolean isHolderOutOfSync(VH holder, T newItem) {
         return isDirtyItemViewHolder(holder, newItem);
     }
 
@@ -526,9 +533,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return activeRootUri;
     }
 
-    public void addItems(@NonNull Context context, List<FolderItem> folderItems) {
+    public void addItems(@NonNull Context context, List<T> folderItems) {
         if(folderItems != null) {
-            for (FolderItem item : folderItems) {
+            for (T item : folderItems) {
                 addFolderItemToInternalStore(item);
             }
             afterAddingFolderItemsToInternalStore(context);
@@ -576,37 +583,37 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         void onPostFolderOpened(DocumentFile oldFolder, DocumentFile newFolder);
     }
 
-    class FolderItemCustomClickListener extends CustomClickListener<FolderItemViewAdapterPreferences, FolderItem, FolderItemViewHolder> {
-        public FolderItemCustomClickListener(FolderItemViewHolder viewHolder, FolderItemRecyclerViewAdapter parentAdapter) {
+    static class FolderItemCustomClickListener<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends CustomClickListener<MSL,LVA, FolderItemViewAdapterPreferences, T, VH> {
+        public FolderItemCustomClickListener(VH viewHolder, LVA parentAdapter) {
             super(viewHolder, parentAdapter);
         }
 
         @Override
         public void onClick(View v) {
-            if(isBusy) {
+            if(getParentAdapter().isBusy()) {
                 return;
             }
             if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
                 FolderItem folderItem = getViewHolder().getItem();
-                changeFolderViewed(v.getContext(), folderItem.getDocumentFile());
-            } else if (getAdapterPrefs().isAllowFileSelection()) {
+                getParentAdapter().changeFolderViewed(v.getContext(), folderItem.getDocumentFile());
+            } else if (getParentAdapter().getAdapterPrefs().isAllowFileSelection()) {
                 super.onClick(v);
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if(isBusy) {
+            if(getParentAdapter().isBusy()) {
                 return false;
             }
-            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getAdapterPrefs().isAllowFolderSelection()) {
+            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getParentAdapter().getAdapterPrefs().isAllowFolderSelection()) {
                 super.onClick(v);
             }
             return super.onLongClick(v);
         }
     }
 
-    protected class FolderItemFolderViewHolder extends FolderItemViewHolder {
+    protected class FolderItemFolderViewHolder extends FolderItemViewHolder<VH, LVA, T, MSL> {
 
         public FolderItemFolderViewHolder(View view) {
             super(view);
@@ -614,7 +621,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
         @Override
         public void fillValues(FolderItem newItem, boolean allowItemDeletion) {
-            setItem(newItem);
+            setItem((T) newItem);
             getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
             if (!allowItemDeletion) {
@@ -634,7 +641,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    protected class FolderItemDocumentFileViewHolder extends FolderItemViewHolder {
+    protected class FolderItemDocumentFileViewHolder extends FolderItemViewHolder<VH, LVA, T, MSL> {
 
         private TextView itemHeading;
         private static final String TAG = "FolderItemDocFileVH";
@@ -643,9 +650,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             super(view);
         }
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         @Override
         public void fillValues(FolderItem newItem, boolean allowItemDeletion) {
-            setItem(newItem);
+            setItem((T) newItem);
 
             long bytes = newItem.getFileLength();
             itemHeading.setVisibility(View.VISIBLE);
@@ -691,7 +699,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    protected abstract static class FolderItemViewHolder extends BaseViewHolder<FolderItemViewAdapterPreferences, FolderItem> implements PicassoLoader.PictureItemImageLoaderListener {
+    public abstract static class FolderItemViewHolder<VH extends FolderItemViewHolder<VH,LVA,T,MSL>, LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends BaseViewHolder<VH,FolderItemViewAdapterPreferences, T, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
 
         private ImageView iconView;
         private ImageView typeIndicatorView;

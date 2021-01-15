@@ -25,8 +25,10 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 
-public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemRecyclerViewAdapter.CategoryItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>> {
+public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH,M>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>, VH extends CategoryItemRecyclerViewAdapter.CategoryItemViewHolder<VH, LVA, MSL, M>, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends BaseRecyclerViewAdapter<LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH, MSL> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
@@ -35,7 +37,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     private CategoryItem activeItem;
     private NavigationListener navigationListener;
 
-    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener<CategoryItem> multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
+    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MSL multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
         super(multiSelectStatusListener, viewPrefs);
         this.navigationListener = navigationListener;
         overallRoot = root;
@@ -99,8 +101,8 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     }
 
     @Override
-    protected CustomClickListener<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder> buildCustomClickListener(CategoryItemViewHolder viewHolder) {
-        return new CategoryItemCustomClickListener(viewHolder, this);
+    protected CustomClickListener<MSL, LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH> buildCustomClickListener(VH viewHolder) {
+        return new CategoryItemCustomClickListener(viewHolder, (LVA)this);
     }
 
     @Override
@@ -138,23 +140,23 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
     @NonNull
     @Override
-    public SimpleCategoryItemViewHolder buildViewHolder(View view, int viewType) {
+    public VH buildViewHolder(View view, int viewType) {
 //        if (viewType == VIEW_TYPE_FOLDER) {
 //            return new SimpleCategoryItemViewHolder(view);
 //        } else {
 //            return new CategoryItemFileViewHolder(view);
 //        }
         // always use the same layout for now.
-        return new SimpleCategoryItemViewHolder(view);
+        return (VH) new SimpleCategoryItemViewHolder(view);
     }
 
     @Override
-    protected CategoryItem getItemById(Long selectedId) {
+    protected CategoryItem getItemById(@NonNull Long selectedId) {
         return overallRoot.findChild(selectedId);
     }
 
     @Override
-    public int getItemPosition(CategoryItem item) {
+    public int getItemPosition(@NonNull CategoryItem item) {
         return currentDisplayContent.indexOf(item);
     }
 
@@ -166,31 +168,33 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     }
 
     @Override
-    protected void replaceItemInInternalStore(int idxToReplace, CategoryItem newItem) {
+    protected void replaceItemInInternalStore(int idxToReplace, @NonNull CategoryItem newItem) {
         throw new UnsupportedOperationException("This makes no sense for a file structure traversal");
     }
 
+    @NonNull
     @Override
-    protected CategoryItem getItemFromInternalStoreMatching(CategoryItem item) {
+    protected CategoryItem getItemFromInternalStoreMatching(@NonNull CategoryItem item) {
         // they'll always be the same
         return item;
     }
 
     @Override
-    protected void addItemToInternalStore(CategoryItem item) {
+    protected void addItemToInternalStore(@NonNull CategoryItem item) {
         if (null == activeItem.findImmediateChild(item.getId())) {
             throw new IllegalArgumentException("CategoryItem is not a child of the currently displayed CategoryItem");
         }
         currentDisplayContent.add(item);
     }
 
+    @NonNull
     @Override
     public CategoryItem getItemByPosition(int position) {
         return currentDisplayContent.get(position);
     }
 
     @Override
-    public boolean isHolderOutOfSync(CategoryItemViewHolder holder, CategoryItem newItem) {
+    public boolean isHolderOutOfSync(VH holder, CategoryItem newItem) {
         return isDirtyItemViewHolder(holder, newItem);
     }
 
@@ -208,8 +212,8 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         void onCategoryOpened(CategoryItem oldCategory, CategoryItem newCategory);
     }
 
-    class CategoryItemCustomClickListener extends CustomClickListener<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder> {
-        public <Q extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder, MultiSelectStatusListener<CategoryItem>>> CategoryItemCustomClickListener(CategoryItemViewHolder viewHolder, Q parentAdapter) {
+    class CategoryItemCustomClickListener extends CustomClickListener<MSL, LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH> {
+        public CategoryItemCustomClickListener(VH viewHolder, LVA parentAdapter) {
             super(viewHolder, parentAdapter);
         }
 
@@ -284,7 +288,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    protected abstract static class CategoryItemViewHolder extends BaseViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
+    protected abstract static class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH,LVA,MSL,M>, LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH,M>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends BaseViewHolder<VH,CategoryItemViewAdapterPreferences, CategoryItem, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
 

@@ -21,7 +21,6 @@ import java.util.HashSet;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
@@ -41,13 +40,13 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
+public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter<?,?,?>, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group> {
 
     private static final String GROUPS_MODEL = "groupsModel";
     private static final String TAG = "GrpSelFrag";
     private PiwigoGroups groupsModel;
 
-    public static GroupSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static GroupSelectFragment newInstance(GroupRecyclerViewAdapter.GroupViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         GroupSelectFragment fragment = new GroupSelectFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
@@ -55,9 +54,12 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected GroupRecyclerViewAdapter.GroupViewAdapterPreferences createEmptyPrefs() {
+        return new GroupRecyclerViewAdapter.GroupViewAdapterPreferences();
     }
+/*
+    public static class GroupSelectAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupSelectAdapterPreferences> {
+    }*/
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
