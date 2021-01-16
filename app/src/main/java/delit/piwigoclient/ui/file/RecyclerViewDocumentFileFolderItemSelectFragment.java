@@ -427,7 +427,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
             try {
                 appSettingsViewModel.takePersistableUriPermissions(requireContext(), itemUri, desiredFlags, getViewPrefs().getSelectedUriPermissionConsumerId(), getViewPrefs().getSelectedUriPermissionConsumerPurpose());
-                if(IOUtils.getTreeUri(itemUri).equals(itemUri)) {
+                if(DocumentFile.fromSingleUri(requireContext(), itemUri).isDirectory()) {
 //                     take Read permission for file select too.
                     appSettingsViewModel.takePersistableFileSelectionUriPermissions(requireContext(), itemUri, Intent.FLAG_GRANT_READ_URI_PERMISSION, getString(R.string.uri_permission_justification_file_selection));
                 }

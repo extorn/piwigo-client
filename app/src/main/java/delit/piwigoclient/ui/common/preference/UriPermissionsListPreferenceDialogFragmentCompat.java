@@ -181,8 +181,7 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
         UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<UriPermissionUse> actionListener = new UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<UriPermissionUse>(deleteSelectedButton) {
             @Override
             public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, UriPermissionUse item) {
-                itemsForDelete.add(item);
-                adapter.remove(item);
+                onItemDelete(item);
             }
         };
         listAdapter = new UriPermissionsListAdapter(actionListener, viewPrefs);
@@ -211,6 +210,7 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
 
     private void onItemDelete(UriPermissionUse item) {
         itemsForDelete.add(item);
+        listAdapter.remove(item);
     }
 //MSL extends UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<T>
     private static class UriPermissionsListAdapter<T extends UriPermissionUse> extends SimpleRecyclerViewAdapter<UriPermissionsListAdapter<T>, T, UriPermissionsListAdapter.UriPermissionsAdapterPrefs, UriPermissionsListAdapter.UriPermissionsViewHolder<T>, UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<T>> {

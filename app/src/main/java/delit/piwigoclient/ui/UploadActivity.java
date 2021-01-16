@@ -73,7 +73,7 @@ import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
  * Created by gareth on 12/07/17.
  */
 
-public class UploadActivity extends MyActivity {
+public class UploadActivity extends MyActivity<UploadActivity> {
 
     private static final String TAG = "uploadActivity";
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;

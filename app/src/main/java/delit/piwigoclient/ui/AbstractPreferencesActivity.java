@@ -35,7 +35,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 
-public abstract class AbstractPreferencesActivity extends MyActivity {
+public abstract class AbstractPreferencesActivity<T extends AbstractPreferencesActivity<T>> extends MyActivity<T> {
 
     private static final String TAG = "PrefAct";
     private CustomToolbar toolbar;

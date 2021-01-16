@@ -128,8 +128,8 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         return licencingHelper;
     }
 
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
-        return new BasicPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<?> buildPiwigoResponseListener() {
+        return new BasicPiwigoResponseListener<>();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -176,9 +176,9 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
+            long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
             if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
-                long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
                 if(data.hasExtra(FileSelectActivity.INTENT_SELECTED_FILES)) {
                     ArrayList<FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
                     FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
@@ -187,6 +187,10 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
                 } else {
                     // using the FileSelectionCompleteEvent posted by the FileSelectActivity to avoid TransactionTooLargeException.
                 }
+            } else {
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis);
+                // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
+                EventBus.getDefault().postSticky(event);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

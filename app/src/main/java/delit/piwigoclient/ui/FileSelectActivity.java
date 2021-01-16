@@ -50,7 +50,7 @@ import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragme
  * Created by gareth on 12/07/17.
  */
 
-public class FileSelectActivity extends MyActivity {
+public class FileSelectActivity extends MyActivity<FileSelectActivity> {
 
     private static final String TAG = "FileSelAct";
 
@@ -216,39 +216,27 @@ public class FileSelectActivity extends MyActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(FileSelectionCompleteEvent event) {
         int sourceEventId = getTrackedIntentType(event.getActionId());
-        if (sourceEventId >= 0) {
-            if (getIntent().getParcelableExtra(INTENT_DATA) != null) {
+        buildAndSetResultIntent(event);
+        if (sourceEventId >= 0 && event.getActionId() != sourceEventId) {
+            // was called from inside my app.
+            BaseMyActivity.relayFileSelectionCompleteEvent(sourceEventId, event);
+        }
+        finish();
+    }
 
-                Intent result = this.getIntent();
+    private void buildAndSetResultIntent(FileSelectionCompleteEvent event) {
+        Intent result = this.getIntent();
 //            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
-                result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
-                if (event.getSelectedFolderItems() != null) {
-                    // need to make sure the caller can read and write any items selected as requested.
-                    result.setFlags(folderItemSelectPrefs.getSelectedUriPermissionFlags());
-                    ClipData clipData = buildClipData(event);
-                    result.setClipData(clipData);
-                    //result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
-                    BaseMyActivity.relayFileSelectionCompleteEvent(sourceEventId, event);
-                    setResult(Activity.RESULT_OK, result);
-                } else {
-                    setResult(Activity.RESULT_CANCELED, result);
-                }
-                finish();
-            } else {
-                Intent result = this.getIntent();
-                result.setFlags(folderItemSelectPrefs.getSelectedUriPermissionFlags());
-                if(event.getSelectedFolderItems() != null) {
-                    if (!event.getSelectedFolderItems().isEmpty()) {
-                        ClipData clipData = buildClipData(event);
-                        result.setClipData(clipData);
-                    }
-                    setResult(Activity.RESULT_OK, result);
-                } else {
-                    setResult(Activity.RESULT_CANCELED, result);
-                }
-
-                finish();
-            }
+        result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
+        if (event.getSelectedFolderItems() != null) {
+            // need to make sure the caller can read and write any items selected as requested.
+            result.setFlags(folderItemSelectPrefs.getSelectedUriPermissionFlags());
+            ClipData clipData = buildClipData(event);
+            result.setClipData(clipData);
+            //result.putParcelableArrayListExtra(INTENT_SELECTED_FILES, event.getSelectedFolderItems());
+            setResult(Activity.RESULT_OK, result);
+        } else {
+            setResult(Activity.RESULT_CANCELED, result);
         }
     }
 
@@ -257,10 +245,22 @@ public class FileSelectActivity extends MyActivity {
         ArrayList<String> mimes = new ArrayList<>(event.getSelectedFolderItems().size());
         ArrayList<ClipData.Item> clipItems = new ArrayList<>(event.getSelectedFolderItems().size());
         for (FolderItem item : event.getSelectedFolderItems()) {
-
-            ClipData.Item clipItem = new ClipData.Item(item.getName(), null, item.getContentUri());
+            String itemName;
+            if(!item.isFieldsCached()) {
+                Logging.log(Log.ERROR, TAG, "Having to cache fields before return - app hangs!" );
+                FirebaseAnalytics.getInstance(this).logEvent("app_hangs_caching_fields", null);
+                if(!item.cacheFields(this)) {
+                    itemName = item.getContentUri().toString();
+                } else {
+                    itemName = item.getName();
+                }
+            } else {
+                itemName = item.getName();
+            }
+            ClipData.Item clipItem = new ClipData.Item(itemName, null, item.getContentUri());
             mimes.add(item.getMime());
             clipItems.add(clipItem);
+
         }
         ClipDescription desc = new ClipDescription(getString(R.string.selected_files), mimes.toArray(new String[0]));
         ClipData clipData = null;
