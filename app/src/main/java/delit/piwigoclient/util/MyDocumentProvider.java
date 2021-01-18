@@ -1,8 +1,13 @@
 package delit.piwigoclient.util;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.CancellationSignal;
@@ -13,13 +18,16 @@ import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 import android.provider.DocumentsProvider;
 import android.util.Log;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.MimeTypeFilter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -161,8 +169,39 @@ public class MyDocumentProvider extends DocumentsProvider {
         row.add(Document.COLUMN_LAST_MODIFIED, file.lastModified());
         row.add(Document.COLUMN_SIZE, file.length());
         if(!getBaseDir().equals(file)) {
-            row.add(Document.COLUMN_FLAGS, Document.FLAG_SUPPORTS_DELETE | Document.FLAG_SUPPORTS_WRITE);
+            row.add(Document.COLUMN_FLAGS, Document.FLAG_SUPPORTS_DELETE | Document.FLAG_SUPPORTS_WRITE/*|Document.FLAG_SUPPORTS_THUMBNAIL*/);
         }
+    }
+
+//    @Override
+//    public AssetFileDescriptor openDocumentThumbnail(String documentId, Point sizeHint, CancellationSignal signal) throws FileNotFoundException {
+//        //TODO finish implementing thumbnails.
+//        File doc = getFileForDocId(documentId);
+//        File thumbnailFile = getThumbnailForFile(docId);
+//        Bitmap thumbnail = createThumbnail(doc, sizeHint, signal);
+//        ParcelFileDescriptor pfd = ParcelFileDescriptor.open(thumbnailFile, ParcelFileDescriptor.MODE_READ_ONLY);
+//        AssetFileDescriptor afd = new AssetFileDescriptor(pfd, 0, pfd.getStatSize());
+//
+//
+//        return super.openDocumentThumbnail(documentId, sizeHint, signal);
+//    }
+
+    private Bitmap createThumbnail(File doc, Point sizeHint, CancellationSignal signal) throws FileNotFoundException {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                String mime = IOUtils.getMimeType(Objects.requireNonNull(getContext()), Uri.fromFile(doc));
+                if( MimeTypeFilter.matches(mime,"video/*")) {
+                    return ThumbnailUtils.createVideoThumbnail(doc, new Size(sizeHint.x, sizeHint.y), signal);
+                } else if( MimeTypeFilter.matches(mime,"image/*")) {
+                    return ThumbnailUtils.createImageThumbnail(doc, new Size(sizeHint.x, sizeHint.y), signal);
+                } else if( MimeTypeFilter.matches(mime,"audio/*")) {
+                    return ThumbnailUtils.createAudioThumbnail(doc, new Size(sizeHint.x, sizeHint.y), signal);
+                }
+            } catch (IOException e) {
+                throw new FileNotFoundException(e.getMessage());
+            }
+        }
+        return null;
     }
 
     private String[] resolveDocumentProjection(String[] projection) {
