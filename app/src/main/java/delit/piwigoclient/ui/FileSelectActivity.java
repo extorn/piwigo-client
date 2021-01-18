@@ -69,7 +69,7 @@ public class FileSelectActivity extends MyActivity<FileSelectActivity> {
         super.onStart();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             String localisedPermission = getString(R.string.permission_read);
-            String requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            String requiredPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
             if(IOUtils.needsWritePermission(folderItemSelectPrefs.getSelectedUriPermissionFlags())) {
                 requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
                 localisedPermission = getString(R.string.permission_write);
