@@ -82,7 +82,7 @@ public class AboutFragment extends MyFragment<AboutFragment> {
 
     private void withInstallGuid(Task<String> uuidTask) {
         String installGuid;
-        TextView uuidField = Objects.requireNonNull(getView()).findViewById(R.id.install_guid_field);
+        TextView uuidField = requireView().findViewById(R.id.install_guid_field);
         try {
             if (uuidTask.isSuccessful()) {
                 installGuid = uuidTask.getResult();

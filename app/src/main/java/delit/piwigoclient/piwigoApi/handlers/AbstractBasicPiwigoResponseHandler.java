@@ -84,7 +84,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     }
 
     public static Date parsePiwigoServerDate(String text) throws ParseException {
-        return new SimpleDateFormat(PIWIGO_DATE_FORMAT).parse(text);
+        return new SimpleDateFormat(PIWIGO_DATE_FORMAT, Locale.UK).parse(text);
     }
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
