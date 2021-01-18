@@ -10,10 +10,8 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
@@ -27,7 +25,6 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
     private final CategoryItem parentAlbum;
     private final boolean recursive;
     private final String thumbnailSize;
-    private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
 
     public AlbumGetSubAlbumsResponseHandler(CategoryItem parentAlbum, String thumbnailSize, boolean recursive) {
         super("pwg.categories.getList", TAG);
@@ -196,11 +193,11 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             if (null == dateLastAlteredStr) {
                 dateLastAltered = new Date(0);
             } else {
-                dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
+                dateLastAltered = parsePiwigoServerDate(dateLastAlteredStr);
             }
         } catch (RuntimeException e) {
             Logging.recordException(e);
-            throw new JSONException("Unable to parse date " + dateLastAlteredStr + " using expected date format string : " + piwigoDateFormat.toPattern());
+            throw new JSONException("Unable to parse date " + dateLastAlteredStr + " using expected date format string : " + PIWIGO_DATE_FORMAT);
         } catch (ParseException e) {
             Logging.recordException(e);
             throw new JSONException("Unable to parse date " + dateLastAlteredStr);

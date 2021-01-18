@@ -7,11 +7,9 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
@@ -53,31 +51,29 @@ public class TagsGetListResponseHandler extends AbstractPiwigoWsResponseHandler 
 
     public static HashSet<Tag> parseTagsFromJson(JsonArray tagsObj) throws JSONException {
 
-        SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
-
         HashSet<Tag> tags = new LinkedHashSet<>(tagsObj.size());
         for (int i = 0; i < tagsObj.size(); i++) {
             JsonObject tagObj = tagsObj.get(i).getAsJsonObject();
-            Tag g = parseTagFromJson(tagObj, piwigoDateFormat);
+            Tag g = parseTagFromJson(tagObj);
             tags.add(g);
         }
         return tags;
     }
 
-    public static Tag parseTagFromJson(JsonObject tagObj, SimpleDateFormat piwigoDateFormat) throws JSONException {
+    public static Tag parseTagFromJson(JsonObject tagObj) throws JSONException {
         long id = tagObj.get("id").getAsLong();
         String name = tagObj.get("name").getAsString();
-        Date lastModified = parseDate(tagObj, "lastmodified", piwigoDateFormat);
+        Date lastModified = parseDate(tagObj, "lastmodified");
         int usageCount = tagObj.has("counter")?tagObj.get("counter").getAsInt():0;
         return new Tag(id, name, usageCount, lastModified);
     }
 
-    public static Date parseDate(JsonObject jsonObject, String fieldName, SimpleDateFormat piwigoDateFormat) throws JSONException {
+    public static Date parseDate(JsonObject jsonObject, String fieldName) throws JSONException {
         if(jsonObject.has(fieldName) && !jsonObject.get(fieldName).isJsonNull()) {
             String dateStr = jsonObject.get(fieldName).getAsString();
             if (dateStr != null) {
                 try {
-                    return piwigoDateFormat.parse(dateStr);
+                    return parsePiwigoServerDate(dateStr);
                 } catch (ParseException e) {
 Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + dateStr);

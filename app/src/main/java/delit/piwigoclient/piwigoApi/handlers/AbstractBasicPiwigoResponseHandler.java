@@ -15,6 +15,11 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import android.text.format.DateFormat;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,6 +51,7 @@ import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 
 public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpResponseHandler {
     private static final String TAG = "PiwigoRespHndlr";
+    public static final String PIWIGO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private final boolean built;
     private final String tag;
     private boolean allowSessionRefreshAttempt;
@@ -72,6 +78,14 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private boolean forceLogin;
     private boolean runInBackground;
 
+
+    public static CharSequence formatDateForPiwigoServer(Date date) {
+        return DateFormat.format(PIWIGO_DATE_FORMAT, date);
+    }
+
+    public static Date parsePiwigoServerDate(String text) throws ParseException {
+        return new SimpleDateFormat(PIWIGO_DATE_FORMAT).parse(text);
+    }
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
         this.tag = tag;

@@ -16,7 +16,6 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.util.UriUtils;
 
 
 public class DebugCompressionListener implements ExoPlayerCompression.CompressionListener {

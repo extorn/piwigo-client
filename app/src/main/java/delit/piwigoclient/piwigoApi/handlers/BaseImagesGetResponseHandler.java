@@ -11,12 +11,10 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -138,7 +136,6 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
     public static class BasicCategoryImageResourceParser {
 
         private final Pattern multimediaPattern;
-        private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private Matcher multimediaPatternMatcher;
         private String basePiwigoUrl;
         private boolean fixedImageUrisForPrivacyPluginUser;
@@ -213,7 +210,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             if (!dateLastAlteredElem.isJsonNull()) {
                 String dateLastAlteredStr = dateLastAlteredElem.getAsString();
                 try {
-                    dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
+                    dateLastAltered = parsePiwigoServerDate(dateLastAlteredStr);
                 } catch (ParseException e) {
                     Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + dateLastAlteredStr);
@@ -226,7 +223,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             if (!dateCreationElem.isJsonNull()) {
                 String dateCreatedStr = dateCreationElem.getAsString();
                 try {
-                    dateCreated = piwigoDateFormat.parse(dateCreatedStr);
+                    dateCreated = parsePiwigoServerDate(dateCreatedStr);
                 } catch (ParseException e) {
                     Logging.recordException(e);
                     throw new JSONException("Unable to parse date " + dateCreatedStr);
