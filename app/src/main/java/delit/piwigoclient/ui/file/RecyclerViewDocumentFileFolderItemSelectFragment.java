@@ -361,7 +361,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             return;
         }
         if (resultCode != Activity.RESULT_OK || resultData == null) {
-            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+            // this is unnecessary to report since the request for files from the system selector was cancelled.
+//            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
         } else {
             new SharedFilesIntentProcessingTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, resultData);
         }
