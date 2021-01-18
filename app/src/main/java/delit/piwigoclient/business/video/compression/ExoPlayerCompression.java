@@ -244,7 +244,6 @@ public class ExoPlayerCompression {
             return bitRate != AUDIO_PASSTHROUGH_BITRATE;
         }
     }
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static class VideoCompressionParameters {
         private final long maxInterleavingIntervalUs;
         private int wantedWidthPx = -1;
