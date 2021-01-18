@@ -397,6 +397,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="progress_loading_user_details">Načítání údajů o uživateli</string>
     <string name="progress_delete_user">Mazání uživatele</string>
     <string name="alert_read_permissions_needed_for_file_upload">Ke čtení a nahrávání souborů je potřeba oprávnění ke čtení souborového systému</string>
+    <string name="alert_file_permissions_needed_for_pattern">%1$s oprávnění je vyžadováno pro souborový systém. Účel:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">Místní ukládání video souborů do mezipaměti je povoleno. Aby to bylo možné, musí být povolen přístup pro zápis do systému souborů. Pokud bude zamítnuto, místní ukládání do mezipaměti bude deaktivováno.</string>
     <string name="alert_error_tidying_video_cache">Nelze uklidit mezipaměť videa. Pokud tento problém přetrvává, nahlaste to prosím.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Soubor nelze zkopírovat z mezipaměti. %1$s</string>
@@ -634,10 +635,10 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">Server nepřijme%1$d souborů vybraných k nahrání. Pokud se jedná o videa, můžete povolit kompresi. Odebrat tyto soubory z nahrávání?</string>
     <string name="upload_status_tab_title_details">Detaily</string>
     <string name="upload_status_tab_title_errors">Chyby</string>
-    <string name="message_piwigo_server_inconsistent_results">Kontrolní součet souboru zpráv Piwigo API %1$s neodpovídá, ale volání API%2$s hlásí, že odpovídá. Může se jednat o chybu na serveru PIWIGO nebo zásuvný modul, který používáte, a může být užitečné jej nahlásit.</string>
+    <string name="message_piwigo_server_inconsistent_results">Kontrolní součet souboru zpráv Piwigo API%1$s neodpovídá, ale volání API%2$s hlásí, že odpovídá. Může se jednat o chybu na serveru PIWIGO nebo zásuvný modul, který používáte, a může být užitečné jej nahlásit.</string>
     <string name="alert_bulk_image_permissions_title">Nastavte přístupová oprávnění</string>
     <string name="alert_bulk_image_permissions_message">Nastavit úrovně oprávnění přístupu pro%1$d vybrané zdroje</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Nelze zpracovat soubory sdílené s typem mime %1$s</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Nelze zpracovat soubory sdílené s typem mime%1$s</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Soubory s následujícími příponami nelze nahrát a byly odstraněny:%1$s</string>
     <string name="please_select_a_parent_album">Vyberte prosím nadřazené album</string>
     <string name="unsupported_device">Litujeme, toto zařízení není podporováno. Došlo k problému s přístupem ke službám Google Play.</string>
@@ -708,5 +709,9 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_error_unable_add_files_previous_job_still_running">Nelze přidat soubory k nahrání. Probíhá nahrávání úlohy.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Nelze přidat soubory k nahrání. Nejprve je třeba dokončit aktuální úlohu nahrávání.</string>
     <string name="removing_files_from_job">Odebírání souborů z úlohy nahrávání</string>
+    <string name="permission_write">Psát si</string>
+    <string name="permission_read">Číst</string>
+    <string name="doc_provider_root_downloads_title">Stažení Piwigo</string>
+    <string name="doc_provider_root_downloads_summary">Soubory stažené ze serveru</string>
 
 </resources>

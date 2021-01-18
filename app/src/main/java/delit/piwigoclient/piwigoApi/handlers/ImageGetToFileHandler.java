@@ -83,46 +83,37 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
         }
     }
 
-    public boolean writeResponseDataToFile(HttpEntity entity) throws IOException {
-
-
-
-        InputStream is = entity.getContent();
-        OutputStream os;
-        BufferedOutputStream bos = null;
-        BufferedInputStream bis = null;
+    public boolean writeResponseDataToFile(HttpEntity entity) {
         boolean isSuccess = false;
-        try {
-            os = getContext().getContentResolver().openOutputStream(outputFileUri);
-            if(os == null) {
-                throw new IOException("Unable to open output stream to Uri : " + outputFileUri);
-            }
-            bos = new BufferedOutputStream(os);
-            bis = new BufferedInputStream(is);
+
+        BufferedInputStream bis = null;
+        try(BufferedOutputStream bos = new BufferedOutputStream(getContext().getContentResolver().openOutputStream(outputFileUri))) {
+
+            bis = new BufferedInputStream(entity.getContent());
             Header contentTypeHeader = entity.getContentType();
-            if(contentTypeHeader != null && !MimeTypeFilter.matches(contentTypeHeader.getValue(),"image/*")) {
+            if (contentTypeHeader != null && !MimeTypeFilter.matches(contentTypeHeader.getValue(), "image/*")) {
                 boolean newLoginAcquired = false;
-                if(!isTriedLoggingInAgain()) {
+                if (!isTriedLoggingInAgain()) {
                     // this was redirected to an http page - login failed most probable - try to force a login and retry!
                     newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
                 }
                 if (!newLoginAcquired) {
                     byte[] responseBody = getResponseBodyAsByteArray(entity);
                     resetSuccessAsFailure();
-                    storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - ("+contentTypeHeader.getValue()+"). image/* expected"));
+                    storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - (" + contentTypeHeader.getValue() + "). image/* expected"));
                 }
                 return false; // this isn't a success yet, but there's another call in progress so we're getting a second chance!
             }
 
             long contentLength = entity.getContentLength();
-            int buffersize = (contentLength > BUFFER_SIZE || contentLength < 1024) ? BUFFER_SIZE : (int) contentLength;
+            int bufferSize = (contentLength > BUFFER_SIZE || contentLength < 1024) ? BUFFER_SIZE : (int) contentLength;
             int progress = -1;
             long totalBytesRead = 0;
             if (contentLength >= 0) {
                 progress = 0;
                 onDownloadProgress(progress);
             }
-            byte[] buffer = new byte[buffersize];
+            byte[] buffer = new byte[bufferSize];
             int bytesRead;
             long lastProgressUpdateAt = System.currentTimeMillis();
             do {
@@ -154,20 +145,19 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
                 }
             }
             isSuccess = true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             setError(new IOException("Error parsing response", e));
         } finally {
             //TODO why would I have written this block?
-//            if (!cancelOperationAsap) {
-//                client.cancelAllRequests(true);
-//                client.getHttpClient().getConnectionManager().shutdown();
-//            }
+            //            if (!cancelOperationAsap) {
+            //                client.cancelAllRequests(true);
+            //                client.getHttpClient().getConnectionManager().shutdown();
+            //            }
             AsyncHttpClient.silentCloseInputStream(bis);
             AsyncHttpClient.endEntityViaReflection(entity);
-            AsyncHttpClient.silentCloseOutputStream(bos);
             if (isCancelCallAsap()) {
                 DocumentFile docFile = IOUtils.getSingleDocFile(getContext(), outputFileUri);
-                if(docFile != null && !docFile.delete()) {
+                if (docFile != null && !docFile.delete()) {
                     Logging.log(Log.ERROR, TAG, "Unable to delete partially downloaded file");
                 }
             }

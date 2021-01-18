@@ -397,6 +397,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="progress_loading_user_details">检索用户详细信息</string>
     <string name="progress_delete_user">删除用户</string>
     <string name="alert_read_permissions_needed_for_file_upload">需要读取文件系统的权限才能选择和上传文件</string>
+    <string name="alert_file_permissions_needed_for_pattern">文件系统需要%1$s权限。 目的：%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">启用了视频文件的本地缓存。为此，必须授予对文件系统的写访问权限。如果被拒绝，本地缓存将被禁用。</string>
     <string name="alert_error_tidying_video_cache">无法整理视频缓存。如果此问题仍然存在，请报告。</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">无法从缓存中复制文件。 %1$s</string>
@@ -708,5 +709,9 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_error_unable_add_files_previous_job_still_running">无法添加文件进行上传。上载作业正在进行中。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">无法添加文件进行上传。当前的上传作业需要先完成。</string>
     <string name="removing_files_from_job">从上载作业中删除文件</string>
+    <string name="permission_write">写</string>
+    <string name="permission_read">读</string>
+    <string name="doc_provider_root_downloads_title">Piwigo下载</string>
+    <string name="doc_provider_root_downloads_summary">从服务器下载的文件</string>
 
 </resources>

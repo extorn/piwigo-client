@@ -397,6 +397,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="progress_loading_user_details">Récupération des détails de l\'utilisateur</string>
     <string name="progress_delete_user">Supprimer l\'utilisateur</string>
     <string name="alert_read_permissions_needed_for_file_upload">Une autorisation est nécessaire pour lire le système de fichiers afin de sélectionner et télécharger des fichiers</string>
+    <string name="alert_file_permissions_needed_for_pattern">L\'autorisation%1$s est nécessaire pour le système de fichiers. Objectif:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">La mise en cache locale des fichiers vidéo est activée. Pour permettre cela, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache locale sera désactivée.</string>
     <string name="alert_error_tidying_video_cache">Impossible de ranger le cache vidéo. Si ce problème persiste, veuillez le signaler.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Impossible de copier le fichier du cache. %1$s</string>
@@ -637,7 +638,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="message_piwigo_server_inconsistent_results">L\'appel d\'API Piwigo%1$s signale que la somme de contrôle du fichier ne correspond pas, mais l\'appel d\'API%2$s indique qu\'elle correspond. Cela pourrait être un bogue dans le serveur PIWIGO ou un plugin que vous utilisez, et cela peut valoir la peine d\'être signalé.</string>
     <string name="alert_bulk_image_permissions_title">Définir les autorisations d\'accès</string>
     <string name="alert_bulk_image_permissions_message">Définir les niveaux d\'autorisation d\'accès pour les%1$d ressources sélectionnées</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec un type mime %1$s</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec un type mime%1$s</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Les fichiers avec les extensions suivantes ne peuvent pas être téléchargés et ont été supprimés:%1$s</string>
     <string name="please_select_a_parent_album">Veuillez sélectionner un album parent</string>
     <string name="unsupported_device">Désolé, cet appareil n\'est pas pris en charge. Il y a un problème d\'accès aux services Google Play.</string>
@@ -708,5 +709,9 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossible d\'ajouter des fichiers à télécharger. Un travail de téléchargement est en cours.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossible d\'ajouter des fichiers à télécharger. La tâche de téléchargement en cours doit se terminer en premier.</string>
     <string name="removing_files_from_job">Suppression de fichiers de la tâche de téléchargement</string>
+    <string name="permission_write">Écrire</string>
+    <string name="permission_read">Lis</string>
+    <string name="doc_provider_root_downloads_title">Téléchargements Piwigo</string>
+    <string name="doc_provider_root_downloads_summary">Fichiers téléchargés depuis le serveur</string>
 
 </resources>

@@ -503,10 +503,11 @@ class BitmapHunter implements Runnable {
     int drawHeight = inHeight;
 
     Matrix matrix = new Matrix();
+    int targetWidth = data.targetWidth;
+    int targetHeight = data.targetHeight;
+    boolean needsResize = targetHeight != drawHeight || targetWidth != drawWidth;
+    if ((needsResize && data.needsMatrixTransform()) || exifOrientation != 0) {
 
-    if (data.needsMatrixTransform() || exifOrientation != 0) {
-      int targetWidth = data.targetWidth;
-      int targetHeight = data.targetHeight;
 
       float targetRotation = data.rotationDegrees;
       if (targetRotation != 0) {
@@ -620,13 +621,13 @@ class BitmapHunter implements Runnable {
           matrix.preScale(sx, sy);
         }
       }
-    }
 
-    Bitmap newResult =
-        Bitmap.createBitmap(result, drawX, drawY, drawWidth, drawHeight, matrix, true);
-    if (newResult != result) {
-      result.recycle();
-      result = newResult;
+      Bitmap newResult =
+              Bitmap.createBitmap(result, drawX, drawY, drawWidth, drawHeight, matrix, true);
+      if (newResult != result) {
+        result.recycle();
+        result = newResult;
+      }
     }
 
     return result;

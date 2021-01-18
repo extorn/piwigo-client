@@ -457,6 +457,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">Alle Benutzerhinweise erneut anzeigen</string>
 
     
+    <string name="preference_app_uri_permissions_held_title">URI-Berechtigungen gehalten</string>
+    <string name="preference_app_uri_permissions_held_summary">Der Zweck für alle URI-Berechtigungen</string>
+
+
+    
 
     
     

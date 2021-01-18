@@ -145,6 +145,20 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.95</item>
+        <item>"Risoluzione del problema:
+                - Sono state utilizzate autorizzazioni file insufficienti, che causano caricamenti non riusciti
+                - File scaricati non visibili ad altre app
+                - download funzionante sia per la cartella Download predefinita, sia per quella selezionata dall\'utente
+                - L\'app ha richiesto le autorizzazioni di lettura o scrittura del file quando non erano necessarie.
+               I cambiamenti:
+                - Nuova preferenza nelle impostazioni dell\'app che elenca tutte le autorizzazioni Uri detenute e il loro scopo
+                - Nuovo DocumentProvider che espone i file scaricati nella posizione di download predefinita al selettore di file di sistema.
+                - Non aggiungere più file scaricati su Android MediaStore - Sono disponibili in qualsiasi selettore di file.
+               Raccomandazione:
+                - 1. Visualizzazione di tutte le autorizzazioni sui file detenute dall\'app nella nuova preferenza, rimuovendo quelle che non si desidera vengano conservate dall\'app.
+                - 2. Controlla ciascuno dei tuoi lavori di caricamento in background, riseleziona la cartella da caricare
+                - 3. Riselezionare la cartella in cui scaricare i file dal server"</item>
         <item>1.4.0.94</item>
         <item>"Risoluzione del problema:
                  - Assicurati che i file selezionati nell\'app per il caricamento vengano elaborati su un thread in background durante l\'invio alla pagina di caricamento in modo che l\'interfaccia utente rimanga visibile."</item>

@@ -1,31 +1,22 @@
 package delit.piwigoclient.ui;
 
-import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -33,31 +24,22 @@ import androidx.loader.app.LoaderManager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomToolbar;
-import delit.libs.ui.view.ProgressIndicator;
-import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.VersionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -74,17 +56,13 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
-import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
@@ -120,29 +98,25 @@ import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
+import delit.piwigoclient.ui.util.download.DownloadManager;
 import hotchemi.android.rate.MyAppRate;
-
-import static android.view.View.VISIBLE;
 
 public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> extends MyActivity<T> implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
-    private static final String STATE_QUEUED_DOWNLOADS = "queuedDownloads";
-    private static final String STATE_ACTIVE_DOWNLOADS = "activeDownloads";
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
-    private static final String NOTIFICATION_GROUP_DOWNLOADS = "Downloads";
+    private static final String STATE_DOWNLOAD_MANAGER = "DownloadManager";
     private final CustomBackStackListener backStackListener;
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
-    private ArrayList<Parcelable> onLoginActionParams = new ArrayList<>();
+    private final ArrayList<Parcelable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
-    //TODO move the download mechanism into a background service so it isn't cancelled if the user leaves the app.
-    private final ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
-    private final ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
+    private DownloadManager<T> downloadManager;
+
 
     public AbstractMainActivity() {
         super(R.layout.activity_main);
@@ -166,8 +140,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         LoaderManager.getInstance(this).getLoader(0); //TODO is this needed?
         outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putParcelable(STATE_BASKET, basket);
-        outState.putParcelableArrayList(STATE_ACTIVE_DOWNLOADS, activeDownloads);
-        outState.putParcelableArrayList(STATE_QUEUED_DOWNLOADS, queuedDownloads);
+        outState.putParcelable(STATE_DOWNLOAD_MANAGER, downloadManager);
 
         if(BuildConfig.DEBUG) {
 //            getSupportFragmentManager().enableDebugLogging(false);
@@ -186,15 +159,14 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         if (savedInstanceState != null) {
             currentAlbum = savedInstanceState.getParcelable(STATE_CURRENT_ALBUM);
             basket = savedInstanceState.getParcelable(STATE_BASKET);
-            ArrayList<DownloadFileRequestEvent> readVal;
-            readVal = savedInstanceState.getParcelableArrayList(STATE_QUEUED_DOWNLOADS);
-            if (readVal != null) {
-                queuedDownloads.addAll(readVal);
+            downloadManager = savedInstanceState.getParcelable(STATE_DOWNLOAD_MANAGER);
+            if(downloadManager == null) {
+                downloadManager = new DownloadManager<T>(getUiHelper());
+            } else {
+                downloadManager.withUiHelper(getUiHelper());
             }
-            readVal = savedInstanceState.getParcelableArrayList(STATE_ACTIVE_DOWNLOADS);
-            if (readVal != null) {
-                activeDownloads.addAll(readVal);
-            }
+        } else {
+            downloadManager = new DownloadManager<T>(getUiHelper());
         }
 
 
@@ -383,122 +355,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(DownloadFileRequestEvent event) {
-        synchronized (activeDownloads) {
-            queuedDownloads.add(event);
-            if (activeDownloads.size() == 0) {
-                try {
-                    processNextQueuedDownloadEvent();
-                } catch(Exception e) {
-                    Logging.recordException(e);
-                    getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_error, getString(R.string.alert_error_starting_download), e.getMessage(), View.NO_ID, R.string.button_ok, new UIHelper.QuestionResultAdapter<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity>(getUiHelper()));
-                    activeDownloads.remove(0);
-                }
-            } else {
-                getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_queued_for_download, queuedDownloads.size()));
-            }
-        }
-    }
-
-    protected void processNextQueuedDownloadEvent() {
-        synchronized (activeDownloads) {
-            DownloadFileRequestEvent nextEvent = queuedDownloads.remove(0);
-
-            activeDownloads.add(nextEvent);
-            processDownloadEvent(nextEvent);
-        }
-    }
-
-    private @Nullable DocumentFile getDestinationFile(@NonNull String mimeType, @NonNull String outputFilename) {
-        DocumentFile folder = AppPreferences.getAppDownloadFolder(getSharedPrefs(), this);
-        if(folder == null) {
-            return null;
-        }
-        return folder.createFile(mimeType, IOUtils.getFileNameWithoutExt(outputFilename));
-    }
-
-    private void processDownloadEvent(DownloadFileRequestEvent event) {
-        DownloadFileRequestEvent.FileDetails fileDetail = event.getNextFileDetailToDownload();
-        if(fileDetail != null) {
-            if (fileDetail.getLocalFileToCopy() != null) {
-                // copy this local download cache to the destination.
-                try {
-                    String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getRemoteUri()));
-                    Logging.log(Log.DEBUG, TAG, "LFC: Mime type : " + mimeType + " retrieved from remote uri : " + fileDetail.getRemoteUri());
-                    if(mimeType == null) {
-                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getOutputFilename()));
-                        Logging.log(Log.DEBUG, TAG, "LFC: Mime type : " + mimeType + " retrieved from output uri : " + fileDetail.getOutputFilename());
-                    }
-                    if(mimeType == null) {
-                        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getResourceName()));
-                        Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from resource name : " + fileDetail.getResourceName());
-                    }
-                    if(mimeType == null) {
-                        Logging.log(Log.ERROR, TAG, "Unable to establish mime type for download");
-                        removeActionDownloadEvent(); // sink the event from the queue to allow others to download
-                        processNextQueuedDownloadEvent();
-                    } else {
-                        DocumentFile destFile = getDestinationFile(mimeType, fileDetail.getOutputFilename());
-                        if(destFile == null) {
-                            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_download_folder_and_retry));
-                            removeActionDownloadEvent(); // sink the event from the queue to allow others to download
-                            processNextQueuedDownloadEvent();
-                        } else {
-                            IOUtils.copyDocumentUriDataToUri(this, fileDetail.getLocalFileToCopy(), destFile.getUri());
-                            Uri mediaStoreUri = IOUtils.addFileToMediaStore(this, destFile.getUri());
-                            fileDetail.setDownloadedFile(mediaStoreUri);
-                            notifyUserFileDownloadComplete(getUiHelper(), mediaStoreUri);
-                            processDownloadEvent(event);
-                        }
-                    }
-                } catch (IOException e) {
-                    Logging.recordException(e);
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
-                    removeActionDownloadEvent(); // sink the event from the queue to allow others to download
-                    processNextQueuedDownloadEvent();
-                }
-            } else {
-                // invoke a download of this file
-                String mimeType = IOUtils.getMimeType(this, Uri.parse(fileDetail.getRemoteUri()));
-                Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from remote uri : " + fileDetail.getRemoteUri());
-                if(mimeType == null) {
-                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getOutputFilename()));
-                    Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from output uri : " + fileDetail.getOutputFilename());
-                }
-                if(mimeType == null) {
-                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(IOUtils.getFileExt(fileDetail.getResourceName()));
-                    Logging.log(Log.DEBUG, TAG, "RFD: Mime type : " + mimeType + " retrieved from resource name : " + fileDetail.getResourceName());
-                }
-                if(mimeType == null) {
-                    Logging.log(Log.ERROR, TAG, "Unable to establish mime type for download");
-                    onFileDownloadEventProcessed(event); // sink the event from the queue to allow others to download
-                    processNextQueuedDownloadEvent();
-                } else {
-                    String downloadToFile = fileDetail.getOutputFilename();
-                    boolean noFileExt = downloadToFile.lastIndexOf('.') < downloadToFile.length() - 5;
-                    if (noFileExt) {
-                        if (mimeType != null) {
-                            mimeType = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-                            Logging.log(Log.ERROR, TAG, "Added mime type for download " + mimeType);
-                            downloadToFile = downloadToFile + '.' + mimeType;
-                        }
-                    }
-                    DocumentFile destinationFile = getDestinationFile(mimeType, downloadToFile);
-                    if(destinationFile == null) {
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_download_folder_and_retry));
-                        removeActionDownloadEvent(); // sink the event from the queue to allow others to download
-                        processNextQueuedDownloadEvent();
-                    } else {
-                        event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction(event)));
-                    }
-                }
-            }
-        } else {
-            // all items downloaded - process them as needed.
-            onFileDownloadEventProcessed(event);
-        }
-    }
 
 //TODO add some sort of cancel operation  if the activity is backgrounded perhaps.
 //    @Override
@@ -510,112 +366,14 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 //    }
 //
 
-    public void onFileDownloadEventProcessed(DownloadFileRequestEvent event) {
-        //DownloadFileRequestEvent event =
-        removeActionDownloadEvent(); // we've got the event, so ignore the return
-        if (event.isShareDownloadedWithAppSelector()) {
-            Set<Uri> destinationFiles = new HashSet<>(event.getFileDetails().size());
-            for(DownloadFileRequestEvent.FileDetails fileDetail : event.getFileDetails()) {
-                destinationFiles.add(fileDetail.getDownloadedFile());
-            }
-            shareFilesWithOtherApps(this, destinationFiles);
-        } else {
-            // Don't do this because it will clear the individual notifications.
-//            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, getUiHelper().getDefaultNotificationChannelId())
-//                    //                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-//                    .setSmallIcon(R.drawable.ic_star_yellow_24dp)
-//                    .setCategory(NotificationCompat.CATEGORY_EVENT)
-//                    .setContentTitle(this.getString(R.string.notification_download_event))
-//                    .setContentText(getString(R.string.alert_image_download_complete_message))
-//                    .setGroup(NOTIFICATION_GROUP_DOWNLOADS)
-//                    .setGroupSummary(true)
-//                    .setAutoCancel(true);
-//            getUiHelper().showNotification(TAG, DownloadTarget.notificationId.getAndIncrement(), mBuilder.build());
-            if(event.getFileDetails().size() > 1) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
-            }
-        }
-    }
-
-    private void notifyUserFileDownloadComplete(final UIHelper uiHelper, final Uri downloadedFile) {
-        //uiHelper.showDetailedMsg(R.string.alert_image_download_title, uiHelper.getContext().getString(R.string.alert_image_download_complete_message));
-        if(BuildConfig.DEBUG) {
-            Log.e(TAG, "Downloaded File - Generating Thumbnail for " + downloadedFile);
-        }
-        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getAppContext()).load(downloadedFile).error(R.drawable.ic_file_gray_24dp).resize(256,256).centerInside().into(new DownloadTarget(uiHelper, downloadedFile));
-    }
-
-    private void shareFilesWithOtherApps(Context context, final Set<Uri> filesToShare) {
-//        File sharedFolder = new File(getContext().getExternalCacheDir(), "shared");
-//        sharedFolder.mkdir();
-//        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
-//        tmpFile.deleteOnExit();
-
-        //Send multiple seems essential to allow to work with the other apps. Not clear why.
-        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-
-        ArrayList<Uri> urisToShare = new ArrayList<>(filesToShare.size());
-        ArrayList<String> mimesOfSharedUris = new ArrayList<>(filesToShare.size());
-
-        for(Uri fileToShare : filesToShare) {
-            String ext = IOUtils.getFileExt(this, fileToShare);
-            if(ext != null) {
-                String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-                mimesOfSharedUris.add(mimeType);
-            } else {
-                Logging.log(Log.WARN, TAG, "Sharing file with another app, unable to tell it the mime type as file has no extension (" + fileToShare + ")");
-            }
-            urisToShare.add(fileToShare);
-        }
-        if(mimesOfSharedUris.size() == 1) {
-            intent.setType(mimesOfSharedUris.get(0));
-        } else {
-            intent.setType("application/octet-stream");
-        }
-
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, urisToShare);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent.putStringArrayListExtra(Intent.EXTRA_MIME_TYPES, mimesOfSharedUris);
-        }
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-        }
-        context.startActivity(Intent.createChooser(intent, getString(R.string.open_files)));
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(DownloadFileRequestEvent event) {
+        downloadManager.onEvent(event);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(CancelDownloadEvent event) {
-        synchronized (activeDownloads) {
-            Iterator<DownloadFileRequestEvent> iter = activeDownloads.iterator();
-            while (iter.hasNext()) {
-                DownloadFileRequestEvent evt = iter.next();
-                if (evt.getRequestId() == event.messageId) {
-                    iter.remove();
-                    break;
-                }
-            }
-
-        }
-    }
-
-    private void scheduleNextDownloadIfPresent() {
-        synchronized (activeDownloads) {
-            if (!queuedDownloads.isEmpty() && activeDownloads.isEmpty()) {
-                processNextQueuedDownloadEvent();
-            }
-        }
-    }
-
-    private @Nullable
-    DownloadFileRequestEvent removeActionDownloadEvent() {
-        synchronized (activeDownloads) {
-            if (activeDownloads.isEmpty()) {
-                return null;
-            }
-            return activeDownloads.remove(0);
-        }
+        downloadManager.onEvent(event);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -649,116 +407,6 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         if (newFragment != null) {
             showFragmentNow(newFragment);
-        }
-    }
-
-    private static class DownloadTarget implements Target {
-
-        protected static final AtomicInteger notificationId = new AtomicInteger(100);
-
-        private final UIHelper uiHelper;
-        private final Uri downloadedFile;
-
-        public DownloadTarget(UIHelper uiHelper, Uri downloadedFile) {
-            this.uiHelper = uiHelper;
-            this.downloadedFile = downloadedFile;
-        }
-
-        private Context getContext() {
-            return uiHelper.getAppContext();
-        }
-
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            if(BuildConfig.DEBUG) {
-                Log.d(TAG, "Generated bitmap from : " + downloadedFile.getPath());
-            }
-            DisplayUtils.runOnUiThread(() -> buildAndShowNotification(bitmap));
-        }
-
-        private void buildAndShowNotification(Bitmap bitmap) {
-
-            Intent notificationIntent;
-
-            //        if(openImageNotFolder) {
-            notificationIntent = new Intent(Intent.ACTION_VIEW);
-            // Action on click on notification
-            MimeTypeMap map = MimeTypeMap.getSingleton();
-            Uri shareFileUri = downloadedFile;
-            try {
-                shareFileUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".provider", Objects.requireNonNull(LegacyIOUtils.getFile(downloadedFile)));
-            } catch (IOException|NullPointerException|IllegalArgumentException e) {
-                Logging.log(Log.INFO, TAG, "File to share ("+shareFileUri+")is not a raw file or stored inside this app folder (file://). Share it as is.");
-//                Logging.recordException(e);
-            }
-            String ext = MimeTypeMap.getFileExtensionFromUrl(downloadedFile.toString());
-            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
-            notificationIntent.setDataAndType(shareFileUri, mimeType);
-            notificationIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-            }
-
-            //        } else {
-            // N.B.this only works with a very select few android apps - folder browsing seemingly isn't a standard thing in android.
-            //            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
-            //            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
-            //            notificationIntent.setDataAndType(selectedUri, "resource/folder");
-            //        }
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
-                    notificationIntent, 0);
-
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), uiHelper.getDefaultNotificationChannelId())
-                    .setCategory(NotificationCompat.CATEGORY_EVENT)
-                    .setLargeIcon(bitmap)
-                    .setContentTitle(getContext().getString(R.string.notification_download_event))
-                    .setContentText(IOUtils.getFilename(getContext(), downloadedFile))
-                    .setContentIntent(pendingIntent)
-                    .setGroup(NOTIFICATION_GROUP_DOWNLOADS)
-//                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
-                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_ALL)
-                    .setAutoCancel(true);
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                // this is not a vector graphic
-                mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
-            } else {
-                mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-            }
-
-            uiHelper.showNotification(TAG, notificationId.getAndIncrement(), mBuilder.build());
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-            if(BuildConfig.DEBUG) {
-                Log.d(TAG, "Failed to generate bitmap from : " + downloadedFile.getPath());
-            }
-            Bitmap errorBitmap = DisplayUtils.getBitmap(errorDrawable);
-            DisplayUtils.runOnUiThread(() -> buildAndShowNotification(errorBitmap));
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-            // Don't need to do anything before loading image
-            if(BuildConfig.DEBUG) {
-                Log.d(TAG, "About to generate bitmap from : " + downloadedFile.getPath());
-            }
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            if(obj instanceof DownloadTarget) {
-                DownloadTarget other = (DownloadTarget) obj;
-                return downloadedFile.equals(other.downloadedFile);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return downloadedFile.hashCode();
         }
     }
 
@@ -903,104 +551,11 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         showFragmentNow(fragment);
     }
 
-    private static class DownloadAction extends UIHelper.Action<ActivityUIHelper<AbstractMainActivity>, AbstractMainActivity, PiwigoResponseBufferingHandler.Response> implements Parcelable {
-
-        private final DownloadFileRequestEvent downloadEvent;
-
-        public DownloadAction(DownloadFileRequestEvent event) {
-            super();
-            downloadEvent = event;
-        }
-
-        protected DownloadAction(Parcel in) {
-            super(in);
-            downloadEvent = in.readParcelable(DownloadFileRequestEvent.class.getClassLoader());
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeParcelable(downloadEvent, flags);
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
-            @Override
-            public DownloadAction createFromParcel(Parcel in) {
-                return new DownloadAction(in);
-            }
-
-            @Override
-            public DownloadAction[] newArray(int size) {
-                return new DownloadAction[size];
-            }
-        };
-
-        @Override
-        public boolean onSuccess(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.Response response) {
-            //UrlProgressResponse, UrlToFileSuccessResponse,
-            if (response instanceof PiwigoResponseBufferingHandler.UrlProgressResponse) {
-                onProgressUpdate(uiHelper, (PiwigoResponseBufferingHandler.UrlProgressResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) {
-                onGetResource(uiHelper, (PiwigoResponseBufferingHandler.UrlToFileSuccessResponse) response);
-            }
-            return super.onSuccess(uiHelper, response);
-        }
-
-        @Override
-        public boolean onFailure(ActivityUIHelper<AbstractMainActivity> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
-                onGetResourceCancelled(uiHelper, (PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
-            }
-            if (response.isEndResponse()) {
-                //TODO handle the failure and retry here so we can keep the activeDownloads field in sync properly. Presently two downloads may occur simulataneously.
-                uiHelper.getParent().removeActionDownloadEvent();
-                uiHelper.getParent().scheduleNextDownloadIfPresent();
-            }
-            return super.onFailure(uiHelper, response);
-        }
-
-        private void onProgressUpdate(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
-            ProgressIndicator progressIndicator = uiHelper.getProgressIndicator();
-            if (response.getProgress() < 0) {
-                progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
-            } else {
-                if (response.getProgress() == 0) {
-                    progressIndicator.showProgressIndicator(R.string.progress_downloading, response.getProgress(), new CancelDownloadListener(response.getMessageId()));
-                } else if (progressIndicator.getVisibility() == VISIBLE) {
-                    progressIndicator.updateProgressIndicator(response.getProgress());
-                }
-            }
-        }
-
-        public void onGetResource(UIHelper<AbstractMainActivity> uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-            Uri mediaStoreUri = IOUtils.addFileToMediaStore(uiHelper.getAppContext(), response.getLocalFileUri());
-            downloadEvent.markDownloaded(response.getUrl(), mediaStoreUri);
-            uiHelper.getParent().notifyUserFileDownloadComplete(uiHelper, mediaStoreUri);
-            uiHelper.getParent().processDownloadEvent(downloadEvent);
-
-        }
-
-
-        private void onGetResourceCancelled(UIHelper uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
-            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getAppContext().getString(R.string.alert_image_download_cancelled_message));
-        }
-
-        private static class CancelDownloadListener implements View.OnClickListener {
-            private final long downloadMessageId;
-
-            public CancelDownloadListener(long messageId) {
-                downloadMessageId = messageId;
-            }
-
-            @Override
-            public void onClick(View v) {
-                EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
-            }
+    public static Uri toContentUri(@NonNull Context context, @NonNull Uri uri) {
+        if ("file".equals(uri.getScheme())) {
+            return androidx.core.content.FileProvider.getUriForFile(context, delit.piwigoclient.BuildConfig.APPLICATION_ID + ".provider", new File(uri.getPath()));
+        } else {
+            return uri;
         }
     }
 

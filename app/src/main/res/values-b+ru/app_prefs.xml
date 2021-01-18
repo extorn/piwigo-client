@@ -457,6 +457,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">Показать все подсказки пользователя снова</string>
 
     
+    <string name="preference_app_uri_permissions_held_title">Разрешения URI сохранены</string>
+    <string name="preference_app_uri_permissions_held_summary">Назначение всех имеющихся разрешений URI</string>
+
+
+    
 
     
     

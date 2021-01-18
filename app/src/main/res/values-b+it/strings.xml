@@ -397,6 +397,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="progress_loading_user_details">Recupero dei dettagli dell\'utente</string>
     <string name="progress_delete_user">Eliminazione dell\'utente</string>
     <string name="alert_read_permissions_needed_for_file_upload">È necessaria l\'autorizzazione per leggere il filesystem per selezionare e caricare i file</string>
+    <string name="alert_file_permissions_needed_for_pattern">È necessaria l\'autorizzazione%1$s per il filesystem. Scopo:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">La memorizzazione nella cache locale dei file video è abilitata. Per consentire ciò, deve essere concesso l\'accesso in scrittura al file system. Se negato, la memorizzazione nella cache locale verrà disabilitata.</string>
     <string name="alert_error_tidying_video_cache">Impossibile riordinare la cache del video. Se il problema persiste, segnalalo.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Impossibile copiare il file dalla cache. %1$s</string>
@@ -708,5 +709,9 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossibile aggiungere file per il caricamento. È in corso un processo di caricamento.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossibile aggiungere file per il caricamento. Il processo di caricamento corrente deve essere completato per primo.</string>
     <string name="removing_files_from_job">Rimozione di file dal processo di caricamento</string>
+    <string name="permission_write">Scrivi</string>
+    <string name="permission_read">Leggere</string>
+    <string name="doc_provider_root_downloads_title">Download di Piwigo</string>
+    <string name="doc_provider_root_downloads_summary">File scaricati dal server</string>
 
 </resources>

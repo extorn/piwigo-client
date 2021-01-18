@@ -20,7 +20,7 @@ public class AppPreferences {
         return prefs.getBoolean(context.getString(R.string.preference_app_always_show_nav_buttons_key), context.getResources().getBoolean(R.bool.preference_app_always_show_nav_buttons_default));
     }
 
-    public static @Nullable DocumentFile getAppDownloadFolder(@NonNull SharedPreferences prefs, @NonNull Context context) {
+    public static @NonNull DocumentFile getAppDownloadFolder(@NonNull SharedPreferences prefs, @NonNull Context context) {
 
         String folder = prefs.getString(context.getString(R.string.preference_app_default_download_folder_key), null);
         if(folder != null) {
@@ -37,10 +37,15 @@ public class AppPreferences {
                 return docFile;
             }
         }
-        if(Build.VERSION.SDK_INT >= 29) {
-            return null;
+        return getDefaultDownloadFolder(context);
+    }
+
+    private static DocumentFile getDefaultDownloadFolder(Context context) {
+        File folder = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        if(folder == null) {
+            folder = context.getFilesDir();
         }
-        return DocumentFile.fromFile(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS));
+        return DocumentFile.fromFile(folder);
     }
 
     public static boolean isAlwaysShowStatusBar(SharedPreferences prefs, Context context) {

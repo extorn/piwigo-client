@@ -457,6 +457,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">Afficher à nouveau tous les conseils utilisateur</string>
 
     
+    <string name="preference_app_uri_permissions_held_title">Autorisations URI conservées</string>
+    <string name="preference_app_uri_permissions_held_summary">Le but de toutes les autorisations URI détenues</string>
+
+
+    
 
     
     

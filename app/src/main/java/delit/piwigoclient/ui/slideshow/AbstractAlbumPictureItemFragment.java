@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.ortiz.touchview.TouchImageView;
@@ -36,8 +37,10 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
@@ -313,7 +316,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     protected void onDownloadItem(final PictureResourceItem model) {
         super.onDownloadItem(model);
-        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
+        if(downloadFolder != null && IOUtils.isPrivateFolder(requireContext(), downloadFolder.getUri().getPath())) {
+            permission = null;
+        }
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, permission, getString(R.string.alert_write_permission_needed_for_download));
         //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
 
     }

@@ -754,6 +754,7 @@ SOFTWARE.
     <string name="progress_loading_user_details">Retrieving user details</string>
     <string name="progress_delete_user">Deleting user</string>
     <string name="alert_read_permissions_needed_for_file_upload">Permission is needed to read the filesystem in order to select and upload files</string>
+    <string name="alert_file_permissions_needed_for_pattern">%1$s permission is needed for the filesystem. Purpose: %2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">Local caching of Video files is enabled. To allow this, write access to the file system must be granted. If denied, local caching will be disabled.</string>
     <string name="alert_error_tidying_video_cache">Unable to tidy the video cache. If this issue persists, please report it.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Unable to copy file from cache. %1$s</string>
@@ -1067,5 +1068,7 @@ SOFTWARE.
     <string name="removing_files_from_job">Removing files from Upload Job</string>
     <string name="permission_write">Write</string>
     <string name="permission_read">Read</string>
+    <string name="doc_provider_root_downloads_title">Piwigo Downloads</string>
+    <string name="doc_provider_root_downloads_summary">Files downloaded from the server</string>
 
 </resources>

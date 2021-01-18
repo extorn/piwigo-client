@@ -4,10 +4,15 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.squareup.picasso.Target;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.ui.AbstractMainActivity;
+import delit.piwigoclient.ui.upload.FilesToUploadRecyclerViewAdapter;
 
 public class DownloadFileRequestEvent implements Parcelable {
     private final boolean shareDownloadedWithAppSelector;

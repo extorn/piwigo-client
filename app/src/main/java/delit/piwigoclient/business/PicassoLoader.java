@@ -37,13 +37,14 @@ import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.picasso.EnhancedPicassoListener;
 import delit.piwigoclient.ui.PicassoFactory;
 import pl.droidsonroids.gif.GifDrawable;
 
 /**
  * Created by gareth on 11/10/17.
  */
-public class PicassoLoader<T extends ImageView> implements Callback, PicassoFactory.EnhancedPicassoListener {
+public class PicassoLoader<T extends ImageView> implements Callback, EnhancedPicassoListener {
 
     public final static int INFINITE_AUTO_RETRIES = -1;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";

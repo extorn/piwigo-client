@@ -397,6 +397,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="progress_loading_user_details">ユーザーの詳細を取得する</string>
     <string name="progress_delete_user">ユーザーを削除しています</string>
     <string name="alert_read_permissions_needed_for_file_upload">ファイルを選択してアップロードするには、ファイルシステムを読み取るためのアクセス許可が必要です</string>
+    <string name="alert_file_permissions_needed_for_pattern">ファイルシステムには%1$sのアクセス許可が必要です。 目的：%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">ビデオファイルのローカルキャッシュが有効になります。これを許可するには、ファイルシステムへの書き込みアクセスを許可する必要があります。拒否された場合、ローカルキャッシュは無効になります。</string>
     <string name="alert_error_tidying_video_cache">ビデオキャッシュを整理できません。この問題が解決しない場合は、報告してください。</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">キャッシュからファイルをコピーできません。 %1$s</string>
@@ -708,5 +709,9 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_error_unable_add_files_previous_job_still_running">アップロードするファイルを追加できません。アップロードジョブが進行中です。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">アップロードするファイルを追加できません。現在のアップロードジョブを最初に終了する必要があります。</string>
     <string name="removing_files_from_job">アップロードジョブからのファイルの削除</string>
+    <string name="permission_write">書く</string>
+    <string name="permission_read">読んだ</string>
+    <string name="doc_provider_root_downloads_title">Piwigoダウンロード</string>
+    <string name="doc_provider_root_downloads_summary">サーバーからダウンロードしたファイル</string>
 
 </resources>

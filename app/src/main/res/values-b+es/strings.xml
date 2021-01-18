@@ -397,6 +397,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="progress_loading_user_details">Recuperando detalles de usuario</string>
     <string name="progress_delete_user">Eliminando usuario</string>
     <string name="alert_read_permissions_needed_for_file_upload">Se necesita permiso para leer el sistema de archivos a fin de seleccionar y cargar archivos</string>
+    <string name="alert_file_permissions_needed_for_pattern">Se necesita el permiso%1$s para el sistema de archivos. Finalidad:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">El almacenamiento en caché local de archivos de video está habilitado. Para permitir esto, se debe otorgar acceso de escritura al sistema de archivos. Si se deniega, el almacenamiento en caché local se desactivará.</string>
     <string name="alert_error_tidying_video_cache">No se pudo ordenar la caché de video. Si el problema persiste, infórmalo.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">No se puede copiar el archivo de la caché. %1$s</string>
@@ -708,5 +709,9 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_error_unable_add_files_previous_job_still_running">No se pueden agregar archivos para cargar. Hay un trabajo de carga en curso.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">No se pueden agregar archivos para cargar. El trabajo de carga actual debe finalizar primero.</string>
     <string name="removing_files_from_job">Eliminar archivos del trabajo de carga</string>
+    <string name="permission_write">Escribir</string>
+    <string name="permission_read">Leer</string>
+    <string name="doc_provider_root_downloads_title">Descargas de Piwigo</string>
+    <string name="doc_provider_root_downloads_summary">Archivos descargados del servidor</string>
 
 </resources>

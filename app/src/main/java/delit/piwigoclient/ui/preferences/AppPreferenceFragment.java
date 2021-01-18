@@ -203,7 +203,10 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
         if (Boolean.TRUE.equals(val)) {
             getUiHelper().runWithExtraPermissions(AppPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {
-            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
+            Preference pref = getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key));
+            if(pref != null) {
+                pref.setEnabled(false);
+            }
             getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_not_recommended));
         }
         return true;

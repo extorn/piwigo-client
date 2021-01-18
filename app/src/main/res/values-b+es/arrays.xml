@@ -145,6 +145,20 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.95</item>
+        <item>"Arreglo del fallo:
+                - Se han utilizado permisos de archivo insuficientes, lo que provoca errores en las cargas
+                - Archivos descargados no visibles para otras aplicaciones
+                - descarga que funciona tanto para la carpeta de descargas predeterminada como para una seleccionada por el usuario
+                - La aplicación solicitó permisos de lectura o escritura de archivos cuando no eran necesarios.
+               Cambios:
+                - Nueva preferencia en la configuración de la aplicación que enumera todos los permisos de Uri y su propósito
+                - Nuevo DocumentProvider que expone los archivos descargados en la ubicación de descarga predeterminada al selector de archivos del sistema.
+                - Ya no agregue archivos descargados a Android MediaStore - Están disponibles en cualquier selector de archivos.
+               Recomendación:
+                - 1. Ver todos los permisos de archivo que tiene la aplicación en la nueva preferencia, eliminando los que no desea que la aplicación mantenga.
+                - 2. Verifique cada uno de sus trabajos de carga en segundo plano, vuelva a seleccionar la carpeta para cargar
+                - 3. Vuelva a seleccionar la carpeta para descargar archivos de su servidor a"</item>
         <item>1.4.0.94</item>
         <item>"Arreglo del fallo:
                  - Asegúrese de que los archivos seleccionados en la aplicación para cargar se procesen en un hilo en segundo plano al enviarlos a la página de carga para que la interfaz de usuario permanezca visible."</item>

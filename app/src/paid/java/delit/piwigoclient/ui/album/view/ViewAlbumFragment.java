@@ -15,6 +15,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -29,8 +30,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.IOUtils;
+import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.Basket;
@@ -156,7 +160,12 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
     @Override
     protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems) {
-        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
+        if(downloadFolder != null && IOUtils.isPrivateFolder(requireContext(), downloadFolder.getUri().getPath())) {
+            permission = null;
+        }
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, permission, getString(R.string.alert_write_permission_needed_for_download));
         //TODO check permissions needed for android 11+ (R)
         //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }

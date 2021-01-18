@@ -2,6 +2,8 @@ package delit.piwigoclient.business.video;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
@@ -122,17 +124,17 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
     }
 
     private static class CustomDatasourceLoadControlPauseListener implements PausableLoadControl.Listener {
-        HttpDataSource dataSource;
+        private HttpDataSource dataSource;
 
-        public void setDataSource(HttpDataSource dataSource) {
+        public void setDataSource(@NonNull HttpDataSource dataSource) {
             this.dataSource = dataSource;
         }
 
         @Override
         public void onPause() {
-            if(dataSource == null) {
-                throw new IllegalStateException("Unable to resume datasource caching as datasource not yet set");
-            }
+//            if(dataSource == null) {
+//                throw new IllegalStateException("Unable to pause datasource caching as dataSource not yet set");
+//            }
             if (dataSource instanceof RemoteAsyncFileCachingDataSource) {
                 ((RemoteAsyncFileCachingDataSource) dataSource).pauseBackgroundLoad();
             }
@@ -142,7 +144,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
         public void onResume() {
             if(dataSource == null) {
                 throw new IllegalStateException("Unable to resume datasource caching as datasource not yet set");
-            }
+            }//FIXME this stops code being executed but removing it seems to cause another issue.
             if (dataSource instanceof RemoteAsyncFileCachingDataSource) {
                 ((RemoteAsyncFileCachingDataSource) dataSource).resumeBackgroundLoad();
             }

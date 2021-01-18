@@ -457,6 +457,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">Alle gebruikershints opnieuw weergeven</string>
 
     
+    <string name="preference_app_uri_permissions_held_title">URI-machtigingen behouden</string>
+    <string name="preference_app_uri_permissions_held_summary">Het doel van alle URI-machtigingen die worden bewaard</string>
+
+
+    
 
     
     

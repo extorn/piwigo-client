@@ -457,6 +457,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">再次显示所有用户提示</string>
 
     
+    <string name="preference_app_uri_permissions_held_title">持有的URI权限</string>
+    <string name="preference_app_uri_permissions_held_summary">保留所有URI权限的目的</string>
+
+
+    
 
     
     

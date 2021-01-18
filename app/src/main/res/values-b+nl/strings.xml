@@ -397,6 +397,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="progress_loading_user_details">Gebruikersgegevens ophalen</string>
     <string name="progress_delete_user">Gebruiker verwijderen</string>
     <string name="alert_read_permissions_needed_for_file_upload">Toestemming is nodig om het bestandssysteem te lezen om bestanden te selecteren en te uploaden</string>
+    <string name="alert_file_permissions_needed_for_pattern">%1$s toestemming is nodig voor het bestandssysteem. Doel:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">Lokale caching van videobestanden is ingeschakeld. Om dit mogelijk te maken, moet schrijftoegang tot het bestandssysteem worden verleend. Indien geweigerd, wordt lokale caching uitgeschakeld.</string>
     <string name="alert_error_tidying_video_cache">Kan de videocache niet opschonen. Als dit probleem zich blijft voordoen, meld het dan.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Kan bestand niet kopiëren uit cache. %1$s</string>
@@ -636,8 +637,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="upload_status_tab_title_errors">Fouten</string>
     <string name="message_piwigo_server_inconsistent_results">Piwigo API-oproep%1$s meldt dat de bestandscontrolesom niet overeenkomt, maar API-oproep%2$s meldt dat het overeenkomt. Dit kan een bug zijn in de PIWIGO-server of een plug-in die u gebruikt, en het kan de moeite waard zijn om dit te melden.</string>
     <string name="alert_bulk_image_permissions_title">Stel toegangsrechten in</string>
-    <string name="alert_bulk_image_permissions_message">Stel toegangsmachtigingsniveaus in voor de %1$d geselecteerde bronnen</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Kan bestanden die zijn gedeeld met een %1$s mime-type niet verwerken</string>
+    <string name="alert_bulk_image_permissions_message">Stel toegangsmachtigingsniveaus in voor de%1$d geselecteerde bronnen</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Kan bestanden die zijn gedeeld met een%1$s mime-type niet verwerken</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Bestanden met de volgende extensies kunnen niet worden geüpload en zijn verwijderd:%1$s</string>
     <string name="please_select_a_parent_album">Selecteer een bovenliggend album</string>
     <string name="unsupported_device">Sorry, dit apparaat wordt niet ondersteund. Er is een probleem met het openen van Google Play-services.</string>
@@ -708,5 +709,9 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="alert_error_unable_add_files_previous_job_still_running">Kan geen bestanden toevoegen om te uploaden. Er wordt een uploadtaak uitgevoerd.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Kan geen bestanden toevoegen om te uploaden. De huidige uploadtaak moet eerst worden voltooid.</string>
     <string name="removing_files_from_job">Bestanden verwijderen uit Upload Job</string>
+    <string name="permission_write">Schrijven</string>
+    <string name="permission_read">Lezen</string>
+    <string name="doc_provider_root_downloads_title">Piwigo-downloads</string>
+    <string name="doc_provider_root_downloads_summary">Bestanden gedownload van de server</string>
 
 </resources>

@@ -397,6 +397,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="progress_loading_user_details">Benutzerdetails abrufen</string>
     <string name="progress_delete_user">Benutzer löschen</string>
     <string name="alert_read_permissions_needed_for_file_upload">Zum Lesen des Dateisystems ist eine Berechtigung erforderlich, um Dateien auswählen und hochladen zu können</string>
+    <string name="alert_file_permissions_needed_for_pattern">Für das Dateisystem ist die Berechtigung% 1 $ erforderlich. Zweck:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">Das lokale Caching von Videodateien ist aktiviert. Um dies zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn dies abgelehnt wird, wird das lokale Caching deaktiviert.</string>
     <string name="alert_error_tidying_video_cache">Der Video-Cache kann nicht aufgeräumt werden. Wenn dieses Problem weiterhin besteht, melden Sie es bitte.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Datei kann nicht aus dem Cache kopiert werden. %1$s</string>
@@ -637,7 +638,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="message_piwigo_server_inconsistent_results">Die Prüfsumme der Piwigo-API-Aufruf%1$s-Datei stimmt nicht überein, aber der API-Aufruf%2$s meldet, dass sie übereinstimmt. Dies kann ein Fehler im PIWIGO-Server oder ein von Ihnen verwendetes Plugin sein und möglicherweise eine Meldung wert sein.</string>
     <string name="alert_bulk_image_permissions_title">Festlegen von Zugriffsberechtigungen</string>
     <string name="alert_bulk_image_permissions_message">Legen Sie die Zugriffsberechtigungsstufen für die ausgewählten Ressourcen%1$d fest</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die für einen MIME-Typ von %1$s freigegeben wurden, können nicht verarbeitet werden</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die für einen MIME-Typ von%1$freigegeben wurden, können nicht verarbeitet werden</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit den folgenden Erweiterungen können nicht hochgeladen werden und wurden entfernt:%1$s</string>
     <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album aus</string>
     <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Beim Zugriff auf Google Play Services ist ein Problem aufgetreten.</string>
@@ -708,5 +709,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_unable_add_files_previous_job_still_running">Dateien zum Hochladen können nicht hinzugefügt werden. Ein Upload-Auftrag wird ausgeführt.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Dateien zum Hochladen können nicht hinzugefügt werden. Der aktuelle Upload-Job muss zuerst beendet werden.</string>
     <string name="removing_files_from_job">Entfernen von Dateien aus dem Upload-Job</string>
+    <string name="permission_write">Schreiben</string>
+    <string name="permission_read">Lesen</string>
+    <string name="doc_provider_root_downloads_title">Piwigo Downloads</string>
+    <string name="doc_provider_root_downloads_summary">Vom Server heruntergeladene Dateien</string>
 
 </resources>

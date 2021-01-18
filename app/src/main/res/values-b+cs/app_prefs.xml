@@ -457,6 +457,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">Znovu zobrazit všechny tipy uživatelů</string>
 
     
+    <string name="preference_app_uri_permissions_held_title">Oprávnění URI zadrženo</string>
+    <string name="preference_app_uri_permissions_held_summary">Účel všech zadržených oprávnění URI</string>
+
+
+    
 
     
     

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
@@ -367,6 +368,7 @@ public class IOUtils {
             if("file".equals(uri.getScheme())) {
                 String path = uri.getPath();
                 if(path != null) {
+                    File f = new File(path);
                     fileExt = IOUtils.getFileExt(new File(path).getName());
                 }
             }
@@ -981,12 +983,14 @@ public class IOUtils {
     }
 
     public static Uri addFileToMediaStore(Context context, Uri fileUri, String mimeType) {
-        ContentValues values = new ContentValues();
-        if(!"file".equals(fileUri.getScheme())) {
-            // Only raw files can be added (the others either already are, or aren't local).
-            return fileUri;
+        Uri mediaStoreUri = getMediaStoreUri(context, fileUri);
+        if(mediaStoreUri != null) {
+            return mediaStoreUri;
         }
-        if(mimeType == null) {
+
+        boolean isFileUri = "file".equals(fileUri.getScheme());
+
+        if(mimeType == null && isFileUri) {
             // guess from the file content.
             try(FileInputStream fis = new FileInputStream(fileUri.getPath())) {
                 mimeType = URLConnection.guessContentTypeFromStream(fis);
@@ -996,12 +1000,22 @@ public class IOUtils {
             }
         }
 
-        Uri mediaStoreUri = IOUtils.selectExternalMediaStoreContentProviderUriForFile(mimeType);
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            //FIXME all are being pushed to downloads here
+            mediaStoreUri = MediaStore.Downloads.EXTERNAL_CONTENT_URI;//getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+        }
         if(mediaStoreUri != null) {
+            ContentValues values = new ContentValues();
             values.put(MediaStore.MediaColumns.TITLE, IOUtils.getFilename(context, fileUri));
             values.put(MediaStore.MediaColumns.MIME_TYPE, mimeType);
-            values.put(MediaStore.MediaColumns.DATA, fileUri.getPath());
+            values.put(MediaStore.MediaColumns.DATA, fileUri.toString());//TODO toPath does not work for a content Uri
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                values.put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures");
+//            }
 //            if(MimeTypeFilter.matches(mimeType,"video/*")) {
 //                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES);
 //            } else if(MimeTypeFilter.matches(mimeType,"image/*")) {
@@ -1027,21 +1041,56 @@ public class IOUtils {
                 Logging.recordException(e); // shouldn't ever occur, but, just in case.
             }
         }
+        Logging.log(Log.ERROR, TAG, "Unable to get a MediaStore Uri. Returning original Uri %1$s", fileUri);
         return fileUri;
     }
 
-    private static @Nullable Uri selectExternalMediaStoreContentProviderUriForFile(@Nullable String mimeType) {
+    /**
+     *
+     * @param context
+     * @param fileUri uri to check
+     * @return null if not in media store.
+     */
+    private static @Nullable Uri getMediaStoreUri(@NonNull Context context, Uri fileUri) {
+        Uri mediaUri = null;
+        boolean inMediaStore = true;
+        if(fileUri == null) {
+            return null;
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            try {
+                mediaUri = MediaStore.getMediaUri(context, fileUri);
+            } catch (SecurityException|IllegalArgumentException e) {
+                inMediaStore = false;
+            }
+        }
+        return mediaUri;
+    }
+
+    private static @Nullable Uri selectExternalMediaStoreContentProviderUriForFile(@Nullable String mimeType, @Nullable Uri fileUri) {
 
         boolean isVideo = MimeTypeFilter.matches(mimeType, "video/*");
         boolean isAudio = MimeTypeFilter.matches(mimeType, "audio/*");
         boolean isImage = MimeTypeFilter.matches(mimeType, "image/*");
         Uri mediaStoreUri = null;
         if(isVideo) {
-            mediaStoreUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            if(fileUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mediaStoreUri = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            } else {
+                mediaStoreUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            }
         } else if(isAudio) {
-            mediaStoreUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            if(fileUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mediaStoreUri = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            } else {
+                mediaStoreUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            }
         } else if(isImage) {
-            mediaStoreUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            if(fileUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mediaStoreUri = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            } else {
+                mediaStoreUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            }
         }
         return mediaStoreUri;
     }
@@ -1139,5 +1188,20 @@ public class IOUtils {
         int expectedFlags = combineIntFlags(permFlags);
         int filteredPerms = input & expectedFlags; // filter everything not expected out
         return expectedFlags == filteredPerms; // is what is left matching what was expected or are bits of expected missing?
+    }
+
+    public static boolean needsWritePermission(int selectedUriPermissionFlags) {
+        return allUriFlagsAreSet(selectedUriPermissionFlags, IOUtils.URI_PERMISSION_WRITE);
+    }
+
+    public static boolean isPrivateFolder(@NonNull Context context, @Nullable String path) {
+        if(path == null) {
+            return false;
+        }
+        File file = context.getExternalFilesDir(null);
+        if(file != null && path.startsWith(file.getPath())) {
+            return true;
+        }
+        return path.startsWith(context.getFilesDir().getPath());
     }
 }

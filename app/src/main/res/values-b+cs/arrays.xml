@@ -145,6 +145,20 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.95</item>
+        <item>"Oprava chyby:
+                - Není použito dostatečné oprávnění k souboru, což způsobuje selhání nahrávání
+                - Stažené soubory nejsou viditelné pro jiné aplikace
+                - stahování funguje jak pro výchozí složku Stahování, tak pro jednu vybranou uživatelem
+                - Aplikace požadovala oprávnění ke čtení nebo zápisu souboru, když nebyla požadována.
+               Změny:
+                - Nová předvolba v nastavení aplikace se seznamem všech zadržených oprávnění Uri a jejich účelu
+                - Nový DocumentProvider vystavující soubory stažené ve výchozím umístění stahování do voliče systémových souborů.
+                - Již nepřidávejte soubory stažené do obchodu Android MediaStore - Jsou k dispozici v jakémkoli selektoru souborů.
+               Doporučení:
+                - 1. Zobrazení všech oprávnění k souborům držených aplikací v nové předvolbě, odstranění všech, která si nepřejete, aby aplikace uchovávala.
+                - 2. Zkontrolujte každou ze svých úloh nahrávání na pozadí, znovu vyberte složku, kterou chcete nahrát
+                - 3. Znovu vyberte složku, do které chcete stáhnout soubory ze serveru"</item>
         <item>1.4.0.94</item>
         <item>"Oprava chyby:
                  - Zajistěte, aby soubory vybrané v aplikaci pro nahrávání byly zpracovány na vlákně na pozadí při odesílání na stránku pro nahrávání, takže uživatelské rozhraní zůstane viditelné."</item>

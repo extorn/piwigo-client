@@ -251,8 +251,13 @@
         <item>1.4.0.95</item>
         <item>"Bugfix:
                 - Insufficient file permissions used, causing failing uploads
+                - Files downloaded not visible to other apps
+                - download working for both default Downloads folder, and one selected by the user
+                - App requested Read or Write File permissions when they weren't required.
                Changes:
                 - New preference in app settings listing all Uri permissions held and their purpose
+                - New DocumentProvider exposing files downloaded in the default download location to the system file selector.
+                - No longer add files downloaded to the Android MediaStore - They're available in any File selector.
                Recommendation:
                 - 1. Viewing all file permissions held by the app in the new preference, removing any you don't wish the app to hold.
                 - 2. Check each of your background upload jobs, reselect the folder to upload

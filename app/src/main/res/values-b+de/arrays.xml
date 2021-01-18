@@ -145,6 +145,20 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.95</item>
+        <item>"Bug-Fix:
+                - Es werden nicht genügend Dateiberechtigungen verwendet, was zu fehlgeschlagenen Uploads führt
+                - Heruntergeladene Dateien sind für andere Apps nicht sichtbar
+                - Download funktioniert sowohl für den Standard-Download-Ordner als auch für einen vom Benutzer ausgewählten
+                - Die App hat Lese- oder Schreibberechtigungen für Dateien angefordert, wenn diese nicht erforderlich waren.
+               Änderungen:
+                - Neue Einstellung in den App-Einstellungen, in der alle gehaltenen Uri-Berechtigungen und ihr Zweck aufgelistet sind
+                - Neuer DocumentProvider macht Dateien, die am Standard-Download-Speicherort heruntergeladen wurden, für die Systemdatei-Auswahl verfügbar.
+                - Fügen Sie keine in den Android MediaStore heruntergeladenen Dateien mehr hinzu. - Sie sind in jeder Dateiauswahl verfügbar.
+               Empfehlung:
+                - 1. Zeigen Sie alle Dateiberechtigungen an, die von der App in der neuen Einstellung gespeichert wurden, und entfernen Sie alle Berechtigungen, die die App nicht enthalten soll.
+                - 2. Überprüfen Sie jeden Ihrer Hintergrund-Upload-Jobs und wählen Sie den hochzuladenden Ordner erneut aus
+                - 3. Wählen Sie den Ordner erneut aus, in den Dateien von Ihrem Server heruntergeladen werden sollen"</item>
         <item>1.4.0.94</item>
         <item>"Bug-Fix:
                  - Stellen Sie sicher, dass die in der App zum Hochladen ausgewählten Dateien beim Senden an die Upload-Seite in einem Hintergrund-Thread verarbeitet werden, damit die Benutzeroberfläche sichtbar bleibt."</item>

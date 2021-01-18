@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -242,7 +243,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         onViewCreatedAndStateLoaded(view, savedInstanceState);
 
         super.onViewCreated(view, savedInstanceState);
-        setAllowDownload(false);
+        setAllowDownload(cachedVideoFile != null);
 
         logStatus("view state restored");
         displayItemDetailsControlsBasedOnSessionState();
@@ -351,6 +352,8 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         stopVideoDownloadAndPlay();
         player.stop(); // this is terminal.
         videoPlaybackPosition = 0; // ensure it starts at the beginning again
+        cachedVideoFile = null;
+
         try {
             CacheUtils.deleteCachedContent(getContext(), getModel().getFileUrl(getModel().getFullSizeFile().getName()));
             // now update stored state and UI display
@@ -371,6 +374,11 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
 
     @Override
     protected void onDownloadItem(final VideoResourceItem model) {
+        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
+        if(downloadFolder != null && IOUtils.isPrivateFolder(requireContext(), downloadFolder.getUri().getPath())) {
+            permission = null;
+        }
         getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_DOWNLOAD);
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
         //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
@@ -483,7 +491,12 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         if (dataSourceFactory.isCachingEnabled()) {
             logStatus("configuring datasource and player - caching enabled - check permissions first");
             getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_CACHE);
-            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
+            String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            File videoCacheFolder = CacheUtils.getBasicCacheFolder(requireContext());
+            if(videoCacheFolder != null && IOUtils.isPrivateFolder(requireContext(), videoCacheFolder.getPath())) {
+                permission = null;
+            }
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, permission, getString(R.string.alert_write_permission_needed_for_video_caching));
             //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {
             logStatus("configuring datasource and player - no caching enabled - do now!");
@@ -583,8 +596,9 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         public void onFullyCached(final CachedContent cacheFileContent) {
             customExoPlayerInfoPanel.postDelayed(() -> customExoPlayerInfoPanel.setVisibility(View.INVISIBLE), 5000);
             timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
-            setAllowDownload(true);
             cachedVideoFile = cacheFileContent.getCachedDataFile();
+            setAllowDownload(cachedVideoFile != null);
+
             originalVideoFilename = cacheFileContent.getOriginalUri().replace(".*/", "").replace("\\?.*", "");
 
             if (isVisible()) {

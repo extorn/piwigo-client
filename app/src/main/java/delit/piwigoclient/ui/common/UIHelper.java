@@ -664,27 +664,29 @@ public abstract class UIHelper<T> {
         hideProgressIndicator();
     }
 
-    public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
+    public int runWithExtraPermissions(@NonNull final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, @Nullable final String permissionNeeded, @NonNull String permissionJustificationString) {
         return runWithExtraPermissions(fragment, sdkVersionRequiredFrom, sdkVersionRequiredUntil, new String[]{permissionNeeded}, permissionJustificationString);
     }
 
-    public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String[] permissionsNeeded, String permissionJustificationString) {
+    public int runWithExtraPermissions(@NonNull final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, @NonNull final String[] permissionsNeeded, @NonNull String permissionJustificationString) {
         PermissionsWantedRequestEvent event = new PermissionsWantedRequestEvent();
         for(String permissionNeeded : permissionsNeeded) {
-            event.addPermissionNeeded(permissionNeeded);
+            if(permissionNeeded != null) {
+                event.addPermissionNeeded(permissionNeeded);
+            }
         }
         event.setJustification(permissionJustificationString);
-        return runWithExtraPermissions(fragment.getActivity(), sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
+        return runWithExtraPermissions(fragment.requireActivity(), sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
     }
 
-    public int runWithExtraPermissions(final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
+    public int runWithExtraPermissions(@NonNull final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
         PermissionsWantedRequestEvent event = new PermissionsWantedRequestEvent();
         event.addPermissionNeeded(permissionNeeded);
         event.setJustification(permissionJustificationString);
         return runWithExtraPermissions(activity, sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
     }
 
-    private int runWithExtraPermissions(final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final PermissionsWantedRequestEvent event) {
+    private int runWithExtraPermissions(@NonNull final Activity activity, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, @NonNull final PermissionsWantedRequestEvent event) {
 
         final PermissionRequester requester = new ActivityPermissionRequester(activity);
         if (activity instanceof FragmentActivity) {
@@ -721,7 +723,7 @@ public abstract class UIHelper<T> {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                final MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(appContext, R.style.Theme_App_EditPages));
+                final MaterialAlertDialogBuilder alert = new MaterialAlertDialogBuilder(new android.view.ContextThemeWrapper(activity, R.style.Theme_App_EditPages));
                 alert.setTitle(appContext.getString(R.string.alert_title_permissions_needed));
                 alert.setMessage(event.getJustification());
 

@@ -30,6 +30,7 @@ import java.util.List;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -67,7 +68,14 @@ public class FileSelectActivity extends MyActivity<FileSelectActivity> {
     public void onStart() {
         super.onStart();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+            String localisedPermission = getString(R.string.permission_read);
+            String requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            if(IOUtils.needsWritePermission(folderItemSelectPrefs.getSelectedUriPermissionFlags())) {
+                requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+                localisedPermission = getString(R.string.permission_write);
+            }
+            String purpose = folderItemSelectPrefs.getSelectedUriPermissionConsumerPurpose();
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, requiredPermission, getString(R.string.alert_file_permissions_needed_for_pattern, localisedPermission, purpose));
 
         }
     }
@@ -135,9 +143,6 @@ public class FileSelectActivity extends MyActivity<FileSelectActivity> {
         folderItemSelectPrefs.withInitialFolder(event.getInitialFolder());
         folderItemSelectPrefs.withVisibleContent(event.getVisibleFileTypes(), event.getFileSortOrder());
         folderItemSelectPrefs.withVisibleMimeTypes(event.getVisibleMimeTypes());
-        if(event.getSelectedUriPermissionsForConsumerId() == null) {
-            Logging.log(Log.ERROR, TAG, "File Consumer id is null. Purpose  : " + event.getSelectedUriPermissionsForConsumerPurpose());
-        }
         folderItemSelectPrefs.withSelectedUriPermissionsForConsumerId(event.getSelectedUriPermissionsForConsumerId());
         folderItemSelectPrefs.setSelectedUriPermissionConsumerPurpose(event.getSelectedUriPermissionsForConsumerPurpose());
         folderItemSelectPrefs.setSelectedUriPermissionFlags(event.getSelectedUriPermissionsFlags());

@@ -457,6 +457,11 @@
     <string name="preference_app_clear_list_of_user_hints_shown_title">すべてのユーザーヒントをもう一度表示</string>
 
     
+    <string name="preference_app_uri_permissions_held_title">保持されているURI権限</string>
+    <string name="preference_app_uri_permissions_held_summary">保持されているすべてのURI権限の目的</string>
+
+
+    
 
     
     

@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,7 @@ import delit.piwigoclient.ui.upgrade.PreferenceMigrator226;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator240;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator282;
 import delit.piwigoclient.ui.upgrade.PreferenceMigrator44;
+import delit.piwigoclient.util.MyDocumentProvider;
 
 /**
  * Created by gareth on 14/06/17.
@@ -52,6 +55,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         // required for vector graphics support on older devices
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         Logging.setDebug(BuildConfig.DEBUG);
+
     }
 
     protected static Resources resources;
