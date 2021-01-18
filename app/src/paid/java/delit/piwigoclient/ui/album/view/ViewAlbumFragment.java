@@ -31,7 +31,6 @@ import java.util.Set;
 
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -162,7 +161,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems) {
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
-        if(downloadFolder != null && IOUtils.isPrivateFolder(requireContext(), downloadFolder.getUri().getPath())) {
+        if(AppPreferences.havePermissions(requireContext(), downloadFolder, IOUtils.URI_PERMISSION_WRITE)) {
             permission = null;
         }
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, permission, getString(R.string.alert_write_permission_needed_for_download));

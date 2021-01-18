@@ -318,7 +318,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         super.onDownloadItem(model);
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
-        if(downloadFolder != null && IOUtils.isPrivateFolder(requireContext(), downloadFolder.getUri().getPath())) {
+        if(AppPreferences.havePermissions(requireContext(), downloadFolder, IOUtils.URI_PERMISSION_WRITE)) {
             permission = null;
         }
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, permission, getString(R.string.alert_write_permission_needed_for_download));

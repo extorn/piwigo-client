@@ -376,11 +376,11 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     protected void onDownloadItem(final VideoResourceItem model) {
         String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
-        if(downloadFolder != null && IOUtils.isPrivateFolder(requireContext(), downloadFolder.getUri().getPath())) {
+        if(AppPreferences.havePermissions(requireContext(), downloadFolder, IOUtils.URI_PERMISSION_WRITE)) {
             permission = null;
         }
         getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_DOWNLOAD);
-        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, permission, getString(R.string.alert_write_permission_needed_for_download));
         //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }
 

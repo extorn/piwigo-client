@@ -3,16 +3,15 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.os.ConfigurationCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 
 public class AppPreferences {
@@ -84,6 +83,14 @@ public class AppPreferences {
 
     public static int getVideoCacheSizeMb(SharedPreferences prefs, Context context) {
         return prefs.getInt(context.getString(R.string.preference_video_cache_maxsize_mb_key), context.getResources().getInteger(R.integer.preference_video_cache_maxsize_mb_default));
+    }
+
+    public static boolean havePermissions(@NonNull Context context, DocumentFile downloadFolder, int ... neededPermissions) {
+        if(downloadFolder != null && IOUtils.isPrivateFolder(context, downloadFolder.getUri().getPath())) {
+            return true;
+        }
+        int havePerms = IOUtils.getUriPermissionsFlags(context, downloadFolder.getUri());
+        return IOUtils.allUriFlagsAreSet(havePerms, neededPermissions);
     }
 
     public static class UriPermissionUseCheckResult {
