@@ -52,7 +52,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     private FragmentUIHelper<T> uiHelper;
     private String piwigoSessionToken;
     private String piwigoServerConnected;
-    private @StyleRes int theme = Resources.ID_NULL;
+    private @StyleRes int theme = 0; //Resources.ID_NULL; (needs 29+)
     private boolean coreComponentsInitialised;
 
     protected long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {

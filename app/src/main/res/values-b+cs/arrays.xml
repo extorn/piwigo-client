@@ -6,7 +6,7 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps (--X)</item>
+        <item>0bps (—X)</item>
         <item>velmi nízká (0,025 b / pixelů * rámeček)</item>
         <item>nižší (0,05 b / pixely * rámeček)</item>
         <item>nízký (0,1 b / pixelů * rámeček)</item>

@@ -2,38 +2,18 @@ package delit.piwigoclient.picasso;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.net.Uri;
-import android.opengl.GLES20;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
-import android.view.TextureView;
 
 import androidx.core.content.MimeTypeFilter;
 
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
-import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.capture.FrameCapturer;
 import delit.piwigoclient.business.video.capture.ExoPlayerFrameCapture;
-import delit.piwigoclient.business.video.opengl.OutputSurface;
 import delit.piwigoclient.util.BitmapUtils;
 
 public class VideoRequestHandler extends RequestHandler {

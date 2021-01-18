@@ -359,7 +359,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
                 });
                 d.show();
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ExitOnCloseAction<T>(getUiHelper()));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ExitOnCloseAction<>(getUiHelper()));
             }
         }
     }

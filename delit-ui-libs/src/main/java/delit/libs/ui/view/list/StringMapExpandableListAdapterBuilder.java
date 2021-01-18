@@ -43,7 +43,7 @@ public class StringMapExpandableListAdapterBuilder extends ExpandableListAdapter
         return data.get(parent);
     }
 
-    public class StringViewBinding extends ViewBinding<String> {
+    public static class StringViewBinding extends ViewBinding<String> {
 
         public StringViewBinding() {
             this(R.layout.exif_list_group_layout, R.id.lblListItemHeader);

@@ -6,7 +6,7 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0 бит / с (--X)</item>
+        <item>0 бит / с (—X)</item>
         <item>очень низкий (0,025 б / пикс * кадр)</item>
         <item>нижний (0,05 б / пикс * кадр)</item>
         <item>низкий (0,1 б / пиксель * кадр)</item>

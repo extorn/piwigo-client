@@ -233,7 +233,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
             viewPrefs.loadFromBundle(savedInstanceState);
             tag = savedInstanceState.getParcelable(ARG_TAG);
-            tagModel = new ViewModelProvider(getActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
+            tagModel = new ViewModelProvider(requireActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
@@ -316,7 +316,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         recyclerView.setLayoutManager(gridLayoutMan);
 
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), PiwigoTagModel.class, tagModel, new AlbumViewAdapterListener(), viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(requireContext(), PiwigoTagModel.class, tagModel, new AlbumViewAdapterListener(), viewPrefs);
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 

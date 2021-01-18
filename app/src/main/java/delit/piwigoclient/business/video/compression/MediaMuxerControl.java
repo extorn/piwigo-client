@@ -26,6 +26,7 @@ import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeSet;
 
 import delit.libs.core.util.Logging;
@@ -445,10 +446,10 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         try {
             MediaMuxer mediaMuxer = buildMediaMuxer(outputFile);
             if (trackFormats.containsKey("video")) {
-                mediaMuxer.addTrack(trackFormats.get("video"));
+                mediaMuxer.addTrack(Objects.requireNonNull(trackFormats.get("video")));
             }
             if (trackFormats.containsKey("audio")) {
-                mediaMuxer.addTrack(trackFormats.get("audio"));
+                mediaMuxer.addTrack(Objects.requireNonNull(trackFormats.get("audio")));
             }
             configureMediaMuxer(mediaMuxer);
             return mediaMuxer;

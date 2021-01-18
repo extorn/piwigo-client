@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.upload;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -605,9 +606,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
+
     private void injectCompressionControlsIntoView() {
         MaterialButton compressVideosButton = new MaterialButton(requireContext());
         compressVideosButton.setText("Compress");
+
         compressVideosButton.setOnClickListener(v -> {
             v.setEnabled(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -999,7 +1002,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         int maxUploadSizeWantedThresholdMB = UploadPreferences.getMaxUploadFilesizeMb(getContext(), prefs);
         HashMap<Uri, Double> retVal = new HashMap<>();
         for (Uri f : filesForUpload) {
-            Double fileLengthMB = BigDecimal.valueOf(IOUtils.getFilesize(requireContext(), f)).divide(BigDecimal.valueOf(1024* 1024), BigDecimal.ROUND_HALF_EVEN).doubleValue();
+            double fileLengthMB = BigDecimal.valueOf(IOUtils.getFilesize(requireContext(), f)).divide(BigDecimal.valueOf(1024* 1024), BigDecimal.ROUND_HALF_EVEN).doubleValue();
             if (fileLengthMB > maxUploadSizeWantedThresholdMB) {
                 retVal.put(f, fileLengthMB);
             }
@@ -1019,7 +1022,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         UploadJob activeJob = null;
 
         if (uploadJobId != null) {
-            activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+            activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
         }
 
         FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
@@ -1241,7 +1244,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
-            UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+            UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
             if (!event.areAllPermissionsGranted()) {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_required_permissions_not_granted_action_cancelled));
                 return;

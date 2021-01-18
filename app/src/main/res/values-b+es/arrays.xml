@@ -6,7 +6,7 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps (--X)</item>
+        <item>0bps (—X)</item>
         <item>muy bajo (0,025 b / píxeles * fotograma)</item>
         <item>inferior (0,05 b / píxeles * fotograma)</item>
         <item>bajo (0,1 b / píxeles * fotograma)</item>

@@ -1,12 +1,5 @@
 package delit.libs.util.picasso;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.graphics.Shader;
-
 public class RoundedTransformation /*
 NOTE: this class works perfectly. but i don't want a picasso reference in this library at the moment
 implements

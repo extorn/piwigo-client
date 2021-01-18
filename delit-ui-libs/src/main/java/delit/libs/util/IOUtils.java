@@ -270,16 +270,14 @@ public class IOUtils {
             mimeType = "application/octet-stream";
         }
 
-        if(folder != null) {
-            tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
-        } else {
+        if (folder == null) {
             File extCacheFolder = context.getExternalCacheDir();
-            if(extCacheFolder == null) {
+            if (extCacheFolder == null) {
                 throw new RuntimeException("Unable to get destination folder for tmp file");
             }
             folder = DocumentFile.fromFile(extCacheFolder);
-            tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
         }
+        tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
         if (tmpFile == null) {
             Logging.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create new temporary file : " + destinationFile.getName() + ".tmp");
             return false;

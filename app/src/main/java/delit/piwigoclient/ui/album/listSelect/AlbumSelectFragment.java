@@ -109,7 +109,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         } else if (getListAdapter() == null) {
             synchronized (this) {
-                AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, getContext());
+                AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, requireContext());
                 availableGalleries.clear();
                 // leaving the root album out prevents it's selection (not wanted).
 //            availableGalleries.add(CategoryItemStub.ROOT_GALLERY);

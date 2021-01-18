@@ -743,7 +743,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         }
     }
 
-    private class OnFilesUnavailableToDownloadQuestionResult extends BaseDownloadQuestionResult {
+    private static class OnFilesUnavailableToDownloadQuestionResult extends BaseDownloadQuestionResult {
 
 
         private final Set<ResourceItem> items;

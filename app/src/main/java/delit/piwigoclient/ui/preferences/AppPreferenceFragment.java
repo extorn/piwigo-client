@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.ListPreference;
@@ -36,6 +37,8 @@ import delit.piwigoclient.ui.common.preference.LocalFoldersListPreference;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
 public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFragment> {
+
+    private static final String TAG = "AppPrefsFrag";
 
     public AppPreferenceFragment() {
     }
@@ -155,9 +158,13 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
             //TODO remove this reference - it should be using Uris
 
             File downloadsFolder = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-            Uri downloadsFolderUri = Uri.fromFile(downloadsFolder);
-            appDownloadFolder.setDefaultValue(downloadsFolderUri);
-            appDownloadFolder.setValue(downloadsFolderUri.toString());
+            if(downloadsFolder == null) {
+                Logging.log(Log.WARN, TAG, "Unable to set default downloads folder");
+            } else {
+                Uri downloadsFolderUri = Uri.fromFile(downloadsFolder);
+                appDownloadFolder.setDefaultValue(downloadsFolderUri);
+                appDownloadFolder.setValue(downloadsFolderUri.toString());
+            }
         }
     }
 

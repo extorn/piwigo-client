@@ -48,7 +48,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
         ArrayList<CategoryItemStub> availableGalleries = new ArrayList<>();
         for (int i = 0; i < categories.size(); i++) {
             JsonObject category = (JsonObject) categories.get(i);
-            Long id = category.get("id").getAsLong();
+            long id = category.get("id").getAsLong();
 
             JsonElement nameElem = category.get("name");
             String name = null;

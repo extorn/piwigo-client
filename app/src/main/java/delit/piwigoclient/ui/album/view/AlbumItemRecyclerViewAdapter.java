@@ -138,7 +138,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
 
     @Override
     protected CustomClickListener<MSL, LVA, AlbumItemRecyclerViewAdapterPreferences, T, VH> buildCustomClickListener(VH viewHolder) {
-        return new AlbumItemCustomClickListener<T, LVA, MSL, VH, RC>(getModelType(), viewHolder, (LVA) this);
+        return new AlbumItemCustomClickListener<>(getModelType(), viewHolder, (LVA) this);
     }
 
     public abstract static class AlbumItemMultiSelectStatusAdapter<T extends GalleryItem> extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<T> {

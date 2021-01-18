@@ -16,7 +16,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +28,6 @@ import java.util.PriorityQueue;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
-import delit.libs.util.LegacyIOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 

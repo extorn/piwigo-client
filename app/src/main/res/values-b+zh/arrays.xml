@@ -6,7 +6,7 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps（--X）</item>
+        <item>0bps（—X）</item>
         <item>非常低（0.025 b /像素*帧）</item>
         <item>较低（0.05 b /像素*帧）</item>
         <item>低（0.1 b /像素*帧）</item>

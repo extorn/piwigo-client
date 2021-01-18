@@ -1026,9 +1026,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
             actionIndicatorImg = basketView.findViewById(R.id.basket_action_indicator);
             if (basket.getAction() == Basket.ACTION_COPY) {
-                PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_copy_black_24px).into(actionIndicatorImg);
+                PicassoFactory.getInstance().getPicassoSingleton(requireContext()).load(R.drawable.ic_content_copy_black_24px).into(actionIndicatorImg);
             } else {
-                PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(actionIndicatorImg);
+                PicassoFactory.getInstance().getPicassoSingleton(requireContext()).load(R.drawable.ic_content_cut_black_24px).into(actionIndicatorImg);
             }
         }
 

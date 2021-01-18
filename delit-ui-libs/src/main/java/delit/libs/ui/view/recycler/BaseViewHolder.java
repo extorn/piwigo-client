@@ -52,7 +52,7 @@ public abstract class BaseViewHolder<VH extends BaseViewHolder<VH, P, T, LVA,MSL
 
         checkBox = itemView.findViewById(R.id.list_item_checked);
         checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
-        checkBox.setOnCheckedChangeListener(new BaseRecyclerViewAdapter.ItemSelectionListener<LVA,VH,P,T,MSL>((LVA)getItemActionListener().getParentAdapter(), (VH)this));
+        checkBox.setOnCheckedChangeListener(new BaseRecyclerViewAdapter.ItemSelectionListener<>((LVA) getItemActionListener().getParentAdapter(), (VH) this));
         if (adapterPrefs.isMultiSelectionEnabled()) {
             checkBox.setButtonDrawable(R.drawable.checkbox);
         } else {

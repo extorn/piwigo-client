@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Environment;
 
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;

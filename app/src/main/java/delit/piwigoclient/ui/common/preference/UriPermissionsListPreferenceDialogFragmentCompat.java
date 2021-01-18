@@ -159,13 +159,13 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
             for(UriPermissionUse itemForDelete : itemsForDelete) {
-                getPreference().getAppSettingsViewModel().releasePersistableUriPermission(getContext(), itemForDelete);
+                getPreference().getAppSettingsViewModel().releasePersistableUriPermission(requireContext(), itemForDelete);
             }
         }
     }
 
     private void loadListValues() {
-        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(getContext());
+        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(requireContext());
         LiveData<List<UriPermissionUse>> uriPermissionsData = getPreference().getAppSettingsViewModel().getAll();
         uriPermissionsData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
             @Override

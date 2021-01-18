@@ -211,7 +211,7 @@ public class QtFastStart {
                     (atomType >> 24) & 255,
                     (atomType >> 16) & 255,
                     (atomType >> 8) & 255,
-                    (atomType >> 0) & 255,
+                    (atomType) & 255,
                     infile.position() - atomSize,
                     atomSize);
             if ((atomType != FREE_ATOM)

@@ -17,19 +17,16 @@
  */
 package delit.piwigoclient.business.video.opengl;
 
-import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
-import android.util.Size;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
 
 /**

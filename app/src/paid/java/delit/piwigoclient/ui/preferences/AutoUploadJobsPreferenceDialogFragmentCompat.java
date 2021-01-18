@@ -15,7 +15,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
-import com.drew.lang.StringUtil;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.util.Strings;
 import com.google.android.material.button.MaterialButton;

@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
@@ -171,7 +170,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     }
 
     private SharedPreferences getSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+        return PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
     }
 
     ConnectionPreferences.ProfilePreferences getConnectionProfile() {
@@ -233,7 +232,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         AlbumSelectionListAdapterPreferences viewPrefs = new AlbumSelectionListAdapterPreferences();
         viewPrefs.selectable(false, false);
         viewPrefs.setFlattenAlbumHierarchy(true);
-        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, getContext());
+        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, requireContext());
         adapter.addAll(albumNames);
         if (!viewPrefs.isAllowRootAlbumSelection()) {
             CategoryItemStub catItem = adapter.getItemById(CategoryItemStub.ROOT_GALLERY.getId());

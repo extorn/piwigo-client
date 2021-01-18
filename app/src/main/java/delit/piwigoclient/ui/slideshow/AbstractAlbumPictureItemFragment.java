@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -110,7 +111,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         loader.rotateToFitScreen(AlbumViewPreferences.isRotateImageSoAspectMatchesScreenAspect(prefs, requireContext()));
         loader.setUsePlaceholderIfError(true);
 
-        imageLoadErrorView = container.findViewById(R.id.image_load_error);
+        imageLoadErrorView = Objects.requireNonNull(container).findViewById(R.id.image_load_error);
 
         imageView.setOnClickListener(v -> {
             if (loader != null && !loader.isImageLoaded()) {

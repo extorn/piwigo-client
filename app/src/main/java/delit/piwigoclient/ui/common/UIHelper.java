@@ -836,12 +836,11 @@ public abstract class UIHelper<T> {
                 }
                 dialogMessageQueue.addFirst(message);
                 showNextQueuedMessage();
-                return true;
             } else {
                 QueuedDialogMessage msg = dialogMessageQueue.peek();
                 msg.getListener().chainResult(message.getListener());
-                return true;
             }
+            return true;
         }
     }
 

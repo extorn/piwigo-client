@@ -308,7 +308,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             return null;
         }
 
-        for(FolderItem item : displayContent) {
+        for(T item : displayContent) {
             if(!item.isFolder() && (item.getLastModified() == 0 /*&& MimeTypeFilter.matches(folderItem.getMime(), permissableMimeTypes) != null*/)) { // 0 length check hides system files.
                 displayContent.remove(item); // this isn't a file we can do anything useful with.
             }
@@ -434,7 +434,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     }
 
     @Override
-    public int getItemPosition(@NonNull FolderItem item) {
+    public int getItemPosition(@NonNull T item) {
         if (currentDisplayContent == null) {
             throw new IllegalStateException("Please set the initial folder and initialise the list before attempting to access the items in the list");
         }

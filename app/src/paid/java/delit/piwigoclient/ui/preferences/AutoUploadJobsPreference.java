@@ -363,7 +363,7 @@ public class AutoUploadJobsPreference extends DialogPreference {
         }
 
         public boolean hasUploadJobId(int jobId) {
-            return getUploadJobIds().contains(Long.valueOf(jobId));
+            return getUploadJobIds().contains((long) jobId);
         }
 
         public void addJobCfg(AutoUploadJobConfig cfg) {

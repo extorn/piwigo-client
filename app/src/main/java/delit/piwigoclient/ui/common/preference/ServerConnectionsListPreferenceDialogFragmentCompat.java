@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -138,14 +137,14 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     }
 
     private ArrayList<ServerConnectionsListPreference.ServerConnection> loadServerConnections(SharedPreferences prefs) {
-        Set<String> profiles = ConnectionPreferences.getConnectionProfileList(prefs, getContext());
+        Set<String> profiles = ConnectionPreferences.getConnectionProfileList(prefs, requireContext());
         ArrayList<ServerConnectionsListPreference.ServerConnection> connections = new ArrayList<>();
         if (profiles.size() > 0) {
             for (String p : profiles) {
                 if(profiles.size() == 1) {
                     ConnectionPreferences.clonePreferences(prefs, getContext(), null, p);
                 }
-                ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p, prefs, getContext());
+                ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p, prefs, requireContext());
                 connections.add(new ServerConnectionsListPreference.ServerConnection(p,
                         profilePrefs.getPiwigoServerAddress(prefs, getContext()),
                         profilePrefs.getPiwigoUsername(prefs, getContext())));

@@ -503,15 +503,13 @@ public class CompressionAudioSink implements AudioSink {
         outputBuffer.position(outBuffInfo.offset);
         outputBuffer.limit(outBuffInfo.offset + outBuffInfo.size);
 
-        if ((outBuffInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0 && outBuffInfo.size != 0) {
-            encoder.releaseOutputBuffer(outputBufIndex, false);
-        } else {
+        if ((outBuffInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) == 0 || outBuffInfo.size == 0) {
             if (VERBOSE_LOGGING) {
                 Log.d(TAG, String.format("writing transcoded sample audio data : [%1$d] - flags : %2$d", audioBufferInfo.presentationTimeUs, outBuffInfo.flags));
             }
             writeDataToMediaMuxer(outputBuffer, outBuffInfo.flags, outBuffInfo.presentationTimeUs);
-            encoder.releaseOutputBuffer(outputBufIndex, false);
         }
+        encoder.releaseOutputBuffer(outputBufIndex, false);
     }
 
     private boolean isEncoderHasOutputReadyToRead(int outputBufIndex) {

@@ -202,7 +202,7 @@ public class ExoPlayerFrameCapture {
         }
     }
 
-    private class InternalFrameCaptureListener extends FrameCaptureListenerWrapper {
+    private static class InternalFrameCaptureListener extends FrameCaptureListenerWrapper {
         private final Player player;
 
         public InternalFrameCaptureListener(Player player, FrameCaptureListener wrapped) {

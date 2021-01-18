@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="checking_license">正在检查许可证...</string>
+    <string name="checking_license">正在检查许可证…</string>
     <string name="button_quit">出口</string>
     <string name="button_buy">购买应用</string>
     <string name="unlicensed_dialog_retry_body">无法确认该应用程序已获得许可。请从Android Market购买。如果有，请检查是否有可用的网络连接，然后重试此许可证检查。</string>

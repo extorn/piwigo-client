@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 import delit.libs.core.util.Logging;
@@ -267,7 +268,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     private boolean handleCombinedJsonAndHtmlResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
-        if (e.getMessage().equals("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
+        if (Objects.equals(e.getMessage(), "java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
             int idx = 0;
             for (int i = responseBody.length - 1; i > 0; i--) {
                 if ('{' == responseBody[i]) {

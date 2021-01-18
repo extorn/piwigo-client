@@ -209,7 +209,6 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     private static class LoginResponseAction extends UIHelper.Action<FragmentUIHelper<AutoUploadJobPreferenceFragment>, AutoUploadJobPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
 
-        private static final long serialVersionUID = -7554482800141220488L;
         private ConnectionPreferences.ProfilePreferences profilePrefs;
 
         public LoginResponseAction(ConnectionPreferences.ProfilePreferences profilePrefs) {

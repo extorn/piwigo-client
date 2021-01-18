@@ -13,16 +13,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.installations.FirebaseInstallations;
 
-import org.w3c.dom.Text;
-
 import java.util.Map;
+import java.util.Objects;
 
 import delit.libs.ui.view.list.StringMapExpandableListAdapterBuilder;
 import delit.libs.util.ArrayUtils;
@@ -84,7 +82,7 @@ public class AboutFragment extends MyFragment<AboutFragment> {
 
     private void withInstallGuid(Task<String> uuidTask) {
         String installGuid;
-        TextView uuidField = getView().findViewById(R.id.install_guid_field);
+        TextView uuidField = Objects.requireNonNull(getView()).findViewById(R.id.install_guid_field);
         try {
             if (uuidTask.isSuccessful()) {
                 installGuid = uuidTask.getResult();

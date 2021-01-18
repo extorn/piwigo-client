@@ -244,6 +244,7 @@ public class ExoPlayerCompression {
             return bitRate != AUDIO_PASSTHROUGH_BITRATE;
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public static class VideoCompressionParameters {
         private final long maxInterleavingIntervalUs;
         private int wantedWidthPx = -1;
@@ -251,7 +252,7 @@ public class ExoPlayerCompression {
         private int wantedFrameRate = 30; //30
         private int wantedKeyFrameInterval = 3; // 3 in seconds where 0 is every frame and -1 is only a single key frame
         private double wantedBitRatePerPixelPerSecond = 0.1;
-        private int wantedBitRateModeV21 = BITRATE_MODE_CBR;
+        private int wantedBitRateModeV21; // lazy initialised (lint)
         private boolean isAllowSkippingFrames;
         private boolean isHardRotateVideo;
 

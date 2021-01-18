@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="checking_license">Kontrola licence ...</string>
+    <string name="checking_license">Kontrola licence …</string>
     <string name="button_quit">Výstup</string>
     <string name="button_buy">Koupit aplikaci</string>
     <string name="unlicensed_dialog_retry_body">Nelze potvrdit, že je aplikace licencována. Zakupte si jej ze služby Android Market. Pokud ano, zkontrolujte, zda je k dispozici síťové připojení, a zkuste znovu tuto kontrolu licence.</string>

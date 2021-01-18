@@ -243,10 +243,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
      * keeps toggle button in sync
      */
     public void deselectAllItems() {
-        if(selectToggle) {
-            onToggleAllSelection();
-        } else {
-            onToggleAllSelection();
+        onToggleAllSelection();
+        if (!selectToggle) {
             onToggleAllSelection();
         }
     }

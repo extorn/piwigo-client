@@ -84,7 +84,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
         }
         initialisedCoreComponents = true;
         if (uiHelper == null) {
-            uiHelper = new FragmentUIHelper<T>((T)this, getPrefs(), getContext(), attachedView);
+            uiHelper = new FragmentUIHelper<>((T) this, getPrefs(), getContext(), attachedView);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);

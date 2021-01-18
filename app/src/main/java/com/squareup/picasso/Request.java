@@ -243,7 +243,7 @@ public final class Request {
       purgeable = request.purgeable;
       onlyScaleDown = request.onlyScaleDown;
       if (request.transformations != null) {
-        transformations = new ArrayList<Transformation>(request.transformations);
+        transformations = new ArrayList<>(request.transformations);
       }
       config = request.config;
       priority = request.priority;
@@ -441,7 +441,7 @@ public final class Request {
         throw new IllegalArgumentException("Transformation key must not be null.");
       }
       if (transformations == null) {
-        transformations = new ArrayList<Transformation>(2);
+        transformations = new ArrayList<>(2);
       }
       transformations.add(transformation);
       return this;

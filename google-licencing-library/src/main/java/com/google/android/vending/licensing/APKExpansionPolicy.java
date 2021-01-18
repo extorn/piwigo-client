@@ -208,7 +208,7 @@ public class APKExpansionPolicy implements Policy {
      * @param validityTimestamp the VT string received
      */
     private void setValidityTimestamp(String validityTimestamp) {
-        Long lValidityTimestamp;
+        long lValidityTimestamp;
         try {
             lValidityTimestamp = Long.parseLong(validityTimestamp);
         } catch (NumberFormatException e) {
@@ -235,7 +235,7 @@ public class APKExpansionPolicy implements Policy {
      * @param retryUntil the GT string received
      */
     private void setRetryUntil(String retryUntil) {
-        Long lRetryUntil;
+        long lRetryUntil;
         try {
             lRetryUntil = Long.parseLong(retryUntil);
         } catch (NumberFormatException e) {
@@ -262,7 +262,7 @@ public class APKExpansionPolicy implements Policy {
      * @param maxRetries the GR string received
      */
     private void setMaxRetries(String maxRetries) {
-        Long lMaxRetries;
+        long lMaxRetries;
         try {
             lMaxRetries = Long.parseLong(maxRetries);
         } catch (NumberFormatException e) {

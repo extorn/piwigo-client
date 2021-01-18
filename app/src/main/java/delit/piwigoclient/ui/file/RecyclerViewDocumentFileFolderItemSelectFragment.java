@@ -991,7 +991,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                     }
                 }
                 if(!loadedFromMemory) {
-                    getListAdapter().changeFolderViewed(getContext(), pathItemFile);
+                    getListAdapter().changeFolderViewed(requireContext(), pathItemFile);
                 }
             }
         }
