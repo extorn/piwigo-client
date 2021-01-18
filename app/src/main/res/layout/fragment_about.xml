@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/uuid_title"
-        style="?editableFieldLabel"/>/>
+        style="?editableFieldLabel"/>
 
     <TextView
         android:id="@+id/install_guid_field"
