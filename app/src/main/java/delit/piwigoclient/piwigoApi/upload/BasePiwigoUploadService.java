@@ -372,46 +372,16 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-
-
-    public static File getTmpUploadFolderAsFile(Context context) {
-        File extCacheFolder = context.getExternalCacheDir();
-        File tmpUploads = new File(extCacheFolder, "piwigo-upload");
-        if(!tmpUploads.exists()) {
-            if(!tmpUploads.mkdirs()) {
-                Logging.log(Log.ERROR, TAG, "Unable to create tmp upload folder " + tmpUploads.getAbsolutePath());
-                throw new RuntimeException("Unable to create the tmp folder: " + tmpUploads.getAbsolutePath());
-            }
-        }
-        return tmpUploads;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static DocumentFile getTmpUploadFolder(@NonNull Context context) {
-        return DocumentFile.fromFile(Objects.requireNonNull(context.getExternalCacheDir())).createDirectory("piwigo-upload");
-    }
-
     private void runPostJobCleanup(UploadJob uploadJob) {
         if (uploadJob == null) {
             return; // Do nothing.
         }
-        Uri tmpUploadUri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            tmpUploadUri = getTmpUploadFolder(this).getUri();
-        } else {
-            tmpUploadUri = Uri.fromFile(getTmpUploadFolderAsFile(this));
-        }
+
         DocumentFile sharedFiles = IOUtils.getSharedFilesFolder(this);
         boolean isDeleteUploadedFiles = uploadJob.isDeleteFilesAfterUpload();
         for (Uri f : uploadJob.getFilesSuccessfullyUploaded()) {
             DocumentFile docFile = null;
             boolean isTmpFile = false;
-            try {
-                docFile = IOUtils.getTreeLinkedDocFile(this, tmpUploadUri, f);
-                isTmpFile = true;
-            } catch(IllegalStateException e) {
-                // ignore.
-            }
             if(docFile == null) {
                 try {
                     docFile = IOUtils.getTreeLinkedDocFile(this, sharedFiles.getUri(), f);

@@ -155,7 +155,6 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         idTask.addOnSuccessListener(this::withInstallGuid);
 
         upgradeAnyPreferencesIfRequired();
-        sanityCheckTheTempUploadFolder();
 
         onAppCreate();
 
@@ -167,21 +166,6 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         // It will be displayed in the app about screen.
         FirebaseCrashlytics.getInstance().setUserId(userGuid);
         FirebaseAnalytics.getInstance(this).setUserId(userGuid);
-    }
-
-    private void sanityCheckTheTempUploadFolder() {
-        long folderSizeBytes;
-        DocumentFile tmpUploadFolder = BasePiwigoUploadService.getTmpUploadFolder(this);
-        folderSizeBytes = IOUtils.getFolderSize(tmpUploadFolder, true);
-
-        long folderMaxSizeBytes = 25 * 1024 * 1024;
-        if (folderSizeBytes > folderMaxSizeBytes) {
-            Bundle b = new Bundle();
-            int activeUploadJobCount = BasePiwigoUploadService.getUploadJobsCount(this);
-            b.putString("folder_size", IOUtils.bytesToNormalizedText(folderSizeBytes));
-            b.putInt("active_uploads", activeUploadJobCount);
-            FirebaseAnalytics.getInstance(this).logEvent("tmp_upload_folder_size", b);
-        }
     }
 
     protected abstract void onAppCreate();
