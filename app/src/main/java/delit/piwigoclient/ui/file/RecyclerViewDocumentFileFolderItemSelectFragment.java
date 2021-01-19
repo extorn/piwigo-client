@@ -638,7 +638,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         for(int i = 0; i < rootLabels.size(); i++) {
             roots.put(rootLabels.get(i), LegacyIOUtils.getDocFile(rootPaths.get(i)));
         }
-        roots.put(getString(R.string.system_file_selector_label), null); // allow other apps to handle file selection
+        if(!getViewPrefs().isAllowFolderSelection()) {
+            roots.put(getString(R.string.system_file_selector_label), null); // allow other apps to handle file selection
+        }
         return roots;
     }
 
@@ -659,7 +661,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             }
         }
         roots.put(getString(R.string.files_cached_from_other_apps), IOUtils.getSharedFilesFolder(requireContext()));
-        roots.put(getString(R.string.system_file_selector_label), null);
+        if(!getViewPrefs().isAllowFolderSelection() || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            roots.put(getString(R.string.system_file_selector_label), null);
+        }
         return roots;
     }
 
