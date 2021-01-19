@@ -633,7 +633,7 @@ public class UploadJob implements Parcelable {
             compressedFolder = f.createDirectory("compressed_vids_for_upload");
         }
         if (compressedFolder == null) {
-            Logging.log(Log.ERROR, TAG, "Unable to create folder for comrepessed files to be placed");
+            Logging.log(Log.ERROR, TAG, "Unable to create folder for compressed files to be placed");
         }
         return compressedFolder;
     }
