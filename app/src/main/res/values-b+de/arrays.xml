@@ -6,7 +6,7 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps (—X)</item>
+        <item>0 bps (-X)</item>
         <item>sehr niedrig (0,025 b / Pixel * Frame)</item>
         <item>niedriger (0,05 b / Pixel * Frame)</item>
         <item>niedrig (0,1 b / Pixel * Frame)</item>
@@ -155,6 +155,7 @@
                 - Neue Einstellung in den App-Einstellungen, in der alle gehaltenen Uri-Berechtigungen und ihr Zweck aufgelistet sind
                 - Neuer DocumentProvider macht Dateien, die am Standard-Download-Speicherort heruntergeladen wurden, für die Systemdatei-Auswahl verfügbar.
                 - Fügen Sie keine in den Android MediaStore heruntergeladenen Dateien mehr hinzu. - Sie sind in jeder Dateiauswahl verfügbar.
+                - Neuer Menü-Link zum Öffnen des Speicherorts für heruntergeladene Dateien
                Empfehlung:
                 - 1. Zeigen Sie alle Dateiberechtigungen an, die von der App in der neuen Einstellung gespeichert wurden, und entfernen Sie alle Berechtigungen, die die App nicht enthalten soll.
                 - 2. Überprüfen Sie jeden Ihrer Hintergrund-Upload-Jobs und wählen Sie den hochzuladenden Ordner erneut aus

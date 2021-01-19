@@ -6,7 +6,7 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps (—X)</item>
+        <item>0 b / s (—X)</item>
         <item>velmi nízká (0,025 b / pixelů * rámeček)</item>
         <item>nižší (0,05 b / pixely * rámeček)</item>
         <item>nízký (0,1 b / pixelů * rámeček)</item>
@@ -155,6 +155,7 @@
                 - Nová předvolba v nastavení aplikace se seznamem všech zadržených oprávnění Uri a jejich účelu
                 - Nový DocumentProvider vystavující soubory stažené ve výchozím umístění stahování do voliče systémových souborů.
                 - Již nepřidávejte soubory stažené do obchodu Android MediaStore - Jsou k dispozici v jakémkoli selektoru souborů.
+                - Nový odkaz na nabídku pro otevření umístění stažených souborů
                Doporučení:
                 - 1. Zobrazení všech oprávnění k souborům držených aplikací v nové předvolbě, odstranění všech, která si nepřejete, aby aplikace uchovávala.
                 - 2. Zkontrolujte každou ze svých úloh nahrávání na pozadí, znovu vyberte složku, kterou chcete nahrát

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="checking_license">Controllo della licenza …</string>
+    <string name="checking_license">Controllo della licenza ...</string>
     <string name="button_quit">Uscita</string>
     <string name="button_buy">Acquista l\'app</string>
     <string name="unlicensed_dialog_retry_body">Impossibile confermare che l\'applicazione sia concessa in licenza. Acquistalo da Android Market. In tal caso, verificare che sia disponibile una connessione di rete e riprovare a controllare la licenza.</string>
@@ -713,5 +713,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="permission_read">Leggere</string>
     <string name="doc_provider_root_downloads_title">Download di Piwigo</string>
     <string name="doc_provider_root_downloads_summary">File scaricati dal server</string>
+    <string name="downloads_menu_title">Download</string>
+    <string name="view_exported_files">Visualizza file esportati</string>
 
 </resources>

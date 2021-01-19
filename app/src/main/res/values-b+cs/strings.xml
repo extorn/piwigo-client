@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="checking_license">Kontrola licence …</string>
+    <string name="checking_license">Kontrola licence ...</string>
     <string name="button_quit">Výstup</string>
     <string name="button_buy">Koupit aplikaci</string>
     <string name="unlicensed_dialog_retry_body">Nelze potvrdit, že je aplikace licencována. Zakupte si jej ze služby Android Market. Pokud ano, zkontrolujte, zda je k dispozici síťové připojení, a zkuste znovu tuto kontrolu licence.</string>
@@ -713,5 +713,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="permission_read">Číst</string>
     <string name="doc_provider_root_downloads_title">Stažení Piwigo</string>
     <string name="doc_provider_root_downloads_summary">Soubory stažené ze serveru</string>
+    <string name="downloads_menu_title">Soubory ke stažení</string>
+    <string name="view_exported_files">Zobrazit exportované soubory</string>
 
 </resources>

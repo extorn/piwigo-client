@@ -6,7 +6,7 @@
     
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>0bps（—X）</item>
+        <item>0bps（-X）</item>
         <item>非常低（0.025 b /像素*帧）</item>
         <item>较低（0.05 b /像素*帧）</item>
         <item>低（0.1 b /像素*帧）</item>
@@ -155,6 +155,7 @@
                 -应用程序设置中的新首选项列出了所有保留的Uri权限及其用途
                 -新的DocumentProvider，将在默认下载位置下载的文件暴露给系统文件选择器。
                 -不再添加下载到Android MediaStore的文件-在任何文件选择器中都可以使用它们。
+                -新菜单链接可打开下载文件的位置
                建议：
                 -1.在新的首选项中查看该应用程序拥有的所有文件权限，删除不希望该应用程序保留的所有文件权限。
                 -2.检查您的每个后台上传作业，重新选择要上传的文件夹

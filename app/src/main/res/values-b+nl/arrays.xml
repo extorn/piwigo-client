@@ -152,11 +152,12 @@
                 - downloaden werkt voor zowel de standaard map Downloads als een map die door de gebruiker is geselecteerd
                 - App verzocht om lees- of schrijfbestandsmachtigingen wanneer ze niet vereist waren.
                Veranderingen:
-                - Nieuwe voorkeur in app-instellingen met een lijst van alle Uri-machtigingen en hun doel
+                - Nieuwe voorkeur in app-instellingen met alle Uri-machtigingen en hun doel
                 - New DocumentProvider toont bestanden die zijn gedownload op de standaard downloadlocatie naar de systeembestandsselectie.
                 - Voeg geen bestanden meer toe die zijn gedownload naar de Android MediaStore - Ze zijn beschikbaar in elke bestandskiezer.
+                - Nieuwe menukoppeling om de locatie van de gedownloade bestanden te openen
                Aanbeveling:
-                - 1. Bekijk alle bestandsrechten van de app in de nieuwe voorkeur, verwijder alle machtigingen waarvan je niet wilt dat de app ze vasthoudt.
+                - 1. Bekijk alle bestandsrechten van de app in de nieuwe voorkeur en verwijder alle machtigingen waarvan je niet wilt dat de app ze vasthoudt.
                 - 2. Controleer al uw uploadopdrachten op de achtergrond, selecteer de map die u wilt uploaden opnieuw
                 - 3. Selecteer opnieuw de map waarnaar u bestanden van uw server wilt downloaden"</item>
         <item>1.4.0.94</item>

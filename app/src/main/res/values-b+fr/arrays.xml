@@ -155,6 +155,7 @@
                 - Nouvelle préférence dans les paramètres de l\'application répertoriant toutes les autorisations Uri détenues et leur objectif
                 - Nouveau DocumentProvider exposant les fichiers téléchargés dans l\'emplacement de téléchargement par défaut au sélecteur de fichiers système.
                 - N\'ajoutez plus de fichiers téléchargés sur Android MediaStore - Ils sont disponibles dans n\'importe quel sélecteur de fichiers.
+                - Nouveau lien de menu pour ouvrir l\'emplacement des fichiers téléchargés
                Recommandation:
                 - 1. Affichage de toutes les autorisations de fichiers détenues par l\'application dans la nouvelle préférence, en supprimant celles que vous ne souhaitez pas que l\'application conserve.
                 - 2. Vérifiez chacun de vos travaux de téléchargement en arrière-plan, resélectionnez le dossier à télécharger

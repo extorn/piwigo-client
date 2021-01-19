@@ -258,6 +258,7 @@
                 - New preference in app settings listing all Uri permissions held and their purpose
                 - New DocumentProvider exposing files downloaded in the default download location to the system file selector.
                 - No longer add files downloaded to the Android MediaStore - They're available in any File selector.
+                - New menu link to open the downloaded files location
                Recommendation:
                 - 1. Viewing all file permissions held by the app in the new preference, removing any you don't wish the app to hold.
                 - 2. Check each of your background upload jobs, reselect the folder to upload

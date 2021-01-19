@@ -57,7 +57,7 @@ I cambiamenti:
 </it-IT>
 <ja-JP>
 バグ修正：
--使用されているファイル権限が不十分であるため、アップロードが失敗します
+-使用されているファイルのアクセス許可が不十分であるため、アップロードが失敗します
 -ダウンロードしたファイルは他のアプリには表示されません
 -デフォルトのダウンロードフォルダとユーザーが選択したフォルダの両方でダウンロードが機能する
 -アプリは、必要のないときにファイルの読み取りまたは書き込み権限を要求しました。
@@ -65,10 +65,11 @@ I cambiamenti:
 -保持されているすべてのUri権限とその目的を一覧表示するアプリ設定の新しい設定
 -デフォルトのダウンロード場所でダウンロードされたファイルをシステムファイルセレクターに公開する新しいDocumentProvider。
 -AndroidMediaStoreにダウンロードしたファイルを追加しなくなりました-どのファイルセレクターでも使用できます。
+-ダウンロードしたファイルの場所を開くための新しいメニューリンク
 勧告：
 -1。アプリが保持しているすべてのファイル権限を新しい設定で表示し、アプリに保持させたくないものをすべて削除します。
 -2。各バックグラウンドアップロードジョブを確認し、アップロードするフォルダを再選択します
--3。サーバーからファイルをダウンロードするフォルダーを再選択します。
+-3。サーバーからフ..."
 </ja-JP>
 <nl-NL>
 Bugfix:
@@ -77,8 +78,8 @@ Bugfix:
 - downloaden werkt voor zowel de standaard map Downloads als een map die door de gebruiker is geselecteerd
 - App verzocht om lees- of schrijfbestandsmachtigingen wanneer ze niet vereist waren.
 Veranderingen:
-- Nieuwe voorkeur in app-instellingen met een lijst van alle Uri-machtigingen en hun doel
-- New DocumentProvider toont bestanden die zijn gedownload ..."
+- Nieuwe voorkeur in app-instellingen met alle Uri-machtigingen en hun doel
+- New DocumentProvider toont bestanden die zijn gedownload op de standaar..."
 </nl-NL>
 <ru-RU>
 Исправлена ​​ошибка:
@@ -100,6 +101,7 @@ Veranderingen:
 -应用程序设置中的新首选项列出了所有保留的Uri权限及其用途
 -新的DocumentProvider，将在默认下载位置下载的文件暴露给系统文件选择器。
 -不再添加下载到Android MediaStore的文件-在任何文件选择器中都可以使用它们。
+-新菜单链接可打开下载文件的位置
 建议：
 -1.在新的首选项中查看该应用程序拥有的所有文件权限，删除不希望该应用程序保留的所有文件权限。
 -2.检查您的每个后台上传作业，重新选择要上传的文件夹

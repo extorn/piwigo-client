@@ -713,5 +713,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="permission_read">Lis</string>
     <string name="doc_provider_root_downloads_title">Téléchargements Piwigo</string>
     <string name="doc_provider_root_downloads_summary">Fichiers téléchargés depuis le serveur</string>
+    <string name="downloads_menu_title">Téléchargements</string>
+    <string name="view_exported_files">Afficher les fichiers exportés</string>
 
 </resources>

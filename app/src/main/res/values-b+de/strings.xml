@@ -285,7 +285,7 @@ Derzeit bietet die kostenpflichtige Version Unterstützung für Tags:
         Piwigo unterstützt Tags bis zu einem gewissen Grad, aber das User Tags-Plugin fügt weitere Funktionen hinzu (grundlegende Tests werden durchgeführt).
 
 
-Derzeit bietet es eine grundlegende Funktionalitätsebene, mit der Sie in einer vorhandenen Galerie navigieren, neue Fotos und Videos hochladen und neue Kategorien in einer Galerie erstellen können. Einige Felder können nach dem Erstellen geändert werden, aber viele sind noch schreibgeschützt … für jetzt!
+Derzeit bietet es eine grundlegende Funktionalitätsebene, mit der Sie in einer vorhandenen Galerie navigieren, neue Fotos und Videos hochladen und neue Kategorien in einer Galerie erstellen können. Einige Felder können nach dem Erstellen geändert werden, aber viele sind noch schreibgeschützt ... für jetzt!
 
 Kann ich Sie bitten, wenn Sie die App deinstallieren, den Link im App-Menü zu verwenden, um mir per E-Mail mitzuteilen, warum die App nicht Ihren Anforderungen entspricht, damit ich dies beheben kann.
 
@@ -373,7 +373,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="users_heading">Benutzer</string>
     <string name="albums_heading">Alben</string>
     <string name="user_high_definition_title">Hochauflösend</string>
-    <string name="user_email_title">E-Mail-Adresse</string>
+    <string name="user_email_title">E-Mail-Addresse</string>
     <string name="none_value">Keiner</string>
     <string name="access_rights_heading">Zugangsrechte</string>
     <string name="progress_loading_album_content">Albuminhalt wird geladen</string>
@@ -638,7 +638,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="message_piwigo_server_inconsistent_results">Die Prüfsumme der Piwigo-API-Aufruf%1$s-Datei stimmt nicht überein, aber der API-Aufruf%2$s meldet, dass sie übereinstimmt. Dies kann ein Fehler im PIWIGO-Server oder ein von Ihnen verwendetes Plugin sein und möglicherweise eine Meldung wert sein.</string>
     <string name="alert_bulk_image_permissions_title">Festlegen von Zugriffsberechtigungen</string>
     <string name="alert_bulk_image_permissions_message">Legen Sie die Zugriffsberechtigungsstufen für die ausgewählten Ressourcen%1$d fest</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die für einen MIME-Typ von %1$s freigegeben wurden, können nicht verarbeitet werden</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Dateien, die für einen MIME-Typ von%1$freigegeben wurden, können nicht verarbeitet werden</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Dateien mit den folgenden Erweiterungen können nicht hochgeladen werden und wurden entfernt:%1$s</string>
     <string name="please_select_a_parent_album">Bitte wählen Sie ein übergeordnetes Album aus</string>
     <string name="unsupported_device">Dieses Gerät wird leider nicht unterstützt. Beim Zugriff auf Google Play Services ist ein Problem aufgetreten.</string>
@@ -672,7 +672,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="uri_still_needed_pattern">Leider können Sie die Berechtigung der App zur Verwendung dieses URI nicht entfernen. Die App benötigt weiterhin die Berechtigung, auf diesen URI zuzugreifen für:\n\n%1$s</string>
     <string name="no_suitable_activity_found">Keine geeignete Aktivität gefunden</string>
     <string name="preference_uri_consumer_description_pattern">Präferenz:%1$s</string>
-    <string name="missing_permissions_warning_message_pattern">"Seitdem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
+    <string name="missing_permissions_warning_message_pattern">"Seit dem letzten Öffnen dieser App wurden die für die folgenden Teile der App erforderlichen Dateiberechtigungen entfernt\n\n%1$s\n\nBitte wählen Sie neue Berechtigungen für diese Einstellungen aus, damit die Dinge wie erwartet funktionieren."</string>
     <string name="folder_selection_title">Ordner auswählen</string>
     <string name="files_selection_title">Dateien auswählen</string>
     <string name="all">Alle</string>
@@ -713,5 +713,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="permission_read">Lesen</string>
     <string name="doc_provider_root_downloads_title">Piwigo Downloads</string>
     <string name="doc_provider_root_downloads_summary">Vom Server heruntergeladene Dateien</string>
+    <string name="downloads_menu_title">Downloads</string>
+    <string name="view_exported_files">Exportierte Dateien anzeigen</string>
 
 </resources>

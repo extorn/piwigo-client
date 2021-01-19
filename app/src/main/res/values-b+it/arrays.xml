@@ -155,8 +155,9 @@
                 - Nuova preferenza nelle impostazioni dell\'app che elenca tutte le autorizzazioni Uri detenute e il loro scopo
                 - Nuovo DocumentProvider che espone i file scaricati nella posizione di download predefinita al selettore di file di sistema.
                 - Non aggiungere più file scaricati su Android MediaStore - Sono disponibili in qualsiasi selettore di file.
+                - Nuovo collegamento al menu per aprire la posizione dei file scaricati
                Raccomandazione:
-                - 1. Visualizzazione di tutte le autorizzazioni sui file detenute dall\'app nella nuova preferenza, rimuovendo quelle che non si desidera vengano conservate dall\'app.
+                - 1. Visualizzazione di tutte le autorizzazioni dei file detenute dall\'app nella nuova preferenza, rimuovendo quelle che non si desidera vengano conservate dall\'app.
                 - 2. Controlla ciascuno dei tuoi lavori di caricamento in background, riseleziona la cartella da caricare
                 - 3. Riselezionare la cartella in cui scaricare i file dal server"</item>
         <item>1.4.0.94</item>

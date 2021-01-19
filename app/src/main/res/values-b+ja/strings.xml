@@ -713,5 +713,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="permission_read">読んだ</string>
     <string name="doc_provider_root_downloads_title">Piwigoダウンロード</string>
     <string name="doc_provider_root_downloads_summary">サーバーからダウンロードしたファイル</string>
+    <string name="downloads_menu_title">ダウンロード</string>
+    <string name="view_exported_files">エクスポートされたファイルを表示する</string>
 
 </resources>

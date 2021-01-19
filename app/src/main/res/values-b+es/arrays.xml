@@ -155,6 +155,7 @@
                 - Nueva preferencia en la configuración de la aplicación que enumera todos los permisos de Uri y su propósito
                 - Nuevo DocumentProvider que expone los archivos descargados en la ubicación de descarga predeterminada al selector de archivos del sistema.
                 - Ya no agregue archivos descargados a Android MediaStore - Están disponibles en cualquier selector de archivos.
+                - Nuevo enlace de menú para abrir la ubicación de los archivos descargados
                Recomendación:
                 - 1. Ver todos los permisos de archivo que tiene la aplicación en la nueva preferencia, eliminando los que no desea que la aplicación mantenga.
                 - 2. Verifique cada uno de sus trabajos de carga en segundo plano, vuelva a seleccionar la carpeta para cargar
