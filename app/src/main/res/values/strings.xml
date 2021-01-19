@@ -1070,5 +1070,7 @@ SOFTWARE.
     <string name="permission_read">Read</string>
     <string name="doc_provider_root_downloads_title">Piwigo Downloads</string>
     <string name="doc_provider_root_downloads_summary">Files downloaded from the server</string>
+    <string name="downloads_menu_title">Downloads</string>
+    <string name="view_exported_files">View Exported Files</string>
 
 </resources>

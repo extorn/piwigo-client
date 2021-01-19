@@ -22,6 +22,7 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,9 +31,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
@@ -63,8 +66,23 @@ public class MyDocumentProvider extends DocumentsProvider {
         return BuildConfig.APPLICATION_ID + ".provider.docs";
     }
 
-    public static boolean ownsUri(Uri uri) {
-        return getAuthority().equals(uri.getAuthority());
+    public static boolean ownsUri(Context context, Uri uri) {
+        if(getAuthority().equals(uri.getAuthority())) {
+            return true;
+        }
+        String baseDir = getBaseDir(context).getPath();
+        return uri.getPath().startsWith(baseDir);
+    }
+
+    public static Uri getRootDocUri() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return DocumentsContract.buildDocumentUriUsingTree(DocumentsContract.buildTreeDocumentUri(getAuthority(), ROOT_DOC_ID), ROOT_DOC_ID);
+        } else {
+            return DocumentsContract.buildDocumentUri(getAuthority(), ROOT_DOC_ID);
+        }
+    }
+    public static Uri getRootsUri() {
+        return DocumentsContract.buildRootUri(getAuthority(), ROOT_ID);
     }
 
     @Override
@@ -85,15 +103,13 @@ public class MyDocumentProvider extends DocumentsProvider {
         // recently used documents will show up in the "Recents" category.
         // FLAG_SUPPORTS_SEARCH allows users to search all documents the application
         // shares.
-        row.add(Root.COLUMN_FLAGS, Root.FLAG_LOCAL_ONLY|Root.FLAG_SUPPORTS_RECENTS/*Root.FLAG_SUPPORTS_CREATE |
-                Root.FLAG_SUPPORTS_RECENTS |
-                Root.FLAG_SUPPORTS_SEARCH*/);
+        row.add(Root.COLUMN_FLAGS, Root.FLAG_LOCAL_ONLY|Root.FLAG_SUPPORTS_RECENTS|Root.FLAG_SUPPORTS_SEARCH/*Root.FLAG_SUPPORTS_CREATE*/);
 
         // COLUMN_TITLE is the root title (e.g. Gallery, Drive).
         row.add(Root.COLUMN_TITLE, getContext().getString(R.string.doc_provider_root_downloads_title));
 
         // This document id cannot change after it's shared.
-        row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(getBaseDir()));
+        row.add(Root.COLUMN_DOCUMENT_ID, getDocIdForFile(getBaseDir(getContext())));
 
         // The child MIME types are used to filter the roots and only present to the
         // user those roots that contain the desired type somewhere in their file hierarchy.
@@ -105,15 +121,21 @@ public class MyDocumentProvider extends DocumentsProvider {
     }
 
     private String getDocIdForFile(File file) {
-        if(file.equals(getBaseDir())) {
+        if(file.equals(getBaseDir(getContext()))) {
             return ROOT_DOC_ID;
         } else {
             return file.getName();
         }
     }
 
-    private File getBaseDir() {
-        return Objects.requireNonNull(getContext()).getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+    private static File getBaseDir(@NonNull Context context) {
+        File f = Objects.requireNonNull(context).getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        if(!f.exists()) {
+            if(!f.mkdir()) {
+                Logging.log(Log.ERROR, TAG, "Unable to create root folder");
+            }
+        }
+        return f;
     }
 
     public static void notifySystemOfUpdatedRootUri(@NonNull Context context) {
@@ -133,6 +155,19 @@ public class MyDocumentProvider extends DocumentsProvider {
     }
 
     @Override
+    public DocumentsContract.Path findDocumentPath(@Nullable String parentDocumentId, String childDocumentId) throws FileNotFoundException {
+        if(parentDocumentId == null || ROOT_DOC_ID.equals(parentDocumentId)) {
+            File f = getFileForDocId(childDocumentId);
+            if(f.exists()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    return new DocumentsContract.Path(ROOT_ID, Collections.singletonList(childDocumentId));
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Cursor queryDocument(String documentId, String[] projection) throws FileNotFoundException {
         final MatrixCursor result = new
                 MatrixCursor(resolveDocumentProjection(projection));
@@ -146,12 +181,14 @@ public class MyDocumentProvider extends DocumentsProvider {
         final MatrixCursor result = new
                 MatrixCursor(resolveDocumentProjection(projection));
         final File parent = getFileForDocId(parentDocumentId);
-        File[] files = parent.listFiles();
-        if(files != null) {
-            for (File file : files) {
-                if(!isThumbnailsFolder(file)) {
-                    // Adds the file's display name, MIME type, size, and so on.
-                    includeFile(result, getDocIdForFile(file), file);
+        if(parent.exists() && parent.isDirectory()) {
+            File[] files = parent.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!isThumbnailsFolder(file)) {
+                        // Adds the file's display name, MIME type, size, and so on.
+                        includeFile(result, getDocIdForFile(file), file);
+                    }
                 }
             }
         }
@@ -176,7 +213,7 @@ public class MyDocumentProvider extends DocumentsProvider {
         row.add(Document.COLUMN_DISPLAY_NAME, file.getName());
         row.add(Document.COLUMN_LAST_MODIFIED, file.lastModified());
         row.add(Document.COLUMN_SIZE, file.length());
-        if(!getBaseDir().equals(file)) {
+        if(!getBaseDir(getContext()).equals(file)) {
             row.add(Document.COLUMN_FLAGS, Document.FLAG_SUPPORTS_DELETE | Document.FLAG_SUPPORTS_WRITE|Document.FLAG_SUPPORTS_THUMBNAIL);
         }
     }
@@ -185,18 +222,18 @@ public class MyDocumentProvider extends DocumentsProvider {
     public AssetFileDescriptor openDocumentThumbnail(String documentId, Point sizeHint, CancellationSignal signal) throws FileNotFoundException {
         File thumbnailFile;
         try {
-            thumbnailFile = getThumbnailForFile(documentId);
+            thumbnailFile = getThumbnailForFile(documentId, sizeHint);
         } catch(FileNotFoundException e) {
             Bitmap thumbnail = createThumbnail(getFileForDocId(documentId), sizeHint, signal);
-            thumbnailFile = writeThumbnailToFile(documentId, thumbnail);
+            thumbnailFile = writeThumbnailToFile(documentId, thumbnail, sizeHint);
         }
+
         ParcelFileDescriptor pfd = ParcelFileDescriptor.open(thumbnailFile, ParcelFileDescriptor.MODE_READ_ONLY);
-        AssetFileDescriptor afd = new AssetFileDescriptor(pfd, 0, pfd.getStatSize());
-        return afd;
+        return new AssetFileDescriptor(pfd, 0, pfd.getStatSize());
     }
 
-    private File writeThumbnailToFile(String documentId, Bitmap thumbnail) {
-        File thumbnails = getThumbnailsFolder();
+    private File writeThumbnailToFile(String documentId, Bitmap thumbnail, Point sizeHint) {
+        File thumbnails = getThumbnailsFolder(sizeHint);
         File thumbnailFile = new File(thumbnails, documentId);
         if(thumbnailFile.exists()) {
             Logging.log(Log.DEBUG, TAG, "Overwriting thumbnail for doc %1$s", documentId);
@@ -211,21 +248,27 @@ public class MyDocumentProvider extends DocumentsProvider {
     }
 
     private File getThumbnailsFolder() {
-        File f = new File(getBaseDir(), THUMBNAILS_DOC_ID);
+        return new File(getBaseDir(getContext()), THUMBNAILS_DOC_ID);
+    }
+
+    private File getThumbnailsFolder(Point sizeHint) {
+        File f = new File(getThumbnailsFolder(), ""+sizeHint.x+'x'+sizeHint.y);
         if(!f.exists()) {
-            if(!f.mkdir()) {
+            if(!f.mkdirs()) {
                 Logging.log(Log.ERROR, TAG, "Unable to create thumbnail folder");
             }
         }
         return f;
     }
 
-    private File getThumbnailForFile(String documentId) throws FileNotFoundException {
-        File thumbnails = getThumbnailsFolder();
+    private File getThumbnailForFile(String documentId, Point sizeHint) throws FileNotFoundException {
+        Logging.log(Log.DEBUG, TAG, "Requesting thumbnail of size %1$s for file %2$s", sizeHint, documentId);
+        File thumbnails = getThumbnailsFolder(sizeHint);
         return getFilesWithName(thumbnails, documentId);
     }
 
     private Bitmap createThumbnail(File doc, Point sizeHint, CancellationSignal signal) throws FileNotFoundException {
+        Logging.log(Log.DEBUG, TAG, "Creating thumbnail of size %1$s for file %2$s", sizeHint, doc);
         String mime = IOUtils.getMimeType(Objects.requireNonNull(getContext()), Uri.fromFile(doc));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             try {
@@ -299,9 +342,9 @@ public class MyDocumentProvider extends DocumentsProvider {
 
     private File getFileForDocId(String docId) throws FileNotFoundException {
         if(ROOT_DOC_ID.equals(docId)) {
-            return getBaseDir();
+            return getBaseDir(getContext());
         } else {
-            File folder = getBaseDir();
+            File folder = getBaseDir(getContext());
             return getFilesWithName(folder, docId);
         }
     }
@@ -387,18 +430,20 @@ public class MyDocumentProvider extends DocumentsProvider {
         final LinkedList<File> pending = new LinkedList<>();
 
         // Start by adding the parent to the list of files to be processed
-        pending.add(parent);
+        if(parent.exists() && parent.isDirectory()) {
+            pending.add(parent);
 
-        // Do while we still have unexamined files
-        while (!pending.isEmpty()) {
-            // Take a file from the list of unprocessed files
-            final File file = pending.removeFirst();
-            if (file.isDirectory()) {
-                // If it's a directory, add all its children to the unprocessed list
-                Collections.addAll(pending, Objects.requireNonNull(file.listFiles()));
-            } else {
-                // If it's a file, add it to the ordered queue.
-                lastModifiedFiles.add(file);
+            // Do while we still have unexamined files
+            while (!pending.isEmpty()) {
+                // Take a file from the list of unprocessed files
+                final File file = pending.removeFirst();
+                if (file.isDirectory()) {
+                    // If it's a directory, add all its children to the unprocessed list
+                    Collections.addAll(pending, Objects.requireNonNull(file.listFiles()));
+                } else {
+                    // If it's a file, add it to the ordered queue.
+                    lastModifiedFiles.add(file);
+                }
             }
         }
 
@@ -420,8 +465,35 @@ public class MyDocumentProvider extends DocumentsProvider {
         File parent = file.getParentFile();
         if(!file.delete()) {
             Logging.log(Log.ERROR,TAG, "Unable to delete document from provider");
+        } else {
+            deleteThumbnails(documentId);
         }
         notifySystemOfUpdatedDocumentUri(Objects.requireNonNull(getContext()), getDocIdForFile(Objects.requireNonNull(parent)));
+    }
+
+    private void deleteThumbnails(String documentId) {
+        Set<File> thumbnails = getThumbnailsForFile(documentId);
+        for(File f : thumbnails) {
+            if(!f.delete()) {
+                Logging.log(Log.ERROR,TAG, "Unable to delete document thumbnail from provider");
+            }
+        }
+    }
+
+    private Set<File> getThumbnailsForFile(String documentId) {
+        File thumbnails = getThumbnailsFolder();
+        if(!thumbnails.exists()) {
+            return Collections.emptySet();
+        }
+        Set<File> thumbs = new HashSet<>();
+        for(File thumbFolder : thumbnails.listFiles()) {
+            try {
+                thumbs.add(getFilesWithName(thumbFolder, documentId));
+            } catch (FileNotFoundException e) {
+                //ignore this. it is expected
+            }
+        }
+        return thumbs;
     }
 
     @Override

@@ -99,7 +99,10 @@ import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
 import delit.piwigoclient.ui.util.download.DownloadManager;
+import delit.piwigoclient.util.MyDocumentProvider;
 import hotchemi.android.rate.MyAppRate;
+
+import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 
 public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> extends MyActivity<T> implements ComponentCallbacks2 {
 
@@ -419,6 +422,9 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             case R.id.nav_upload:
                 showUpload();
                 break;
+            case R.id.nav_download:
+                showDownloads();
+                break;
             case R.id.nav_groups:
                 showGroups();
                 break;
@@ -458,6 +464,29 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    public void openFolder(Uri uri){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            intent.putExtra(EXTRA_INITIAL_URI, uri);
+        }
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.view_exported_files)));
+        } catch(ActivityNotFoundException e) {
+            Logging.recordException(e);
+        }
+    }
+
+    private void showDownloads() {
+        Uri downloadFolder = AppPreferences.getAppDownloadFolder(getSharedPrefs(), this).getUri();
+        if(MyDocumentProvider.ownsUri(this, downloadFolder)) {
+            downloadFolder = MyDocumentProvider.getRootDocUri();
+        }
+        openFolder(downloadFolder);
     }
 
     protected void showPrivacy() {

@@ -173,12 +173,15 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            long actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
+            long actionTimeMillis = -1;
+            if(data != null && data.hasExtra(FileSelectActivity.ACTION_TIME_MILLIS)) {
+                actionTimeMillis = data.getLongExtra(FileSelectActivity.ACTION_TIME_MILLIS, -1);
+            }
             if (resultCode == RESULT_OK && data.getExtras() != null) {
-//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+//                  int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 if(data.hasExtra(FileSelectActivity.INTENT_SELECTED_FILES)) {
                     ArrayList<FolderItem> filesForUpload = data.getParcelableArrayListExtra(FileSelectActivity.INTENT_SELECTED_FILES);
                     FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, actionTimeMillis).withFolderItems(filesForUpload);
