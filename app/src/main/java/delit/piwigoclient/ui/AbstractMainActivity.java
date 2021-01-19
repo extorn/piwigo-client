@@ -467,7 +467,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     public void openFolder(Uri uri){
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
