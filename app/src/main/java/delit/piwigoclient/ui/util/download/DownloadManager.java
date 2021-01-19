@@ -36,7 +36,7 @@ import delit.piwigoclient.ui.file.DocumentFileFilter;
 import delit.piwigoclient.ui.file.RegexpDocumentFileFilter;
 import delit.piwigoclient.util.MyDocumentProvider;
 
-public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadActionListener, DownloadedFileNotificationGenerator.DownloadTargetLoadListener<T> {
+public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadActionListener, DownloadedFileNotificationGenerator.DownloadTargetLoadListener<DownloadedFileNotificationGenerator<T>> {
 
     public static final String NOTIFICATION_GROUP_DOWNLOADS = "Downloads";
 
@@ -46,6 +46,7 @@ public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadAc
     private ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
     private UIHelper<T> uiHelper;
     //TODO we don't store these notification handlers so possibly notifications may not get created.
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")// Don't query them as it's just to stop garbage collection
     private final ArrayList<DownloadedFileNotificationGenerator<T>> thumbNotificationGenerators = new ArrayList<>();
 
     public DownloadManager(UIHelper<T> uiHelper) {
@@ -202,7 +203,7 @@ public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadAc
         if(BuildConfig.DEBUG) {
             Log.e(TAG, "Downloaded File - Generating Thumbnail for " + downloadedFile);
         }
-        DownloadedFileNotificationGenerator<T> generator = new DownloadedFileNotificationGenerator<>(uiHelper, this, downloadedFile);
+        DownloadedFileNotificationGenerator generator = new DownloadedFileNotificationGenerator(uiHelper, this, downloadedFile);
         generator.execute();
         thumbNotificationGenerators.add(generator);
     }
@@ -361,7 +362,6 @@ public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadAc
     private String getString(@StringRes int stringResId, Object ... formatArgs) {
         return uiHelper.getAppContext().getString(stringResId, formatArgs);
     }
-
 
     @Override
     public void onDownloadTargetResult(DownloadedFileNotificationGenerator<T> generator, boolean success) {

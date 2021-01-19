@@ -1,73 +1,37 @@
 package delit.piwigoclient.ui.util.download;
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
-import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AbstractMainActivity;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.UIHelper;
 
-public class DownloadedFileNotificationGenerator<T> implements Target {
+public class DownloadedFileNotificationGenerator<T> extends FileThumbnailGenerator<DownloadedFileNotificationGenerator<T>> {
 
     protected static final AtomicInteger notificationId = new AtomicInteger(100);
-    private static final String TAG = "DownloadTarget";
-
+    private static final String TAG = "DnldFileNotifGen";
     private final UIHelper<T> uiHelper;
-    private final Uri downloadedFile;
-    private final DownloadTargetLoadListener<T> listener;
 
-    public interface DownloadTargetLoadListener<T> {
-        void onDownloadTargetResult(DownloadedFileNotificationGenerator<T> generator, boolean success);
-    }
-
-    public Uri getDownloadedFile() {
-        return downloadedFile;
-    }
-
-    public DownloadedFileNotificationGenerator(@NonNull UIHelper<T> uiHelper, @NonNull DownloadTargetLoadListener<T> loadListener, @NonNull Uri downloadedFile) {
+    public DownloadedFileNotificationGenerator(UIHelper<T> uiHelper, @NonNull DownloadTargetLoadListener<DownloadedFileNotificationGenerator<T>> loadListener, @NonNull Uri downloadedFile) {
+        super(uiHelper.getAppContext(), loadListener, downloadedFile, new Point(256,256));
         this.uiHelper = uiHelper;
-        this.listener = loadListener;
-        this.downloadedFile = downloadedFile;
-    }
-
-    public void execute() {
-        PicassoFactory.getInstance().getPicassoSingleton(uiHelper.getAppContext()).load(downloadedFile).error(R.drawable.ic_file_gray_24dp).resize(256,256).centerInside().into(this);
-    }
-
-    private Context getContext() {
-        return uiHelper.getAppContext();
     }
 
     @Override
-    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-        if(BuildConfig.DEBUG) {
-            Log.d(TAG, "Generated bitmap from : " + downloadedFile.getPath());
-        }
-        DisplayUtils.runOnUiThread(() -> buildAndShowNotification(bitmap));
-        listener.onDownloadTargetResult(this,true);
-    }
-
-    private void buildAndShowNotification(Bitmap bitmap) {
+    protected void withLoadedThumbnail(Bitmap bitmap) {
 
         Intent notificationIntent;
 
@@ -75,8 +39,8 @@ public class DownloadedFileNotificationGenerator<T> implements Target {
         notificationIntent = new Intent(Intent.ACTION_VIEW);
         // Action on click on notification
         MimeTypeMap map = MimeTypeMap.getSingleton();
-        Uri shareFileUri = AbstractMainActivity.toContentUri(getContext(), downloadedFile);
-        String ext = MimeTypeMap.getFileExtensionFromUrl(downloadedFile.toString());
+        Uri shareFileUri = AbstractMainActivity.toContentUri(getContext(), getDownloadedFile());
+        String ext = MimeTypeMap.getFileExtensionFromUrl(getDownloadedFile().toString());
         String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
         notificationIntent.setDataAndType(shareFileUri, mimeType);
         notificationIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -98,7 +62,7 @@ public class DownloadedFileNotificationGenerator<T> implements Target {
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setLargeIcon(bitmap)
                 .setContentTitle(getContext().getString(R.string.notification_download_event))
-                .setContentText(IOUtils.getFilename(getContext(), downloadedFile))
+                .setContentText(IOUtils.getFilename(getContext(), getDownloadedFile()))
                 .setContentIntent(pendingIntent)
                 .setGroup(DownloadManager.NOTIFICATION_GROUP_DOWNLOADS)
 //                    .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
@@ -116,34 +80,21 @@ public class DownloadedFileNotificationGenerator<T> implements Target {
     }
 
     @Override
-    public void onBitmapFailed(Drawable errorDrawable) {
-        if(BuildConfig.DEBUG) {
-            Log.d(TAG, "Failed to generate bitmap from : " + downloadedFile.getPath());
-        }
-        Bitmap errorBitmap = DisplayUtils.getBitmap(errorDrawable);
-        DisplayUtils.runOnUiThread(() -> buildAndShowNotification(errorBitmap));
-        listener.onDownloadTargetResult(this,false);
-    }
-
-    @Override
-    public void onPrepareLoad(Drawable placeHolderDrawable) {
-        // Don't need to do anything before loading image
-        if(BuildConfig.DEBUG) {
-            Log.d(TAG, "About to generate bitmap from : " + downloadedFile.getPath());
-        }
+    protected void withErrorThumbnail(Bitmap bitmap) {
+        withLoadedThumbnail(bitmap);
     }
 
     @Override
     public boolean equals(@Nullable Object obj) {
         if(obj instanceof DownloadedFileNotificationGenerator) {
             DownloadedFileNotificationGenerator<?> other = (DownloadedFileNotificationGenerator<?>) obj;
-            return downloadedFile.equals(other.downloadedFile);
+            return getDownloadedFile().equals(other.getDownloadedFile());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return downloadedFile.hashCode();
+        return getDownloadedFile().hashCode();
     }
 }
