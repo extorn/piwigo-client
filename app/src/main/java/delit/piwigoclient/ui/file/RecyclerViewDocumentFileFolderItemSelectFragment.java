@@ -318,6 +318,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private void retrieveFilesFromSystemPicker(@Nullable Uri uri) {
         // change the selected root to be blank again (do it now as it takes a while)
         folderRootFolderSpinner.setSelection(0);
+        if(getViewPrefs().isAllowFolderSelection() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            retrievePermissionsForUri(uri, getViewPrefs().getSelectedUriPermissionFlags());
+            return;
+        }
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
