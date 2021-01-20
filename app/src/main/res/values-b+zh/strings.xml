@@ -618,7 +618,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值"</string>
+    <string name="preference_corrupt_please_re_type_pattern">首选项%1$s不可检索，并且默认为%2$s。请在应用设置中重置此值</string>
     <string name="switch_to_cached_mode">该服务器目前不可用。使用缓存的数据？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">压缩影片</string>
@@ -638,7 +638,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="message_piwigo_server_inconsistent_results">Piwigo API调用%1$s报告文件校验和不匹配，但API调用%2$s报告它匹配。这可能是PIWIGO服务器中的错误或您使用的插件，可能值得报告。</string>
     <string name="alert_bulk_image_permissions_title">设置访问权限</string>
     <string name="alert_bulk_image_permissions_message">设置%1$d个所选资源的访问权限级别</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与%1$s MIME类型共享的文件</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与“%1$s” MIME类型共享的文件</string>
     <string name="alert_error_unsupported_file_extensions_pattern">具有以下扩展名的文件无法上传并已被删除：%1$s</string>
     <string name="please_select_a_parent_album">请选择一个父相册</string>
     <string name="unsupported_device">抱歉，不支持此设备。访问Google Play服务时出现问题。</string>
@@ -663,7 +663,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="create_email_using_app">使用应用创建电子邮件</string>
     <string name="open_files">在应用程序中打开文件</string>
     <string name="files_unavailable_to_download_removed_pattern">您选择的文件包含无法处理的文件。这些%1$d文件已被忽略。要共享视频文件，必须先将其完全本地缓存。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"所有一次性用户提示将再次显示"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">所有一次性用户提示将再次显示</string>
     
     
     <string name="delete_uploaded_files_title">删除上传的文件</string>

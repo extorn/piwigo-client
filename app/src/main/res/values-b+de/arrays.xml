@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals."</item>
-        <item>"Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch"</item>
+        <item>Wenn Sie Probleme mit der App haben, benachrichtigen Sie mich bitte per E-Mail. Wenn Sie möchten, veröffentlichen Sie eine negative Bewertung bei Google Play. Ich versuche nicht, dies zu stoppen, aber bitte senden Sie auch eine E-Mail. Oben im Menü der ausziehbaren Schublade befindet sich ein Link, über den Sie mir eine E-Mail senden können. Ich kann eine E-Mail-Adresse viel umfassender unterstützen. Danke vielmals.</item>
+        <item>Sie können nur Dateien zum Hochladen auswählen, die zum Hochladen auf Ihren Server zulässig sind. Wenn Sie Videos hochladen möchten, müssen Sie die Datei config.inc.php Ihres Servers so ändern, dass sie $ conf [\'upload_form_all_types\'] = true enthält. eher als falsch</item>
         <item>Wenn ein Upload gerade nicht erfolgreich ist, versuchen Sie, die Einstellungen auf der Upload-Seite für die App-Einstellungen zu verwenden, um alle verbleibenden fehlgeschlagenen Uploads vom Server zu löschen</item>
-        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - \"Sie dürfen keine Tags löschen.\" - Stellen Sie sicher, dass Benutzer Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
+        <item>Beim Versuch, Tags zu aktualisieren, tritt immer ein Fehler auf. - "Sie dürfen keine Tags löschen." - Stellen Sie sicher, dass Benutzer Tags hinzufügen und löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen App mit dieser App, um sie dem Upload-Bildschirm hinzuzufügen und auf Ihren aktuellen Server zu übertragen</item>
         <item>Klicken Sie lange auf ein Bild (entweder Miniaturbild oder Diashow), das nicht geladen werden konnte, um es erneut abzurufen</item>
         <item>Klicken Sie lange auf ein Album, um das Album und den gesamten Inhalt zu löschen</item>
@@ -136,12 +136,12 @@
         <item>Sie können ein Bild beim Anzeigen in einer Diashow vergrößern, indem Sie zwei Finger zusammen oder auseinander auf dem Bildschirm zeichnen</item>
         <item>Wenn Sie als Administrator angemeldet sind, aktivieren Sie die Anwendungssperrfunktion, bevor Sie Ihr Gerät einem Freund zum Anzeigen Ihrer Fotos übergeben, um zu verhindern, dass versehentlich Änderungen an Ihrer Galerie vorgenommen werden</item>
         <item>Wenn Sie ein ganzes Video angesehen haben und das lokale Datei-Caching aktiviert ist, können Sie dieses Video in Ihrem Download-Ordner speichern</item>
-        <item>Klicken Sie lange auf die Schaltfläche \"Löschen\" in einer \"Datei zum Hochladen\", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
+        <item>Klicken Sie lange auf die Schaltfläche "Löschen" in einer "Datei zum Hochladen", um alle hochzuladenden Dateien zu löschen (wenn der Auftrag nicht ausgeführt wird).</item>
         <item>Wenn Bilder nur langsam geladen werden, überprüfen Sie, ob Ihr Server beim Hochladen automatisch die von dieser App verwendete Größe generiert</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Die Zukunft</item>
-        <item>"Weitere Updates sind nicht geplant."</item>
+        <item>Weitere Updates sind nicht geplant.</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         

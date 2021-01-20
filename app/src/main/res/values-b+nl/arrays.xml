@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>"Als je problemen hebt met de app, gebruik dan een e-mail om me op de hoogte te stellen. Plaats desgewenst een negatieve recensie op Google Play, ik probeer dat niet te stoppen, maar stuur ook een e-mail. Bovenaan het uitschuifbare lademenu staat een link om mij een e-mail te sturen. Ik kan veel uitgebreidere ondersteuning bieden op een e-mailadres. Erg bedankt."</item>
-        <item>"U kunt alleen bestanden zien die u kunt selecteren om te uploaden en die op uw server kunnen worden geüpload. Als je video\'s wilt uploaden, zorg er dan voor dat je je server config.inc.php-bestand wijzigt en $ conf [\'upload_form_all_types\'] = true bevat; in plaats van onwaar"</item>
+        <item>Als je problemen hebt met de app, gebruik dan een e-mail om me op de hoogte te stellen. Plaats desgewenst een negatieve recensie op Google Play, ik probeer dat niet te stoppen, maar stuur ook een e-mail. Bovenaan het uitschuifbare lademenu staat een link om mij een e-mail te sturen. Ik kan veel uitgebreidere ondersteuning bieden op een e-mailadres. Erg bedankt.</item>
+        <item>U kunt alleen bestanden zien die u kunt selecteren om te uploaden en die op uw server kunnen worden geüpload. Als je video\'s wilt uploaden, zorg er dan voor dat je je server config.inc.php-bestand wijzigt en $ conf [\'upload_form_all_types\'] = true bevat; in plaats van onwaar</item>
         <item>Als een upload net niet lukt, probeer dan de voorkeur op de uploadpagina van de app-instellingen te gebruiken om eventuele resterende mislukte uploads van de server te wissen</item>
-        <item>Er treedt altijd een fout op bij het updaten van tags - \"U mag geen tags verwijderen\" - Zorg ervoor dat gebruikers tags zowel kunnen toevoegen als verwijderen (instelling voor serverplug-in)</item>
+        <item>Er treedt altijd een fout op bij het updaten van tags - "U mag geen tags verwijderen" - Zorg ervoor dat gebruikers tags zowel kunnen toevoegen als verwijderen (instelling voor serverplug-in)</item>
         <item>Deel bestanden van een andere app met deze app om ze toe te voegen aan het uploadscherm, klaar om naar je huidige server te gaan</item>
         <item>Klik lang op een afbeelding (miniatuur of diashow-item) die niet is geladen om deze opnieuw op te halen</item>
         <item>Klik lang op een album om dat album en alle inhoud te verwijderen</item>
@@ -141,7 +141,7 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
-        <item>"Er zijn geen verdere updates gepland."</item>
+        <item>Er zijn geen verdere updates gepland.</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         

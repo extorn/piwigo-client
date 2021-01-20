@@ -618,7 +618,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"Předvolba%1$s je nenávratná a byla nastavena na%2$s. Resetujte tuto hodnotu v nastavení aplikace"</string>
+    <string name="preference_corrupt_please_re_type_pattern">Předvolba%1$s je nenávratná a byla nastavena na%2$s. Resetujte tuto hodnotu v nastavení aplikace</string>
     <string name="switch_to_cached_mode">Server v současné době není k dispozici. Použít data v mezipaměti?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Komprimujte videa</string>
@@ -638,7 +638,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="message_piwigo_server_inconsistent_results">Kontrolní součet souboru zpráv Piwigo API%1$s neodpovídá, ale volání API%2$s hlásí, že odpovídá. Může se jednat o chybu na serveru PIWIGO nebo zásuvný modul, který používáte, a může být užitečné jej nahlásit.</string>
     <string name="alert_bulk_image_permissions_title">Nastavte přístupová oprávnění</string>
     <string name="alert_bulk_image_permissions_message">Nastavit úrovně oprávnění přístupu pro%1$d vybrané zdroje</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Nelze zpracovat soubory sdílené s typem mime%1$s</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Nelze zpracovat soubory sdílené s typem mime „%1$s“</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Soubory s následujícími příponami nelze nahrát a byly odstraněny:%1$s</string>
     <string name="please_select_a_parent_album">Vyberte prosím nadřazené album</string>
     <string name="unsupported_device">Litujeme, toto zařízení není podporováno. Došlo k problému s přístupem ke službám Google Play.</string>
@@ -663,7 +663,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="create_email_using_app">Vytvořte e-mail pomocí aplikace</string>
     <string name="open_files">Otevřete soubory v aplikaci</string>
     <string name="files_unavailable_to_download_removed_pattern">Váš výběr obsahoval soubory, které nelze zpracovat. Tyto%1$d soubory byly ignorovány. Chcete-li sdílet video soubor, musí být nejprve plně místně uložen do mezipaměti.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Všechny jednorázové tipy uživatelů se znovu zobrazí"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">Všechny jednorázové tipy uživatelů se znovu zobrazí</string>
     
     
     <string name="delete_uploaded_files_title">Odstraňte nahrané soubory</string>

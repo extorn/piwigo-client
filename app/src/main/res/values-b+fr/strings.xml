@@ -297,7 +297,7 @@ AVERTISSEMENT: Versions de Piwigo inférieures à 1.9.2 - je pense que le télé
 
 J\'ai testé avec une copie du plugin piwigo_privacy installé et aussi le plugin VideoJS installé.
 J\'ai une copie du plugin Extended Description installé, mais malheureusement, cette fonctionnalité n\'est pas encore exposée via l\'API PIWIGO.
-Je voudrais inclure le support des photos \"favorites\" mais cette fonctionnalité ne semble pas encore être exposée via l \ \'API PIWIGO.
+Je voudrais inclure le support des photos \"favorites\" mais cette fonctionnalité ne semble pas encore être exposée via l \'API PIWIGO.
 
 Veuillez me signaler tout bogue par e-mail si vous rencontrez des bogues. J\'ai testé cela sur l\'émulateur Android, un téléphone Samsung et une tablette Samsung, mais c\'est ma première application, donc je suis sûr que les choses iront mal pour quelqu\'un.
 
@@ -345,7 +345,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="button_agree">Je suis d\'accord</string>
     <string name="eula_menu_title">CLUF</string>
     <string name="alert_warning">Attention</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \"la plus proche\".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">La taille de vignette que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille "la plus proche".</string>
     <string name="rate_dialog_message">Si vous aimez utiliser cette application, pourriez-vous prendre un moment pour la noter? Cela ne prendra pas plus d\'une minute. Merci pour votre aide!</string>
     <string name="groups_menu_title">Groupes</string>
     <string name="group_members_pattern">(%1$d membres)</string>
@@ -453,7 +453,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_message_file_upload_cancelled_pattern">Téléchargement du fichier (%1$s) annulé.</string>
     <string name="alert_message_upload_cancelled">Importation annulée</string>
     <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquez sur Télécharger. Cela nettoiera l\'état de téléchargement annulé du serveur.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille \"la plus proche\".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge de manière native par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de taille "la plus proche".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de%1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Pour autoriser la mise en cache sur le disque, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache sera en mémoire.</string>
@@ -618,7 +618,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">"La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application"</string>
+    <string name="preference_corrupt_please_re_type_pattern">La préférence%1$s est irrécupérable et a été définie par défaut sur%2$s. Veuillez réinitialiser cette valeur dans les paramètres de l\'application</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données mises en cache?</string>
     <string name="server_connection_id_pattern">%1$s à%2$s</string>
     <string name="compress_videos">Compresser des vidéos</string>
@@ -638,7 +638,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="message_piwigo_server_inconsistent_results">L\'appel d\'API Piwigo%1$s signale que la somme de contrôle du fichier ne correspond pas, mais l\'appel d\'API%2$s indique qu\'elle correspond. Cela pourrait être un bogue dans le serveur PIWIGO ou un plugin que vous utilisez, et cela peut valoir la peine d\'être signalé.</string>
     <string name="alert_bulk_image_permissions_title">Définir les autorisations d\'accès</string>
     <string name="alert_bulk_image_permissions_message">Définir les niveaux d\'autorisation d\'accès pour les%1$d ressources sélectionnées</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec un type mime%1$s</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec un type mime «%1$s»</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Les fichiers avec les extensions suivantes ne peuvent pas être téléchargés et ont été supprimés:%1$s</string>
     <string name="please_select_a_parent_album">Veuillez sélectionner un album parent</string>
     <string name="unsupported_device">Désolé, cet appareil n\'est pas pris en charge. Il y a un problème d\'accès aux services Google Play.</string>
@@ -663,7 +663,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="create_email_using_app">Créer un e-mail à l\'aide de l\'application</string>
     <string name="open_files">Ouvrir des fichiers dans l\'application</string>
     <string name="files_unavailable_to_download_removed_pattern">Votre sélection contenait des fichiers qui n\'ont pas pu être traités. Ces%1$d fichiers ont été ignorés. Pour partager un fichier vidéo, il doit d\'abord être entièrement mis en cache localement.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">"Tous les conseils d\'utilisation uniques seront à nouveau affichés"</string>
+    <string name="alert_all_user_hints_will_be_shown_again">Tous les conseils d\'utilisation uniques seront à nouveau affichés</string>
     
     
     <string name="delete_uploaded_files_title">Supprimer les fichiers téléchargés</string>

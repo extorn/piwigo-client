@@ -995,7 +995,7 @@ SOFTWARE.
     <string name="message_piwigo_server_inconsistent_results">Piwigo API Call %1$s reports file checksum doesn\'t match, but API call %2$s reports that it matches. This could be a bug in the PIWIGO server or a plugin you use, and may be worth reporting.</string>
     <string name="alert_bulk_image_permissions_title">Set Access Permissions</string>
     <string name="alert_bulk_image_permissions_message">Set access permission levels for the %1$d selected resources</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">Unable to handle files shared with an %1$s mime type</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Unable to handle files shared with an "%1$s" mime type</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Files with the following extensions cannot be uploaded and have been removed: %1$s</string>
     <string name="please_select_a_parent_album">Please select a parent album</string>
     <string name="unsupported_device">Sorry, this device is not supported. There is an issue with accessing Google Play Services.</string>
