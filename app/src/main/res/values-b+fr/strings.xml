@@ -397,7 +397,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="progress_loading_user_details">Récupération des détails de l\'utilisateur</string>
     <string name="progress_delete_user">Supprimer l\'utilisateur</string>
     <string name="alert_read_permissions_needed_for_file_upload">Une autorisation est nécessaire pour lire le système de fichiers afin de sélectionner et télécharger des fichiers</string>
-    <string name="alert_file_permissions_needed_for_pattern">L\'autorisation%1$s est nécessaire pour le système de fichiers. Objectif:%2$s</string>
+    <string name="alert_file_permissions_needed_for_pattern">Les autorisations%1$s sont nécessaires pour le système de fichiers. Objectif:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">La mise en cache locale des fichiers vidéo est activée. Pour permettre cela, l\'accès en écriture au système de fichiers doit être accordé. Si elle est refusée, la mise en cache locale sera désactivée.</string>
     <string name="alert_error_tidying_video_cache">Impossible de ranger le cache vidéo. Si ce problème persiste, veuillez le signaler.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Impossible de copier le fichier du cache. %1$s</string>

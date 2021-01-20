@@ -397,7 +397,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="progress_loading_user_details">Recupero dei dettagli dell\'utente</string>
     <string name="progress_delete_user">Eliminazione dell\'utente</string>
     <string name="alert_read_permissions_needed_for_file_upload">È necessaria l\'autorizzazione per leggere il filesystem per selezionare e caricare i file</string>
-    <string name="alert_file_permissions_needed_for_pattern">È necessaria l\'autorizzazione%1$s per il filesystem. Scopo:%2$s</string>
+    <string name="alert_file_permissions_needed_for_pattern">Sono necessari%1$s autorizzazioni per il filesystem. Scopo:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">La memorizzazione nella cache locale dei file video è abilitata. Per consentire ciò, deve essere concesso l\'accesso in scrittura al file system. Se negato, la memorizzazione nella cache locale verrà disabilitata.</string>
     <string name="alert_error_tidying_video_cache">Impossibile riordinare la cache del video. Se il problema persiste, segnalalo.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Impossibile copiare il file dalla cache. %1$s</string>

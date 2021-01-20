@@ -141,7 +141,7 @@
     <string name="gallery_details_updating_progress_title">Actualizar álbum</string>
     <string name="progress_resource_details_updating">Actualización de los detalles de los recursos</string>
     <string name="gallery_details_name_title">Nombre del álbum</string>
-    <string name="gallery_details_description_title">Descripción del Album</string>
+    <string name="gallery_details_description_title">Descripción del Ã�lbum</string>
     <string name="gallery_details_save_button">Salvar</string>
     <string name="gallery_details_discard_button">Descarte</string>
     <string name="gallery_action_delete_progress_title">Eliminar álbum</string>
@@ -397,7 +397,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="progress_loading_user_details">Recuperando detalles de usuario</string>
     <string name="progress_delete_user">Eliminando usuario</string>
     <string name="alert_read_permissions_needed_for_file_upload">Se necesita permiso para leer el sistema de archivos a fin de seleccionar y cargar archivos</string>
-    <string name="alert_file_permissions_needed_for_pattern">Se necesita el permiso%1$s para el sistema de archivos. Finalidad:%2$s</string>
+    <string name="alert_file_permissions_needed_for_pattern">Se necesitan permisos%1$s para el sistema de archivos. Finalidad:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">El almacenamiento en caché local de archivos de video está habilitado. Para permitir esto, se debe otorgar acceso de escritura al sistema de archivos. Si se deniega, el almacenamiento en caché local se desactivará.</string>
     <string name="alert_error_tidying_video_cache">No se pudo ordenar la caché de video. Si el problema persiste, infórmalo.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">No se puede copiar el archivo de la caché. %1$s</string>
@@ -568,7 +568,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_invalid_uri_pattern_spaces">URI no válido. Hay un carácter de espacio en el URI en la posición%1$d</string>
     <string name="album_section_heading_albums">álbumes</string>
     <string name="album_section_heading_albums_pattern">álbumes (%1$d)</string>
-    <string name="album_section_heading_resources">fotos en este album</string>
+    <string name="album_section_heading_resources">fotos en este Ã¡lbum</string>
     <string name="album_title_home">casa</string>
     <string name="upload_file_rating">Mi clasificación</string>
     <string name="slideshow_image_details_rating_score_title">Puntaje de calificación</string>
@@ -638,7 +638,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="message_piwigo_server_inconsistent_results">La suma de comprobación del archivo de informes de la llamada%1$s a la API de Piwigo no coincide, pero la llamada a la API%2$s informa que coincide. Esto podría ser un error en el servidor PIWIGO o un complemento que usa, y puede valer la pena informar.</string>
     <string name="alert_bulk_image_permissions_title">Establecer permisos de acceso</string>
     <string name="alert_bulk_image_permissions_message">Establecer niveles de permisos de acceso para los%1$d recursos seleccionados</string>
-    <string name="alert_error_unable_to_handle_shared_mime_type">No se pueden administrar los archivos compartidos con un tipo mime \"%1$s\"</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">No se pueden administrar los archivos compartidos con un tipo mime "%1$s"</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Los archivos con las siguientes extensiones no se pueden cargar y se han eliminado:%1$s</string>
     <string name="please_select_a_parent_album">Seleccione un álbum principal</string>
     <string name="unsupported_device">Lo sentimos, este dispositivo no es compatible. Hay un problema con el acceso a los servicios de Google Play.</string>
@@ -688,7 +688,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="content_filter">Filtro de contenido</string>
     <string name="alert_advert_importance_message">Los ingresos de los anuncios son importantes para mí. Lamento que te frustren (a mí también), pero si los miras, seguirán apareciendo hasta que veas uno. Para evitar este problema, obsérvelos hasta que ofrezcan la opción de cerrar. Alternativamente, compre la versión paga de esta aplicación. Muchas gracias por su apoyo.</string>
     <string name="eula_privacy_title">Intimidad</string>
-    <string name="privacy_policy_label">Nuestra politica de privacidad</string>
+    <string name="privacy_policy_label">Nuestra polÃ­tica de privacidad</string>
     <string name="title_advert_consent">Tu privacidad</string>
     <string name="personalised_adverts_label">¿Quieres que los anuncios estén personalizados?</string>
     <string name="personalised_adverts_field">Mostrar anuncios personalizados</string>

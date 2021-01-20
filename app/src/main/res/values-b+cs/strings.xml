@@ -397,7 +397,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="progress_loading_user_details">Načítání údajů o uživateli</string>
     <string name="progress_delete_user">Mazání uživatele</string>
     <string name="alert_read_permissions_needed_for_file_upload">Ke čtení a nahrávání souborů je potřeba oprávnění ke čtení souborového systému</string>
-    <string name="alert_file_permissions_needed_for_pattern">%1$s oprávnění je vyžadováno pro souborový systém. Účel:%2$s</string>
+    <string name="alert_file_permissions_needed_for_pattern">Pro souborový systém jsou potřebná oprávnění%1$s. Účel:%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">Místní ukládání video souborů do mezipaměti je povoleno. Aby to bylo možné, musí být povolen přístup pro zápis do systému souborů. Pokud bude zamítnuto, místní ukládání do mezipaměti bude deaktivováno.</string>
     <string name="alert_error_tidying_video_cache">Nelze uklidit mezipaměť videa. Pokud tento problém přetrvává, nahlaste to prosím.</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">Soubor nelze zkopírovat z mezipaměti. %1$s</string>
