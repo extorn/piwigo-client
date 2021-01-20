@@ -36,7 +36,7 @@ import delit.piwigoclient.ui.file.DocumentFileFilter;
 import delit.piwigoclient.ui.file.RegexpDocumentFileFilter;
 import delit.piwigoclient.util.MyDocumentProvider;
 
-public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadActionListener, DownloadedFileNotificationGenerator.DownloadTargetLoadListener<DownloadedFileNotificationGenerator<T>> {
+public class DownloadManager<S extends UIHelper<T>, T> implements Parcelable, DownloadAction.DownloadActionListener, DownloadedFileNotificationGenerator.DownloadTargetLoadListener<DownloadedFileNotificationGenerator<T>> {
 
     public static final String NOTIFICATION_GROUP_DOWNLOADS = "Downloads";
 
@@ -44,16 +44,16 @@ public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadAc
     //TODO move the download mechanism into a background service so it isn't cancelled if the user leaves the app.
     private ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
     private ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
-    private UIHelper<T> uiHelper;
+    private S uiHelper;
     //TODO we don't store these notification handlers so possibly notifications may not get created.
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")// Don't query them as it's just to stop garbage collection
     private final ArrayList<DownloadedFileNotificationGenerator<T>> thumbNotificationGenerators = new ArrayList<>();
 
-    public DownloadManager(UIHelper<T> uiHelper) {
+    public DownloadManager(S uiHelper) {
         this.uiHelper = uiHelper;
     }
 
-    public void withUiHelper(UIHelper<T> uiHelper) {
+    public void withUiHelper(S uiHelper) {
         this.uiHelper = uiHelper;
     }
 
@@ -85,14 +85,14 @@ public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadAc
         return 0;
     }
 
-    public static final Creator<DownloadManager<?>> CREATOR = new Creator<DownloadManager<?>>() {
+    public static final Creator<DownloadManager<?,?>> CREATOR = new Creator<DownloadManager<?,?>>() {
         @Override
-        public DownloadManager<?> createFromParcel(Parcel in) {
+        public DownloadManager<?,?> createFromParcel(Parcel in) {
             return new DownloadManager<>(in);
         }
 
         @Override
-        public DownloadManager<?>[] newArray(int size) {
+        public DownloadManager<?,?>[] newArray(int size) {
             return new DownloadManager[size];
         }
     };
@@ -194,7 +194,7 @@ public class DownloadManager<T> implements Parcelable, DownloadAction.DownloadAc
         }
     }
 
-    private UIHelper<T> getUiHelper() {
+    private S getUiHelper() {
         return uiHelper;
     }
 

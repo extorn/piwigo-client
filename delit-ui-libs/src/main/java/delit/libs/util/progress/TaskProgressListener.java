@@ -1,4 +1,4 @@
-package delit.libs.ui.util;
+package delit.libs.util.progress;
 
 public interface TaskProgressListener extends ProgressListener {
 

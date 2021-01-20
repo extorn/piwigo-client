@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.upload;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -53,6 +52,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,7 +66,6 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.util.TaskProgressTracker;
 import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.list.BiArrayAdapter;
@@ -75,6 +74,7 @@ import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
 import delit.libs.util.SetUtils;
+import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -110,6 +110,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
+import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -237,19 +238,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getOwner().overallUploadProgressBar.showProgressIndicator(0);
         }
 
-
         @Override
         protected List<FilesToUploadRecyclerViewAdapter.UploadDataItem> doInBackgroundSafely(FileSelectionCompleteEvent[] objects) {
-            TaskProgressTracker mainTaskProgressListener = new TaskProgressTracker() {
-                @Override
-                protected void reportProgress(int newOverallProgress) {
-                    try {
-                        DisplayUtils.runOnUiThread(() -> {getOwner().overallUploadProgressBar.showProgressIndicator(R.string.calculating_file_checksums, newOverallProgress);});
-                    } catch (NullPointerException e) {
-                        Logging.log(Log.ERROR, TAG, "Error updating upload progress");
-                    }
-                }
-            };
+            UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(getOwner().overallUploadProgressBar, R.string.calculating_file_checksums);
+            TaskProgressTracker fileSelectionProgress = new TaskProgressTracker(100, progressListener);
             FileSelectionCompleteEvent event = objects[0];
             int itemCount = event.getSelectedFolderItems().size();
 
@@ -257,15 +249,16 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (PiwigoSessionDetails.getInstance(activeProfile) != null) {
 
                 Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
-                Iterator<FolderItem> iter = event.getSelectedFolderItems().iterator();
+
                 Set<String> unsupportedExts = new HashSet<>();
                 int currentItem = 0;
 
+
                 // Initialise phase 1 (0% -15% - split between number of files to process)
-                mainTaskProgressListener.withStage(0, 15, itemCount);
-
-                FolderItem.cacheDocumentInformation(getContext(), event.getSelectedFolderItems(), mainTaskProgressListener);
-
+                TaskProgressTracker cachingProgressTracker = fileSelectionProgress.addSubTask(itemCount, 15);
+                FolderItem.cacheDocumentInformation(getContext(), event.getSelectedFolderItems(), cachingProgressTracker);
+                Logging.log(Log.DEBUG, TAG, "Doc Field Caching Progress : %1$.0f (complete? %2$b)", 100 * cachingProgressTracker.getTaskProgress(), cachingProgressTracker.isComplete());
+                Iterator<FolderItem> iter = event.getSelectedFolderItems().iterator();
                 while (iter.hasNext()) {
                     currentItem++;
                     FolderItem f = iter.next();
@@ -288,38 +281,31 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 totalImportedFileBytes += item.getFileLength();
             }
 
-            // At this point, firstMainTaskProgressListener is initialise phase 2 (15% -100% - same number of files to process)
-            mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(), 100, itemCount);
-            double thisStageAsPercOfTotal = (100 * mainTaskProgressListener.getMainTaskProgressPerPercentOfThisTask());
+            // At this point, firstMainTaskProgressListener is initialise phase 2 (15% -100% or 0% - 100% as appropriate - same number of files to process)
+            TaskProgressTracker overallChecksumCalcTask = fileSelectionProgress.addSubTask(totalImportedFileBytes, fileSelectionProgress.getRemainingWork());
 
             ArrayList<FilesToUploadRecyclerViewAdapter.UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
 
             for (FolderItem f : event.getSelectedFolderItems()) {
-                double sizeOfThisFileAsPercentageOfThoseToProcess = (100.0 * f.getFileLength()) / totalImportedFileBytes;
-                double progressForThisItem = sizeOfThisFileAsPercentageOfThoseToProcess * thisStageAsPercOfTotal;
 
                 if(BuildConfig.DEBUG) {
                     Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
                 }
                 FilesToUploadRecyclerViewAdapter.UploadDataItem item = new FilesToUploadRecyclerViewAdapter.UploadDataItem(f.getContentUri(), f.getName(), f.getMime());
+                TaskProgressTracker fileChecksumTracker = overallChecksumCalcTask.addSubTask(f.getFileLength(), f.getFileLength());
                 try {
-
-                    double fromProgress = mainTaskProgressListener.getOverallTaskProgress(); // gets current progress
-                    double toProgress = Math.min(fromProgress + progressForThisItem, 100);
-//                    Log.d(TAG, String.format("%1$.2f - %2$.2f", fromProgress, toProgress));
-                    mainTaskProgressListener.withStage(fromProgress, toProgress, 1);
-                    item.calculateDataHashCode(getContext(), mainTaskProgressListener);
-                    mainTaskProgressListener.onTick(1);
+                    item.calculateDataHashCode(getContext(), fileChecksumTracker);
                     uploadDataItems.add(item);
                 } catch (Md5SumUtils.Md5SumException e) {
                     Logging.recordException(e);
                 } catch(SecurityException secException) {
                     getOwner().overallUploadProgressBar.post(() -> getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions)));
+                } finally {
+                    fileChecksumTracker.markComplete();
                 }
             }
-            if(mainTaskProgressListener.getLastReportedProgress() < 100) {
-                mainTaskProgressListener.withStage(mainTaskProgressListener.getLastReportedProgress(), 100).onProgress(100);
-            }
+            overallChecksumCalcTask.markComplete();
+            fileSelectionProgress.markComplete();
             getOwner().updateLastOpenedFolderPref(getContext(), event.getSelectedFolderItems());
             return uploadDataItems;
         }
@@ -1499,53 +1485,23 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (Boolean.TRUE == positiveAnswer) {
                 getParent().overallUploadProgressBar.showProgressIndicator(R.string.removing_files_from_job, 0);
                 AbstractUploadFragment fragment = getUiHelper().getParent();
-                List<Uri> uris = fragment.getFilesForUploadViewAdapter().getFiles();
-                RemoveAllFilesFromUploadTask task = new RemoveAllFilesFromUploadTask(fragment, uris);
-                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                fragment.removeAllFilesFromUploadImmediately();
             }
         }
+    }
 
-        private static class RemoveAllFilesFromUploadTask extends OwnedSafeAsyncTask<AbstractUploadFragment, Void, Void, Void> {
+    private void removeAllFilesFromUploadImmediately() {
+        List<Uri> uris = getFilesForUploadViewAdapter().getFiles();
 
-            private final AbstractUploadFragment fragment;
-            private final List<Uri> uris;
-
-            public RemoveAllFilesFromUploadTask(AbstractUploadFragment fragment, List<Uri> uris) {
-                super(fragment);
-                this.fragment = fragment;
-                this.uris = uris;
-            }
-
-            @Override
-            protected Void doInBackgroundSafely(Void... voids) {
-                TaskProgressTracker tracker = new TaskProgressTracker(5) {
-                    @Override
-                    protected void reportProgress(int newOverallProgress) {
-                        DisplayUtils.runOnUiThread(() -> {fragment.overallUploadProgressBar.showProgressIndicator(R.string.removing_files_from_job, newOverallProgress);});
-                    }
-                };
-                tracker.withStage(0 ,100, uris.size());
-                int i = 0;
-                for(Uri uri : uris) {
-                    i++;
-                    final int currentTick = i;
-
-                    DisplayUtils.postOnUiThread(() -> {
-                        fragment.getFilesForUploadViewAdapter().remove(uri);
-                        fragment.releaseUriPermissionsForUploadItem(uri);
-                        tracker.onTick(currentTick);
-                    });
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecuteSafely(Void aVoid) {
-                fragment.uploadFilesNowButton.setEnabled(fragment.getFilesForUploadViewAdapter().getItemCount() > 0);
-                fragment.updateActiveJobActionButtonsStatus();
-                getOwner().overallUploadProgressBar.hideProgressIndicator();
-            }
-        }
+        UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(overallUploadProgressBar, R.string.removing_files_from_job);
+        TaskProgressTracker tracker = new TaskProgressTracker(2, progressListener);
+        releaseUriPermissionsForUploadItems(uris);
+        tracker.incrementWorkDone(1);
+        getFilesForUploadViewAdapter().removeAll(uris);
+        tracker.incrementWorkDone(2);
+        uploadFilesNowButton.setEnabled(getFilesForUploadViewAdapter().getItemCount() > 0);
+        updateActiveJobActionButtonsStatus();
+        overallUploadProgressBar.hideProgressIndicator();
     }
 
     private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>, AbstractUploadFragment> implements Parcelable {
@@ -2114,6 +2070,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private void releaseUriPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             appSettingsViewModel.releaseAllPersistableUriPermissions(requireContext(), URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD);
+        }
+    }
+
+    private void releaseUriPermissionsForUploadItems(Collection<Uri> fileForUploadUris) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            appSettingsViewModel.releasePersistableUriPermission(requireContext(), fileForUploadUris, URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, false);
         }
     }
 

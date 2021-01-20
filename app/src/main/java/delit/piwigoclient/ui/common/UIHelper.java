@@ -779,12 +779,7 @@ public abstract class UIHelper<T> {
         if (progressIndicator == null) {
             Logging.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
-            if (DisplayUtils.isRunningOnUIThread()) {
-                progressIndicator.showProgressIndicator(titleString, progress);
-            } else {
-                // publish on the main thread
-                progressIndicator.post(() -> progressIndicator.showProgressIndicator(titleString, progress));
-            }
+            DisplayUtils.runOnUiThread(()->progressIndicator.showProgressIndicator(titleString, progress));
         }
     }
 

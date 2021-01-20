@@ -17,7 +17,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.util.ProgressListener;
+import delit.libs.util.progress.ProgressListener;
+import delit.libs.util.progress.TaskProgressTracker;
 
 /**
  * Created by gareth on 17/05/17.
@@ -29,7 +30,7 @@ public class Md5SumUtils {
 
     public static String calculateMD5(ContentResolver contentResolver, Uri uri) throws RuntimeException, Md5SumException {
         // send in a no-op listener
-        return calculateMD5(contentResolver, uri, percent -> {});
+        return calculateMD5(contentResolver, uri, new TaskProgressTracker.ProgressAdapter());
     }
 
     public static String calculateMD5(@NonNull ContentResolver contentResolver, @NonNull Uri uri, @NonNull ProgressListener progressListener) throws RuntimeException, Md5SumException {
@@ -49,35 +50,28 @@ public class Md5SumUtils {
                 throw new FileNotFoundException("File descriptor unavailable (file likely doesn't exist) : " + uri);
             }
             long totalBytes = pfd.getStatSize();
-            long processedBytes = 0;
-            int bytesSinceProgressReport = 0;
-            int lastProgressReport = 0; // a % between 0 and 100
             int reportEveryBytes = 512 * 1024; // report progress once 512Kb as a maximum frequency
+            TaskProgressTracker taskProgressTracker = new TaskProgressTracker(100, progressListener); // percent
+            TaskProgressTracker fileReaderTask = taskProgressTracker.addSubTask(totalBytes,75);
+            fileReaderTask.setMinimumWorkReportingInterval(reportEveryBytes);
+
             try(FileChannel channel = new FileInputStream(pfd.getFileDescriptor()).getChannel()) {
                 ByteBuffer bb = ByteBuffer.allocateDirect(65536);//64Kb
                 double onePercentOfBytes = ((double)totalBytes)/100;
                 while (channel.read(bb) >= 0) {
                     bb.flip(); // ready buffer for reading
-                    bytesSinceProgressReport += bb.remaining();
-                    processedBytes += bb.remaining();
+                    fileReaderTask.incrementWorkDone(bb.remaining());
                     digest.update(bb);
-                    int progress = (int)Math.rint(0.95 * (((double)processedBytes) / onePercentOfBytes));
-                    if(reportEveryBytes <= bytesSinceProgressReport && progress > lastProgressReport) {
-                        bytesSinceProgressReport = 0;
-                        lastProgressReport = progress;
-                        progressListener.onProgress(progress); // only gets called if the progress has changed
-                    }
                     bb.flip(); // ready buffer for writing
                 }
-
+                fileReaderTask.markComplete();
                 byte[] md5sum = digest.digest();
                 BigInteger bigInt = new BigInteger(1, md5sum);
                 String output = bigInt.toString(16);
                 // Fill to 32 chars
                 output = String.format("%32s", output).replace(' ', '0');
-                progressListener.onProgress(100);
+                taskProgressTracker.markComplete();
                 return output;
-
             }
 
 

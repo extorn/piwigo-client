@@ -190,4 +190,11 @@ public class CollectionUtils {
         }
         return destination;
     }
+
+    public static <T extends Collection<String>> T toStrings(Collection<?> input, T output) {
+        for(Object i : input) {
+            output.add(i.toString());
+        }
+        return output;
+    }
 }

@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,15 +55,14 @@ import java.util.TreeMap;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.ProgressListener;
-import delit.libs.ui.util.SimpleSubTaskProgressTracker;
-import delit.libs.ui.util.TaskProgressListener;
-import delit.libs.ui.util.TaskProgressTracker;
 import delit.libs.ui.view.AbstractBreadcrumbsView;
 import delit.libs.ui.view.DocumentFileBreadcrumbsView;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
+import delit.libs.util.progress.ProgressListener;
+import delit.libs.util.progress.TaskProgressListener;
+import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
@@ -233,8 +233,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
 
         @Override
-        public void onProgress(int percentageComplete) {
-            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), percentageComplete);
+        public void onProgress(@FloatRange(from = 0, to = 1) double percentageComplete) {
+            int intPerc = (int)Math.rint(percentageComplete * 100);
+            uiHelper.showProgressIndicator(uiHelper.getAppContext().getString(R.string.progress_loading_folder_content), intPerc);
+        }
+
+        @Override
+        public double getUpdateStep() {
+            return 0.01;//1%
         }
 
         @Override
@@ -469,7 +475,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         Logging.log(Log.WARN, TAG, "File shared without needed permissions: " + docFile.getUri());
                         getView().post(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions), R.string.button_ok));
                     }
-                    listener.onProgress(100);
+                    listener.onProgress(1);
                 } else {
                     itemsShared = processOpenDocuments(resultData, listener);
                 }
@@ -481,7 +487,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 FolderItem folderItem = new FolderItem(permittedUri, docFile);
                 folderItem.cacheFields(context);
                 itemsShared.add(folderItem);
-                listener.onProgress(100);
+                listener.onProgress(1);
 
                 if(permissionsMissing) {
                     processOpenDocumentsWithoutPermissions(itemsShared);
@@ -845,9 +851,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         protected List<FolderItem> doInBackgroundSafely(List<FolderItem> ... params) {
             List<FolderItem> itemsShared = params[0];
             List<FolderItem> copiedItemsShared = new ArrayList<>(itemsShared.size());
-            TaskProgressTracker progressTracker = new SimpleSubTaskProgressTracker(this);
-            progressTracker.withStage(0, 80, itemsShared.size());
-            int i = 0;
+            TaskProgressTracker progressTracker = new TaskProgressTracker(100,this);
+            TaskProgressTracker copyProgressTracker = progressTracker.addSubTask(itemsShared.size(), 80);
             for(FolderItem item : itemsShared) {
                 DocumentFile sharedFilesFolder = IOUtils.getSharedFilesFolder(getContext());
 
@@ -855,14 +860,17 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 try {
                     Uri newUri = IOUtils.copyDocumentUriDataToUri(getContext(), item.getContentUri(), tmpFile.getUri());
                     copiedItemsShared.add(new FolderItem(newUri));
-                    progressTracker.onTick(++i);
                 } catch (IOException e) {
+                    Logging.log(Log.ERROR, TAG, "Error copying uris");
+                    Logging.recordException(e);
                     e.printStackTrace();
+                } finally {
+                    copyProgressTracker.incrementWorkDone(1);
                 }
             }
-            progressTracker.withStage(80, 100, copiedItemsShared.size());
+            TaskProgressTracker cacheProgressTracker = progressTracker.addSubTask(copiedItemsShared.size(), 20);
             itemsShared.clear();
-            FolderItem.cacheDocumentInformation(getContext(), copiedItemsShared, progressTracker);
+            FolderItem.cacheDocumentInformation(getContext(), copiedItemsShared, cacheProgressTracker);
             return copiedItemsShared;
         }
 
@@ -894,8 +902,13 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
 
         @Override
-        public void onProgress(int percent) {
-            publishProgress(percent);
+        public void onProgress(double percent) {
+            publishProgress((int)Math.rint(percent*100));
+        }
+
+        @Override
+        public double getUpdateStep() {
+            return 0.01;//1%
         }
     }
 
@@ -951,8 +964,13 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
 
         @Override
-        public void onProgress(int percent) {
-            publishProgress(percent);
+        public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
+            publishProgress((int) Math.rint(percent * 100));
+        }
+
+        @Override
+        public double getUpdateStep() {
+            return 0.01;//1%
         }
     }
 

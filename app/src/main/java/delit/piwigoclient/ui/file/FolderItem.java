@@ -17,16 +17,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.util.DisplayUtils;
-import delit.libs.ui.util.ProgressListener;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
+import delit.libs.util.progress.ProgressListener;
+import delit.libs.util.progress.TaskProgressTracker;
 
 public class FolderItem implements Parcelable {
     private static final AtomicLong uidGen = new AtomicLong();
@@ -280,59 +279,46 @@ public class FolderItem implements Parcelable {
             return true;
         }
         ThreadPoolExecutor executor = new ThreadPoolExecutor(4, 32, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(items.size()));
-        Semaphore sem = new Semaphore(items.size());
+
+        TaskProgressTracker cachingTracker = new TaskProgressTracker(items.size(), taskListener);
         for(FolderItem item : items) {
-            try {
-                sem.acquire();
-                executor.execute(() -> {
-                    try {
-
-                        if(!item.isFieldsCached()) {
-                            if(!item.cacheFields(context)) {
-                                Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + item.getContentUri());
-                            }
+            executor.execute(() -> {
+                try {
+                    if(!item.isFieldsCached()) {
+                        if (!item.cacheFields(context)) {
+                            Logging.log(Log.ERROR, TAG, "Unable to cache fields for URI : " + item.getContentUri());
                         }
-                    } finally {
-                        sem.release();
                     }
-                });
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+                } finally {
+                    cachingTracker.incrementWorkDone(1);
+                }
+            });
         }
-        int lastUpdateAt = 0;
-        int tasksProcessed = 0;
         boolean cancelled = false;
 
         // Wait for the tasks to finish.
 
         if(taskListener != null) {
-            while (!cancelled && sem.availablePermits() < items.size()) {
-                tasksProcessed = (int)executor.getCompletedTaskCount();
-                if (lastUpdateAt < tasksProcessed) {
-                    lastUpdateAt = tasksProcessed;
-                    double progress = ((double) lastUpdateAt) / items.size();
-                    DisplayUtils.postOnUiThread(() -> taskListener.onProgress((int)Math.rint(100 * progress)));
-                    int permits = tasksProcessed + 1;
-                    try {
-                        sem.tryAcquire(permits, 1, TimeUnit.SECONDS);
-                        sem.release(permits); // release the permits if we acquired them.
-                    } catch (InterruptedException e) {
-                        cancelled = true;
+            while (!cancelled && !cachingTracker.isComplete()) {
+                try {
+                    synchronized (cachingTracker) {
+                        cachingTracker.wait();
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    cancelled = true;
                 }
             }
-            int outstandingTasks = items.size() - sem.availablePermits();
+            int outstandingTasks = (int)cachingTracker.getRemainingWork();
             Logging.log(Log.INFO,TAG, "Finished waiting for executor to end (cancelled : "+cancelled+") while listening to progress. Outstanding Task Count : " + outstandingTasks);
         } else {
             try {
-                executor.awaitTermination(100, TimeUnit.SECONDS);
+                executor.awaitTermination(60, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 cancelled = true;
                 Logging.log(Log.ERROR, TAG, "Timeout (60sec!) while waiting for folder content fields to be cached");
             }
-            int outstandingTasks = items.size() - sem.availablePermits();
+            int outstandingTasks = (int)cachingTracker.getRemainingWork();
             Logging.log(Log.INFO,TAG, "Finished waiting for executor to end (cancelled : "+cancelled+") . Outstanding Task Count : " + outstandingTasks);
         }
         executor.shutdown();
@@ -341,13 +327,6 @@ public class FolderItem implements Parcelable {
         } catch (InterruptedException e) {
             cancelled = true;
             Logging.log(Log.ERROR, TAG, "Timeout while waiting for folder content field loading executor to end");
-        }
-        int maxWait = 60; // sec
-
-        try {
-            sem.tryAcquire(items.size(), 60, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Logging.log(Log.DEBUG, TAG, "Ignoring InterruptedException - not ideal.");
         }
         return !cancelled;
     }

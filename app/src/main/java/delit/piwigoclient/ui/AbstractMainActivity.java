@@ -62,6 +62,7 @@ import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelec
 import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
@@ -118,7 +119,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private Basket basket = new Basket();
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
-    private DownloadManager<T> downloadManager;
+    private DownloadManager<ActivityUIHelper<T>, T> downloadManager;
 
 
     public AbstractMainActivity() {
@@ -164,12 +165,12 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             basket = savedInstanceState.getParcelable(STATE_BASKET);
             downloadManager = savedInstanceState.getParcelable(STATE_DOWNLOAD_MANAGER);
             if(downloadManager == null) {
-                downloadManager = new DownloadManager<T>(getUiHelper());
+                downloadManager = new DownloadManager<>(getUiHelper());
             } else {
                 downloadManager.withUiHelper(getUiHelper());
             }
         } else {
-            downloadManager = new DownloadManager<T>(getUiHelper());
+            downloadManager = new DownloadManager<>(getUiHelper());
         }
 
 

@@ -9,9 +9,14 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import java.util.List;
+import java.util.Set;
 
 @Dao
 public interface UriPermissionUseDao {
+
+    @Transaction
+    @Query("SELECT * FROM UriPermissionUse WHERE uri IN(:uris)")
+    LiveData<List<UriPermissionUse>> loadAllByUris(Set<String> uris);
 
     @Transaction
     @Query("SELECT * FROM UriPermissionUse WHERE uri = :uri")

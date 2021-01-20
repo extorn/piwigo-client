@@ -5,7 +5,11 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+
+import delit.libs.util.CollectionUtils;
 
 public class AppSettingsRepository {
     private static AppSettingsRepository instance;
@@ -36,6 +40,12 @@ public class AppSettingsRepository {
     // Observed LiveData will notify the observer when the data has changed.
     public LiveData<List<UriPermissionUse>> getAllUriPermissions(@NonNull Uri uri) {
         return uriPermissionUseDao.loadAllByUri(uri.toString());
+    }
+
+    // Room executes all queries on a separate thread.
+    // Observed LiveData will notify the observer when the data has changed.
+    public LiveData<List<UriPermissionUse>> getAllUriPermissions(@NonNull Collection<Uri> uris) {
+        return uriPermissionUseDao.loadAllByUris(CollectionUtils.toStrings(uris, new HashSet<>(uris.size())));
     }
 
     // Room executes all queries on a separate thread.

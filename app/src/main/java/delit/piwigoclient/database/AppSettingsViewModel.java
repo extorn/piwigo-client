@@ -15,8 +15,10 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import delit.libs.core.util.Logging;
@@ -43,6 +45,10 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
     public LiveData<List<UriPermissionUse>> getAllForUri(Uri uri) {
         return appSettingsRepository.getAllUriPermissions(uri);
+    }
+
+    public LiveData<List<UriPermissionUse>> getAllForUris(Collection<Uri> uris) {
+        return appSettingsRepository.getAllUriPermissions(uris);
     }
 
     public LiveData<List<UriPermissionUse>> getAll() {
@@ -103,51 +109,14 @@ public class AppSettingsViewModel extends AndroidViewModel {
     public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId, boolean removeTreeToo) {
         LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
         LiveData<List<UriPermissionUse>> liveData = getAllForUri(uri);
-        liveData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
-            @Override
-            public void onChanged(List<UriPermissionUse> permissionsHeld) {
-                liveData.removeObserver(this);
-                List<String> consumers = new ArrayList<>();
-                int flagsToRemove = 0;
-                int flagsStillUsed = 0;
-                for (UriPermissionUse use : permissionsHeld) {
-                    if (!use.consumerId.equals(consumerId)) {
-                        consumers.add(use.consumerId);
-                        flagsStillUsed |= use.flags;
-                    } else {
-                        flagsToRemove = use.flags;
-                        // remove our tracking entry for how we are using the uri permission
-                        delete(use);
-                    }
-                }
-                // remove the flags to keep from the flags to remove
-                int mask = ~flagsStillUsed;
-                flagsToRemove &= mask;
+        liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context, liveData, uri, consumerId, removeTreeToo));
+    }
 
-                if ((flagsToRemove != 0 || flagsStillUsed == 0) && consumers.size() == 0) {
-                    // remove the Uri permission if it is no longer in use
-                    List<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, new ArrayList<>(Arrays.asList(uri)));//DO NOT USE SINGLETON LIST
-                    if(uriPermsHeld.contains(uri)) {
-                        try {
-                            context.getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
-                        } catch(SecurityException e) {
-                            String mimeType = context.getContentResolver().getType(uri);
-                            Logging.log(Log.WARN, TAG, "unable to release permission for uri. Uri Mime type : "  + mimeType);
-                            Logging.recordException(e);
-                        }
-                    } else if(removeTreeToo) {
-                        // check the tree uri.
-                        Uri treeUri = IOUtils.getTreeUri(uri);
-                        if(!treeUri.equals(uri)) {
-                            uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(context, new ArrayList<>(Arrays.asList(treeUri)));//DO NOT USE SINGLETON LIST
-                            if (!uriPermsHeld.isEmpty()) {
-                                releasePersistableUriPermission(context, treeUri, consumerId, true);
-                            }
-                        }
-                    }
-                }
-            }
-        });
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void releasePersistableUriPermission(@NonNull Context context, @NonNull Collection<Uri> uris, String consumerId, boolean removeTreeToo) {
+        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
+        LiveData<List<UriPermissionUse>> liveData = getAllForUris(uris);
+        liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context, liveData, uris, consumerId, removeTreeToo));
     }
 
     //TODO need to use this kind of thing to ensure we ask user to add permissions back for URis that they removed permissions for in the system UI
@@ -169,5 +138,80 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
     public void deleteAllForUri(@NonNull Uri folderUri) {
         appSettingsRepository.deleteAllForUri(folderUri);
+    }
+
+    private class PermissionsRemovingObserver implements Observer<List<UriPermissionUse>> {
+        private final Collection<Uri> uris;
+        private final WeakReference<Context> contextRef;
+        private final String consumerId;
+        private final LiveData<List<UriPermissionUse>> liveData;
+        private final boolean removeTreeToo;
+
+
+        public PermissionsRemovingObserver(Context context, LiveData<List<UriPermissionUse>> liveData, Collection<Uri> uris, String consumerId, boolean removeTreeToo) {
+            this.contextRef = new WeakReference<>(context);
+            this.liveData = liveData;
+            this.uris = uris;
+            this.consumerId = consumerId;
+            this.removeTreeToo = removeTreeToo;
+        }
+
+        public Context getContext() {
+            return contextRef.get();
+        }
+
+        public PermissionsRemovingObserver(Context context, LiveData<List<UriPermissionUse>> liveData, Uri uri, String consumerId, boolean removeTreeToo) {
+            this(context, liveData, Arrays.asList(uri), consumerId, removeTreeToo);
+        }
+
+        @Override
+        public void onChanged(List<UriPermissionUse> permissionsHeld) {
+            liveData.removeObserver(this);
+            List<String> consumers = new ArrayList<>();
+            int flagsToRemove = 0;
+            int flagsStillUsed = 0;
+            for (UriPermissionUse use : permissionsHeld) {
+                if (!use.consumerId.equals(consumerId)) {
+                    consumers.add(use.consumerId);
+                    flagsStillUsed |= use.flags;
+                } else {
+                    flagsToRemove = use.flags;
+                    // remove our tracking entry for how we are using the uri permission
+                    delete(use);
+                }
+            }
+            // remove the flags to keep from the flags to remove
+            int mask = ~flagsStillUsed;
+            flagsToRemove &= mask;
+
+            if ((flagsToRemove != 0 || flagsStillUsed == 0) && consumers.size() == 0) {
+                // remove the Uri permission if it is no longer in use
+                Collection<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), uris);//DO NOT USE SINGLETON LIST
+                for(Uri uri : uris) {
+                    removePermissionsForUri(uriPermsHeld, uri, flagsToRemove);
+                }
+            }
+        }
+
+        private void removePermissionsForUri(Collection<Uri> uriPermsHeld, Uri uri, int flagsToRemove) {
+            if(uriPermsHeld.contains(uri)) {
+                try {
+                    getContext().getContentResolver().releasePersistableUriPermission(uri, flagsToRemove);
+                } catch(SecurityException e) {
+                    String mimeType = getContext().getContentResolver().getType(uri);
+                    Logging.log(Log.WARN, TAG, "unable to release permission for uri. Uri Mime type : "  + mimeType);
+                    Logging.recordException(e);
+                }
+            } else if(removeTreeToo) {
+                // check the tree uri.
+                Uri treeUri = IOUtils.getTreeUri(uri);
+                if(!treeUri.equals(uri)) {
+                    uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), new ArrayList<>(Arrays.asList(treeUri)));//DO NOT USE SINGLETON LIST
+                    if (!uriPermsHeld.isEmpty()) {
+                        releasePersistableUriPermission(getContext(), treeUri, consumerId, true);
+                    }
+                }
+            }
+        }
     }
 }

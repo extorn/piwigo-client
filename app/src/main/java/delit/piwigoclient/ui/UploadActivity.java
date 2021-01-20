@@ -6,12 +6,14 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -27,13 +29,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import delit.libs.core.util.Logging;
+import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomToolbar;
+import delit.libs.util.progress.ProgressListener;
+import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -79,7 +82,6 @@ public class UploadActivity extends MyActivity<UploadActivity> {
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
     private static final String INTENT_DATA_CURRENT_ALBUM = "currentAlbum";
-    private final HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
@@ -98,7 +100,10 @@ public class UploadActivity extends MyActivity<UploadActivity> {
         return intent;
     }
 
-    private void checkForSentFiles(Intent intent) {
+    private void checkForSentFiles(@Nullable Intent intent) {
+        if(intent == null) {
+            return;
+        }
         if(Intent.ACTION_SEND.equals(intent.getAction())
                 || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
@@ -108,14 +113,23 @@ public class UploadActivity extends MyActivity<UploadActivity> {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        lastIntent = intent;
+        if(lastIntent != intent) {
+            lastIntent = intent;
+            checkForSentFiles(lastIntent);
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(lastIntent == null) {
-            lastIntent = getIntent();
+        Intent currentIntent = getIntent();
+        if(lastIntent == null || currentIntent != lastIntent) {
+            lastIntent = currentIntent;
         }
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
@@ -343,133 +357,6 @@ public class UploadActivity extends MyActivity<UploadActivity> {
         getSupportFragmentManager().popBackStackImmediate();
     }
 
-    private ArrayList<Uri> handleSentFiles(Intent intent) {
-        // Get intent, action and MIME type
-        String action = intent.getAction();
-        String type = intent.getType();
-
-        try {
-
-            if (Intent.ACTION_SEND.equals(action) && type != null) {
-                if (!type.startsWith("*/")) {
-                    return handleSendMultipleImages(intent); // Handle single image being sent
-                } else {
-                    getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
-                }
-            } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-                // type is */* if it contains a mixture of file types
-                if (type.equals("*/*") || null != MimeTypeFilter.matches(type, new String[]{"image/*","video/*","application/pdf","application/zip"})) {
-                    return handleSendMultipleImages(intent); // Handle multiple images being sent
-                } else {
-                    getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
-                }
-            } else if ("application/octet-stream".equals(type)) {
-                return handleSendMultipleImages(intent); // Handle multiple images being sent
-//                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
-            }
-            return null;
-
-        } finally {
-            if (errors.size() > 0) {
-                // build a dialog.
-
-                StringBuilder sb = new StringBuilder();
-                sb.append(getString(R.string.upload_unacceptable_files_prefix));
-                sb.append('\n');
-                sb.append('\n');
-                for (Map.Entry<String, String> errorEntry : errors.entrySet()) {
-                    String uri = errorEntry.getKey();
-                    String err = errorEntry.getValue();
-                    sb.append(getString(R.string.filelist_item_prefix));
-                    sb.append(uri);
-                    sb.append('\n');
-                    sb.append(err);
-                    sb.append('\n');
-                    sb.append('\n');
-                }
-
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, sb.toString());
-
-            }
-        }
-    }
-
-    private ArrayList<Uri> handleSendMultipleImages(Intent intent) {
-
-        ArrayList<Uri> filesToUpload;
-
-        ClipData clipData = intent.getClipData();
-        if(clipData != null && clipData.getItemCount() > 0) {
-            // process clip data
-            filesToUpload = new ArrayList<>(clipData.getItemCount());
-//            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
-            for(int i = 0; i < clipData.getItemCount(); i++) {
-                ClipData.Item sharedItem = clipData.getItemAt(i);
-                Uri sharedUri = sharedItem.getUri();
-                if (sharedUri != null) {
-                    String mimeType = getContentResolver().getType(sharedUri);
-                    handleSentImage(sharedUri, mimeType, filesToUpload);
-                }
-            }
-            intent.setClipData(null);
-        } else {
-            // process the extra stream data
-            try {
-                ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-                filesToUpload = handleSendMultipleImages(intent, imageUris);
-                intent.removeExtra(Intent.EXTRA_STREAM);
-            } catch(ClassCastException e) {
-                Uri sharedUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                filesToUpload = new ArrayList<>(1);
-                if (sharedUri != null) {
-                    String mimeType = getContentResolver().getType(sharedUri);
-                    handleSentImage(sharedUri, mimeType, filesToUpload);
-                }
-                intent.removeExtra(Intent.EXTRA_STREAM);
-            }
-        }
-        return filesToUpload;
-    }
-
-    private ArrayList<Uri> handleSendMultipleImages(Intent intent, ArrayList<Uri> imageUris) {
-        ArrayList<Uri> filesToUpload;
-        String[] mimeTypes = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
-        }
-        if (imageUris != null) {
-            filesToUpload = new ArrayList<>(imageUris.size());
-            int i = 0;
-            for (Uri imageUri : imageUris) {
-                String mimeType;
-                if(mimeTypes != null && mimeTypes.length >= i) {
-                    mimeType = mimeTypes[i];
-                    i++;
-                } else {
-                    mimeType = intent.getType();
-                }
-                if (imageUri != null) {
-                    handleSentImage(imageUri, mimeType, filesToUpload);
-                }
-            }
-        } else {
-            String mimeType = intent.getType();
-            Uri imageUri = intent.getData();
-            if(imageUri != null) {
-                filesToUpload = new ArrayList<>(1);
-                handleSentImage(imageUri, mimeType, filesToUpload);
-            } else {
-                filesToUpload = new ArrayList<>(0);
-            }
-        }
-        intent.removeExtra(Intent.EXTRA_STREAM);
-        return filesToUpload;
-    }
-
-    private void handleSentImage(Uri sharedUri, String mimeType, ArrayList<Uri> filesToUpload) {
-        filesToUpload.add(sharedUri);
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
 //        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
@@ -548,15 +435,172 @@ public class UploadActivity extends MyActivity<UploadActivity> {
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
-                ArrayList<Uri> sentFiles = handleSentFiles(lastIntent);
-                if(sentFiles != null) {
-                    // this activity was invoked from another application
-                    FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, -1).withFiles(sentFiles);
-                    EventBus.getDefault().postSticky(evt);
-                }
+                new SharedFilesIntentProcessingTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, lastIntent);
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             }
+        }
+    }
+
+
+    private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<UploadActivity, Intent, Integer, Void> implements ProgressListener {
+
+
+        public SharedFilesIntentProcessingTask(UploadActivity parent) {
+            super(parent);
+            withContext(parent);
+        }
+
+        @Override
+        protected void onPreExecuteSafely() {
+            super.onPreExecuteSafely();
+            getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),0);
+        }
+
+        @Override
+        protected Void doInBackgroundSafely(Intent[] objects) {
+            Intent intent = objects[0];
+            ArrayList<Uri> sentFiles = handleSentFiles(intent);
+            if(sentFiles != null) {
+                // this activity was invoked from another application
+                FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(getOwner().fileSelectionEventId, -1).withFiles(sentFiles);
+                EventBus.getDefault().postSticky(evt);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdateSafely(Integer... progress) {
+            super.onProgressUpdateSafely(progress);
+            try {
+                getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),progress[0]);
+            } catch(NullPointerException e) {
+                Logging.log(Log.ERROR, TAG, "Unable to report progress. Likely not attached");
+                Logging.recordException(e);
+            }
+
+        }
+
+        @Override
+        protected void onPostExecuteSafely(Void params) {
+            getOwner().getUiHelper().hideProgressIndicator();
+        }
+
+        @Override
+        public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
+            publishProgress((int) Math.rint(percent * 100));
+        }
+
+        @Override
+        public double getUpdateStep() {
+            return 0.01;//1%
+        }
+
+        private ArrayList<Uri> handleSentFiles(Intent intent) {
+            // Get intent, action and MIME type
+            String action = intent.getAction();
+            String type = intent.getType();
+
+            if (Intent.ACTION_SEND.equals(action) && type != null) {
+                if (!type.startsWith("*/")) {
+                    return handleSendMultipleImages(intent); // Handle single image being sent
+                } else {
+                    getOwner().getUiHelper().showDetailedMsg(R.string.alert_error, getContext().getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
+                }
+            } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+                // type is */* if it contains a mixture of file types
+                if (type.equals("*/*") || null != MimeTypeFilter.matches(type, new String[]{"image/*","video/*","application/pdf","application/zip"})) {
+                    return handleSendMultipleImages(intent); // Handle multiple images being sent
+                } else {
+                    getOwner().getUiHelper().showDetailedMsg(R.string.alert_error, getContext().getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
+                }
+            } else if ("application/octet-stream".equals(type)) {
+                return handleSendMultipleImages(intent); // Handle multiple images being sent
+//                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
+            }
+            return null;
+        }
+
+        private ArrayList<Uri> handleSendMultipleImages(Intent intent) {
+
+            ArrayList<Uri> filesToUpload;
+
+            ClipData clipData = intent.getClipData();
+            if(clipData != null && clipData.getItemCount() > 0) {
+                // process clip data
+                filesToUpload = new ArrayList<>(clipData.getItemCount());
+//            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
+                TaskProgressTracker fileImportTracker = new TaskProgressTracker(clipData.getItemCount(), this);
+                for(int i = 0; i < clipData.getItemCount(); i++) {
+                    ClipData.Item sharedItem = clipData.getItemAt(i);
+                    Uri sharedUri = sharedItem.getUri();
+                    if (sharedUri != null) {
+                        String mimeType = getContext().getContentResolver().getType(sharedUri);
+                        handleSentImage(sharedUri, mimeType, filesToUpload);
+                    }
+                    fileImportTracker.incrementWorkDone(1);
+                }
+                intent.setClipData(null);
+            } else {
+                // process the extra stream data
+                try {
+                    ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                    filesToUpload = handleSendMultipleImages(intent, imageUris);
+                    intent.removeExtra(Intent.EXTRA_STREAM);
+                } catch(ClassCastException e) {
+                    Uri sharedUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                    filesToUpload = new ArrayList<>(1);
+                    if (sharedUri != null) {
+                        String mimeType = getContext().getContentResolver().getType(sharedUri);
+                        handleSentImage(sharedUri, mimeType, filesToUpload);
+                    }
+                    intent.removeExtra(Intent.EXTRA_STREAM);
+                }
+            }
+            return filesToUpload;
+        }
+
+        private ArrayList<Uri> handleSendMultipleImages(Intent intent, ArrayList<Uri> imageUris) {
+            ArrayList<Uri> filesToUpload;
+            String[] mimeTypes = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
+            }
+            if (imageUris != null) {
+                filesToUpload = new ArrayList<>(imageUris.size());
+                TaskProgressTracker fileImportTracker = new TaskProgressTracker(imageUris.size(), this);
+                int i = 0;
+                for (Uri imageUri : imageUris) {
+                    String mimeType;
+                    if(mimeTypes != null && mimeTypes.length >= i) {
+                        mimeType = mimeTypes[i];
+                        i++;
+                    } else {
+                        mimeType = intent.getType();
+                    }
+                    if (imageUri != null) {
+                        handleSentImage(imageUri, mimeType, filesToUpload);
+                    }
+                    fileImportTracker.incrementWorkDone(1);
+                }
+            } else {
+                String mimeType = intent.getType();
+                Uri imageUri = intent.getData();
+                if(imageUri != null) {
+                    TaskProgressTracker fileImportTracker = new TaskProgressTracker(1, this);
+                    filesToUpload = new ArrayList<>(1);
+                    handleSentImage(imageUri, mimeType, filesToUpload);
+                    fileImportTracker.markComplete();
+                } else {
+                    filesToUpload = new ArrayList<>(0);
+                }
+            }
+            intent.removeExtra(Intent.EXTRA_STREAM);
+            return filesToUpload;
+        }
+
+        private void handleSentImage(Uri sharedUri, String mimeType, ArrayList<Uri> filesToUpload) {
+            filesToUpload.add(sharedUri);
         }
     }
 

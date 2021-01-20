@@ -34,10 +34,10 @@ import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
-import delit.libs.ui.util.ProgressListener;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
+import delit.libs.util.progress.ProgressListener;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -79,6 +79,13 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     @Override
     public long getItemId(int position) {
         return uploadDataItemsModel.getItemUid(position);
+    }
+
+    public void removeAll(List<Uri> uris) {
+        for(Uri uri : uris) {
+            uploadDataItemsModel.remove(uri);
+        }
+        notifyDataSetChanged();
     }
 
     public void remove(Uri fileSelectedForUpload) {
