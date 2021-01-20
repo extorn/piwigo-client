@@ -19,7 +19,7 @@
     <string name="progress_creating_tag">Creazione di tag</string>
     <string name="error_updating_favorites_pattern">Errore durante la rimozione della risorsa (%1$s) dai preferiti:%2$s</string>
     <string name="favorites_content_load_failed_text">Impossibile caricare le risorse contrassegnate come preferite</string>
-    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Hai richiesto di eliminare%1$d risorse. Desideri eliminarli da tutti gli album (e dal server) - in modo permanente o semplicemente scollegarli da questo preferito?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Hai richiesto di eliminare%1$d risorse. Desideri eliminarli da tutti gli album (e dal server) in modo permanente o semplicemente scollegarli da questo preferito?</string>
     <string name="progress_remove_favorite_resources">Rimozione di risorse dall\'elenco dei preferiti</string>
     <string name="favorites_empty_text">Attualmente non hai preferiti</string>
     <string name="favorites_heading">I tuoi preferiti</string>

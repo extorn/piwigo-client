@@ -177,12 +177,12 @@
 Lea este Acuerdo de licencia de usuario final (\"Acuerdo\") detenidamente antes de hacer clic en \"Acepto\"
 , descargando o usando Piwigo Client (\"Aplicación\").
 
-Al hacer clic en el botón \"Acepto\", descargar o usar la Aplicación, acepta estar obligado
+Al hacer clic en el botón \"Acepto\", descargar o usar la Aplicación, usted acepta estar obligado
 por los términos y condiciones de este Acuerdo.
 Si no está de acuerdo con los términos de este Acuerdo, no haga clic en el botón \"Acepto\" y no
 descargar o utilizar la aplicación.
 
-Si está considerando usar esta aplicación para acceder o modificar un servidor utilizado con fines comerciales, es esencial que lea y comprenda las limitaciones de responsabilidad.
+Si está considerando utilizar esta aplicación para acceder o modificar un servidor utilizado con fines comerciales, es esencial que lea y comprenda las limitaciones de responsabilidad.
 Debe probar esto en un servidor que no sea de producción a su satisfacción antes de aceptar cualquier riesgo y responsabilidad usted mismo en función de sus decisiones. Esta aplicación ha sido diseñada principalmente
 para fines no comerciales.
 
@@ -197,7 +197,7 @@ Gareth Deli te otorga una licencia limitada, revocable, no exclusiva, intransfer
 para descargar, instalar y utilizar la Aplicación únicamente para sus fines personales o comerciales
 estrictamente de acuerdo con los términos de este Acuerdo.
 
-EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD, APTITUD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS AUTORES O TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE CUALQUIER RECLAMO, DAÑOS U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE OTRO MODO, QUE SURJA DE, FUERA DE O EN RELACIÓN CON EL SOFTWARE O EL USO U OTRAS NEGOCIACIONES EN EL SOFTWARE
+EL SOFTWARE SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD, APTITUD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS AUTORES O TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE CUALQUIER RECLAMO, DAÑOS U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE OTRO MODO, QUE SURJA DE, FUERA DE O EN RELACIÓN CON EL SOFTWARE O EL USO U OTRAS NEGOCIACIONES SOFTWARE
 
 
 ** Restricciones
@@ -210,7 +210,7 @@ b) crear trabajos derivados basados ​​en esta aplicación.
 
 ** Recopilación de datos del usuario
 
-La integración de Firebase se ha agregado a esta aplicación para facilitar el seguimiento del uso de la aplicación con el propósito principal de ser una resolución de errores más eficiente y determinar la forma en que se está utilizando la aplicación. Se recopilarán los datos mínimos necesarios para lograr este propósito.
+La integración de Firebase se ha agregado a esta aplicación para facilitar el seguimiento del uso de la aplicación con el propósito principal de ser una resolución de errores más eficiente y determinar la forma en que se usa la aplicación. Se recopilarán los datos mínimos necesarios para lograr este propósito.
 
 
 ** Garantía limitada y exención de responsabilidad
@@ -345,7 +345,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_agree">Estoy de acuerdo</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Advertencia</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de la "coincidencia más cercana".</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de la \"coincidencia más cercana\".</string>
     <string name="rate_dialog_message">Si le gusta usar esta aplicación, ¿le importaría tomarse un momento para calificarla? No tomará más de un minuto. ¡Gracias por su apoyo!</string>
     <string name="groups_menu_title">Grupos</string>
     <string name="group_members_pattern">(%1$d miembros)</string>
@@ -453,7 +453,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_message_file_upload_cancelled_pattern">Se canceló la carga del archivo (%1$s).</string>
     <string name="alert_message_upload_cancelled">Subida cancelada</string>
     <string name="alert_message_upload_cancelled_message">Si no desea reiniciar la carga más tarde. Debe eliminar los archivos del trabajo de carga y luego hacer clic en cargar. Esto limpiará el estado de carga cancelada del servidor.</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de la "coincidencia más cercana".</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">El tamaño de imagen que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de la \"coincidencia más cercana\".</string>
     <string name="logging_out_of_piwigo_pattern">Cerrar sesión en%1$s</string>
     <string name="loading_new_server_configuration">Cargando nueva configuración de conexión al servidor</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Para permitir el almacenamiento en caché en el disco, se debe otorgar acceso de escritura al sistema de archivos. Si se deniega, el almacenamiento en caché estará en la memoria.</string>
@@ -561,7 +561,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_show_details">Mostrar detalle</string>
     <string name="button_hide_details">Ocultar detalle</string>
     <string name="alert_message_max_upload_file_count_reached">Se alcanzó el número máximo de archivos que se pueden cargar. Para cargar más a la vez, compre y use la versión paga de esta aplicación.</string>
-    <string name="alert_message_advert_load_error">Los anuncios tienen problemas para cargarse constantemente. Por favor, infórmeme de esto, ya que estos constituyen una fuente de ingresos importante, aunque muy pequeña, para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta atrás se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación con normalidad.</string>
+    <string name="alert_message_advert_load_error">Los anuncios tienen problemas para cargarse constantemente. Por favor infórmeme de esto, ya que constituyen una fuente de ingresos importante, aunque muy pequeña, para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta atrás se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación con normalidad.</string>
     <string name="alert_temporary_upload_album_deleted">El álbum de carga temporal se eliminó correctamente</string>
     <string name="alert_deleting_temporary_upload_album">Eliminando el álbum de carga temporal</string>
     <string name="alert_invalid_uri_pattern">URI no válido. %1$s</string>
@@ -577,7 +577,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="content_description_icon">icono</string>
     <string name="duplicates_ignored_pattern">Se ignoraron%1$d duplicados.</string>
     <string name="progress_loading_session_details">Cargando detalles de la sesión</string>
-    <string name="alert_msg_using_fallback_piwigo_method_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor y se ha utilizado la alternativa%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor y se ha utilizado el respaldo%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor. Deshabilitar la funcionalidad afectada en la aplicación. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="removing_favorite">Eliminando favorito</string>
     <string name="adding_favorite">Agregar favorito</string>
@@ -618,7 +618,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">La preferencia%1$s es irrecuperable y se ha establecido de forma predeterminada en%2$s. Restablezca este valor en la configuración de la aplicación</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La preferencia%1$s es irrecuperable y se ha establecido de forma predeterminada en%2$s. Restablezca este valor en la configuración de la aplicación"</string>
     <string name="switch_to_cached_mode">El servidor no está disponible actualmente. ¿Usar datos en caché?</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">Comprimir videos</string>
@@ -663,7 +663,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="create_email_using_app">Crear un correo electrónico usando la aplicación</string>
     <string name="open_files">Abrir archivos en la aplicación</string>
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no se pudieron procesar. Estos%1$d archivos se han ignorado. Para compartir un archivo de video, primero debe almacenarse en caché localmente.</string>
-    <string name="alert_all_user_hints_will_be_shown_again">Todas las sugerencias de usuario únicas se mostrarán nuevamente</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"Todas las sugerencias de usuario únicas se mostrarán nuevamente"</string>
     
     
     <string name="delete_uploaded_files_title">Eliminar archivos cargados</string>

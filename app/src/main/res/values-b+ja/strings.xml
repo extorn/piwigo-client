@@ -188,7 +188,7 @@
 
 **定義
 
-ライセンシー：ライセンシーとは、ライセンス対象のソフトウェアを使用する予定のある、またはすでに合法または違法に使用している個人または企業です。 「ライセンシー」という用語は、ソフトウェアがデフォルトで合法的にライセンスされていることを意味するものではありません。
+ライセンシー：ライセンシーとは、ライセンスされたソフトウェアを使用することを意図している、またはすでに合法または違法に使用している個人または会社です。 「ライセンシー」という用語は、ソフトウェアがデフォルトで合法的にライセンスされていることを意味するものではありません。
 
 
 **ライセンス
@@ -220,7 +220,7 @@ Firebase統合がこのアプリケーションに追加され、アプリケー
 
 **責任の制限
 
-ライセンシーは、ソフトウェアの使用の結果、およびそれによって法的に可能な限り、直接的および間接的な損害をもたらす責任を負います。法的責任は、法的に可能な限り購入価格に限定されます。それ以外の場合は、法的に可能な最小値に制限されます。
+ライセンシーは、ソフトウェアの使用の結果、およびそれによって法的に可能な限り、直接的および間接的な損害をもたらす責任を負います。責任は、法的に可能な限り、購入価格に限定されます。それ以外の場合は、法的に可能な最小値に制限されます。
 
 
 **メンテナンスとサポート
@@ -303,7 +303,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 提案やバグをメールで送ってくれたすべての人に感謝します。私はあなたの提案のすべてにできるだけ早く対処するよう努めます。発生するすべてのクラッシュを報告することを選択してください。 次回のアップデート後もバグが発生する場合は、時間をかけてメールでお問い合わせください。 バグが発生する直前に何が起こっているかについて、もう少しコンテキストが必要になる可能性があります。
 
-現時点では、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
+現在、リリースはアドホックベースです。 アプリが成熟するにつれて、リリースの頻度は減少すると予想されます。 リリーススケジュールと履歴は以下のとおりです。 これは変更され、物事が遅れる可能性がありますが、リストの内容を確認できます。"</string>
     <string name="licences_heading">このアプリ内で使用されるリソースのライセンス</string>
     
     <string name="slideshow_image_details_name_title">リソース名</string>
@@ -345,7 +345,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="button_agree">同意する</string>
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">警告</string>
-    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">選択したサムネイルサイズは、接続しているサーバーでネイティブにサポートされていません。 サーバーは「最も近い」サイズの画像を返します。</string>
+    <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">選択したサムネイルサイズは、接続しているサーバーでネイティブにサポートされていません。サーバーは「最も一致する」サイズの画像を返します。</string>
     <string name="rate_dialog_message">このアプリの使用を楽しんでいる場合は、少し時間を取って評価していただけませんか。 1分以上かかることはありません。ご協力ありがとうございました！</string>
     <string name="groups_menu_title">グループ</string>
     <string name="group_members_pattern">（%1$dメンバー）</string>
@@ -397,7 +397,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="progress_loading_user_details">ユーザーの詳細を取得する</string>
     <string name="progress_delete_user">ユーザーを削除しています</string>
     <string name="alert_read_permissions_needed_for_file_upload">ファイルを選択してアップロードするには、ファイルシステムを読み取るためのアクセス許可が必要です</string>
-    <string name="alert_file_permissions_needed_for_pattern">ファイルシステムには%1$sのアクセス許可が必要です。 目的：%2$s</string>
+    <string name="alert_file_permissions_needed_for_pattern">ファイルシステムには%1$sのアクセス許可が必要です。目的：%2$s</string>
     <string name="alert_write_permission_needed_for_video_caching">ビデオファイルのローカルキャッシュが有効になります。これを許可するには、ファイルシステムへの書き込みアクセスを許可する必要があります。拒否された場合、ローカルキャッシュは無効になります。</string>
     <string name="alert_error_tidying_video_cache">ビデオキャッシュを整理できません。この問題が解決しない場合は、報告してください。</string>
     <string name="alert_error_unable_to_copy_file_from_cache_pattern">キャッシュからファイルをコピーできません。 %1$s</string>
@@ -453,7 +453,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_message_file_upload_cancelled_pattern">ファイル（%1$s）のアップロードがキャンセルされました。</string>
     <string name="alert_message_upload_cancelled">アップロードがキャンセルされました</string>
     <string name="alert_message_upload_cancelled_message">後でアップロードを再開したくない場合。アップロードジョブからファイルを削除してから、[アップロード]をクリックする必要があります。これにより、キャンセルされたアップロード状態がサーバーから削除されます。</string>
-    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">選択した画像サイズは、接続しているサーバーでネイティブにサポートされていません。 サーバーは「最も近い」サイズの画像を返します。</string>
+    <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">選択した画像サイズは、接続しているサーバーでネイティブにサポートされていません。サーバーは「最も一致する」サイズの画像を返します。</string>
     <string name="logging_out_of_piwigo_pattern">%1$sからのログアウト</string>
     <string name="loading_new_server_configuration">新しいサーバー接続構成のロード</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">ディスクへのキャッシュを許可するには、ファイルシステムへの書き込みアクセスを許可する必要があります。拒否された場合、キャッシュはメモリに保存されます。</string>
@@ -500,7 +500,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_error_item_not_unique">申し訳ありませんが、そのアイテムはすでに存在します。</string>
     <string name="alert_warning_no_server_url_specified">サーバーURIが指定されていません。サーバーの場所を追加して、再試行してください。</string>
     <string name="error_heading_unloadable_certificate_files">次の証明書ファイルを読み込めませんでした。</string>
-    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルを読み込めませんでした。</string>
+    <string name="error_heading_unloadable_keystore_files">次のキーストアファイルをロードできませんでした。</string>
     <string name="error_heading_unloadable_keystore_aliases">次のキーストアエイリアスを読み込めませんでした。</string>
     <string name="heading_keystore_filename">キーストア</string>
     <string name="heading_keystore_alias">エイリアス</string>
@@ -587,7 +587,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_server_call_in_progress_please_wait">サーバー呼び出しが進行中です。これが完了するのを待ってから、再試行してください。</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">アップロードを続行するには、サーバー上に孤立したイメージが多すぎます。再試行する前に、これらを整理してください。</string>
     <string name="upload_error_orphaned_file_retrieval_failed">孤立した画像のリストを取得できません。再試行してください。</string>
-    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理者ユーザーは、予想される機能にアクセスできません。これは、コミュニティプラグイン（管理者以外のユーザーの管理者ステータスを偽造する）が正しくインストールされていない場合に発生する可能性があります。関連するプラグインが、Webブラウザを使用して期待するメソッドを正しく公開していることを確認してください：%1$s / tools / ws.htm</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">管理者ユーザーは、予想される機能にアクセスできません。これは、コミュニティプラグイン（管理者以外のユーザーの管理者ステータスを偽造する）が正しくインストールされていない場合に発生する可能性があります。関連するプラグインがWebブラウザを使用して期待するメソッドを正しく公開していることを確認してください：%1$s / tools / ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">この機能は利用できません。 PiwigoClientWsExtsプラグインをサーバーにインストールしてください。すでにインストールされている場合は、最新バージョンに更新してください。</string>
     <string name="alert_user_session_no_allowed_filetypes">サーバーは、ユーザーセッション情報とともにアップロードできるファイルタイプのリストを提供していません（これは通常、管理者ユーザーにのみ提供されます）。サーバーが正しく構成されていることを確認して、再試行してください。問題が解決しない場合は、問題の診断に役立てるためにメールでお問い合わせください。</string>
     <string name="job_not_found">アップロードジョブが見つかりません</string>
@@ -618,7 +618,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
 
 
 
-    <string name="preference_corrupt_please_re_type_pattern">プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください</string>
+    <string name="preference_corrupt_please_re_type_pattern">"プリファレンス%1$sは取得できず、デフォルトで%2$sになっています。アプリの設定でこの値をリセットしてください"</string>
     <string name="switch_to_cached_mode">サーバーは現在利用できません。キャッシュされたデータを使用しますか？</string>
     <string name="server_connection_id_pattern">%1$s @%2$s</string>
     <string name="compress_videos">ビデオを圧縮する</string>
@@ -635,7 +635,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">サーバーは、アップロード用に選択された%1$dファイルを受け入れません。これらがビデオの場合、圧縮を有効にすることができます。これらのファイルをアップロードから削除しますか？</string>
     <string name="upload_status_tab_title_details">詳細</string>
     <string name="upload_status_tab_title_errors">エラー</string>
-    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sはそれが一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある可能性があります。</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API呼び出し%1$sはファイルのチェックサムが一致しないことを報告しますが、API呼び出し%2$sはそれが一致することを報告します。これは、PIWIGOサーバーまたは使用しているプラ​​グインのバグである可能性があり、報告する価値がある場合があります。</string>
     <string name="alert_bulk_image_permissions_title">アクセス許可を設定する</string>
     <string name="alert_bulk_image_permissions_message">選択した%1$dリソースのアクセス許可レベルを設定します</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">%1$sのMIMEタイプと共有されているファイルを処理できません</string>
@@ -663,11 +663,11 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="create_email_using_app">アプリを使用してメールを作成する</string>
     <string name="open_files">アプリでファイルを開く</string>
     <string name="files_unavailable_to_download_removed_pattern">選択したファイルには、処理できなかったファイルが含まれていました。これらの%1$dファイルは無視されています。ビデオファイルを共有するには、最初にローカルで完全にキャッシュする必要があります。</string>
-    <string name="alert_all_user_hints_will_be_shown_again">すべての1回限りのユーザーヒントが再度表示されます</string>
+    <string name="alert_all_user_hints_will_be_shown_again">"すべての1回限りのユーザーヒントが再度表示されます"</string>
     
     
     <string name="delete_uploaded_files_title">アップロードしたファイルを削除する</string>
-    <string name="release_permissions_for_uri_pattern">選択した古いURI（%1$s）に対して、このアプリが保持している権限を解放しますか？</string>
+    <string name="release_permissions_for_uri_pattern">選択した古いウリ（%1$s）に対して、このアプリが保持していた権限を解放しますか？</string>
     <string name="system_file_selector_label">システムファイルの選択</string>
     <string name="uri_still_needed_pattern">申し訳ありませんが、アプリがこのURIを使用する権限を削除することはできません。 アプリには、次の目的でこのURIにアクセスするための権限が必要です。\n\n%1$s</string>
     <string name="no_suitable_activity_found">適切なアクティビティが見つかりません</string>
@@ -703,7 +703,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="selected_files">選択したファイル</string>
     <string name="alert_slideshow_reset_as_out_of_sync_with_album">ロードされたアルバムのコンテンツと同期していないスライドショー。開始時にリセットします。</string>
     <string name="uri_permission_justification_file_selection">このアプリで使用するファイルまたはフォルダーを選択するには</string>
-    <string name="alert_error_please_select_download_folder_and_retry">アプリの設定でファイルをダウンロードするフォルダを選択して、再試行してください。</string>
+    <string name="alert_error_please_select_download_folder_and_retry">アプリの設定でファイルをダウンロードするフォルダーを選択して、再試行してください。</string>
     <string name="no_acceptable_file_ext_found_for_video_pattern">オプション（%1$s）の中でサーバーに受け入れられるファイル（ビデオ：%3$bオーディオ：%4$b）の有効な出力ファイル拡張子（推奨は%2$s）が見つかりませんでした</string>
     <string name="uuid_title">UUIDをインストールします</string>
     <string name="alert_error_unable_add_files_previous_job_still_running">アップロードするファイルを追加できません。アップロードジョブが進行中です。</string>
