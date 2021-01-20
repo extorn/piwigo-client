@@ -124,8 +124,8 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji.</item>
-        <item>Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro nahrání na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné</item>
+        <item>"Pokud máte s aplikací nějaké problémy, informujte mě prosím e-mailem. Pokud chcete, zveřejněte negativní recenzi na Google Play, nesnažím se to zastavit, ale prosím pošlete také e-mail. V horní části nabídky vysouvací zásuvky je odkaz na zaslání e-mailu. Na e-mailovou adresu mohu poskytnout mnohem komplexnější podporu. Mnohokrát děkuji."</item>
+        <item>"Můžete vidět pouze soubory, které chcete vybrat k nahrání a které jsou přijatelné pro nahrání na váš server. Pokud chcete nahrávat videa, změňte soubor config.inc.php serveru tak, aby obsahoval $ conf [\'upload_form_all_types\'] = true; spíše než falešné"</item>
         <item>Pokud nahrávání právě neproběhne úspěšně, zkuste pomocí předvoleb na stránce nahrávání nastavení aplikace vymazat zbytková neúspěšná nahrávání ze serveru</item>
         <item>Při pokusu o aktualizaci značek vždy dojde k chybě - „Nemáte oprávnění mazat značky“ - Zajistěte, aby uživatelé mohli značky přidávat i mazat (nastavení pluginu serveru)</item>
         <item>Sdílejte s touto aplikací soubory z jiné aplikace a přidejte je na obrazovku nahrávání připravené k přechodu na aktuální server</item>
@@ -141,10 +141,16 @@
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Budoucnost</item>
-        <item>Žádné další aktualizace nejsou plánovány.</item>
+        <item>"Žádné další aktualizace nejsou plánovány."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.96</item>
+        <item>"Oprava chyby:
+                 - Uživatelské rozhraní po sdílení velkého počtu souborů z externí aplikace přestane reagovat (bílá obrazovka)
+                 - Po sdílení z jiné aplikace se na stránce pro nahrávání neobjeví žádné soubory
+                 - postup nesprávně hlášen při importu souborů pro nahrávání
+                 - výkon importu souborů a odebrání souborů ze seznamu nahrávek"</item>
         <item>1.4.0.95</item>
         <item>"Oprava chyby:
                 - Není použito dostatečné oprávnění k souboru, což způsobuje selhání nahrávání
@@ -181,7 +187,7 @@
         <item>"Oprava chyby:
                  - Opraveno několik problémů způsobujících selhání některých uživatelů
                 Změny:
-                 - Přidáno UUID do protokolů a na obrazovku about, což mi umožňuje sledovat protokoly ke konkrétnímu uživateli, pokud mi dá svůj UUID (pro řešení konkrétních chyb, se kterými se setkávají)."</item>
+                 - Přidáno UUID do protokolů a na obrazovku s informacemi, která mi umožňuje sledovat protokoly ke konkrétnímu uživateli, pokud mi dají svůj UUID (pro řešení konkrétních chyb, se kterými se setkávají)."</item>
         <item>1.4.0.88</item>
         <item>"Oprava chyby:
              - Kompresor obrazu nefunguje v posledních verzích systému Android

@@ -189,7 +189,7 @@
     
 
     
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">ポートレート：表示するアルバムの列</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">肖像画：表示するアルバムの列</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     

@@ -25,7 +25,7 @@ Sla volledig gedownloade video\'s op
 Sluit eventueel video\'s uit van diavoorstellingen
 Beoordeel afbeeldingen en bekijk gemiddelde beoordelingen
 Upload nieuwe afbeeldingen of video\'s (kan optioneel worden gecomprimeerd)
-Automatische controle van apparaatmappen en uploaden van bestanden in een achtergrondtaak
+Automatische bewaking van apparaatmappen en uploaden van bestanden in een achtergrondtaak
 Bekijk, voeg toe, wijzig, verwijder tags en getagde afbeeldingen
 Toestemmingen, beschrijving en andere details van albums en bestanden instellen en wijzigen
 Albums toevoegen of wijzigen, hun rechten, beschrijving, enz
@@ -47,5 +47,5 @@ https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.ht
 
 Bekende beperkingen:
 
-1. Opmerkingen worden momenteel niet ondersteund - u kunt geen opmerkingen zien of toevoegen. Als deze ontbrekende functie belangrijk voor je is, neem dan contact met me op.</string>
+1. Opmerkingen worden momenteel niet ondersteund. U kunt opmerkingen niet zien of toevoegen. Als deze ontbrekende functie belangrijk voor je is, neem dan contact met me op.</string>
 </resources>

@@ -124,10 +124,10 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto.</item>
-        <item>Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso</item>
+        <item>"In caso di problemi con l\'app, utilizzare l\'email per avvisarmi. Se lo desideri, pubblica una recensione negativa su Google Play, non sto cercando di fermarla, ma per favore invia anche un\'email. C\'è un collegamento per inviarmi un\'e-mail nella parte superiore del menu a scomparsa del cassetto. Posso fornire un supporto molto più completo a un indirizzo email. Grazie molto."</item>
+        <item>"Puoi vedere solo i file da selezionare per il caricamento che possono essere caricati sul tuo server. Se desideri caricare video, assicurati di modificare il file config.inc.php del server per includere $ conf [\'upload_form_all_types\'] = true; piuttosto che falso"</item>
         <item>Se un caricamento non riesce, prova a utilizzare la preferenza nella pagina di caricamento delle impostazioni dell\'app per cancellare eventuali caricamenti non riusciti residui dal server</item>
-        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - "Non sei autorizzato a eliminare i tag" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
+        <item>Si verifica sempre un errore quando si tenta di aggiornare i tag - \"Non sei autorizzato a eliminare i tag\" - Assicurati che gli utenti possano sia aggiungere che eliminare tag (impostazione del plug-in del server)</item>
         <item>Condividi i file da un\'app diversa con questa app per aggiungerli alla schermata di caricamento pronti per essere trasferiti al tuo server corrente</item>
         <item>Fare clic a lungo su un\'immagine (miniatura o elemento della presentazione) che non è stato caricato per recuperarla di nuovo</item>
         <item>Fare clic a lungo su un album per eliminare quell\'album e tutto il contenuto</item>
@@ -137,14 +137,20 @@
         <item>Dopo aver effettuato l\'accesso come amministratore, prima di consegnare il dispositivo a un amico per visualizzare le foto, attivare la funzione di blocco dell\'applicazione per evitare modifiche involontarie alla tua galleria</item>
         <item>Dopo aver visualizzato un intero video, se la memorizzazione nella cache dei file locali è abilitata, è possibile salvare quel video nella cartella dei download</item>
         <item>Fare clic a lungo sul pulsante Elimina su un \ \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
-        <item>Se le immagini si caricano lentamente, verifica che il tuo server generi automaticamente le dimensioni utilizzate da questa app quando vengono caricate</item>
+        <item>Se il caricamento delle immagini è lento, verifica che il tuo server generi automaticamente la dimensione utilizzata da questa app quando vengono caricate</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Il futuro</item>
-        <item>Non sono previsti ulteriori aggiornamenti.</item>
+        <item>"Non sono previsti ulteriori aggiornamenti."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.96</item>
+        <item>"Risoluzione del problema:
+                 - L\'interfaccia utente non risponde (schermo bianco) dopo aver condiviso un numero elevato di file da un\'app esterna
+                 - Nessun file viene visualizzato nella pagina di caricamento dopo averli condivisi da un\'altra app
+                 - avanzamento segnalato in modo errato durante l\'importazione dei file per il caricamento
+                 - esecuzione dell\'importazione e rimozione di file dall\'elenco di caricamento"</item>
         <item>1.4.0.95</item>
         <item>"Risoluzione del problema:
                 - Sono state utilizzate autorizzazioni file insufficienti, che causano caricamenti non riusciti
@@ -157,7 +163,7 @@
                 - Non aggiungere più file scaricati su Android MediaStore - Sono disponibili in qualsiasi selettore di file.
                 - Nuovo collegamento al menu per aprire la posizione dei file scaricati
                Raccomandazione:
-                - 1. Visualizzazione di tutte le autorizzazioni dei file detenute dall\'app nella nuova preferenza, rimuovendo quelle che non si desidera vengano conservate dall\'app.
+                - 1. Visualizzazione di tutte le autorizzazioni sui file detenute dall\'app nella nuova preferenza, rimuovendo quelle che non si desidera vengano conservate dall\'app.
                 - 2. Controlla ciascuno dei tuoi lavori di caricamento in background, riseleziona la cartella da caricare
                 - 3. Riselezionare la cartella in cui scaricare i file dal server"</item>
         <item>1.4.0.94</item>
@@ -205,7 +211,7 @@
                  - aggiunte traduzioni per un errore che può verificarsi durante la compressione video
                  - Utilizza il GUID di installazione dell\'app Firebase per la crittografia dei messaggi, se disponibile
                 Risoluzione del problema:
-                 - Correzione della traduzione della stringa per il russo che causava un arresto anomalo nella presentazione"</item>
+                 - Corretta la traduzione della stringa per il russo che causava arresti anomali nella presentazione"</item>
         <item>1.4.0.84</item>
         <item>"Modificare:
                  - Rimosso l\'avviso sulla rotazione dello schermo a metà di una presentazione.
@@ -218,8 +224,8 @@
                  - Corretta la posizione del pulsante nella barra delle azioni degli elementi durante la modifica di un elemento risorsa"</item>
         <item>1.4.0.82</item>
         <item>"I cambiamenti:
-                 - Il passaggio da una concessione di autorizzazioni di file Android a una sottocartella non è consentito da Android 30. (rimozione di questa funzione).
+                 - Il passaggio da una concessione di autorizzazioni di file Android a una sottocartella non è consentito da Android 30 (rimozione di questa funzione).
                 Risoluzione del problema:
-                 - Modifica e salvataggio dei lavori di caricamento automatico non funzionanti"</item>
+                 - La modifica e il salvataggio dei lavori di caricamento automatico non funzionano"</item>
     </string-array>
 </resources>

@@ -96,7 +96,7 @@
     
 
     <string-array name="privacy_levels_groups_array">
-        <item>Admins</item>
+        <item>Beheerders</item>
         <item>Beheerders, familie</item>
         <item>Beheerders, familie, vrienden</item>
         <item>Beheerders, familie, vrienden, contacten</item>
@@ -124,27 +124,33 @@
     
 
     <string-array name="top_tips" translatable="true">
-        <item>Als je problemen hebt met de app, gebruik dan een e-mail om me op de hoogte te stellen. Plaats desgewenst een negatieve recensie op Google Play, ik probeer dat niet te stoppen, maar stuur ook een e-mail. Bovenaan het uitschuifbare lademenu staat een link om mij een e-mail te sturen. Ik kan veel uitgebreidere ondersteuning bieden op een e-mailadres. Erg bedankt.</item>
-        <item>U kunt alleen bestanden zien die u kunt selecteren om te uploaden en die op uw server kunnen worden geüpload. Als je video\'s wilt uploaden, zorg er dan voor dat je je server config.inc.php-bestand wijzigt en $ conf [\'upload_form_all_types\'] = true bevat; in plaats van onwaar</item>
-        <item>Als een upload niet lukt, probeer dan de voorkeur op de uploadpagina van de app-instellingen te gebruiken om resterende mislukte uploads van de server te wissen</item>
-        <item>Er treedt altijd een fout op bij het updaten van tags - "U mag geen tags verwijderen" - Zorg ervoor dat gebruikers tags zowel kunnen toevoegen als verwijderen (instelling voor serverplug-in)</item>
+        <item>"Als je problemen hebt met de app, gebruik dan een e-mail om me op de hoogte te stellen. Plaats desgewenst een negatieve recensie op Google Play, ik probeer dat niet te stoppen, maar stuur ook een e-mail. Bovenaan het uitschuifbare lademenu staat een link om mij een e-mail te sturen. Ik kan veel uitgebreidere ondersteuning bieden op een e-mailadres. Erg bedankt."</item>
+        <item>"U kunt alleen bestanden zien die u kunt selecteren om te uploaden en die op uw server kunnen worden geüpload. Als je video\'s wilt uploaden, zorg er dan voor dat je je server config.inc.php-bestand wijzigt en $ conf [\'upload_form_all_types\'] = true bevat; in plaats van onwaar"</item>
+        <item>Als een upload net niet lukt, probeer dan de voorkeur op de uploadpagina van de app-instellingen te gebruiken om eventuele resterende mislukte uploads van de server te wissen</item>
+        <item>Er treedt altijd een fout op bij het updaten van tags - \"U mag geen tags verwijderen\" - Zorg ervoor dat gebruikers tags zowel kunnen toevoegen als verwijderen (instelling voor serverplug-in)</item>
         <item>Deel bestanden van een andere app met deze app om ze toe te voegen aan het uploadscherm, klaar om naar je huidige server te gaan</item>
         <item>Klik lang op een afbeelding (miniatuur of diashow-item) die niet is geladen om deze opnieuw op te halen</item>
         <item>Klik lang op een album om dat album en alle inhoud te verwijderen</item>
         <item>Klik lang op een albumafbeelding om bulkselectie van afbeeldingen voor een actie mogelijk te maken</item>
         <item>Wanneer u een afbeelding in de diavoorstelling bekijkt, klikt u lang om de weergegeven afbeelding te draaien / wijzigen / verder zoomen toe te staan</item>
-        <item>U kunt tijdens het bekijken van een diavoorstelling op een afbeelding inzoomen door twee vingers naar elkaar toe of uit elkaar te trekken op het scherm</item>
-        <item>Wanneer u bent aangemeld als beheerder, schakelt u de toepassingsvergrendelingsfunctie in voordat u uw apparaat aan een vriend geeft om uw foto\'s te bekijken om te voorkomen dat er onbedoelde wijzigingen in uw galerij worden aangebracht</item>
+        <item>U kunt inzoomen op een afbeelding tijdens het bekijken van een diavoorstelling door twee vingers naar elkaar toe of uit elkaar te trekken op het scherm</item>
+        <item>Als u bent aangemeld als beheerder en voordat u uw apparaat aan een vriend overhandigt om uw foto\'s te bekijken, schakelt u de toepassingsvergrendelingsfunctie in om te voorkomen dat er onbedoelde wijzigingen in uw galerij worden aangebracht.</item>
         <item>Als je eenmaal een volledige video hebt bekeken en lokale bestandscaching is ingeschakeld, is het mogelijk om die video op te slaan in je downloadmap</item>
-        <item>Klik lang op de verwijderknop op een \ \'bestand voor uploaden \' om alle te uploaden bestanden te verwijderen (wanneer de taak niet in uitvoering is)</item>
+        <item>Klik lang op de verwijderknop op een \ \'bestand voor uploaden \' om alle te uploaden bestanden te verwijderen (als de taak niet in uitvoering is)</item>
         <item>Als afbeeldingen traag worden geladen, controleer dan of uw server automatisch de grootte genereert die door deze app wordt gebruikt wanneer ze worden geüpload</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>De toekomst</item>
-        <item>Er zijn geen verdere updates gepland.</item>
+        <item>"Er zijn geen verdere updates gepland."</item>
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.96</item>
+        <item>"Bugfix:
+                 - UI lijkt niet te reageren (wit scherm) na het delen van een groot aantal bestanden van een externe app
+                 - Er verschijnen geen bestanden op de uploadpagina nadat ze zijn gedeeld vanuit een andere app
+                 - voortgang onjuist gerapporteerd tijdens het importeren van bestanden om te uploaden
+                 - prestaties van het importeren van bestanden en het verwijderen van bestanden uit de uploadlijst"</item>
         <item>1.4.0.95</item>
         <item>"Bugfix:
                 - Onvoldoende bestandsrechten gebruikt, waardoor uploads mislukken
@@ -152,7 +158,7 @@
                 - downloaden werkt voor zowel de standaard map Downloads als een map die door de gebruiker is geselecteerd
                 - App verzocht om lees- of schrijfbestandsmachtigingen wanneer ze niet vereist waren.
                Veranderingen:
-                - Nieuwe voorkeur in app-instellingen met alle Uri-machtigingen en hun doel
+                - Nieuwe voorkeur in app-instellingen met een lijst van alle Uri-machtigingen en hun doel
                 - New DocumentProvider toont bestanden die zijn gedownload op de standaard downloadlocatie naar de systeembestandsselectie.
                 - Voeg geen bestanden meer toe die zijn gedownload naar de Android MediaStore - Ze zijn beschikbaar in elke bestandskiezer.
                 - Nieuwe menukoppeling om de locatie van de gedownloade bestanden te openen

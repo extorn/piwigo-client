@@ -252,7 +252,8 @@
         <item>"Bugfix:
                 - UI appears unresponsive (white screen) after sharing a large number of files from external app
                 - No files appear in the upload page after sharing them from another app
-                - progress incorrectly reported while importing files for upload"</item>
+                - progress incorrectly reported while importing files for upload
+                - performance of file import and removal of files from the upload list"</item>
         <item>1.4.0.95</item>
         <item>"Bugfix:
                 - Insufficient file permissions used, causing failing uploads

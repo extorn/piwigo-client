@@ -72,7 +72,7 @@
     
 
     
-    <string name="preference_server_connection_retries_title">Verbinding wordt opnieuw geprobeerd voordat de verbinding mislukt</string>
+    <string name="preference_server_connection_retries_title">De verbinding wordt opnieuw geprobeerd voordat de verbinding mislukt</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     
 
@@ -198,7 +198,7 @@
 
     
     <string name="preference_gallery_include_videos_in_slideshow_title">Laat video\'s zien in een diavoorstelling</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">Moeten video\'s worden weergegeven tijdens het bladeren door een galerij in de modus diavoorstelling?</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Moeten video\'s worden weergegeven tijdens het bladeren door een galerij in de modus voor diavoorstellingen?</string>
     
 
     
@@ -214,7 +214,7 @@
 
     
     <string name="preference_video_cache_enabled_title">Cache video\'s die zijn bekeken naar een bestand</string>
-    <string name="preference_video_cache_enabled_summary">Indien ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen voor later afspelen</string>
+    <string name="preference_video_cache_enabled_summary">Indien ingeschakeld, worden alle gestreamde video\'s in de cache opgeslagen om later af te spelen</string>
     
 
     
@@ -251,7 +251,7 @@
     <string name="preference_gallery_clearVideoCache_title">Wis videocache</string>
     
     <string name="preference_gallery_clearVideoCache_summary">Verwijdert alle video\'s in het cachegeheugen</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">Verwijdert alle%1$.2fMB aan video\'s die op schijf zijn opgeslagen</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Verwijdert alle%1$.2fMB aan video\'s in het cachegeheugen op schijf</string>
 
     
     
@@ -418,7 +418,7 @@
     <string name="preference_data_file_selector_showFilenames_summary">Bestandsnamen weergegeven voor elk bestand</string>
 
     
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landschap: kolommen met bestanden om weer te geven</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landschap: kolommen met bestanden die moeten worden weergegeven</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
     
