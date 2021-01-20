@@ -919,7 +919,11 @@ public class IOUtils {
                 return pfd.getStatSize();
             }
             return -1;
-        } catch (FileNotFoundException | SecurityException e) {
+        } catch (FileNotFoundException e) {
+            return -1;
+        } catch(SecurityException e) {
+            Logging.log(Log.ERROR, TAG, "No longer able to access file. %1$s", e.getMessage());
+            Logging.recordException(e);
             return -1;
         } finally {
             if(pfd != null) {
