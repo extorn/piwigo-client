@@ -136,7 +136,7 @@
         <item>Puede acercar una imagen al ver una presentación de diapositivas juntando o separando dos dedos en la pantalla</item>
         <item>Cuando inicie sesión como administrador, antes de entregar su dispositivo a un amigo para que vea sus fotos, active la función de bloqueo de la aplicación para evitar que se realicen cambios involuntarios en su galería.</item>
         <item>Una vez que haya visto un video completo, si el almacenamiento en caché de archivos local está habilitado, es posible guardar ese video en su carpeta de descargas</item>
-        <item>Haga clic largo en el botón Eliminar en un \ \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no esté en curso)</item>
+        <item>Haga clic largo en el botón Eliminar en un \'archivo para cargar \' para eliminar todos los archivos que se cargarán (cuando el trabajo no esté en curso)</item>
         <item>Si las imágenes tardan en cargarse, compruebe que su servidor genera automáticamente el tamaño utilizado por esta aplicación cuando se cargan</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
@@ -145,6 +145,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.96</item>
+        <item>"Arreglo del fallo:
+                 - Última carpeta no predeterminada en la vista de selección de carpeta
+                 - Liberar los permisos de Uri causó un bloqueo
+                 - El trabajo de carga en segundo plano no solicitaba los permisos de carpeta correctos"</item>
         <item>1.4.0.96</item>
         <item>"Arreglo del fallo:
                  - La interfaz de usuario parece no responder (pantalla blanca) después de compartir una gran cantidad de archivos desde una aplicación externa

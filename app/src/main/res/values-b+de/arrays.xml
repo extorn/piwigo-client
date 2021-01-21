@@ -147,6 +147,11 @@
         
         <item>1.4.0.96</item>
         <item>"Bug-Fix:
+                 - Letzter Ordner nicht standardmäßig in der Ordnerauswahlansicht
+                 - Das Freigeben von Uri-Berechtigungen verursachte einen Absturz
+                 - Der Job zum Hochladen im Hintergrund hat nicht die richtigen Ordnerberechtigungen angefordert"</item>
+        <item>1.4.0.96</item>
+        <item>"Bug-Fix:
                  - Die Benutzeroberfläche reagiert nicht mehr (weißer Bildschirm), nachdem eine große Anzahl von Dateien von einer externen App freigegeben wurde
                  - Auf der Upload-Seite werden keine Dateien angezeigt, nachdem sie von einer anderen App freigegeben wurden
                  - Fortschritt beim Importieren von Dateien zum Hochladen falsch gemeldet

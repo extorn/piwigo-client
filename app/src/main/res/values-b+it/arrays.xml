@@ -136,7 +136,7 @@
         <item>È possibile ingrandire un\'immagine durante la visualizzazione in una presentazione avvicinando o allontanando due dita sullo schermo</item>
         <item>Dopo aver effettuato l\'accesso come amministratore, prima di consegnare il dispositivo a un amico per visualizzare le foto, attivare la funzione di blocco dell\'applicazione per evitare modifiche involontarie alla tua galleria</item>
         <item>Dopo aver visualizzato un intero video, se la memorizzazione nella cache dei file locali è abilitata, è possibile salvare quel video nella cartella dei download</item>
-        <item>Fare clic a lungo sul pulsante Elimina su un \ \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
+        <item>Fare clic a lungo sul pulsante Elimina su un \'file da caricare \' per eliminare tutti i file da caricare (quando il lavoro non è in corso)</item>
         <item>Se il caricamento delle immagini è lento, verifica che il tuo server generi automaticamente la dimensione utilizzata da questa app quando vengono caricate</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
@@ -145,6 +145,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.96</item>
+        <item>"Risoluzione del problema:
+                 - Ultima cartella non predefinita nella visualizzazione di selezione della cartella
+                 - Il rilascio delle autorizzazioni Uri ha causato l\'arresto anomalo
+                 - Il processo di caricamento in background non richiedeva le autorizzazioni corrette per la cartella"</item>
         <item>1.4.0.96</item>
         <item>"Risoluzione del problema:
                  - L\'interfaccia utente non risponde (schermo bianco) dopo aver condiviso un numero elevato di file da un\'app esterna

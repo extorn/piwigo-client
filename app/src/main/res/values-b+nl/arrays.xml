@@ -136,7 +136,7 @@
         <item>U kunt inzoomen op een afbeelding tijdens het bekijken van een diavoorstelling door twee vingers naar elkaar toe of uit elkaar te trekken op het scherm</item>
         <item>Als u bent aangemeld als beheerder en voordat u uw apparaat aan een vriend overhandigt om uw foto\'s te bekijken, schakelt u de toepassingsvergrendelingsfunctie in om te voorkomen dat er onbedoelde wijzigingen in uw galerij worden aangebracht.</item>
         <item>Als je eenmaal een volledige video hebt bekeken en lokale bestandscaching is ingeschakeld, is het mogelijk om die video op te slaan in je downloadmap</item>
-        <item>Klik lang op de verwijderknop op een \ \'bestand voor uploaden \' om alle te uploaden bestanden te verwijderen (als de taak niet in uitvoering is)</item>
+        <item>Klik lang op de verwijderknop op een \'bestand voor uploaden \' om alle te uploaden bestanden te verwijderen (als de taak niet in uitvoering is)</item>
         <item>Als afbeeldingen traag worden geladen, controleer dan of uw server automatisch de grootte genereert die door deze app wordt gebruikt wanneer ze worden geüpload</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
@@ -145,6 +145,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.96</item>
+        <item>"Bugfix:
+                 - Laatste map niet standaard in mapkeuzeweergave
+                 - Het vrijgeven van Uri-machtigingen veroorzaakte een crash
+                 - Uploadtaak op de achtergrond vroeg niet om de juiste mapmachtigingen"</item>
         <item>1.4.0.96</item>
         <item>"Bugfix:
                  - UI lijkt niet te reageren (wit scherm) na het delen van een groot aantal bestanden van een externe app

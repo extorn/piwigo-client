@@ -136,7 +136,7 @@
         <item>Při prohlížení v prezentaci můžete obraz přiblížit tak, že na obrazovce přitáhnete dva prsty k sobě nebo od sebe</item>
         <item>Pokud jste přihlášeni jako správce, před podáním zařízení příteli k prohlížení vašich fotografií aktivujte funkci zámku aplikace, abyste zabránili neúmyslným změnám v galerii</item>
         <item>Jakmile je zobrazeno celé video, je-li povoleno ukládání do mezipaměti místního souboru, je možné toto video uložit do složky ke stažení</item>
-        <item>Dlouhým kliknutím na tlačítko mazání na \ \'souboru k nahrání \' vymažete všechny soubory, které se mají nahrát (pokud právě neprobíhá úloha)</item>
+        <item>Dlouhým kliknutím na tlačítko mazání na \'souboru k nahrání \' vymažete všechny soubory, které se mají nahrát (pokud právě neprobíhá úloha)</item>
         <item>Pokud se obrázky načítají pomalu, zkontrolujte, zda váš server po nahrání automaticky generuje velikost používanou touto aplikací</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
@@ -145,6 +145,11 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.96</item>
+        <item>"Oprava chyby:
+                 - Poslední složka není ve složce vybrána
+                 - Uvolnění oprávnění Uri způsobilo havárii
+                 - Úloha nahrávání na pozadí nepožadovala správná oprávnění složky"</item>
         <item>1.4.0.96</item>
         <item>"Oprava chyby:
                  - Uživatelské rozhraní po sdílení velkého počtu souborů z externí aplikace přestane reagovat (bílá obrazovka)
