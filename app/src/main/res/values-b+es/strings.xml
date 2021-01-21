@@ -142,7 +142,7 @@
     <string name="gallery_details_updating_progress_title">Actualizar álbum</string>
     <string name="progress_resource_details_updating">Actualización de los detalles de los recursos</string>
     <string name="gallery_details_name_title">Nombre del álbum</string>
-    <string name="gallery_details_description_title">Descripción del Ã�lbum</string>
+    <string name="gallery_details_description_title">Descripción del Álbum</string>
     <string name="gallery_details_save_button">Salvar</string>
     <string name="gallery_details_discard_button">Descarte</string>
     <string name="gallery_action_delete_progress_title">Eliminar álbum</string>
@@ -570,7 +570,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_invalid_uri_pattern_spaces">URI no válido. Hay un carácter de espacio en el URI en la posición%1$d</string>
     <string name="album_section_heading_albums">álbumes</string>
     <string name="album_section_heading_albums_pattern">álbumes (%1$d)</string>
-    <string name="album_section_heading_resources">fotos en este Ã¡lbum</string>
+    <string name="album_section_heading_resources">fotos en este álbum</string>
     <string name="album_title_home">casa</string>
     <string name="upload_file_rating">Mi clasificación</string>
     <string name="slideshow_image_details_rating_score_title">Puntaje de calificación</string>
@@ -691,7 +691,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="content_filter">Filtro de contenido</string>
     <string name="alert_advert_importance_message">Los ingresos de los anuncios son importantes para mí. Lamento que te frustren (a mí también), pero si los miras, seguirán apareciendo hasta que veas uno. Para evitar este problema, obsérvelos hasta que ofrezcan la opción de cerrar. Alternativamente, compre la versión paga de esta aplicación. Muchas gracias por su apoyo.</string>
     <string name="eula_privacy_title">Intimidad</string>
-    <string name="privacy_policy_label">Nuestra polÃ­tica de privacidad</string>
+    <string name="privacy_policy_label">Nuestra política de privacidad</string>
     <string name="title_advert_consent">Tu privacidad</string>
     <string name="personalised_adverts_label">¿Quieres que los anuncios estén personalizados?</string>
     <string name="personalised_adverts_field">Mostrar anuncios personalizados</string>
