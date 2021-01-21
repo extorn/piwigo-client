@@ -250,6 +250,11 @@
         -->
         <item>1.4.0.96</item>
         <item>"Bugfix:
+                - Last folder not default in folder select view
+                - Releasing Uri permissions caused crash
+                - Background upload job wasn't requesting the correct folder permissions"</item>
+        <item>1.4.0.96</item>
+        <item>"Bugfix:
                 - UI appears unresponsive (white screen) after sharing a large number of files from external app
                 - No files appear in the upload page after sharing them from another app
                 - progress incorrectly reported while importing files for upload

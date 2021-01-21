@@ -544,7 +544,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             Uri lastFolderUsed = getViewPrefs().getInitialFolder();
             if(lastFolderUsed != null) {
                 //Only open the last opened Uri if we have access to it.
-                initialFolder = IOUtils.getDocumentFileForUriLinkedToAnAccessibleRoot(requireContext(), getViewPrefs().getInitialFolder());
+                initialFolder = IOUtils.getDocumentFileForUriLinkedToAnAccessibleRoot(requireContext(), lastFolderUsed);
             }
             if (initialFolder != null) {
                 // We still have access to the given Uri somehow.

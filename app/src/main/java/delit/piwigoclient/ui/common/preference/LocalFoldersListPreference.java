@@ -138,7 +138,11 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
         fileSelectNeededEvent.withInitialSelection(selection);
         fileSelectNeededEvent.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey());
         fileSelectNeededEvent.setSelectedUriPermissionsForConsumerPurpose(getTitle().toString());
-        fileSelectNeededEvent.requestUriReadWritePermissions();
+        if(IOUtils.allUriFlagsAreSet(requiredUriFlagsForSelectedItems, IOUtils.URI_PERMISSION_WRITE)) {
+            fileSelectNeededEvent.requestUriReadWritePermissions();
+        } else {
+            fileSelectNeededEvent.requestUriReadPermission();
+        }
         return fileSelectNeededEvent;
     }
 

@@ -819,14 +819,17 @@ public class IOUtils {
         }
         List<UriPermission> persistedPermissions = context.getContentResolver().getPersistedUriPermissions();
         DocumentFile match = null;
+        int matchTreeDepth = Integer.MAX_VALUE;
         for(UriPermission perm : persistedPermissions) {
             try {
                 DocumentFile file = DocumentFile.fromTreeUri(context, perm.getUri());
 //                DocumentFile file = DocumentFile.fromSingleUri(context, perm.getUri());
                 if(file != null && file.isDirectory()) {
                     DocumentFile item = IOUtils.getTreeLinkedDocFile(context, perm.getUri(), initialFolder);
-                    if (match == null || getTreeDepth(item) < getTreeDepth(match)) {
+                    int thisTreeDepth = getTreeDepth(item);
+                    if (thisTreeDepth < matchTreeDepth || item.getUri().equals(initialFolder)) {
                         match = item;
+                        matchTreeDepth = getTreeDepth(match);
                     }
                 }
             } catch(IllegalStateException | IllegalArgumentException e) {
@@ -856,18 +859,19 @@ public class IOUtils {
     }
 
     @RequiresApi(api = KITKAT)
-    public static <T extends Collection<Uri>> T removeUrisWeLackPermissionFor(@NonNull Context context, @NonNull T uris) {
+    public static <T extends Collection<Uri>> ArrayList<Uri> removeUrisWeLackPermissionFor(@NonNull Context context, @NonNull T uris) {
         // remove the persisted uri permission for each
         Set<Uri> heldPerms = new HashSet<>();
         for(UriPermission actualHeldPerm : context.getContentResolver().getPersistedUriPermissions()) {
             heldPerms.add(actualHeldPerm.getUri());
         }
+        ArrayList<Uri> editable = new ArrayList<>(uris);
         if(!heldPerms.isEmpty()) {
-            if (uris.retainAll(heldPerms)) {
+            if (editable.retainAll(heldPerms)) {
                 Logging.log(Log.INFO, TAG, "Some permissions to remove are no longer held (removing silently)");
             }
         }
-        return uris;
+        return editable;
     }
 
     public static Map<String,String> getUniqueExtAndMimeTypes(DocumentFile[] files) {

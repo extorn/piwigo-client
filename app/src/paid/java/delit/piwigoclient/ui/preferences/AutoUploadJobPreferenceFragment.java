@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
@@ -28,6 +27,7 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -90,9 +90,20 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             return true;
         });
 
+        boolean deleteFilesAfterUpload = getBooleanPreferenceValue(R.string.preference_data_upload_automatic_job_delete_uploaded_key, R.bool.preference_data_upload_automatic_job_delete_uploaded_default);
+
         LocalFoldersListPreference uploadFromFolder = (LocalFoldersListPreference) findPreference(R.string.preference_data_upload_automatic_job_local_folder_key);
-        uploadFromFolder.setRequiredPermissions(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         uploadFromFolder.setOnPreferenceChangeListener(new LocalFoldersListPreference.PersistablePermissionsChangeListener(getUiHelper()));
+        uploadFromFolder.setOnPreferenceClickListener(preference -> {
+
+            int permissions = IOUtils.URI_PERMISSION_READ;
+            if(deleteFilesAfterUpload) {
+                permissions = IOUtils.URI_PERMISSION_READ_WRITE;
+            }
+            ((LocalFoldersListPreference)preference).setRequiredPermissions(permissions);
+
+            return false;
+        });
 
         //ServerConnectionsListPreference serverConnPref = (ServerConnectionsListPreference) findPreference(R.string.preference_data_upload_automatic_job_server_key);
 
@@ -172,6 +183,13 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                         docFile = null;
                     }
                     allPreferencesValid = docFile != null && docFile.exists() && docFile.isDirectory();
+
+                    boolean deleteFilesAfterUpload = getBooleanPreferenceValue(R.string.preference_data_upload_automatic_job_delete_uploaded_key, R.bool.preference_data_upload_automatic_job_delete_uploaded_default);
+                    int perms = IOUtils.URI_PERMISSION_READ;
+                    if(deleteFilesAfterUpload) {
+                        perms = IOUtils.URI_PERMISSION_READ_WRITE;
+                    }
+                    allPreferencesValid &= IOUtils.appHoldsAllUriPermissionsForUri(getContext(), uri, perms);
                 }
             }
         }

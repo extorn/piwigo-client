@@ -19,6 +19,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import delit.libs.core.util.Logging;
@@ -186,7 +187,7 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
             if ((flagsToRemove != 0 || flagsStillUsed == 0) && consumers.size() == 0) {
                 // remove the Uri permission if it is no longer in use
-                Collection<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), uris);//DO NOT USE SINGLETON LIST
+                Collection<Uri> uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), uris);
                 for(Uri uri : uris) {
                     removePermissionsForUri(uriPermsHeld, uri, flagsToRemove);
                 }
@@ -206,7 +207,7 @@ public class AppSettingsViewModel extends AndroidViewModel {
                 // check the tree uri.
                 Uri treeUri = IOUtils.getTreeUri(uri);
                 if(!treeUri.equals(uri)) {
-                    uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), new ArrayList<>(Arrays.asList(treeUri)));//DO NOT USE SINGLETON LIST
+                    uriPermsHeld = IOUtils.removeUrisWeLackPermissionFor(getContext(), Collections.singletonList(treeUri));
                     if (!uriPermsHeld.isEmpty()) {
                         releasePersistableUriPermission(getContext(), treeUri, consumerId, true);
                     }

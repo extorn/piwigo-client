@@ -173,6 +173,10 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
         return findPreference(requireContext().getString(preferenceId));
     }
 
+    protected boolean getBooleanPreferenceValue(@StringRes int preferenceKey, @BoolRes int defaultValue) {
+        return getPreferenceManager().getSharedPreferences().getBoolean(getString(preferenceKey), getResources().getBoolean(defaultValue));
+    }
+
     protected boolean getBooleanPreferenceValue(String preferenceKey, boolean defaultValue) {
         return getPreferenceManager().getSharedPreferences().getBoolean(preferenceKey, defaultValue);
     }
