@@ -63,7 +63,7 @@ public class MyDocumentProvider extends DocumentsProvider {
     private static final String THUMBNAILS_DOC_ID = "Thumbnails";
 
     public static String getAuthority() {
-        return BuildConfig.APPLICATION_ID + ".provider.docs";
+        return BuildConfig.DOCUMENTS_PROVIDER_AUTHORITY;
     }
 
     public static boolean ownsUri(Context context, Uri uri) {

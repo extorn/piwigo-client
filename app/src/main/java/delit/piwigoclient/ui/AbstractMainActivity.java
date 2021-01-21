@@ -569,7 +569,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
 
     public static Uri toContentUri(@NonNull Context context, @NonNull Uri uri) {
         if ("file".equals(uri.getScheme())) {
-            return androidx.core.content.FileProvider.getUriForFile(context, delit.piwigoclient.BuildConfig.APPLICATION_ID + ".provider", new File(uri.getPath()));
+            return androidx.core.content.FileProvider.getUriForFile(context, BuildConfig.FILE_PROVIDER_AUTHORITY, new File(uri.getPath()));
         } else {
             return uri;
         }
