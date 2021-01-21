@@ -1232,7 +1232,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(requireContext(), uploadJobId);
             if (!event.areAllPermissionsGranted()) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_required_permissions_not_granted_action_cancelled));
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_required_permissions_not_granted_action_cancelled));
+                } else {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_required_permissions_not_granted_action_cancelled_scoped_storage));
+                }
                 return;
             }
             //ensure the handler is actively listening before the job starts.

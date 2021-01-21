@@ -372,7 +372,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
         if (resultCode != Activity.RESULT_OK || resultData == null) {
             // this is unnecessary to report since the request for files from the system selector was cancelled.
-//            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
         } else {
             new SharedFilesIntentProcessingTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, resultData);
         }
@@ -407,7 +406,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
             itemsShared.add(item);
             permissionsMissing = takePersistablePermissionsIfNeeded(resultData, item.getContentUri());
         } else {
-            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+            } else {
+                Logging.log(Log.ERROR, TAG, "Unexpected warning about file permissions");
+                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem_scoped_storage);
+            }
         }
         FolderItem.cacheDocumentInformation(requireContext(), itemsShared, listener);
         if(permissionsMissing) {
@@ -452,7 +456,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
 
     private List<FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
         if (resultData.getData() == null) {
-            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+            } else {
+                Logging.log(Log.ERROR, TAG, "Unexpected warning about file permissions");
+                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem_scoped_storage);
+            }
             return null;
         } else {
             Context context = getContext();

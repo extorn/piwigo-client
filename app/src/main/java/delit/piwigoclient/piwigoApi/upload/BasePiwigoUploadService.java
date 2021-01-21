@@ -1141,7 +1141,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
 
             ExifInterface originalExifData;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 FileDescriptor fd = getContentResolver().openFileDescriptor(rawImage, "r").getFileDescriptor();
                 originalExifData = new ExifInterface(fd);
                 outputPhoto = DocumentFile.fromFile(new Compressor(this)

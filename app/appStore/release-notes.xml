@@ -1,60 +1,40 @@
 <en-GB>
 Bugfix:
-- Last folder not default in folder select view
-- Releasing Uri permissions caused crash
-- Background upload job wasn't requesting the correct folder permissions
+- Further improvements to file system permissions requests
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Poslední složka není ve složce vybrána
-- Uvolnění oprávnění Uri způsobilo havárii
-- Úloha nahrávání na pozadí nepožadovala správná oprávnění složky
+- Další vylepšení požadavků na oprávnění systému souborů
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Letzter Ordner nicht standardmäßig in der Ordnerauswahlansicht
-- Das Freigeben von Uri-Berechtigungen verursachte einen Absturz
-- Der Job zum Hochladen im Hintergrund hat nicht die richtigen Ordnerberechtigungen angefordert
+- Weitere Verbesserungen bei Dateisystemberechtigungsanforderungen
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Última carpeta no predeterminada en la vista de selección de carpeta
-- Liberar los permisos de Uri causó un bloqueo
-- El trabajo de carga en segundo plano no solicitaba los permisos de carpeta correctos
+- Más mejoras en las solicitudes de permisos del sistema de archivos
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Le dernier dossier n\'est pas par défaut dans la vue de sélection de dossier
-- La libération des autorisations Uri a causé un crash
-- La tâche de téléchargement en arrière-plan ne demandait pas les autorisations de dossier correctes
+- Améliorations supplémentaires des demandes d\'autorisations du système de fichiers
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Ultima cartella non predefinita nella visualizzazione di selezione della cartella
-- Il rilascio delle autorizzazioni Uri ha causato l\'arresto anomalo
-- Il processo di caricamento in background non richiedeva le autorizzazioni corrette per la cartella
+- Ulteriori miglioramenti alle richieste di autorizzazioni del file system
 </it-IT>
 <ja-JP>
 バグ修正：
--フォルダ選択ビューで最後のフォルダがデフォルトではない
--Uri権限を解放するとクラッシュが発生しました
--バックグラウンドアップロードジョブが正しいフォルダ権限を要求していませんでした
+-ファイルシステムのアクセス許可要求のさらなる改善
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Laatste map niet standaard in mapkeuzeweergave
-- Het vrijgeven van Uri-machtigingen veroorzaakte een crash
-- Uploadtaak op de achtergrond vroeg niet om de juiste mapmachtigingen
+- Verdere verbeteringen aan verzoeken om bestandssysteemrechten
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Последняя папка не по умолчанию в режиме выбора папки
-- Освобождение разрешений Uri вызвало сбой
-- Задание фоновой загрузки не запрашивало правильные разрешения для папки
+- Дальнейшие улучшения запросов разрешений файловой системы.
 </ru-RU>
 <zh-CN>
 错误修正：
--在文件夹选择视图中最后一个文件夹不是默认文件夹
--释放Uri权限导致崩溃
--后台上传作业未请求正确的文件夹权限
+-对文件系统权限请求的进一步改进
 </zh-CN>

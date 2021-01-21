@@ -51,7 +51,8 @@
     <string name="alert_error">Error</string>
     <string name="alert_error_no_app_available_to_handle_action">No app could be found to handle this action.</string>
     <string name="alert_error_no_app_available_to_rate_app">No app could be found to rate this app. Thanks for trying though.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Download cancelled. Required permissions are not granted.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Download cancelled. Required FileSystem permissions are not available.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Download cancelled. Required FileSystem permissions are not available. As an alternative to system wide permissions, re-select the folder to use in the app preferences.</string>
     <string name="button_retry">Retry</string>
 
 
@@ -775,6 +776,7 @@ SOFTWARE.
     <string name="progress_adding_group">Adding Group</string>
     <string name="upload_unacceptable_files_prefix">Unaccepted Files</string>
     <string name="alert_error_unable_to_access_local_filesystem">Without access to the local filesystem, this action cannot proceed. Sorry.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Without access to the local filesystem, this action cannot proceed. As an alternative to system wide permissions, re-select the folder to use in the app preferences.</string>
     <string name="alert_error_admin_user_required">Only admin users can upload unless the community plugin is installed. Sorry.</string>
     <string name="upload_username_title">Upload as</string>
     <string name="certificates_heading">Certificates</string>
@@ -964,6 +966,7 @@ SOFTWARE.
     <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
     <string name="please_read_and_agree_with_eula_first">Please read and confirm agreement with the terms of the EULA first</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Required Permissions were not granted. Action cancelled.</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Required Permissions were not granted. Action cancelled. As an alternative to system wide permissions, re-select the folder to use in the app preferences.</string>
     <string name="default_str">default</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
     <string name="alert_plugin_required_pattern">%1$s Server Plugin Required - Version %2$s or newer</string>
@@ -1066,8 +1069,6 @@ SOFTWARE.
     <string name="alert_error_unable_add_files_previous_job_still_running">Unable to add files for upload. An upload job is in progress.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Unable to add files for upload. The current  upload job needs to finish first.</string>
     <string name="removing_files_from_job">Removing files from Upload Job</string>
-    <string name="permission_write">Write</string>
-    <string name="permission_read">Read</string>
     <string name="doc_provider_root_downloads_title">Piwigo Downloads</string>
     <string name="doc_provider_root_downloads_summary">Files downloaded from the server</string>
     <string name="downloads_menu_title">Downloads</string>

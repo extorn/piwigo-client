@@ -1,5 +1,6 @@
 package delit.libs.util;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -56,6 +57,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.BuildConfig;
+import delit.libs.R;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 
@@ -798,7 +800,7 @@ public class IOUtils {
         return permissionFlags;
     }
 
-    public static boolean appHoldsAllUriPermissionsForUri(Context context, Uri uri, int permissions) {
+    public static boolean appHoldsAllUriPermissionsForUri(@NonNull Context context, @Nullable Uri uri, int permissions) {
         if (uri == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             return true;
         }
@@ -1209,5 +1211,31 @@ public class IOUtils {
             return true;
         }
         return path.startsWith(context.getFilesDir().getPath());
+    }
+
+    public static String getManifestFilePermissionsNeeded(int selectedUriPermissionFlags) {
+        String requiredPermission = null;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            requiredPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
+            if (IOUtils.needsWritePermission(selectedUriPermissionFlags)) {
+                requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+            }
+        }
+        return requiredPermission;
+    }
+
+    public static String getI18LocalisedFilePermissionName(Context context, int selectedUriPermissionFlags) {
+        if(IOUtils.needsWritePermission(selectedUriPermissionFlags)) {
+            return context.getString(R.string.permission_write);
+        }
+        return context.getString(R.string.permission_read);
+
+    }
+
+    public static @Nullable String getManifestFilePermissionsNeeded(@NonNull Context context, @Nullable Uri folderUri, int uriPermissionReadWrite) {
+        if(!IOUtils.appHoldsAllUriPermissionsForUri(context, folderUri, IOUtils.URI_PERMISSION_READ_WRITE)) {
+            return IOUtils.getManifestFilePermissionsNeeded(IOUtils.URI_PERMISSION_READ_WRITE);
+        }
+        return null;
     }
 }

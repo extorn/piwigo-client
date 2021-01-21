@@ -51,7 +51,8 @@
     <string name="alert_error">Errore</string>
     <string name="alert_error_no_app_available_to_handle_action">Non è stata trovata alcuna app per gestire questa azione.</string>
     <string name="alert_error_no_app_available_to_rate_app">Non è stata trovata alcuna app per valutare questa app. Grazie per aver provato comunque.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Download annullato. Le autorizzazioni richieste non vengono concesse.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Download annullato. Le autorizzazioni necessarie per FileSystem non sono disponibili.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Download annullato. Le autorizzazioni necessarie per FileSystem non sono disponibili. In alternativa alle autorizzazioni a livello di sistema, riselezionare la cartella da utilizzare nelle preferenze dell\'app.</string>
     <string name="button_retry">Riprova</string>
 
 
@@ -418,6 +419,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="progress_adding_group">Aggiunta di gruppo</string>
     <string name="upload_unacceptable_files_prefix">File non accettati</string>
     <string name="alert_error_unable_to_access_local_filesystem">Senza accesso al filesystem locale, questa azione non può procedere. Scusate.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Senza accesso al filesystem locale, questa azione non può procedere. In alternativa alle autorizzazioni a livello di sistema, riselezionare la cartella da utilizzare nelle preferenze dell\'app.</string>
     <string name="alert_error_admin_user_required">Solo gli utenti amministratori possono caricare a meno che il plug-in della community non sia installato. Scusate.</string>
     <string name="upload_username_title">Carica come</string>
     <string name="certificates_heading">Certificati</string>
@@ -607,6 +609,7 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="subalbum_detail_txt_pattern">%1$d album secondari</string>
     <string name="please_read_and_agree_with_eula_first">Leggere e confermare prima l\'accordo con i termini dell\'EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Le autorizzazioni richieste non sono state concesse. Azione annullata.</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Le autorizzazioni richieste non sono state concesse. Azione annullata. In alternativa alle autorizzazioni a livello di sistema, riselezionare la cartella da utilizzare nelle preferenze dell\'app.</string>
     <string name="default_str">predefinito</string>
     <string name="copied_to_clipboard">Copiato negli Appunti</string>
     <string name="alert_plugin_required_pattern">Plugin del server%1$s richiesto - Versione%2$s o successiva</string>
@@ -709,8 +712,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossibile aggiungere file per il caricamento. È in corso un processo di caricamento.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossibile aggiungere file per il caricamento. Il processo di caricamento corrente deve essere completato per primo.</string>
     <string name="removing_files_from_job">Rimozione di file dal processo di caricamento</string>
-    <string name="permission_write">Scrivi</string>
-    <string name="permission_read">Leggere</string>
     <string name="doc_provider_root_downloads_title">Download di Piwigo</string>
     <string name="doc_provider_root_downloads_summary">File scaricati dal server</string>
     <string name="downloads_menu_title">Download</string>

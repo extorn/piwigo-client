@@ -51,7 +51,8 @@
     <string name="alert_error">Chyba</string>
     <string name="alert_error_no_app_available_to_handle_action">Nebyla nalezena žádná aplikace, která by tuto akci zvládla.</string>
     <string name="alert_error_no_app_available_to_rate_app">Nebyla nalezena žádná aplikace pro hodnocení této aplikace. Díky, že jste to vyzkoušeli.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Stahování bylo zrušeno. Požadovaná oprávnění nejsou udělena.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Stahování bylo zrušeno. Požadovaná oprávnění FileSystem nejsou k dispozici.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Stahování bylo zrušeno. Požadovaná oprávnění FileSystem nejsou k dispozici. Jako alternativu k celosystémovým oprávněním znovu vyberte složku, kterou chcete použít v předvolbách aplikace.</string>
     <string name="button_retry">Zkuste to znovu</string>
 
 
@@ -418,6 +419,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="progress_adding_group">Přidání skupiny</string>
     <string name="upload_unacceptable_files_prefix">Nepřijaté soubory</string>
     <string name="alert_error_unable_to_access_local_filesystem">Bez přístupu k místnímu souborovému systému nemůže tato akce pokračovat. Promiňte.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Bez přístupu k místnímu souborovému systému nemůže tato akce pokračovat. Jako alternativu k celosystémovým oprávněním znovu vyberte složku, kterou chcete použít v předvolbách aplikace.</string>
     <string name="alert_error_admin_user_required">Pokud není nainstalován plugin komunity, mohou nahrávat pouze uživatelé s právy správce. Promiňte.</string>
     <string name="upload_username_title">Nahrát jako</string>
     <string name="certificates_heading">Certifikáty</string>
@@ -607,6 +609,7 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="subalbum_detail_txt_pattern">%1$d podřízených alb</string>
     <string name="please_read_and_agree_with_eula_first">Nejprve si přečtěte a potvrďte souhlas s podmínkami smlouvy EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Požadovaná oprávnění nebyla udělena. Akce zrušena.</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Požadovaná oprávnění nebyla udělena. Akce zrušena. Jako alternativu k celosystémovým oprávněním znovu vyberte složku, kterou chcete použít v předvolbách aplikace.</string>
     <string name="default_str">výchozí</string>
     <string name="copied_to_clipboard">Zkopírováno do schránky</string>
     <string name="alert_plugin_required_pattern">Vyžaduje se%1$s serverový modul - verze%2$s nebo novější</string>
@@ -709,8 +712,6 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_error_unable_add_files_previous_job_still_running">Nelze přidat soubory k nahrání. Probíhá nahrávání úlohy.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Nelze přidat soubory k nahrání. Nejprve je třeba dokončit aktuální úlohu nahrávání.</string>
     <string name="removing_files_from_job">Odebírání souborů z úlohy nahrávání</string>
-    <string name="permission_write">Psát si</string>
-    <string name="permission_read">Číst</string>
     <string name="doc_provider_root_downloads_title">Stažení Piwigo</string>
     <string name="doc_provider_root_downloads_summary">Soubory stažené ze serveru</string>
     <string name="downloads_menu_title">Soubory ke stažení</string>

@@ -106,7 +106,7 @@ public class UploadActivity extends MyActivity<UploadActivity> {
         }
         if(Intent.ACTION_SEND.equals(intent.getAction())
                 || Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
-            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.N_MR1, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
         }
     }
 
@@ -413,7 +413,12 @@ public class UploadActivity extends MyActivity<UploadActivity> {
             if (event.areAllPermissionsGranted()) {
                 new SharedFilesIntentProcessingTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, lastIntent);
             } else {
-                createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+                } else {
+                    Logging.log(Log.ERROR, TAG, "Unexpected warning about file permissions");
+                    createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem_scoped_storage);
+                }
             }
         }
     }

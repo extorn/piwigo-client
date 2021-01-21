@@ -51,7 +51,8 @@
     <string name="alert_error">Fout</string>
     <string name="alert_error_no_app_available_to_handle_action">Er is geen app gevonden om deze actie uit te voeren.</string>
     <string name="alert_error_no_app_available_to_rate_app">Er is geen app gevonden om deze app te beoordelen. Bedankt voor het proberen.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Download geannuleerd. Vereiste machtigingen worden niet verleend.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Download geannuleerd. Vereiste machtigingen voor het bestandssysteem zijn niet beschikbaar.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Download geannuleerd. Vereiste machtigingen voor het bestandssysteem zijn niet beschikbaar. Als alternatief voor systeembrede machtigingen, selecteert u de map die u wilt gebruiken in de app-voorkeuren opnieuw.</string>
     <string name="button_retry">Probeer het opnieuw</string>
 
 
@@ -418,6 +419,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="progress_adding_group">Groep toevoegen</string>
     <string name="upload_unacceptable_files_prefix">Niet-geaccepteerde bestanden</string>
     <string name="alert_error_unable_to_access_local_filesystem">Zonder toegang tot het lokale bestandssysteem kan deze actie niet doorgaan. Sorry.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Zonder toegang tot het lokale bestandssysteem kan deze actie niet doorgaan. Als alternatief voor systeembrede machtigingen, selecteert u de map die u wilt gebruiken in de app-voorkeuren opnieuw.</string>
     <string name="alert_error_admin_user_required">Alleen admin-gebruikers kunnen uploaden, tenzij de community-plug-in is geïnstalleerd. Sorry.</string>
     <string name="upload_username_title">Upload als</string>
     <string name="certificates_heading">Certificaten</string>
@@ -607,6 +609,7 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="subalbum_detail_txt_pattern">%1$d onderliggende albums</string>
     <string name="please_read_and_agree_with_eula_first">Lees en bevestig eerst de voorwaarden van de EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Vereiste machtigingen zijn niet verleend. Actie geannuleerd.</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Vereiste machtigingen zijn niet verleend. Actie geannuleerd. Als alternatief voor systeembrede machtigingen, selecteert u de map die u wilt gebruiken in de app-voorkeuren opnieuw.</string>
     <string name="default_str">standaard</string>
     <string name="copied_to_clipboard">Gekopieerd naar het klembord</string>
     <string name="alert_plugin_required_pattern">%1$s serverplug-in vereist - versie%2$s of nieuwer</string>
@@ -709,8 +712,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="alert_error_unable_add_files_previous_job_still_running">Kan geen bestanden toevoegen om te uploaden. Er wordt een uploadtaak uitgevoerd.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Kan geen bestanden toevoegen om te uploaden. De huidige uploadtaak moet eerst worden voltooid.</string>
     <string name="removing_files_from_job">Bestanden verwijderen uit Upload Job</string>
-    <string name="permission_write">Schrijven</string>
-    <string name="permission_read">Lezen</string>
     <string name="doc_provider_root_downloads_title">Piwigo-downloads</string>
     <string name="doc_provider_root_downloads_summary">Bestanden gedownload van de server</string>
     <string name="downloads_menu_title">Downloads</string>

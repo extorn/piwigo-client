@@ -51,7 +51,8 @@
     <string name="alert_error">Error</string>
     <string name="alert_error_no_app_available_to_handle_action">Es konnte keine App gefunden werden, die diese Aktion ausführt.</string>
     <string name="alert_error_no_app_available_to_rate_app">Es wurde keine App gefunden, um diese App zu bewerten. Danke, dass du es versucht hast.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Download abgebrochen. Erforderliche Berechtigungen werden nicht erteilt.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Download abgebrochen. Erforderliche FileSystem-Berechtigungen sind nicht verfügbar.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Download abgebrochen. Erforderliche FileSystem-Berechtigungen sind nicht verfügbar. Wählen Sie als Alternative zu systemweiten Berechtigungen den Ordner erneut aus, der in den App-Einstellungen verwendet werden soll.</string>
     <string name="button_retry">Wiederholen</string>
 
 
@@ -418,6 +419,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="progress_adding_group">Gruppe hinzufügen</string>
     <string name="upload_unacceptable_files_prefix">Nicht akzeptierte Dateien</string>
     <string name="alert_error_unable_to_access_local_filesystem">Ohne Zugriff auf das lokale Dateisystem kann diese Aktion nicht fortgesetzt werden. Es tut uns leid.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Ohne Zugriff auf das lokale Dateisystem kann diese Aktion nicht fortgesetzt werden. Wählen Sie als Alternative zu systemweiten Berechtigungen den Ordner erneut aus, der in den App-Einstellungen verwendet werden soll.</string>
     <string name="alert_error_admin_user_required">Nur Administratoren können hochladen, es sei denn, das Community-Plugin ist installiert. Es tut uns leid.</string>
     <string name="upload_username_title">Hochladen als</string>
     <string name="certificates_heading">Zertifikate</string>
@@ -607,6 +609,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="subalbum_detail_txt_pattern">%1$d untergeordnete Alben</string>
     <string name="please_read_and_agree_with_eula_first">Bitte lesen und bestätigen Sie zuerst die Zustimmung zu den Bestimmungen der EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen.</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen. Wählen Sie als Alternative zu systemweiten Berechtigungen den Ordner erneut aus, der in den App-Einstellungen verwendet werden soll.</string>
     <string name="default_str">Standard</string>
     <string name="copied_to_clipboard">In die Zwischenablage kopiert</string>
     <string name="alert_plugin_required_pattern">%1$s Server Plugin erforderlich - Version%2$s oder neuer</string>
@@ -709,8 +712,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_unable_add_files_previous_job_still_running">Dateien zum Hochladen können nicht hinzugefügt werden. Ein Upload-Auftrag wird ausgeführt.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Dateien zum Hochladen können nicht hinzugefügt werden. Der aktuelle Upload-Job muss zuerst beendet werden.</string>
     <string name="removing_files_from_job">Entfernen von Dateien aus dem Upload-Job</string>
-    <string name="permission_write">Schreiben</string>
-    <string name="permission_read">Lesen</string>
     <string name="doc_provider_root_downloads_title">Piwigo Downloads</string>
     <string name="doc_provider_root_downloads_summary">Vom Server heruntergeladene Dateien</string>
     <string name="downloads_menu_title">Downloads</string>

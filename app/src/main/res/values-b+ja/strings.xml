@@ -51,7 +51,8 @@
     <string name="alert_error">エラー</string>
     <string name="alert_error_no_app_available_to_handle_action">このアクションを処理するアプリが見つかりませんでした。</string>
     <string name="alert_error_no_app_available_to_rate_app">このアプリを評価するアプリが見つかりませんでした。試してくれてありがとう。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">ダウンロードがキャンセルされました。必要な権限が付与されていません。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">ダウンロードがキャンセルされました。 必要なFileSystem権限が利用できません。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">ダウンロードがキャンセルされました。 必要なFileSystem権限が利用できません。 システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
     <string name="button_retry">リトライ</string>
 
 
@@ -418,6 +419,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="progress_adding_group">グループの追加</string>
     <string name="upload_unacceptable_files_prefix">受け入れられないファイル</string>
     <string name="alert_error_unable_to_access_local_filesystem">ローカルファイルシステムへのアクセスがないと、このアクションを続行できません。ごめんなさい。</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">ローカルファイルシステムへのアクセスがないと、このアクションを続行できません。 システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
     <string name="alert_error_admin_user_required">コミュニティプラグインがインストールされていない限り、管理者ユーザーのみがアップロードできます。ごめんなさい。</string>
     <string name="upload_username_title">としてアップロード</string>
     <string name="certificates_heading">証明書</string>
@@ -607,6 +609,7 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="subalbum_detail_txt_pattern">%1$dの子アルバム</string>
     <string name="please_read_and_agree_with_eula_first">最初にEULAの条件を読んで同意を確認してください</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">必要な権限が付与されていません。アクションはキャンセルされました。</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">必要な権限が付与されていません。 アクションはキャンセルされました。 システム全体の権限の代わりに、アプリの設定で使用するフォルダーを再選択します。</string>
     <string name="default_str">デフォルト</string>
     <string name="copied_to_clipboard">クリップボードにコピー</string>
     <string name="alert_plugin_required_pattern">%1$sサーバープラグインが必要-バージョン%2$s以降</string>
@@ -709,8 +712,6 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="alert_error_unable_add_files_previous_job_still_running">アップロードするファイルを追加できません。アップロードジョブが進行中です。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">アップロードするファイルを追加できません。現在のアップロードジョブを最初に終了する必要があります。</string>
     <string name="removing_files_from_job">アップロードジョブからのファイルの削除</string>
-    <string name="permission_write">書く</string>
-    <string name="permission_read">読んだ</string>
     <string name="doc_provider_root_downloads_title">Piwigoダウンロード</string>
     <string name="doc_provider_root_downloads_summary">サーバーからダウンロードしたファイル</string>
     <string name="downloads_menu_title">ダウンロード</string>

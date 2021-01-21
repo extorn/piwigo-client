@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
@@ -208,12 +207,9 @@ public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFra
     private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = (preference, value) -> {
         final Boolean val = (Boolean) value;
         if (Boolean.TRUE.equals(val)) {
-            String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-            File videoCacheFolder = CacheUtils.getBasicCacheFolder(requireContext());
-            if(videoCacheFolder != null && IOUtils.isPrivateFolder(requireContext(), videoCacheFolder.getPath())) {
-                permission = null;
-            }
-            getUiHelper().runWithExtraPermissions(AppPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, permission, getString(R.string.alert_write_permission_needed_for_video_caching));
+            Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext()));
+            String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), videoCacheFolder, IOUtils.URI_PERMISSION_READ_WRITE);
+            getUiHelper().runWithExtraPermissions(AppPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {
             Preference pref = getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key));
             if(pref != null) {

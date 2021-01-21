@@ -3,6 +3,8 @@ package delit.piwigoclient.business.video;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.common.util.Base64Utils;
 
 import java.io.File;
@@ -262,7 +264,7 @@ public class CacheUtils {
         return succeededDeletion;
     }
 
-    public static File getBasicCacheFolder(Context context) {
+    public static @NonNull File getBasicCacheFolder(@NonNull Context context) {
         File cacheFolder;
         try {
             cacheFolder = new File(context.getExternalCacheDir(), "basic-cache");

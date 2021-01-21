@@ -51,7 +51,8 @@
     <string name="alert_error">错误</string>
     <string name="alert_error_no_app_available_to_handle_action">找不到应用程序来处理此操作。</string>
     <string name="alert_error_no_app_available_to_rate_app">找不到任何应用对该应用进行评分。感谢您的尝试。</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。没有授予所需的权限。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">下载已取消。 必需的文件系统权限不可用。</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">下载已取消。 必需的文件系统权限不可用。 作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
     <string name="button_retry">重试</string>
 
 
@@ -418,6 +419,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="progress_adding_group">新增群组</string>
     <string name="upload_unacceptable_files_prefix">不可接受的文件</string>
     <string name="alert_error_unable_to_access_local_filesystem">如果无法访问本地文件系统，则无法执行此操作。抱歉。</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">如果无法访问本地文件系统，则无法执行此操作。 作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
     <string name="alert_error_admin_user_required">除非安装了社区插件，否则只有管理员用户可以上传。抱歉。</string>
     <string name="upload_username_title">上载为</string>
     <string name="certificates_heading">证明书</string>
@@ -607,6 +609,7 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="subalbum_detail_txt_pattern">%1$d个儿童相册</string>
     <string name="please_read_and_agree_with_eula_first">请先阅读并确认同意EULA的条款</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">未授予所需的权限。动作已取消。</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">未授予所需的权限。 动作已取消。 作为系统范围权限的替代方法，重新选择要在应用程序首选项中使用的文件夹。</string>
     <string name="default_str">默认</string>
     <string name="copied_to_clipboard">复制到剪贴板</string>
     <string name="alert_plugin_required_pattern">需要%1$s服务器插件-版本%2$s或更高版本</string>
@@ -709,8 +712,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_error_unable_add_files_previous_job_still_running">无法添加文件进行上传。上载作业正在进行中。</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">无法添加文件进行上传。当前的上传作业需要先完成。</string>
     <string name="removing_files_from_job">从上载作业中删除文件</string>
-    <string name="permission_write">写</string>
-    <string name="permission_read">读</string>
     <string name="doc_provider_root_downloads_title">Piwigo下载</string>
     <string name="doc_provider_root_downloads_summary">从服务器下载的文件</string>
     <string name="downloads_menu_title">资料下载</string>

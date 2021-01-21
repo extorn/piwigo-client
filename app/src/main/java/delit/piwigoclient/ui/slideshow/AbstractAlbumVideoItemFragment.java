@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -374,14 +373,10 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
 
     @Override
     protected void onDownloadItem(final VideoResourceItem model) {
-        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
-        if(AppPreferences.havePermissions(requireContext(), downloadFolder, IOUtils.URI_PERMISSION_WRITE)) {
-            permission = null;
-        }
+        String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), downloadFolder.getUri(), IOUtils.URI_PERMISSION_READ_WRITE);
         getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_DOWNLOAD);
-        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, permission, getString(R.string.alert_write_permission_needed_for_download));
-        //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_download));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -432,19 +427,13 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                     dialog.show();
 
                 } else {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+                    } else {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions_scoped_storage));
+                    }
                     EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), getModel()));
                 }
-//                    String downloadFilename = originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1");
-//                    String remoteUri = getModel().getFileUrl(getModel().getFullSizeFile().getName());
-//                    DownloadFileRequestEvent evt = new DownloadFileRequestEvent(false);
-//                    evt.addFileDetail(getModel().getName(), remoteUri, downloadFilename, cachedVideoFile);
-//                    EventBus.getDefault().post(evt);
-//                    getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
-//
-//                } else {
-//                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
-//                }
             } else if (getUiHelper().getPermissionsNeededReason() == PERMISSIONS_FOR_CACHE) {
                 if (event.areAllPermissionsGranted()) {
                     permissionToCache = true;
@@ -491,13 +480,9 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         if (dataSourceFactory.isCachingEnabled()) {
             logStatus("configuring datasource and player - caching enabled - check permissions first");
             getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_CACHE);
-            String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-            File videoCacheFolder = CacheUtils.getBasicCacheFolder(requireContext());
-            if(videoCacheFolder != null && IOUtils.isPrivateFolder(requireContext(), videoCacheFolder.getPath())) {
-                permission = null;
-            }
-            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, permission, getString(R.string.alert_write_permission_needed_for_video_caching));
-            //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
+            Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext()));
+            String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), videoCacheFolder, IOUtils.URI_PERMISSION_READ_WRITE);
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {
             logStatus("configuring datasource and player - no caching enabled - do now!");
             configurePlayer(videoIsPlayingWhenVisible);

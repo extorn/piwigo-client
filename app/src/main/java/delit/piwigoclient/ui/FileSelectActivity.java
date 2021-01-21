@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -67,16 +66,11 @@ public class FileSelectActivity extends MyActivity<FileSelectActivity> {
     @Override
     public void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            String localisedPermission = getString(R.string.permission_read);
-            String requiredPermission = Manifest.permission.READ_EXTERNAL_STORAGE;
-            if(IOUtils.needsWritePermission(folderItemSelectPrefs.getSelectedUriPermissionFlags())) {
-                requiredPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-                localisedPermission = getString(R.string.permission_write);
-            }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            String manifestFilePermissionsNeeded = IOUtils.getManifestFilePermissionsNeeded(folderItemSelectPrefs.getSelectedUriPermissionFlags());
+            String localisedPermission = IOUtils.getI18LocalisedFilePermissionName(this, folderItemSelectPrefs.getSelectedUriPermissionFlags());
             String purpose = folderItemSelectPrefs.getSelectedUriPermissionConsumerPurpose();
-            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, requiredPermission, getString(R.string.alert_file_permissions_needed_for_pattern, localisedPermission, purpose));
-
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.N_MR1, manifestFilePermissionsNeeded, getString(R.string.alert_file_permissions_needed_for_pattern, localisedPermission, purpose));
         }
     }
 
@@ -213,7 +207,12 @@ public class FileSelectActivity extends MyActivity<FileSelectActivity> {
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (!event.areAllPermissionsGranted()) {
-                createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+                } else {
+                    Logging.log(Log.ERROR, TAG, "Unexpected warning about file permissions");
+                    createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem_scoped_storage);
+                }
             }
         }
     }

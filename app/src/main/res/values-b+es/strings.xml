@@ -51,7 +51,8 @@
     <string name="alert_error">Error</string>
     <string name="alert_error_no_app_available_to_handle_action">No se pudo encontrar ninguna aplicación para manejar esta acción.</string>
     <string name="alert_error_no_app_available_to_rate_app">No se pudo encontrar ninguna aplicación para calificar esta aplicación. Gracias por intentarlo.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Descarga cancelada. No se otorgan los permisos necesarios.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Descarga cancelada. Los permisos necesarios del sistema de archivos no están disponibles.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Descarga cancelada. Los permisos necesarios del sistema de archivos no están disponibles. Como alternativa a los permisos de todo el sistema, vuelva a seleccionar la carpeta para usar en las preferencias de la aplicación.</string>
     <string name="button_retry">Rever</string>
 
 
@@ -418,6 +419,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="progress_adding_group">Agregar grupo</string>
     <string name="upload_unacceptable_files_prefix">Archivos no aceptados</string>
     <string name="alert_error_unable_to_access_local_filesystem">Sin acceso al sistema de archivos local, esta acción no puede continuar. Lo siento.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Sin acceso al sistema de archivos local, esta acción no puede continuar. Como alternativa a los permisos de todo el sistema, vuelva a seleccionar la carpeta para usar en las preferencias de la aplicación.</string>
     <string name="alert_error_admin_user_required">Solo los usuarios administradores pueden cargar a menos que el complemento de la comunidad esté instalado. Lo siento.</string>
     <string name="upload_username_title">Subir como</string>
     <string name="certificates_heading">Certificados</string>
@@ -607,6 +609,7 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="subalbum_detail_txt_pattern">%1$d álbumes secundarios</string>
     <string name="please_read_and_agree_with_eula_first">Primero lea y confirme el acuerdo con los términos del EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">No se concedieron los permisos necesarios. Acción cancelada.</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">No se concedieron los permisos necesarios. Acción cancelada. Como alternativa a los permisos de todo el sistema, vuelva a seleccionar la carpeta para usar en las preferencias de la aplicación.</string>
     <string name="default_str">defecto</string>
     <string name="copied_to_clipboard">Copiado al portapapeles</string>
     <string name="alert_plugin_required_pattern">Se requiere el complemento de servidor%1$s - Versión%2$s o más reciente</string>
@@ -709,8 +712,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_error_unable_add_files_previous_job_still_running">No se pueden agregar archivos para cargar. Hay un trabajo de carga en curso.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">No se pueden agregar archivos para cargar. El trabajo de carga actual debe finalizar primero.</string>
     <string name="removing_files_from_job">Eliminar archivos del trabajo de carga</string>
-    <string name="permission_write">Escribir</string>
-    <string name="permission_read">Leer</string>
     <string name="doc_provider_root_downloads_title">Descargas de Piwigo</string>
     <string name="doc_provider_root_downloads_summary">Archivos descargados del servidor</string>
     <string name="downloads_menu_title">Descargas</string>

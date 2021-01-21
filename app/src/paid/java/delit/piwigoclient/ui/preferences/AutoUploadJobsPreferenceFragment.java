@@ -63,7 +63,7 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
 
         private void onUploadWirelessOnlyChanged(Boolean uploadOverWirelessOnly) {
             if(uploadOverWirelessOnly) {
-                getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
+                getUiHelper().runWithExtraPermissions(requireActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
             }
             if(BackgroundPiwigoUploadService.isStarted(requireContext())) {
                 // ensure the service knows the change occurred.
@@ -75,7 +75,7 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
             if(BackgroundPiwigoUploadService.isStarted(requireContext()) && !backgroundUploadEnabled) {
                 BackgroundPiwigoUploadService.sendActionKillService(requireContext());
             } else if(!BackgroundPiwigoUploadService.isStarted(requireContext()) && backgroundUploadEnabled) {
-                BackgroundPiwigoUploadService.startService(getContext());
+                BackgroundPiwigoUploadService.startService(requireContext());
             }
         }
     };

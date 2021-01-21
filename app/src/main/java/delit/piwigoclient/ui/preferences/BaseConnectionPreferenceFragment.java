@@ -1,9 +1,9 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,7 +25,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.HashSet;
@@ -617,13 +616,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
             if ("disk".equals(newValue) || valueChanged) {
                 if (!initialising) {
-                    String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-                    File videoCacheFolder = CacheUtils.getBasicCacheFolder(requireContext());
-                    if(videoCacheFolder != null && IOUtils.isPrivateFolder(requireContext(), videoCacheFolder.getPath())) {
-                        permission = null;
-                    }
-                    getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, permission, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
-                    //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
+                    Uri videoCacheFolder = Uri.fromFile(CacheUtils.getBasicCacheFolder(requireContext()));
+                    String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), videoCacheFolder, IOUtils.URI_PERMISSION_READ_WRITE);
+                    getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
                 }
             } else {
                 if (!initialising) {

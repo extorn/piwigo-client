@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -317,13 +316,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     protected void onDownloadItem(final PictureResourceItem model) {
         super.onDownloadItem(model);
-        String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
         DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
-        if(AppPreferences.havePermissions(requireContext(), downloadFolder, IOUtils.URI_PERMISSION_WRITE)) {
-            permission = null;
-        }
-        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, permission, getString(R.string.alert_write_permission_needed_for_download));
-        //        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.R, Integer.MAX_VALUE, Manifest.permission.MANAGE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
+        String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), downloadFolder.getUri(), IOUtils.URI_PERMISSION_READ_WRITE);
+        getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.Q, permission, getString(R.string.alert_write_permission_needed_for_download));
 
     }
 
@@ -339,7 +334,11 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 dialog.show();
 
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
+                } else {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions_scoped_storage));
+                }
                 EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), getModel()));
             }
         }

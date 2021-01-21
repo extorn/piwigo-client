@@ -51,7 +51,8 @@
     <string name="alert_error">Erreur</string>
     <string name="alert_error_no_app_available_to_handle_action">Aucune application n\'a été trouvée pour gérer cette action.</string>
     <string name="alert_error_no_app_available_to_rate_app">Aucune application n\'a pu être trouvée pour évaluer cette application. Merci d\'avoir essayé.</string>
-    <string name="alert_error_download_cancelled_insufficient_permissions">Téléchargement annulé. Les autorisations requises ne sont pas accordées.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions">Téléchargement annulé. Les autorisations FileSystem requises ne sont pas disponibles.</string>
+    <string name="alert_error_download_cancelled_insufficient_permissions_scoped_storage">Téléchargement annulé. Les autorisations FileSystem requises ne sont pas disponibles. Au lieu des autorisations à l\'échelle du système, sélectionnez à nouveau le dossier à utiliser dans les préférences de l\'application.</string>
     <string name="button_retry">Retenter</string>
 
 
@@ -418,6 +419,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="progress_adding_group">Ajout d\'un groupe</string>
     <string name="upload_unacceptable_files_prefix">Fichiers non acceptés</string>
     <string name="alert_error_unable_to_access_local_filesystem">Sans accès au système de fichiers local, cette action ne peut pas se poursuivre. Désolé.</string>
+    <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Sans accès au système de fichiers local, cette action ne peut pas se poursuivre. Au lieu des autorisations à l\'échelle du système, sélectionnez à nouveau le dossier à utiliser dans les préférences de l\'application.</string>
     <string name="alert_error_admin_user_required">Seuls les utilisateurs administrateurs peuvent télécharger à moins que le plugin de communauté ne soit installé. Désolé.</string>
     <string name="upload_username_title">Télécharger en tant que</string>
     <string name="certificates_heading">Certificats</string>
@@ -607,6 +609,7 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="subalbum_detail_txt_pattern">%1$d albums enfants</string>
     <string name="please_read_and_agree_with_eula_first">Veuillez d\'abord lire et confirmer l\'accord avec les termes du CLUF</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Les autorisations requises n\'ont pas été accordées. Action annulée.</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Les autorisations requises n\'ont pas été accordées. Action annulée. Au lieu des autorisations à l\'échelle du système, sélectionnez à nouveau le dossier à utiliser dans les préférences de l\'application.</string>
     <string name="default_str">défaut</string>
     <string name="copied_to_clipboard">Copié dans le presse-papier</string>
     <string name="alert_plugin_required_pattern">Plug-in serveur%1$s requis - Version%2$s ou plus récente</string>
@@ -709,8 +712,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_error_unable_add_files_previous_job_still_running">Impossible d\'ajouter des fichiers à télécharger. Un travail de téléchargement est en cours.</string>
     <string name="alert_error_unable_add_files_previous_job_unfinished">Impossible d\'ajouter des fichiers à télécharger. La tâche de téléchargement en cours doit se terminer en premier.</string>
     <string name="removing_files_from_job">Suppression de fichiers de la tâche de téléchargement</string>
-    <string name="permission_write">Écrire</string>
-    <string name="permission_read">Lis</string>
     <string name="doc_provider_root_downloads_title">Téléchargements Piwigo</string>
     <string name="doc_provider_root_downloads_summary">Fichiers téléchargés depuis le serveur</string>
     <string name="downloads_menu_title">Téléchargements</string>
