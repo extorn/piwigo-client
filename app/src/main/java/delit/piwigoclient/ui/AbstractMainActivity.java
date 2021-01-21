@@ -419,48 +419,34 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         // Handle navigation view item clicks here.
         int id = event.navigationitemSelected;
 
-        switch (id) {
-            case R.id.nav_upload:
-                showUpload();
-                break;
-            case R.id.nav_download:
-                showDownloads();
-                break;
-            case R.id.nav_groups:
-                showGroups();
-                break;
-            case R.id.nav_tags:
-                showTags();
-                break;
-            case R.id.nav_users:
-                showUsers();
-                break;
-            case R.id.nav_top_tips:
-                showTopTips();
-                break;
-            case R.id.nav_gallery:
-                showGallery(CategoryItem.ROOT_ALBUM);
-                break;
-            case R.id.nav_favorites:
-                showFavorites();
-                break;
-            case R.id.nav_about:
-                showAboutFragment();
-                break;
-            case R.id.nav_oss_licences:
-                showLicencesFragment();
-                break;
-            case R.id.nav_settings:
-                showPreferences();
-                break;
-            case R.id.nav_eula:
-                showEula();
-                break;
-            case R.id.nav_privacy:
-                showPrivacy();
-                break;
-            default:
-                onNavigationItemSelected(event, id);
+        if (id == R.id.nav_upload) {
+            showUpload();
+        } else if (id == R.id.nav_download) {
+            showDownloads();
+        } else if (id == R.id.nav_groups) {
+            showGroups();
+        } else if (id == R.id.nav_tags) {
+            showTags();
+        } else if (id == R.id.nav_users) {
+            showUsers();
+        } else if (id == R.id.nav_top_tips) {
+            showTopTips();
+        } else if (id == R.id.nav_gallery) {
+            showGallery(CategoryItem.ROOT_ALBUM);
+        } else if (id == R.id.nav_favorites) {
+            showFavorites();
+        } else if (id == R.id.nav_about) {
+            showAboutFragment();
+        } else if (id == R.id.nav_oss_licences) {
+            showLicencesFragment();
+        } else if (id == R.id.nav_settings) {
+            showPreferences();
+        } else if (id == R.id.nav_eula) {
+            showEula();
+        } else if (id == R.id.nav_privacy) {
+            showPrivacy();
+        } else {
+            onNavigationItemSelected(event, id);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

@@ -201,42 +201,18 @@ public class UploadActivity extends MyActivity<UploadActivity> {
         // Handle navigation view item clicks here.
         int id = event.navigationitemSelected;
 
-        switch (id) {
-//            case R.id.nav_upload:
-//                showUpload();
-//                break;
-            case R.id.nav_groups:
-                showGroups();
-                break;
-//            case R.id.nav_tags:
-//                showTags();
-//                break;
-            case R.id.nav_users:
-                showUsers();
-                break;
-            case R.id.nav_top_tips:
-                showTopTips();
-                break;
-            case R.id.nav_gallery:
-                showGallery();
-                break;
-//            case R.id.nav_favorites:
-//                showFavorites();
-//                break;
-//            case R.id.nav_about:
-//                showAboutFragment();
-//                break;
-//            case R.id.nav_oss_licences:
-//                showLicencesFragment();
-//                break;
-            case R.id.nav_settings:
-                showPreferences();
-                break;
-//            case R.id.nav_eula:
-//                showEula();
-//                break;
-            default:
-                onNavigationItemSelected(event, id);
+        if (id == R.id.nav_groups) {
+            showGroups();
+        } else if (id == R.id.nav_users) {
+            showUsers();
+        } else if (id == R.id.nav_top_tips) {
+            showTopTips();
+        } else if (id == R.id.nav_gallery) {
+            showGallery();
+        } else if (id == R.id.nav_settings) {
+            showPreferences();
+        } else {
+            onNavigationItemSelected(event, id);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

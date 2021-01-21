@@ -64,12 +64,10 @@ public abstract class AbstractPreferencesActivity<T extends AbstractPreferencesA
         // Handle navigation view item clicks here.
         int id = event.navigationitemSelected;
 
-        switch (id) {
-            case R.id.nav_gallery:
-                showGallery();
-                break;
-            default:
-                onNavigationItemSelected(event, id);
+        if (id == R.id.nav_gallery) {
+            showGallery();
+        } else {
+            onNavigationItemSelected(event, id);
         }
     }
 

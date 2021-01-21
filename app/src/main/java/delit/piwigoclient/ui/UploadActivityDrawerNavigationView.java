@@ -35,15 +35,13 @@ public class UploadActivityDrawerNavigationView extends BaseActivityDrawerNaviga
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_online_mode:
-                configureNetworkAccess(true);
-                break;
-            case R.id.nav_offline_mode:
-                configureNetworkAccess(false);
-                break;
-            default:
-                super.onNavigationItemSelected(item);
+        int itemId = item.getItemId();
+        if (itemId == R.id.nav_online_mode) {
+            configureNetworkAccess(true);
+        } else if (itemId == R.id.nav_offline_mode) {
+            configureNetworkAccess(false);
+        } else {
+            super.onNavigationItemSelected(item);
         }
         return true;
     }

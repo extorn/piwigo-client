@@ -200,21 +200,16 @@ public class DownloadSelectionMultiItemDialog {
     private void onDownloadOptionsSelected(FilterItemsRequestedForDownload filterItemsRequestedForDownload, String selectedFilesizeName, int selectedAction) {
         Set<ResourceItem> itemsToDownload = filterItemsRequestedForDownload.getItemsToDownload();
         Set<ResourceItem> vidsUnableToDownload = filterItemsRequestedForDownload.getVidsUnableToDownload();
-        switch(selectedAction) {
-            case R.string.copy_link:
-                onCopyLink(itemsToDownload, selectedFilesizeName);
-                break;
-            case R.string.download_file:
-                itemsToDownload.removeAll(vidsUnableToDownload);
-                onDownloadFile(itemsToDownload, selectedFilesizeName, vidsUnableToDownload);
-                break;
-            case R.string.share_with_an_app:
-                itemsToDownload.removeAll(vidsUnableToDownload);
-                onShareFile(itemsToDownload, selectedFilesizeName, vidsUnableToDownload);
-                break;
-            default:
-                // no selection (do nothing) - this is impossible
-                throw new IllegalStateException("No valid download files action selected: " + selectedAction);
+        if (selectedAction == R.string.copy_link) {
+            onCopyLink(itemsToDownload, selectedFilesizeName);
+        } else if (selectedAction == R.string.download_file) {
+            itemsToDownload.removeAll(vidsUnableToDownload);
+            onDownloadFile(itemsToDownload, selectedFilesizeName, vidsUnableToDownload);
+        } else if (selectedAction == R.string.share_with_an_app) {
+            itemsToDownload.removeAll(vidsUnableToDownload);
+            onShareFile(itemsToDownload, selectedFilesizeName, vidsUnableToDownload);
+        } else {// no selection (do nothing) - this is impossible
+            throw new IllegalStateException("No valid download files action selected: " + selectedAction);
         }
     }
 
