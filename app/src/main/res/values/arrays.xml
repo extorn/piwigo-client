@@ -248,7 +248,7 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.96</item>
+        <item>1.4.0.97</item>
         <item>"Bugfix:
                 - Last folder not default in folder select view
                 - Releasing Uri permissions caused crash
