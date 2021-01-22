@@ -716,5 +716,9 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="doc_provider_root_downloads_summary">Soubory stažené ze serveru</string>
     <string name="downloads_menu_title">Soubory ke stažení</string>
     <string name="view_exported_files">Zobrazit exportované soubory</string>
+    <string name="generating_upload_job">Konfigurace úlohy nahrávání pomocí vašeho výběru</string>
+    <string name="alert_error_files_without_permissions_pattern">Uri oprávnění nebyla poskytnuta pro všechny soubory. Ti, kteří to nebudou, nebudou nahrávat, pokud je úloha pozastavena a později obnovena (například pomocí správy napájení systému Android). Chcete-li se tomuto problému vyhnout, vyberte soubory, které chcete pomocí této aplikace nahrát, pokud je to možné. Ovlivněné soubory:%1$d.</string>
+    <string name="button_compress">Komprimovat</string>
+    <string name="unable_to_compress_without_data">Nelze komprimovat bez nastavení</string>
 
 </resources>

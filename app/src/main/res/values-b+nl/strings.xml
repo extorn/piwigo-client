@@ -716,5 +716,9 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="doc_provider_root_downloads_summary">Bestanden gedownload van de server</string>
     <string name="downloads_menu_title">Downloads</string>
     <string name="view_exported_files">Bekijk geëxporteerde bestanden</string>
+    <string name="generating_upload_job">Upload Job configureren met uw selectie</string>
+    <string name="alert_error_files_without_permissions_pattern">Uri-machtigingen zijn niet voor alle bestanden verstrekt. Degenen zonder zullen niet uploaden als de taak wordt onderbroken en later wordt hervat (bijvoorbeeld door Android-energiebeheer). Om dit probleem te voorkomen, selecteert u bestanden om te uploaden met deze app indien mogelijk. Betreffende bestanden:%1$d.</string>
+    <string name="button_compress">Samendrukken</string>
+    <string name="unable_to_compress_without_data">Kan niet comprimeren zonder de instellingen</string>
 
 </resources>

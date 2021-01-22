@@ -716,5 +716,9 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="doc_provider_root_downloads_summary">Archivos descargados del servidor</string>
     <string name="downloads_menu_title">Descargas</string>
     <string name="view_exported_files">Ver archivos exportados</string>
+    <string name="generating_upload_job">Configuración de Cargar trabajo con su selección</string>
+    <string name="alert_error_files_without_permissions_pattern">No se proporcionaron permisos Uri para todos los archivos. Aquellos que no lo tengan no se cargarán si el trabajo se detiene y luego se reanuda (por ejemplo, mediante la administración de energía de Android). Para evitar este problema, seleccione los archivos para cargar desde esta aplicación si es posible. Archivos afectados:%1$d.</string>
+    <string name="button_compress">Comprimir</string>
+    <string name="unable_to_compress_without_data">No se puede comprimir sin la configuración</string>
 
 </resources>

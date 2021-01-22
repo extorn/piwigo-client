@@ -716,5 +716,9 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="doc_provider_root_downloads_summary">从服务器下载的文件</string>
     <string name="downloads_menu_title">资料下载</string>
     <string name="view_exported_files">查看导出的文件</string>
+    <string name="generating_upload_job">根据您的选择配置上传作业</string>
+    <string name="alert_error_files_without_permissions_pattern">没有为所有文件提供Uri权限。 如果作业暂停并稍后恢复（例如，通过Android电源管理），则没有上传内容的用户将不会上传。 为避免此问题，请尽可能选择要使用此应用上传的文件。 受影响的文件：%1$d。</string>
+    <string name="button_compress">压缩</string>
+    <string name="unable_to_compress_without_data">没有设置就无法压缩</string>
 
 </resources>

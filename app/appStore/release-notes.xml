@@ -1,40 +1,50 @@
 <en-GB>
 Bugfix:
-- Further improvements to file system permissions requests
+- wasn't taking Uri permissions for files shared by another app, causing upload failure on job restart
+- calculation of upload job completion status was too expensive for large jobs causing App to be non responsive
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Další vylepšení požadavků na oprávnění systému souborů
+- nebral oprávnění Uri pro soubory sdílené jinou aplikací, což způsobilo selhání nahrávání při restartu úlohy
+- výpočet stavu dokončení úlohy nahrávání byl příliš nákladný pro velké úlohy, což způsobilo, že aplikace nereagovala
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Weitere Verbesserungen bei Dateisystemberechtigungsanforderungen
+- hat keine Uri-Berechtigungen für Dateien erhalten, die von einer anderen App freigegeben wurden, was beim Neustart des Jobs zu einem Upload-Fehler führte
+- Die Berechnung des Status des Abschlusses eines Upload-Jobs war für große Jobs zu teuer, sodass die App nicht mehr reagiert
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Más mejoras en las solicitudes de permisos del sistema de archivos
+- no estaba tomando permisos de Uri para archivos compartidos por otra aplicación, lo que provocó un error de carga al reiniciar el trabajo
+- el cálculo del estado de finalización del trabajo de carga era demasiado caro para trabajos grandes, lo que hacía que la aplicación no respondiera
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Améliorations supplémentaires des demandes d\'autorisations du système de fichiers
+- ne prenait pas les autorisations Uri pour les fichiers partagés par une autre application, provoquant un échec de téléchargement au redémarrage du travail
+- le calcul de l\'état d\'achèvement de la tâche de téléchargement était trop coûteux pour les tâches volumineuses, ce qui empêchait l\'application de répondre
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Ulteriori miglioramenti alle richieste di autorizzazioni del file system
+- non stava prendendo le autorizzazioni Uri per i file condivisi da un\'altra app, causando un errore di caricamento al riavvio del lavoro
+- il calcolo dello stato di completamento del lavoro di caricamento era troppo costoso per lavori di grandi dimensioni e l\'app non rispondeva
 </it-IT>
 <ja-JP>
 バグ修正：
--ファイルシステムのアクセス許可要求のさらなる改善
+-別のアプリで共有されているファイルのUri権限を取得していなかったため、ジョブの再起動時にアップロードが失敗しました
+-アップロードジョブの完了ステータスの計算は、大きなジョブにはコストがかかりすぎて、アプリが応答しなくなりました
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Verdere verbeteringen aan verzoeken om bestandssysteemrechten
+- nam geen Uri-machtigingen voor bestanden die door een andere app werden gedeeld, waardoor het uploaden mislukte bij het herstarten van de taak
+- de berekening van de voltooiingsstatus van de uploadtaak was te duur voor grote taken, waardoor de app niet reageerde
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Дальнейшие улучшения запросов разрешений файловой системы.
+- не использовались разрешения Uri для файлов, совместно используемых другим приложением, что приводило к сбою загрузки при перезапуске задания
+- расчет статуса завершения задания загрузки был слишком дорогим для больших заданий, из-за чего приложение не отвечало
 </ru-RU>
 <zh-CN>
 错误修正：
--对文件系统权限请求的进一步改进
+-未获得其他应用程序共享文件的Uri权限，导致作业重新启动时上传失败
+-对于大型任务而言，上传任务完成状态的计算过于昂贵，导致App无法响应
 </zh-CN>

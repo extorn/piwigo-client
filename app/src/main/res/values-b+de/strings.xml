@@ -716,5 +716,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="doc_provider_root_downloads_summary">Vom Server heruntergeladene Dateien</string>
     <string name="downloads_menu_title">Downloads</string>
     <string name="view_exported_files">Exportierte Dateien anzeigen</string>
+    <string name="generating_upload_job">Konfigurieren des Upload-Jobs mit Ihrer Auswahl</string>
+    <string name="alert_error_files_without_permissions_pattern">Uri-Berechtigungen wurden nicht für alle Dateien bereitgestellt. Diejenigen ohne werden nicht hochgeladen, wenn der Job angehalten und später wieder aufgenommen wird (z. B. durch Android Power Management). Um dieses Problem zu vermeiden, wählen Sie nach Möglichkeit Dateien aus, die über diese App hochgeladen werden sollen. Betroffene Dateien:%1$d.</string>
+    <string name="button_compress">Kompresse</string>
+    <string name="unable_to_compress_without_data">Ohne die Einstellungen kann nicht komprimiert werden</string>
 
 </resources>

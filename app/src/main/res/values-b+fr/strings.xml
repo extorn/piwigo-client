@@ -716,5 +716,9 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="doc_provider_root_downloads_summary">Fichiers téléchargés depuis le serveur</string>
     <string name="downloads_menu_title">Téléchargements</string>
     <string name="view_exported_files">Afficher les fichiers exportés</string>
+    <string name="generating_upload_job">Configuration de la tâche de téléchargement avec votre sélection</string>
+    <string name="alert_error_files_without_permissions_pattern">Les autorisations Uri n\'étaient pas fournies pour tous les fichiers. Ceux qui n\'en ont pas ne seront pas téléchargés si le travail est mis en pause puis repris (par exemple par la gestion de l\'alimentation Android). Pour éviter ce problème, sélectionnez les fichiers à télécharger à partir de cette application si possible. Fichiers concernés:%1$d.</string>
+    <string name="button_compress">Compresse</string>
+    <string name="unable_to_compress_without_data">Impossible de compresser sans les paramètres</string>
 
 </resources>
