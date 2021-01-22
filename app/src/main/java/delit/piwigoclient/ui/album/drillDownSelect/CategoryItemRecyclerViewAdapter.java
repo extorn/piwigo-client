@@ -28,7 +28,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 
-public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH,M>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>, VH extends CategoryItemRecyclerViewAdapter.CategoryItemViewHolder<VH, LVA, MSL, M>, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends BaseRecyclerViewAdapter<LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH, MSL> {
+public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH,M>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,CategoryItem>, VH extends CategoryItemRecyclerViewAdapter.CategoryItemViewHolder<VH, LVA, MSL, M>, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends BaseRecyclerViewAdapter<LVA, CategoryItemViewAdapterPreferences, CategoryItem, VH, MSL> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
@@ -288,7 +288,7 @@ public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerVie
         }
     }
 
-    protected abstract static class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH,LVA,MSL,M>, LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH,M>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends BaseViewHolder<VH,CategoryItemViewAdapterPreferences, CategoryItem, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
+    protected abstract static class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH,LVA,MSL,M>, LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH,M>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,CategoryItem>, M extends ResourceContainer<? extends CategoryItem, GalleryItem>> extends BaseViewHolder<VH,CategoryItemViewAdapterPreferences, CategoryItem, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
         private ImageView iconView;
         private ResizingPicassoLoader iconViewLoader;
 

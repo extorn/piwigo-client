@@ -51,7 +51,7 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
  * Created by gareth on 26/05/17.
  */
 
-public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter<?,?,?,Tag>, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag> {
+public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter<?,?,?>, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private static final String ARGS_UNSAVED_TAGS = "unsavedTags";
@@ -136,7 +136,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             getViewPrefs().readonly();
         }
 
-        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(requireContext(), PiwigoTagModel.class, tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
+        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(requireContext(), PiwigoTagModel.class, tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter() {
         }, getViewPrefs());
         /*if(!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();

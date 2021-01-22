@@ -13,7 +13,7 @@ import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 
-public class AlbumHeadingViewHolder<VH extends AlbumHeadingViewHolder<VH,LVA, T,MSL, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, RC extends ResourceContainer<?, T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
+public class AlbumHeadingViewHolder<VH extends AlbumHeadingViewHolder<VH,LVA, T,MSL, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, RC extends ResourceContainer<?, T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
 
     private TextView headingView;
     private int subAlbumCount;

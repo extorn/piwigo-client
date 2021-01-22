@@ -87,21 +87,10 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             getViewPrefs().readonly();
         }
 
-        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(requireContext(), groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
-            @Override
-            public void onItemLongClick(BaseRecyclerViewAdapter adapter, Group item) {
-                EventBus.getDefault().post(new ViewGroupEvent(item));
-            }
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onDisabledItemClick(A adapter, Group item) {
-                EventBus.getDefault().post(new ViewGroupEvent(item));
-            }
-        }, getViewPrefs());
+        GroupRecyclerViewAdapter<?,?,?> viewAdapter = new GroupRecyclerViewAdapter(requireContext(), groupsModel, new GroupSelectMultiSelectListener<>(), getViewPrefs());
         if (!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }
-
         // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!
         HashSet<Long> currentSelection = getCurrentSelection();
 
@@ -136,11 +125,27 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
                 loadGroupsPage(pageToLoad);
             }
         };
+
         scrollListener.configure(groupsModel.getPagesLoaded(), groupsModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
 
         return v;
     }
+
+    private static class GroupSelectMultiSelectListener<MSL extends GroupSelectMultiSelectListener<MSL,LVA>, LVA extends GroupRecyclerViewAdapter<LVA,?,MSL>> extends GroupRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,Group> {
+
+        @Override
+        public void onItemLongClick(LVA adapter, Group item) {
+            EventBus.getDefault().post(new ViewGroupEvent(item));
+        }
+
+        @Override
+        public void onDisabledItemClick(LVA adapter, Group item) {
+            EventBus.getDefault().post(new ViewGroupEvent(item));
+        }
+    }
+
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

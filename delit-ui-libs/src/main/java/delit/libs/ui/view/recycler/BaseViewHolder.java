@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import delit.libs.R;
 import delit.libs.ui.view.button.MaterialCheckboxTriState;
 
-public abstract class BaseViewHolder<VH extends BaseViewHolder<VH, P, T, LVA,MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, LVA extends BaseRecyclerViewAdapter<LVA,P, T, VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends CustomViewHolder<VH, LVA, P, T, MSL> {
+public abstract class BaseViewHolder<VH extends BaseViewHolder<VH, P, T, LVA,MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, LVA extends BaseRecyclerViewAdapter<LVA,P, T, VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends CustomViewHolder<VH, LVA, P, T, MSL> {
     private TextView txtTitle;
     private TextView detailsTitle;
     private View deleteButton;

@@ -3,7 +3,11 @@ package delit.libs.util.progress;
 import android.util.Log;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -190,6 +194,11 @@ public class TaskProgressTracker implements ProgressListener {
         return notifiableProgressStep;
     }
 
+    public synchronized void setExactProgress(double progress) {
+        long workToMarkDone = BigDecimal.valueOf(progress * totalWork).setScale(0, RoundingMode.HALF_DOWN).longValue();
+        setWorkDone(workToMarkDone);
+    }
+
     private static class SubTaskListener implements ProgressListener {
 
         private final TaskProgressTracker overallTaskTracker;
@@ -215,7 +224,9 @@ public class TaskProgressTracker implements ProgressListener {
          }
      }
 
+
     public static class ProgressAdapter implements ProgressListener {
+
         @Override
         public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
         }

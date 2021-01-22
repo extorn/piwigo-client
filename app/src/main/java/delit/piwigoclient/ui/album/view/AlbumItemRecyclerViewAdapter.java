@@ -25,7 +25,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  */
-public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends IdentifiableListViewAdapter<LVA, AlbumItemRecyclerViewAdapterPreferences, T, RC, VH, MSL> {
+public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA, VH,RC,T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends IdentifiableListViewAdapter<LVA, AlbumItemRecyclerViewAdapterPreferences, T, RC, VH, MSL> {
 
     public AlbumItemRecyclerViewAdapter(@NonNull final Context context, final Class<? extends ViewModelContainer> modelType, final RC gallery, MSL multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
         super(context, modelType, gallery, multiSelectStatusListener, prefs);
@@ -138,22 +138,22 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
 
     @Override
     protected CustomClickListener<MSL, LVA, AlbumItemRecyclerViewAdapterPreferences, T, VH> buildCustomClickListener(VH viewHolder) {
-        return new AlbumItemCustomClickListener<>(getModelType(), viewHolder, (LVA) this);
+        return new AlbumItemCustomClickListener<T,LVA,MSL,VH,RC>(getModelType(), viewHolder, (LVA) this);
     }
 
-    public abstract static class AlbumItemMultiSelectStatusAdapter<T extends GalleryItem> extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<T> {
+    public abstract static class AlbumItemMultiSelectStatusAdapter<MSL extends AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>,LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC> , VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>, T extends GalleryItem> extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,T> {
 
         protected abstract void onCategoryLongClick(CategoryItem album);
 
         protected abstract void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem);
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, T item) {
+        public void onItemClick(LVA adapter, T item) {
             super.onItemClick(adapter, item);
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item) {
+        public void onItemLongClick(LVA adapter, T item) {
             if (item instanceof CategoryItem) {
                 onCategoryLongClick((CategoryItem) item);
             }
@@ -162,9 +162,8 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         protected abstract void onCategoryClick(CategoryItem item);
     }
 
-    private static class AlbumItemCustomClickListener<T extends GalleryItem, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH,RC>, MSL extends AlbumItemMultiSelectStatusAdapter<T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends CustomClickListener<MSL,LVA, AlbumItemRecyclerViewAdapterPreferences, T, VH> {
+    private static class AlbumItemCustomClickListener<T extends GalleryItem, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH,RC>, MSL extends AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>> extends CustomClickListener<MSL,LVA, AlbumItemRecyclerViewAdapterPreferences, T, VH> {
 
-        private final int maxManualRetries = 2;
         private final Class<ViewModelContainer> modelType;
         private int manualRetries = 0;
 
@@ -208,6 +207,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
 
         @Override
         public void onClick(View v) {
+            int maxManualRetries = 2;
             if (v == getViewHolder().mImageView && !getViewHolder().imageLoader.isImageLoaded() && getViewHolder().imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
                 manualRetries++;
                 getViewHolder().imageLoader.cancelImageLoadIfRunning();
@@ -244,7 +244,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
                 PiwigoAlbum album = (PiwigoAlbum)itemStore;
                 boolean hideAlbums = !album.isHideAlbums();
                 album.setHideAlbums(hideAlbums);
-                AlbumHeadingViewHolder<?,LVA,T,MSL,RC> viewHolder = (AlbumHeadingViewHolder<?,LVA,T,MSL,RC>) getViewHolder();
+                AlbumHeadingViewHolder<?,?,?,?,?> viewHolder = (AlbumHeadingViewHolder<?,?,?,?,?>) getViewHolder();
                 viewHolder.setSubAlbumCount(album.getSubAlbumCount());
                 viewHolder.setShowAlbumCount(hideAlbums);
                 getParentAdapter().notifyDataSetChanged();
@@ -259,7 +259,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
 
         private void onCategoryLongClick() {
             if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled() && getParentAdapter().getMultiSelectStatusListener() != null) {
-                AlbumItemMultiSelectStatusAdapter multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
+                MSL multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
                 multiSelectListener.onCategoryLongClick((CategoryItem) getViewHolder().getItem());
             }
         }

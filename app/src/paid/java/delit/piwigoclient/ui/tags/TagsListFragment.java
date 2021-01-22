@@ -38,6 +38,7 @@ import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTags;
 import delit.piwigoclient.model.piwigo.Tag;
@@ -56,6 +57,9 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.model.PiwigoTagModel;
+import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
+import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
+import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
 
 /**
  * Created by gareth on 26/05/17.
@@ -66,7 +70,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
     private ExtendedFloatingActionButton retryActionButton;
     private PiwigoTags<Tag> tagsModel;
-    private TagRecyclerViewAdapter<?,?,?,Tag> viewAdapter;
+    private TagRecyclerViewAdapter<?,?,?> viewAdapter;
     private ExtendedFloatingActionButton addListItemButton;
     private AlertDialog addNewTagDialog;
     private TagRecyclerViewAdapter.TagViewAdapterPreferences viewPrefs;
@@ -494,15 +498,15 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         setViewControlStatusBasedOnSessionState();
     }
 
-    class TagListSelectListener extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag> {
+    private class TagListSelectListener<MSL extends TagListSelectListener<MSL,LVA>, LVA extends TagRecyclerViewAdapter<LVA,MSL,?>> extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, Tag> {
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Tag item) {
+        public void onItemDeleteRequested(LVA adapter, Tag item) {
             onDeleteTag(item);
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, Tag item) {
+        public void onItemClick(LVA adapter, Tag item) {
             onTagSelected(item);
         }
 

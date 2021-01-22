@@ -296,7 +296,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     @Override
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
         try {
-            updateNotificationText(getString(R.string.notification_text_background_upload_running), thisUploadJob.getUploadProgress(this));
+            updateNotificationText(getString(R.string.notification_text_background_upload_running), thisUploadJob.getOverallUploadProgressInt());
             boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
                 super.runJob(thisUploadJob, listener, deleteJobConfigFileOnSuccess);

@@ -5,18 +5,20 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
+import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
+
 public class FilesForUploadViewModel extends AndroidViewModel {
-    private FilesToUploadRecyclerViewAdapter.UploadDataItemModel uploadDataItemModel;
+    private UploadDataItemModel uploadDataItemModel;
 
     public FilesForUploadViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public void setFilesForUpload(FilesToUploadRecyclerViewAdapter.UploadDataItemModel uploadDataItemsModel) {
+    public void setFilesForUpload(UploadDataItemModel uploadDataItemsModel) {
         this.uploadDataItemModel = uploadDataItemsModel;
     }
 
-    public FilesToUploadRecyclerViewAdapter.UploadDataItemModel getUploadDataItemModel() {
+    public UploadDataItemModel getUploadDataItemModel() {
         return uploadDataItemModel;
     }
 }

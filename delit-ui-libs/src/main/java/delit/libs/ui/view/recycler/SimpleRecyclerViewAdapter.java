@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class SimpleRecyclerViewAdapter<LVA extends SimpleRecyclerViewAdapter<LVA,T,P,VH,MSL>, T, P extends BaseRecyclerViewAdapterPreferences<P>, VH extends CustomViewHolder<VH, LVA, P,T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
+public abstract class SimpleRecyclerViewAdapter<LVA extends SimpleRecyclerViewAdapter<LVA,T,P,VH,MSL>, T, P extends BaseRecyclerViewAdapterPreferences<P>, VH extends CustomViewHolder<VH, LVA, P,T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
 
     private List<T> itemStore;
 

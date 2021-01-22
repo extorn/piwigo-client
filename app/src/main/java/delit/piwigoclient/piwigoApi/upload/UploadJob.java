@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi.upload;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.util.Log;
 
@@ -25,6 +26,8 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.Md5SumUtils;
+import delit.libs.util.progress.ProgressListener;
+import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -71,6 +74,10 @@ public class UploadJob implements Parcelable {
     private volatile boolean cancelUploadAsap;
     private DocumentFile loadedFromFile;
     private boolean wasLastRunCancelled;
+    private double overallUploadProgress;
+    private TaskProgressTracker taskProgressTracker;
+    private long totalWork;
+    private long workDone;
 
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, List<Uri> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
@@ -108,6 +115,9 @@ public class UploadJob implements Parcelable {
         imageCompressionParams = ParcelUtils.readParcelable(in, UploadJob.ImageCompressionParams.class);
         allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
         isDeleteFilesAfterUpload = ParcelUtils.readBool(in);
+        overallUploadProgress = in.readDouble();
+        totalWork = in.readLong();
+        workDone = in.readLong();
     }
 
     public static final Creator<UploadJob> CREATOR = new Creator<UploadJob>() {
@@ -122,23 +132,92 @@ public class UploadJob implements Parcelable {
         }
     };
 
-    public int getUploadProgress(@NonNull Context context) {
-        int filesCount = filesForUpload.size();
-        long totalProgress = filesCount * 100;
-        long jobProgress = 0;
+    public static class ProgressAdapterChain extends TaskProgressTracker.ProgressAdapter {
+        private UploadJob uploadJob;
+        private ProgressListener chained;
+        public ProgressAdapterChain(@NonNull UploadJob uploadJob, @NonNull ProgressListener chained) {
+            this.chained = chained;
+            this.uploadJob = uploadJob;
+        }
+
+        @Override
+        public void onProgress(double percent) {
+            uploadJob.overallUploadProgress = percent;
+            uploadJob.workDone = uploadJob.totalWork - uploadJob.taskProgressTracker.getRemainingWork();
+//            chained.onProgress(percent);
+        }
+
+        @Override
+        public double getUpdateStep() {
+            return 0;//chained.getUpdateStep();
+        }
+    }
+
+    public TaskProgressTracker getProgressTrackerForJob(@NonNull Context context) {
+        if(taskProgressTracker == null) {
+            if(this.totalWork == 0) {
+                this.totalWork = calculateTotalWork(context);
+                this.workDone = calculateWorkDone(context); // this will assume checksums need to occur still, but will deal with files uploaded or partially so as best it can.
+            }
+            taskProgressTracker = new TaskProgressTracker(totalWork, new ProgressAdapterChain(this, null));
+            taskProgressTracker.setWorkDone(workDone);
+
+        }
+        return taskProgressTracker;
+    }
+
+    private long calculateWorkDone(@NonNull Context context) {
+        long workDone = 0;
         for (Uri f : filesForUpload) {
             if (CANCELLED.equals(fileUploadStatus.get(f))) {
-                totalProgress -= 100;
+                workDone += 7;
                 continue;
             }
             if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isVideo(context, f) && isCompressVideosBeforeUpload())) {
-                totalProgress += 100;
+                if(getCompressionProgress(context, f) == 100) {
+                    workDone += 6; // if it is partially done, then it's going to be scrapped and re-done.
+                }
             }
-            jobProgress += getCompressionProgress(context, f);
-            jobProgress += getUploadProgress(f);
-
+            workDone += Math.rint(6.0 * getUploadProgress(f) / 100);
         }
-        return (int) Math.rint(((double) jobProgress) / totalProgress * 100);
+        return workDone;
+    }
+
+    public int getOverallUploadProgressInt() {
+        return (int) Math.rint(100 * overallUploadProgress);
+    }
+
+    public TaskProgressTracker getTaskProgressTrackerForSingleFileChunkParsing(TaskProgressTracker dataUploadListener, long totalBytes, long bytesUploaded) {
+        double percRemainingToUpload = bytesUploaded == 0 ? 1 : (1 - ((double)bytesUploaded) / totalBytes);
+        return dataUploadListener.addSubTask(totalBytes - bytesUploaded, (long)Math.ceil(percRemainingToUpload * 6));
+    }
+
+    public TaskProgressTracker getTaskProgressTrackerForAllChecksumCalculation() {
+        return taskProgressTracker.addSubTask(filesForUpload.size(), filesForUpload.size() * 2);
+    }
+
+    public TaskProgressTracker getTaskProgressTrackerForSingleFileVerification() {
+        return taskProgressTracker.addSubTask(1, filesForUpload.size());
+    }
+
+
+    public TaskProgressTracker getTaskProgressTrackerForAllDataUpload() {
+        return taskProgressTracker.addSubTask(filesForUpload.size(), filesForUpload.size() * 6);
+    }
+
+    public TaskProgressTracker getTaskProgressTrackerForSingleFileCompression() {
+        return taskProgressTracker.addSubTask(100, 6);
+    }
+
+    public long calculateTotalWork(@NonNull Context context) {
+        int filesCount = filesForUpload.size();
+        long totalWork = filesCount * 9; // 6 for data upload, 2 for checksum calc, 1 for data verification
+        for (Uri f : filesForUpload) {
+            if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isVideo(context, f) && isCompressVideosBeforeUpload())) {
+                totalWork += 6; // another 6 for compression
+            }
+        }
+        return totalWork;
     }
 
     public void setToRunInBackground() {
@@ -379,47 +458,54 @@ public class UploadJob implements Parcelable {
     }
 
     public synchronized Map<Uri, Md5SumUtils.Md5SumException> calculateChecksums(@NonNull Context context) {
-        Map<Uri, Md5SumUtils.Md5SumException> failures = new HashMap<>(0);
-        ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded(context);
-        boolean newJob = false;
-        if (fileChecksums == null) {
-            fileChecksums = new HashMap<>(filesForUpload.size());
-            newJob = true;
-        }
-        for (Uri f : filesNotFinished) {
-            if(!IOUtils.exists(context, f)) {
-                // Remove file from upload list
-                cancelFileUpload(f);
-            } else if (needsUpload(f) || needsVerification(f)) {
-                Uri fileForChecksumCalc = null;
-                if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
-                        || canCompressVideoFile(context, f) && isCompressVideosBeforeUpload())) {
-                    fileForChecksumCalc = f;
-                } else if(getCompressedFile(f) != null) {
-                    fileForChecksumCalc = getCompressedFile(f);
-                }
-                if(fileForChecksumCalc != null) {
-                    // if its not a file we're going to compress but haven't yet
+        TaskProgressTracker checksumProgressTracker = getTaskProgressTrackerForAllChecksumCalculation();
+        try {
+            Map<Uri, Md5SumUtils.Md5SumException> failures = new HashMap<>(0);
+            ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded(context);
+            boolean newJob = false;
+            if (fileChecksums == null) {
+                fileChecksums = new HashMap<>(filesForUpload.size());
+                newJob = true;
+            }
+            for (Uri f : filesNotFinished) {
+                TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask(100, 1);
+                if (!IOUtils.exists(context, f)) {
+                    // Remove file from upload list
+                    cancelFileUpload(f);
+                } else if (needsUpload(f) || needsVerification(f)) {
+                    Uri fileForChecksumCalc = null;
+                    if (!((isPhoto(context, f) && isCompressPhotosBeforeUpload())
+                            || canCompressVideoFile(context, f) && isCompressVideosBeforeUpload())) {
+                        fileForChecksumCalc = f;
+                    } else if (getCompressedFile(f) != null) {
+                        fileForChecksumCalc = getCompressedFile(f);
+                    }
+                    if (fileForChecksumCalc != null) {
+                        // if its not a file we're going to compress but haven't yet
 
-                    // recalculate checksums for all files not yet uploaded
-                    String checksum = null;
-                    try {
-                        checksum = Md5SumUtils.calculateMD5(context.getContentResolver(), fileForChecksumCalc);
-                    } catch (Md5SumUtils.Md5SumException e) {
-                        failures.put(f, e);
-                        Logging.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
-                    } finally {
-                        if (!newJob) {
-                            fileChecksums.remove(f);
-                        }
-                        if (checksum != null) {
-                            fileChecksums.put(f, checksum);
+                        // recalculate checksums for all files not yet uploaded
+                        String checksum = null;
+                        try {
+                            checksum = Md5SumUtils.calculateMD5(context.getContentResolver(), fileForChecksumCalc, fileChecksumProgressTracker);
+                        } catch (Md5SumUtils.Md5SumException e) {
+                            failures.put(f, e);
+                            Logging.log(Log.DEBUG, TAG, "Error calculating MD5 hash for file. Noting failure");
+                        } finally {
+                            if (!newJob) {
+                                fileChecksums.remove(f);
+                            }
+                            if (checksum != null) {
+                                fileChecksums.put(f, checksum);
+                            }
                         }
                     }
                 }
+                fileChecksumProgressTracker.markComplete();
             }
+            return failures;
+        } finally {
+            checksumProgressTracker.markComplete();
         }
-        return failures;
     }
 
     public synchronized Map<Uri, String> getFileChecksums() {
@@ -737,6 +823,9 @@ public class UploadJob implements Parcelable {
         ParcelUtils.writeParcelable(dest, imageCompressionParams);
         ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
         ParcelUtils.writeBool(dest, isDeleteFilesAfterUpload);
+        dest.writeDouble(overallUploadProgress);
+        dest.writeLong(totalWork);
+        dest.writeLong(workDone);
     }
 
     public boolean isDeleteFilesAfterUpload() {

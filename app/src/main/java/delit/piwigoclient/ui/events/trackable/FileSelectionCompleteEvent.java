@@ -15,13 +15,20 @@ import delit.piwigoclient.ui.file.FolderItem;
 
 public class FileSelectionCompleteEvent extends TrackableResponseEvent {
 
-    private long actionTimeMillis;
+    private final long actionTimeMillis;
     private final ArrayList<FolderItem> selectedFolderItems;
+    private boolean necessaryPermissionsGranted = true;
 
     public FileSelectionCompleteEvent(int actionId, long actionTimeMillis) {
         super(actionId);
         this.selectedFolderItems = new ArrayList<>();
         this.actionTimeMillis = actionTimeMillis;
+    }
+
+    public FileSelectionCompleteEvent withFiles(ArrayList<Uri> uris, boolean permissionsGrantedForAllFilesNeeded) {
+        withFiles(uris);
+        necessaryPermissionsGranted = permissionsGrantedForAllFilesNeeded;
+        return this;
     }
 
     public FileSelectionCompleteEvent withFiles(Collection<Uri> uris) {
@@ -51,5 +58,9 @@ public class FileSelectionCompleteEvent extends TrackableResponseEvent {
             selectedFiles.add(item.getDocumentFile());
         }
         return selectedFiles;
+    }
+
+    public boolean isNecessaryPermissionsGranted() {
+        return necessaryPermissionsGranted;
     }
 }

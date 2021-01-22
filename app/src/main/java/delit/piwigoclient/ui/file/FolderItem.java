@@ -30,9 +30,9 @@ import delit.libs.util.progress.TaskProgressTracker;
 public class FolderItem implements Parcelable {
     private static final AtomicLong uidGen = new AtomicLong();
     private static final String TAG = "FolderItem";
-    private long uid;
+    private final long uid;
     private Uri rootUri;
-    private Uri itemUri;
+    private final Uri itemUri;
     private DocumentFile itemDocFile;
     private Boolean isFolder;
     private Boolean isFile; // items are not files or folders if they are special system files
@@ -46,6 +46,7 @@ public class FolderItem implements Parcelable {
     private final static int DOCFILE = 1;
     private final static int FILE = 2;
     private final static int MEDIASTORE = 3;
+    private int uriPermissions;
 
     public FolderItem(Uri itemUri) {
         this.itemUri = itemUri;
@@ -77,6 +78,7 @@ public class FolderItem implements Parcelable {
         mime = in.readString();
         fileLength = in.readLong();
         fieldsLoadedFrom = in.readInt();
+        uriPermissions = in.readInt();
     }
 
     @Override
@@ -92,6 +94,7 @@ public class FolderItem implements Parcelable {
         dest.writeString(mime);
         dest.writeLong(fileLength);
         dest.writeInt(fieldsLoadedFrom);
+        dest.writeInt(uriPermissions);
     }
 
     @Override
@@ -274,6 +277,10 @@ public class FolderItem implements Parcelable {
         return cached;
     }
 
+    public int getUriPermissions() {
+        return uriPermissions;
+    }
+
     public static <T extends FolderItem> boolean  cacheDocumentInformation(@NonNull Context context, @NonNull List<T> items, ProgressListener taskListener) {
         if(items.size() == 0) {
             return true;
@@ -329,5 +336,9 @@ public class FolderItem implements Parcelable {
             Logging.log(Log.ERROR, TAG, "Timeout while waiting for folder content field loading executor to end");
         }
         return !cancelled;
+    }
+
+    public void setPermissionsGranted(int permissions) {
+        uriPermissions = permissions;
     }
 }

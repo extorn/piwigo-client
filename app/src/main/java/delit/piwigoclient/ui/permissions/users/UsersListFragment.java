@@ -34,6 +34,7 @@ import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
+import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
@@ -50,6 +51,8 @@ import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
 import delit.piwigoclient.ui.model.PiwigoUsersModel;
+import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
+import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
 
 /**
  * Created by gareth on 26/05/17.
@@ -167,18 +170,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new UserRecyclerViewAdapter(getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusAdapter<User>() {
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, User u) {
-                onDeleteUser(u);
-            }
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, User item) {
-                EventBus.getDefault().post(new ViewUserEvent(item));
-            }
-        }, viewPrefs);
+        viewAdapter = new UserRecyclerViewAdapter(getContext(), usersModel, new UserMultiSelectListener(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
         recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -427,4 +419,15 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         }
     }
 
+    private class UserMultiSelectListener<MSL extends UserMultiSelectListener<MSL,LVA>, LVA extends UserRecyclerViewAdapter<LVA,?,MSL>> extends UserRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, User> {
+        @Override
+        public  void onItemDeleteRequested(LVA adapter, User u) {
+            onDeleteUser(u);
+        }
+
+        @Override
+        public void onItemClick(LVA adapter, User item) {
+            EventBus.getDefault().post(new ViewUserEvent(item));
+        }
+    }
 }

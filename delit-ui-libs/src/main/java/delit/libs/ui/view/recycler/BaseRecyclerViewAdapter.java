@@ -25,7 +25,7 @@ import delit.libs.ui.view.list.SelectableItemsAdapter;
  * @param <T> Item
  * @param <VH> ViewHolder for each Item
  */
-public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapter<LVA, P,T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends RecyclerView.Adapter<VH> implements Enableable, SelectableItemsAdapter<T> {
+public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapter<LVA, P,T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends RecyclerView.Adapter<VH> implements Enableable, SelectableItemsAdapter<T> {
 
     private static final String TAG = "BaseRecyclerViewAdapter";
     final MSL multiSelectStatusListener;
@@ -137,8 +137,8 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
             selectedResourceIds.clear();
         }
         notifyItemRangeChanged(0, getItemCount());
-        multiSelectStatusListener.onMultiSelectStatusChanged(this, prefs.isAllowItemSelection());
-        multiSelectStatusListener.onItemSelectionCountChanged(this, selectedResourceIds.size());
+        multiSelectStatusListener.onMultiSelectStatusChanged((LVA) this, prefs.isAllowItemSelection());
+        multiSelectStatusListener.onItemSelectionCountChanged((LVA) this, selectedResourceIds.size());
     }
 
     public boolean isItemSelectionAllowed() {
@@ -185,7 +185,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
     @Override
     public void clearSelectedItemIds() {
         selectedResourceIds.clear();
-        multiSelectStatusListener.onItemSelectionCountChanged(this,selectedResourceIds.size());
+        multiSelectStatusListener.onItemSelectionCountChanged((LVA) this,selectedResourceIds.size());
         notifyItemRangeChanged(0, getItemCount());
     }
 
@@ -194,7 +194,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
         for (int i = 0; i < getItemCount(); i++) {
             selectedResourceIds.add(getItemId(i));
         }
-        multiSelectStatusListener.onItemSelectionCountChanged(this,selectedResourceIds.size());
+        multiSelectStatusListener.onItemSelectionCountChanged((LVA) this,selectedResourceIds.size());
         notifyItemRangeChanged(0, getItemCount());
     }
 
@@ -281,6 +281,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
         }
     }
 
+
     public ItemSelectionListener<LVA, VH,P,T,MSL> buildItemSelectionListener(VH viewHolder) {
         return new ItemSelectionListener<>((LVA)this, viewHolder);
     }
@@ -295,61 +296,61 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
     }
 
     public void onDeleteItem(VH viewHolder, View v) {
-        multiSelectStatusListener.onItemDeleteRequested(this, viewHolder.getItem());
+        multiSelectStatusListener.onItemDeleteRequested((LVA) this, viewHolder.getItem());
     }
 
     public MSL getMultiSelectStatusListener() {
         return multiSelectStatusListener;
     }
 
-    public interface MultiSelectStatusListener<T> {
-        <A extends BaseRecyclerViewAdapter> void onMultiSelectStatusChanged(A adapter, boolean multiSelectEnabled);
+    public interface MultiSelectStatusListener<MSL extends MultiSelectStatusListener<MSL,LVA,T>, LVA extends BaseRecyclerViewAdapter<LVA, ?, T, ?, MSL>, T> {
+        void onMultiSelectStatusChanged(LVA adapter, boolean multiSelectEnabled);
 
-        <A extends BaseRecyclerViewAdapter> void onItemSelectionCountChanged(A adapter, int size);
+        void onItemSelectionCountChanged(LVA adapter, int size);
 
-        <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, T g);
+        void onItemDeleteRequested(LVA adapter, T g);
 
-        <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, T item);
+        void onItemClick(LVA adapter, T item);
 
-        <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item);
+        void onItemLongClick(LVA adapter, T item);
 
-        <A extends BaseRecyclerViewAdapter> void onDisabledItemClick(A adapter, T item);
+        void onDisabledItemClick(LVA adapter, T item);
     }
 
-    public static class MultiSelectStatusAdapter<T> implements MultiSelectStatusListener<T> {
+    public static class MultiSelectStatusAdapter<MSA extends MultiSelectStatusAdapter<MSA,LVA,T>, LVA extends BaseRecyclerViewAdapter<LVA, ?, T, ?, MSA>, T> implements MultiSelectStatusListener<MSA,LVA, T> {
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onMultiSelectStatusChanged(A adapter, boolean multiSelectEnabled) {
+        public void onMultiSelectStatusChanged(LVA adapter, boolean multiSelectEnabled) {
 
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemSelectionCountChanged(A adapter, int size) {
+        public void onItemSelectionCountChanged(LVA adapter, int size) {
 
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, T g) {
+        public void onItemDeleteRequested(LVA adapter, T g) {
 
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, T item) {
+        public void onItemClick(LVA adapter, T item) {
 
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item) {
+        public void onItemLongClick(LVA adapter, T item) {
 
         }
 
         @Override
-        public <A extends BaseRecyclerViewAdapter> void onDisabledItemClick(A adapter, T item) {
+        public void onDisabledItemClick(LVA adapter, T item) {
 
         }
     }
 
-    public static class ItemSelectionListener<LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> implements CompoundButton.OnCheckedChangeListener {
+    public static class ItemSelectionListener<LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> implements CompoundButton.OnCheckedChangeListener {
 
         private final VH holder;
         private final LVA adapter;

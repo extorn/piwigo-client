@@ -19,7 +19,7 @@ import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
  */
 
 //public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> {
-public class GroupRecyclerViewAdapter<RVA extends GroupRecyclerViewAdapter<RVA, VH,MSL>, VH extends GroupRecyclerViewAdapter.GroupViewHolder<VH, RVA,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> extends IdentifiableListViewAdapter<RVA, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group, PiwigoGroups, VH, MSL> {
+public class GroupRecyclerViewAdapter<RVA extends GroupRecyclerViewAdapter<RVA, VH,MSL>, VH extends GroupRecyclerViewAdapter.GroupViewHolder<VH, RVA,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,RVA,Group>> extends IdentifiableListViewAdapter<RVA, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group, PiwigoGroups, VH, MSL> {
 
     public GroupRecyclerViewAdapter(Context context, final PiwigoGroups groups, MSL multiSelectStatusListener, GroupViewAdapterPreferences prefs) {
         super(context, null, groups, multiSelectStatusListener, prefs);
@@ -34,7 +34,7 @@ public class GroupRecyclerViewAdapter<RVA extends GroupRecyclerViewAdapter<RVA, 
     public static class GroupViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<GroupViewAdapterPreferences> {
     }
 
-    public static class GroupViewHolder<VH extends GroupViewHolder<VH, LVA,MSL>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<Group>> extends BaseViewHolder<VH, GroupViewAdapterPreferences, Group, LVA,MSL> {
+    public static class GroupViewHolder<VH extends GroupViewHolder<VH, LVA,MSL>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,Group>> extends BaseViewHolder<VH, GroupViewAdapterPreferences, Group, LVA,MSL> {
 
         private GroupViewAdapterPreferences adapterPrefs;
 

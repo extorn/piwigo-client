@@ -148,8 +148,8 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         return new FragmentUIHelper<>((T) this, prefs, context, attachedView);
     }
 
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new BasicPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<T> buildPiwigoResponseListener(Context context) {
+        return new BasicPiwigoResponseListener<>();
     }
 
     protected boolean isSessionDetailsChanged() {
@@ -160,7 +160,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         return !PiwigoSessionDetails.matchesServerConnection(ConnectionPreferences.getActiveProfile(), piwigoServerConnected);
     }
 
-    protected void updateActiveSessionDetails() {
+    public void updateActiveSessionDetails() {
         piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile());
         piwigoServerConnected = PiwigoSessionDetails.getActiveServerConnection(ConnectionPreferences.getActiveProfile());
     }
@@ -192,7 +192,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         if(AdsManager.getInstance(getContext()).hasAdvertLoadProblem(getContext())) {
             Logging.log(Log.INFO, TAG, "warning user that adverts are unavailable");
             prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).apply();
-            uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener(getUiHelper()));
+            uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener<>(getUiHelper()));
         }
     }
 
@@ -234,8 +234,8 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         coreComponentsInitialised = true;
         if (uiHelper == null) {
             uiHelper = buildUIHelper(getContext(), attachedView);
-            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
-            listener.withUiHelper(this, uiHelper);
+            BasicPiwigoResponseListener<T> listener = buildPiwigoResponseListener(getContext());
+            listener.withUiHelper((T)this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
         if (savedInstanceState != null) {
@@ -255,7 +255,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         this.theme = theme;
     }
 
-    private static class AdLoadErrorDialogListener<T extends MyFragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>,T> implements Parcelable {
+    private static class AdLoadErrorDialogListener<T extends MyFragment<T>> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>,T> implements Parcelable {
 
         private long shownAt;
         private LifecycleObserver observer;
@@ -280,15 +280,15 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
             return 0;
         }
 
-        public static final Creator<AdLoadErrorDialogListener> CREATOR = new Creator<AdLoadErrorDialogListener>() {
+        public static final Creator<AdLoadErrorDialogListener<?>> CREATOR = new Creator<AdLoadErrorDialogListener<?>>() {
             @Override
-            public AdLoadErrorDialogListener createFromParcel(Parcel in) {
-                return new AdLoadErrorDialogListener(in);
+            public AdLoadErrorDialogListener<?> createFromParcel(Parcel in) {
+                return new AdLoadErrorDialogListener<>(in);
             }
 
             @Override
-            public AdLoadErrorDialogListener[] newArray(int size) {
-                return new AdLoadErrorDialogListener[size];
+            public AdLoadErrorDialogListener<?>[] newArray(int size) {
+                return new AdLoadErrorDialogListener<?>[size];
             }
         };
 
@@ -324,10 +324,10 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
     }
 
     protected boolean isAppInReadOnlyMode() {
-        return prefs.getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
+        return prefs.getBoolean(requireContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
-    protected SharedPreferences getPrefs() {
+    public SharedPreferences getPrefs() {
         return prefs;
     }
 }

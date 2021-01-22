@@ -110,14 +110,15 @@ public class AppSettingsViewModel extends AndroidViewModel {
     public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId, boolean removeTreeToo) {
         LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
         LiveData<List<UriPermissionUse>> liveData = getAllForUri(uri);
-        liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context, liveData, uri, consumerId, removeTreeToo));
+        DisplayUtils.runOnUiThread(()->{liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uri, consumerId, removeTreeToo));});
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void releasePersistableUriPermission(@NonNull Context context, @NonNull Collection<Uri> uris, String consumerId, boolean removeTreeToo) {
         LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
         LiveData<List<UriPermissionUse>> liveData = getAllForUris(uris);
-        liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context, liveData, uris, consumerId, removeTreeToo));
+        //TODO is this actually going to help?!
+        DisplayUtils.runOnUiThread(()->{liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uris, consumerId, removeTreeToo));});
     }
 
     //TODO need to use this kind of thing to ensure we ask user to add permissions back for URis that they removed permissions for in the system UI

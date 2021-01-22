@@ -533,7 +533,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if(getListAdapter() == null) {
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<FolderItem>(), getViewPrefs());
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter(), getViewPrefs());
             viewAdapter.setTaskListener(new FolderItemTaskListener(getUiHelper()));
 
             if (!viewAdapter.isItemSelectionAllowed()) {

@@ -163,19 +163,7 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new GroupRecyclerViewAdapter(getContext(), groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Group item) {
-                onDeleteGroup(item);
-            }
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, Group item) {
-                EventBus.getDefault().post(new ViewGroupEvent(item));
-            }
-
-        }, viewPrefs);
+        viewAdapter = new GroupRecyclerViewAdapter(getContext(), groupsModel, new GroupListMultiSelectListener<>(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
         recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -200,6 +188,19 @@ public class GroupsListFragment extends MyFragment<GroupsListFragment> {
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;
+    }
+
+    private class GroupListMultiSelectListener<MSL extends GroupListMultiSelectListener<MSL,LVA>, LVA extends GroupRecyclerViewAdapter<LVA,?,MSL>> extends GroupRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,Group> {
+
+        @Override
+        public  void onItemDeleteRequested(LVA adapter, Group item) {
+            onDeleteGroup(item);
+        }
+
+        @Override
+        public void onItemClick(LVA adapter, Group item) {
+            EventBus.getDefault().post(new ViewGroupEvent(item));
+        }
     }
 
     @Override

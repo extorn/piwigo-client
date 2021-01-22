@@ -10,7 +10,7 @@ import delit.piwigoclient.model.piwigo.PiwigoUtils;
 
 import static android.view.View.INVISIBLE;
 
-public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, MSL, RC,T>, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, RC extends PiwigoAlbum<T>, T extends CategoryItem> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
+public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, MSL, RC,T>, LVA extends AlbumItemRecyclerViewAdapter<LVA,T,MSL,VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, RC extends PiwigoAlbum<T>, T extends CategoryItem> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
     public TextView mPhotoCountView;
 
     public CategoryItemViewHolder(View view, LVA parentAdapter, int viewType) {

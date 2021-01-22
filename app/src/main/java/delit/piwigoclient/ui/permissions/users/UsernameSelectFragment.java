@@ -100,7 +100,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             usernamesModel = new PiwigoUsernames();
         }
 
-        UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(requireContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter<Username>() {
+        UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(requireContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter() {
         }, getViewPrefs());
 
         // need to load this before the list adapter is added else will load from the list adapter which hasn't been inited yet!

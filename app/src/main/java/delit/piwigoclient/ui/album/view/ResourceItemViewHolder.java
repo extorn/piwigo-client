@@ -16,7 +16,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 
-public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL,T, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<T>, T extends ResourceItem, RC extends PiwigoAlbum<T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
+public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL,T, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, T extends ResourceItem, RC extends PiwigoAlbum<T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
     public AppCompatImageView mTypeIndicatorImg;
     public AppCompatCheckBox checkBox;
 

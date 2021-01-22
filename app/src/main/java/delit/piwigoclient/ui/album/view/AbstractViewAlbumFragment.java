@@ -606,7 +606,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         viewAdapterListener = new AlbumViewAdapterListener();
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter<>(requireContext(), PiwigoAlbumModel.class, galleryModel, viewAdapterListener, viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(requireContext(), PiwigoAlbumModel.class, galleryModel, viewAdapterListener, viewPrefs);
 
         if (savedInstanceState != null) {
             viewAdapter.setInitiallySelectedItems(new HashSet<>());

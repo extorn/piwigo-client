@@ -15,12 +15,15 @@ import android.view.View;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.MimeTypeFilter;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -29,18 +32,21 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomToolbar;
+import delit.libs.util.IOUtils;
 import delit.libs.util.progress.ProgressListener;
 import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
@@ -65,10 +71,12 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameRecyclerViewAdapter;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
+import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
 import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 
@@ -427,9 +435,13 @@ public class UploadActivity extends MyActivity<UploadActivity> {
     private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<UploadActivity, Intent, Integer, Void> implements ProgressListener {
 
 
+        private final AppSettingsViewModel appSettingsViewModel;
+
         public SharedFilesIntentProcessingTask(UploadActivity parent) {
             super(parent);
             withContext(parent);
+            ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(parent);
+            appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
         }
 
         @Override
@@ -438,13 +450,47 @@ public class UploadActivity extends MyActivity<UploadActivity> {
             getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),0);
         }
 
+        private class SentFilesResult {
+
+            private ArrayList<Uri> sentFiles;
+            private HashMap<Uri, Integer> sentFilesAndPermissions;
+            private int expectedPermissionsGranted;
+
+            public SentFilesResult(int sentFilesCount) {
+                this.sentFiles = new ArrayList<>(sentFilesCount);
+                this.sentFilesAndPermissions = new HashMap<>(sentFilesCount);
+            }
+
+            public ArrayList<FolderItem> getSentFiles() {
+                ArrayList<FolderItem> items = new ArrayList<>(sentFiles.size());
+                for(Uri uri : sentFiles) {
+                    FolderItem fi = new FolderItem(uri);
+                    Integer perms = sentFilesAndPermissions.get(uri);
+                    if(perms != null) {
+                        fi.setPermissionsGranted(perms);
+                    }
+                    items.add(fi);
+                }
+                return items;
+            }
+
+            public void addPermissionsGranted(Uri uri, int permissions) {
+                sentFilesAndPermissions.put(uri, permissions);
+            }
+
+            public void add(Uri sharedUri) {
+                sentFiles.add(sharedUri);
+            }
+        }
+
         @Override
         protected Void doInBackgroundSafely(Intent[] objects) {
+            //FIXME count the uri permissions taken against files sent. If not match then warn user of inability to restart the upload if it crashes or app is killed by system due to e.g. battery consumption. Instead, collate the files through the app file selection.
             Intent intent = objects[0];
-            ArrayList<Uri> sentFiles = handleSentFiles(intent);
-            if(sentFiles != null) {
+            SentFilesResult sentFilesResult = handleSentFiles(intent);
+            if(sentFilesResult != null) {
                 // this activity was invoked from another application
-                FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(getOwner().fileSelectionEventId, -1).withFiles(sentFiles);
+                FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(getOwner().fileSelectionEventId, -1).withFolderItems(sentFilesResult.getSentFiles());
                 EventBus.getDefault().postSticky(evt);
             }
             return null;
@@ -477,7 +523,11 @@ public class UploadActivity extends MyActivity<UploadActivity> {
             return 0.01;//1%
         }
 
-        private ArrayList<Uri> handleSentFiles(Intent intent) {
+        /**
+         * @param intent to check for sent files.
+         * @return null ONLY if the Intent was not intended to send any files.
+         */
+        private @Nullable SentFilesResult handleSentFiles(@NonNull Intent intent) {
             // Get intent, action and MIME type
             String action = intent.getAction();
             String type = intent.getType();
@@ -502,22 +552,31 @@ public class UploadActivity extends MyActivity<UploadActivity> {
             return null;
         }
 
-        private ArrayList<Uri> handleSendMultipleImages(Intent intent) {
+        private @NonNull SentFilesResult handleSendMultipleImages(Intent intent) {
 
-            ArrayList<Uri> filesToUpload;
+            SentFilesResult result;
 
             ClipData clipData = intent.getClipData();
             if(clipData != null && clipData.getItemCount() > 0) {
                 // process clip data
-                filesToUpload = new ArrayList<>(clipData.getItemCount());
+                result = new SentFilesResult(clipData.getItemCount());
 //            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
                 TaskProgressTracker fileImportTracker = new TaskProgressTracker(clipData.getItemCount(), this);
+                boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
                 for(int i = 0; i < clipData.getItemCount(); i++) {
                     ClipData.Item sharedItem = clipData.getItemAt(i);
                     Uri sharedUri = sharedItem.getUri();
                     if (sharedUri != null) {
                         String mimeType = getContext().getContentResolver().getType(sharedUri);
-                        handleSentImage(sharedUri, mimeType, filesToUpload);
+                        handleSentImage(sharedUri, mimeType, result);
+                        if(canTakePermission) {
+                            try {
+                                appSettingsViewModel.takePersistableUriPermissions(getContext(), sharedUri, IOUtils.URI_PERMISSION_READ, AbstractUploadFragment.URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, getContext().getString(R.string.uri_permission_justification_to_upload));
+                                result.addPermissionsGranted(sharedUri, IOUtils.URI_PERMISSION_READ);
+                            } catch(SecurityException e) {
+                                Logging.log(Log.DEBUG, TAG, "No persistable permission available for uri %1$s", sharedUri);
+                            }
+                        }
                     }
                     fileImportTracker.incrementWorkDone(1);
                 }
@@ -526,29 +585,29 @@ public class UploadActivity extends MyActivity<UploadActivity> {
                 // process the extra stream data
                 try {
                     ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-                    filesToUpload = handleSendMultipleImages(intent, imageUris);
+                    result = handleSendMultipleImages(intent, imageUris);
                     intent.removeExtra(Intent.EXTRA_STREAM);
                 } catch(ClassCastException e) {
                     Uri sharedUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                    filesToUpload = new ArrayList<>(1);
+                    result = new SentFilesResult(1);
                     if (sharedUri != null) {
                         String mimeType = getContext().getContentResolver().getType(sharedUri);
-                        handleSentImage(sharedUri, mimeType, filesToUpload);
+                        handleSentImage(sharedUri, mimeType, result);
                     }
                     intent.removeExtra(Intent.EXTRA_STREAM);
                 }
             }
-            return filesToUpload;
+            return result;
         }
 
-        private ArrayList<Uri> handleSendMultipleImages(Intent intent, ArrayList<Uri> imageUris) {
-            ArrayList<Uri> filesToUpload;
+        private @NonNull SentFilesResult handleSendMultipleImages(@NonNull Intent intent, @Nullable ArrayList<Uri> imageUris) {
+            SentFilesResult result;
             String[] mimeTypes = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 mimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
             }
             if (imageUris != null) {
-                filesToUpload = new ArrayList<>(imageUris.size());
+                result = new SentFilesResult(imageUris.size());
                 TaskProgressTracker fileImportTracker = new TaskProgressTracker(imageUris.size(), this);
                 int i = 0;
                 for (Uri imageUri : imageUris) {
@@ -560,27 +619,36 @@ public class UploadActivity extends MyActivity<UploadActivity> {
                         mimeType = intent.getType();
                     }
                     if (imageUri != null) {
-                        handleSentImage(imageUri, mimeType, filesToUpload);
+                        handleSentImage(imageUri, mimeType, result);
                     }
                     fileImportTracker.incrementWorkDone(1);
                 }
             } else {
                 String mimeType = intent.getType();
-                Uri imageUri = intent.getData();
-                if(imageUri != null) {
+                Uri sharedUri = intent.getData();
+                if(sharedUri != null) {
+                    boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
                     TaskProgressTracker fileImportTracker = new TaskProgressTracker(1, this);
-                    filesToUpload = new ArrayList<>(1);
-                    handleSentImage(imageUri, mimeType, filesToUpload);
+                    result = new SentFilesResult(1);
+                    handleSentImage(sharedUri, mimeType, result);
+                    if(canTakePermission) {
+                        try {
+                            appSettingsViewModel.takePersistableUriPermissions(getContext(), sharedUri, IOUtils.URI_PERMISSION_READ, AbstractUploadFragment.URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, getContext().getString(R.string.uri_permission_justification_to_upload));
+                            result.addPermissionsGranted(sharedUri, IOUtils.URI_PERMISSION_READ);
+                        } catch(SecurityException e) {
+                            Logging.log(Log.DEBUG, TAG, "No persistable permission available for uri %1$s", sharedUri);
+                        }
+                    }
                     fileImportTracker.markComplete();
                 } else {
-                    filesToUpload = new ArrayList<>(0);
+                    result = new SentFilesResult(0);
                 }
             }
             intent.removeExtra(Intent.EXTRA_STREAM);
-            return filesToUpload;
+            return result;
         }
 
-        private void handleSentImage(Uri sharedUri, String mimeType, ArrayList<Uri> filesToUpload) {
+        private void handleSentImage(@NonNull Uri sharedUri, String mimeType, @NonNull SentFilesResult filesToUpload) {
             filesToUpload.add(sharedUri);
         }
     }

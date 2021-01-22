@@ -6,7 +6,6 @@
 
     <!-- Only supports API >= 18 -->
     <!--<uses-sdk tools:overrideLibrary="net.ypresto.androidtranscoder" />-->
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" tools:ignore="ScopedStorage" />
