@@ -2,12 +2,15 @@ package delit.piwigoclient.ui.upload;
 
 import android.net.Uri;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 
-public class UploadFragment extends AbstractUploadFragment {
+public class UploadFragment extends AbstractUploadFragment<UploadFragment> {
     public static UploadFragment newInstance(CategoryItemStub currentGallery, int actionId) {
         UploadFragment fragment = new UploadFragment();
         fragment.setArguments(fragment.buildArgs(currentGallery, actionId));
@@ -15,14 +18,15 @@ public class UploadFragment extends AbstractUploadFragment {
     }
 
     @Override
-    protected void updateFilesForUploadList(List<FilesToUploadRecyclerViewAdapter.UploadDataItem> folderItemsToBeUploaded) {
+    protected void updateFilesForUploadList(List<UploadDataItemModel.UploadDataItem> folderItemsToBeUploaded) {
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
         super.updateFilesForUploadList(folderItemsToBeUploaded);
-        List<Uri> allFiles = adapter.getFiles();
+        Set<Uri> allFiles = adapter.getFilesAndSizes().keySet();
         boolean maxItemCountReached = false;
+        Iterator<Uri> iter = allFiles.iterator();
         while(allFiles.size() > 5) {
             maxItemCountReached = true;
-            adapter.remove(allFiles.get(allFiles.size()-1));
+            adapter.remove(iter.next());
         }
 
         if(maxItemCountReached) {
