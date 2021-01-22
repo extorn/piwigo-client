@@ -143,12 +143,17 @@ public class ExoPlayerFrameCapture {
                 new Thread() {
                     @Override
                     public void run() {
-                        if(BuildConfig.DEBUG) {
-                            Log.d(TAG, "stopping and releasing player");
+                        try {
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "stopping and releasing player");
+                            }
+                            player.stop(true);
+                        } catch(Exception e) {
+                            Logging.recordException(e);
                         }
-                        player.stop(true);
                         player.release();
                         looper.quitSafely();
+
                     }
                 }.start();
             }
