@@ -341,7 +341,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
         thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFileUrisAndHashcodes());
         // technically this is called after the job has already started, but the user doesn't need to know that.
-        if(thisUploadJob.getFilesForUpload().size() > 0) {
+        if(thisUploadJob.hasFilesForUpload()) {
             EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.hasBeenRunBefore()));
         }
     }
@@ -482,9 +482,9 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         if(matchingFiles.isEmpty()) {
             return null;
         }
-        ArrayList<Uri> filesToUpload = new ArrayList<>(matchingFiles.size());
+        Map<Uri,Long> filesToUpload = new HashMap<>(matchingFiles.size());
         for (DocumentFile matchingFile : matchingFiles) {
-            filesToUpload.add(matchingFile.getUri());
+            filesToUpload.put(matchingFile.getUri(), matchingFile.length());
         }
 
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);

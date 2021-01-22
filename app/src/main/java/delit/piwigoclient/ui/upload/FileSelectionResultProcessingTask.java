@@ -53,7 +53,6 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
 
             Set<String> unsupportedExts = new HashSet<>();
-            int currentItem = 0;
 
 
             // Initialise phase 1 (0% -15% - split between number of files to process)
@@ -63,7 +62,6 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             Iterator<FolderItem> iter = event.getSelectedFolderItems().iterator();
             int missingPermissions = 0;
             while (iter.hasNext()) {
-                currentItem++;
                 FolderItem f = iter.next();
                 //TODO check this is correct to assume that upper case extensions are okay (server isn't case sensitive!).
                 if (f.getExt() == null || (!allowedFileTypes.contains(f.getExt()) && !allowedFileTypes.contains(f.getExt().toLowerCase()))) {
@@ -102,7 +100,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
             if(BuildConfig.DEBUG) {
                 Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
             }
-            UploadDataItemModel.UploadDataItem item = new UploadDataItemModel.UploadDataItem(f.getContentUri(), f.getName(), f.getMime());
+            UploadDataItemModel.UploadDataItem item = new UploadDataItemModel.UploadDataItem(f.getContentUri(), f.getName(), f.getMime(), f.getFileLength());
             TaskProgressTracker fileChecksumTracker = overallChecksumCalcTask.addSubTask(f.getFileLength(), f.getFileLength());
             try {
                 item.calculateDataHashCode(getContext(), fileChecksumTracker);

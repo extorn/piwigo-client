@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
@@ -513,11 +511,16 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
 
     private void injectCompressionControlsIntoView() {
         MaterialButton compressVideosButton = new MaterialButton(requireContext());
-        compressVideosButton.setText("Compress");
+        compressVideosButton.setText(R.string.button_compress);
 
         compressVideosButton.setOnClickListener(v -> {
             v.setEnabled(false);
-            compressVideos(v);
+            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+            Map<Uri,Long> filesForUpload = fileListAdapter.getFilesAndSizes();
+            if (filesForUpload.isEmpty()) {
+                return;
+            }
+            AdhocVideoCompression.compressVideos(v, buildVideoCompressionParams(), filesForUpload, getUiHelper());
         });
         filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -538,45 +541,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void compressVideos(View linkedView) {
-        FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-        List<Uri> filesForUpload = fileListAdapter.getFiles();
-        if (filesForUpload.isEmpty()) {
-            return;
-        }
-        for(Uri fileForCompression : filesForUpload) {
-            ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-            long rawVal = compressVideosQualitySpinner.getSelectedItemId();
-            int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
-            double bpps = ((double) rawVal) / 1000;
-            compressionSettings.setAddVideoTrack(rawVal != 0);
-            compressionSettings.setAddAudioTrack(audioBitrate != 0);
-            compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
-            compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
-//                compressionSettings.disableFastStart();
 
-
-            DocumentFile moviesFolder = DocumentFile.fromFile(requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES));
-            DocumentFile outputVideo;
-            int i = 0;
-            DocumentFile inputDocFile = IOUtils.getSingleDocFile(requireContext(), fileForCompression);
-            String compressedFileExt = compressionSettings.getOutputFileExt(requireContext());
-            String outputFilenameSuffixWithoutExt = IOUtils.getFileNameWithoutExt(Objects.requireNonNull(inputDocFile.getName()));
-            String outputFilenameSuffix = outputFilenameSuffixWithoutExt + '.' + compressedFileExt;
-
-            do {
-                i++;
-                outputVideo = moviesFolder.findFile("compressed_" + i + outputFilenameSuffix);
-                if(outputVideo == null) {
-                    outputVideo = moviesFolder.createFile(compressionSettings.getOutputFileMimeType(null), "compressed_" + i + outputFilenameSuffixWithoutExt);
-                    break;
-                }
-            } while (true);
-
-            new ExoPlayerCompression().invokeFileCompression(getContext(), fileForCompression, Objects.requireNonNull(outputVideo).getUri(), new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
-        }
-    }
 
     private void setSpinnerSelectedItem(Spinner spinner, Object item) {
         SpinnerAdapter adapter = spinner.getAdapter();
@@ -866,7 +831,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
 
     public void buildAndSubmitNewUploadJob(boolean fileSizesHaveBeenChecked) {
         FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-        List<Uri> filesForUpload = fileListAdapter.getFiles();
+        Map<Uri,Long> filesForUpload = fileListAdapter.getFilesAndSizes();
         byte privacyLevelWanted = (byte) privacyLevelSpinner.getSelectedItemId(); // save as just bytes!
         long piwigoListenerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
         boolean isDeleteFilesAfterUpload = deleteFilesAfterUploadCheckbox.isChecked();
@@ -974,10 +939,15 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         boolean jobYetToFinishUploadingFiles = filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow));
         boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
         uploadFilesNowButton.setEnabled(jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles); // Allow restart of the job.
+
         compressVideosCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isVideoFilesWaitingForUpload());
-        compressVideosCheckbox.callOnClick();
+        compressVideosCheckbox.callOnClick(); // set relevant fields to enabled / disabled
+
         compressImagesCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isImageFilesWaitingForUpload());
-        compressImagesCheckbox.callOnClick();
+        compressImagesCheckbox.callOnClick(); // set relevant fields to enabled / disabled
+
+        deleteFilesAfterUploadCheckbox.setEnabled(noJobIsYetConfigured || jobIsFinished && !filesStillToBeUploaded);
+
         updateActiveJobActionButtonsStatus();
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGalleryTextView.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
@@ -1148,7 +1118,8 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
     }
 
     public void removeAllFilesFromUploadImmediately() {
-        List<Uri> uris = getFilesForUploadViewAdapter().getFiles();
+        Map<Uri,Long> filesAndSizes = getFilesForUploadViewAdapter().getFilesAndSizes();
+        Set<Uri> uris = filesAndSizes.keySet();
 
         UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(overallUploadProgressBar, R.string.removing_files_from_job);
         TaskProgressTracker tracker = new TaskProgressTracker(2, progressListener);

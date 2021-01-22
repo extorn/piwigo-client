@@ -6,6 +6,7 @@ import android.webkit.MimeTypeMap;
 import androidx.core.content.MimeTypeFilter;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,17 +27,17 @@ import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUploadFragment, Void, Integer, UploadJob> {
-    private final List<Uri> filesToUpload;
+    private final Map<Uri,Long> filesToUploadAndSize;
     private final CategoryItemStub uploadToAlbum;
     private final byte privacyWanted;
     private final long piwigoListenerId;
     private final boolean deleteUploadedFiles;
     private final boolean filesizesChecked;
 
-    public CreateAndSubmitUploadJobTask(AbstractUploadFragment owner, List<Uri> filesToUpload, CategoryItemStub uploadToAlbum, byte privacyWanted, long piwigoListenerId, boolean deleteUploadedFiles, boolean filesizesChecked) {
+    public CreateAndSubmitUploadJobTask(AbstractUploadFragment owner, Map<Uri,Long> filesToUploadAndSize, CategoryItemStub uploadToAlbum, byte privacyWanted, long piwigoListenerId, boolean deleteUploadedFiles, boolean filesizesChecked) {
         super(owner);
         withContext(owner.requireContext());
-        this.filesToUpload = filesToUpload;
+        this.filesToUploadAndSize = filesToUploadAndSize;
         this.uploadToAlbum = uploadToAlbum;
         this.privacyWanted = privacyWanted;
         this.piwigoListenerId = piwigoListenerId;
@@ -68,19 +69,19 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
             boolean compressVideos = getOwner().isCompressVideos();
             boolean compressImages = getOwner().isCompressImages();
 
-            if (!runIsAllFileTypesAcceptedByServerTests(filesToUpload, compressVideos, compressImages)) {
+            if (!runIsAllFileTypesAcceptedByServerTests(filesToUploadAndSize.keySet(), compressVideos, compressImages)) {
                 return null; // no, they aren't
             }
 
             if (!filesizesChecked) {
-                if (!runAreAllFilesUnderUserChosenMaxUploadThreshold(filesToUpload, compressVideos, compressImages)) {
+                if (!runAreAllFilesUnderUserChosenMaxUploadThreshold(filesToUploadAndSize, compressVideos, compressImages)) {
                     return null; // no, they aren't
                 }
             }
         }
 
         if (activeJob == null) {
-            activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesToUpload, uploadToAlbum, privacyWanted, piwigoListenerId, deleteUploadedFiles);
+            activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesToUploadAndSize, uploadToAlbum, privacyWanted, piwigoListenerId, deleteUploadedFiles);
             UploadJob.VideoCompressionParams vidCompParams = getOwner().buildVideoCompressionParams();
             UploadJob.ImageCompressionParams imageCompParams = getOwner().buildImageCompressionParams();
             if (vidCompParams != null) {
@@ -103,11 +104,13 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         getOwner().getUiHelper().hideProgressIndicator();
     }
 
-    private Map<Uri,Double> getFilesExceedingMaxDesiredUploadThreshold(List<Uri> filesForUpload) {
+    private Map<Uri,Double> getFilesExceedingMaxDesiredUploadThreshold(Map<Uri,Long> filesForUploadAndSizes) {
         int maxUploadSizeWantedThresholdMB = UploadPreferences.getMaxUploadFilesizeMb(getContext(), getOwner().getPrefs());
         HashMap<Uri, Double> retVal = new HashMap<>();
-        for (Uri f : filesForUpload) {
-            double fileLengthMB = BigDecimal.valueOf(IOUtils.getFilesize(getContext(), f)).divide(BigDecimal.valueOf(1024* 1024), BigDecimal.ROUND_HALF_EVEN).doubleValue();
+        for (Map.Entry<Uri,Long> entry : filesForUploadAndSizes.entrySet()) {
+            Uri f = entry.getKey();
+            Long size = entry.getValue();
+            double fileLengthMB = BigDecimal.valueOf(size).divide(BigDecimal.valueOf(1024* 1024), BigDecimal.ROUND_HALF_EVEN).doubleValue();
             if (fileLengthMB > maxUploadSizeWantedThresholdMB) {
                 retVal.put(f, fileLengthMB);
             }
@@ -115,9 +118,9 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         return retVal;
     }
 
-    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(List<Uri> filesForUpload, boolean compressVideos, boolean compressImages) {
+    private boolean runAreAllFilesUnderUserChosenMaxUploadThreshold(Map<Uri,Long> filesForUploadAndSize, boolean compressVideos, boolean compressImages) {
 
-        final Map<Uri,Double> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUpload);
+        final Map<Uri,Double> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUploadAndSize);
 
         StringBuilder filenameListStrB = new StringBuilder();
         Set<Uri> keysToRemove = new HashSet<>();
@@ -147,7 +150,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
         return true;
     }
 
-    private boolean runIsAllFileTypesAcceptedByServerTests(List<Uri> filesForUpload, boolean compressVideos, boolean compressImages) {
+    private boolean runIsAllFileTypesAcceptedByServerTests(Collection<Uri> filesForUpload, boolean compressVideos, boolean compressImages) {
         // check for server unacceptable files.
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
         Set<String> serverAcceptedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();

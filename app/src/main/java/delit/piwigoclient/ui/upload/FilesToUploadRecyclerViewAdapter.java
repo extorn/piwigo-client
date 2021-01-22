@@ -11,7 +11,9 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.SimpleRecyclerViewAdapter;
@@ -78,7 +80,7 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
         }
     }
 
-    public void removeAll(List<Uri> uris) {
+    public void removeAll(Collection<Uri> uris) {
         for(Uri uri : uris) {
             uploadDataItemsModel.remove(uri);
         }
@@ -127,7 +129,7 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
         notifyItemRangeChanged(0, getItemCount());
     }
 
-    public List<Uri> getFiles() {
+    public Map<Uri,Long> getFilesAndSizes() {
         return uploadDataItemsModel.getFilesSelectedForUpload();
     }
 

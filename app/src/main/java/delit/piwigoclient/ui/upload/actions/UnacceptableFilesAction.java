@@ -59,7 +59,7 @@ public class UnacceptableFilesAction<T extends AbstractUploadFragment<T>> extend
 
         if (Boolean.TRUE == positiveAnswer) {
 
-            List<Uri> unaccceptableFiles = new ArrayList<>(fragment.getFilesForUploadViewAdapter().getFiles());
+            List<Uri> unaccceptableFiles = new ArrayList<Uri>(fragment.getFilesForUploadViewAdapter().getFilesAndSizes().keySet());
             Iterator<Uri> iter = unaccceptableFiles.iterator();
             while (iter.hasNext()) {
                 if (!unacceptableFileExts.contains(IOUtils.getFileExt(getContext(), iter.next()).toLowerCase())) {

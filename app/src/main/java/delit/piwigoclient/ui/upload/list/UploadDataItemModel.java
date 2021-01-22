@@ -11,9 +11,11 @@ import androidx.documentfile.provider.DocumentFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -45,7 +47,7 @@ public class UploadDataItemModel implements Parcelable {
     public UploadDataItemModel(ArrayList<DocumentFile> filesToUpload) {
         this.uploadDataItems = new ArrayList<>();
         for (DocumentFile f : filesToUpload) {
-            uploadDataItems.add(new UploadDataItem(f.getUri(), IOUtils.getFilename(f), f.getType()));
+            uploadDataItems.add(new UploadDataItem(f.getUri(), IOUtils.getFilename(f), f.getType(), f.length()));
         }
     }
 
@@ -193,10 +195,10 @@ public class UploadDataItemModel implements Parcelable {
         uploadDataItems.clear();
     }
 
-    public List<Uri> getFilesSelectedForUpload() {
-        ArrayList<Uri> filesSelectedForUpload = new ArrayList<>(uploadDataItems.size());
+    public Map<Uri,Long> getFilesSelectedForUpload() {
+        Map<Uri,Long> filesSelectedForUpload = new HashMap<>(uploadDataItems.size());
         for (UploadDataItem item : uploadDataItems) {
-            filesSelectedForUpload.add(item.uri);
+            filesSelectedForUpload.put(item.uri, item.dataLength);
         }
         return filesSelectedForUpload;
     }
@@ -221,11 +223,12 @@ public class UploadDataItemModel implements Parcelable {
         private String filename;
         protected final UploadProgressInfo uploadProgress;
 
-        public UploadDataItem(Uri uri, String filename, String mimeType) {
+        public UploadDataItem(Uri uri, String filename, String mimeType, long dataLength) {
             this.uri = uri;
             this.mimeType = mimeType;
             uploadProgress = new UploadProgressInfo(uri);
             this.filename = filename;
+            this.dataLength = dataLength;
             uid = getNextUid();
         }
 

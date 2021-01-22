@@ -3,12 +3,12 @@ package delit.piwigoclient.piwigoApi.upload;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Parcel;
-import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -50,7 +50,7 @@ public class UploadJob implements Parcelable {
 
     private final long jobId;
     private final long responseHandlerId;
-    private final ArrayList<Uri> filesForUpload;
+    private final HashMap<Uri,Long> filesForUploadAndSize;
     private HashMap<Uri, Uri> compressedFilesMap;
     private final HashMap<Uri, Integer> fileUploadStatus;
     private final HashMap<Uri, PartialUploadData> filePartialUploadProgress;
@@ -75,21 +75,21 @@ public class UploadJob implements Parcelable {
     private DocumentFile loadedFromFile;
     private boolean wasLastRunCancelled;
     private double overallUploadProgress;
-    private TaskProgressTracker taskProgressTracker;
+    private TaskProgressTracker overallJobProgressTracker;
     private long totalWork;
     private long workDone;
 
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, List<Uri> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, Map<Uri, Long> filesForUploadAndBytes, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
         this.uploadToCategory = destinationCategory.getId();
         this.uploadToCategoryParentage = new ArrayList<>(destinationCategory.getParentageChain());
         this.privacyLevelWanted = uploadedFilePrivacyLevel;
-        this.filesForUpload = new ArrayList<>(filesForUpload);
-        this.fileUploadStatus = new HashMap<>(filesForUpload.size());
-        this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
+        this.filesForUploadAndSize = new HashMap<>(filesForUploadAndBytes);
+        this.fileUploadStatus = new HashMap<>(filesForUploadAndSize.size());
+        this.filePartialUploadProgress = new HashMap<>(filesForUploadAndSize.size());
         this.compressedFilesMap = new HashMap<>();
         this.isDeleteFilesAfterUpload = isDeleteFilesAfterUpload;
     }
@@ -97,7 +97,7 @@ public class UploadJob implements Parcelable {
     protected UploadJob(Parcel in) {
         jobId = in.readLong();
         responseHandlerId = in.readLong();
-        filesForUpload = ParcelUtils.readArrayList(in, Uri.class.getClassLoader());
+        filesForUploadAndSize = ParcelUtils.readMap(in, Uri.class.getClassLoader());
         compressedFilesMap = ParcelUtils.readMap(in, Uri.class.getClassLoader());
         fileUploadStatus = ParcelUtils.readMap(in, Uri.class.getClassLoader());
         filePartialUploadProgress = ParcelUtils.readMap(in, UploadJob.PartialUploadData.class.getClassLoader());
@@ -132,19 +132,42 @@ public class UploadJob implements Parcelable {
         }
     };
 
+    private long calculateTotalWork(@NonNull Context context) {
+        long total = 0;
+        for(Map.Entry<Uri,Long> entry : filesForUploadAndSize.entrySet()) {
+            long val = entry.getValue();
+            Uri f = entry.getKey();
+            total += val;
+            if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isVideo(context, f) && isCompressVideosBeforeUpload())) {
+                total += val; // double the file for compression
+            }
+        }
+        return total;
+    }
+
+    public boolean hasFilesForUpload() {
+        return !filesForUploadAndSize.isEmpty();
+    }
+
+    public long getFileSize(Uri toUpload) {
+        return filesForUploadAndSize.get(toUpload);
+    }
+
+
+
     public static class ProgressAdapterChain extends TaskProgressTracker.ProgressAdapter {
         private UploadJob uploadJob;
         private ProgressListener chained;
-        public ProgressAdapterChain(@NonNull UploadJob uploadJob, @NonNull ProgressListener chained) {
-            this.chained = chained;
-            this.uploadJob = uploadJob;
-        }
-
         @Override
         public void onProgress(double percent) {
             uploadJob.overallUploadProgress = percent;
-            uploadJob.workDone = uploadJob.totalWork - uploadJob.taskProgressTracker.getRemainingWork();
+            uploadJob.workDone = uploadJob.totalWork - uploadJob.overallJobProgressTracker.getRemainingWork();
 //            chained.onProgress(percent);
+        }
+
+        public ProgressAdapterChain(@NonNull UploadJob uploadJob, @Nullable ProgressListener chained) {
+            this.chained = chained;
+            this.uploadJob = uploadJob;
         }
 
         @Override
@@ -154,31 +177,33 @@ public class UploadJob implements Parcelable {
     }
 
     public TaskProgressTracker getProgressTrackerForJob(@NonNull Context context) {
-        if(taskProgressTracker == null) {
+        if(overallJobProgressTracker == null) {
             if(this.totalWork == 0) {
                 this.totalWork = calculateTotalWork(context);
                 this.workDone = calculateWorkDone(context); // this will assume checksums need to occur still, but will deal with files uploaded or partially so as best it can.
             }
-            taskProgressTracker = new TaskProgressTracker(totalWork, new ProgressAdapterChain(this, null));
-            taskProgressTracker.setWorkDone(workDone);
+            overallJobProgressTracker = new TaskProgressTracker(totalWork, new ProgressAdapterChain(this, null));
+            overallJobProgressTracker.setWorkDone(workDone);
 
         }
-        return taskProgressTracker;
+        return overallJobProgressTracker;
     }
 
     private long calculateWorkDone(@NonNull Context context) {
         long workDone = 0;
-        for (Uri f : filesForUpload) {
-            if (CANCELLED.equals(fileUploadStatus.get(f))) {
-                workDone += 7;
+        for (Map.Entry<Uri,Long> entry : filesForUploadAndSize.entrySet()) {
+            Uri key = entry.getKey();
+            long size = entry.getValue();
+            if (CANCELLED.equals(fileUploadStatus.get(key))) {
+                workDone += size;
                 continue;
             }
-            if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isVideo(context, f) && isCompressVideosBeforeUpload())) {
-                if(getCompressionProgress(context, f) == 100) {
-                    workDone += 6; // if it is partially done, then it's going to be scrapped and re-done.
+            if ((isPhoto(context, key) && isCompressPhotosBeforeUpload()) || (isVideo(context, key) && isCompressVideosBeforeUpload())) {
+                if(getCompressionProgress(context, key) == 100) {
+                    workDone += size; // if it is partially done, then it's going to be scrapped and re-done.
                 }
             }
-            workDone += Math.rint(6.0 * getUploadProgress(f) / 100);
+            workDone += Math.rint(((double)size) / 100 * getUploadProgress(key));
         }
         return workDone;
     }
@@ -187,37 +212,21 @@ public class UploadJob implements Parcelable {
         return (int) Math.rint(100 * overallUploadProgress);
     }
 
-    public TaskProgressTracker getTaskProgressTrackerForSingleFileChunkParsing(TaskProgressTracker dataUploadListener, long totalBytes, long bytesUploaded) {
-        double percRemainingToUpload = bytesUploaded == 0 ? 1 : (1 - ((double)bytesUploaded) / totalBytes);
-        return dataUploadListener.addSubTask(totalBytes - bytesUploaded, (long)Math.ceil(percRemainingToUpload * 6));
+    public TaskProgressTracker getTaskProgressTrackerForSingleFileChunkParsing(long totalBytes, long bytesUploaded) {
+        return overallJobProgressTracker.addSubTask(totalBytes - bytesUploaded, totalBytes - bytesUploaded);
     }
 
     public TaskProgressTracker getTaskProgressTrackerForAllChecksumCalculation() {
-        return taskProgressTracker.addSubTask(filesForUpload.size(), filesForUpload.size() * 2);
+        return overallJobProgressTracker.addSubTask(100, 0);
     }
 
     public TaskProgressTracker getTaskProgressTrackerForSingleFileVerification() {
-        return taskProgressTracker.addSubTask(1, filesForUpload.size());
+        return overallJobProgressTracker.addSubTask(1, 0);
     }
 
-
-    public TaskProgressTracker getTaskProgressTrackerForAllDataUpload() {
-        return taskProgressTracker.addSubTask(filesForUpload.size(), filesForUpload.size() * 6);
-    }
-
-    public TaskProgressTracker getTaskProgressTrackerForSingleFileCompression() {
-        return taskProgressTracker.addSubTask(100, 6);
-    }
-
-    public long calculateTotalWork(@NonNull Context context) {
-        int filesCount = filesForUpload.size();
-        long totalWork = filesCount * 9; // 6 for data upload, 2 for checksum calc, 1 for data verification
-        for (Uri f : filesForUpload) {
-            if ((isPhoto(context, f) && isCompressPhotosBeforeUpload()) || (isVideo(context, f) && isCompressVideosBeforeUpload())) {
-                totalWork += 6; // another 6 for compression
-            }
-        }
-        return totalWork;
+    public TaskProgressTracker getTaskProgressTrackerForSingleFileCompression(Uri uri) {
+        long filesize = getFileSize(uri);
+        return overallJobProgressTracker.addSubTask(100, filesize);
     }
 
     public void setToRunInBackground() {
@@ -275,7 +284,7 @@ public class UploadJob implements Parcelable {
 
     public ArrayList<Uri> getFilesAwaitingUpload() {
         Set<Uri> filesProcessedToSomeDegree = fileUploadStatus.keySet();
-        ArrayList<Uri> filesAwaitingUpload = new ArrayList<>(filesForUpload);
+        ArrayList<Uri> filesAwaitingUpload = new ArrayList<>(filesForUploadAndSize.keySet());
         filesAwaitingUpload.removeAll(filesProcessedToSomeDegree);
         return filesAwaitingUpload;
     }
@@ -379,8 +388,8 @@ public class UploadJob implements Parcelable {
         return jobId;
     }
 
-    public synchronized ArrayList<Uri> getFilesForUpload() {
-        return filesForUpload;
+    public synchronized Set<Uri> getFilesForUpload() {
+        return filesForUploadAndSize.keySet();
     }
 
     public byte getPrivacyLevelWanted() {
@@ -464,7 +473,7 @@ public class UploadJob implements Parcelable {
             ArrayList<Uri> filesNotFinished = getFilesNotYetUploaded(context);
             boolean newJob = false;
             if (fileChecksums == null) {
-                fileChecksums = new HashMap<>(filesForUpload.size());
+                fileChecksums = new HashMap<>(filesForUploadAndSize.size());
                 newJob = true;
             }
             for (Uri f : filesNotFinished) {
@@ -558,7 +567,7 @@ public class UploadJob implements Parcelable {
     }
 
     public synchronized ArrayList<Uri> getFilesNotYetUploaded(@NonNull Context context) {
-        ArrayList<Uri> filesToUpload = new ArrayList<>(filesForUpload);
+        ArrayList<Uri> filesToUpload = new ArrayList<>(filesForUploadAndSize.keySet());
         filesToUpload.removeAll(getFilesProcessedToEnd());
         filesToUpload.removeAll(getFilesWhereUploadedDataHasBeenVerified());
         Iterator<Uri> filesToUploadIterator = filesToUpload.iterator();
@@ -584,10 +593,6 @@ public class UploadJob implements Parcelable {
         } else {
             data.setUploadStatus(fileChecksum, bytesUploaded, countChunksUploadedOkay);
         }
-    }
-
-    public Set<Uri> getFilesPartiallyUploaded() {
-        return filePartialUploadProgress.keySet();
     }
 
     public PartialUploadData getChunksAlreadyUploadedData(Uri fileForUpload) {
@@ -628,8 +633,8 @@ public class UploadJob implements Parcelable {
     }
 
     public Map<Uri, String> getFileToFilenamesMap(@NonNull Context context) {
-        Map<Uri, String> filenamesMap = new HashMap<>(filesForUpload.size());
-        for (Uri f : filesForUpload) {
+        Map<Uri, String> filenamesMap = new HashMap<>(filesForUploadAndSize.size());
+        for (Uri f : filesForUploadAndSize.keySet()) {
             filenamesMap.put(f, IOUtils.getSingleDocFile(context, f).getName());
         }
         return filenamesMap;
@@ -638,7 +643,7 @@ public class UploadJob implements Parcelable {
     public void filterPreviouslyUploadedFiles(Map<Uri, String> fileUploadedHashMap) {
         for (HashMap.Entry<Uri, String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
             Uri potentialDuplicateUpload = fileUploadedEntry.getKey();
-            if (filesForUpload.contains(potentialDuplicateUpload)) {
+            if (filesForUploadAndSize.containsKey(potentialDuplicateUpload)) {
                 // a file at this absolute path has been uploaded previously to this end point
                 String checksum = fileChecksums.get(potentialDuplicateUpload);
                 if (checksum != null) {
@@ -646,7 +651,7 @@ public class UploadJob implements Parcelable {
                         // the file is identical to that previously uploaded (checksum check)
                         if (!fileUploadStatus.containsKey(potentialDuplicateUpload)) {
                             // this is a fresh target for this job
-                            filesForUpload.remove(fileUploadedEntry.getKey());
+                            filesForUploadAndSize.remove(fileUploadedEntry.getKey());
                             fileChecksums.remove(fileUploadedEntry.getKey());
                         }
                     }
@@ -805,7 +810,7 @@ public class UploadJob implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(jobId);
         dest.writeLong(responseHandlerId);
-        ParcelUtils.writeArrayList(dest, filesForUpload);
+        ParcelUtils.writeMap(dest, filesForUploadAndSize);
         ParcelUtils.writeMap(dest, compressedFilesMap);
         ParcelUtils.writeMap(dest, fileUploadStatus);
         ParcelUtils.writeMap(dest, filePartialUploadProgress);
