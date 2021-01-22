@@ -119,7 +119,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
     private static final String SAVED_STATE_UPLOAD_TO_ALBUM = "uploadToAlbum";
     private static final String SAVED_STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID = "externallyTriggeredSelectFilesActionId";
-    private static final boolean ENABLE_COMPRESSION_BUTTON = true;
+    private static final boolean ENABLE_COMPRESSION_BUTTON = false;
     private static final int TAB_IDX_SETTINGS = 1;
     private static final int TAB_IDX_FILES = 0;
     public static final String URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD = "foregroundUpload";
@@ -481,9 +481,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         updateUiUploadStatusFromJobIfRun(container.getContext());
 
         if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON && ExoPlayerCompression.isSupported()) {
-
             injectCompressionControlsIntoView();
-
         }
 
         return view;
@@ -520,7 +518,12 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
             if (filesForUpload.isEmpty()) {
                 return;
             }
-            AdhocVideoCompression.compressVideos(v, buildVideoCompressionParams(), filesForUpload, getUiHelper());
+            UploadJob.VideoCompressionParams compressionParams = buildVideoCompressionParams();
+            if(compressionParams != null) {
+                AdhocVideoCompression.compressVideos(v, compressionParams, filesForUpload, getUiHelper());
+            } else {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unable_to_compress_without_data));
+            }
         });
         filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override

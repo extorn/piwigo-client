@@ -35,6 +35,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 
 public class UploadJob implements Parcelable {
 
+
     private static final String TAG = "UploadJob";
     public static final Integer COMPRESSED = 8; // file has been compressed successfully.
 
@@ -47,6 +48,14 @@ public class UploadJob implements Parcelable {
     public static final Integer REQUIRES_DELETE = 5; // user cancels upload after file partially uploaded
     public static final Integer DELETED = 6; // file has been deleted from the server
     public static final Integer CORRUPT = 7; // (moves to this state if verification fails)
+
+    //Total of this work must equal TOTAL WORK. I'm tring to keep this around 100 so its roughly percentages. N.b. this isn't accurate as job size changes.
+    public static final long WORK_DIVISION_CHECKSUM_PERC = 5;
+    public static final long WORK_DIVISION_POST_CHECKED_FOR_EXISTING_FILES = 2;
+    public static final long WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC = 87;
+    public static final long WORK_DIVISION_DELETE_TEMP_FOLDER = 5;
+    public static final long WORK_DIVISION_POST_UPLOAD_CALLS = 1;
+    public static final long TOTAL_WORK = WORK_DIVISION_CHECKSUM_PERC + WORK_DIVISION_POST_CHECKED_FOR_EXISTING_FILES + WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC + WORK_DIVISION_DELETE_TEMP_FOLDER + WORK_DIVISION_POST_UPLOAD_CALLS;
 
     private final long jobId;
     private final long responseHandlerId;
@@ -76,8 +85,9 @@ public class UploadJob implements Parcelable {
     private boolean wasLastRunCancelled;
     private double overallUploadProgress;
     private TaskProgressTracker overallJobProgressTracker;
-    private long totalWork;
-    private long workDone;
+    private TaskProgressTracker uploadProgressTracker;
+    private long totalDataToWorkOn;
+    private long dataWorkAlreadyDone;
 
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, Map<Uri, Long> filesForUploadAndBytes, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel, boolean isDeleteFilesAfterUpload) {
@@ -116,8 +126,8 @@ public class UploadJob implements Parcelable {
         allowUploadOfRawVideosIfIncompressible = ParcelUtils.readBool(in);
         isDeleteFilesAfterUpload = ParcelUtils.readBool(in);
         overallUploadProgress = in.readDouble();
-        totalWork = in.readLong();
-        workDone = in.readLong();
+        totalDataToWorkOn = in.readLong();
+        dataWorkAlreadyDone = in.readLong();
     }
 
     public static final Creator<UploadJob> CREATOR = new Creator<UploadJob>() {
@@ -154,14 +164,15 @@ public class UploadJob implements Parcelable {
     }
 
 
-
     public static class ProgressAdapterChain extends TaskProgressTracker.ProgressAdapter {
         private UploadJob uploadJob;
         private ProgressListener chained;
         @Override
         public void onProgress(double percent) {
             uploadJob.overallUploadProgress = percent;
-            uploadJob.workDone = uploadJob.totalWork - uploadJob.overallJobProgressTracker.getRemainingWork();
+            if(uploadJob.uploadProgressTracker != null) {
+                uploadJob.dataWorkAlreadyDone = uploadJob.totalDataToWorkOn - uploadJob.uploadProgressTracker.getRemainingWork();
+            }
 //            chained.onProgress(percent);
         }
 
@@ -174,19 +185,6 @@ public class UploadJob implements Parcelable {
         public double getUpdateStep() {
             return 0;//chained.getUpdateStep();
         }
-    }
-
-    public TaskProgressTracker getProgressTrackerForJob(@NonNull Context context) {
-        if(overallJobProgressTracker == null) {
-            if(this.totalWork == 0) {
-                this.totalWork = calculateTotalWork(context);
-                this.workDone = calculateWorkDone(context); // this will assume checksums need to occur still, but will deal with files uploaded or partially so as best it can.
-            }
-            overallJobProgressTracker = new TaskProgressTracker(totalWork, new ProgressAdapterChain(this, null));
-            overallJobProgressTracker.setWorkDone(workDone);
-
-        }
-        return overallJobProgressTracker;
     }
 
     private long calculateWorkDone(@NonNull Context context) {
@@ -212,16 +210,32 @@ public class UploadJob implements Parcelable {
         return (int) Math.rint(100 * overallUploadProgress);
     }
 
+    public TaskProgressTracker getProgressTrackerForJob(@NonNull Context context) {
+        if(overallJobProgressTracker == null) {
+            if(this.totalDataToWorkOn == 0) {
+                this.totalDataToWorkOn = calculateTotalWork(context);
+                this.dataWorkAlreadyDone = calculateWorkDone(context); // this will assume checksums need to occur still, but will deal with files uploaded or partially so as best it can.
+            }
+            overallJobProgressTracker = new TaskProgressTracker(TOTAL_WORK, new ProgressAdapterChain(this, null));
+            overallJobProgressTracker.setExactProgress(overallUploadProgress);
+        }
+        return overallJobProgressTracker;
+    }
+
+    public TaskProgressTracker getTaskProgressTrackerForOverallCompressionAndUploadOfData() {
+        if(uploadProgressTracker == null) {
+            uploadProgressTracker = overallJobProgressTracker.addSubTask(totalDataToWorkOn, WORK_DIVISION_COMPRESS_AND_UPLOAD_PERC);
+            uploadProgressTracker.setWorkDone(dataWorkAlreadyDone);
+        }
+        return uploadProgressTracker;
+    }
+
     public TaskProgressTracker getTaskProgressTrackerForSingleFileChunkParsing(long totalBytes, long bytesUploaded) {
-        return overallJobProgressTracker.addSubTask(totalBytes - bytesUploaded, totalBytes - bytesUploaded);
+        return uploadProgressTracker.addSubTask(totalBytes - bytesUploaded, totalBytes - bytesUploaded);
     }
 
     public TaskProgressTracker getTaskProgressTrackerForAllChecksumCalculation() {
-        return overallJobProgressTracker.addSubTask(100, 0);
-    }
-
-    public TaskProgressTracker getTaskProgressTrackerForSingleFileVerification() {
-        return overallJobProgressTracker.addSubTask(1, 0);
+        return overallJobProgressTracker.addSubTask(filesForUploadAndSize.size(), WORK_DIVISION_CHECKSUM_PERC);
     }
 
     public TaskProgressTracker getTaskProgressTrackerForSingleFileCompression(Uri uri) {
@@ -477,7 +491,7 @@ public class UploadJob implements Parcelable {
                 newJob = true;
             }
             for (Uri f : filesNotFinished) {
-                TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask(100, 1);
+                TaskProgressTracker fileChecksumProgressTracker = checksumProgressTracker.addSubTask(100, 1); // tick one file off. Each file has 0 - 100% completion
                 if (!IOUtils.exists(context, f)) {
                     // Remove file from upload list
                     cancelFileUpload(f);
@@ -829,8 +843,8 @@ public class UploadJob implements Parcelable {
         ParcelUtils.writeBool(dest, allowUploadOfRawVideosIfIncompressible);
         ParcelUtils.writeBool(dest, isDeleteFilesAfterUpload);
         dest.writeDouble(overallUploadProgress);
-        dest.writeLong(totalWork);
-        dest.writeLong(workDone);
+        dest.writeLong(totalDataToWorkOn);
+        dest.writeLong(dataWorkAlreadyDone);
     }
 
     public boolean isDeleteFilesAfterUpload() {

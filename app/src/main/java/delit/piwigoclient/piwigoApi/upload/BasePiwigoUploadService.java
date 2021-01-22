@@ -545,13 +545,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         runJob(thisUploadJob, null, true);
     }
 
-    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
+    protected void runJob(@NonNull UploadJob thisUploadJob, JobUploadListener listener, boolean deleteJobConfigFileOnSuccess) {
 
         try {
             setRunningUploadJob(thisUploadJob);
-            TaskProgressTracker overallJobProgressTracker = thisUploadJob.getProgressTrackerForJob(this);
-
-            int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(this, prefs);
 
             if (thisUploadJob == null) {
                 if (BuildConfig.DEBUG) {
@@ -561,6 +558,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
                 return;
             }
+            TaskProgressTracker overallJobProgressTracker = thisUploadJob.getProgressTrackerForJob(this);
+
+            int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(this, prefs);
+
             thisUploadJob.setRunning(true);
             thisUploadJob.setSubmitted(false);
 
@@ -664,11 +665,18 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     }
                 }
 
+                overallJobProgressTracker.incrementWorkDone(UploadJob.WORK_DIVISION_POST_CHECKED_FOR_EXISTING_FILES);
+
                 saveStateToDisk(thisUploadJob);
 
                 if (!thisUploadJob.isCancelUploadAsap()) {
                     if (thisUploadJob.hasFilesForUpload()) {
-                        uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob, availableAlbumsOnServer);
+                        TaskProgressTracker overallDataCompressAndUploadTracker = thisUploadJob.getTaskProgressTrackerForOverallCompressionAndUploadOfData();
+                        try {
+                            uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob, availableAlbumsOnServer);
+                        } finally {
+                            overallDataCompressAndUploadTracker.markComplete();
+                        }
                     }
                 }
 
@@ -682,6 +690,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     }
                 }
 
+                overallJobProgressTracker.incrementWorkDone(UploadJob.WORK_DIVISION_POST_UPLOAD_CALLS);
+
                 if (!thisUploadJob.isCancelUploadAsap()) {
 
                     if (thisUploadJob.getFilesNotYetUploaded(this).size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
@@ -691,6 +701,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         }
                     }
                 }
+
+                overallJobProgressTracker.incrementWorkDone(UploadJob.WORK_DIVISION_DELETE_TEMP_FOLDER);
 
                 thisUploadJob.setFinished();
 
@@ -1503,7 +1515,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private void verifyUploadedFileData(UploadJob thisUploadJob, Uri fileForUpload) {
         if (thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
-            TaskProgressTracker verificationTracker = thisUploadJob.getTaskProgressTrackerForSingleFileVerification();
+//            TaskProgressTracker verificationTracker = thisUploadJob.getTaskProgressTrackerForSingleFileVerification();
             try {
 
                 Boolean verifiedUploadedFile = verifyFileNotCorrupted(thisUploadJob, thisUploadJob.getUploadedFileResource(fileForUpload));
@@ -1524,7 +1536,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     thisUploadJob.markFileAsCorrupt(fileForUpload);
                 }
             } finally {
-                verificationTracker.markComplete();
+//                verificationTracker.markComplete();
             }
         } else {
             thisUploadJob.markFileAsNeedsDelete(fileForUpload);

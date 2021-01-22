@@ -1076,5 +1076,6 @@ SOFTWARE.
     <string name="generating_upload_job">Configuring Upload Job with your selection</string>
     <string name="alert_error_files_without_permissions_pattern">Uri Permissions were not provided for all files. Those without will not upload if the job is paused and later resumed (for example by Android power management). To avoid this issue, select files to upload from using this app if possible. Affected files: %1$d.</string>
     <string name="button_compress">Compress</string>
+    <string name="unable_to_compress_without_data">Unable to compress without the settings</string>
 
 </resources>
