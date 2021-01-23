@@ -250,8 +250,9 @@
         -->
         <item>1.4.0.100</item>
         <item>"Bugfix:
-                - More testing of the uploads area has removed a number of bugs
-                - upload job can become stuck where shared files are no longer available"</item>
+                - More testing of the uploads area has removed a number of bugs including:
+                    - upload job can become stuck where shared files are no longer available
+                    - upload job can stop if the last updated date wasn't available for a video being compressed"</item>
         <item>1.4.0.99</item>
         <item>"Bugfix:
                 - wasn't taking Uri permissions for files shared by another app, causing upload failure on job restart
