@@ -239,7 +239,7 @@ public class TaskProgressTracker implements ProgressListener {
 
         @Override
         public double getUpdateStep() {
-            return 1; // update at end only
+            return 1; // update at 100% only
         }
     }
 }

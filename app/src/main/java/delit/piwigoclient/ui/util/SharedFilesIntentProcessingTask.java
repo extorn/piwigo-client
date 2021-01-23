@@ -22,7 +22,6 @@ import delit.libs.core.util.Logging;
 import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
-import delit.libs.util.progress.ProgressListener;
 import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.R;
 import delit.piwigoclient.database.AppSettingsViewModel;
@@ -31,8 +30,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends OwnedSafeAsyncTask<T, Intent, Integer, Void> implements ProgressListener {
-
+public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends OwnedSafeAsyncTask<T, Intent, Integer, Void> {
 
     private static final String TAG = "SharedFilesIntentParser";
     private final AppSettingsViewModel appSettingsViewModel;
@@ -57,49 +55,20 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
         getOwner().getUiHelper().showProgressIndicator(getOwner().getString(R.string.progress_importing_files),0);
     }
 
-    private class SentFilesResult {
-
-        private final ArrayList<Uri> sentFiles;
-        private final HashMap<Uri, Integer> sentFilesAndPermissions;
-
-        public SentFilesResult(int sentFilesCount) {
-            this.sentFiles = new ArrayList<>(sentFilesCount);
-            this.sentFilesAndPermissions = new HashMap<>(sentFilesCount);
-        }
-
-        public ArrayList<FolderItem> getSentFiles() {
-            ArrayList<FolderItem> items = new ArrayList<>(sentFiles.size());
-            for(Uri uri : sentFiles) {
-                FolderItem fi = new FolderItem(uri);
-                Integer perms = sentFilesAndPermissions.get(uri);
-                if(perms != null) {
-                    fi.setPermissionsGranted(perms);
-                }
-                items.add(fi);
-            }
-            return items;
-        }
-
-        public void addPermissionsGranted(Uri uri, int permissions) {
-            sentFilesAndPermissions.put(uri, permissions);
-        }
-
-        public void add(Uri sharedUri) {
-            sentFiles.add(sharedUri);
-        }
-    }
-
     @Override
     protected Void doInBackgroundSafely(Intent[] objects) {
-        //FIXME count the uri permissions taken against files sent. If not match then warn user of inability to restart the upload if it crashes or app is killed by system due to e.g. battery consumption. Instead, collate the files through the app file selection.
         Intent intent = objects[0];
         SentFilesResult sentFilesResult = findSentFilesWithinIntent(intent);
         if(sentFilesResult != null) {
-            // this activity was invoked from another application
-            FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, -1).withFolderItems(sentFilesResult.getSentFiles());
-            EventBus.getDefault().postSticky(evt);
+            processSharedFilesInBackground(sentFilesResult);
         }
         return null;
+    }
+
+    protected void processSharedFilesInBackground(SentFilesResult sentFilesResult) {
+        // this activity was invoked from another application
+        FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, -1).withFolderItems(sentFilesResult.getSentFiles());
+        EventBus.getDefault().postSticky(evt);
     }
 
     @Override
@@ -117,16 +86,6 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
     @Override
     protected void onPostExecuteSafely(Void params) {
         getOwner().getUiHelper().hideProgressIndicator();
-    }
-
-    @Override
-    public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
-        publishProgress((int) Math.rint(percent * 100));
-    }
-
-    @Override
-    public double getUpdateStep() {
-        return 0.01;//1%
     }
 
     /**
@@ -194,24 +153,27 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
         SentFilesResult result;// process clip data
         result = new SentFilesResult(clipData.getItemCount());
 //            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
-        TaskProgressTracker fileImportTracker = new TaskProgressTracker(clipData.getItemCount(), this);
+        TaskProgressTracker fileImportTracker = new TaskProgressTracker(clipData.getItemCount(), new ProgressListener());
         boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
         for(int i = 0; i < clipData.getItemCount(); i++) {
-            ClipData.Item sharedItem = clipData.getItemAt(i);
-            Uri sharedUri = sharedItem.getUri();
-            if (sharedUri != null) {
-                String mimeType = getContext().getContentResolver().getType(sharedUri);
-                handleSentImage(sharedUri, mimeType, result);
-                if(canTakePermission) {
-                    try {
-                        appSettingsViewModel.takePersistableUriPermissions(getContext(), sharedUri, IOUtils.URI_PERMISSION_READ, AbstractUploadFragment.URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, getContext().getString(R.string.uri_permission_justification_to_upload));
-                        result.addPermissionsGranted(sharedUri, IOUtils.URI_PERMISSION_READ);
-                    } catch(SecurityException e) {
-                        Logging.log(Log.DEBUG, TAG, "No persistable permission available for uri %1$s", sharedUri);
+            try {
+                ClipData.Item sharedItem = clipData.getItemAt(i);
+                Uri sharedUri = sharedItem.getUri();
+                if (sharedUri != null) {
+                    String mimeType = getContext().getContentResolver().getType(sharedUri);
+                    handleSentImage(sharedUri, mimeType, result);
+                    if (canTakePermission) {
+                        try {
+                            appSettingsViewModel.takePersistableUriPermissions(getContext(), sharedUri, IOUtils.URI_PERMISSION_READ, AbstractUploadFragment.URI_PERMISSION_CONSUMER_ID_FOREGROUND_UPLOAD, getContext().getString(R.string.uri_permission_justification_to_upload));
+                            result.addPermissionsGranted(sharedUri, IOUtils.URI_PERMISSION_READ);
+                        } catch (SecurityException e) {
+                            Logging.log(Log.DEBUG, TAG, "No persistable permission available for uri %1$s", sharedUri);
+                        }
                     }
                 }
+            } finally {
+                fileImportTracker.incrementWorkDone(1);
             }
-            fileImportTracker.incrementWorkDone(1);
         }
         intent.setClipData(null);
         return result;
@@ -226,20 +188,23 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
         }
         if (imageUris != null) {
             result = new SentFilesResult(imageUris.size());
-            TaskProgressTracker fileImportTracker = new TaskProgressTracker(imageUris.size(), this);
+            TaskProgressTracker fileImportTracker = new TaskProgressTracker(imageUris.size(), new ProgressListener());
             int i = 0;
             for (Uri imageUri : imageUris) {
-                String mimeType;
-                if(mimeTypes != null && mimeTypes.length >= i) {
-                    mimeType = mimeTypes[i];
-                    i++;
-                } else {
-                    mimeType = intent.getType();
+                try {
+                    String mimeType;
+                    if (mimeTypes != null && mimeTypes.length >= i) {
+                        mimeType = mimeTypes[i];
+                        i++;
+                    } else {
+                        mimeType = intent.getType();
+                    }
+                    if (imageUri != null) {
+                        handleSentImage(imageUri, mimeType, result);
+                    }
+                } finally {
+                    fileImportTracker.incrementWorkDone(1);
                 }
-                if (imageUri != null) {
-                    handleSentImage(imageUri, mimeType, result);
-                }
-                fileImportTracker.incrementWorkDone(1);
             }
         } else {
             result = tryToExtractFilesFromIntentData(intent);
@@ -254,7 +219,7 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
         Uri sharedUri = intent.getData();
         if(sharedUri != null) {
             boolean canTakePermission = IOUtils.allUriFlagsAreSet(intent.getFlags(), IOUtils.URI_PERMISSION_READ);
-            TaskProgressTracker fileImportTracker = new TaskProgressTracker(1, this);
+            TaskProgressTracker fileImportTracker = new TaskProgressTracker(1, new ProgressListener());
             result = new SentFilesResult(1);
             handleSentImage(sharedUri, mimeType, result);
             if(canTakePermission) {
@@ -275,5 +240,49 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
 
     private void handleSentImage(@NonNull Uri sharedUri, String mimeType, @NonNull SentFilesResult filesToUpload) {
         filesToUpload.add(sharedUri);
+    }
+
+    private static class SentFilesResult {
+
+        private final ArrayList<Uri> sentFiles;
+        private final HashMap<Uri, Integer> sentFilesAndPermissions;
+
+        public SentFilesResult(int sentFilesCount) {
+            this.sentFiles = new ArrayList<>(sentFilesCount);
+            this.sentFilesAndPermissions = new HashMap<>(sentFilesCount);
+        }
+
+        public ArrayList<FolderItem> getSentFiles() {
+            ArrayList<FolderItem> items = new ArrayList<>(sentFiles.size());
+            for(Uri uri : sentFiles) {
+                FolderItem fi = new FolderItem(uri);
+                Integer perms = sentFilesAndPermissions.get(uri);
+                if(perms != null) {
+                    fi.setPermissionsGranted(perms);
+                }
+                items.add(fi);
+            }
+            return items;
+        }
+
+        public void addPermissionsGranted(Uri uri, int permissions) {
+            sentFilesAndPermissions.put(uri, permissions);
+        }
+
+        public void add(Uri sharedUri) {
+            sentFiles.add(sharedUri);
+        }
+    }
+
+    protected class ProgressListener implements delit.libs.util.progress.ProgressListener {
+        @Override
+        public void onProgress(@FloatRange(from = 0, to = 1) double percent) {
+            publishProgress((int) Math.rint(percent * 100));
+        }
+
+        @Override
+        public double getUpdateStep() {
+            return 0.01;//1%
+        }
     }
 }
