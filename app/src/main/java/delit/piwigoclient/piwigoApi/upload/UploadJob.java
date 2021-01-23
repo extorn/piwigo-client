@@ -590,7 +590,8 @@ public class UploadJob implements Parcelable {
             IOUtils.getSingleDocFile(context, f);
             DocumentFile docFile = IOUtils.getSingleDocFile(context, f);
             if(docFile != null && (docFile.isDirectory() || !docFile.isFile())) {
-                filesToUploadIterator.remove();
+                //filesToUploadIterator.remove();
+                cancelFileUpload(f); // these are no longer valid.
             }
         }
         return filesToUpload;
