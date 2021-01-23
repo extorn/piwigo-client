@@ -42,7 +42,9 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("tag_id", String.valueOf(tag.getId()));
-        params.put("order", sortOrder);
+        if(!"server".equals(sortOrder)) {
+            params.put("order", sortOrder);
+        }
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
         return params;

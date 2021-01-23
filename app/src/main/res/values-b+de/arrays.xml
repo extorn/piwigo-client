@@ -69,6 +69,7 @@
 
     
     <string-array name="preference_gallery_sort_order_entries">
+        <item>Server Standard</item>
         <item>Ressourcen-ID</item>
         <item>Ressourcendateiname</item>
         <item>Ressourcenname</item>
@@ -153,7 +154,10 @@
                  - Schlechte Leistung beim Scrollen durch Alben
                  - Neues Bildsymbol und Medientypsymbol verschwinden beim Scrollen durch das Album
                  - Das Komprimieren eines Videos als Ergebnis einer Audiodatei führte zu einem Standbild
-                 - Multimediadateien können nicht abgespielt werden, wenn die Miniaturansicht eine Standardeinstellung ist und keine generierte Datei"</item>
+                 - Multimediadateien können nicht abgespielt werden, wenn die Miniaturansicht eine Standardeinstellung ist und keine generierte Datei
+               Änderungen:
+                 - Option für die Standardoption der Sortierreihenfolge des Servers hinzugefügt - wird beim Abrufen von Albuminhalten verwendet.
+                   Dies ist jetzt die Standardeinstellung bei der App-Installation."</item>
         <item>1.4.0.99</item>
         <item>"Bug-Fix:
                  - hat keine Uri-Berechtigungen für Dateien erhalten, die von einer anderen App freigegeben wurden, was beim Neustart des Jobs zu einem Upload-Fehler führte

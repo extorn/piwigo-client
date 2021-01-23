@@ -69,6 +69,7 @@
 
     
     <string-array name="preference_gallery_sort_order_entries">
+        <item>Valeur par défaut du serveur</item>
         <item>ID de ressource</item>
         <item>Nom de fichier de la ressource</item>
         <item>Nom de la ressource</item>
@@ -153,7 +154,10 @@
                  - Mauvaises performances de défilement des albums
                  - la nouvelle icône d\'image et l\'icône de type de média disparaissent lors du défilement dans l\'album
                  - la compression d\'une vidéo pour qu\'elle ne soit qu\'un fichier audio entraîne une image fixe de la vidéo
-                 - La lecture des fichiers multimédias échouera si la vignette est une valeur par défaut plutôt qu\'un fichier généré"</item>
+                 - La lecture des fichiers multimédias échouera si la vignette est une valeur par défaut plutôt qu\'un fichier généré
+               Changements:
+                 - Ajout d\'une option pour l\'option de préférence d\'ordre de tri par défaut du serveur - utilisée lors de la récupération du contenu de l\'album.
+                   Il s\'agit désormais du paramètre par défaut lors de l\'installation de l\'application."</item>
         <item>1.4.0.99</item>
         <item>"Correction d\'un bug:
                  - ne prenait pas les autorisations Uri pour les fichiers partagés par une autre application, provoquant un échec de téléchargement au redémarrage du travail

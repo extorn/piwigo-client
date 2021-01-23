@@ -69,6 +69,7 @@
 
     
     <string-array name="preference_gallery_sort_order_entries">
+        <item>Servidor predeterminado</item>
         <item>ID de recurso</item>
         <item>Nombre de archivo de recurso</item>
         <item>Nombre del recurso</item>
@@ -153,7 +154,10 @@
                  - Rendimiento deficiente al desplazarse por los álbumes
                  - El icono de nueva imagen y el icono de tipo de medio desaparecen mientras se desplaza por el álbum
                  - comprimir un video para que sea solo un archivo de audio resultaba en una imagen fija de video
-                 - los archivos multimedia no se reproducirán si la miniatura es predeterminada en lugar de generar un archivo"</item>
+                 - los archivos multimedia no se reproducirán si la miniatura es predeterminada en lugar de generar un archivo
+               Cambios:
+                 - Opción agregada para la opción de preferencia de orden de clasificación predeterminada del servidor: se usa al recuperar el contenido del álbum.
+                   Esta es ahora la configuración predeterminada en la instalación de la aplicación."</item>
         <item>1.4.0.99</item>
         <item>"Arreglo del fallo:
                  - no estaba tomando permisos de Uri para archivos compartidos por otra aplicación, lo que provocó un error de carga al reiniciar el trabajo

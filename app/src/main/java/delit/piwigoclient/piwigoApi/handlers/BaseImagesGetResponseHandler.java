@@ -60,7 +60,9 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         if(parentAlbum != null) {
             params.put("cat_id", String.valueOf(parentAlbum.getId()));
         }
-        params.put("order", sortOrder);
+        if(!"server".equals(sortOrder)) {
+            params.put("order", sortOrder);
+        }
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
         return params;

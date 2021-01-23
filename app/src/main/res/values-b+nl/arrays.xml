@@ -69,6 +69,7 @@
 
     
     <string-array name="preference_gallery_sort_order_entries">
+        <item>Server standaard</item>
         <item>Bron-ID</item>
         <item>Resource bestandsnaam</item>
         <item>Naam van de bron</item>
@@ -153,7 +154,10 @@
                  - Slechte prestaties bij het scrollen door albums
                  - nieuw afbeeldingspictogram en mediatype-pictogram verdwijnen tijdens het bladeren door het album
                  - het comprimeren van een video om slechts een audiobestand te zijn, resulteerde in een videobestand
-                 - multimediabestanden kunnen niet worden afgespeeld als de miniatuur een standaard is in plaats van een bestand dat is gegenereerd"</item>
+                 - multimediabestanden kunnen niet worden afgespeeld als de miniatuur een standaard is in plaats van een bestand dat is gegenereerd
+               Veranderingen:
+                 - Optie toegevoegd voor de voorkeursoptie voor de standaard sorteervolgorde van de server - wordt gebruikt bij het ophalen van albuminhoud.
+                   Dit is nu de standaardinstelling voor app-installatie."</item>
         <item>1.4.0.99</item>
         <item>"Bugfix:
                  - nam geen Uri-machtigingen voor bestanden die door een andere app werden gedeeld, waardoor het uploaden mislukte bij het herstarten van de taak

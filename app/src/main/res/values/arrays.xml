@@ -129,6 +129,7 @@
         <item>small</item>
     </string-array>
     <string-array name="preference_gallery_sort_order_entries">
+        <item>Server Default</item>
         <item>Resource ID</item>
         <item>Resource Filename</item>
         <item>Resource Name</item>
@@ -139,6 +140,7 @@
         <item>random</item>
     </string-array>
     <string-array name="preference_gallery_sort_order_entryValues" translatable="false">
+        <item>server</item>
         <item>id</item>
         <item>file</item>
         <item>name</item>
@@ -256,7 +258,10 @@
                 - Poor performance scrolling through albums
                 - new image icon and media type icon disappear while scrolling through album
                 - compressing a video to be just an audio file results was resulting in a video still
-                - multimedia files will fail to play if the thumbnail is a default rather than file generated"</item>
+                - multimedia files will fail to play if the thumbnail is a default rather than file generated
+              Changes:
+                - Added option for server default sort order preference option - used when retrieving album content.
+                  This is now the default setting on app install."</item>
         <item>1.4.0.99</item>
         <item>"Bugfix:
                 - wasn't taking Uri permissions for files shared by another app, causing upload failure on job restart

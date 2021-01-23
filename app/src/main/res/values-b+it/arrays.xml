@@ -69,6 +69,7 @@
 
     
     <string-array name="preference_gallery_sort_order_entries">
+        <item>Default del server</item>
         <item>ID risorsa</item>
         <item>Nome file risorsa</item>
         <item>Nome risorsa</item>
@@ -153,7 +154,10 @@
                  - Scarse prestazioni durante lo scorrimento degli album
                  - l\'icona della nuova immagine e l\'icona del tipo di supporto scompaiono durante lo scorrimento dell\'album
                  - la compressione di un video in modo che fosse solo un file audio risultava come risultato di un video fermo
-                 - i file multimediali non verranno riprodotti se la miniatura è predefinita anziché generata da un file"</item>
+                 - i file multimediali non verranno riprodotti se la miniatura è predefinita anziché generata da un file
+               I cambiamenti:
+                 - Aggiunta l\'opzione per l\'opzione di preferenza di ordinamento predefinita del server, utilizzata durante il recupero del contenuto dell\'album.
+                   Questa è ora l\'impostazione predefinita per l\'installazione dell\'app."</item>
         <item>1.4.0.99</item>
         <item>"Risoluzione del problema:
                  - non stava prendendo le autorizzazioni Uri per i file condivisi da un\'altra app, causando un errore di caricamento al riavvio del lavoro

@@ -231,7 +231,7 @@
     <string name="preference_gallery_sort_order_key" translatable="false">preference_gallery_sort_order</string>
     <string name="preference_gallery_sort_order_title">Album sort order</string>
     <string name="preference_gallery_sort_order_summary">%1$s</string>
-    <string name="preference_gallery_sort_order_default" translatable="false">name</string>
+    <string name="preference_gallery_sort_order_default" translatable="false">server</string>
 
 
     <string name="preference_album_subalbum_sort_order_key" translatable="false">preference_album_subalbum_sort_order</string>

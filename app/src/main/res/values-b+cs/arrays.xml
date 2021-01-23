@@ -69,6 +69,7 @@
 
     
     <string-array name="preference_gallery_sort_order_entries">
+        <item>Výchozí nastavení serveru</item>
         <item>ID zdroje</item>
         <item>Název souboru zdroje</item>
         <item>Název zdroje</item>
@@ -153,7 +154,10 @@
                  - Špatný výkon při procházení alb
                  - nová ikona obrázku a ikona typu média zmizí při procházení albem
                  - výsledkem komprese videa, která má být pouze zvukovým souborem, je statický obraz
-                 - multimediální soubory se nepřehrají, pokud je miniatura výchozí a nikoli vygenerovaná"</item>
+                 - multimediální soubory se nepřehrají, pokud je miniatura výchozí a nikoli vygenerovaná
+               Změny:
+                 - Přidána možnost pro výchozí předvolbu pořadí řazení serveru - používá se při načítání obsahu alba.
+                   Toto je nyní výchozí nastavení pro instalaci aplikace."</item>
         <item>1.4.0.99</item>
         <item>"Oprava chyby:
                  - nebral oprávnění Uri pro soubory sdílené jinou aplikací, což způsobilo selhání nahrávání při restartu úlohy
