@@ -52,6 +52,8 @@ import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpResponseHandler {
     private static final String TAG = "PiwigoRespHndlr";
     public static final String PIWIGO_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final SimpleDateFormat PIWIGO_SERVER_SIMPLE_DATE_FORMAT = new SimpleDateFormat(PIWIGO_DATE_FORMAT, Locale.UK);
+    private static final boolean VERBOSE_LOGGING = false;
     private final boolean built;
     private final String tag;
     private boolean allowSessionRefreshAttempt;
@@ -83,8 +85,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return DateFormat.format(PIWIGO_DATE_FORMAT, date);
     }
 
-    public static Date parsePiwigoServerDate(String text) throws ParseException {
-        return new SimpleDateFormat(PIWIGO_DATE_FORMAT, Locale.UK).parse(text);
+    public synchronized static Date parsePiwigoServerDate(String text) throws ParseException {
+        return PIWIGO_SERVER_SIMPLE_DATE_FORMAT.parse(text);
     }
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -136,7 +138,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     @Override
     public void onProgress(long bytesWritten, long totalSize) {
-        if(BuildConfig.DEBUG) {
+        if(VERBOSE_LOGGING && BuildConfig.DEBUG) {
             double currentProgressPercent = Math.floor((totalSize > 0) ? (bytesWritten * 1.0 / totalSize) * 100 : -1);
             if(currentProgressPercent < 0 || currentProgressPercent > lastProgressReportAtPercent) {
                 if(totalSize > 1) {

@@ -157,14 +157,8 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
     protected String getUriStringEncodingPathSegments(Context c, Uri uri) {
 
-        List<String> pathSegments = uri.getPathSegments();
         Uri.Builder builder = uri.buildUpon().encodedPath(null);
         Set<String> queryParamIds = new HashSet<>(uri.getQueryParameterNames());
-
-        boolean pathSegmentsPossiblyAlreadyEncoded = false;
-        for (int i = 0; i < pathSegments.size(); i++) {
-            builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
-        }
 
         if (queryParamIds.contains(EXIF_WANTED_URI_PARAM)) {
             builder.clearQuery();
@@ -191,6 +185,11 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
                 }
             }
 
+        } else {
+            List<String> pathSegments = uri.getPathSegments();
+            for (int i = 0; i < pathSegments.size(); i++) {
+                builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
+            }
         }
 
 
