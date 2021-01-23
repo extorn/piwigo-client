@@ -57,7 +57,11 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
 
             // Initialise phase 1 (0% -15% - split between number of files to process)
             TaskProgressTracker cachingProgressTracker = fileSelectionProgress.addSubTask(itemCount, 15);
-            FolderItem.cacheDocumentInformation(getContext(), event.getSelectedFolderItems(), cachingProgressTracker);
+            try {
+                FolderItem.cacheDocumentInformation(getContext(), event.getSelectedFolderItems(), cachingProgressTracker);
+            } finally {
+                cachingProgressTracker.markComplete();
+            }
             Logging.log(Log.DEBUG, TAG, "Doc Field Caching Progress : %1$.0f (complete? %2$b)", 100 * cachingProgressTracker.getTaskProgress(), cachingProgressTracker.isComplete());
             Iterator<FolderItem> iter = event.getSelectedFolderItems().iterator();
             int missingPermissions = 0;
