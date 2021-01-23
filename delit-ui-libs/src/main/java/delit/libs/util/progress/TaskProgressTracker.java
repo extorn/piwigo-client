@@ -92,7 +92,10 @@ public class TaskProgressTracker implements ProgressListener {
         this.workDone = workDone;
         afterTaskProgress();
         if(!subTasks.isEmpty()) {
-            throw new IllegalStateException("Unable to update overall work progress when sub divided.");
+            calculateProgressValue(); // this will clear any orphaned sub tasks that are complete.
+            if(!subTasks.isEmpty()) {
+                throw new IllegalStateException("Unable to update overall work progress when sub divided.");
+            }
         }
     }
 
