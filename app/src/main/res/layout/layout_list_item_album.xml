@@ -18,9 +18,11 @@
             android:id="@+id/resource_thumbnail"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="28dp"
             android:scaleType="fitCenter"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/resource_description"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.3"
@@ -31,8 +33,12 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_margin="2dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/resource_thumbnail"
+            app:layout_constraintEnd_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@+id/resource_thumbnail"
+            app:layout_constraintTop_toTopOf="@+id/resource_thumbnail"
+            app:layout_constraintVertical_bias="0"
             app:srcCompat="@drawable/ic_star_yellow_24dp" />
 
         <TextView
@@ -48,27 +54,18 @@
             android:paddingEnd="3dp"
             android:paddingBottom="0dp"
             android:textAppearance="?textAppearanceHeadline5"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@id/resource_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
-            app:layout_constraintTop_toTopOf="@id/resource_thumbnail"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="Album Name. This one is really long!" />
 
-        <!--<androidx.core.widget.NestedScrollView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constrainedHeight="true"
-            android:fillViewport="true"
-            android:scrollbars="vertical"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintBottom_toTopOf="@+id/album_photoCount"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
-            app:layout_constraintTop_toBottomOf="@id/resource_name"
-            app:layout_constraintHeight_max="150dp">-->
         <TextView
             android:id="@+id/resource_description"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:maxLines="10"
@@ -77,11 +74,11 @@
             android:paddingTop="3dp"
             android:paddingEnd="3dp"
             android:paddingBottom="0dp"
+            android:textAppearance="?textAppearanceBody2"
             app:layout_constraintBottom_toTopOf="@+id/album_photoCount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
             app:layout_constraintTop_toBottomOf="@id/resource_name"
-            android:textAppearance="?textAppearanceBody2"
             tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description. What do you think?
 asdadfasd\n
 \n
@@ -115,9 +112,10 @@ END" />
             android:paddingStart="11dp"
             android:paddingEnd="5dp"
             android:textAppearance="?textAppearanceBody2"
+            app:layout_constraintTop_toBottomOf="@+id/resource_description"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/resource_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="215 photos" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
