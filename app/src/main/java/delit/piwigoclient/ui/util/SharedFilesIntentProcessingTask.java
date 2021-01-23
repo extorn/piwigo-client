@@ -30,16 +30,18 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends OwnedSafeAsyncTask<T, Intent, Integer, Void> {
+public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends OwnedSafeAsyncTask<T, Void, Integer, Void> {
 
     private static final String TAG = "SharedFilesIntentParser";
     private final AppSettingsViewModel appSettingsViewModel;
     private final int fileSelectionEventId;
+    private final Intent intent;
     private String[] acceptedMimeTypes = new String[]{"image/*", "video/*", "application/pdf", "application/zip"};
 
-    public SharedFilesIntentProcessingTask(T parent, int fileSelectionEventId) {
+    public SharedFilesIntentProcessingTask(T parent, int fileSelectionEventId, Intent intent) {
         super(parent);
         withContext(parent);
+        this.intent = intent;
         this.fileSelectionEventId = fileSelectionEventId;
         ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(parent);
         appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
@@ -56,8 +58,7 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
     }
 
     @Override
-    protected Void doInBackgroundSafely(Intent[] objects) {
-        Intent intent = objects[0];
+    protected Void doInBackgroundSafely(Void... objects) {
         SentFilesResult sentFilesResult = findSentFilesWithinIntent(intent);
         if(sentFilesResult != null) {
             processSharedFilesInBackground(sentFilesResult);

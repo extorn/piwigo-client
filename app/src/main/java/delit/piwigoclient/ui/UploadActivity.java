@@ -402,7 +402,7 @@ public class UploadActivity extends MyActivity<UploadActivity> {
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
-                new SharedFilesIntentProcessingTask(this, fileSelectionEventId).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, lastIntent);
+                new SharedFilesIntentProcessingTask<>(this, fileSelectionEventId, lastIntent).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
