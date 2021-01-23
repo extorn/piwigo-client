@@ -8,7 +8,7 @@ import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
 
 public class UploadFragment extends AbstractUploadFragment<UploadFragment> {
     public static UploadFragment newInstance(CategoryItemStub currentGallery, int actionId) {
@@ -18,7 +18,7 @@ public class UploadFragment extends AbstractUploadFragment<UploadFragment> {
     }
 
     @Override
-    protected void updateFilesForUploadList(List<UploadDataItemModel.UploadDataItem> folderItemsToBeUploaded) {
+    protected void updateFilesForUploadList(List<UploadDataItem> folderItemsToBeUploaded) {
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
         super.updateFilesForUploadList(folderItemsToBeUploaded);
         Set<Uri> allFiles = adapter.getFilesAndSizes().keySet();
