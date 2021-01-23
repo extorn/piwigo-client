@@ -6,13 +6,13 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
  * Created by gareth on 12/06/17.
  */
 
-public class AlbumItemDeletedEvent {
+public class AlbumItemDeletedEvent<T extends GalleryItem> {
 
-    public final GalleryItem item;
+    public final T item;
     private final int albumResourceItemIdx;
     private final int albumResourceItemCount;
 
-    public AlbumItemDeletedEvent(final GalleryItem item, int albumItemIdx, int albumItemCount) {
+    public AlbumItemDeletedEvent(final T item, int albumItemIdx, int albumItemCount) {
         this.item = item;
         this.albumResourceItemIdx = albumItemIdx;
         this.albumResourceItemCount = albumItemCount;

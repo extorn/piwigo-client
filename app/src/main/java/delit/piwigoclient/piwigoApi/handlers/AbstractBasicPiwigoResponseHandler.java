@@ -85,8 +85,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return DateFormat.format(PIWIGO_DATE_FORMAT, date);
     }
 
-    public synchronized static Date parsePiwigoServerDate(String text) throws ParseException {
-        return PIWIGO_SERVER_SIMPLE_DATE_FORMAT.parse(text);
+    public static Date parsePiwigoServerDate(String text) throws ParseException {
+        synchronized (PIWIGO_SERVER_SIMPLE_DATE_FORMAT) {
+            return PIWIGO_SERVER_SIMPLE_DATE_FORMAT.parse(text);
+        }
     }
 
     public AbstractBasicPiwigoResponseHandler(String tag) {

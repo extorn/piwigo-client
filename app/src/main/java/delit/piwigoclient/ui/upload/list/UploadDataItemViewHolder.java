@@ -95,8 +95,9 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
 
             // if has finished compressing the file, update the file size heading text
             if (uploadDataItem.uploadProgress.getCompressionProgress() == 100) {
-                // change the shown file size to be that of the compressed file
+                // change the shown file name and size to be that of the compressed file
                 try {
+                    fileNameField.setText(uploadDataItem.getFilename(itemView.getContext()));
                     itemHeading.setText(uploadDataItem.getFileSizeStr(itemView.getContext()));
                 } catch (IllegalStateException e) {
                     // don't care - this happens due to file being deleted post upload

@@ -253,7 +253,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             }
 
 
-            if (originalResourceUrl != null && multimediaPatternMatcher.matches() && (originalResourceUrl.startsWith(basePiwigoUrl) || originalResourceUrl.toLowerCase().startsWith(basePiwigoUrl.toLowerCase()))) {
+            if (originalResourceUrl != null && multimediaPatternMatcher.matches() && (originalResourceUrl.matches("(?i)^"+basePiwigoUrl+"/upload/.*"))) {
                 //TODO why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
                 String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
@@ -263,14 +263,10 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                     fixedPrivacyPluginImageUrisForPrivacyPluginUser = true;
                 } else {
-
-                    String thumbRelUri = thumbnail.substring(basePiwigoUrl.length());
-                    if (thumbRelUri.startsWith("/" + id + "/_data")) {
-                        boolean missingImageId = mediaFile.startsWith("/upload");
-                        if (missingImageId) {
-                            originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/" + id + "/upload");
-                            fixedImageUrisForPrivacyPluginUser = true;
-                        }
+                    boolean missingImageId = mediaFile.startsWith("/upload");
+                    if (missingImageId) {
+                        originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/" + id + "/upload");
+                        fixedImageUrisForPrivacyPluginUser = true;
                     }
                 }
                 item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);

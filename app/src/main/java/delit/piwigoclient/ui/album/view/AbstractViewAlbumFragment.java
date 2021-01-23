@@ -162,12 +162,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
     private static final String STATE_SELECTED_ITEMS = "selectedItemIds";
+    public static final String SERVER_CALL_ID_SUB_CATEGORIES = "C";
+    public static final String SERVER_CALL_ID_ALBUM_PERMISSIONS = "P";
+    public static final String SERVER_CALL_ID_ALBUM_INFO_DETAIL = "U";
+    public static final String SERVER_CALL_ID_ADMIN_LIST_ALBUMS = "AL";
 
 
-    private static PiwigoAlbumAdminList albumAdminList;
+    private static PiwigoAlbumAdminList adminOnlyServerCategoriesTree;
     private PiwigoAlbum<GalleryItem> galleryModel;
     private HashSet<Long> userIdsInSelectedGroups;
-    private List<CategoryItem> adminCategories;
+    private List<CategoryItem> adminOnlyChildCategories;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
     private boolean isReopening;
     private String currentResourceSortOrder;
@@ -525,7 +529,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         } else {
             // fresh view of the root of the gallery - reset the admin list
             if (galleryModel.getContainerDetails().isRoot()) {
-                albumAdminList = null;
+                adminOnlyServerCategoriesTree = null;
             }
         }
 
@@ -822,7 +826,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
     private void loadAdminListOfAlbums() {
         long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsAdminResponseHandler());
-        loadingMessageIds.put(loadingMessageId, "AL");
+        loadingMessageIds.put(loadingMessageId, SERVER_CALL_ID_ADMIN_LIST_ALBUMS);
     }
 
     private void onDownloadAllItemsButtonClick(HashSet<Long> imageIds, HashSet<GalleryItem> selectedItems) {
@@ -1126,7 +1130,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 //            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
 //                connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
 //            }
-            loadingMessageIds.put(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), viewPrefs.getPreferredAlbumThumbnailSize(), false)), "C");
+            loadingMessageIds.put(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), viewPrefs.getPreferredAlbumThumbnailSize(), false)), SERVER_CALL_ID_SUB_CATEGORIES);
         }
     }
 
@@ -1339,24 +1343,24 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             loadAlbumPermissionsIfNeeded();
             if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
                 boolean loadAdminList = false;
-                if (albumAdminList == null) {
+                if (adminOnlyServerCategoriesTree == null) {
                     loadAdminList = true;
                 } else {
                     if (galleryModel.getContainerDetails().isRoot()) {
-                        adminCategories = albumAdminList.getAlbums();
+                        adminOnlyChildCategories = adminOnlyServerCategoriesTree.getAlbums();
                     } else {
-                        CategoryItem adminCopyOfAlbum = null;
+                        CategoryItem adminCopyOfThisAlbum = null;
                         try {
-                            adminCopyOfAlbum = albumAdminList.getAlbum(galleryModel.getContainerDetails());
+                            adminCopyOfThisAlbum = adminOnlyServerCategoriesTree.getAlbum(galleryModel.getContainerDetails());
                         } catch (IllegalStateException e) {
                             Logging.recordException(e);
                             Logging.log(Log.ERROR, getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
                         }
-                        if (adminCopyOfAlbum != null) {
-                            adminCategories = adminCopyOfAlbum.getChildAlbums();
+                        if (adminCopyOfThisAlbum != null) {
+                            adminOnlyChildCategories = adminCopyOfThisAlbum.getChildAlbums();
                         } else {
                             // this admin list is outdated.
-                            albumAdminList = null;
+                            adminOnlyServerCategoriesTree = null;
                             loadAdminList = true;
                         }
                     }
@@ -1787,24 +1791,25 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         onResourceUpdateProcessed(response);
     }
 
-    protected void onAdminListOfAlbumsLoaded(AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
-        albumAdminList = response.getAdminList();
+    protected synchronized void onAdminListOfAlbumsLoaded(AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
+        adminOnlyServerCategoriesTree = response.getAdminList();
         try {
-            adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
+            adminOnlyChildCategories = adminOnlyServerCategoriesTree.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
         } catch (IllegalStateException e) {
             Logging.recordException(e);
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new AlbumNoLongerExistsAction(getUiHelper()));
             return;
         }
 
-        // will only run if the album was found on the server
-        if (!loadingMessageIds.containsValue("C")) {
-            // categories have finished loading. Let's superimpose those not already present.
-            boolean changed = galleryModel.addMissingAlbums(adminCategories);
-            if (changed) {
-                galleryModel.updateSpacerAlbumCount(albumsPerRow);
-                viewAdapter.notifyDataSetChanged();
+        if (adminOnlyChildCategories.size() > 1) {
+            if (!galleryModel.containsItem(CategoryItem.ALBUM_HEADING)) {
+                galleryModel.addItem(CategoryItem.ALBUM_HEADING);
             }
+        }
+        boolean changed = galleryModel.addMissingAlbums(adminOnlyChildCategories);
+        if (changed) {
+            galleryModel.updateSpacerAlbumCount(albumsPerRow);
+            viewAdapter.notifyDataSetChanged();
         }
 
     }
@@ -1964,16 +1969,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
                 switch (itemToLoad) {
-                    case "C":
+                    case SERVER_CALL_ID_SUB_CATEGORIES:
                         loadAlbumSubCategories();
                         break;
-                    case "P":
+                    case SERVER_CALL_ID_ALBUM_PERMISSIONS:
                         loadAlbumPermissionsIfNeeded();
                         break;
-                    case "U":
+                    case SERVER_CALL_ID_ALBUM_INFO_DETAIL:
                         updateAlbumDetails();
                         break;
-                    case "AL":
+                    case SERVER_CALL_ID_ADMIN_LIST_ALBUMS:
                         loadAdminListOfAlbums();
                         break;
                     default:
@@ -1985,38 +1990,38 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    protected void onListOfAlbumsLoaded(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+    protected synchronized void onListOfAlbumsLoaded(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
 
-        synchronized (this) {
-            if (galleryModel.getContainerDetails().isRoot()) {
-                galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
-            }
-            if (response.getAlbums().size() > 1) {
-                if (!galleryModel.containsItem(CategoryItem.ALBUM_HEADING)) {
-                    galleryModel.addItem(CategoryItem.ALBUM_HEADING);
-                }
-            }
-            for (CategoryItem item : response.getAlbums()) {
-                if (item.getId() != galleryModel.getContainerDetails().getId()) {
-                    galleryModel.addItem(item);
-                } else {
-                    // copy the extra data across not retrieved by default.
-                    item.setGroups(galleryModel.getContainerDetails().getGroups());
-                    item.setUsers(galleryModel.getContainerDetails().getUsers());
-                    // now update the reference.
-                    galleryModel.setContainerDetails(item);
-                    // update the display.
-                    setGalleryHeadings();
-                }
-            }
-            if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !loadingMessageIds.containsValue("AL")) {
-                // admin album list has already finished loading. Let's superimpose those not already present.
-                // sink changed value - don't care here.
-                galleryModel.addMissingAlbums(adminCategories);
-            }
-            galleryModel.updateSpacerAlbumCount(albumsPerRow);
-            viewAdapter.notifyDataSetChanged();
+        if (galleryModel.getContainerDetails().isRoot()) {
+            galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
         }
+        if (response.getAlbums().size() > 1) {
+            if (!galleryModel.containsItem(CategoryItem.ALBUM_HEADING)) {
+                galleryModel.addItem(CategoryItem.ALBUM_HEADING);
+            }
+        }
+        for (CategoryItem item : response.getAlbums()) {
+            if (item.getId() != galleryModel.getContainerDetails().getId()) {
+                // the 'child' album is not the current album we're viewing
+                // first try and remove it (will remove any admin copies)
+                galleryModel.remove(item);
+                // now add the item.
+                galleryModel.addItem(item);
+            } else {
+                // copy the extra data across not retrieved by default.
+                item.setGroups(galleryModel.getContainerDetails().getGroups());
+                item.setUsers(galleryModel.getContainerDetails().getUsers());
+                // now update the reference.
+                galleryModel.setContainerDetails(item);
+                // update the display.
+                setGalleryHeadings();
+            }
+        }
+        if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            galleryModel.addMissingAlbums(adminOnlyChildCategories);
+        }
+        galleryModel.updateSpacerAlbumCount(albumsPerRow);
+        viewAdapter.notifyDataSetChanged();
         emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
 
@@ -2133,9 +2138,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             EventBus.getDefault().post(event);
             exitFragment = true;
         } else {
-            if (albumAdminList != null) {
-                albumAdminList.removeAlbumById(galleryDetails, response.getAlbumId());
-                adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryDetails);
+            if (adminOnlyServerCategoriesTree != null) {
+                adminOnlyServerCategoriesTree.removeAlbumById(galleryDetails, response.getAlbumId());
+                adminOnlyChildCategories = adminOnlyServerCategoriesTree.getDirectChildrenOfAlbum(galleryDetails);
             }
             galleryDetails.removeChildAlbum(response.getAlbumId()); // will return false if it was the admin copy (unlikely but do after to be sure).
             //we've deleted a child album (now update this album view to reflect the server content)
@@ -2307,21 +2312,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         String failedCall = loadingMessageIds.get(messageId);
         if (failedCall == null) {
             if (editingItemDetails) {
-                failedCall = "U";
+                failedCall = SERVER_CALL_ID_ALBUM_INFO_DETAIL;
             } else {
-                failedCall = "P";
+                failedCall = SERVER_CALL_ID_ALBUM_PERMISSIONS;
             }
         }
         synchronized (itemsToLoad) {
             itemsToLoad.add(failedCall);
             switch (failedCall) {
-                case "U":
+                case SERVER_CALL_ID_ALBUM_INFO_DETAIL:
                     emptyGalleryLabel.setText(R.string.gallery_update_failed_text);
                     break;
-                case "P":
+                case SERVER_CALL_ID_ALBUM_PERMISSIONS:
                     emptyGalleryLabel.setText(R.string.gallery_permissions_load_failed_text);
                     break;
-                case "AL":
+                case SERVER_CALL_ID_ADMIN_LIST_ALBUMS:
                     emptyGalleryLabel.setText(R.string.gallery_admin_albums_list_load_failed_text);
                     break;
                 default:

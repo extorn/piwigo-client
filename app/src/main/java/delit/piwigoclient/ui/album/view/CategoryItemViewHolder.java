@@ -73,21 +73,12 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
 
     private void configurePlaceholderThumbnail(CategoryItem newItem) {
         imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            (imageLoader).setCenterCrop(true);
-        } else {
-            (imageLoader).setCenterCrop(false);
-        }
+        imageLoader.setCenterCrop(parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed());
     }
 
     private void configureLoadingBasicThumbnail(CategoryItem newItem) {
         imageLoader.setUriToLoad(newItem.getThumbnailUrl());
-
-        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            (imageLoader).setCenterCrop(true);
-        } else {
-            (imageLoader).setCenterCrop(false);
-        }
+        imageLoader.setCenterCrop(parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed());
     }
 
     @Override

@@ -72,7 +72,6 @@ public abstract class AlbumItemViewHolder<VH extends AlbumItemViewHolder<VH,LVA,
         mRecentlyAlteredMarkerView = itemView.findViewById(R.id.newly_altered_marker_image);
         mItemContainer = itemView.findViewById(R.id.item_container);
         imageLoader = new ResizingPicassoLoader<>(mImageView, this, 0, 0);
-//        imageLoader.load();
         mImageView.setContentDescription("resource thumb");
         mImageView.setOnClickListener(getItemActionListener());
         mImageView.setOnLongClickListener(getItemActionListener());

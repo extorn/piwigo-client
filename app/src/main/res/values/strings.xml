@@ -762,8 +762,8 @@ SOFTWARE.
     <string name="gallery_empty_text">This album is currently empty</string>
     <string name="alert_error_unable_to_clear_cached_content">Unable to delete cached content.</string>
     <string name="alert_clear_cached_content">Clear cached data for this resource and force re-download from the server?</string>
-    <string name="gallery_album_content_load_failed_text">Unable to load album content or permissions details</string>
-    <string name="gallery_permissions_load_failed_text">Unable to load album content or permissions details</string>
+    <string name="gallery_album_content_load_failed_text">Unable to load album content</string>
+    <string name="gallery_permissions_load_failed_text">Unable to load album permissions details</string>
     <string name="gallery_update_failed_text">Unable to update album details</string>
     <string name="progress_saving_changes">Saving changes</string>
     <string name="user_privacy_level_title">Privacy Level</string>

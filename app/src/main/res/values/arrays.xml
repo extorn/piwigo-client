@@ -255,7 +255,8 @@
                     - upload job can stop if the last updated date wasn't available for a video being compressed
                 - Poor performance scrolling through albums
                 - new image icon and media type icon disappear while scrolling through album
-                - compressing a video to be just an audio file results was resulting in a video still"</item>
+                - compressing a video to be just an audio file results was resulting in a video still
+                - multimedia files will fail to play if the thumbnail is a default rather than file generated"</item>
         <item>1.4.0.99</item>
         <item>"Bugfix:
                 - wasn't taking Uri permissions for files shared by another app, causing upload failure on job restart

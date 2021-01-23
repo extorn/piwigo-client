@@ -292,6 +292,7 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
         return doInBackground(messageId);
     }
 
+
     /**
      * Run synchronously in a different thread
      *

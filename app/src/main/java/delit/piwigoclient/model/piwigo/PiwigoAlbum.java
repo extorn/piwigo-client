@@ -351,8 +351,6 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
             } else if (CategoryItem.BLANK.equals(removedItem)) {
                 subAlbumCount--;
             }
-        } else {
-            // It's a resource (no count recorded at the moment).
         }
         return removedItem;
     }
@@ -373,14 +371,14 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
         }
         return null;
     }
-    public static final Parcelable.Creator<PiwigoAlbum> CREATOR
-            = new Parcelable.Creator<PiwigoAlbum>() {
-        public PiwigoAlbum createFromParcel(Parcel in) {
-            return new PiwigoAlbum(in);
+    public static final Parcelable.Creator<PiwigoAlbum<?>> CREATOR
+            = new Parcelable.Creator<PiwigoAlbum<?>>() {
+        public PiwigoAlbum<?> createFromParcel(Parcel in) {
+            return new PiwigoAlbum<>(in);
         }
 
-        public PiwigoAlbum[] newArray(int size) {
-            return new PiwigoAlbum[size];
+        public PiwigoAlbum<?>[] newArray(int size) {
+            return new PiwigoAlbum<?>[size];
         }
     };
 }

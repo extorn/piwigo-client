@@ -86,7 +86,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
 
     @Override
     public boolean isSuccess() {
-        return super.isSuccess() && !isResponseError();
+        return super.isSuccess() && !isResponseError() && response != null;
     }
 
     public PiwigoResponseBufferingHandler.BaseResponse getResponse() {

@@ -36,8 +36,8 @@ public class PiwigoAlbumAdminList implements Parcelable {
         }
         List<Long> fullAlbumPath = new ArrayList<>(parentageChain);
         fullAlbumPath.add(albumId);
-        for (CategoryItem c : rootAlbums) {
-            CategoryItem item = c.locateChildAlbum(fullAlbumPath);
+        for (CategoryItem rootAlbum : rootAlbums) {
+            CategoryItem item = rootAlbum.locateChildAlbum(fullAlbumPath);
             if (item != null) {
                 return item.getChildAlbums();
             }

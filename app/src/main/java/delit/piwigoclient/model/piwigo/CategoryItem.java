@@ -278,7 +278,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         }
     }
 
-    public void removeChildAlbum(CategoryItem item) {
+    public void removeChildAlbum(@NonNull CategoryItem item) {
         childAlbums.remove(item);
         updateTotalPhotoAndSubAlbumCount();
     }

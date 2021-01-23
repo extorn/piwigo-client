@@ -250,7 +250,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 }
             }
             if (responseHandler.isFailed()) {
-                throw new HttpIOException(responseHandler.getStatusCode(), responseHandler.getResponseData(), responseHandler.getRequestURI().toString());
+                HttpIOException exception =  new HttpIOException(responseHandler.getStatusCode(), responseHandler.getResponseData(), responseHandler.getRequestURI().toString());
+                httpResponseHandler = null; // clear the http response handler so we get a new one next time.
+                throw exception;
             }
         }
         long bytesRemaining = dataSpec.length == LENGTH_UNSET ? cacheMetaData.getTotalBytes() - dataSpec.position
