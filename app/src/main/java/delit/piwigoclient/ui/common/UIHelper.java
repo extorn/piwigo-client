@@ -800,7 +800,7 @@ public abstract class UIHelper<T> {
 
     public void hideProgressIndicator() {
         ProgressIndicator progressIndicator = getProgressIndicator();
-        if(progressIndicator != null) {
+        if(progressIndicator != null && progressIndicator.isVisible()) {
             if (DisplayUtils.isRunningOnUIThread()) {
                 progressIndicator.setVisibility(View.GONE);
             } else {
