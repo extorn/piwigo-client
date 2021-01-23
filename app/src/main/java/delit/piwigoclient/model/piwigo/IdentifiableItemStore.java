@@ -22,5 +22,5 @@ public interface IdentifiableItemStore<T> {
 
     boolean removeAll(Collection<T> itemsForDeletion);
 
-    void remove(T r);
+    boolean remove(T r);
 }

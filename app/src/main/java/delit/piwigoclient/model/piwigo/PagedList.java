@@ -307,8 +307,8 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     @Override
-    public void remove(T item) {
-        items.remove(item);
+    public boolean remove(T item) {
+        return items.remove(item);
     }
 
     @Override

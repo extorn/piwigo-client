@@ -2000,13 +2000,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 galleryModel.addItem(CategoryItem.ALBUM_HEADING);
             }
         }
+        boolean itemsRemoved = false;
+        boolean itemsAdded = false;
         for (CategoryItem item : response.getAlbums()) {
             if (item.getId() != galleryModel.getContainerDetails().getId()) {
                 // the 'child' album is not the current album we're viewing
                 // first try and remove it (will remove any admin copies)
-                galleryModel.remove(item);
+                itemsRemoved = galleryModel.remove(item);
                 // now add the item.
                 galleryModel.addItem(item);
+                itemsAdded = true;
             } else {
                 // copy the extra data across not retrieved by default.
                 item.setGroups(galleryModel.getContainerDetails().getGroups());
@@ -2021,7 +2024,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             galleryModel.addMissingAlbums(adminOnlyChildCategories);
         }
         galleryModel.updateSpacerAlbumCount(albumsPerRow);
-        viewAdapter.notifyDataSetChanged();
+        if(itemsRemoved) {
+            // everything has changed including the admin -> default items.
+            viewAdapter.notifyDataSetChanged();
+        } else if(itemsAdded) {
+            // everything has changed
+            viewAdapter.notifyDataSetChanged();
+        }
         emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
 

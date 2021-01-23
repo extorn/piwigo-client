@@ -71,6 +71,16 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
         imageLoader.load();
     }
 
+    @Override
+    public void redisplayOldValues(T newItem, boolean allowItemDeletion) {
+        if (newItem.getThumbnailUrl() != null) {
+            /* this will occur if we were previously showing an admin version of the category
+               and now we're showing a full-fat user version. */
+            configureLoadingBasicThumbnail(newItem);
+        }
+        super.redisplayOldValues(newItem, allowItemDeletion);
+    }
+
     private void configurePlaceholderThumbnail(CategoryItem newItem) {
         imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
         imageLoader.setCenterCrop(parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed());
