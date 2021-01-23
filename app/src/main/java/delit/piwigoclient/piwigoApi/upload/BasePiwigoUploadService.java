@@ -17,6 +17,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -1798,7 +1799,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
 
         @Override
-        public void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs) {
+        public void onCompressionProgress(Uri inputFile, Uri outputFile, @FloatRange(from = 0, to = 100) double compressionProgress, long mediaDurationMs) {
             int intCompProgress = (int) Math.round(compressionProgress);
             singleFileCompressionProgressTracker.setWorkDone(intCompProgress);
             uploadService.updateNotificationProgressText(job.getOverallUploadProgressInt());

@@ -240,7 +240,7 @@ public class UploadJob implements Parcelable {
 
     public TaskProgressTracker getTaskProgressTrackerForSingleFileCompression(Uri uri) {
         long filesize = getFileSize(uri);
-        return overallJobProgressTracker.addSubTask(100, filesize);
+        return uploadProgressTracker.addSubTask(100, filesize);
     }
 
     public void setToRunInBackground() {

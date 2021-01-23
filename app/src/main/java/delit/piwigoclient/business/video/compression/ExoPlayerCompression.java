@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
@@ -180,7 +181,7 @@ public class ExoPlayerCompression {
 
         void onCompressionComplete(Uri inputFile, Uri outputFile);
 
-        void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs);
+        void onCompressionProgress(Uri inputFile, Uri outputFile, @FloatRange(from = 0, to = 100) double compressionProgress, long mediaDurationMs);
     }
 
     private static class CompressionListenerWrapper implements CompressionListener {
@@ -210,7 +211,7 @@ public class ExoPlayerCompression {
         }
 
         @Override
-        public void onCompressionProgress(Uri inputFile, Uri outputFile, double compressionProgress, long mediaDurationMs) {
+        public void onCompressionProgress(Uri inputFile, Uri outputFile, @FloatRange(from = 0, to = 100) double compressionProgress, long mediaDurationMs) {
             wrapped.onCompressionProgress(inputFile, outputFile, compressionProgress, mediaDurationMs);
         }
     }
