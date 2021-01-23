@@ -452,7 +452,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         return false;
     }
 
-    private UploadJob getUploadJob(Context context, AutoUploadJobConfig jobConfig, BackgroundPiwigoFileUploadResponseListener jobListener) {
+    private UploadJob getUploadJob(@NonNull Context context, @NonNull AutoUploadJobConfig jobConfig, @NonNull BackgroundPiwigoFileUploadResponseListener jobListener) {
         DocumentFile localFolderToMonitor = jobConfig.getLocalFolderToMonitor(context);
         if(localFolderToMonitor == null || !localFolderToMonitor.exists()) {
             postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(), getString(R.string.ignoring_job_local_folder_not_found)));

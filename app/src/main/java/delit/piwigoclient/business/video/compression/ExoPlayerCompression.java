@@ -590,8 +590,15 @@ public class ExoPlayerCompression {
         }
 
         public void cancel() {
-            cancelled = true;
-            player.stop(); // will cause the thread to shutdown safely once all messages have been processed.
+            try {
+                cancelled = true;
+                player.stop(); // will cause the thread to shutdown safely once all messages have been processed.
+            } catch(Exception e) {
+                Logging.log(Log.ERROR, TAG, "Encountered unexpected error cancelling video compression");
+                Logging.recordException(e);
+            } finally {
+                Logging.log(Log.DEBUG, TAG, "Compression cancelled");
+            }
         }
     }
 }

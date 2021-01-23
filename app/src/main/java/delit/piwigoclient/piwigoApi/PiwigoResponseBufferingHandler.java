@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.libs.core.util.Logging;
+import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -167,16 +168,13 @@ public class PiwigoResponseBufferingHandler {
             if (r.isEndResponse()) {
                 handlerResponseMap.remove(messageId);
             }
-            callbackHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (h.canHandlePiwigoResponseNow(r)) {
-                        h.handlePiwigoResponse(r);
-                    } else {
-                        requeueResponseForLaterProcessing(r, h);
-                    }
+            callbackHandler.post(new SafeRunnable(() -> {
+                if (h.canHandlePiwigoResponseNow(r)) {
+                    h.handlePiwigoResponse(r);
+                } else {
+                    requeueResponseForLaterProcessing(r, h);
                 }
-            });
+            }));
         }
         return oldHandler;
     }
@@ -212,9 +210,7 @@ public class PiwigoResponseBufferingHandler {
             handler = null;
         }
         if (handler != null) {
-            callbackHandler.post(new Runnable() {
-                @Override
-                public void run() {
+            callbackHandler.post(new SafeRunnable(() -> {
                     try {
                         if (handler.canHandlePiwigoResponseNow(response)) {
                             handler.handlePiwigoResponse(response);
@@ -229,8 +225,7 @@ public class PiwigoResponseBufferingHandler {
                             Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
                         }
                     }
-                }
-            });
+                }));
         } else {
             // Allow 30 seconds grace after which this response could be expunged at any moment.
             response.setExpiresAt(System.currentTimeMillis() + 30000);

@@ -533,7 +533,7 @@ public class IOUtils {
         String uriScheme = uri.getScheme();
         if(uriScheme == null || "file".equals(uri.getScheme())) {
             File f = new File(Objects.requireNonNull(uri.getPath()));
-            if(f.exists()) {
+            if(f.exists() && lastModified > 0) {
                 return f.setLastModified(lastModified);
             } else {
                 return false;

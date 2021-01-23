@@ -76,6 +76,7 @@ import delit.libs.ui.util.ParcelUtils;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.CustomSnackbar;
 import delit.libs.util.ObjectUtils;
+import delit.libs.util.SafeRunnable;
 import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -792,12 +793,7 @@ public abstract class UIHelper<T> {
                 progressIndicator.setVisibility(View.VISIBLE);
             } else {
                 // publish on the main thread
-                progressIndicator.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressIndicator.setVisibility(View.VISIBLE);
-                    }
-                });
+                progressIndicator.post(new SafeRunnable(() -> progressIndicator.setVisibility(View.VISIBLE)));
             }
         }
     }
@@ -809,12 +805,7 @@ public abstract class UIHelper<T> {
                 progressIndicator.setVisibility(View.GONE);
             } else {
                 // publish on the main thread
-                progressIndicator.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressIndicator.setVisibility(View.GONE);
-                    }
-                });
+                progressIndicator.post(new SafeRunnable(() -> progressIndicator.setVisibility(View.GONE)));
             }
         }
     }

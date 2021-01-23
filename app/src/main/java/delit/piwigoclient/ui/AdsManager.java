@@ -57,6 +57,7 @@ import java.util.Objects;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.list.BaseRecyclerAdapter;
+import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -551,10 +552,8 @@ public class AdsManager {
         void loadAdvert() {
             if (!rewardedVideoAd.isLoaded() || !isLoading) {
                 if (Looper.myLooper() != Looper.getMainLooper()) {
-                    h.post(() -> {
-                        // always load adverts on the main thread!
-                        loadAdvert();
-                    });
+                    // always load adverts on the main thread!
+                    h.post(new SafeRunnable(this::loadAdvert));
                     return;
                 }
 
@@ -687,7 +686,7 @@ public class AdsManager {
                 onCloseActionId = -1;
             }
             Handler mainHandler = new Handler(context.getMainLooper());
-            Runnable myRunnable = () -> ad.loadAd(AdsManager.getInstance(context).buildAdRequest(context));
+            Runnable myRunnable = new SafeRunnable(() -> ad.loadAd(AdsManager.getInstance(context).buildAdRequest(context)));
             mainHandler.post(myRunnable);
 
         }

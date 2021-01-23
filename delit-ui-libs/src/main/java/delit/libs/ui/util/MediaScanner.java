@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
+import delit.libs.util.SafeRunnable;
 
 public class MediaScanner implements MediaScannerConnection.MediaScannerConnectionClient {
 
@@ -71,7 +72,7 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         synchronized (tasks) {
             tasks.add(task);
         }
-        tasksHandler.post(task);
+        tasksHandler.post(new SafeRunnable(task));
         if (BuildConfig.DEBUG) {
             dumpStatus();
         }

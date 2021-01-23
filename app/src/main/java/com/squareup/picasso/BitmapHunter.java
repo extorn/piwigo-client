@@ -435,11 +435,9 @@ class BitmapHunter implements Runnable {
       try {
         newResult = transformation.transform(result);
       } catch (final RuntimeException e) {
-        Picasso.HANDLER.post(new Runnable() {
-          @Override public void run() {
-            throw new RuntimeException(
-                "Transformation " + transformation.key() + " crashed with exception.", e);
-          }
+        Picasso.HANDLER.post(() -> {
+          throw new RuntimeException(
+              "Transformation " + transformation.key() + " crashed with exception.", e);
         });
         return null;
       }
@@ -454,33 +452,27 @@ class BitmapHunter implements Runnable {
         for (Transformation t : transformations) {
           builder.append(t.key()).append('\n');
         }
-        Picasso.HANDLER.post(new Runnable() {
-          @Override public void run() {
-            throw new NullPointerException(builder.toString());
-          }
+        Picasso.HANDLER.post(() -> {
+          throw new NullPointerException(builder.toString());
         });
         return null;
       }
 
       if (newResult == result && result.isRecycled()) {
-        Picasso.HANDLER.post(new Runnable() {
-          @Override public void run() {
-            throw new IllegalStateException("Transformation "
-                + transformation.key()
-                + " returned input Bitmap but recycled it.");
-          }
+        Picasso.HANDLER.post(() -> {
+          throw new IllegalStateException("Transformation "
+              + transformation.key()
+              + " returned input Bitmap but recycled it.");
         });
         return null;
       }
 
       // If the transformation returned a new bitmap ensure they recycled the original.
       if (newResult != result && !result.isRecycled()) {
-        Picasso.HANDLER.post(new Runnable() {
-          @Override public void run() {
-            throw new IllegalStateException("Transformation "
-                + transformation.key()
-                + " mutated input Bitmap but failed to recycle the original.");
-          }
+        Picasso.HANDLER.post(() -> {
+          throw new IllegalStateException("Transformation "
+              + transformation.key()
+              + " mutated input Bitmap but failed to recycle the original.");
         });
         return null;
       }

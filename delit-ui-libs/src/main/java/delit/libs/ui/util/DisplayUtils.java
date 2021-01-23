@@ -60,6 +60,7 @@ import java.util.Locale;
 
 import delit.libs.BuildConfig;
 import delit.libs.core.util.Logging;
+import delit.libs.util.SafeRunnable;
 
 /**
  * Created by gareth on 30/05/17.
@@ -318,7 +319,7 @@ public class DisplayUtils {
             runnable.run();
         } else {
             Handler h = new Handler(Looper.getMainLooper());
-            h.post(runnable);
+            h.post(new SafeRunnable(runnable));
         }
     }
 

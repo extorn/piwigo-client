@@ -48,6 +48,7 @@ import java.util.Set;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.libs.util.IOUtils;
+import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
@@ -587,13 +588,13 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
             originalVideoFilename = cacheFileContent.getOriginalUri().replace(".*/", "").replace("\\?.*", "");
 
             if (isVisible()) {
-                getView().post(() -> {
+                getView().post(new SafeRunnable(() -> {
                     if (getContext() != null) {
                         displayItemDetailsControlsBasedOnSessionState();
                         cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.bytesToNormalizedText(cacheFileContent.getCachedBytes()) ,IOUtils.bytesToNormalizedText(cacheFileContent.getTotalBytes())));
                         timebar.invalidate();
                     }
-                });
+                }));
             }
         }
 
@@ -606,14 +607,14 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
             }
             if (isVisible()) {
-                getView().post(() -> {
+                getView().post(new SafeRunnable(() -> {
                     if (getContext() != null) {
                         customExoPlayerInfoPanel.setVisibility(View.VISIBLE);
                         downloadedByteCountView.setText(IOUtils.bytesToNormalizedText(bytesDownloaded));
                         cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.bytesToNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.bytesToNormalizedText(cacheFileContent.getTotalBytes())));
                         timebar.invalidate();
                     }
-                });
+                }));
             }
         }
 
@@ -623,7 +624,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
             }
             if (isVisible()) {
-                getView().post(() -> {
+                getView().post(new SafeRunnable(() -> {
                     if (getContext() != null) {
                         if(cacheFileContent.isComplete()) {
                             customExoPlayerInfoPanel.postDelayed(() -> customExoPlayerInfoPanel.setVisibility(View.INVISIBLE), 5000);
@@ -633,20 +634,20 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                         cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.bytesToNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.bytesToNormalizedText(cacheFileContent.getTotalBytes())));
                         timebar.invalidate();
                     }
-                });
+                }));
             }
         }
 
         @Override
         public void onDownload(final long bytesCachedInThisRange, final long totalBytes, final long bytesAddedToCache) {
             if (isVisible()) {
-                getView().post(() -> {
+                getView().post(new SafeRunnable(() -> {
                     if (getContext() != null) {
                         bytesDownloaded += bytesAddedToCache;
                         downloadedByteCountView.setText(IOUtils.bytesToNormalizedText(bytesDownloaded));
                         cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.bytesToNormalizedText(bytesCachedInThisRange), IOUtils.bytesToNormalizedText(totalBytes)));
                     }
-                });
+                }));
             }
         }
     }

@@ -60,6 +60,7 @@ import delit.libs.ui.view.DocumentFileBreadcrumbsView;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
+import delit.libs.util.SafeRunnable;
 import delit.libs.util.progress.ProgressListener;
 import delit.libs.util.progress.TaskProgressListener;
 import delit.libs.util.progress.TaskProgressTracker;
@@ -482,7 +483,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                         itemsShared.add(folderItem);
                     } else {
                         Logging.log(Log.WARN, TAG, "File shared without needed permissions: " + docFile.getUri());
-                        getView().post(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions), R.string.button_ok));
+                        getView().post(new SafeRunnable(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.sorry_file_unusable_as_app_shared_from_does_not_provide_necessary_permissions), R.string.button_ok)));
                     }
                     listener.onProgress(1);
                 } else {

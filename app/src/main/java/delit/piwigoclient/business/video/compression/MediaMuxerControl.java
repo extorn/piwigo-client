@@ -32,6 +32,7 @@ import java.util.TreeSet;
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
 import delit.libs.util.LegacyIOUtils;
+import delit.libs.util.SafeRunnable;
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {
@@ -600,11 +601,11 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     private void onCompressionError(final Exception e) {
-        eventHandler.post(() -> listener.onCompressionError(inputFile, outputFile, e));
+        eventHandler.post(new SafeRunnable(() -> listener.onCompressionError(inputFile, outputFile, e)));
     }
 
     private void onCompressionComplete() {
-        eventHandler.post(() -> listener.onCompressionComplete(inputFile, outputFile));
+        eventHandler.post(new SafeRunnable(() -> listener.onCompressionComplete(inputFile, outputFile)));
     }
 
     public boolean isAudioConfigured() {

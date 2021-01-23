@@ -248,6 +248,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.100</item>
+        <item>"Bugfix:
+                - More testing of the uploads area has removed a number of bugs
+                - upload job can become stuck where shared files are no longer available"</item>
         <item>1.4.0.99</item>
         <item>"Bugfix:
                 - wasn't taking Uri permissions for files shared by another app, causing upload failure on job restart

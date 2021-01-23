@@ -30,6 +30,7 @@ import java.util.Random;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.PreferenceUtils;
+import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 
@@ -206,11 +207,11 @@ public class LicenceCheckingHelper {
     }
 
     private void displayResult(final String result) {
-        mHandler.post(() -> activity.getUiHelper().showDetailedMsg(R.string.alert_information, result));
+        mHandler.post(new SafeRunnable(() -> activity.getUiHelper().showDetailedMsg(R.string.alert_information, result)));
     }
 
     private void displayDialog(final boolean showRetry) {
-        mHandler.post(() -> showDialog(showRetry));
+        mHandler.post(new SafeRunnable(() -> showDialog(showRetry)));
     }
 
     protected void onDestroy() {
