@@ -1077,5 +1077,9 @@ public class UploadJob implements Parcelable {
             dest.writeDouble(quality);
             dest.writeInt(audioBitrate);
         }
+
+        public boolean hasAStream() {
+            return audioBitrate > 0 || quality - 0.0001 > 0;
+        }
     }
 }

@@ -1037,7 +1037,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         double desiredBitratePerPixelPerSec = uploadJob.getVideoCompressionParams().getQuality();
         int desiredAudioBitrate = uploadJob.getVideoCompressionParams().getAudioBitrate();
-        compressionSettings.setAddAudioTrack(desiredAudioBitrate != 0);
+        compressionSettings.setAddAudioTrack(desiredAudioBitrate != 0); // -1 is used for pass-through.
+        compressionSettings.setAddVideoTrack(desiredBitratePerPixelPerSec - 0.00001 > 0); // no pass-through option.
         compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(desiredBitratePerPixelPerSec);
         compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
         Set<String> serverAcceptedFileExts = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs()).getAllowedFileTypes();

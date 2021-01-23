@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -355,6 +356,9 @@ public class IOUtils {
         return fileExt;
     }
 
+    // access ordered list.
+    private static final LinkedHashMap<String,String> knownExtsToMimes = new LinkedHashMap<String,String>(0, 0.75f, true);
+
     /**
      * Bomb proof get MimeType. (I hope)
      * @param context
@@ -362,7 +366,10 @@ public class IOUtils {
      * @return mime type for the uri
      */
     public static @Nullable String getMimeType(@NonNull Context context, @NonNull Uri uri) {
-        String mimeType = context.getContentResolver().getType(uri);
+        String mimeType = null;
+        if("content".equals(uri.getScheme())) {
+            mimeType = context.getContentResolver().getType(uri);
+        }
         if(mimeType == null) {
             String fileExt = null;
             if("file".equals(uri.getScheme())) {
@@ -375,7 +382,16 @@ public class IOUtils {
             if(fileExt == null) {
                 fileExt = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
             }
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+            if(fileExt != null) {
+                mimeType = knownExtsToMimes.get(fileExt.toLowerCase());
+                if(mimeType == null) {
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+                    knownExtsToMimes.put(fileExt.toLowerCase(), mimeType);
+                    if(knownExtsToMimes.size() > 50) {
+                        knownExtsToMimes.entrySet().iterator().remove();
+                    }
+                }
+            }
         }
         return mimeType;
     }
@@ -1148,7 +1164,10 @@ public class IOUtils {
     public static Set<String> getMimeTypesFromFileExts(Set<String> mimeTypes, Set<String> fileExts) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
         for(String fileExt : fileExts) {
-            String mimeType = map.getMimeTypeFromExtension(fileExt.toLowerCase());
+            String mimeType = knownExtsToMimes.get(fileExt.toLowerCase());
+            if(mimeType == null) {
+                mimeType = map.getMimeTypeFromExtension(fileExt.toLowerCase());
+            }
             if(mimeType == null) {
                 if(fileExt.equals("webmv")) {
                     mimeType = "video/webm";

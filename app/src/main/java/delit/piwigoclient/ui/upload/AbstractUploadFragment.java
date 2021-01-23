@@ -100,6 +100,7 @@ import delit.piwigoclient.ui.upload.actions.OnGetSubAlbumNamesAction;
 import delit.piwigoclient.ui.upload.actions.OnLoginAction;
 import delit.piwigoclient.ui.upload.actions.PartialUploadFileAction;
 import delit.piwigoclient.ui.upload.actions.UnacceptableFilesAction;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
@@ -777,14 +778,14 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         return uploadToAlbum;
     }
 
-    protected void updateFilesForUploadList(List<UploadDataItemModel.UploadDataItem> folderItemsToBeUploaded) {
+    protected void updateFilesForUploadList(List<UploadDataItem> folderItemsToBeUploaded) {
         overallUploadProgressBar.showProgressIndicator(R.string.progress_importing_files, -1);
         try {
             if (folderItemsToBeUploaded.size() > 0) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                 int addedItems = 0;
 
-                for (UploadDataItemModel.UploadDataItem item : folderItemsToBeUploaded) {
+                for (UploadDataItem item : folderItemsToBeUploaded) {
                     if (adapter.add(item)) {
                         addedItems++;
                     }
@@ -864,6 +865,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
             UploadJob.VideoCompressionParams vidCompParams = new UploadJob.VideoCompressionParams();
             vidCompParams.setQuality(((double) compressVideosQualitySpinner.getSelectedItemId()) / 1000);
             vidCompParams.setAudioBitrate((int) compressVideosAudioBitrateSpinner.getSelectedItemId());
+
             return vidCompParams;
         }
         return null;

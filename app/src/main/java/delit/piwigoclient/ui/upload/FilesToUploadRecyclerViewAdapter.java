@@ -19,6 +19,7 @@ import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.SimpleRecyclerViewAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
 import delit.piwigoclient.ui.upload.list.UploadDataItemViewHolder;
 import delit.piwigoclient.ui.upload.list.UploadItemMultiSelectStatusAdapter;
@@ -26,7 +27,7 @@ import delit.piwigoclient.ui.upload.list.UploadItemMultiSelectStatusAdapter;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  */
-public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,VH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA, LVA,VH>, VH extends UploadDataItemViewHolder<VH, LVA,MSA>> extends SimpleRecyclerViewAdapter<LVA, UploadDataItemModel.UploadDataItem, FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs, VH, MSA> {
+public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,VH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA, LVA,VH>, VH extends UploadDataItemViewHolder<VH, LVA,MSA>> extends SimpleRecyclerViewAdapter<LVA, UploadDataItem, FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs, VH, MSA> {
 
     private static final String TAG = "F2UAdapter";
     public static final int VIEW_TYPE_LIST = 0;
@@ -115,13 +116,13 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
     }
 
     void updateUploadProgress(Uri fileBeingUploaded, int percentageComplete) {
-        uploadDataItemsModel.updateUploadProgress(fileBeingUploaded, percentageComplete);
-        notifyDataSetChanged();
+        UploadDataItem item = uploadDataItemsModel.updateUploadProgress(fileBeingUploaded, percentageComplete);
+        notifyItemChanged(uploadDataItemsModel.getItemPosition(item));
     }
 
     void updateCompressionProgress(Uri fileBeingCompressed, Uri compressedFile, int percentageComplete) {
-        uploadDataItemsModel.updateCompressionProgress(fileBeingCompressed, compressedFile, percentageComplete);
-        notifyDataSetChanged();
+        UploadDataItem item = uploadDataItemsModel.updateCompressionProgress(fileBeingCompressed, compressedFile, percentageComplete);
+        notifyItemChanged(uploadDataItemsModel.getItemPosition(item));
     }
 
     public void selectAllItemIds() {
@@ -145,7 +146,7 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
      * @param uploadDataItem metadata for an item being uploaded, its upload progress, etc
      * @return true if the item was added (will be false if a matching item is already present based on file hashcode)
      */
-    public boolean add(@NonNull UploadDataItemModel.UploadDataItem uploadDataItem) {
+    public boolean add(@NonNull UploadDataItem uploadDataItem) {
         return uploadDataItemsModel.add(uploadDataItem);
     }
 
@@ -153,7 +154,7 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
      * @param filesForUpload files to be uploaded
      * @return List of all files that were not already present
      */
-    public int addAll(List<UploadDataItemModel.UploadDataItem> filesForUpload) {
+    public int addAll(List<UploadDataItem> filesForUpload) {
         int itemsAdded = uploadDataItemsModel.addAll(filesForUpload);
         notifyDataSetChanged();
         return itemsAdded;

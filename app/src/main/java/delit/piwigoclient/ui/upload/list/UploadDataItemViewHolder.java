@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.upload.list;
 
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import androidx.core.content.res.ResourcesCompat;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.material.button.MaterialButton;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
@@ -21,7 +23,8 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.ui.upload.FilesToUploadRecyclerViewAdapter;
 
-public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,LVA,MSA>,LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,IVH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA,LVA,IVH>> extends CustomViewHolder<IVH, LVA, FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs, UploadDataItemModel.UploadDataItem, MSA> implements PicassoLoader.PictureItemImageLoaderListener<ImageView> {
+public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,LVA,MSA>,LVA extends FilesToUploadRecyclerViewAdapter<LVA,MSA,IVH>, MSA extends UploadItemMultiSelectStatusAdapter<MSA,LVA,IVH>> extends CustomViewHolder<IVH, LVA, FilesToUploadRecyclerViewAdapter.UploadAdapterPrefs, UploadDataItem, MSA> implements PicassoLoader.PictureItemImageLoaderListener<ImageView> {
+    private static final String TAG = "UploadDataItemVH";
     private ProgressIndicator progressBar;
     private TextView fileNameField;
     private TextView itemHeading;
@@ -38,7 +41,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
     }
 
     @Override
-    public void redisplayOldValues(UploadDataItemModel.UploadDataItem uploadDataItem, boolean allowItemDeletion) {
+    public void redisplayOldValues(UploadDataItem uploadDataItem, boolean allowItemDeletion) {
         super.redisplayOldValues(uploadDataItem, allowItemDeletion);
 
         // Always do these actions when asked to render.
@@ -50,7 +53,7 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
     }
 
     @Override
-    public void fillValues(UploadDataItemModel.UploadDataItem uploadDataItem, boolean allowItemDeletion) {
+    public void fillValues(UploadDataItem uploadDataItem, boolean allowItemDeletion) {
         setItem(uploadDataItem);
         fileNameField.setText(uploadDataItem.getFilename(itemView.getContext()));
         try {
@@ -78,14 +81,19 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
 
     }
 
-    private void updateProgressFields(UploadDataItemModel.UploadDataItem uploadDataItem) {
+    private void updateProgressFields(UploadDataItem uploadDataItem) {
         // Configure the item upload progress fields
         if (uploadDataItem.uploadProgress != null && uploadDataItem.uploadProgress.inProgress()) {
+
+            // Update the progress bar text and values
             @StringRes int progressTextResId = R.string.uploading_progress_bar_message;
-            if (uploadDataItem.uploadProgress.getUploadProgress() <= 0 && uploadDataItem.uploadProgress.getCompressionProgress() > 0) {
+            if (uploadDataItem.uploadProgress.isMidCompression()) {
                 progressTextResId = R.string.compressing_progress_bar_message;
             }
+
             progressBar.showMultiProgressIndicator(progressTextResId, uploadDataItem.uploadProgress.getUploadProgress(), uploadDataItem.uploadProgress.getCompressionProgress());
+
+            // if has finished compressing the file, update the file size heading text
             if (uploadDataItem.uploadProgress.getCompressionProgress() == 100) {
                 // change the shown file size to be that of the compressed file
                 try {
@@ -93,6 +101,8 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
                 } catch (IllegalStateException e) {
                     // don't care - this happens due to file being deleted post upload
                 }
+            } else if(!uploadDataItem.uploadProgress.isMidCompression()) {
+                Logging.log(Log.ERROR, TAG, "Finished compression but not set to 100%");
             }
         } else {
             progressBar.hideProgressIndicator();

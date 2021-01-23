@@ -23,10 +23,10 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.file.FolderItem;
-import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
-class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploadFragment<?>, FileSelectionCompleteEvent, Object, List<UploadDataItemModel.UploadDataItem>> {
+class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploadFragment<?>, FileSelectionCompleteEvent, Object, List<UploadDataItem>> {
 
     private static final String TAG = "FileSelResProcTask";
 
@@ -41,7 +41,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
     }
 
     @Override
-    protected List<UploadDataItemModel.UploadDataItem> doInBackgroundSafely(FileSelectionCompleteEvent... objects) {
+    protected List<UploadDataItem> doInBackgroundSafely(FileSelectionCompleteEvent... objects) {
         UiUpdatingProgressListener progressListener = new UiUpdatingProgressListener(getOwner().getOverallUploadProgressIndicator(), R.string.calculating_file_checksums);
         TaskProgressTracker fileSelectionProgress = new TaskProgressTracker(100, progressListener);
         FileSelectionCompleteEvent event = objects[0];
@@ -97,14 +97,14 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
         // At this point, firstMainTaskProgressListener is initialise phase 2 (15% -100% or 0% - 100% as appropriate - same number of files to process)
         TaskProgressTracker overallChecksumCalcTask = fileSelectionProgress.addSubTask(totalImportedFileBytes, fileSelectionProgress.getRemainingWork());
 
-        ArrayList<UploadDataItemModel.UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
+        ArrayList<UploadDataItem> uploadDataItems = new ArrayList<>(event.getSelectedFolderItems().size());
 
         for (FolderItem f : event.getSelectedFolderItems()) {
 
             if(BuildConfig.DEBUG) {
                 Log.w(TAG, "Upload Fragment Passed URI: " + f.getContentUri());
             }
-            UploadDataItemModel.UploadDataItem item = new UploadDataItemModel.UploadDataItem(f.getContentUri(), f.getName(), f.getMime(), f.getFileLength());
+            UploadDataItem item = new UploadDataItem(f.getContentUri(), f.getName(), f.getMime(), f.getFileLength());
             TaskProgressTracker fileChecksumTracker = overallChecksumCalcTask.addSubTask(f.getFileLength(), f.getFileLength());
             try {
                 item.calculateDataHashCode(getContext(), fileChecksumTracker);
@@ -124,7 +124,7 @@ class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploa
     }
 
     @Override
-    protected void onPostExecuteSafely(List<UploadDataItemModel.UploadDataItem> folderItems) {
+    protected void onPostExecuteSafely(List<UploadDataItem> folderItems) {
         getOwner().hideOverallUploadProgressIndicator();
         getOwner().switchToUploadingFilesTab();
         getOwner().updateFilesForUploadList(folderItems);

@@ -39,13 +39,11 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
             itemView.setVisibility(View.VISIBLE);
         }
 
-        CategoryItem category = (CategoryItem) newItem;
-
-        if (category.getSubCategories() > 0) {
-            long totalPhotos = category.getTotalPhotos();
-            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, category.getSubCategories(), totalPhotos));
+        if (newItem.getSubCategories() > 0) {
+            long totalPhotos = newItem.getTotalPhotos();
+            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, newItem.getSubCategories(), totalPhotos));
         } else {
-            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, category.getPhotoCount()));
+            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, newItem.getPhotoCount()));
             mPhotoCountView.setSingleLine();
         }
 
@@ -66,10 +64,11 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
         }
 
         if (newItem.getThumbnailUrl() != null) {
-            configureLoadingBasicThumbnail(category);
+            configureLoadingBasicThumbnail(newItem);
         } else {
-            configurePlaceholderThumbnail(category);
+            configurePlaceholderThumbnail(newItem);
         }
+        imageLoader.load();
     }
 
     private void configurePlaceholderThumbnail(CategoryItem newItem) {

@@ -16,7 +16,7 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.upload.list.UploadDataItemModel;
+import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.util.TimerThreshold;
 
 
@@ -74,7 +74,7 @@ public class DebugCompressionListener implements ExoPlayerCompression.Compressio
                 //FIXME - This works because even though the compressed file (media store) uri is not written to, it is one already (I think!).
                 String filename = IOUtils.getFilename(uiHelper.getAppContext(), outputFile);
                 String mimeType = IOUtils.getMimeType(uiHelper.getAppContext(), outputFile);
-                fragment.getFilesForUploadViewAdapter().add(new UploadDataItemModel.UploadDataItem(outputFile, filename, mimeType, -1));
+                fragment.getFilesForUploadViewAdapter().add(new UploadDataItem(outputFile, filename, mimeType, -1));
             });
         }
 

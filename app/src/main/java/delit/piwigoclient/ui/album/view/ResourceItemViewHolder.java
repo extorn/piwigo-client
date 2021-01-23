@@ -29,7 +29,6 @@ public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL
         super.fillValues(newItem, allowItemDeletion);
         updateCheckableStatus();
         checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener((VH)this));
-        updateRecentlyViewedMarker(newItem);
 
         if (!(newItem.getName() == null || newItem.getName().isEmpty()) && parentAdapter.getAdapterPrefs().isShowResourceNames()) {
             mNameView.setVisibility(View.VISIBLE);
@@ -39,6 +38,7 @@ public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL
         }
         fillResourceItemThumbnailValue(newItem);
         setTypeIndicatorStatus(newItem);
+        updateRecentlyViewedMarker(newItem);
     }
 
     public void updateCheckableStatus() {
@@ -49,16 +49,18 @@ public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL
     private void setTypeIndicatorStatus(GalleryItem newItem) {
         if (newItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
             String itemMime = ((ResourceItem)newItem).guessMimeTypeFromUri();
-            PicassoLoader picasso = new PicassoLoader<>(mTypeIndicatorImg);
+//            PicassoLoader picasso = new PicassoLoader<>(mTypeIndicatorImg);
             if(itemMime == null || MimeTypes.isVideo(itemMime)) {
-                picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
+                mTypeIndicatorImg.setImageResource(R.drawable.ic_movie_filter_black_24px);
+//                picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
             } else if(MimeTypes.isAudio(itemMime)) {
-                picasso.setResourceToLoad(R.drawable.ic_audiotrack_black_24dp);
+                mTypeIndicatorImg.setImageResource(R.drawable.ic_audiotrack_black_24dp);
+//                picasso.setResourceToLoad(R.drawable.ic_audiotrack_black_24dp);
             }
-            picasso.load();
+//            picasso.load();
             mTypeIndicatorImg.setVisibility(View.VISIBLE);
         } else {
-            mTypeIndicatorImg.setVisibility(View.GONE);
+            mTypeIndicatorImg.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -74,6 +76,7 @@ public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL
             imageLoader.setUriToLoad(resItem.getFirstSuitableUrl());
         }
         imageLoader.setCenterCrop(true);
+        imageLoader.load();
     }
 
     @Override
@@ -85,9 +88,9 @@ public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL
 
     @Override
     public void onRecycled() {
-        UIHelper.recycleImageViewContent(mImageView);
-        UIHelper.recycleImageViewContent(mRecentlyAlteredMarkerView);
-        UIHelper.recycleImageViewContent(mTypeIndicatorImg);
+        super.onRecycled();
+//        UIHelper.recycleImageViewContent(mRecentlyAlteredMarkerView);
+//        UIHelper.recycleImageViewContent(mTypeIndicatorImg);
     }
 
 

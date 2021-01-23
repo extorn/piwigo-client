@@ -1077,5 +1077,6 @@ SOFTWARE.
     <string name="alert_error_files_without_permissions_pattern">Uri Permissions were not provided for all files. Those without will not upload if the job is paused and later resumed (for example by Android power management). To avoid this issue, select files to upload from using this app if possible. Affected files: %1$d.</string>
     <string name="button_compress">Compress</string>
     <string name="unable_to_compress_without_data">Unable to compress without the settings</string>
+    <string name="video_compression_settings_invalid">Video compression settings are invalid. Please check and try again.</string>
 
 </resources>

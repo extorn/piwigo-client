@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import delit.libs.ui.OwnedSafeAsyncTask;
+import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
 import delit.libs.util.SetUtils;
 import delit.piwigoclient.R;
@@ -87,6 +88,10 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
             if (vidCompParams != null) {
                 activeJob.setVideoCompressionParams(vidCompParams);
                 activeJob.setAllowUploadOfRawVideosIfIncompressible(getOwner().isRawVideoUploadPermittedIfNeeded());
+                if(!vidCompParams.hasAStream()) {
+                    DisplayUtils.runOnUiThread(()-> getOwner().getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.video_compression_settings_invalid)));
+                    return null;
+                }
             }
 
             if (imageCompParams != null) {
