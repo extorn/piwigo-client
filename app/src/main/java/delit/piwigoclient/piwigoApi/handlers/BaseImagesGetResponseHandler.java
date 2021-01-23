@@ -32,6 +32,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetResourcesRspHdlr";
+    private final static String AMP_HTML_TAG = "&amp;";
     private final Set<String> multimediaExtensionList;
     private final CategoryItem parentAlbum;
     private final String sortOrder;
@@ -282,6 +283,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
                 PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
 
+                boolean needToFixUrl = true; // if we don't fix one, we don't fix them all.
                 while (imageSizeKeys.hasNext()) {
                     String imageSizeKey = imageSizeKeys.next();
                     JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
@@ -303,7 +305,15 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                     }
                     int thisImageHeight = jsonElem.getAsInt();
 
-                    picItem.addResourceFile(imageSizeKey, fixUrl(url), thisImageWidth, thisImageHeight);
+                    if(needToFixUrl) {
+                        String fixed = fixUrl(url);
+                        if(fixed.equals(url)) {
+                            needToFixUrl = false;
+                        } else {
+                            url = fixed;
+                        }
+                    }
+                    picItem.addResourceFile(imageSizeKey, url, thisImageWidth, thisImageHeight);
 
                 }
 
@@ -322,9 +332,9 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         private String fixUrl(String url) {
             String fixedUrl = url;
             int idx = url.indexOf('&');
-            if(idx > 0 && idx == url.indexOf("&amp;")) {
+            if(idx > 0 && url.regionMatches(idx, AMP_HTML_TAG, 0, AMP_HTML_TAG.length())) {
                 //strip the unwanted extra html escaping
-                fixedUrl = url.replaceAll("&amp;", "&");
+                fixedUrl = url.replaceAll(AMP_HTML_TAG, "&");
                 fixedImageUrisWithAmpEscaping = true;
             }
             return fixedUrl;
