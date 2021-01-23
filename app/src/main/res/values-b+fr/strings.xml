@@ -405,8 +405,8 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="gallery_empty_text">cet album est actuellement vide</string>
     <string name="alert_error_unable_to_clear_cached_content">Impossible de supprimer le contenu mis en cache.</string>
     <string name="alert_clear_cached_content">Effacer les données mises en cache pour cette ressource et forcer le re-téléchargement à partir du serveur?</string>
-    <string name="gallery_album_content_load_failed_text">Impossible de charger le contenu de l\'album ou les détails des autorisations</string>
-    <string name="gallery_permissions_load_failed_text">Impossible de charger le contenu de l\'album ou les détails des autorisations</string>
+    <string name="gallery_album_content_load_failed_text">Impossible de charger le contenu de l\'album</string>
+    <string name="gallery_permissions_load_failed_text">Impossible de charger les détails des autorisations d\'album</string>
     <string name="gallery_update_failed_text">Impossible de mettre à jour les détails de l\'album</string>
     <string name="progress_saving_changes">Enregistrer les modifications</string>
     <string name="user_privacy_level_title">Niveau de confidentialité</string>
@@ -720,5 +720,6 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="alert_error_files_without_permissions_pattern">Les autorisations Uri n\'étaient pas fournies pour tous les fichiers. Ceux qui n\'en ont pas ne seront pas téléchargés si le travail est mis en pause puis repris (par exemple par la gestion de l\'alimentation Android). Pour éviter ce problème, sélectionnez les fichiers à télécharger à partir de cette application si possible. Fichiers concernés:%1$d.</string>
     <string name="button_compress">Compresse</string>
     <string name="unable_to_compress_without_data">Impossible de compresser sans les paramètres</string>
+    <string name="video_compression_settings_invalid">Les paramètres de compression vidéo ne sont pas valides. S\'il vous plaît, vérifiez et essayez à nouveau.</string>
 
 </resources>

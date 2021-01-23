@@ -145,6 +145,15 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.100</item>
+        <item>"Bugfix:
+                 - Meer testen van het uploadgebied heeft een aantal bugs verwijderd, waaronder:
+                     - uploadtaak kan vastlopen waar gedeelde bestanden niet langer beschikbaar zijn
+                     - uploadtaak kan stoppen als de laatste bijgewerkte datum niet beschikbaar was voor een video die werd gecomprimeerd
+                 - Slechte prestaties bij het scrollen door albums
+                 - nieuw afbeeldingspictogram en mediatype-pictogram verdwijnen tijdens het bladeren door het album
+                 - het comprimeren van een video om slechts een audiobestand te zijn, resulteerde in een videobestand
+                 - multimediabestanden kunnen niet worden afgespeeld als de miniatuur een standaard is in plaats van een bestand dat is gegenereerd"</item>
         <item>1.4.0.99</item>
         <item>"Bugfix:
                  - nam geen Uri-machtigingen voor bestanden die door een andere app werden gedeeld, waardoor het uploaden mislukte bij het herstarten van de taak

@@ -145,6 +145,15 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.100</item>
+        <item>"Correction d\'un bug:
+                 - Des tests supplémentaires de la zone de téléchargement ont supprimé un certain nombre de bogues, notamment:
+                     - la tâche de téléchargement peut rester bloquée là où les fichiers partagés ne sont plus disponibles
+                     - la tâche de téléchargement peut s\'arrêter si la dernière date de mise à jour n\'était pas disponible pour une vidéo en cours de compression
+                 - Mauvaises performances de défilement des albums
+                 - la nouvelle icône d\'image et l\'icône de type de média disparaissent lors du défilement dans l\'album
+                 - la compression d\'une vidéo pour qu\'elle ne soit qu\'un fichier audio entraîne une image fixe de la vidéo
+                 - La lecture des fichiers multimédias échouera si la vignette est une valeur par défaut plutôt qu\'un fichier généré"</item>
         <item>1.4.0.99</item>
         <item>"Correction d\'un bug:
                  - ne prenait pas les autorisations Uri pour les fichiers partagés par une autre application, provoquant un échec de téléchargement au redémarrage du travail

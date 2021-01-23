@@ -145,6 +145,15 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.100</item>
+        <item>"Arreglo del fallo:
+                 - Más pruebas del área de cargas han eliminado una serie de errores que incluyen:
+                     - el trabajo de carga puede atascarse donde los archivos compartidos ya no están disponibles
+                     - el trabajo de carga puede detenerse si la última fecha actualizada no estaba disponible para un video que se está comprimiendo
+                 - Rendimiento deficiente al desplazarse por los álbumes
+                 - El icono de nueva imagen y el icono de tipo de medio desaparecen mientras se desplaza por el álbum
+                 - comprimir un video para que sea solo un archivo de audio resultaba en una imagen fija de video
+                 - los archivos multimedia no se reproducirán si la miniatura es predeterminada en lugar de generar un archivo"</item>
         <item>1.4.0.99</item>
         <item>"Arreglo del fallo:
                  - no estaba tomando permisos de Uri para archivos compartidos por otra aplicación, lo que provocó un error de carga al reiniciar el trabajo

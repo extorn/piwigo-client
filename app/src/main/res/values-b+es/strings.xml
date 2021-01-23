@@ -405,8 +405,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="gallery_empty_text">Este álbum está actualmente vacío</string>
     <string name="alert_error_unable_to_clear_cached_content">No se pudo eliminar el contenido en caché.</string>
     <string name="alert_clear_cached_content">¿Borrar los datos almacenados en caché para este recurso y forzar la descarga desde el servidor?</string>
-    <string name="gallery_album_content_load_failed_text">No se puede cargar el contenido del álbum o los detalles de los permisos</string>
-    <string name="gallery_permissions_load_failed_text">No se puede cargar el contenido del álbum o los detalles de los permisos</string>
+    <string name="gallery_album_content_load_failed_text">No se puede cargar el contenido del álbum.</string>
+    <string name="gallery_permissions_load_failed_text">No se pueden cargar los detalles de los permisos del álbum</string>
     <string name="gallery_update_failed_text">No se pueden actualizar los detalles del álbum</string>
     <string name="progress_saving_changes">Guardando cambios</string>
     <string name="user_privacy_level_title">Nivel de privacidad</string>
@@ -720,5 +720,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="alert_error_files_without_permissions_pattern">No se proporcionaron permisos Uri para todos los archivos. Aquellos que no lo tengan no se cargarán si el trabajo se detiene y luego se reanuda (por ejemplo, mediante la administración de energía de Android). Para evitar este problema, seleccione los archivos para cargar desde esta aplicación si es posible. Archivos afectados:%1$d.</string>
     <string name="button_compress">Comprimir</string>
     <string name="unable_to_compress_without_data">No se puede comprimir sin la configuración</string>
+    <string name="video_compression_settings_invalid">La configuración de compresión de video no es válida. Por favor revisa e intenta de nuevo.</string>
 
 </resources>

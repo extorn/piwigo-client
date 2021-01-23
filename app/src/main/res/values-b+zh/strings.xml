@@ -405,8 +405,8 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="gallery_empty_text">该相册当前为空</string>
     <string name="alert_error_unable_to_clear_cached_content">无法删除缓存的内容。</string>
     <string name="alert_clear_cached_content">清除此资源的缓存数据并强制从服务器重新下载？</string>
-    <string name="gallery_album_content_load_failed_text">无法加载相册内容或权限详细信息</string>
-    <string name="gallery_permissions_load_failed_text">无法加载相册内容或权限详细信息</string>
+    <string name="gallery_album_content_load_failed_text">无法加载相册内容</string>
+    <string name="gallery_permissions_load_failed_text">无法加载相册权限详细信息</string>
     <string name="gallery_update_failed_text">无法更新专辑详细信息</string>
     <string name="progress_saving_changes">保存更改</string>
     <string name="user_privacy_level_title">隐私等级</string>
@@ -720,5 +720,6 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="alert_error_files_without_permissions_pattern">没有为所有文件提供Uri权限。 如果作业暂停并稍后恢复（例如，通过Android电源管理），则没有上传内容的用户将不会上传。 为避免此问题，请尽可能选择要使用此应用上传的文件。 受影响的文件：%1$d。</string>
     <string name="button_compress">压缩</string>
     <string name="unable_to_compress_without_data">没有设置就无法压缩</string>
+    <string name="video_compression_settings_invalid">视频压缩设置无效。 请检查并重试。</string>
 
 </resources>

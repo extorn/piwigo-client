@@ -405,8 +405,8 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="gallery_empty_text">Questo album è attualmente vuoto</string>
     <string name="alert_error_unable_to_clear_cached_content">Impossibile eliminare il contenuto memorizzato nella cache.</string>
     <string name="alert_clear_cached_content">Cancellare i dati memorizzati nella cache per questa risorsa e forzare il nuovo download dal server?</string>
-    <string name="gallery_album_content_load_failed_text">Impossibile caricare il contenuto dell\'album o i dettagli delle autorizzazioni</string>
-    <string name="gallery_permissions_load_failed_text">Impossibile caricare il contenuto dell\'album o i dettagli delle autorizzazioni</string>
+    <string name="gallery_album_content_load_failed_text">Impossibile caricare il contenuto dell\'album</string>
+    <string name="gallery_permissions_load_failed_text">Impossibile caricare i dettagli delle autorizzazioni dell\'album</string>
     <string name="gallery_update_failed_text">Impossibile aggiornare i dettagli dell\'album</string>
     <string name="progress_saving_changes">Salvataggio delle modifiche</string>
     <string name="user_privacy_level_title">Livello di privacy</string>
@@ -720,5 +720,6 @@ I rilasci sono su base ad hoc al momento. La frequenza dei rilasci dovrebbe ridu
     <string name="alert_error_files_without_permissions_pattern">Le autorizzazioni Uri non sono state fornite per tutti i file. Quelli senza non caricheranno se il lavoro viene messo in pausa e successivamente ripreso (ad esempio dalla gestione dell\'alimentazione di Android). Per evitare questo problema, seleziona i file da caricare utilizzando questa app, se possibile. File interessati:%1$d.</string>
     <string name="button_compress">Comprimere</string>
     <string name="unable_to_compress_without_data">Impossibile comprimere senza le impostazioni</string>
+    <string name="video_compression_settings_invalid">Le impostazioni di compressione video non sono valide. Si prega di verificare e riprovare.</string>
 
 </resources>

@@ -145,6 +145,15 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.100</item>
+        <item>"Oprava chyby:
+                 - Další testování oblasti pro nahrávání odstranilo řadu chyb, včetně:
+                     - úloha nahrávání se může zaseknout tam, kde sdílené soubory již nejsou k dispozici
+                     - úloha nahrávání se může zastavit, pokud pro komprimované video nebylo k dispozici poslední aktualizované datum
+                 - Špatný výkon při procházení alb
+                 - nová ikona obrázku a ikona typu média zmizí při procházení albem
+                 - výsledkem komprese videa, která má být pouze zvukovým souborem, je statický obraz
+                 - multimediální soubory se nepřehrají, pokud je miniatura výchozí a nikoli vygenerovaná"</item>
         <item>1.4.0.99</item>
         <item>"Oprava chyby:
                  - nebral oprávnění Uri pro soubory sdílené jinou aplikací, což způsobilo selhání nahrávání při restartu úlohy

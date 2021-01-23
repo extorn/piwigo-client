@@ -145,6 +145,15 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.100</item>
+        <item>"Bug-Fix:
+                 - Weitere Tests des Upload-Bereichs haben eine Reihe von Fehlern behoben, darunter:
+                     - Der Upload-Auftrag kann hängen bleiben, wenn freigegebene Dateien nicht mehr verfügbar sind
+                     - Der Upload-Auftrag kann gestoppt werden, wenn das Datum der letzten Aktualisierung für ein zu komprimierendes Video nicht verfügbar war
+                 - Schlechte Leistung beim Scrollen durch Alben
+                 - Neues Bildsymbol und Medientypsymbol verschwinden beim Scrollen durch das Album
+                 - Das Komprimieren eines Videos als Ergebnis einer Audiodatei führte zu einem Standbild
+                 - Multimediadateien können nicht abgespielt werden, wenn die Miniaturansicht eine Standardeinstellung ist und keine generierte Datei"</item>
         <item>1.4.0.99</item>
         <item>"Bug-Fix:
                  - hat keine Uri-Berechtigungen für Dateien erhalten, die von einer anderen App freigegeben wurden, was beim Neustart des Jobs zu einem Upload-Fehler führte

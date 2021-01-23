@@ -405,8 +405,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="gallery_empty_text">Dieses Album ist derzeit leer</string>
     <string name="alert_error_unable_to_clear_cached_content">Zwischengespeicherte Inhalte können nicht gelöscht werden.</string>
     <string name="alert_clear_cached_content">Zwischengespeicherte Daten für diese Ressource löschen und erneuten Download vom Server erzwingen?</string>
-    <string name="gallery_album_content_load_failed_text">Albuminhalt oder Berechtigungsdetails können nicht geladen werden</string>
-    <string name="gallery_permissions_load_failed_text">Albuminhalt oder Berechtigungsdetails können nicht geladen werden</string>
+    <string name="gallery_album_content_load_failed_text">Albuminhalt kann nicht geladen werden</string>
+    <string name="gallery_permissions_load_failed_text">Details zu den Albumberechtigungen können nicht geladen werden</string>
     <string name="gallery_update_failed_text">Albumdetails können nicht aktualisiert werden</string>
     <string name="progress_saving_changes">Änderungen speichern</string>
     <string name="user_privacy_level_title">Datenschutzstufe</string>
@@ -720,5 +720,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_files_without_permissions_pattern">Uri-Berechtigungen wurden nicht für alle Dateien bereitgestellt. Diejenigen ohne werden nicht hochgeladen, wenn der Job angehalten und später wieder aufgenommen wird (z. B. durch Android Power Management). Um dieses Problem zu vermeiden, wählen Sie nach Möglichkeit Dateien aus, die über diese App hochgeladen werden sollen. Betroffene Dateien:%1$d.</string>
     <string name="button_compress">Kompresse</string>
     <string name="unable_to_compress_without_data">Ohne die Einstellungen kann nicht komprimiert werden</string>
+    <string name="video_compression_settings_invalid">Die Einstellungen für die Videokomprimierung sind ungültig. Bitte überprüfen Sie es und versuchen Sie es erneut.</string>
 
 </resources>

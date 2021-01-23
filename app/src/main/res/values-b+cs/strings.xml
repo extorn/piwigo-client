@@ -405,8 +405,8 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="gallery_empty_text">Toto album je momentálně prázdné</string>
     <string name="alert_error_unable_to_clear_cached_content">Obsah uložený v mezipaměti nelze odstranit.</string>
     <string name="alert_clear_cached_content">Vymazat data uložená v mezipaměti pro tento zdroj a vynutit opětovné stažení ze serveru?</string>
-    <string name="gallery_album_content_load_failed_text">Nelze načíst obsah alba nebo podrobnosti oprávnění</string>
-    <string name="gallery_permissions_load_failed_text">Nelze načíst obsah alba nebo podrobnosti oprávnění</string>
+    <string name="gallery_album_content_load_failed_text">Nelze načíst obsah alba</string>
+    <string name="gallery_permissions_load_failed_text">Nelze načíst podrobnosti oprávnění alba</string>
     <string name="gallery_update_failed_text">Nelze aktualizovat podrobnosti alba</string>
     <string name="progress_saving_changes">Ukládání změn</string>
     <string name="user_privacy_level_title">Úroveň ochrany osobních údajů</string>
@@ -720,5 +720,6 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="alert_error_files_without_permissions_pattern">Uri oprávnění nebyla poskytnuta pro všechny soubory. Ti, kteří to nebudou, nebudou nahrávat, pokud je úloha pozastavena a později obnovena (například pomocí správy napájení systému Android). Chcete-li se tomuto problému vyhnout, vyberte soubory, které chcete pomocí této aplikace nahrát, pokud je to možné. Ovlivněné soubory:%1$d.</string>
     <string name="button_compress">Komprimovat</string>
     <string name="unable_to_compress_without_data">Nelze komprimovat bez nastavení</string>
+    <string name="video_compression_settings_invalid">Nastavení komprese videa je neplatné. Zkontrolujte to a zkuste to znovu.</string>
 
 </resources>

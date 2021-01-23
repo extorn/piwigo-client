@@ -1,50 +1,93 @@
 <en-GB>
 Bugfix:
-- wasn't taking Uri permissions for files shared by another app, causing upload failure on job restart
-- calculation of upload job completion status was too expensive for large jobs causing App to be non responsive
+- More testing of the uploads area has removed a number of bugs including:
+- upload job can become stuck where shared files are no longer available
+- upload job can stop if the last updated date wasn't available for a video being compressed
+- Poor performance scrolling through albums
+- new image icon and media type icon disappear while scrolling through album
+- compressing a video to be just an audio file results was resulting in a video still
+- multimedia files will fail to play if ..."
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- nebral oprávnění Uri pro soubory sdílené jinou aplikací, což způsobilo selhání nahrávání při restartu úlohy
-- výpočet stavu dokončení úlohy nahrávání byl příliš nákladný pro velké úlohy, což způsobilo, že aplikace nereagovala
+- Další testování oblasti pro nahrávání odstranilo řadu chyb, včetně:
+- úloha nahrávání se může zaseknout tam, kde sdílené soubory již nejsou k dispozici
+- úloha nahrávání se může zastavit, pokud pro komprimované video nebylo k dispozici poslední aktualizované datum
+- Špatný výkon při procházení alb
+- nová ikona obrázku a ikona typu média zmizí při procházení albem
+- výsledkem komprese videa, která má být pouze zvukovým souborem, je statický obraz
+- multimediální soubory se nep..."
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- hat keine Uri-Berechtigungen für Dateien erhalten, die von einer anderen App freigegeben wurden, was beim Neustart des Jobs zu einem Upload-Fehler führte
-- Die Berechnung des Status des Abschlusses eines Upload-Jobs war für große Jobs zu teuer, sodass die App nicht mehr reagiert
+- Weitere Tests des Upload-Bereichs haben eine Reihe von Fehlern behoben, darunter:
+- Der Upload-Auftrag kann hängen bleiben, wenn freigegebene Dateien nicht mehr verfügbar sind
+- Der Upload-Auftrag kann gestoppt werden, wenn das Datum der letzten Aktualisierung für ein zu komprimierendes Video nicht verfügbar war
+- Schlechte Leistung beim Scrollen durch Alben
+- Neues Bildsymbol und Medientypsymbol verschwinden beim Scrollen durch das Album
+- Das Komprimieren eines Videos als Ergebn..."
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- no estaba tomando permisos de Uri para archivos compartidos por otra aplicación, lo que provocó un error de carga al reiniciar el trabajo
-- el cálculo del estado de finalización del trabajo de carga era demasiado caro para trabajos grandes, lo que hacía que la aplicación no respondiera
+- Más pruebas del área de cargas han eliminado una serie de errores que incluyen:
+- el trabajo de carga puede atascarse donde los archivos compartidos ya no están disponibles
+- el trabajo de carga puede detenerse si la última fecha actualizada no estaba disponible para un video que se está comprimiendo
+- Rendimiento deficiente al desplazarse por los álbumes
+- El icono de nueva imagen y el icono de tipo de medio desaparecen mientras se desplaza por el álbum
+- comprimir un v..."
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- ne prenait pas les autorisations Uri pour les fichiers partagés par une autre application, provoquant un échec de téléchargement au redémarrage du travail
-- le calcul de l\'état d\'achèvement de la tâche de téléchargement était trop coûteux pour les tâches volumineuses, ce qui empêchait l\'application de répondre
+- Des tests supplémentaires de la zone de téléchargement ont supprimé un certain nombre de bogues, notamment:
+- la tâche de téléchargement peut rester bloquée là où les fichiers partagés ne sont plus disponibles
+- la tâche de téléchargement peut s\'arrêter si la dernière date de mise à jour n\'était pas disponible pour une vidéo en cours de compression
+- Mauvaises performances de défilement des albums
+- la nouvelle icône d\'image et l\'icône de type de média disparaisse..."
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- non stava prendendo le autorizzazioni Uri per i file condivisi da un\'altra app, causando un errore di caricamento al riavvio del lavoro
-- il calcolo dello stato di completamento del lavoro di caricamento era troppo costoso per lavori di grandi dimensioni e l\'app non rispondeva
+- Ulteriori test dell\'area dei caricamenti hanno rimosso una serie di bug tra cui:
+- il lavoro di caricamento può bloccarsi dove i file condivisi non sono più disponibili
+- il processo di caricamento può interrompersi se la data dell\'ultimo aggiornamento non era disponibile per un video in fase di compressione
+- Scarse prestazioni durante lo scorrimento degli album
+- l\'icona della nuova immagine e l\'icona del tipo di supporto scompaiono durante lo scorrimento de..."
 </it-IT>
 <ja-JP>
 バグ修正：
--別のアプリで共有されているファイルのUri権限を取得していなかったため、ジョブの再起動時にアップロードが失敗しました
--アップロードジョブの完了ステータスの計算は、大きなジョブにはコストがかかりすぎて、アプリが応答しなくなりました
+-アップロード領域をさらにテストすることで、次のような多くのバグが削除されました。
+-共有ファイルが利用できなくなった場合、アップロードジョブがスタックする可能性があります
+-圧縮されているビデオの最終更新日が利用できなかった場合、アップロードジョブを停止できます
+-アルバムをスクロールするパフォーマンスが低い
+-アルバムをスクロールしている間、新しい画像アイコンとメディアタイプアイコンが消えます
+-ビデオを圧縮して単なるオーディオファイルにした結果、ビデオは静止画になりました
+-サムネイルが生成されたファイルではなくデフォルトの場合、マルチメディアファイルは再生に失敗します
 </ja-JP>
 <nl-NL>
 Bugfix:
-- nam geen Uri-machtigingen voor bestanden die door een andere app werden gedeeld, waardoor het uploaden mislukte bij het herstarten van de taak
-- de berekening van de voltooiingsstatus van de uploadtaak was te duur voor grote taken, waardoor de app niet reageerde
+- Meer testen van het uploadgebied heeft een aantal bugs verwijderd, waaronder:
+- uploadtaak kan vastlopen waar gedeelde bestanden niet langer beschikbaar zijn
+- uploadtaak kan stoppen als de laatste bijgewerkte datum niet beschikbaar was voor een video die werd gecomprimeerd
+- Slechte prestaties bij het scrollen door albums
+- nieuw afbeeldingspictogram en mediatype-pictogram verdwijnen tijdens het bladeren door het album
+- het comprimeren van een video om slechts een audiobestand te..."
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- не использовались разрешения Uri для файлов, совместно используемых другим приложением, что приводило к сбою загрузки при перезапуске задания
-- расчет статуса завершения задания загрузки был слишком дорогим для больших заданий, из-за чего приложение не отвечало
+- Дополнительное тестирование области загрузки устранило ряд ошибок, в том числе:
+- задание загрузки может зависнуть там, где общие файлы больше не доступны
+- задание загрузки может быть остановлено, если дата последнего обновления не была доступна для сжатого видео
+- Плохая производительность при просмотре альбомов
+- значок нового изображения и значок типа мультимедиа исчезают при прокрутке альбома
+- сжатие видео в аудиофайл привело к появлению кадра видео
+- мультимедийны..."
 </ru-RU>
 <zh-CN>
 错误修正：
--未获得其他应用程序共享文件的Uri权限，导致作业重新启动时上传失败
--对于大型任务而言，上传任务完成状态的计算过于昂贵，导致App无法响应
+-对上传区域的更多测试消除了许多错误，包括：
+-上传作业可能会卡在无法再使用共享文件的地方
+-如果上次更新日期不适用于压缩的视频，则上传作业可以停止
+-专辑播放效果不佳
+-在相册中滚动时，新的图像图标和媒体类型图标消失
+-将视频压缩为音频文件结果导致视频静止
+-如果缩略图是默认缩略图而不是生成的文件，则多媒体文件将无法播放
 </zh-CN>
