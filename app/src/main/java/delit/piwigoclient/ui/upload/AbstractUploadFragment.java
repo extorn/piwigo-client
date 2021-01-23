@@ -930,7 +930,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         }
     }
 
-    public void allowUserUploadConfiguration(UploadJob uploadJob) {
+    public void allowUserUploadConfiguration(@Nullable UploadJob uploadJob) {
 
         filesToUploadAdapter = getFilesForUploadViewAdapter();
         boolean filesStillToBeUploaded = filesToUploadAdapter.getItemCount() > 0;
@@ -951,27 +951,30 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
 
         deleteFilesAfterUploadCheckbox.setEnabled(noJobIsYetConfigured || jobIsFinished && !filesStillToBeUploaded);
 
-        updateActiveJobActionButtonsStatus();
+        updateActiveJobActionButtonsStatus(requireContext(), uploadJob);
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGalleryTextView.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
     }
 
     private void updateActiveJobActionButtonsStatus() {
+        UploadJob job = null;
+        Context ctx = requireContext();
         if (uploadJobId != null) {
-            Context ctx = getContext();
             if(ctx == null) {
                 ctx = getUiHelper().getAppContext();
             }
-            UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
-            if (job != null) {
-                uploadJobStatusButton.setVisibility(VISIBLE);
-                boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully(ctx);
-                deleteUploadJobButton.setVisibility(canForceDeleteJob ? VISIBLE : GONE);
-            } else {
-                uploadJobStatusButton.setVisibility(GONE);
-                deleteUploadJobButton.setVisibility(GONE);
-            }
+            job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
+
+        }
+        updateActiveJobActionButtonsStatus(ctx, job);
+    }
+
+    private void updateActiveJobActionButtonsStatus(@NonNull Context context, @Nullable UploadJob job) {
+        if (job != null) {
+            uploadJobStatusButton.setVisibility(VISIBLE);
+            boolean canForceDeleteJob = job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully(context);
+            deleteUploadJobButton.setVisibility(canForceDeleteJob ? VISIBLE : GONE);
         } else {
             uploadJobStatusButton.setVisibility(GONE);
             deleteUploadJobButton.setVisibility(GONE);
