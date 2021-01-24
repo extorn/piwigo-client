@@ -307,7 +307,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 

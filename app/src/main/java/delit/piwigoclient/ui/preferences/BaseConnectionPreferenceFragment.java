@@ -423,7 +423,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 

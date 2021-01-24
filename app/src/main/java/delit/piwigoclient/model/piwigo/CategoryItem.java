@@ -51,6 +51,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     private long permissionLoadedAt;
     private String thumbnailUrl;
     private boolean isUserCommentsAllowed;
+    private boolean isAdminCopy;
 
     public CategoryItem(CategoryItemStub stub) {
         super(stub.getId(), stub.getName(), null, null, null);
@@ -81,6 +82,11 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         groups = in.createLongArray();
         permissionLoadedAt = in.readLong();
         thumbnailUrl = in.readString();
+        isAdminCopy = ParcelUtils.readBool(in);
+    }
+
+    public void markAsAdminCopy() {
+        isAdminCopy = true;
     }
 
     public static ArrayList<CategoryItem> newListFromStubs(ArrayList<CategoryItemStub> albumNames) {
@@ -108,6 +114,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         out.writeLongArray(groups);
         out.writeLong(permissionLoadedAt);
         out.writeString(thumbnailUrl);
+        ParcelUtils.writeBool(out, isAdminCopy);
     }
 
     @Override
@@ -160,11 +167,15 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         isPrivate = aPrivate;
     }
 
+    public boolean isAdminCopy() {
+        return isAdminCopy;
+    }
+
     @Override
     public boolean equals(Object other) {
-        if(other instanceof GalleryItem) {
-            GalleryItem otherItem = (GalleryItem) other;
-            return otherItem.getId() == this.getId() || BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName());
+        if(other instanceof CategoryItem) {
+            CategoryItem otherItem = (CategoryItem) other;
+            return (otherItem.getId() == this.getId() && otherItem.isAdminCopy() == this.isAdminCopy) || BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName());
         }
         return false;
     }

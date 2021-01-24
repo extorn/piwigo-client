@@ -167,7 +167,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 

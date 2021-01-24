@@ -543,7 +543,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         super.onDetachedFromWindow();
     }
 
-    protected boolean removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass) {
+    protected <B extends Fragment> boolean removeFragmentsFromHistory(Class<B> fragmentClass) {
         boolean found = false;
         int i = 0;
         int popToStateId = -1;

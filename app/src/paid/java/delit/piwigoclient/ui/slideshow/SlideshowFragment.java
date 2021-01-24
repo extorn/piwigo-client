@@ -50,13 +50,13 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
+public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<F,FUIH,T> {
 
     private static final String TAG = "SlideshowFragment";
     private SlideshowDriver currentSlideshowDriver = new SlideshowDriver();
 
-    public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(Class<ViewModelContainer> modelType, ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
-        SlideshowFragment<S> fragment = new SlideshowFragment<>();
+    public static <F extends SlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> F  newInstance(Class<ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> gallery, GalleryItem currentGalleryItem) {
+        F fragment = (F) new SlideshowFragment();
         fragment.setArguments(buildArgs(modelType, gallery, currentGalleryItem));
         return fragment;
     }
@@ -102,17 +102,16 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
         return TAG;
     }
 
-    private static class ReloadTagSlideshowModelAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>,
-            AbstractSlideshowFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
+    private static class ReloadTagSlideshowModelAction<F extends SlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends UIHelper.Action<FUIH,F, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+        public boolean onSuccess(FUIH uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
             boolean updated = false;
-            AbstractSlideshowFragment slideshowFragment = uiHelper.getParent();
+            F slideshowFragment = uiHelper.getParent();
             for(Tag t : response.getTags()) {
                 if (t.getId() == slideshowFragment.getResourceContainer().getId()) {
                     // tag has been located!
-                    slideshowFragment.setContainerDetails(new PiwigoTag(t));
+                    slideshowFragment.setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoTag(t));
                     updated = true;
                 }
             }
@@ -127,7 +126,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             Logging.log(Log.INFO, TAG, "removing from activity on piwigo failure");
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;

@@ -46,6 +46,7 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
@@ -53,7 +54,7 @@ import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 import delit.piwigoclient.ui.slideshow.AbstractSlideshowItemFragment;
 import delit.piwigoclient.ui.slideshow.DownloadSelectionMultiItemDialog;
 
-public class ViewAlbumFragment extends AbstractViewAlbumFragment {
+public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends AbstractViewAlbumFragment<F,FUIH> {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
     AddTagsToResourcesAction tagMembershipChangesAction;
 
@@ -111,42 +112,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 if (!bulkActionData.getSelectedItems().isEmpty()) {
                     HashSet<ResourceItem> selectedItems = bulkActionData.getSelectedItems();
                     DownloadSelectionMultiItemDialog dialogFactory = new DownloadSelectionMultiItemDialog(getContext());
-                    AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, new DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener() {
-
-                        @Override
-                        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
-                            if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult(getUiHelper(), items, selectedPiwigoFilesizeName));
-                            } else {
-                                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
-                            }
-                        }
-
-                        @Override
-                        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
-                            if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<>(getUiHelper(), items, selectedPiwigoFilesizeName));
-                            } else {
-                                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
-                            }
-                        }
-
-                        @Override
-                        public void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
-                            ResourceItem item = items.iterator().next();
-                            String resourceName = item.getName();
-                            ResourceItem.ResourceFile resourceFile = item.getFile(selectedPiwigoFilesizeName);
-                            Uri uri = Uri.parse(item.getFileUrl(resourceFile.getName()));
-                            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                            if(mgr != null) {
-                                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
-                                mgr.setPrimaryClip(clipData);
-                                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
-                            } else {
-                                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
-                            }
-                        }
-                    });
+                    AlertDialog dialog = dialogFactory.buildDialog(AbstractBaseResourceItem.ResourceFile.ORIGINAL, selectedItems, new MyDownloadSelectionMultiItemListener());
                     dialog.show();
                 }
 
@@ -257,9 +223,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
                 for(ResourceItem item : tagMembershipChangesAction.resourcesReadyToProcess) {
                     if (allowTagEdit) {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler<>(item));
                     } else {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(item, true));
                     }
                 }
             }
@@ -270,16 +236,16 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     private void getResourceInfo(HashSet<ResourceItem> selectedResources) {
         Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, getContext());
         for(ResourceItem item : selectedResources) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageGetInfoResponseHandler(item, multimediaExtensionList));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageGetInfoResponseHandler<>(item, multimediaExtensionList));
         }
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new ViewAlbumPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new ViewAlbumPiwigoResponseListener<>();
     }
 
-    protected static class ViewAlbumPiwigoResponseListener extends CustomPiwigoResponseListener<ViewAlbumFragment> {
+    protected static class ViewAlbumPiwigoResponseListener<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends CustomPiwigoResponseListener<F,FUIH> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             super.onAfterHandlePiwigoResponse(response);
@@ -398,5 +364,42 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             return 0;
         }
 
+    }
+
+    private class MyDownloadSelectionMultiItemListener<T extends ResourceItem> implements DownloadSelectionMultiItemDialog.DownloadSelectionMultiItemListener {
+
+        @Override
+        public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+            if(filesUnavailableToDownload.size() > 0) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
+            } else {
+                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
+            }
+        }
+
+        @Override
+        public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
+            if(filesUnavailableToDownload.size() > 0) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new AbstractSlideshowItemFragment.SelectionContainsUnsuitableFilesQuestionResult<F,FUIH,T>(getUiHelper(), items, selectedPiwigoFilesizeName));
+            } else {
+                new AbstractSlideshowItemFragment.BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
+            }
+        }
+
+        @Override
+        public void onCopyLink(Context context, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+            ResourceItem item = items.iterator().next();
+            String resourceName = item.getName();
+            ResourceItem.ResourceFile resourceFile = item.getFile(selectedPiwigoFilesizeName);
+            Uri uri = Uri.parse(item.getFileUrl(resourceFile.getName()));
+            ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            if(mgr != null) {
+                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
+                mgr.setPrimaryClip(clipData);
+                getUiHelper().showShortMsg(R.string.copied_to_clipboard);
+            } else {
+                FirebaseAnalytics.getInstance(context).logEvent("NoClipMgr", null);
+            }
+        }
     }
 }

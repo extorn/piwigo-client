@@ -100,7 +100,7 @@ public abstract class MyPreferenceFragment<F extends MyPreferenceFragment<F,FUIH
         Context newContext = DisplayUtils.updateContext(getContext(), newLocale);
     }
 
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new BasicPiwigoResponseListener();
     }
 

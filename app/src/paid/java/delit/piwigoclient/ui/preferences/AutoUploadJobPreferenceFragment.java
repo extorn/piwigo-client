@@ -49,7 +49,7 @@ import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
-public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
+public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
 
     private static final String JOB_ID_ARG = "jobConfigId";
     private static final String ACTION_ID_ARG = "actionId";
@@ -225,7 +225,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class LoginResponseAction extends UIHelper.Action<FragmentUIHelper<AutoUploadJobPreferenceFragment>, AutoUploadJobPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class LoginResponseAction<F extends AutoUploadJobPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, LoginResponseHandler.PiwigoOnLoginResponse> {
 
         private ConnectionPreferences.ProfilePreferences profilePrefs;
 
@@ -234,13 +234,13 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<AutoUploadJobPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             uiHelper.getParent().updateAvailableFileTypes(PiwigoSessionDetails.getInstance(profilePrefs).getAllowedFileTypes());
             return true;
         }
     }
 
-    private void updateAvailableFileTypes(Set<String> allowedFileTypes) {
+    protected void updateAvailableFileTypes(Set<String> allowedFileTypes) {
         MultiSelectListPreference p = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
         String[] availableOptions = allowedFileTypes.toArray(new String[0]);
 
@@ -340,7 +340,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 
@@ -386,7 +386,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class CustomPiwigoResponseListener<S extends AutoUploadJobPreferenceFragment> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends AutoUploadJobPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override

@@ -40,6 +40,9 @@ public class TagsGetAdminListResponseHandler extends AbstractPiwigoWsResponseHan
         JsonObject result = rsp.getAsJsonObject();
         JsonArray tagsObj = result.get("tags").getAsJsonArray();
         HashSet<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsObj);
+        for(Tag t : tags) {
+            t.markAsAdminCopy();
+        }
         PiwigoGetTagsAdminListRetrievedResponse r = new PiwigoGetTagsAdminListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, tags.size(), tags, isCached);
         storeResponse(r);
     }

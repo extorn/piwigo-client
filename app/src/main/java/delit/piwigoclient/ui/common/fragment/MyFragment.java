@@ -42,7 +42,7 @@ import delit.piwigoclient.ui.events.ToolbarEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class MyFragment<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHelper<FUIH, T>> extends Fragment {
+public class MyFragment<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends Fragment {
 
     private static final String TAG = "MyFrag";
     private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
@@ -145,10 +145,10 @@ public class MyFragment<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHel
     }
 
     protected FUIH buildUIHelper(Context context, @NonNull View attachedView) {
-        return (FUIH) new FragmentUIHelper((T) this, prefs, context, attachedView);
+        return (FUIH) new FragmentUIHelper((F) this, prefs, context, attachedView);
     }
 
-    protected BasicPiwigoResponseListener<FUIH,T> buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH, F> buildPiwigoResponseListener(Context context) {
         return new BasicPiwigoResponseListener<>();
     }
 
@@ -234,8 +234,8 @@ public class MyFragment<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHel
         coreComponentsInitialised = true;
         if (uiHelper == null) {
             uiHelper = buildUIHelper(getContext(), attachedView);
-            BasicPiwigoResponseListener<FUIH,T> listener = buildPiwigoResponseListener(getContext());
-            listener.withUiHelper((T)this, uiHelper);
+            BasicPiwigoResponseListener<FUIH, F> listener = buildPiwigoResponseListener(getContext());
+            listener.withUiHelper((F)this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
         if (savedInstanceState != null) {

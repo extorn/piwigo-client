@@ -68,6 +68,7 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
             }
 
             CategoryItem item = new CategoryItem(id, name, description, !isPublic, null, photos, photos, 0, null);
+            item.markAsAdminCopy();
 
             String[] parentage = category.get("uppercats").getAsString().split(",");
             ArrayList<Long> parentageChain = new ArrayList<>(parentage.length);

@@ -43,6 +43,7 @@ import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsGetListResponseHandle
 import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.model.PiwigoTagModel;
@@ -51,7 +52,7 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
  * Created by gareth on 26/05/17.
  */
 
-public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter<?,?,?>, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag> {
+public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter<?,?,?>, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private static final String ARGS_UNSAVED_TAGS = "unsavedTags";
@@ -403,11 +404,11 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<TagSelectFragment> {
+    private static class CustomPiwigoResponseListener<F extends TagSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
@@ -430,7 +431,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         }
     }
 
-    private void onTagCreated(TagAddResponseHandler.PiwigoAddTagResponse response) {
+    protected void onTagCreated(TagAddResponseHandler.PiwigoAddTagResponse response) {
         Tag newTag = response.getTag();
         insertNewTagToList(newTag);
     }

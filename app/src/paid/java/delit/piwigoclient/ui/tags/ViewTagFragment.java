@@ -82,7 +82,7 @@ import static android.view.View.VISIBLE;
 /**
  * A fragment representing a list of Items.
  */
-public class ViewTagFragment extends MyFragment<ViewTagFragment> {
+public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends MyFragment<F,FUIH> {
 
     private static final String ARG_TAG = "tag";
     private static final String STATE_TAG_DIRTY = "isTagDirty";
@@ -97,7 +97,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     private RelativeLayout bulkActionsContainer;
     private ExtendedFloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
-    private Tag tag;
+    private Tag currentTag;
     private PiwigoTag tagModel;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
@@ -110,6 +110,17 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     private boolean tagIsDirty;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
 
+    public Tag getCurrentTag() {
+        return currentTag;
+    }
+
+    public DeleteActionData getDeleteActionData() {
+        return deleteActionData;
+    }
+
+    public HashMap<Long, String> getLoadingMessageIds() {
+        return loadingMessageIds;
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -132,7 +143,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
         if (getArguments() != null) {
             if (getArguments().containsKey(ARG_TAG)) {
-                tag = getArguments().getParcelable(ARG_TAG);
+                currentTag = getArguments().getParcelable(ARG_TAG);
             }
         }
     }
@@ -157,7 +168,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
     @Override
     protected String buildPageHeading() {
-        return getString(R.string.tag_heading_pattern, tag.getName());
+        return getString(R.string.tag_heading_pattern, currentTag.getName());
     }
 
     @Override
@@ -166,7 +177,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         if (viewPrefs != null) {
             viewPrefs.storeToBundle(outState);
         }
-        outState.putParcelable(ARG_TAG, tag);
+        outState.putParcelable(ARG_TAG, currentTag);
         BundleUtils.writeMap(outState, STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
@@ -202,7 +213,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         return viewPrefs;
     }
 
-    private boolean getMultiSelectionAllowed() {
+    protected boolean getMultiSelectionAllowed() {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean captureActionClicks = sessionDetails != null && sessionDetails.isAdminUser();
         captureActionClicks |= (sessionDetails != null && sessionDetails.isFullyLoggedIn() && sessionDetails.isUseUserTagPluginForUpdate());
@@ -232,7 +243,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             //restore saved state
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
             viewPrefs.loadFromBundle(savedInstanceState);
-            tag = savedInstanceState.getParcelable(ARG_TAG);
+            currentTag = savedInstanceState.getParcelable(ARG_TAG);
             tagModel = new ViewModelProvider(requireActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
@@ -249,7 +260,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
 
         TagUpdatedEvent tagUpdatedEvent = EventBus.getDefault().getStickyEvent(TagUpdatedEvent.class);
-        if(tagUpdatedEvent != null && tag != null && tag.getId() == tagUpdatedEvent.getTag().getId()) {
+        if(tagUpdatedEvent != null && currentTag != null && currentTag.getId() == tagUpdatedEvent.getTag().getId()) {
             // updated the items tagged with this tag.
             // force reload of all tagged content.
             tagModel = null;
@@ -260,7 +271,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(tagModel == null) {
             tagIsDirty = true;
-            tagModel = new ViewModelProvider(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
+            tagModel = new ViewModelProvider(requireActivity()).get("" + currentTag.getId(), PiwigoTagModel.class).getPiwigoTag(currentTag).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -363,11 +374,11 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         recyclerView.addOnScrollListener(scrollListener);
     }
 
-    private void reloadTagModel(Tag tag) {
+    protected void reloadTagModel(Tag tag) {
         tagModel = new ViewModelProvider(requireActivity()).get("" + tag.getId(), PiwigoTagModel.class).updatePiwigoTag(tag).getValue();
     }
 
-    private PiwigoTag getTagModel() {
+    protected PiwigoTag getTagModel() {
         return tagModel;
     }
 
@@ -379,7 +390,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
+    protected void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
             tagModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             if (tagModel.isFullyLoaded() && tagModel.getItemCount() == 0) {
@@ -553,7 +564,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
     }
 
-    private void loadAlbumResourcesPage(int pageToLoad) {
+    protected void loadAlbumResourcesPage(int pageToLoad) {
         synchronized (loadingMessageIds) {
             tagModel.acquirePageLoadLock();
             try {
@@ -572,7 +583,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
                 Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
 
-                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new TagGetImagesResponseHandler(tag, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new TagGetImagesResponseHandler(currentTag, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
                 tagModel.recordPageBeingLoaded(loadingMessageId, pageToLoad);
                 loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             } finally {
@@ -592,14 +603,14 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         return pageToActuallyLoad;
     }
 
-    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
+    protected void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>,ViewTagFragment> implements Parcelable {
+    private static class OnDeleteTagsAction<F extends ViewTagFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public OnDeleteTagsAction(FragmentUIHelper<ViewTagFragment> uiHelper) {
+        public OnDeleteTagsAction(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -631,17 +642,17 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            ViewTagFragment fragment = getUiHelper().getParent();
-            fragment.viewAdapter.toggleItemSelection();
+            F fragment = getUiHelper().getParent();
+            fragment.getViewAdapter().toggleItemSelection();
             if (Boolean.TRUE == positiveAnswer) {
-                HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItemIds());
-                HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItems());
+                HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(fragment.getDeleteActionData().getSelectedItemIds());
+                HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(fragment.getDeleteActionData().getSelectedItems());
                 fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
             } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
                 boolean allowTagEdit = !fragment.isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
-                for (ResourceItem item : fragment.deleteActionData.getSelectedItems()) {
-                    item.getTags().remove(fragment.tag);
+                for (ResourceItem item : fragment.getDeleteActionData().getSelectedItems()) {
+                    item.getTags().remove(fragment.getCurrentTag());
                     if (allowTagEdit) {
                         getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item));
                     } else {
@@ -652,6 +663,10 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 // Neutral (cancel button) - do nothing
             }
         }
+    }
+
+    protected AlbumItemRecyclerViewAdapter getViewAdapter() {
+        return viewAdapter;
     }
 
     @Override
@@ -685,12 +700,12 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>, ViewTagFragment> implements Parcelable {
+    private static class OnDeleteTagsForeverAction<F extends ViewTagFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
 
         private final HashSet<Long> selectedItemIds;
         private final HashSet<? extends ResourceItem> selectedItems;
 
-        public OnDeleteTagsForeverAction(FragmentUIHelper<ViewTagFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+        public OnDeleteTagsForeverAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
@@ -755,7 +770,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
-        tag = null;
+        currentTag = null;
         tagModel = null;
         if(tagListView != null) {
             tagListView.setAdapter(null);
@@ -763,22 +778,22 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onTagUpdateResponse(PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse rsp) {
+    protected void onTagUpdateResponse(PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse rsp) {
         if(rsp.hasError()) {
             String errorMsg = getString(R.string.error_updating_tag_pattern, rsp.getPiwigoResource().getName(), rsp.getError());
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, errorMsg);
-            rsp.getPiwigoResource().getTags().add(tag); // removal failed, re-add this tag.
+            rsp.getPiwigoResource().getTags().add(currentTag); // removal failed, re-add this tag.
         } else {
             ResourceItem r = rsp.getPiwigoResource();
             onItemRemovedFromTag(r);
         }
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<ViewTagFragment> {
+    private static class CustomPiwigoResponseListener<F extends ViewTagFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -790,7 +805,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            synchronized (getParent().loadingMessageIds) {
+            synchronized (getParent().getLoadingMessageIds()) {
 
                 if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
                     getParent().onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
@@ -806,38 +821,46 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
                 } else if (response instanceof PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) {
                     getParent().onTagUpdateResponse(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response));
                 } else if (response instanceof GetMethodsAvailableResponseHandler.PiwigoGetMethodsAvailableResponse) {
-                    getParent().viewPrefs.withAllowMultiSelect(getParent().getMultiSelectionAllowed());
+                    getParent().getViewPrefs().withAllowMultiSelect(getParent().getMultiSelectionAllowed());
                 } else {
-                    String failedCall = getParent().loadingMessageIds.get(response.getMessageId());
-                    synchronized (getParent().itemsToLoad) {
-                        getParent().itemsToLoad.add(failedCall);
-                        getParent().emptyTagLabel.setText(R.string.tag_content_load_failed_text);
-                        if (getParent().itemsToLoad.size() > 0) {
-                            getParent().emptyTagLabel.setVisibility(VISIBLE);
-                            getParent().retryActionButton.show();
-                        }
-                    }
+                    getParent().withUnexpectedPiwigoResponse(response);
                 }
-                getParent().loadingMessageIds.remove(response.getMessageId());
+                getParent().getLoadingMessageIds().remove(response.getMessageId());
             }
         }
     }
 
-    private void onItemRemovedFromServer(ResourceItem r) {
+    protected void withUnexpectedPiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+        String failedCall = loadingMessageIds.get(response.getMessageId());
+        synchronized (itemsToLoad) {
+            itemsToLoad.add(failedCall);
+            emptyTagLabel.setText(R.string.tag_content_load_failed_text);
+            if (itemsToLoad.size() > 0) {
+                emptyTagLabel.setVisibility(VISIBLE);
+                retryActionButton.show();
+            }
+        }
+    }
+
+    protected AlbumItemRecyclerViewAdapterPreferences getViewPrefs() {
+        return viewPrefs;
+    }
+
+    protected void onItemRemovedFromServer(ResourceItem r) {
         onItemRemovedFromTag(r);
         for(Long albumId : r.getLinkedAlbums()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
         }
     }
 
-    private void onItemRemovedFromTag(ResourceItem r) {
+    protected void onItemRemovedFromTag(ResourceItem r) {
         int itemIdx = tagModel.getItemIdx(r);
         tagModel.remove(itemIdx);
         viewAdapter.notifyItemRemoved(itemIdx);
         if (deleteActionData != null && deleteActionData.removeProcessedResource(r)) {
             deleteActionData = null;
         }
-        EventBus.getDefault().post(new TagContentAlteredEvent(tag.getId(), -1));
+        EventBus.getDefault().post(new TagContentAlteredEvent(currentTag.getId(), -1));
     }
 
     private void onReloadAlbum() {
@@ -860,7 +883,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    static class TagLoadedAction extends UIHelper.Action<FragmentUIHelper<ViewTagFragment>, ViewTagFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> implements Parcelable {
+    static class TagLoadedAction<F extends ViewTagFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends UIHelper.Action<FUIH, F, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> implements Parcelable {
 
         TagLoadedAction(){}
 
@@ -891,9 +914,9 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<ViewTagFragment> uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+        public boolean onSuccess(FUIH uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
             boolean updated = false;
-            ViewTagFragment fragment = uiHelper.getParent();
+            F fragment = uiHelper.getParent();
             for (Tag t : response.getTags()) {
                 if (t.getId() == fragment.getTagModel().getId()) {
                     // tag has been located!
@@ -912,8 +935,8 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<ViewTagFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            ViewTagFragment fragment = uiHelper.getParent();
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            F fragment = uiHelper.getParent();
             Logging.log(Log.INFO, TAG, "removing from activity on piwigo error");
             fragment.getParentFragmentManager().popBackStack();
             return false;
@@ -947,7 +970,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         // This is needed because a slideshow item currently only fires these events (tag unaware).
-        if (tag != null && tag.getId() == albumAlteredEvent.getAlbumAltered()) {
+        if (currentTag != null && currentTag.getId() == albumAlteredEvent.getAlbumAltered()) {
             tagIsDirty = true;
             if(isResumed()) {
                 reloadAlbumContent();
@@ -957,7 +980,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagContentAlteredEvent event) {
-        if (tag != null && tag.getId() == event.getId()) {
+        if (currentTag != null && currentTag.getId() == event.getId()) {
             tagIsDirty = true;
             if(isResumed()) {
                 reloadAlbumContent();
@@ -995,7 +1018,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         }
     }
 
-    private void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
+    protected void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
         if(this.deleteActionData.isTrackingMessageId(response.getMessageId())) {
             this.deleteActionData.updateLinkedAlbums(response.getResource());
             if (this.deleteActionData.isResourceInfoAvailable()) {

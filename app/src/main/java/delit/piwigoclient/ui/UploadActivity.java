@@ -14,7 +14,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -299,7 +298,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
         CategoryItemStub currentAlbum = getIntent().getParcelableExtra(INTENT_DATA_CURRENT_ALBUM);
 
         if (isCurrentUserAuthorisedToUpload(sessionDetails)) {
-            Fragment f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
+            UploadFragment f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class);
             showFragmentNow(f);
         }

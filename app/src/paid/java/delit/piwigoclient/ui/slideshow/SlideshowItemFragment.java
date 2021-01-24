@@ -27,7 +27,6 @@ import delit.libs.util.SetUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -47,7 +46,7 @@ import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 
 
-public abstract class SlideshowItemFragment<T extends ResourceItem> extends AbstractSlideshowItemFragment<T> {
+public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends AbstractSlideshowItemFragment<F,FUIH,T> {
 
     private static final String STATE_UPDATED_TAGS_SET = "updatedTagSet";
     private static final String STATE_CHANGED_TAGS_SET = "changedTagSet";
@@ -59,12 +58,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
         super.setupImageDetailPopup(v, savedInstanceState);
 
-        getTagsField().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onShowTagsSelection();
-            }
-        });
+        getTagsField().setOnClickListener(v1 -> onShowTagsSelection());
     }
 
     private void onShowTagsSelection() {
@@ -100,7 +94,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     }
 
-    private void onResourceTagsUpdated(ResourceItem piwigoResource) {
+    protected void onResourceTagsUpdated(ResourceItem piwigoResource) {
         getModel().setTags(piwigoResource.getTags());
         populateResourceExtraFields();
     }
@@ -183,7 +177,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         return v;
     }
 
-    private void onFavoriteUpdateFailed(boolean oldValue) {
+    protected void onFavoriteUpdateFailed(boolean oldValue) {
         if (getModel().isFavorite() != favoriteButton.isChecked()) {
             // change the button to match the model.
             favoriteButton.setTag("noListener");
@@ -208,7 +202,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             changedTagsEvents = BundleUtils.getHashSet(savedInstanceState, STATE_CHANGED_TAGS_SET);
         }
         super.onViewCreated(view, savedInstanceState);
-        favoriteButton.setOnCheckedChangeListener(new SlideshowItemFragment.FavoriteCheckedListener(getUiHelper(), getModel()));
+        favoriteButton.setOnCheckedChangeListener(new SlideshowItemFragment.FavoriteCheckedListener<>(getUiHelper(), getModel()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -263,8 +257,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new PaidPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new PaidPiwigoResponseListener<>();
     }
 
     @Override
@@ -276,7 +270,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class PaidPiwigoResponseListener extends CustomPiwigoResponseListener<SlideshowItemFragment<PictureResourceItem>, PictureResourceItem> {
+    private static class PaidPiwigoResponseListener<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends CustomPiwigoResponseListener<F, FUIH,T> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -298,30 +292,30 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private void onFavoriteUpdateSucceeded(boolean newValue) {
+    protected void onFavoriteUpdateSucceeded(boolean newValue) {
         favoriteButton.setEnabled(true);
     }
 
-    private abstract static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<FragmentUIHelper<SlideshowItemFragment<T>>, SlideshowItemFragment<T>, S> {
+    private abstract static class FavoriteAction<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<FUIH, F, S> {
 
         FavoriteAction(){}
 
         protected abstract boolean getValueOnSucess();
 
         @Override
-        public boolean onFailure(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             getActionParent(uiHelper).onFavoriteUpdateFailed(!getValueOnSucess());
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, S response) {
+        public boolean onSuccess(FUIH uiHelper, S response) {
             getActionParent(uiHelper).onFavoriteUpdateSucceeded(getValueOnSucess());
             return super.onSuccess(uiHelper, response);
         }
     }
 
-    private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> implements Parcelable {
+    private static class FavoriteRemoveAction<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends FavoriteAction<F,FUIH,T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> implements Parcelable {
 
         FavoriteRemoveAction(){}
 
@@ -355,7 +349,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
+        public boolean onSuccess(FUIH uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
                 EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
             }
@@ -363,7 +357,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> implements Parcelable {
+    private static class FavoriteAddAction<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends FavoriteAction<F,FUIH,T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> implements Parcelable {
 
         FavoriteAddAction(){}
 
@@ -397,7 +391,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
+        public boolean onSuccess(FUIH uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
                 EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
             }
@@ -405,7 +399,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteCheckedListener implements CompoundButton.OnCheckedChangeListener {
+    private static class FavoriteCheckedListener<F extends SlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> implements CompoundButton.OnCheckedChangeListener {
 
         private static final String TAG = "FavoriteCheckedListener";
         private final @NonNull
@@ -413,7 +407,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         private final @NonNull
         ResourceItem item;
 
-        public FavoriteCheckedListener(@NonNull UIHelper helper, @NonNull ResourceItem item) {
+        public FavoriteCheckedListener(@NonNull FUIH helper, @NonNull T item) {
             this.helper = helper;
             this.item = item;
             if (item == null) {
@@ -434,9 +428,9 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             buttonView.setEnabled(false);
             if (item.hasFavoriteInfo()) {
                 if (!item.isFavorite()) {
-                    helper.invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(item), new FavoriteAddAction());
+                    helper.invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(item), new FavoriteAddAction<>());
                 } else {
-                    helper.invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(item), new FavoriteRemoveAction());
+                    helper.invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(item), new FavoriteRemoveAction<>());
                 }
             }
         }

@@ -244,7 +244,7 @@ public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH exte
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 

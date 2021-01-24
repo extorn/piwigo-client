@@ -59,7 +59,7 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
 /**
  * Created by gareth on 26/05/17.
  */
-public class TagsListFragment<T extends Tag> extends MyFragment<TagsListFragment<Tag>> {
+public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends MyFragment<F,FUIH> {
     private static final String TAG = "TagsListFrag";
     private static final String TAGS_MODEL = "tagsModel";
     private final ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
@@ -311,11 +311,11 @@ public class TagsListFragment<T extends Tag> extends MyFragment<TagsListFragment
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem));
     }
 
-    private static class OnDeleteTagAction<T extends Tag> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment<T>>, TagsListFragment<T>> implements Parcelable {
+    private static class OnDeleteTagAction<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>, T extends Tag> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
 
         private final T tag;
 
-        public OnDeleteTagAction(FragmentUIHelper<TagsListFragment<T>> uiHelper, T tag) {
+        public OnDeleteTagAction(FUIH uiHelper, T tag) {
             super(uiHelper);
             this.tag = tag;
         }
@@ -336,22 +336,22 @@ public class TagsListFragment<T extends Tag> extends MyFragment<TagsListFragment
             return 0;
         }
 
-        public static final Creator<OnDeleteTagAction<?>> CREATOR = new Creator<OnDeleteTagAction<?>>() {
+        public static final Creator<OnDeleteTagAction<?,?,?>> CREATOR = new Creator<OnDeleteTagAction<?,?,?>>() {
             @Override
-            public OnDeleteTagAction<?> createFromParcel(Parcel in) {
+            public OnDeleteTagAction<?,?,?> createFromParcel(Parcel in) {
                 return new OnDeleteTagAction<>(in);
             }
 
             @Override
-            public OnDeleteTagAction<?>[] newArray(int size) {
-                return new OnDeleteTagAction<?>[size];
+            public OnDeleteTagAction<?,?,?>[] newArray(int size) {
+                return new OnDeleteTagAction<?,?,?>[size];
             }
         };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if(Boolean.TRUE == positiveAnswer) {
-                TagsListFragment<T> fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 fragment.deleteTagNow(tag);
             }
         }
@@ -361,7 +361,7 @@ public class TagsListFragment<T extends Tag> extends MyFragment<TagsListFragment
         addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname));
     }
 
-    private void deleteTagNow(Tag thisItem) {
+    protected void deleteTagNow(Tag thisItem) {
         throw new UnsupportedOperationException("Not supported in Piwigo API");
 //        long deleteActionId = PiwigoAccessService.startActionDeleteTag(thisItem.getId(), this.getContext());
 //        this.deleteActionsPending.put(deleteActionId, thisItem);
@@ -369,11 +369,11 @@ public class TagsListFragment<T extends Tag> extends MyFragment<TagsListFragment
     }
 
     @Override
-    protected BasicPiwigoResponseListener<TagsListFragment<Tag>> buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener<>();
     }
 
-    private static class CustomPiwigoResponseListener<T extends TagsListFragment<Tag>> extends BasicPiwigoResponseListener<T> {
+    private static class CustomPiwigoResponseListener<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {

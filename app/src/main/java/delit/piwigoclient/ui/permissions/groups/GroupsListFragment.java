@@ -305,7 +305,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 

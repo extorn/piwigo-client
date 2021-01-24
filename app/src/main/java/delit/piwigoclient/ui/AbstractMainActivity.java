@@ -105,7 +105,7 @@ import hotchemi.android.rate.MyAppRate;
 
 import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 
-public abstract class AbstractMainActivity<T extends AbstractMainActivity<T,UIH>,UIH extends ActivityUIHelper<UIH,T>> extends MyActivity<T,UIH> implements ComponentCallbacks2 {
+public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends MyActivity<A, AUIH> implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
     private static final String STATE_BASKET = "basket";
@@ -119,7 +119,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T,UIH>
     private Basket basket = new Basket();
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
-    private DownloadManager<UIH, T> downloadManager;
+    private DownloadManager<AUIH, A> downloadManager;
 
 
     public AbstractMainActivity() {

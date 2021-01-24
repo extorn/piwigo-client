@@ -77,7 +77,7 @@ import static android.view.View.VISIBLE;
 /**
  * A fragment representing a list of Items.
  */
-public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
+public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String STATE_FAVORITES_ACTIVE_LOAD_THREADS = "activeLoadingThreads";
     private static final String STATE_FAVORITES_LOADS_TO_RETRY = "retryLoadList";
@@ -92,7 +92,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     private ExtendedFloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
     private PiwigoFavorites favoritesModel;
-    final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
+    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     private int colsOnScreen;
     private DeleteActionData deleteActionData;
@@ -103,6 +103,10 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
     private boolean favoritesIsDirty;
 
+
+    public HashMap<Long, String> getLoadingMessageIds() {
+        return loadingMessageIds;
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -549,20 +553,20 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         return pageToActuallyLoad;
     }
 
-    private BaseRecyclerViewAdapter getViewAdapter() {
+    protected BaseRecyclerViewAdapter getViewAdapter() {
         return viewAdapter;
     }
 
-    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
+    protected void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewFavoritesFragment>,ViewFavoritesFragment> implements Parcelable {
+    private static class OnDeleteFavoritesAction<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
         private final HashSet<Long> selectedItemIds;
         private final HashSet<ResourceItem> selectedItems;
 
-        public OnDeleteFavoritesAction(FragmentUIHelper<ViewFavoritesFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
+        public OnDeleteFavoritesAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
@@ -600,7 +604,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            ViewFavoritesFragment fragment = getUiHelper().getParent();
+            F fragment = getUiHelper().getParent();
             fragment.getViewAdapter().toggleItemSelection();
             if (Boolean.TRUE == positiveAnswer) {
                 HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(selectedItemIds);
@@ -651,12 +655,12 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         }
     }
 
-    private static class OnDeleteFavoritesForeverAction extends UIHelper.QuestionResultAdapter implements Parcelable {
+    private static class OnDeleteFavoritesForeverAction<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private final HashSet<Long> selectedItemIds;
         private final HashSet<? extends ResourceItem> selectedItems;
 
-        public OnDeleteFavoritesForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+        public OnDeleteFavoritesForeverAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
@@ -695,7 +699,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems));
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<>(selectedItemIds, selectedItems));
             }
         }
     }
@@ -728,8 +732,8 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
     void onFavoritesUpdateResponse(FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse rsp) {
@@ -745,7 +749,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
         }*/
     }
 
-    private static class CustomPiwigoResponseListener<S extends ViewFavoritesFragment> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -757,7 +761,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            synchronized (getParent().loadingMessageIds) {
+            synchronized (getParent().getLoadingMessageIds()) {
                 if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
                     getParent().onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
@@ -776,7 +780,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
                 } else {
                     getParent().onLoadFavoritesFailure(response.getMessageId());
                 }
-                getParent().loadingMessageIds.remove(response.getMessageId());
+                getParent().getLoadingMessageIds().remove(response.getMessageId());
             }
         }
 

@@ -243,7 +243,7 @@ public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FU
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
 

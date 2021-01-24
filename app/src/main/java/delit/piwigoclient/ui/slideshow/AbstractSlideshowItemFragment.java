@@ -785,8 +785,8 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
     @Override
@@ -1154,7 +1154,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         }
     }
 
-    public static class BaseDownloadQuestionResult<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    public static class BaseDownloadQuestionResult<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public BaseDownloadQuestionResult(FUIH uiHelper) {
             super(uiHelper);
@@ -1211,7 +1211,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         }
     }
 
-    public static class SelectionContainsUnsuitableFilesQuestionResult<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends BaseDownloadQuestionResult<F,FUIH,T> {
+    public static class SelectionContainsUnsuitableFilesQuestionResult<F extends MyFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends BaseDownloadQuestionResult<F,FUIH,T> {
 
         private final Set<ResourceItem> items;
         private final String selectedPiwigoFilesizeName;

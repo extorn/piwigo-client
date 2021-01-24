@@ -15,6 +15,7 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
     private String name;
     private int usageCount;
     private Date lastModified;
+    private boolean isAdminCopy;
 
     public Tag(String name) {
         this.name = name;
@@ -37,6 +38,7 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
         name = in.readString();
         usageCount = in.readInt();
         lastModified = ParcelUtils.readDate(in);
+        isAdminCopy = ParcelUtils.readBool(in);
     }
 
     @Override
@@ -45,6 +47,7 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
         dest.writeString(name);
         dest.writeInt(usageCount);
         ParcelUtils.writeDate(dest, lastModified);
+        ParcelUtils.writeBool(dest, isAdminCopy);
     }
 
     public long getId() {
@@ -71,15 +74,20 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
         return lastModified;
     }
 
+    public boolean isAdminCopy() {
+        return isAdminCopy;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof Tag)) {
             return false;
         }
-        if(((Tag) other).id < 0 || this.id < 0) {
-            return ((Tag) other).name.equals(this.name);
+        Tag otherTag = (Tag) other;
+        if(otherTag.id < 0 || this.id < 0) {
+            return otherTag.name.equals(this.name) && otherTag.isAdminCopy == this.isAdminCopy;
         }
-        return ((Tag) other).id == this.id;
+        return otherTag.id == this.id && otherTag.isAdminCopy == this.isAdminCopy;
     }
 
     @Override
@@ -107,5 +115,9 @@ public class Tag implements Identifiable, Parcelable, PhotoContainer {
     public int getPagesOfPhotos(int pageSize) {
         int pages = ((getUsageCount() / pageSize) + (getUsageCount() % pageSize > 0 ? 0 : -1));
         return Math.max(pages, 0);
+    }
+
+    public void markAsAdminCopy() {
+        isAdminCopy = true;
     }
 }

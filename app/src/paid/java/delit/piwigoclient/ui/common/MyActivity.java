@@ -8,7 +8,7 @@ import delit.piwigoclient.piwigoApi.upload.BackgroundUploadServiceEventHandler;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyActivity<T extends MyActivity<T>> extends BaseMyActivity<T> {
+public abstract class MyActivity<A extends MyActivity<A,AUIH>, AUIH extends ActivityUIHelper<AUIH,A>> extends BaseMyActivity<A,AUIH> {
 
     private BackgroundUploadServiceEventHandler backgroundUploadServiceEventHandler = new BackgroundUploadServiceEventHandler();
 

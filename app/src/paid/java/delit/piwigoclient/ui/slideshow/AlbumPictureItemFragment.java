@@ -22,12 +22,14 @@ import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.PicassoLoader;
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
 import delit.piwigoclient.ui.events.SlideshowItemPageFinished;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 import pl.droidsonroids.gif.GifDrawable;
 
-public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
+public class AlbumPictureItemFragment<F extends AlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH, F>, T extends PictureResourceItem> extends AbstractAlbumPictureItemFragment<F,FUIH, T> {
 
     private static final String TAG = "AlbumPicItemFr";
     private ViewPager resourceDetailsViewPager;
