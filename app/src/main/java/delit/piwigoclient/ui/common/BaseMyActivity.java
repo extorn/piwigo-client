@@ -86,7 +86,7 @@ import delit.piwigoclient.ui.file.FolderItem;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCompatActivity {
+public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends ActivityUIHelper<UIH,T>> extends AppCompatActivity {
 
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
@@ -97,7 +97,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
     private static boolean activitySwap;
 
     private HashMap<Long, Integer> trackedActionIntentsMap = new HashMap<>(3);
-    private ActivityUIHelper<T> uiHelper;
+    private UIH uiHelper;
     private LicenceCheckingHelper licencingHelper;
 
     private String initialisedWithLanguage;
@@ -128,7 +128,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         return licencingHelper;
     }
 
-    protected BasicPiwigoResponseListener<?> buildPiwigoResponseListener() {
+    protected BasicPiwigoResponseListener<UIH,T> buildPiwigoResponseListener() {
         return new BasicPiwigoResponseListener<>();
     }
 
@@ -310,7 +310,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         }
 
         if (uiHelper == null) {
-            uiHelper = new ActivityUIHelper<>((T)this, prefs, getWindow().getDecorView());
+            uiHelper = (UIH)new ActivityUIHelper<UIH,T>((T)this, prefs, getWindow().getDecorView());
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
@@ -362,7 +362,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
                 });
                 d.show();
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ExitOnCloseAction<>(getUiHelper()));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ExitOnCloseAction<UIH,T>(getUiHelper()));
             }
         }
     }
@@ -411,7 +411,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         final int trackingRequestId = TrackableRequestEvent.getNextEventId();
         getUiHelper().setTrackingRequest(trackingRequestId);
 
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction(getUiHelper(), trackingRequestId));
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new OnStopActivityAction<>(getUiHelper(), trackingRequestId));
     }
 
     @Override
@@ -562,7 +562,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         return found;
     }
 
-    protected void showFragmentNow(Fragment f) {
+    protected <F extends Fragment> void showFragmentNow(F f) {
         showFragmentNow(f, false);
     }
 
@@ -606,7 +606,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         }
     }
 
-    public ActivityUIHelper<T> getUiHelper() {
+    public UIH getUiHelper() {
         return uiHelper;
     }
 
@@ -676,10 +676,10 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         return isAttachedToWindow;
     }
 
-    private static class OnStopActivityAction extends UIHelper.QuestionResultAdapter implements Parcelable {
+    private static class OnStopActivityAction<UIH extends ActivityUIHelper<UIH,T>, T extends BaseMyActivity<T,UIH>> extends UIHelper.QuestionResultAdapter<UIH,T> implements Parcelable {
         private final int trackingRequestId;
 
-        public OnStopActivityAction(UIHelper uiHelper, int trackingRequestId) {
+        public OnStopActivityAction(UIH uiHelper, int trackingRequestId) {
             super(uiHelper);
             this.trackingRequestId = trackingRequestId;
         }
@@ -700,15 +700,15 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
             return 0;
         }
 
-        public static final Creator<OnStopActivityAction> CREATOR = new Creator<OnStopActivityAction>() {
+        public static final Creator<OnStopActivityAction<?,?>> CREATOR = new Creator<OnStopActivityAction<?,?>>() {
             @Override
-            public OnStopActivityAction createFromParcel(Parcel in) {
-                return new OnStopActivityAction(in);
+            public OnStopActivityAction<?,?> createFromParcel(Parcel in) {
+                return new OnStopActivityAction<>(in);
             }
 
             @Override
-            public OnStopActivityAction[] newArray(int size) {
-                return new OnStopActivityAction[size];
+            public OnStopActivityAction<?,?>[] newArray(int size) {
+                return new OnStopActivityAction<?,?>[size];
             }
         };
 
@@ -727,9 +727,9 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
         return agreedEulaVersion < currentEulaVersion;
     }
 
-    private static class ExitOnCloseAction<T extends BaseMyActivity<T>> extends UIHelper.QuestionResultAdapter<ActivityUIHelper<T>,T> implements Parcelable {
+    private static class ExitOnCloseAction<UIH extends ActivityUIHelper<UIH,T>, T extends BaseMyActivity<T,UIH>> extends UIHelper.QuestionResultAdapter<UIH,T> implements Parcelable {
 
-        public ExitOnCloseAction(ActivityUIHelper<T> uiHelper) {
+        public ExitOnCloseAction(UIH uiHelper) {
             super(uiHelper);
         }
 
@@ -747,14 +747,14 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T>> extends AppCom
             return 0;
         }
 
-        public static final Creator<ExitOnCloseAction> CREATOR = new Creator<ExitOnCloseAction>() {
+        public static final Creator<ExitOnCloseAction<?,?>> CREATOR = new Creator<ExitOnCloseAction<?,?>>() {
             @Override
-            public ExitOnCloseAction createFromParcel(Parcel in) {
-                return new ExitOnCloseAction(in);
+            public ExitOnCloseAction<?,?> createFromParcel(Parcel in) {
+                return new ExitOnCloseAction<>(in);
             }
 
             @Override
-            public ExitOnCloseAction[] newArray(int size) {
+            public ExitOnCloseAction<?,?>[] newArray(int size) {
                 return new ExitOnCloseAction[size];
             }
         };

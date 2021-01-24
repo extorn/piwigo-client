@@ -77,7 +77,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 21/06/17.
  */
 
-public class GroupFragment extends MyFragment<GroupFragment> {
+public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String CURRENT_GROUP_MEMBERS = "currentGroupMembers";
     private static final String CURRENT_GROUP = "currentGroup";
@@ -288,7 +288,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
     }
 
-    private static class GroupFragmentAction extends UIHelper.Action<FragmentUIHelper<GroupFragment>, GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse> implements Parcelable {
+    private static class GroupFragmentAction<F extends GroupFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH, F, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse> implements Parcelable {
 
         protected GroupFragmentAction(){
             super();
@@ -321,9 +321,9 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+        public boolean onSuccess(FUIH uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
             HashSet<Group> groups = response.getGroups();
-            GroupFragment groupFragment = uiHelper.getParent();
+            F groupFragment = uiHelper.getParent();
             if(groups.isEmpty()) {
                 Logging.log(Log.INFO, TAG, "removing from activity as group not available any more");
                 groupFragment.getParentFragmentManager().popBackStack();
@@ -337,7 +337,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             Logging.log(Log.INFO, TAG, "removing from activity on piwigo error response rxd");
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
@@ -410,7 +410,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         return albumPermissions;
     }
 
-    private void setFieldsFromModel(Group group) {
+    protected void setFieldsFromModel(Group group) {
         groupNameField.setText(group.getName());
         isDefaultField.setChecked(group.isDefault());
 
@@ -439,14 +439,14 @@ public class GroupFragment extends MyFragment<GroupFragment> {
 
     private void deleteGroup(final Group group) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), group));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction<>(getUiHelper(), group));
     }
 
-    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupFragment>,GroupFragment> implements Parcelable {
+    private static class OnDeleteGroupAction<F extends GroupFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private final Group group;
 
-        OnDeleteGroupAction(FragmentUIHelper<GroupFragment> uiHelper, Group group) {
+        OnDeleteGroupAction(FUIH uiHelper, Group group) {
             super(uiHelper);
             this.group = group;
         }
@@ -521,7 +521,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         setFieldsFromModel(currentGroup);
     }
 
-    private void onGroupPermissionsRemoved(GroupPermissionsRemovedResponseHandler.PiwigoGroupPermissionsRemovedResponse response) {
+    protected void onGroupPermissionsRemoved(GroupPermissionsRemovedResponseHandler.PiwigoGroupPermissionsRemovedResponse response) {
         synchronized (permissionsSaveActionIds) {
             permissionsSaveActionIds.remove(response.getMessageId());
             if (permissionsSaveActionIds.size() == 0) {
@@ -532,7 +532,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         publishGroupAddedOrAlteredEventIfFinished();
     }
 
-    private void onGroupPermissionsAdded(GroupPermissionsAddResponseHandler.PiwigoGroupPermissionsAddedResponse response) {
+    protected void onGroupPermissionsAdded(GroupPermissionsAddResponseHandler.PiwigoGroupPermissionsAddedResponse response) {
         synchronized (permissionsSaveActionIds) {
             permissionsSaveActionIds.remove(response.getMessageId());
             if (permissionsSaveActionIds.size() == 0) {
@@ -543,7 +543,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         publishGroupAddedOrAlteredEventIfFinished();
     }
 
-    private void onGroupMembersAdded(GroupAddMembersResponseHandler.PiwigoGroupAddMembersResponse response) {
+    protected void onGroupMembersAdded(GroupAddMembersResponseHandler.PiwigoGroupAddMembersResponse response) {
         synchronized (memberSaveActionIds) {
             memberSaveActionIds.remove(response.getMessageId());
             currentGroup = response.getGroup();
@@ -555,7 +555,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         publishGroupAddedOrAlteredEventIfFinished();
     }
 
-    private void onGroupMembersRemoved(GroupRemoveMembersResponseHandler.PiwigoGroupRemoveMembersResponse response) {
+    protected void onGroupMembersRemoved(GroupRemoveMembersResponseHandler.PiwigoGroupRemoveMembersResponse response) {
         synchronized (memberSaveActionIds) {
             memberSaveActionIds.remove(response.getMessageId());
             currentGroup = response.getGroup();
@@ -583,10 +583,10 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         boolean hasRemovedPermissions = oldGroupMembersSet.size() > 0;
 
         if (hasRemovedPermissions) {
-            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupRemoveMembersResponseHandler(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet))));
+            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupRemoveMembersResponseHandler<>(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet))));
         }
         if (hasAddedNewPermissions) {
-            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupAddMembersResponseHandler(currentGroup.getId(), new ArrayList<>(newGroupMembersSet))));
+            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupAddMembersResponseHandler<>(currentGroup.getId(), new ArrayList<>(newGroupMembersSet))));
         }
     }
 
@@ -613,7 +613,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
     }
 
-    private void onGroupInfoUpdated(GroupUpdateInfoResponseHandler.PiwigoGroupUpdateInfoResponse response) {
+    protected void onGroupInfoUpdated(GroupUpdateInfoResponseHandler.PiwigoGroupUpdateInfoResponse response) {
         newGroup = null;
         currentGroup = response.getGroup();
         saveGroupMembershipChangesIfRequired();
@@ -621,7 +621,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         publishGroupAddedOrAlteredEventIfFinished();
     }
 
-    private void onGroupAdded(GroupAddResponseHandler.PiwigoAddGroupResponse response) {
+    protected void onGroupAdded(GroupAddResponseHandler.PiwigoAddGroupResponse response) {
         newGroup = null;
         currentGroup = response.getGroup();
         saveGroupMembershipChangesIfRequired();
@@ -629,7 +629,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         publishGroupAddedOrAlteredEventIfFinished();
     }
 
-    private void onGroupDeleted(GroupDeleteResponseHandler.PiwigoDeleteGroupResponse response) {
+    protected void onGroupDeleted(GroupDeleteResponseHandler.PiwigoDeleteGroupResponse response) {
         EventBus.getDefault().post(new GroupDeletedEvent(currentGroup));
         // return to previous screen
         if (isVisible()) {
@@ -638,12 +638,12 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
     }
 
-    private void onUsernamesLoaded(UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
+    protected void onUsernamesLoaded(UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
         currentGroupMembers = response.getUsernames();
         populateGroupMembersField();
     }
 
-    private void onGroupPermissionsRetrieved(GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse response) {
+    protected void onGroupPermissionsRetrieved(GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse response) {
 
         this.currentAccessibleAlbumIds = response.getAllowedAlbums();
         if (availableGalleries != null) {
@@ -652,7 +652,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
 
     }
 
-    private void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    protected void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentAccessibleAlbumIds != null) {
             populateAlbumPermissionsList();
@@ -734,7 +734,7 @@ public class GroupFragment extends MyFragment<GroupFragment> {
         }
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<GroupFragment> {
+    private static class CustomPiwigoResponseListener<F extends GroupFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         private static final String TAG = "GroupFrag";
 
         @Override

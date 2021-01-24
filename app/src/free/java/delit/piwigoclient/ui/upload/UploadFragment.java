@@ -8,11 +8,12 @@ import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.upload.list.UploadDataItem;
 
-public class UploadFragment extends AbstractUploadFragment<UploadFragment> {
+public class UploadFragment<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends AbstractUploadFragment<F,FUIH> {
     public static UploadFragment newInstance(CategoryItemStub currentGallery, int actionId) {
-        UploadFragment fragment = new UploadFragment();
+        UploadFragment fragment = new UploadFragment<>();
         fragment.setArguments(fragment.buildArgs(currentGallery, actionId));
         return fragment;
     }

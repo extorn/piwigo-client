@@ -36,7 +36,7 @@ import delit.piwigoclient.ui.file.DocumentFileFilter;
 import delit.piwigoclient.ui.file.RegexpDocumentFileFilter;
 import delit.piwigoclient.util.MyDocumentProvider;
 
-public class DownloadManager<S extends UIHelper<T>, T> implements Parcelable, DownloadAction.DownloadActionListener, DownloadedFileNotificationGenerator.DownloadTargetLoadListener<DownloadedFileNotificationGenerator<T>> {
+public class DownloadManager<UIH extends UIHelper<UIH,T>, T> implements Parcelable, DownloadAction.DownloadActionListener, DownloadedFileNotificationGenerator.DownloadTargetLoadListener<DownloadedFileNotificationGenerator<UIH,T>> {
 
     public static final String NOTIFICATION_GROUP_DOWNLOADS = "Downloads";
 
@@ -44,16 +44,16 @@ public class DownloadManager<S extends UIHelper<T>, T> implements Parcelable, Do
     //TODO move the download mechanism into a background service so it isn't cancelled if the user leaves the app.
     private ArrayList<DownloadFileRequestEvent> queuedDownloads = new ArrayList<>();
     private ArrayList<DownloadFileRequestEvent> activeDownloads = new ArrayList<>(1);
-    private S uiHelper;
+    private UIH uiHelper;
     //TODO we don't store these notification handlers so possibly notifications may not get created.
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")// Don't query them as it's just to stop garbage collection
-    private final ArrayList<DownloadedFileNotificationGenerator<T>> thumbNotificationGenerators = new ArrayList<>();
+    private final ArrayList<DownloadedFileNotificationGenerator<UIH,T>> thumbNotificationGenerators = new ArrayList<>();
 
-    public DownloadManager(S uiHelper) {
+    public DownloadManager(UIH uiHelper) {
         this.uiHelper = uiHelper;
     }
 
-    public void withUiHelper(S uiHelper) {
+    public void withUiHelper(UIH uiHelper) {
         this.uiHelper = uiHelper;
     }
 
@@ -194,11 +194,11 @@ public class DownloadManager<S extends UIHelper<T>, T> implements Parcelable, Do
         }
     }
 
-    private S getUiHelper() {
+    private UIH getUiHelper() {
         return uiHelper;
     }
 
-    private void notifyUserFileDownloadComplete(final UIHelper<T> uiHelper, final Uri downloadedFile) {
+    private void notifyUserFileDownloadComplete(final UIHelper<UIH,T> uiHelper, final Uri downloadedFile) {
         //uiHelper.showDetailedMsg(R.string.alert_image_download_title, uiHelper.getContext().getString(R.string.alert_image_download_complete_message));
         if(BuildConfig.DEBUG) {
             Log.e(TAG, "Downloaded File - Generating Thumbnail for " + downloadedFile);
@@ -364,7 +364,7 @@ public class DownloadManager<S extends UIHelper<T>, T> implements Parcelable, Do
     }
 
     @Override
-    public void onDownloadTargetResult(DownloadedFileNotificationGenerator<T> generator, boolean success) {
+    public void onDownloadTargetResult(DownloadedFileNotificationGenerator<UIH,T> generator, boolean success) {
         thumbNotificationGenerators.remove(generator);
     }
 }

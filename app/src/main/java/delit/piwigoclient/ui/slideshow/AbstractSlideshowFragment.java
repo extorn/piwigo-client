@@ -40,7 +40,6 @@ import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
-import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
@@ -65,7 +64,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/05/17.
  */
 
-public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment {
+public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment<F,FUIH> {
 
     private static final String TAG = "AbsSlideshowFragment";
     private static final String ARG_GALLERY_TYPE = "containerModelType";
@@ -74,7 +73,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     private CustomViewPager viewPager;
     private ResourceContainer<T, GalleryItem> resourceContainer;
     private View progressIndicator;
-    private GalleryItemAdapter<T, CustomViewPager, ? extends SlideshowItemFragment<? extends ResourceItem>> galleryItemAdapter;
+    private GalleryItemAdapter<T, CustomViewPager, ?,?> galleryItemAdapter;
     private AdView adView;
 
     public static <T extends Identifiable & Parcelable> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> resourceContainer, GalleryItem currentItem) {
@@ -252,7 +251,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         int rawCurrentGalleryItemPosition = arguments.getInt(ARG_GALLERY_ITEM_DISPLAYED);
 
         if (galleryItemAdapter == null) {
-            galleryItemAdapter = new GalleryItemAdapter<>(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter = new GalleryItemAdapter(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
             // update settings with newest values.
@@ -396,7 +395,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
     }
 
-    protected GalleryItemAdapter<T, CustomViewPager, ? extends SlideshowItemFragment<? extends ResourceItem>> getGalleryItemAdapter() {
+    protected GalleryItemAdapter<T, CustomViewPager, ?,?> getGalleryItemAdapter() {
         return galleryItemAdapter;
     }
 
@@ -458,11 +457,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         return TAG;
     }
 
-    private static class AlbumLoadResponseAction extends UIHelper.Action<FragmentUIHelper<AbstractSlideshowFragment>, AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
+    private static class AlbumLoadResponseAction<F extends AbstractSlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends UIHelper.Action<FUIH, F, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
-            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
+        public boolean onSuccess(FUIH uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+            F fragment = getActionParent(uiHelper);
             if (response.getAlbums().isEmpty()) {
                 // will occur if the album no longer exists.
                 Logging.log(Log.INFO, TAG, "removing from activity as album no longer exists");
@@ -470,7 +469,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 return false;
             }
             CategoryItem currentAlbum = response.getAlbums().get(0);
-            if (currentAlbum.getId() != fragment.resourceContainer.getId()) {
+            if (currentAlbum.getId() != fragment.getResourceContainer().getId()) {
                 //Something wierd is going on - this should never happen
                 Logging.log(Log.ERROR, TAG, "Closing slideshow - reloaded album had different id to that expected!");
                 fragment.getParentFragmentManager().popBackStack();
@@ -482,15 +481,15 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            F fragment = getActionParent(uiHelper);
             Logging.log(Log.INFO, TAG, "removing from activity after piwigo error response");
             fragment.getParentFragmentManager().popBackStack();
             return false;
         }
     }
 
-    private static class CustomPiwigoResponseListener<S extends AbstractSlideshowFragment> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends AbstractSlideshowFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends Identifiable & Parcelable & PhotoContainer> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {

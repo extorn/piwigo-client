@@ -20,20 +20,20 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.installations.FirebaseInstallations;
 
 import java.util.Map;
-import java.util.Objects;
 
 import delit.libs.ui.view.list.StringMapExpandableListAdapterBuilder;
 import delit.libs.util.ArrayUtils;
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 /**
  * Created by gareth on 07/06/17.
  */
 
-public class AboutFragment extends MyFragment<AboutFragment> {
-    public static AboutFragment newInstance() {
-        AboutFragment fragment = new AboutFragment();
+public class AboutFragment<F extends AboutFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends MyFragment<F,FUIH> {
+    public static <F extends AboutFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> AboutFragment<F,FUIH> newInstance() {
+        AboutFragment<F,FUIH> fragment = new AboutFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         return fragment;
     }

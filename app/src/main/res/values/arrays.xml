@@ -250,6 +250,10 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.101</item>
+        <item>"Bugfix:
+                - Recent changes made it impossible to have both the free and paid versions installed at the same time on a single device
+                - album thumbnails not always showing for admin user"</item>
         <item>1.4.0.100</item>
         <item>"Bugfix:
                 - More testing of the uploads area has removed a number of bugs including:

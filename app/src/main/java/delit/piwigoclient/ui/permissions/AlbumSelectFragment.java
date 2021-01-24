@@ -25,6 +25,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.ListViewLongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
@@ -32,7 +33,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteE
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, AlbumSelectionListAdapterPreferences> {
+public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
@@ -40,8 +41,8 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
     private ArrayList<CategoryItemStub> availableItems;
     private HashSet<Long> indirectSelection;
 
-    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
-        AlbumSelectFragment fragment = new AlbumSelectFragment();
+    public static <F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> F newInstance(ArrayList<CategoryItemStub> availableAlbums, AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+        F fragment = (F) new AlbumSelectFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
@@ -170,7 +171,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         return new CustomPiwigoResponseListener();
     }
 
-    private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    protected void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().hideProgressIndicator();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
@@ -180,7 +181,7 @@ public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment
         rerunRetrievalForFailedPages();
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<AlbumSelectFragment> {
+    private static class CustomPiwigoResponseListener<F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {

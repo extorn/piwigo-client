@@ -25,12 +25,13 @@ import delit.libs.util.IOUtils;
 import delit.libs.util.progress.TaskProgressTracker;
 import delit.piwigoclient.R;
 import delit.piwigoclient.database.AppSettingsViewModel;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends OwnedSafeAsyncTask<T, Void, Integer, Void> {
+public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH extends ActivityUIHelper<AUIH,A>> extends OwnedSafeAsyncTask<A, Void, Integer, Void> {
 
     private static final String TAG = "SharedFilesIntentParser";
     private final AppSettingsViewModel appSettingsViewModel;
@@ -38,7 +39,7 @@ public class SharedFilesIntentProcessingTask<T extends MyActivity<T>> extends Ow
     private final Intent intent;
     private String[] acceptedMimeTypes = new String[]{"image/*", "video/*", "application/pdf", "application/zip"};
 
-    public SharedFilesIntentProcessingTask(T parent, int fileSelectionEventId, Intent intent) {
+    public SharedFilesIntentProcessingTask(A parent, int fileSelectionEventId, Intent intent) {
         super(parent);
         withContext(parent);
         this.intent = intent;

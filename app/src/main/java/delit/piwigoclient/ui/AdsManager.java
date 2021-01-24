@@ -61,9 +61,8 @@ import delit.libs.util.SafeRunnable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.RewardUpdateEvent;
 import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
@@ -267,10 +266,10 @@ public class AdsManager {
         return false;
     }
 
-    public void showPleadingMessageIfNeeded(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+    public <FUIH extends FragmentUIHelper<FUIH,F>,F extends MyFragment<F,FUIH>> void showPleadingMessageIfNeeded(FUIH uiHelper) {
         if(isLastAdShownAndUnpaid()) {
             lastAdPaid = null;
-            uiHelper.showOrQueueDialogQuestion(R.string.alert_warning, uiHelper.getString(R.string.alert_advert_importance_message), View.NO_ID, R.string.button_ok, new AdvertPleadingListener(uiHelper));
+            uiHelper.showOrQueueDialogQuestion(R.string.alert_warning, uiHelper.getString(R.string.alert_advert_importance_message), View.NO_ID, R.string.button_ok, new AdvertPleadingListener<>(uiHelper));
         }
     }
 
@@ -722,8 +721,8 @@ public class AdsManager {
         }
     }
 
-    private static class AdvertPleadingListener extends delit.piwigoclient.ui.common.UIHelper.QuestionResultAdapter implements Parcelable {
-        public AdvertPleadingListener(UIHelper uiHelper) {
+    private static class AdvertPleadingListener<F extends MyFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends delit.piwigoclient.ui.common.UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+        public AdvertPleadingListener(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -741,14 +740,14 @@ public class AdsManager {
             return 0;
         }
 
-        public static final Creator<AdvertPleadingListener> CREATOR = new Creator<AdvertPleadingListener>() {
+        public static final Creator<AdvertPleadingListener<?,?>> CREATOR = new Creator<AdvertPleadingListener<?,?>>() {
             @Override
-            public AdvertPleadingListener createFromParcel(Parcel in) {
-                return new AdvertPleadingListener(in);
+            public AdvertPleadingListener<?,?> createFromParcel(Parcel in) {
+                return new AdvertPleadingListener<>(in);
             }
 
             @Override
-            public AdvertPleadingListener[] newArray(int size) {
+            public AdvertPleadingListener<?,?>[] newArray(int size) {
                 return new AdvertPleadingListener[size];
             }
         };

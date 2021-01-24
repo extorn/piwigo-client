@@ -13,13 +13,14 @@ import androidx.annotation.Nullable;
 import com.google.android.gms.ads.AdView;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 /**
  * Created by gareth on 04/08/17.
  */
 
-public class TopTipsFragment extends MyFragment<TopTipsFragment> {
+public class TopTipsFragment<F extends TopTipsFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     public static TopTipsFragment newInstance() {
         TopTipsFragment fragment = new TopTipsFragment();

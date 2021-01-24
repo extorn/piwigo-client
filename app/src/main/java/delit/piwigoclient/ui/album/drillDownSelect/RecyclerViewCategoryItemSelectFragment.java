@@ -45,13 +45,14 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.album.CategoryBreadcrumbsView;
 import delit.piwigoclient.ui.common.BackButtonHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 
-public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter<?,?,?,?>, CategoryItemViewAdapterPreferences, CategoryItem> implements BackButtonHandler {
+public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCategoryItemSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<CategoryItemRecyclerViewAdapter<?,?,?>, CategoryItemViewAdapterPreferences, CategoryItem> implements BackButtonHandler {
     private static final String TAG = "RecViewCatItemSelFr";
     private static final String ACTIVE_ITEM = "RecyclerViewCategoryItemSelectFragment.activeCategory";
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
@@ -334,7 +335,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         }
     }
 
-    private static class CustomPiwigoResponseListener<S extends RecyclerViewCategoryItemSelectFragment> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends RecyclerViewCategoryItemSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override

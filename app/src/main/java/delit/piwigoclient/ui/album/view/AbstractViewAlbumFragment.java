@@ -139,7 +139,7 @@ import static android.widget.AdapterView.INVALID_POSITION;
 /**
  * A fragment representing a list of Items.
  */
-public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewAlbumFragment> {
+public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     public static final String TAG = "AbsViewAlbumFrag";
     public static final String RESUME_ACTION = "ALBUM";
@@ -239,18 +239,18 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     public AbstractViewAlbumFragment() {
     }
 
-    public static AbstractViewAlbumFragment newInstance(CategoryItem album) {
-        AbstractViewAlbumFragment fragment = new ViewAlbumFragment();
+    public static <F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> AbstractViewAlbumFragment<F,FUIH> newInstance(CategoryItem album) {
+        AbstractViewAlbumFragment<F,FUIH> fragment = new ViewAlbumFragment<>();
         fragment.addArguments(album);
         return fragment;
     }
 
-    private static void deleteResourcesFromServerForever(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, final HashSet<Long> selectedItemIds, final HashSet<ResourceItem> selectedItems) {
+    private static <F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  void deleteResourcesFromServerForever(FUIH uiHelper, final HashSet<Long> selectedItemIds, final HashSet<ResourceItem> selectedItems) {
         String msg = uiHelper.getAppContext().getString(R.string.alert_confirm_really_delete_items_from_server);
         uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourceForeverAction<>(uiHelper, selectedItemIds, selectedItems));
     }
 
-    public static boolean canHandleReopenAction(UIHelper uiHelper) {
+    public static <UIH extends UIHelper<UIH,?>> boolean canHandleReopenAction(UIH uiHelper) {
         SharedPreferences resumePrefs = uiHelper.getResumePrefs();
         if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
             ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
@@ -461,7 +461,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                 isReopening = true;
                 String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
                 AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
-                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
+                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction<>());
             } else {
                 throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
             }
@@ -620,7 +620,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         Basket basket = getBasket();
 
         setupBulkActionsControls(basket);
-
         galleryListView.setAdapter(viewAdapter);
 
 
@@ -864,7 +863,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             return;
         }
         if (resourcesReadyForAction.size() > 0) {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_bulk_image_permissions_title, getString(R.string.alert_bulk_image_permissions_message, resourcesReadyForAction.size()), R.layout.layout_bulk_image_permissions, R.string.button_cancel, View.NO_ID, R.string.button_ok, new BulkImagePermissionsListener(bulkResourceActionData.getSelectedItemIds(), getUiHelper()));
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_bulk_image_permissions_title, getString(R.string.alert_bulk_image_permissions_message, resourcesReadyForAction.size()), R.layout.layout_bulk_image_permissions, R.string.button_cancel, View.NO_ID, R.string.button_ok, new BulkImagePermissionsListener<>(bulkResourceActionData.getSelectedItemIds(), getUiHelper()));
         }
     }
 
@@ -881,7 +880,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private void updateResourcePermissions(final HashSet<Long> imageIds, final byte privacyLevel) {
+    protected void updateResourcePermissions(final HashSet<Long> imageIds, final byte privacyLevel) {
 
         // copy this to avoid remote possibility of a concurrent modification exception.
         HashSet<Long> itemIds = new HashSet<>(imageIds);
@@ -923,7 +922,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
         if (sharedResources.size() > 0) {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, View.NO_ID, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new DeleteSharedResourcesAction(getUiHelper(), sharedResources));
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, View.NO_ID, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new DeleteSharedResourcesAction<>(getUiHelper(), sharedResources));
         } else {
             deleteResourcesFromServerForever(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
         }
@@ -986,7 +985,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         });
     }
 
-    private Basket getBasket() {
+    protected Basket getBasket() {
         MainActivity activity = (MainActivity) requireActivity();
         return activity.getBasket();
     }
@@ -1522,7 +1521,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         cutButton.setOnClickListener(v -> onCopyItem(galleryModel.getContainerDetails()));
     }
 
-    private boolean addingAlbumPermissions() {
+    protected boolean addingAlbumPermissions() {
         updateAlbumDetailsProgress = UPDATE_SETTING_ADDING_PERMISSIONS;
         // Get all groups newly added to the list of permissions
         HashSet<Long> wantedAlbumGroups = SetUtils.asSet(currentGroups);
@@ -2113,7 +2112,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private void onAlbumUpdateFinished() {
+    protected void onAlbumUpdateFinished() {
         updateAlbumDetailsProgress = UPDATE_NOT_RUNNING;
         setGalleryHeadings();
         getUiHelper().hideProgressIndicator();
@@ -2350,16 +2349,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> implements Parcelable {
+    private static class LoadAlbumTreeAction<FUIH extends FragmentUIHelper<FUIH,AbstractViewAlbumFragment>> extends UIHelper.Action<FUIH, AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> implements Parcelable {
 
-        public static final Creator<LoadAlbumTreeAction> CREATOR = new Creator<LoadAlbumTreeAction>() {
+        public static final Creator<LoadAlbumTreeAction<?>> CREATOR = new Creator<LoadAlbumTreeAction<?>>() {
             @Override
-            public LoadAlbumTreeAction createFromParcel(Parcel in) {
-                return new LoadAlbumTreeAction(in);
+            public LoadAlbumTreeAction<?> createFromParcel(Parcel in) {
+                return new LoadAlbumTreeAction<>(in);
             }
 
             @Override
-            public LoadAlbumTreeAction[] newArray(int size) {
+            public LoadAlbumTreeAction<?>[] newArray(int size) {
                 return new LoadAlbumTreeAction[size];
             }
         };
@@ -2382,7 +2381,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
+        public boolean onSuccess(FUIH uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
             CategoryItem currentItem = response.getAlbumTreeRoot();
 
             // cache the retrieved category tree into the model
@@ -2412,29 +2411,29 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().onReopenModelRetrieved(CategoryItem.ROOT_ALBUM.clone(), CategoryItem.ROOT_ALBUM.clone());
             return true; // to close the progress indicator
         }
     }
 
-    private static final class BulkImagePermissionsListener extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static final class BulkImagePermissionsListener<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public static final Creator<BulkImagePermissionsListener> CREATOR = new Creator<BulkImagePermissionsListener>() {
+        public static final Creator<BulkImagePermissionsListener<?,?>> CREATOR = new Creator<BulkImagePermissionsListener<?,?>>() {
             @Override
-            public BulkImagePermissionsListener createFromParcel(Parcel in) {
-                return new BulkImagePermissionsListener(in);
+            public BulkImagePermissionsListener<?,?> createFromParcel(Parcel in) {
+                return new BulkImagePermissionsListener<>(in);
             }
 
             @Override
-            public BulkImagePermissionsListener[] newArray(int size) {
+            public BulkImagePermissionsListener<?,?>[] newArray(int size) {
                 return new BulkImagePermissionsListener[size];
             }
         };
         private final HashSet<Long> imageIds;
         private Spinner privacyLevelSpinner;
 
-        BulkImagePermissionsListener(HashSet<Long> imageIds, FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+        BulkImagePermissionsListener(HashSet<Long> imageIds, FUIH uiHelper) {
             super(uiHelper);
             this.imageIds = imageIds;
         }
@@ -2517,21 +2516,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class AlbumNoLongerExistsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class AlbumNoLongerExistsAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
 
-        public static final Creator<AlbumNoLongerExistsAction> CREATOR = new Creator<AlbumNoLongerExistsAction>() {
+        public static final Creator<AlbumNoLongerExistsAction<?,?>> CREATOR = new Creator<AlbumNoLongerExistsAction<?,?>>() {
             @Override
-            public AlbumNoLongerExistsAction createFromParcel(Parcel in) {
-                return new AlbumNoLongerExistsAction(in);
+            public AlbumNoLongerExistsAction<?,?> createFromParcel(Parcel in) {
+                return new AlbumNoLongerExistsAction<>(in);
             }
 
             @Override
-            public AlbumNoLongerExistsAction[] newArray(int size) {
+            public AlbumNoLongerExistsAction<?,?>[] newArray(int size) {
                 return new AlbumNoLongerExistsAction[size];
             }
         };
 
-        public AlbumNoLongerExistsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+        public AlbumNoLongerExistsAction(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -2561,21 +2560,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class BasketAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class BasketAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public static final Creator<BasketAction> CREATOR = new Creator<BasketAction>() {
+        public static final Creator<BasketAction<?,?>> CREATOR = new Creator<BasketAction<?,?>>() {
             @Override
-            public BasketAction createFromParcel(Parcel in) {
-                return new BasketAction(in);
+            public BasketAction<?,?> createFromParcel(Parcel in) {
+                return new BasketAction<>(in);
             }
 
             @Override
-            public BasketAction[] newArray(int size) {
+            public BasketAction<?,?>[] newArray(int size) {
                 return new BasketAction[size];
             }
         };
 
-        BasketAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+        BasketAction(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -2595,7 +2594,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+            F fragment = getUiHelper().getParent();
             Basket basket = fragment.getBasket();
             final int basketAction = basket.getAction();
             final HashSet<ResourceItem> basketContent = basket.getContents();
@@ -2612,14 +2611,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     HashSet<ResourceItem> itemsToMove = basketContent;
                     CategoryItem moveToAlbum = containerDetails;
                     for (ResourceItem itemToMove : itemsToMove) {
-                        getUiHelper().addActiveServiceCall(R.string.progress_move_resources, new ImageChangeParentAlbumHandler(itemToMove, moveToAlbum));
+                        getUiHelper().addActiveServiceCall(R.string.progress_move_resources, new ImageChangeParentAlbumHandler<>(itemToMove, moveToAlbum));
                     }
                 }
             }
         }
     }
 
-    private static class DeleteAlbumAction extends UIHelper.QuestionResultAdapter implements Parcelable {
+    private static class DeleteAlbumAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         public static final Creator<DeleteAlbumAction> CREATOR = new Creator<DeleteAlbumAction>() {
             @Override
@@ -2634,7 +2633,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         };
         private final CategoryItem album;
 
-        public DeleteAlbumAction(UIHelper uiHelper, CategoryItem album) {
+        public DeleteAlbumAction(FUIH uiHelper, CategoryItem album) {
             super(uiHelper);
             this.album = album;
         }
@@ -2667,7 +2666,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
         }
 
-        private static class ReallyDeleteAlbumAction extends UIHelper.QuestionResultAdapter implements Parcelable {
+        private static class ReallyDeleteAlbumAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
             public static final Creator<ReallyDeleteAlbumAction> CREATOR = new Creator<ReallyDeleteAlbumAction>() {
                 @Override
                 public ReallyDeleteAlbumAction createFromParcel(Parcel in) {
@@ -2681,7 +2680,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             };
             private final CategoryItem album;
 
-            public ReallyDeleteAlbumAction(UIHelper uiHelper, CategoryItem album) {
+            public ReallyDeleteAlbumAction(FUIH uiHelper, CategoryItem album) {
                 super(uiHelper);
                 this.album = album;
             }
@@ -2711,7 +2710,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class DeleteSharedResourcesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class DeleteSharedResourcesAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
 
         public static final Creator<DeleteSharedResourcesAction> CREATOR = new Creator<DeleteSharedResourcesAction>() {
             @Override
@@ -2726,7 +2725,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         };
         private final HashSet<ResourceItem> sharedResources;
 
-        public DeleteSharedResourcesAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<ResourceItem> sharedResources) {
+        public DeleteSharedResourcesAction(FUIH uiHelper, HashSet<ResourceItem> sharedResources) {
             super(uiHelper);
             this.sharedResources = sharedResources;
         }
@@ -2749,11 +2748,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+            F fragment = getUiHelper().getParent();
             BulkResourceActionData deleteActionData = fragment.getBulkResourceActionData();
 
             if (Boolean.TRUE == positiveAnswer) {
-                deleteActionData.trackMessageId(getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(deleteActionData.getSelectedItemIds(), deleteActionData.selectedItems)));
+                deleteActionData.trackMessageId(getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<>(deleteActionData.getSelectedItemIds(), deleteActionData.selectedItems)));
             } else if (Boolean.FALSE == positiveAnswer) {
                 final long currentAlbumId = fragment.getGalleryModel().getContainerDetails().getId();
                 HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
@@ -2770,23 +2769,23 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class DeleteResourceForeverAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class DeleteResourceForeverAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public static final Creator<DeleteResourceForeverAction> CREATOR = new Creator<DeleteResourceForeverAction>() {
+        public static final Creator<DeleteResourceForeverAction<?,?,?>> CREATOR = new Creator<DeleteResourceForeverAction<?,?,?>>() {
             @Override
-            public DeleteResourceForeverAction createFromParcel(Parcel in) {
-                return new DeleteResourceForeverAction(in);
+            public DeleteResourceForeverAction<?,?,?> createFromParcel(Parcel in) {
+                return new DeleteResourceForeverAction<>(in);
             }
 
             @Override
-            public DeleteResourceForeverAction[] newArray(int size) {
+            public DeleteResourceForeverAction<?,?,?>[] newArray(int size) {
                 return new DeleteResourceForeverAction[size];
             }
         };
         private final HashSet<Long> selectedItemIds;
         private final HashSet<T> selectedItems;
 
-        public DeleteResourceForeverAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<T> selectedItems) {
+        public DeleteResourceForeverAction(FUIH uiHelper, HashSet<Long> selectedItemIds, HashSet<T> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
@@ -2821,23 +2820,23 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class AddAccessToAlbumAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class AddAccessToAlbumAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public static final Creator<AddAccessToAlbumAction> CREATOR = new Creator<AddAccessToAlbumAction>() {
+        public static final Creator<AddAccessToAlbumAction<?,?>> CREATOR = new Creator<AddAccessToAlbumAction<?,?>>() {
             @Override
-            public AddAccessToAlbumAction createFromParcel(Parcel in) {
-                return new AddAccessToAlbumAction(in);
+            public AddAccessToAlbumAction<?,?> createFromParcel(Parcel in) {
+                return new AddAccessToAlbumAction<>(in);
             }
 
             @Override
-            public AddAccessToAlbumAction[] newArray(int size) {
+            public AddAccessToAlbumAction<?,?>[] newArray(int size) {
                 return new AddAccessToAlbumAction[size];
             }
         };
         private final HashSet<Long> newlyAddedGroups;
         private final HashSet<Long> newlyAddedUsers;
 
-        public AddAccessToAlbumAction(FragmentUIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
+        public AddAccessToAlbumAction(FUIH uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
             super(uiHelper);
             this.newlyAddedGroups = newlyAddedGroups;
             this.newlyAddedUsers = newlyAddedUsers;
@@ -2863,7 +2862,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+            F fragment = getUiHelper().getParent();
             final CategoryItem currentCategoryDetails = fragment.getGalleryModel().getContainerDetails();
             if (Boolean.TRUE == positiveAnswer) {
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true));
@@ -2873,11 +2872,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class AddingChildPermissionsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class AddingChildPermissionsAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
         private HashSet<Long> newlyAddedGroups;
         private HashSet<Long> newlyAddedUsers;
 
-        public AddingChildPermissionsAction(FragmentUIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
+        public AddingChildPermissionsAction(FUIH uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
             super(uiHelper);
             this.newlyAddedGroups = newlyAddedGroups;
             this.newlyAddedUsers = newlyAddedUsers;
@@ -2886,29 +2885,29 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 final CategoryItem currentCategoryDetails = fragment.getGalleryModel().getContainerDetails();
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true));
             }
         }
     }
 
-    private static class RemoveAccessToAlbumAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
-        public static final Creator<RemoveAccessToAlbumAction> CREATOR = new Creator<RemoveAccessToAlbumAction>() {
+    private static class RemoveAccessToAlbumAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
+        public static final Creator<RemoveAccessToAlbumAction<?,?>> CREATOR = new Creator<RemoveAccessToAlbumAction<?,?>>() {
             @Override
-            public RemoveAccessToAlbumAction createFromParcel(Parcel in) {
-                return new RemoveAccessToAlbumAction(in);
+            public RemoveAccessToAlbumAction<?,?> createFromParcel(Parcel in) {
+                return new RemoveAccessToAlbumAction<>(in);
             }
 
             @Override
-            public RemoveAccessToAlbumAction[] newArray(int size) {
+            public RemoveAccessToAlbumAction<?,?>[] newArray(int size) {
                 return new RemoveAccessToAlbumAction[size];
             }
         };
         private final HashSet<Long> newlyRemovedGroups;
         private final HashSet<Long> newlyRemovedUsers;
 
-        public RemoveAccessToAlbumAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<Long> newlyRemovedGroups, HashSet<Long> newlyRemovedUsers) {
+        public RemoveAccessToAlbumAction(FUIH uiHelper, HashSet<Long> newlyRemovedGroups, HashSet<Long> newlyRemovedUsers) {
             super(uiHelper);
             this.newlyRemovedGroups = newlyRemovedGroups;
             this.newlyRemovedUsers = newlyRemovedUsers;
@@ -2935,7 +2934,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 PiwigoAlbum<GalleryItem> galleryModel = fragment.getGalleryModel();
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
             } else {
@@ -2944,7 +2943,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class BadHttpProtocolAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class BadHttpProtocolAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
 
         public static final Creator<BadHttpProtocolAction> CREATOR = new Creator<BadHttpProtocolAction>() {
             @Override
@@ -2959,7 +2958,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         };
         private final ConnectionPreferences.ProfilePreferences connectionPreferences;
 
-        public BadHttpProtocolAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        public BadHttpProtocolAction(FUIH uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
             super(uiHelper);
             this.connectionPreferences = connectionPreferences;
         }
@@ -2983,29 +2982,30 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (positiveAnswer != null && positiveAnswer) {
-                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 SharedPreferences prefs = fragment.getPrefs();
                 connectionPreferences.setForceHttps(prefs, getContext(), true);
             }
         }
     }
 
-    private static class BadRequestRedirectionAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
 
-        public static final Creator<BadRequestRedirectionAction> CREATOR = new Creator<BadRequestRedirectionAction>() {
+    private static class BadRequestRedirectionAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
+
+        public static final Creator<BadRequestRedirectionAction<?,?>> CREATOR = new Creator<BadRequestRedirectionAction<?,?>>() {
             @Override
-            public BadRequestRedirectionAction createFromParcel(Parcel in) {
-                return new BadRequestRedirectionAction(in);
+            public BadRequestRedirectionAction<?,?> createFromParcel(Parcel in) {
+                return new BadRequestRedirectionAction<>(in);
             }
 
             @Override
-            public BadRequestRedirectionAction[] newArray(int size) {
+            public BadRequestRedirectionAction<?,?>[] newArray(int size) {
                 return new BadRequestRedirectionAction[size];
             }
         };
         private final ConnectionPreferences.ProfilePreferences connectionPreferences;
 
-        public BadRequestRedirectionAction(FragmentUIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        public BadRequestRedirectionAction(FUIH uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
             super(uiHelper);
             this.connectionPreferences = connectionPreferences;
         }
@@ -3029,7 +3029,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (positiveAnswer != null && positiveAnswer) {
-                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 SharedPreferences prefs = fragment.getPrefs();
                 connectionPreferences.setFollowHttpRedirects(prefs, getContext(), true);
                 //hard reset all http clients! No other solution sadly.
@@ -3193,21 +3193,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    private static class AddingAlbumPermissionsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>, AbstractViewAlbumFragment> implements Parcelable {
+    private static class AddingAlbumPermissionsAction<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
 
-        public static final Creator<AddingAlbumPermissionsAction> CREATOR = new Creator<AddingAlbumPermissionsAction>() {
+        public static final Creator<AddingAlbumPermissionsAction<?,?>> CREATOR = new Creator<AddingAlbumPermissionsAction<?,?>>() {
             @Override
-            public AddingAlbumPermissionsAction createFromParcel(Parcel in) {
-                return new AddingAlbumPermissionsAction(in);
+            public AddingAlbumPermissionsAction<?,?> createFromParcel(Parcel in) {
+                return new AddingAlbumPermissionsAction<>(in);
             }
 
             @Override
-            public AddingAlbumPermissionsAction[] newArray(int size) {
+            public AddingAlbumPermissionsAction<?,?>[] newArray(int size) {
                 return new AddingAlbumPermissionsAction[size];
             }
         };
 
-        AddingAlbumPermissionsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+        AddingAlbumPermissionsAction(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -3228,7 +3228,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 fragment.addingAlbumPermissions();
             }
         }
@@ -3274,7 +3274,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         }
     }
 
-    protected static class CustomPiwigoResponseListener<T extends AbstractViewAlbumFragment> extends BasicPiwigoResponseListener<T> {
+    protected static class CustomPiwigoResponseListener<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -3393,7 +3393,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
             PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null, null);
             Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
-            ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
+            ImageGetInfoResponseHandler<?> handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
             long messageId = handler.invokeAsync(getContext());
             albumThumbnailLoadActions.put(messageId, mItem);
             getUiHelper().addBackgroundServiceCall(messageId);
@@ -3406,10 +3406,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             }
             item.setThumbnailUrl(thumbnailResource.getThumbnailUrl());
 
-            RecyclerView.ViewHolder vh = galleryListView.findViewHolderForItemId(item.getId());
+            AlbumItemViewHolder<?,?,?,?,?> vh = (AlbumItemViewHolder<?, ?, ?, ?, ?>) galleryListView.findViewHolderForItemId(item.getId());
             if (vh != null) {
                 // item currently displaying.
-                viewAdapter.redrawItem((AlbumItemViewHolder) vh, item);
+                viewAdapter.redrawItem(vh, item);
             }
 
             return true;

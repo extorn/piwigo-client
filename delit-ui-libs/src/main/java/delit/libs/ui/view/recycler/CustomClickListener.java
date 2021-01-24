@@ -5,7 +5,7 @@ import android.view.View;
 
 import delit.libs.core.util.Logging;
 
-public class CustomClickListener<MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>, LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>> implements View.OnClickListener, View.OnLongClickListener {
+public class CustomClickListener<MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>, LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>> implements View.OnClickListener, View.OnLongClickListener {
 
     private final VH viewHolder;
     private final LVA parentAdapter;

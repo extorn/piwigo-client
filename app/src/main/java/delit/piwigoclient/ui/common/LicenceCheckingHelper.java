@@ -48,10 +48,10 @@ public class LicenceCheckingHelper {
     private LicenseChecker mChecker;
     // A handler on the UI thread.
     private Handler mHandler;
-    private BaseMyActivity<?> activity;
+    private BaseMyActivity<?,?> activity;
     private Date lastChecked;
 
-    public void onCreate(BaseMyActivity<?> activity) {
+    public void onCreate(BaseMyActivity<?,?> activity) {
 
         this.activity = activity;
 
@@ -86,7 +86,7 @@ public class LicenceCheckingHelper {
         doVisualCheck(activity.getApplicationContext());
     }
 
-    private long getVersionCode(@NonNull BaseMyActivity<?> activity) {
+    private long getVersionCode(@NonNull BaseMyActivity<?,?> activity) {
         try {
             PackageInfo pInfo = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
             // fill the salt with new random data (seeded from the current app version number)
@@ -123,7 +123,7 @@ public class LicenceCheckingHelper {
         doCheck();
     }
 
-    private static class LicenceCheckAction<T extends ActivityUIHelper<R>,R extends MyActivity<R>> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
+    private static class LicenceCheckAction<T extends ActivityUIHelper<T,R>,R extends MyActivity<R,T>> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
 
         private final boolean allowRetry;
 
@@ -162,7 +162,7 @@ public class LicenceCheckingHelper {
 
         @Override
         public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
-            MyActivity<?> activity = getUiHelper().getParent();
+            R activity = getUiHelper().getParent();
             if (Boolean.TRUE == positiveAnswer) {
                 if (allowRetry) {
                     activity.getLicencingHelper().forceCheck();

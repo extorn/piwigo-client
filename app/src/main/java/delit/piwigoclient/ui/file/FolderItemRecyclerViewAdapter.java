@@ -48,7 +48,7 @@ import delit.piwigoclient.business.ResizingPicassoLoader;
 
 import static delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences.ALPHABETICAL;
 
-public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends BaseRecyclerViewAdapter<LVA, FolderItemViewAdapterPreferences, T, VH, MSL> {
+public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,FolderItemViewAdapterPreferences,T,VH>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends BaseRecyclerViewAdapter<LVA, FolderItemViewAdapterPreferences, T, VH, MSL> {
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
@@ -442,12 +442,13 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     }
 
     @Override
-    protected void removeItemFromInternalStore(int idxRemoved) {
+    protected T removeItemFromInternalStore(int idxRemoved) {
         FolderItem f = currentDisplayContent.get(idxRemoved);
         if (f.getDocumentFile().exists()) {
             f.getDocumentFile().delete();
         }
         currentDisplayContent.remove(idxRemoved);
+        return null;
     }
 
     @Override
@@ -583,7 +584,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         void onPostFolderOpened(DocumentFile oldFolder, DocumentFile newFolder);
     }
 
-    static class FolderItemCustomClickListener<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends CustomClickListener<MSL,LVA, FolderItemViewAdapterPreferences, T, VH> {
+    static class FolderItemCustomClickListener<LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,FolderItemViewAdapterPreferences,T,VH>, VH extends FolderItemRecyclerViewAdapter.FolderItemViewHolder<VH, LVA, T, MSL>> extends CustomClickListener<MSL,LVA, FolderItemViewAdapterPreferences, T, VH> {
         public FolderItemCustomClickListener(VH viewHolder, LVA parentAdapter) {
             super(viewHolder, parentAdapter);
         }
@@ -699,7 +700,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    public abstract static class FolderItemViewHolder<VH extends FolderItemViewHolder<VH,LVA,T,MSL>, LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends BaseViewHolder<VH,FolderItemViewAdapterPreferences, T, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
+    public abstract static class FolderItemViewHolder<VH extends FolderItemViewHolder<VH,LVA,T,MSL>, LVA extends FolderItemRecyclerViewAdapter<LVA,T,MSL,VH>, T extends FolderItem, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,FolderItemViewAdapterPreferences,T,VH>> extends BaseViewHolder<VH,FolderItemViewAdapterPreferences, T, LVA,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
 
         private ImageView iconView;
         private ImageView typeIndicatorView;

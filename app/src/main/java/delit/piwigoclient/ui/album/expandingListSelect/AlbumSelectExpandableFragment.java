@@ -41,6 +41,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 
@@ -48,7 +49,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEve
  * UNUSED - Use this once it works!
  * Created by gareth on 26/05/17.
  */
-public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpandableFragment> {
+public class AlbumSelectExpandableFragment<F extends AlbumSelectExpandableFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private static final String STATE_ACTION_ID = "actionId";
@@ -394,7 +395,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
         setupListContentLoadingIfNeeded();
     }
 
-    private static class CustomPiwigoResponseListener<S extends AlbumSelectExpandableFragment> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends AlbumSelectExpandableFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override

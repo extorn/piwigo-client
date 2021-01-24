@@ -41,7 +41,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 
-public class NavBarHeaderView extends FrameLayout {
+public class NavBarHeaderView<V extends NavBarHeaderView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends FrameLayout {
 
     public static final String EMAIL_TEMPLATE_PATTERN = "Comments:\n" +
             "Feature Request:\n" +
@@ -56,7 +56,7 @@ public class NavBarHeaderView extends FrameLayout {
     private boolean refreshSessionInProgress;
     private TextView currentUsernameField;
     private TextView currentServerField;
-    private ViewGroupUIHelper<NavBarHeaderView> uiHelper;
+    private VUIH uiHelper;
 
     public NavBarHeaderView(Context context) {
         super(context);
@@ -88,9 +88,9 @@ public class NavBarHeaderView extends FrameLayout {
         if (uiHelper == null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
             // don't do this if showing in the IDE.
-            uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
-            BasicPiwigoResponseListener<NavBarHeaderView> listener = new BasicPiwigoResponseListener<>();
-            listener.withUiHelper(this, uiHelper);
+            uiHelper = (VUIH)new ViewGroupUIHelper<>((V)this, prefs, getContext());
+            BasicPiwigoResponseListener<VUIH,V> listener = new BasicPiwigoResponseListener<>();
+            listener.withUiHelper((V)this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
     }
@@ -211,11 +211,11 @@ public class NavBarHeaderView extends FrameLayout {
 
     }
 
-    private void markRefreshSessionComplete() {
+    protected void markRefreshSessionComplete() {
         refreshSessionInProgress = false;
     }
 
-    private void updateServerConnectionDetails() {
+    protected void updateServerConnectionDetails() {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if (sessionDetails != null) {
             currentServerField.setText(sessionDetails.getServerUrl());
@@ -234,7 +234,7 @@ public class NavBarHeaderView extends FrameLayout {
         updateServerConnectionDetails();
     }
 
-    private void runHttpClientCleanup(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    protected void runHttpClientCleanup(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         HttpConnectionCleanup cleanup = new HttpConnectionCleanup(connectionPrefs, getContext());
         long msgId = cleanup.getMessageId();
         uiHelper.addActionOnResponse(msgId, new OnHttpConnectionsCleanedAction());
@@ -283,16 +283,16 @@ public class NavBarHeaderView extends FrameLayout {
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<UIHelper<NavBarHeaderView>, NavBarHeaderView, LoginResponseHandler.PiwigoOnLoginResponse> {
+    private static class OnLoginAction<V extends NavBarHeaderView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.Action<VUIH,V, LoginResponseHandler.PiwigoOnLoginResponse> {
 
         @Override
-        public boolean onFailure(UIHelper<NavBarHeaderView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(VUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().markRefreshSessionComplete();
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(UIHelper<NavBarHeaderView> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(VUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             uiHelper.getParent().markRefreshSessionComplete();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
@@ -310,16 +310,16 @@ public class NavBarHeaderView extends FrameLayout {
         }
     }
 
-    private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<UIHelper<NavBarHeaderView>, NavBarHeaderView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+    private static class OnHttpConnectionsCleanedAction<V extends NavBarHeaderView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.Action<VUIH,V, HttpConnectionCleanup.HttpClientsShutdownResponse> {
 
         @Override
-        public boolean onFailure(UIHelper<NavBarHeaderView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(VUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             uiHelper.getParent().markRefreshSessionComplete();
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(UIHelper<NavBarHeaderView> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+        public boolean onSuccess(VUIH uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getAppContext());
             if ((serverUri == null || serverUri.trim().isEmpty())) {
@@ -332,10 +332,10 @@ public class NavBarHeaderView extends FrameLayout {
         }
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<UIHelper<NavBarHeaderView>, NavBarHeaderView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
+    private static class OnLogoutAction<V extends NavBarHeaderView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.Action<VUIH, V, LogoutResponseHandler.PiwigoOnLogoutResponse> {
 
         @Override
-        public boolean onSuccess(UIHelper<NavBarHeaderView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
+        public boolean onSuccess(VUIH uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             uiHelper.getParent().runHttpClientCleanup(connectionPrefs);
             uiHelper.getParent().updateServerConnectionDetails();
@@ -343,7 +343,7 @@ public class NavBarHeaderView extends FrameLayout {
         }
 
         @Override
-        public boolean onFailure(UIHelper<NavBarHeaderView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(VUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getAppContext());
             onSuccess(uiHelper, null);

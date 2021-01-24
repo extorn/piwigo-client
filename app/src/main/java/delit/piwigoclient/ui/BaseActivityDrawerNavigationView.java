@@ -40,12 +40,12 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
 
-public class BaseActivityDrawerNavigationView extends NavigationView implements NavigationView.OnNavigationItemSelectedListener, DrawerNavigationView {
+public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends NavigationView implements NavigationView.OnNavigationItemSelectedListener, DrawerNavigationView {
 
 
     private static final String TAG = "BaseActDrNavV";
     private SharedPreferences prefs;
-    private ViewGroupUIHelper uiHelper;
+    private VUIH uiHelper;
 
     public BaseActivityDrawerNavigationView(Context context) {
         this(context, null);
@@ -129,11 +129,11 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         } else {
             message = getContext().getString(R.string.alert_question_disable_network_access);
         }
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_question_title, message, R.string.button_no, R.string.button_yes, new ConfigureNetworkAccessQuestionResult(uiHelper, accessAllowed));
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_question_title, message, R.string.button_no, R.string.button_yes, new ConfigureNetworkAccessQuestionResult<>(uiHelper, accessAllowed));
     }
 
     protected void showLockDialog() {
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_lock, getContext().getString(R.string.alert_message_lock), R.string.button_cancel, R.string.button_lock, new OnAppLockAction(uiHelper));
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_lock, getContext().getString(R.string.alert_message_lock), R.string.button_cancel, R.string.button_lock, new OnAppLockAction<>(uiHelper));
     }
 
 
@@ -186,7 +186,7 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         if (uiHelper == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
             // don't do this if showing in the IDE.
-            uiHelper = new ViewGroupUIHelper<>(this, prefs, getContext());
+            uiHelper = (VUIH) new ViewGroupUIHelper(this, prefs, getContext());
             BasicPiwigoResponseListener listener = buildPiwigoListener();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
@@ -204,16 +204,16 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         super.onDetachedFromWindow();
     }
 
-    private void onLoginAfterAppUnlockEvent(PiwigoSessionDetails oldCredentials) {
+    protected void onLoginAfterAppUnlockEvent(PiwigoSessionDetails oldCredentials) {
         lockAppInReadOnlyMode(false);
         uiHelper.closeAllDialogs();
         uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
         EventBus.getDefault().post(new AppUnlockedEvent());
     }
 
-    private static class OnAppLockAction extends UIHelper.QuestionResultAdapter implements Parcelable {
+    private static class OnAppLockAction<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.QuestionResultAdapter<VUIH,V> implements Parcelable {
 
-        public OnAppLockAction(UIHelper uiHelper) {
+        public OnAppLockAction(VUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -251,11 +251,11 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView> implements Parcelable {
+    private static class ConfigureNetworkAccessQuestionResult<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.QuestionResultAdapter<VUIH, V> implements Parcelable {
 
         private final boolean networkAccessDesired;
 
-        public ConfigureNetworkAccessQuestionResult(ViewGroupUIHelper<MainActivityDrawerNavigationView> uiHelper, boolean networkAccessDesired) {
+        public ConfigureNetworkAccessQuestionResult(VUIH uiHelper, boolean networkAccessDesired) {
             super(uiHelper);
             this.networkAccessDesired = networkAccessDesired;
         }
@@ -310,7 +310,7 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<UIHelper<MainActivityDrawerNavigationView>, MainActivityDrawerNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> implements Parcelable {
+    private static class OnLoginAction<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.Action<VUIH, V, LoginResponseHandler.PiwigoOnLoginResponse> implements Parcelable {
 
         protected OnLoginAction(){}
 
@@ -341,13 +341,13 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         };
 
         @Override
-        public boolean onFailure(UIHelper<MainActivityDrawerNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(VUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
 //            uiHelper.getParent().markRefreshSessionComplete();
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(UIHelper<MainActivityDrawerNavigationView> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(VUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 //            uiHelper.getParent().markRefreshSessionComplete();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
@@ -365,9 +365,9 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    private static class OnUnlockAction extends UIHelper.QuestionResultAdapter implements Parcelable {
+    private static class OnUnlockAction<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends UIHelper.QuestionResultAdapter<VUIH,V> implements Parcelable {
 
-        public OnUnlockAction(UIHelper uiHelper) {
+        public OnUnlockAction(VUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -423,7 +423,7 @@ public class BaseActivityDrawerNavigationView extends NavigationView implements 
         }
     }
 
-    protected static class CustomPiwigoListener extends BasicPiwigoResponseListener<BaseActivityDrawerNavigationView> {
+    protected static class CustomPiwigoListener<V extends BaseActivityDrawerNavigationView<V,VUIH>, VUIH extends ViewGroupUIHelper<VUIH,V>> extends BasicPiwigoResponseListener<VUIH,V> {
         @Override
         public void onBeforeHandlePiwigoResponseInListener(PiwigoResponseBufferingHandler.Response response) {
             // invokeAndWait the chained call before hiding the progress dialog to avoid flicker.

@@ -28,13 +28,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
-import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
@@ -51,14 +49,12 @@ import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
 import delit.piwigoclient.ui.model.PiwigoUsersModel;
-import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
-import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class UsersListFragment extends MyFragment<UsersListFragment> {
+public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String TAG = "UsrListFrag";
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
@@ -251,11 +247,11 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UsersListFragment>,UsersListFragment> implements Parcelable {
+    private static class OnDeleteUserAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private final User user;
 
-        public OnDeleteUserAction(FragmentUIHelper<UsersListFragment> uiHelper, User user) {
+        public OnDeleteUserAction(FUIH uiHelper, User user) {
             super(uiHelper);
             this.user = user;
         }
@@ -291,7 +287,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                UsersListFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 fragment.deleteUserNow(user);
             }
         }
@@ -306,7 +302,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onUsersLoaded(final UsersGetListResponseHandler.PiwigoGetUsersListResponse response) {
+    protected void onUsersLoaded(final UsersGetListResponseHandler.PiwigoGetUsersListResponse response) {
         usersModel.acquirePageLoadLock();
         try {
             usersModel.recordPageLoadSucceeded(response.getMessageId());
@@ -329,13 +325,13 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         viewAdapter.replaceOrAddItem(event.getUser());
     }
 
-    private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
+    protected void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(user);
         getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_success_pattern, user.getUsername()));
     }
 
-    private void onUserDeleteFailed(final long messageId) {
+    protected void onUserDeleteFailed(final long messageId) {
         User user = deleteActionsPending.remove(messageId);
         getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_failed_pattern, user.getUsername()));
     }
@@ -348,7 +344,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         }
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<UsersListFragment> {
+    private static class CustomPiwigoResponseListener<F extends UsersListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -372,28 +368,28 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
             } else if (response instanceof UserDeleteResponseHandler.PiwigoDeleteUserResponse) {
                 getParent().onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
-                if(getParent().usersModel.isTrackingPageLoaderWithId(response.getMessageId())) {
+                if(getParent().getUsersModel().isTrackingPageLoaderWithId(response.getMessageId())) {
                     onUsersLoadFailed(response);
-                } else if (getParent().deleteActionsPending.size() == 0) {
+                } else if (getParent().getDeleteActionsPending().size() == 0) {
                     // assume this to be a list reload that's required.
-                    getParent().retryActionButton.show();
+                    getParent().showRetryActionButton();
                 }
             }
         }
 
         protected void onUsersLoadFailed(PiwigoResponseBufferingHandler.Response response) {
-            getParent().usersModel.acquirePageLoadLock();
+            getParent().getUsersModel().acquirePageLoadLock();
             try {
-                getParent().usersModel.recordPageLoadFailed(response.getMessageId());
+                getParent().getUsersModel().recordPageLoadFailed(response.getMessageId());
 //                onListItemLoadFailed();
             } finally {
-                getParent().usersModel.releasePageLoadLock();
+                getParent().getUsersModel().releasePageLoadLock();
             }
         }
 
         @Override
         protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
-            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+            if (getParent().getDeleteActionsPending().containsKey(msg.getMessageId())) {
                 getParent().onUserDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoHttpErrorResponse(msg);
@@ -402,7 +398,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
 
         @Override
         protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
-            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+            if (getParent().getDeleteActionsPending().containsKey(msg.getMessageId())) {
                 getParent().onUserDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoUnexpectedReplyErrorResponse(msg);
@@ -411,7 +407,7 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
 
         @Override
         protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-            if (getParent().deleteActionsPending.containsKey(msg.getMessageId())) {
+            if (getParent().getDeleteActionsPending().containsKey(msg.getMessageId())) {
                 getParent().onUserDeleteFailed(msg.getMessageId());
             } else {
                 super.handlePiwigoServerErrorResponse(msg);
@@ -419,7 +415,19 @@ public class UsersListFragment extends MyFragment<UsersListFragment> {
         }
     }
 
-    private class UserMultiSelectListener<MSL extends UserMultiSelectListener<MSL,LVA>, LVA extends UserRecyclerViewAdapter<LVA,?,MSL>> extends UserRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, User> {
+    protected void showRetryActionButton() {
+        retryActionButton.show();
+    }
+
+    protected ConcurrentHashMap<Long, User> getDeleteActionsPending() {
+        return deleteActionsPending;
+    }
+
+    protected PiwigoUsers getUsersModel() {
+        return usersModel;
+    }
+
+    private class UserMultiSelectListener<MSL extends UserMultiSelectListener<MSL,LVA,VH>, LVA extends UserRecyclerViewAdapter<LVA,VH,MSL>,VH extends UserRecyclerViewAdapter.UserViewHolder<VH,LVA,MSL>> extends UserRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences, User,VH> {
         @Override
         public  void onItemDeleteRequested(LVA adapter, User u) {
             onDeleteUser(u);

@@ -6,12 +6,13 @@ import android.os.Bundle;
 import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 
 /**
  * Created by gareth on 12/05/17.
  */
 
-public class OtherPreferenceFragment extends MyPreferenceFragment<OtherPreferenceFragment> {
+public class OtherPreferenceFragment<F extends OtherPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
 
     public OtherPreferenceFragment() {
     }

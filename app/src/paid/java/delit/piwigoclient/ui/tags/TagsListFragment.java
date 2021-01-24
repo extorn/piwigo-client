@@ -33,12 +33,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTags;
 import delit.piwigoclient.model.piwigo.Tag;
@@ -57,17 +55,14 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.model.PiwigoTagModel;
-import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
-import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
-import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
 
 /**
  * Created by gareth on 26/05/17.
  */
-public class TagsListFragment extends MyFragment<TagsListFragment> {
+public class TagsListFragment<T extends Tag> extends MyFragment<TagsListFragment<Tag>> {
     private static final String TAG = "TagsListFrag";
     private static final String TAGS_MODEL = "tagsModel";
-    private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
     private ExtendedFloatingActionButton retryActionButton;
     private PiwigoTags<Tag> tagsModel;
     private TagRecyclerViewAdapter<?,?,?> viewAdapter;
@@ -316,11 +311,11 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem));
     }
 
-    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment>, TagsListFragment> implements Parcelable {
+    private static class OnDeleteTagAction<T extends Tag> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment<T>>, TagsListFragment<T>> implements Parcelable {
 
-        private final Tag tag;
+        private final T tag;
 
-        public OnDeleteTagAction(FragmentUIHelper<TagsListFragment> uiHelper, Tag tag) {
+        public OnDeleteTagAction(FragmentUIHelper<TagsListFragment<T>> uiHelper, T tag) {
             super(uiHelper);
             this.tag = tag;
         }
@@ -341,22 +336,22 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
             return 0;
         }
 
-        public static final Creator<OnDeleteTagAction> CREATOR = new Creator<OnDeleteTagAction>() {
+        public static final Creator<OnDeleteTagAction<?>> CREATOR = new Creator<OnDeleteTagAction<?>>() {
             @Override
-            public OnDeleteTagAction createFromParcel(Parcel in) {
-                return new OnDeleteTagAction(in);
+            public OnDeleteTagAction<?> createFromParcel(Parcel in) {
+                return new OnDeleteTagAction<>(in);
             }
 
             @Override
-            public OnDeleteTagAction[] newArray(int size) {
-                return new OnDeleteTagAction[size];
+            public OnDeleteTagAction<?>[] newArray(int size) {
+                return new OnDeleteTagAction<?>[size];
             }
         };
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if(Boolean.TRUE == positiveAnswer) {
-                TagsListFragment fragment = getUiHelper().getParent();
+                TagsListFragment<T> fragment = getUiHelper().getParent();
                 fragment.deleteTagNow(tag);
             }
         }
@@ -374,11 +369,11 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
     }
 
     @Override
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+    protected BasicPiwigoResponseListener<TagsListFragment<Tag>> buildPiwigoResponseListener(Context context) {
+        return new CustomPiwigoResponseListener<>();
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<TagsListFragment> {
+    private static class CustomPiwigoResponseListener<T extends TagsListFragment<Tag>> extends BasicPiwigoResponseListener<T> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -434,7 +429,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         }
     }
 
-    private void onTagCreated(Tag newTag) {
+    protected void onTagCreated(Tag newTag) {
         tagsModel.addItem(newTag);
         tagsModel.sort();
         int firstIndexChanged = tagsModel.getItemIdx(newTag);
@@ -498,7 +493,7 @@ public class TagsListFragment extends MyFragment<TagsListFragment> {
         setViewControlStatusBasedOnSessionState();
     }
 
-    private class TagListSelectListener<MSL extends TagListSelectListener<MSL,LVA>, LVA extends TagRecyclerViewAdapter<LVA,MSL,?>> extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, Tag> {
+    private class TagListSelectListener<MSL extends TagListSelectListener<MSL,LVA,VH>, LVA extends TagRecyclerViewAdapter<LVA,MSL,VH>, VH extends TagRecyclerViewAdapter.TagViewHolder<VH, LVA, MSL>> extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag,VH> {
 
         @Override
         public void onItemDeleteRequested(LVA adapter, Tag item) {

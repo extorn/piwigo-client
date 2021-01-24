@@ -11,7 +11,7 @@ import delit.piwigoclient.ui.AdsManager;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyActivity<T extends MyActivity<T>> extends BaseMyActivity {
+public abstract class MyActivity<A extends MyActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends BaseMyActivity<A, AUIH> {
     protected static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
     private AdsManager.RewardCountDownAction rewardsCountdownAction;
 

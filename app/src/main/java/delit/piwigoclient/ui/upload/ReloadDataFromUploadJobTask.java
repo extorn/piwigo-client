@@ -14,17 +14,17 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.util.TimerThreshold;
 
-class ReloadDataFromUploadJobTask<T extends AbstractUploadFragment<T>> extends OwnedSafeAsyncTask<T, Void, Object, List<UploadDataItem>> {
+class ReloadDataFromUploadJobTask<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Void, Object, List<UploadDataItem>> {
 
     private final UploadJob uploadJob;
 
-    ReloadDataFromUploadJobTask(T parent, UploadJob job) {
+    ReloadDataFromUploadJobTask(F parent, UploadJob job) {
         super(parent);
         withContext(parent.requireContext());
         this.uploadJob = job;
     }
 
-    FragmentUIHelper<T> getUiHelper() {
+    FUIH getUiHelper() {
         return getOwner().getUiHelper();
     }
 

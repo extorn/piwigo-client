@@ -46,6 +46,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -58,7 +59,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 /**
  * Created by gareth on 23/05/17.
  */
-public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
+public class CreateAlbumFragment<F extends CreateAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String STATE_UPLOAD_TO_GALLERY = "uploadToGallery";
     private static final String STATE_NEW_GALLERY = "newAlbum";
@@ -406,7 +407,7 @@ public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
         void onDialogClose();
     }
 
-    private static class CustomPiwigoResponseListener<S extends CreateAlbumFragment> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends CreateAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override

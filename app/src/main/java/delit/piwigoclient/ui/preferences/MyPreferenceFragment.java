@@ -45,10 +45,10 @@ import delit.piwigoclient.ui.common.preference.UriPermissionsListPreferenceDialo
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
+public abstract class MyPreferenceFragment<F extends MyPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
     private static final String STATE_PAGER_INDEX_POS = "pager_index_pos";
     protected static final int NO_PAGER_INDEX = -1;
-    private FragmentUIHelper<T> uiHelper;
+    private FUIH uiHelper;
     private int pagerIndex;
     protected static final String DIALOG_FRAGMENT_TAG =
             "androidx.preference.PreferenceFragment.DIALOG";
@@ -62,7 +62,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
         this.pagerIndex = pagerIndex;
     }
 
-    protected FragmentUIHelper<T> getUiHelper() {
+    protected FUIH getUiHelper() {
         return uiHelper;
     }
 
@@ -84,7 +84,7 @@ public abstract class MyPreferenceFragment<T extends MyPreferenceFragment> exten
         }
         initialisedCoreComponents = true;
         if (uiHelper == null) {
-            uiHelper = new FragmentUIHelper<>((T) this, getPrefs(), getContext(), attachedView);
+            uiHelper = (FUIH) new FragmentUIHelper<FUIH,F>((F) this, getPrefs(), getContext(), attachedView);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(getContext());
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);

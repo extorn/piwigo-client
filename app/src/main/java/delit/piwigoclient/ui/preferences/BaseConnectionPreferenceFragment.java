@@ -55,7 +55,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
-public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment<BaseConnectionPreferenceFragment> {
+public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
     private static final String TAG = "Connection Settings";
     protected Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
     private final Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
@@ -277,7 +277,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         if (responseCacheButtonTextRetriever != null && responseCacheButtonTextRetriever.getStatus() != AsyncTask.Status.FINISHED) {
             responseCacheButtonTextRetriever.cancel(true);
         }
-        responseCacheButtonTextRetriever = UIHelper.submitAsyncTask(new ResponseCacheButtonTextRetriever(this));
+        responseCacheButtonTextRetriever = getUiHelper().submitAsyncTask(new ResponseCacheButtonTextRetriever((F) this));
     }
 
     @Override
@@ -295,11 +295,11 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         initialising = false;
     }
 
-    private static class ResponseCacheButtonTextRetriever extends OwnedSafeAsyncTask<BaseConnectionPreferenceFragment, Void, Void, Long> {
+    private static class ResponseCacheButtonTextRetriever<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Void, Void, Long> {
 
         private Preference responseCacheFlushButton;
 
-        public ResponseCacheButtonTextRetriever(BaseConnectionPreferenceFragment owner) {
+        public ResponseCacheButtonTextRetriever(F owner) {
             super(owner);
             withContext(owner.requireContext());
         }
@@ -427,7 +427,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         return new CustomPiwigoResponseListener();
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> implements Parcelable {
+    private static class OnLogoutAction<FUIH extends FragmentUIHelper<FUIH,ConnectionPreferenceFragment>> extends UIHelper.Action<FUIH, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -458,20 +458,20 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             return 0;
         }
 
-        public static final Creator<OnLogoutAction> CREATOR = new Creator<OnLogoutAction>() {
+        public static final Creator<OnLogoutAction<?>> CREATOR = new Creator<OnLogoutAction<?>>() {
             @Override
-            public OnLogoutAction createFromParcel(Parcel in) {
-                return new OnLogoutAction(in);
+            public OnLogoutAction<?> createFromParcel(Parcel in) {
+                return new OnLogoutAction<>(in);
             }
 
             @Override
-            public OnLogoutAction[] newArray(int size) {
+            public OnLogoutAction<?>[] newArray(int size) {
                 return new OnLogoutAction[size];
             }
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
+        public boolean onSuccess(FUIH uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getAppContext()).start();
             if(loginAgain != null && !loginAgain) {
@@ -484,7 +484,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getAppContext());
             onSuccess(uiHelper, null);
@@ -492,7 +492,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<ConnectionPreferenceFragment>, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse>implements Parcelable {
+    private static class OnLoginAction<FUIH extends FragmentUIHelper<FUIH,ConnectionPreferenceFragment>> extends UIHelper.Action<FUIH, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse>implements Parcelable {
 
         protected OnLoginAction(){}
 
@@ -510,20 +510,20 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             return 0;
         }
 
-        public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
+        public static final Creator<OnLoginAction<?>> CREATOR = new Creator<OnLoginAction<?>>() {
             @Override
-            public OnLoginAction createFromParcel(Parcel in) {
-                return new OnLoginAction(in);
+            public OnLoginAction<?> createFromParcel(Parcel in) {
+                return new OnLoginAction<>(in);
             }
 
             @Override
-            public OnLoginAction[] newArray(int size) {
+            public OnLoginAction<?>[] newArray(int size) {
                 return new OnLoginAction[size];
             }
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
@@ -540,7 +540,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action<FragmentUIHelper<BaseConnectionPreferenceFragment>, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> implements Parcelable {
+    private static class OnHttpClientShutdownAction<FUIH extends FragmentUIHelper<FUIH,BaseConnectionPreferenceFragment>> extends UIHelper.Action<FUIH, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -570,20 +570,20 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             return 0;
         }
 
-        public static final Creator<OnHttpClientShutdownAction> CREATOR = new Creator<OnHttpClientShutdownAction>() {
+        public static final Creator<OnHttpClientShutdownAction<?>> CREATOR = new Creator<OnHttpClientShutdownAction<?>>() {
             @Override
-            public OnHttpClientShutdownAction createFromParcel(Parcel in) {
-                return new OnHttpClientShutdownAction(in);
+            public OnHttpClientShutdownAction<?> createFromParcel(Parcel in) {
+                return new OnHttpClientShutdownAction<>(in);
             }
 
             @Override
-            public OnHttpClientShutdownAction[] newArray(int size) {
+            public OnHttpClientShutdownAction<?>[] newArray(int size) {
                 return new OnHttpClientShutdownAction[size];
             }
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<BaseConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+        public boolean onSuccess(FUIH uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             boolean retVal = false;
             if(loginAsProfileAfterLogout != null) {
                 // copy those profile values to the working app copy of prefs
@@ -733,7 +733,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<BaseConnectionPreferenceFragment> {
+    private static class CustomPiwigoResponseListener<FUIH extends FragmentUIHelper<FUIH,BaseConnectionPreferenceFragment>> extends BasicPiwigoResponseListener<FUIH,BaseConnectionPreferenceFragment> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
 

@@ -7,13 +7,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -42,7 +40,6 @@ import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPrefer
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
@@ -67,7 +64,7 @@ import delit.piwigoclient.ui.util.SharedFilesIntentProcessingTask;
  * Created by gareth on 12/07/17.
  */
 
-public class UploadActivity extends MyActivity<UploadActivity> {
+public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends MyActivity<A,AUIH> {
 
     private static final String TAG = "uploadActivity";
     private static final int OPEN_GOOGLE_PLAY_INTENT_REQUEST = 10102;
@@ -402,7 +399,7 @@ public class UploadActivity extends MyActivity<UploadActivity> {
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
-                new SharedFilesIntentProcessingTask<>(this, fileSelectionEventId, lastIntent).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new SharedFilesIntentProcessingTask<>((A)this, fileSelectionEventId, lastIntent).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
@@ -417,10 +414,10 @@ public class UploadActivity extends MyActivity<UploadActivity> {
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<A,AUIH>();
     }
 
-    private static class CustomPiwigoResponseListener<A extends UploadActivity> extends BasicPiwigoResponseListener<A> {
+    private static class CustomPiwigoResponseListener<A extends UploadActivity<A,AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends BasicPiwigoResponseListener<AUIH, A> {
         public A getParent() {
             return super.getParent();
         }
@@ -435,21 +432,6 @@ public class UploadActivity extends MyActivity<UploadActivity> {
                 }
             } else {
                 super.onAfterHandlePiwigoResponse(response);
-            }
-        }
-    }
-
-    private static class ActivityUIHelperUploadActivityQuestionResultAdapter extends UIHelper.QuestionResultAdapter<ActivityUIHelper<UploadActivity>, UploadActivity> implements Parcelable {
-
-
-        public ActivityUIHelperUploadActivityQuestionResultAdapter(ActivityUIHelper<UploadActivity> uiHelper) {
-            super(uiHelper);
-        }
-
-        @Override
-        public void onDismiss(AlertDialog dialog) {
-            if (!BuildConfig.DEBUG) {
-                getParent().finish();
             }
         }
     }

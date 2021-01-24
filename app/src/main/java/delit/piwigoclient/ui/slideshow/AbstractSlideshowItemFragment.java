@@ -28,7 +28,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
@@ -97,7 +96,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/04/18.
  */
 
-public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> extends MyFragment implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
+public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends MyFragment<F,FUIH> implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
 
     private static final String TAG = "SlideshowItemFragment";
 
@@ -732,9 +731,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return tagsField;
     }
 
-    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>, AbstractSlideshowItemFragment> implements Parcelable {
+    private static class UseAsAlbumThumbnailForParentAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>,T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public UseAsAlbumThumbnailForParentAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
+        public UseAsAlbumThumbnailForParentAction(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -767,7 +766,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractSlideshowItemFragment parent = getUiHelper().getParent();
+                F parent = getUiHelper().getParent();
                 ResourceItem model = parent.getModel();
                 long albumId = model.getParentId();
                 Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
@@ -911,16 +910,16 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     protected void onImageDeleted(HashSet<? extends ResourceItem> deletedItems) {
         List<Long> resourceItemParentChain = model.getParentageChain();
-        EventBus.getDefault().post(new AlbumItemDeletedEvent(model, albumItemIdx, albumLoadedItemCount));
+        EventBus.getDefault().post(new AlbumItemDeletedEvent<>(model, albumItemIdx, albumLoadedItemCount));
         for (int i = 0; i < resourceItemParentChain.size() - 1; i++) {
             // update all albums except the direct parent of the resource deleted
             EventBus.getDefault().post(new AlbumAlteredEvent(resourceItemParentChain.get(i), resourceItemParentChain.get(i+1)));
         }
     }
 
-    private static class OnDeleteItemAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>, AbstractSlideshowItemFragment> implements Parcelable {
+    private static class OnDeleteItemAction<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public OnDeleteItemAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
+        public OnDeleteItemAction(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -953,8 +952,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractSlideshowItemFragment<T> fragment = getUiHelper().getParent();
-                T model = fragment.getModel();
+                F fragment = getUiHelper().getParent();
+                ResourceItem model = fragment.getModel();
                 AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
                 getUiHelper().setTrackingRequest(event.getActionId());
                 EventBus.getDefault().post(event);
@@ -1126,7 +1125,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), model));
     }
 
-    protected static class CustomPiwigoResponseListener<S extends AbstractSlideshowItemFragment<V>, V extends ResourceItem> extends BasicPiwigoResponseListener<S> {
+    protected static class CustomPiwigoResponseListener<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends BasicPiwigoResponseListener<FUIH,F> {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -1142,9 +1141,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             } else if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                 getParent().onImageDeleted(((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response).getDeletedItems());
             } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
-                getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<V>) response);
+                getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<T>) response);
             } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
-                BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<V> r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<V>) response);
+                BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T> r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T>) response);
                 getParent().onResourceInfoAltered(r.getPiwigoResource());
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 getParent().onGetSubAlbumNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
@@ -1155,9 +1154,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    public static class BaseDownloadQuestionResult<T extends Fragment> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>, T> implements Parcelable {
+    public static class BaseDownloadQuestionResult<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public BaseDownloadQuestionResult(FragmentUIHelper<T> uiHelper) {
+        public BaseDownloadQuestionResult(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -1212,12 +1211,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    public static class SelectionContainsUnsuitableFilesQuestionResult<T extends Fragment> extends BaseDownloadQuestionResult<T> {
+    public static class SelectionContainsUnsuitableFilesQuestionResult<F extends AbstractSlideshowItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends ResourceItem> extends BaseDownloadQuestionResult<F,FUIH,T> {
 
         private final Set<ResourceItem> items;
         private final String selectedPiwigoFilesizeName;
 
-        public SelectionContainsUnsuitableFilesQuestionResult(FragmentUIHelper<T> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+        public SelectionContainsUnsuitableFilesQuestionResult(FUIH uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
             super(uiHelper);
             this.items = items;
             this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;

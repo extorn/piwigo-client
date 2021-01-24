@@ -17,10 +17,10 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class UnacceptableFilesAction<T extends AbstractUploadFragment<T>> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>, T> implements Parcelable {
+public class UnacceptableFilesAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
     private final Set<String> unacceptableFileExts;
 
-    public UnacceptableFilesAction(FragmentUIHelper<T> uiHelper, Set<String> unacceptableFileExts) {
+    public UnacceptableFilesAction(FUIH uiHelper, Set<String> unacceptableFileExts) {
         super(uiHelper);
         this.unacceptableFileExts = unacceptableFileExts;
     }
@@ -41,21 +41,21 @@ public class UnacceptableFilesAction<T extends AbstractUploadFragment<T>> extend
         return 0;
     }
 
-    public static final Creator<UnacceptableFilesAction<?>> CREATOR = new Creator<UnacceptableFilesAction<?>>() {
+    public static final Creator<UnacceptableFilesAction<?,?>> CREATOR = new Creator<UnacceptableFilesAction<?,?>>() {
         @Override
-        public UnacceptableFilesAction<?> createFromParcel(Parcel in) {
+        public UnacceptableFilesAction<?,?> createFromParcel(Parcel in) {
             return new UnacceptableFilesAction<>(in);
         }
 
         @Override
-        public UnacceptableFilesAction<?>[] newArray(int size) {
+        public UnacceptableFilesAction<?,?>[] newArray(int size) {
             return new UnacceptableFilesAction[size];
         }
     };
 
     @Override
     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-        T fragment = getUiHelper().getParent();
+        F fragment = getUiHelper().getParent();
 
         if (Boolean.TRUE == positiveAnswer) {
 

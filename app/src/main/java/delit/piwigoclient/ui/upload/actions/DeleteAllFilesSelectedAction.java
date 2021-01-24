@@ -10,9 +10,9 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class DeleteAllFilesSelectedAction<T extends AbstractUploadFragment<T>> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>, T> implements Parcelable {
+public class DeleteAllFilesSelectedAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-    public DeleteAllFilesSelectedAction(FragmentUIHelper<T> uiHelper) {
+    public DeleteAllFilesSelectedAction(FUIH uiHelper) {
         super(uiHelper);
     }
 
@@ -30,14 +30,14 @@ public class DeleteAllFilesSelectedAction<T extends AbstractUploadFragment<T>> e
         return 0;
     }
 
-    public static final Creator<DeleteAllFilesSelectedAction<?>> CREATOR = new Creator<DeleteAllFilesSelectedAction<?>>() {
+    public static final Creator<DeleteAllFilesSelectedAction<?,?>> CREATOR = new Creator<DeleteAllFilesSelectedAction<?,?>>() {
         @Override
-        public DeleteAllFilesSelectedAction<?> createFromParcel(Parcel in) {
+        public DeleteAllFilesSelectedAction<?,?> createFromParcel(Parcel in) {
             return new DeleteAllFilesSelectedAction<>(in);
         }
 
         @Override
-        public DeleteAllFilesSelectedAction<?>[] newArray(int size) {
+        public DeleteAllFilesSelectedAction<?,?>[] newArray(int size) {
             return new DeleteAllFilesSelectedAction[size];
         }
     };
@@ -46,7 +46,7 @@ public class DeleteAllFilesSelectedAction<T extends AbstractUploadFragment<T>> e
     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
         if (Boolean.TRUE == positiveAnswer) {
             getParent().showOverallUploadProgressIndicator(R.string.removing_files_from_job, 0);
-            T fragment = getUiHelper().getParent();
+            F fragment = getUiHelper().getParent();
             fragment.removeAllFilesFromUploadImmediately();
         }
     }

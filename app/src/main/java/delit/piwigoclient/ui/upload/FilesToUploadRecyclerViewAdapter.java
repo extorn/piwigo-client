@@ -66,8 +66,9 @@ public class FilesToUploadRecyclerViewAdapter<LVA extends FilesToUploadRecyclerV
     }
 
     @Override
-    protected void removeItemFromInternalStore(int idxToRemove) {
+    protected UploadDataItem removeItemFromInternalStore(int idxToRemove) {
         uploadDataItemsModel.remove(idxToRemove);
+        return null;
     }
 
     @NonNull

@@ -96,7 +96,7 @@ import static android.content.Context.CLIPBOARD_SERVICE;
  * Created by gareth on 13/10/17.
  */
 
-public abstract class UIHelper<T> {
+public abstract class UIHelper<P extends UIHelper<P,T>,T> {
 
     private static final String TAG = "UiHelper";
     private static final String STATE_UIHELPER = "uiHelperState";
@@ -110,7 +110,7 @@ public abstract class UIHelper<T> {
     private static ExecutorService executors;
     private final WeakReference<T> parent;
     private final SharedPreferences prefs;
-    private final Deque<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingDeque<>(20);
+    private final Deque<QueuedDialogMessage<P,T>> dialogMessageQueue = new LinkedBlockingDeque<>(20);
     private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(50);
     private boolean toastShowing = false;
     private Context appContext;
@@ -119,11 +119,11 @@ public abstract class UIHelper<T> {
     private final Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
-    private BasicPiwigoResponseListener piwigoResponseListener;
+    private BasicPiwigoResponseListener<P,T> piwigoResponseListener;
     private int permissionsNeededReason;
     private NotificationManagerCompat notificationManager;
     private WeakReference<ProgressIndicator> progressIndicator;
-    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Long, Action<P,T,? extends PiwigoResponseBufferingHandler.Response>> actionOnServerCallComplete = new ConcurrentHashMap<>();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this(parent, prefs, context, DisplayUtils.getActivity(context).getWindow().getDecorView());
@@ -370,7 +370,7 @@ public abstract class UIHelper<T> {
         return msgId;
     }
 
-    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action<P,T,? extends PiwigoResponseBufferingHandler.Response> actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
         return invokeSilentServiceCall(worker);
     }
@@ -432,7 +432,7 @@ public abstract class UIHelper<T> {
         return addActiveServiceCall(titleString, messageId, serviceDesc);
     }
 
-    public static <T extends AsyncTask<S, ?, ?>, S> T submitAsyncTask(T task, S... params) {
+    public <AST extends AsyncTask<P, ?,?>> AST submitAsyncTask(AST task, P... params) {
         if (executors == null) {
             executors = Executors.newCachedThreadPool();
         }
@@ -553,11 +553,11 @@ public abstract class UIHelper<T> {
         return addActiveServiceCall(appContext.getString(titleStringId), worker);
     }
 
-    public BasicPiwigoResponseListener getPiwigoResponseListener() {
+    public BasicPiwigoResponseListener<P,T> getPiwigoResponseListener() {
         return piwigoResponseListener;
     }
 
-    public void setPiwigoResponseListener(BasicPiwigoResponseListener piwigoResponseListener) {
+    public void setPiwigoResponseListener(BasicPiwigoResponseListener<P,T> piwigoResponseListener) {
         this.piwigoResponseListener = piwigoResponseListener;
     }
 
@@ -810,7 +810,7 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage message) {
+    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage<P,T> message) {
         if (!canShowDialog()) {
             return false;
         }
@@ -823,7 +823,7 @@ public abstract class UIHelper<T> {
                 dialogMessageQueue.addFirst(message);
                 showNextQueuedMessage();
             } else {
-                QueuedDialogMessage msg = dialogMessageQueue.peek();
+                QueuedDialogMessage<P,T> msg = dialogMessageQueue.peek();
                 msg.getListener().chainResult(message.getListener());
             }
             return true;
@@ -836,7 +836,7 @@ public abstract class UIHelper<T> {
             return;
         }
         String msg = getAppContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority());
-        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new UnexpectedUriQuestionResult<>(this));
+        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new UnexpectedUriQuestionResult<>((P) this));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -879,7 +879,7 @@ public abstract class UIHelper<T> {
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction<>(this, event.getUntrustedCerts()));
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction<>((P)this, event.getUntrustedCerts()));
     }
 
     public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
@@ -896,12 +896,12 @@ public abstract class UIHelper<T> {
         return messageId;
     }
 
-    public <S extends QueuedDialogMessage> void showOrQueueDialogMessage(S message) {
+    public <S extends QueuedDialogMessage<P,T>> void showOrQueueDialogMessage(S message) {
         synchronized (dialogMessageQueue) {
             if (!isDialogShowing() && canShowDialog()) {
-                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<?,?> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
+                    showDialog(nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
@@ -911,9 +911,9 @@ public abstract class UIHelper<T> {
                 dialogMessageQueue.add(message);
             }
             if (!isDialogShowing() && canShowDialog()) {
-                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<?,?> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
+                    showDialog(nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
@@ -921,40 +921,40 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, detail, positiveButtonTextId, negativeButtonTextId, listener));
+    public <QRL extends QuestionResultListener<P,T>> void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, detail, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
+    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
+    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 
-    public void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
+    public <QRL extends QuestionResultListener<P,T>> void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
     }
 
-    public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, listener));
+    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId));
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId));
     }
 
-    public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId, cancellable, listener));
+    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QRL listener) {
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId, cancellable, listener));
     }
 
-    public void showOrQueueDialogMessage(int titleId, String message, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, listener));
+    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogMessage(int titleId, String message, QRL listener) {
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message) {
-        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null));
+        showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null));
     }
 
     public void removeActionForResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -1071,7 +1071,7 @@ public abstract class UIHelper<T> {
         return getAppContext().getString(stringPatternRes, args);
     }
 
-    public interface QuestionResultListener<S extends UIHelper<T>, T> extends Parcelable {
+    public interface QuestionResultListener<P extends UIHelper<P,T>, T> extends Parcelable {
         void onDismiss(AlertDialog dialog);
 
         void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
@@ -1080,28 +1080,28 @@ public abstract class UIHelper<T> {
 
         void onShow(AlertDialog alertDialog);
 
-        void setUiHelper(S uiHelper);
+        void setUiHelper(P uiHelper);
 
         T getParent();
 
-        void chainResult(QuestionResultListener listener);
+        void chainResult(QuestionResultListener<P,T> listener);
 
         void onPopulateDialogView(ViewGroup dialogView, @LayoutRes int layoutId);
     }
 
-    public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
-        return actionOnServerCallComplete.get(response.getMessageId());
+    public Action<P,T, PiwigoResponseBufferingHandler.Response> getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
+        return (Action<P, T, PiwigoResponseBufferingHandler.Response>) actionOnServerCallComplete.get(response.getMessageId());
     }
 
-    public void addActionOnResponse(long msgId, Action loginAction) {
-        actionOnServerCallComplete.put(msgId, loginAction);
+    public void addActionOnResponse(long msgId, Action action) {
+        actionOnServerCallComplete.put(msgId, action);
     }
 
-    private static class NewUnTrustedCaCertificateReceivedAction<T> extends UIHelper.QuestionResultAdapter<UIHelper<T>,T> implements Parcelable {
+    private static class NewUnTrustedCaCertificateReceivedAction<P extends UIHelper<P,T>, T> extends UIHelper.QuestionResultAdapter<P,T> implements Parcelable {
 
         private final HashMap<String, X509Certificate> untrustedCerts;
 
-        public NewUnTrustedCaCertificateReceivedAction(UIHelper<T> uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
+        public NewUnTrustedCaCertificateReceivedAction(P uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
             super(uiHelper);
             this.untrustedCerts = untrustedCerts;
         }
@@ -1122,15 +1122,15 @@ public abstract class UIHelper<T> {
             return 0;
         }
 
-        public static final Creator<NewUnTrustedCaCertificateReceivedAction> CREATOR = new Creator<NewUnTrustedCaCertificateReceivedAction>() {
+        public static final Creator<NewUnTrustedCaCertificateReceivedAction<?,?>> CREATOR = new Creator<NewUnTrustedCaCertificateReceivedAction<?,?>>() {
             @Override
-            public NewUnTrustedCaCertificateReceivedAction createFromParcel(Parcel in) {
-                return new NewUnTrustedCaCertificateReceivedAction(in);
+            public NewUnTrustedCaCertificateReceivedAction<?,?> createFromParcel(Parcel in) {
+                return new NewUnTrustedCaCertificateReceivedAction<>(in);
             }
 
             @Override
-            public NewUnTrustedCaCertificateReceivedAction[] newArray(int size) {
-                return new NewUnTrustedCaCertificateReceivedAction[size];
+            public NewUnTrustedCaCertificateReceivedAction<?,?>[] newArray(int size) {
+                return new NewUnTrustedCaCertificateReceivedAction<?,?>[size];
             }
         };
 
@@ -1138,7 +1138,7 @@ public abstract class UIHelper<T> {
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
 
-                final Set<String> preNotifiedCerts = new HashSet<>(getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>()));
+                final Set<String> preNotifiedCerts = new HashSet<>(getUiHelper().getPrefs().getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>()));
                 if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
                     // already dealt with this
                     return;
@@ -1155,9 +1155,9 @@ public abstract class UIHelper<T> {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.alert_error_adding_certificate_to_truststore));
                 }
                 preNotifiedCerts.addAll(untrustedCerts.keySet());
-                getUiHelper().prefs.edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
+                getUiHelper().getPrefs().edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
                 long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext(), true).start();
-                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
+                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener<P,T>() {
                     @Override
                     public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
                         getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
@@ -1172,13 +1172,13 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class QuestionResultAdapter<Q extends UIHelper<T>,T> implements QuestionResultListener<Q,T>, Parcelable {
+    public static class QuestionResultAdapter<P extends UIHelper<P,T>,T> implements QuestionResultListener<P,T>, Parcelable {
 
-        private QuestionResultListener chainedListener;
+        private QuestionResultListener<P,T> chainedListener;
 
-        private Q uiHelper;
+        private P uiHelper;
 
-        public QuestionResultAdapter(Q uiHelper) {
+        public QuestionResultAdapter(P uiHelper) {
             this.uiHelper = uiHelper;
         }
 
@@ -1196,14 +1196,14 @@ public abstract class UIHelper<T> {
             return 0;
         }
 
-        public static final Creator<QuestionResultAdapter> CREATOR = new Creator<QuestionResultAdapter>() {
+        public static final Creator<QuestionResultAdapter<?,?>> CREATOR = new Creator<QuestionResultAdapter<?,?>>() {
             @Override
-            public QuestionResultAdapter createFromParcel(Parcel in) {
-                return new QuestionResultAdapter(in);
+            public QuestionResultAdapter<?,?> createFromParcel(Parcel in) {
+                return new QuestionResultAdapter<>(in);
             }
 
             @Override
-            public QuestionResultAdapter[] newArray(int size) {
+            public QuestionResultAdapter<?,?>[] newArray(int size) {
                 return new QuestionResultAdapter[size];
             }
         };
@@ -1212,12 +1212,12 @@ public abstract class UIHelper<T> {
             return getUiHelper().getParent();
         }
 
-        public Q getUiHelper() {
+        public P getUiHelper() {
             return uiHelper;
         }
 
         @Override
-        public void setUiHelper(Q uiHelper) {
+        public void setUiHelper(P uiHelper) {
             this.uiHelper = uiHelper;
         }
 
@@ -1252,7 +1252,7 @@ public abstract class UIHelper<T> {
         }
 
         @Override
-        public void chainResult(QuestionResultListener listener) {
+        public void chainResult(QuestionResultListener<P,T> listener) {
             chainedListener = listener;
         }
 
@@ -1325,7 +1325,7 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class QueuedDialogMessage implements Parcelable {
+    public static class QueuedDialogMessage<P extends UIHelper<P,T>,T> implements Parcelable {
         private static final AtomicInteger idGen = new AtomicInteger();
         private final int id;
         private final int titleId;
@@ -1333,7 +1333,7 @@ public abstract class UIHelper<T> {
         private final int positiveButtonTextId;
         private final boolean cancellable;
         private final String detail;
-        private final QuestionResultListener listener;
+        private final QuestionResultListener<P,T> listener;
         private final boolean hasListener;
 
         public QueuedDialogMessage(Parcel in) {
@@ -1367,7 +1367,7 @@ public abstract class UIHelper<T> {
             this(titleId, message, detail, R.string.button_ok, true, null);
         }
 
-        public QueuedDialogMessage(int titleId, String message, String detail, QuestionResultListener listener) {
+        public QueuedDialogMessage(int titleId, String message, String detail, QuestionResultListener<P,T> listener) {
             this(titleId, message, detail, R.string.button_ok, true, listener);
         }
 
@@ -1375,7 +1375,7 @@ public abstract class UIHelper<T> {
             this(titleId, message, detail, positiveButtonTextId, true, null);
         }
 
-        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
+        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener<P,T> listener) {
             this.id = idGen.incrementAndGet();
             this.titleId = titleId;
             if (message == null) {
@@ -1389,15 +1389,15 @@ public abstract class UIHelper<T> {
             this.hasListener = listener != null;
         }
 
-        public static final Creator<QueuedDialogMessage> CREATOR = new Creator<QueuedDialogMessage>() {
+        public static final Creator<QueuedDialogMessage<?,?>> CREATOR = new Creator<QueuedDialogMessage<?,?>>() {
             @Override
-            public QueuedDialogMessage createFromParcel(Parcel in) {
-                return new QueuedDialogMessage(in);
+            public QueuedDialogMessage<?,?> createFromParcel(Parcel in) {
+                return new QueuedDialogMessage<>(in);
             }
 
             @Override
-            public QueuedDialogMessage[] newArray(int size) {
-                return new QueuedDialogMessage[size];
+            public QueuedDialogMessage<?,?>[] newArray(int size) {
+                return new QueuedDialogMessage<?,?>[size];
             }
         };
 
@@ -1421,7 +1421,7 @@ public abstract class UIHelper<T> {
             return message;
         }
 
-        public QuestionResultListener getListener() {
+        public QuestionResultListener<P,T> getListener() {
             return listener;
         }
 
@@ -1430,7 +1430,7 @@ public abstract class UIHelper<T> {
             if (!(obj instanceof UIHelper.QueuedDialogMessage)) {
                 return false;
             }
-            QueuedDialogMessage other = ((QueuedDialogMessage) obj);
+            QueuedDialogMessage<?,?> other = ((QueuedDialogMessage<?,?>) obj);
             return titleId == other.titleId && message.equals(other.message);
         }
 
@@ -1472,7 +1472,7 @@ public abstract class UIHelper<T> {
         }
     }
 
-    protected static class QueuedQuestionMessage extends QueuedDialogMessage {
+    protected static class QueuedQuestionMessage<P extends UIHelper<P,T>,T> extends QueuedDialogMessage<P,T> {
 
         private final int negativeButtonTextId;
         private final int layoutId;
@@ -1493,35 +1493,35 @@ public abstract class UIHelper<T> {
             dest.writeInt(neutralButtonTextId);
         }
 
-        public static final Creator<QueuedQuestionMessage> CREATOR = new Creator<QueuedQuestionMessage>() {
+        public static final Creator<QueuedQuestionMessage<?,?>> CREATOR = new Creator<QueuedQuestionMessage<?,?>>() {
             @Override
-            public QueuedQuestionMessage createFromParcel(Parcel in) {
-                return new QueuedQuestionMessage(in);
+            public QueuedQuestionMessage<?,?> createFromParcel(Parcel in) {
+                return new QueuedQuestionMessage<>(in);
             }
 
             @Override
-            public QueuedQuestionMessage[] newArray(int size) {
+            public QueuedQuestionMessage<?,?>[] newArray(int size) {
                 return new QueuedQuestionMessage[size];
             }
         };
 
-        public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
+        public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
             this(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, listener);
         }
 
-        public QueuedQuestionMessage(int titleId, String message, String detail, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
+        public QueuedQuestionMessage(int titleId, String message, String detail, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
             this(titleId, message, detail, View.NO_ID, positiveButtonTextId, negativeButtonTextId, listener);
         }
 
-        public QueuedQuestionMessage(int titleId, String message, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
+        public QueuedQuestionMessage(int titleId, String message, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
             this(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, View.NO_ID, listener);
         }
 
-        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
+        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener<P,T> listener) {
             this(titleId, message, detail, layoutId, positiveButtonTextId, negativeButtonTextId, View.NO_ID, listener);
         }
 
-        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, int neutralButtonTextId, QuestionResultListener listener) {
+        public QueuedQuestionMessage(int titleId, String message, String detail, int layoutId, int positiveButtonTextId, int negativeButtonTextId, int neutralButtonTextId, QuestionResultListener<P,T> listener) {
 
             super(titleId, message, detail, positiveButtonTextId, false, listener);
             this.negativeButtonTextId = negativeButtonTextId;
@@ -1573,11 +1573,11 @@ public abstract class UIHelper<T> {
 
     protected class DismissListener implements DialogInterface.OnDismissListener {
 
-        private QuestionResultListener listener;
+        private QuestionResultListener<?,?> listener;
         private boolean buildNewDialogOnDismiss;
         private boolean dialogClosingForUrgentMessage;
 
-        public void setListener(QuestionResultListener listener) {
+        public void setListener(QuestionResultListener<?,?> listener) {
             this.listener = listener;
         }
 
@@ -1627,7 +1627,7 @@ public abstract class UIHelper<T> {
             if (canShowDialog()) {
 
                 if (dialogMessageQueue.size() > 0 && canShowDialog()) {
-                    QueuedDialogMessage nextMessage;
+                    QueuedDialogMessage<?,?> nextMessage;
                     do {
                         nextMessage = dialogMessageQueue.peek();
                         if (nextMessage.isHasListener() && nextMessage.getListener() == null) {
@@ -1638,7 +1638,7 @@ public abstract class UIHelper<T> {
 
                     } while (nextMessage == null && dialogMessageQueue.size() > 0);
                     if (nextMessage instanceof QueuedQuestionMessage) {
-                        showDialog((QueuedQuestionMessage) nextMessage);
+                        showDialog(nextMessage);
                     } else if (nextMessage != null) {
                         showDialog(nextMessage);
                     } else {
@@ -1661,21 +1661,21 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action<P extends UIHelper<T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Parcelable {
+    public static class Action<P extends UIHelper<P,T>, T, S extends PiwigoResponseBufferingHandler.Response> implements Parcelable {
 
 
         protected Action(Parcel in) {
         }
 
-        public static final Creator<Action> CREATOR = new Creator<Action>() {
+        public static final Creator<Action<?,?,?>> CREATOR = new Creator<Action<?,?,?>>() {
             @Override
-            public Action createFromParcel(Parcel in) {
-                return new Action(in);
+            public Action<?,?,?> createFromParcel(Parcel in) {
+                return new Action<>(in);
             }
 
             @Override
-            public Action[] newArray(int size) {
-                return new Action[size];
+            public Action<?,?,?>[] newArray(int size) {
+                return new Action<?,?,?>[size];
             }
         };
 
@@ -1709,10 +1709,10 @@ public abstract class UIHelper<T> {
         }
     }
 
-    private static class UnexpectedUriQuestionResult<Q extends UIHelper<T>,T>  extends QuestionResultAdapter<Q,T>implements Parcelable {
+    private static class UnexpectedUriQuestionResult<P extends UIHelper<P,T>,T>  extends QuestionResultAdapter<P,T>implements Parcelable {
 
 
-        public UnexpectedUriQuestionResult(Q uiHelper) {
+        public UnexpectedUriQuestionResult(P uiHelper) {
             super(uiHelper);
         }
 
@@ -1730,15 +1730,15 @@ public abstract class UIHelper<T> {
             return 0;
         }
 
-        public static final Creator<UnexpectedUriQuestionResult> CREATOR = new Creator<UnexpectedUriQuestionResult>() {
+        public static final Creator<UnexpectedUriQuestionResult<?,?>> CREATOR = new Creator<UnexpectedUriQuestionResult<?,?>>() {
             @Override
-            public UnexpectedUriQuestionResult createFromParcel(Parcel in) {
-                return new UnexpectedUriQuestionResult(in);
+            public UnexpectedUriQuestionResult<?,?> createFromParcel(Parcel in) {
+                return new UnexpectedUriQuestionResult<>(in);
             }
 
             @Override
-            public UnexpectedUriQuestionResult[] newArray(int size) {
-                return new UnexpectedUriQuestionResult[size];
+            public UnexpectedUriQuestionResult<?,?>[] newArray(int size) {
+                return new UnexpectedUriQuestionResult<?,?>[size];
             }
         };
 

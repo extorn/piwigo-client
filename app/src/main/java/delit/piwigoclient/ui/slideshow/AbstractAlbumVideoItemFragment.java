@@ -71,7 +71,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
-public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
+public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends SlideshowItemFragment<F,FUIH,T> {
 
     private static final String TAG = "VideoItemFragment";
 
@@ -327,7 +327,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
     }
 
     @Override
-    protected void configureItemContent(@Nullable View itemContentView, final VideoResourceItem model, @Nullable Bundle savedInstanceState) {
+    protected void configureItemContent(@Nullable View itemContentView, final T model, @Nullable Bundle savedInstanceState) {
         super.configureItemContent(itemContentView, model, savedInstanceState);
     }
 
@@ -348,7 +348,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         }
     }
 
-    private void clearCacheAndRestartVideo() {
+    protected void clearCacheAndRestartVideo() {
         stopVideoDownloadAndPlay();
         player.stop(); // this is terminal.
         videoPlaybackPosition = 0; // ensure it starts at the beginning again
@@ -392,9 +392,9 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                         @Override
                         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new SelectionContainsUnsuitableFilesQuestionResult(getUiHelper(), items, selectedPiwigoFilesizeName));
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new SelectionContainsUnsuitableFilesQuestionResult<>(getUiHelper(), items, selectedPiwigoFilesizeName));
                             } else {
-                                new BaseDownloadQuestionResult<AbstractAlbumVideoItemFragment>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
+                                new BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, false);
                             }
 
                         }
@@ -402,9 +402,9 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                         @Override
                         public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
                             if(filesUnavailableToDownload.size() > 0) {
-                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new OnFilesUnavailableToDownloadQuestionResult(getUiHelper(), items, selectedPiwigoFilesizeName));
+                                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new OnFilesUnavailableToDownloadQuestionResult<>(getUiHelper(), items, selectedPiwigoFilesizeName));
                             } else {
-                                new BaseDownloadQuestionResult<AbstractAlbumVideoItemFragment>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
+                                new BaseDownloadQuestionResult<>(getUiHelper()).doDownloadAction(items, selectedPiwigoFilesizeName, true);
                             }
                         }
 
@@ -652,9 +652,9 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         }
     }
 
-    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractAlbumVideoItemFragment>,AbstractAlbumVideoItemFragment> implements Parcelable {
+    private static class ClearCachedContentAction<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
-        public ClearCachedContentAction(FragmentUIHelper<AbstractAlbumVideoItemFragment> uiHelper) {
+        public ClearCachedContentAction(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -719,7 +719,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
                 } catch (RuntimeException e1) {
                     // do nothing.
                 }
-                getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
+                getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage<>(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
             } else if (e instanceof HttpDataSource.InvalidResponseCodeException) {
                 HttpDataSource.InvalidResponseCodeException err = (HttpDataSource.InvalidResponseCodeException) e;
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.responseCode, getModel().getDownloadFileName(getModel().getFullSizeFile())));
@@ -729,7 +729,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
         }
     }
 
-    private static class OnFilesUnavailableToDownloadQuestionResult extends BaseDownloadQuestionResult {
+    private static class OnFilesUnavailableToDownloadQuestionResult<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends BaseDownloadQuestionResult<F,FUIH,T> {
 
 
         private final Set<ResourceItem> items;
@@ -737,7 +737,7 @@ public class AbstractAlbumVideoItemFragment extends SlideshowItemFragment<VideoR
 
 
 
-        public OnFilesUnavailableToDownloadQuestionResult(FragmentUIHelper<AbstractAlbumVideoItemFragment> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+        public OnFilesUnavailableToDownloadQuestionResult(FUIH uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
             super(uiHelper);
             this.items = items;
             this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;

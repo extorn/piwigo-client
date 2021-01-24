@@ -7,8 +7,9 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 
-public abstract class PiwigoFileUploadResponseListener<T> extends BasicPiwigoResponseListener<T> {
+public abstract class PiwigoFileUploadResponseListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends BasicPiwigoResponseListener<FUIH,F> {
 
     private final Context context;
 

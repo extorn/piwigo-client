@@ -10,12 +10,13 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 
 /**
  * Created by gareth on 12/05/17.
  */
 
-public class BaseGalleryPreferenceFragment extends MyPreferenceFragment<BaseGalleryPreferenceFragment> {
+public class BaseGalleryPreferenceFragment<F extends BaseGalleryPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
 
     private static final String TAG = "Gallery Settings";
 

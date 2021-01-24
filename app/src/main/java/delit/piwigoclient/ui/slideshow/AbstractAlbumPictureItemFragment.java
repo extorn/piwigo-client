@@ -59,7 +59,7 @@ import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
 
-public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<PictureResourceItem> implements PicassoLoader.PictureItemImageLoaderListener<TouchImageView> {
+public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends PictureResourceItem> extends SlideshowItemFragment<F,FUIH,T> implements PicassoLoader.PictureItemImageLoaderListener<TouchImageView> {
 
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
     private static final String TAG = "AbPicItemFrag";
@@ -220,7 +220,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     @Override
-    protected void configureItemContent(@Nullable View itemContent, final PictureResourceItem model, @Nullable Bundle savedInstanceState) {
+    protected void configureItemContent(@Nullable View itemContent, final T model, @Nullable Bundle savedInstanceState) {
         super.configureItemContent(itemContent, model, savedInstanceState);
 
         imageView.setOnLongClickListener(v -> {
@@ -314,7 +314,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     @Override
-    protected void onDownloadItem(final PictureResourceItem model) {
+    protected void onDownloadItem(final T model) {
         super.onDownloadItem(model);
         DocumentFile downloadFolder = AppPreferences.getAppDownloadFolder(getPrefs(), requireContext());
         String permission = IOUtils.getManifestFilePermissionsNeeded(requireContext(), downloadFolder.getUri(), IOUtils.URI_PERMISSION_READ_WRITE);
@@ -373,7 +373,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         @Override
         public void onDownload(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
             if(filesUnavailableToDownload.size() > 0) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new MyFilesUnavailableQuestionResultAdapter<AbstractAlbumPictureItemFragment>(getUiHelper(), items, selectedPiwigoFilesizeName));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new MyFilesUnavailableQuestionResultAdapter<>(getUiHelper(), items, selectedPiwigoFilesizeName));
             } else {
                 doDownloadAction(items, selectedPiwigoFilesizeName, false);
             }
@@ -383,7 +383,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         @Override
         public void onShare(Set<ResourceItem> items, String selectedPiwigoFilesizeName, Set<ResourceItem> filesUnavailableToDownload) {
             if(filesUnavailableToDownload.size() > 0) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(getUiHelper(), items, selectedPiwigoFilesizeName));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_unavailable_to_download_removed_pattern, filesUnavailableToDownload.size()), new UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<>((FUIH)getUiHelper(), items, selectedPiwigoFilesizeName));
             } else {
                 doDownloadAction(items, selectedPiwigoFilesizeName, true);
             }
@@ -410,12 +410,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
     }
 
-    private static class UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter extends UIHelper.QuestionResultAdapter<UIHelper<AbstractAlbumPictureItemFragment>,AbstractAlbumPictureItemFragment> implements Parcelable {
+    private static class UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter<F extends AbstractAlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends PictureResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private final Set<ResourceItem> items;
         private final String selectedPiwigoFilesizeName;
 
-        public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(FragmentUIHelper<AbstractAlbumPictureItemFragment> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+        public UIHelperAbstractAlbumPictureItemFragmentQuestionResultAdapter(FUIH uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
             super(uiHelper);
             this.items = items;
             this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;
@@ -457,11 +457,11 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         }
     }
 
-    private static class MyFilesUnavailableQuestionResultAdapter<T extends AbstractAlbumPictureItemFragment> extends UIHelper.QuestionResultAdapter<UIHelper<T>, T> implements Parcelable {
+    private static class MyFilesUnavailableQuestionResultAdapter<F extends AbstractAlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends PictureResourceItem> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
         private final Set<ResourceItem> items;
         private final String selectedPiwigoFilesizeName;
 
-        public MyFilesUnavailableQuestionResultAdapter(UIHelper<T> uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
+        public MyFilesUnavailableQuestionResultAdapter(FUIH uiHelper, Set<ResourceItem> items, String selectedPiwigoFilesizeName) {
             super(uiHelper);
             this.items = items;
             this.selectedPiwigoFilesizeName = selectedPiwigoFilesizeName;

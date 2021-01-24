@@ -32,10 +32,11 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.preference.LocalFoldersListPreference;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 
-public class AppPreferenceFragment extends MyPreferenceFragment<AppPreferenceFragment> {
+public class AppPreferenceFragment<F extends AppPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
 
     private static final String TAG = "AppPrefsFrag";
 

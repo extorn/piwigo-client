@@ -24,10 +24,11 @@ import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
-public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends ViewPager, P extends SlideshowItemFragment<? extends ResourceItem>> extends MyFragmentRecyclerPagerAdapter<P, S> {
+public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends ViewPager, SIF extends SlideshowItemFragment<SIF,FUIH,ResourceItem>,FUIH extends FragmentUIHelper<FUIH,SIF>> extends MyFragmentRecyclerPagerAdapter<SIF, VP> {
 
     private static final String TAG = "GalleryItemAdapter";
     private final List<Integer> galleryResourceItems;
@@ -107,19 +108,19 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     }
 
     @Override
-    public Class<? extends P> getFragmentType(int position) {
+    public Class<? extends SIF> getFragmentType(int position) {
         int slideshowIdx = galleryResourceItems.get(position);
         GalleryItem galleryItem = null;
         try {
             galleryItem = gallery.getItemByIdx(slideshowIdx);
             if (galleryItem instanceof PictureResourceItem) {
                 if ("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
-                    return (Class<? extends P>) AlbumGifPictureItemFragment.class;
+                    return (Class) AlbumGifPictureItemFragment.class;
                 } else {
-                    return (Class<? extends P>) AlbumPictureItemFragment.class;
+                    return (Class) AlbumPictureItemFragment.class;
                 }
             } else if (galleryItem instanceof VideoResourceItem) {
-                return (Class<? extends P>) AlbumVideoItemFragment.class;
+                return (Class) AlbumVideoItemFragment.class;
             }
             //TODO check what causes this - probably deleting all items and trying to show a header!
             throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + galleryItem.getClass().getName() + ")");
@@ -130,8 +131,8 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     }
 
     @Override
-    protected P createNewItem(Class<? extends P> fragmentTypeNeeded, int position) {
-        P item = instantiateItem(fragmentTypeNeeded);
+    protected SIF createNewItem(Class<? extends SIF> fragmentTypeNeeded, int position) {
+        SIF item = instantiateItem(fragmentTypeNeeded);
         if (item == null) {
             throw new RuntimeException("unsupported gallery item.");
         }
@@ -206,7 +207,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     }
 
     @Override
-    protected void onItemDeleted(P fragment) {
+    protected void onItemDeleted(SIF fragment) {
         super.onItemDeleted(fragment);
         Integer cachedPosition = cachedItemPositions.remove(fragment.getModel().getId());
     }

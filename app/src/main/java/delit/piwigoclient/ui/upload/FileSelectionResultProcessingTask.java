@@ -26,11 +26,11 @@ import delit.piwigoclient.ui.file.FolderItem;
 import delit.piwigoclient.ui.upload.list.UploadDataItem;
 import delit.piwigoclient.ui.util.UiUpdatingProgressListener;
 
-class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploadFragment<?>, FileSelectionCompleteEvent, Object, List<UploadDataItem>> {
+class FileSelectionResultProcessingTask extends OwnedSafeAsyncTask<AbstractUploadFragment<?,?>, FileSelectionCompleteEvent, Object, List<UploadDataItem>> {
 
     private static final String TAG = "FileSelResProcTask";
 
-    FileSelectionResultProcessingTask(AbstractUploadFragment<?> parent) {
+    FileSelectionResultProcessingTask(AbstractUploadFragment<?,?> parent) {
         super(parent);
         withContext(parent.requireContext().getApplicationContext());
     }

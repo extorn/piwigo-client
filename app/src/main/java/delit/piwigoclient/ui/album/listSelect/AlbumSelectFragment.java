@@ -25,6 +25,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
@@ -33,7 +34,7 @@ import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
  * Created by gareth on 26/05/17.
  */
 //TODO - Migrate to using ASAP - ListViewLongSelectableSetSelectFragment
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AlbumSelectionListAdapterPreferences> {
+public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AlbumSelectionListAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private static final String TAG = "AlbumSelFrag";
@@ -185,7 +186,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         rerunRetrievalForFailedPages();
     }
 
-    private static class CustomPiwigoResponseListener<S extends AlbumSelectFragment> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends AlbumSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override

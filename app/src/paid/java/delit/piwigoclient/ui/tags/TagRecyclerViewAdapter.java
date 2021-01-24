@@ -6,14 +6,11 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.ui.view.recycler.BaseViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoTags;
-import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.Tag;
-import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 import delit.piwigoclient.ui.model.ViewModelContainer;
 
@@ -21,7 +18,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
  * {@link RecyclerView.Adapter} that can display a {@link Tag}
  */
 public class TagRecyclerViewAdapter<LVA extends TagRecyclerViewAdapter<LVA, MSL, VH>,
-                                    MSL extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,Tag>,
+                                    MSL extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag,VH>,
                                     VH extends TagRecyclerViewAdapter.TagViewHolder<VH, LVA, MSL>>
                                     extends IdentifiableListViewAdapter<LVA, TagRecyclerViewAdapter.TagViewAdapterPreferences, Tag, PiwigoTags<Tag>, VH, MSL> {
 
@@ -37,7 +34,7 @@ public class TagRecyclerViewAdapter<LVA extends TagRecyclerViewAdapter<LVA, MSL,
 
     public static class TagViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<TagViewAdapterPreferences>{}
 
-    public static class TagViewHolder<VH extends TagViewHolder<VH,LVA,MSL>, LVA extends TagRecyclerViewAdapter<LVA, MSL,VH>,MSL extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,Tag>> extends BaseViewHolder<VH, TagViewAdapterPreferences, Tag, LVA,MSL> {
+    public static class TagViewHolder<VH extends TagViewHolder<VH,LVA,MSL>, LVA extends TagRecyclerViewAdapter<LVA, MSL,VH>,MSL extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,TagRecyclerViewAdapter.TagViewAdapterPreferences,Tag,VH>> extends BaseViewHolder<VH, TagViewAdapterPreferences, Tag, LVA,MSL> {
         private final LVA parentAdapter;
 
         public TagViewHolder(View view, LVA parentAdapter) {

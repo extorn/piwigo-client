@@ -21,11 +21,12 @@ import delit.libs.ui.view.list.SelectableItemsAdapter;
 
 /**
  * {@link RecyclerView.Adapter} that can display items
+ * NOTE: MUST override getItemId(int position) if using stable IDs and it MUST NOT return item position if sort order changes!
  *
  * @param <T> Item
  * @param <VH> ViewHolder for each Item
  */
-public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapter<LVA, P,T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends RecyclerView.Adapter<VH> implements Enableable, SelectableItemsAdapter<T> {
+public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapter<LVA, P,T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>> extends RecyclerView.Adapter<VH> implements Enableable, SelectableItemsAdapter<T> {
 
     private static final String TAG = "BaseRecyclerViewAdapter";
     final MSL multiSelectStatusListener;
@@ -34,7 +35,6 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
 
     public BaseRecyclerViewAdapter(MSL multiSelectStatusListener, P prefs) {
-        this.setHasStableIds(true);
         this.multiSelectStatusListener = multiSelectStatusListener;
         this.prefs = prefs;
     }
@@ -43,9 +43,6 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
         return prefs;
     }
 
-    @Override
-    public abstract long getItemId(int position);
-
     public abstract @NonNull
     VH buildViewHolder(View view, int viewType);
 
@@ -53,7 +50,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
 
     public abstract int getItemPosition(@NonNull T item);
 
-    protected abstract void removeItemFromInternalStore(int idxToRemove);
+    protected abstract T removeItemFromInternalStore(int idxToRemove);
 
     protected abstract void replaceItemInInternalStore(int idxToReplace, @NonNull T newItem);
 
@@ -303,7 +300,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
         return multiSelectStatusListener;
     }
 
-    public interface MultiSelectStatusListener<MSL extends MultiSelectStatusListener<MSL,LVA,T>, LVA extends BaseRecyclerViewAdapter<LVA, ?, T, ?, MSL>, T> {
+    public interface MultiSelectStatusListener<MSL extends MultiSelectStatusListener<MSL,LVA,P,T,VH>, LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T,MSL>> {
         void onMultiSelectStatusChanged(LVA adapter, boolean multiSelectEnabled);
 
         void onItemSelectionCountChanged(LVA adapter, int size);
@@ -317,7 +314,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
         void onDisabledItemClick(LVA adapter, T item);
     }
 
-    public static class MultiSelectStatusAdapter<MSA extends MultiSelectStatusAdapter<MSA,LVA,T>, LVA extends BaseRecyclerViewAdapter<LVA, ?, T, ?, MSA>, T> implements MultiSelectStatusListener<MSA,LVA, T> {
+    public static class MultiSelectStatusAdapter<MSL extends MultiSelectStatusAdapter<MSL,LVA,P,T,VH>, LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, VH extends CustomViewHolder<VH, LVA, P, T, MSL>> implements MultiSelectStatusListener<MSL,LVA, P,T,VH> {
 
         @Override
         public void onMultiSelectStatusChanged(LVA adapter, boolean multiSelectEnabled) {
@@ -350,7 +347,7 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
         }
     }
 
-    public static class ItemSelectionListener<LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> implements CompoundButton.OnCheckedChangeListener {
+    public static class ItemSelectionListener<LVA extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>> implements CompoundButton.OnCheckedChangeListener {
 
         private final VH holder;
         private final LVA adapter;

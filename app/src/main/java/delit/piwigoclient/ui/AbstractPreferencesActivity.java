@@ -26,6 +26,7 @@ import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
@@ -35,7 +36,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 
-public abstract class AbstractPreferencesActivity<T extends AbstractPreferencesActivity<T>> extends MyActivity<T> {
+public abstract class AbstractPreferencesActivity<A extends AbstractPreferencesActivity<A,AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends MyActivity<A,AUIH> {
 
     private static final String TAG = "PrefAct";
     private CustomToolbar toolbar;

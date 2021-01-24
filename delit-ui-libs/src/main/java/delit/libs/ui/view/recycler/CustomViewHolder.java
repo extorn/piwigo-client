@@ -4,7 +4,7 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-public abstract class CustomViewHolder<VH extends CustomViewHolder<VH, LVA, P,T,MSL>, LVA extends BaseRecyclerViewAdapter<LVA, P,T,VH,MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends RecyclerView.ViewHolder {
+public abstract class CustomViewHolder<VH extends CustomViewHolder<VH, LVA, P,T,MSL>, LVA extends BaseRecyclerViewAdapter<LVA, P,T,VH,MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>> extends RecyclerView.ViewHolder {
 
     private T item;
     private CustomClickListener<MSL, LVA, P,T,VH> itemActionListener;

@@ -23,9 +23,10 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 
-class ForegroundPiwigoFileUploadResponseListener<T extends AbstractUploadFragment<T>> extends PiwigoFileUploadResponseListener<T> {
+class ForegroundPiwigoFileUploadResponseListener<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends PiwigoFileUploadResponseListener<F,FUIH> {
 
     private static final String TAG = "FgFileUploadRespL";
 
@@ -315,7 +316,7 @@ class ForegroundPiwigoFileUploadResponseListener<T extends AbstractUploadFragmen
             errorMessage = ((PiwigoResponseBufferingHandler.CustomErrorResponse) error).getErrorMessage();
         }
         if (errorMessage != null) {
-            AbstractUploadFragment<?> parent = getParent();
+            F parent = getParent();
             if (parent != null && parent.isAdded()) {
                 parent.notifyUser(context, R.string.alert_error, errorMessage);
             }

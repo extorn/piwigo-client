@@ -6,7 +6,6 @@ import android.os.Parcelable;
 
 import androidx.appcompat.app.AlertDialog;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -16,7 +15,7 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
  * Created by gareth on 07/04/18.
  */
 
-public class MainActivity extends AbstractMainActivity<MainActivity> {
+public class MainActivity<A extends MainActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends AbstractMainActivity<A, AUIH> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +64,9 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
         }
     }
 
-    private static class BuyAdvertFreeTimeQuestionListener<T extends ActivityUIHelper<R>,R extends MainActivity> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
+    private static class BuyAdvertFreeTimeQuestionListener<A extends MainActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends UIHelper.QuestionResultAdapter<AUIH,A> implements Parcelable {
 
-        public BuyAdvertFreeTimeQuestionListener(T uiHelper) {
+        public BuyAdvertFreeTimeQuestionListener(AUIH uiHelper) {
             super(uiHelper);
         }
 

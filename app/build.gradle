@@ -8,6 +8,21 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 android {
 
+    def configureBuildConfig = {applicationId, applicationIdSuffix, isPaidVersion ->
+        // Creates a property for the FileProvider authority.
+        def filesAuthorityValue = "${applicationId}${applicationIdSuffix}.provider"
+        def documentsAuthorityValue = "${applicationId}${applicationIdSuffix}.provider.docs"
+
+        defaultConfig.manifestPlaceholders = [ filesAuthority: "${filesAuthorityValue}",
+                                 documentsAuthority: "${documentsAuthorityValue}" ]
+
+        // this boolean can be accessed in java classes by using BuildConfig class
+        // and now you can identify if your app is the paid version or not
+        defaultConfig.buildConfigField "boolean", "PAID_VERSION", "${isPaidVersion}"
+        defaultConfig.buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${filesAuthorityValue}\""
+        defaultConfig.buildConfigField "String", "DOCUMENTS_PROVIDER_AUTHORITY", "\"${documentsAuthorityValue}\""
+    }
+
     flavorDimensions "tier"
 
     signingConfigs {
@@ -37,16 +52,9 @@ android {
         applicationId "delit.piwigoclient"
 
         def latestPiwigoClientWsPluginVersion = "1.0.13"
-        // Creates a property for the FileProvider authority.
-        def filesAuthorityValue = "${applicationId}.provider"
-        def documentsAuthorityValue = "${applicationId}.provider.docs"
-
-        manifestPlaceholders = [ filesAuthority: "${filesAuthorityValue}",
-                                 documentsAuthority: "${documentsAuthorityValue}" ]
 
         buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"${latestPiwigoClientWsPluginVersion}\""
-        buildConfigField "String", "FILE_PROVIDER_AUTHORITY", "\"${filesAuthorityValue}\""
-        buildConfigField "String", "DOCUMENTS_PROVIDER_AUTHORITY", "\"${documentsAuthorityValue}\""
+
 
         minSdkVersion 19
         targetSdkVersion 30
@@ -91,10 +99,9 @@ android {
     }
     productFlavors {
         free {
-            applicationId "delit.piwigoclient"
-            // this boolean can be accessed in java classes by using BuildConfig class
-            // and now you can identify if your app is the paid version or not
-            buildConfigField "boolean", "PAID_VERSION", "false"
+            // this is important - will be null otherwise
+            applicationIdSuffix ""
+            configureBuildConfig(applicationId, applicationIdSuffix, false)
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
             // this property is optional if you are using only one dimension.
             dimension "tier"
@@ -102,7 +109,7 @@ android {
         paid {
             applicationIdSuffix ".paid"
             //.phone when debugging on phone so separate install.
-            buildConfigField "boolean", "PAID_VERSION", "true"
+            configureBuildConfig(applicationId, applicationIdSuffix, true)
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
             // this property is optional if you are using only one dimension.
             dimension "tier"
@@ -111,7 +118,7 @@ android {
         paidphone {
             applicationIdSuffix ".paid.phone"
             //.phone when debugging on phone so separate install.
-            buildConfigField "boolean", "PAID_VERSION", "true"
+            configureBuildConfig(applicationId, applicationIdSuffix, true)
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
             // this property is optional if you are using only one dimension.
             dimension "tier"
@@ -184,7 +191,7 @@ dependencies {
     //implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'com.google.android.gms:play-services-ads:19.6.0'
+    implementation 'com.google.android.gms:play-services-ads:19.7.0'
     implementation 'com.google.android.ads.consent:consent-library:1.0.8'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.8.2'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.2'

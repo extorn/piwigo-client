@@ -9,7 +9,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class OnGetSubAlbumNamesAction<T extends AbstractUploadFragment<T>> extends UIHelper.Action<FragmentUIHelper<T>, T, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> implements Parcelable {
+public class OnGetSubAlbumNamesAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.Action<FUIH,F, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> implements Parcelable {
 
     public OnGetSubAlbumNamesAction(){}
 
@@ -27,22 +27,22 @@ public class OnGetSubAlbumNamesAction<T extends AbstractUploadFragment<T>> exten
         return 0;
     }
 
-    public static final Creator<OnGetSubAlbumNamesAction<?>> CREATOR = new Creator<OnGetSubAlbumNamesAction<?>>() {
+    public static final Creator<OnGetSubAlbumNamesAction<?,?>> CREATOR = new Creator<OnGetSubAlbumNamesAction<?,?>>() {
         @Override
-        public OnGetSubAlbumNamesAction<?> createFromParcel(Parcel in) {
+        public OnGetSubAlbumNamesAction<?,?> createFromParcel(Parcel in) {
             return new OnGetSubAlbumNamesAction<>(in);
         }
 
         @Override
-        public OnGetSubAlbumNamesAction<?>[] newArray(int size) {
-            return new OnGetSubAlbumNamesAction<?>[size];
+        public OnGetSubAlbumNamesAction<?,?>[] newArray(int size) {
+            return new OnGetSubAlbumNamesAction<?,?>[size];
         }
     };
 
     @Override
-    public boolean onSuccess(FragmentUIHelper<T> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    public boolean onSuccess(FUIH uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         if (response.getAlbumNames().size() > 0) {
-            AbstractUploadFragment<?> fragment = uiHelper.getParent();
+            F fragment = uiHelper.getParent();
             CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();
             if (uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
                 uploadToAlbum = response.getAlbumNames().get(0);

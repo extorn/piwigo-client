@@ -42,14 +42,14 @@ import delit.piwigoclient.ui.events.ToolbarEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class MyFragment<T extends MyFragment<T>> extends Fragment {
+public class MyFragment<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHelper<FUIH, T>> extends Fragment {
 
     private static final String TAG = "MyFrag";
     private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final String STATE_ACTIVE_SERVER_CONNECTION = "activeServerConnection";
     protected SharedPreferences prefs;
     // Stored state below here.
-    private FragmentUIHelper<T> uiHelper;
+    private FUIH uiHelper;
     private String piwigoSessionToken;
     private String piwigoServerConnected;
     private @StyleRes int theme = 0; //Resources.ID_NULL; (needs 29+)
@@ -144,11 +144,11 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         super.onAttach(context);
     }
 
-    protected FragmentUIHelper<T> buildUIHelper(Context context, @NonNull View attachedView) {
-        return new FragmentUIHelper<>((T) this, prefs, context, attachedView);
+    protected FUIH buildUIHelper(Context context, @NonNull View attachedView) {
+        return (FUIH) new FragmentUIHelper((T) this, prefs, context, attachedView);
     }
 
-    protected BasicPiwigoResponseListener<T> buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,T> buildPiwigoResponseListener(Context context) {
         return new BasicPiwigoResponseListener<>();
     }
 
@@ -206,7 +206,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         return "Piwigo Client";
     }
 
-    public FragmentUIHelper<T> getUiHelper() {
+    public FUIH getUiHelper() {
         return uiHelper;
     }
 
@@ -234,7 +234,7 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         coreComponentsInitialised = true;
         if (uiHelper == null) {
             uiHelper = buildUIHelper(getContext(), attachedView);
-            BasicPiwigoResponseListener<T> listener = buildPiwigoResponseListener(getContext());
+            BasicPiwigoResponseListener<FUIH,T> listener = buildPiwigoResponseListener(getContext());
             listener.withUiHelper((T)this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
@@ -255,12 +255,12 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
         this.theme = theme;
     }
 
-    private static class AdLoadErrorDialogListener<T extends MyFragment<T>> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>,T> implements Parcelable {
+    private static class AdLoadErrorDialogListener<T extends MyFragment<T,FUIH>, FUIH extends FragmentUIHelper<FUIH,T>> extends UIHelper.QuestionResultAdapter<FUIH,T> implements Parcelable {
 
         private long shownAt;
         private LifecycleObserver observer;
 
-        public AdLoadErrorDialogListener(FragmentUIHelper<T> uiHelper) {
+        public AdLoadErrorDialogListener(FUIH uiHelper) {
             super(uiHelper);
         }
 
@@ -280,15 +280,15 @@ public class MyFragment<T extends MyFragment<T>> extends Fragment {
             return 0;
         }
 
-        public static final Creator<AdLoadErrorDialogListener<?>> CREATOR = new Creator<AdLoadErrorDialogListener<?>>() {
+        public static final Creator<AdLoadErrorDialogListener<?,?>> CREATOR = new Creator<AdLoadErrorDialogListener<?,?>>() {
             @Override
-            public AdLoadErrorDialogListener<?> createFromParcel(Parcel in) {
+            public AdLoadErrorDialogListener<?,?> createFromParcel(Parcel in) {
                 return new AdLoadErrorDialogListener<>(in);
             }
 
             @Override
-            public AdLoadErrorDialogListener<?>[] newArray(int size) {
-                return new AdLoadErrorDialogListener<?>[size];
+            public AdLoadErrorDialogListener<?,?>[] newArray(int size) {
+                return new AdLoadErrorDialogListener[size];
             }
         };
 

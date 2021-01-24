@@ -14,12 +14,13 @@ import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 
 /**
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
+public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>,FUIH extends FragmentUIHelper<FUIH,F>,T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<F,FUIH,T> {
 
     private static final String TAG = "SlideshowFragment";
 

@@ -34,6 +34,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AppPreferences;
 import delit.piwigoclient.business.OtherPreferences;
+import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.BaseMyActivity;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StatusBarChangeEvent;
@@ -50,7 +51,7 @@ import delit.piwigoclient.ui.file.RecyclerViewDocumentFileFolderItemSelectFragme
  * Created by gareth on 12/07/17.
  */
 
-public class FileSelectActivity extends MyActivity<FileSelectActivity> {
+public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH extends ActivityUIHelper<AUIH, A>> extends MyActivity<A, AUIH> {
 
     private static final String TAG = "FileSelAct";
 

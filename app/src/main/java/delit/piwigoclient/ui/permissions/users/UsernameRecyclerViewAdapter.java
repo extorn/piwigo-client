@@ -20,7 +20,7 @@ import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 /**
  * {@link androidx.recyclerview.widget.RecyclerView.Adapter} that can display a {@link Username}
  */
-public class UsernameRecyclerViewAdapter<LVA extends UsernameRecyclerViewAdapter<LVA,T,VH,MSL>, T extends Username, VH extends UsernameRecyclerViewAdapter.UsernameViewHolder<VH, LVA,T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends IdentifiableListViewAdapter<LVA, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, T, PiwigoUsernames<T>, VH, MSL> {
+public class UsernameRecyclerViewAdapter<LVA extends UsernameRecyclerViewAdapter<LVA,T,VH,MSL>, T extends Username, VH extends UsernameRecyclerViewAdapter.UsernameViewHolder<VH, LVA,T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences,T,VH>> extends IdentifiableListViewAdapter<LVA, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, T, PiwigoUsernames<T>, VH, MSL> {
 
     private final List<String> userTypes;
     private final List<String> userTypeValues;
@@ -47,7 +47,7 @@ public class UsernameRecyclerViewAdapter<LVA extends UsernameRecyclerViewAdapter
         return userTypes.get(userTypeValues.indexOf(itemUserTypeVal));
     }
 
-    public static class UsernameViewHolder<VH extends UsernameViewHolder<VH, LVA,T,MSL>, LVA extends UsernameRecyclerViewAdapter<LVA,T,VH,MSL>, T extends Username, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends BaseViewHolder<VH, UsernameRecyclerViewAdapterPreferences, T, LVA,MSL> {
+    public static class UsernameViewHolder<VH extends UsernameViewHolder<VH, LVA,T,MSL>, LVA extends UsernameRecyclerViewAdapter<LVA,T,VH,MSL>, T extends Username, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences,T,VH>> extends BaseViewHolder<VH, UsernameRecyclerViewAdapterPreferences, T, LVA,MSL> {
 
         LVA parentAdapter;
 

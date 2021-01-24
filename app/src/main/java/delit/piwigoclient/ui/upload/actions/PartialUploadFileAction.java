@@ -14,11 +14,11 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class PartialUploadFileAction<T extends AbstractUploadFragment<T>> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>, T> implements Parcelable {
+public class PartialUploadFileAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
     private static final String TAG = "PartialUploadFileAction";
     private final Uri itemToRemove;
 
-    public PartialUploadFileAction(FragmentUIHelper<T> uiHelper, Uri itemToRemove) {
+    public PartialUploadFileAction(FUIH uiHelper, Uri itemToRemove) {
         super(uiHelper);
         this.itemToRemove = itemToRemove;
     }
@@ -39,14 +39,14 @@ public class PartialUploadFileAction<T extends AbstractUploadFragment<T>> extend
         return 0;
     }
 
-    public static final Creator<PartialUploadFileAction<?>> CREATOR = new Creator<PartialUploadFileAction<?>>() {
+    public static final Creator<PartialUploadFileAction<?,?>> CREATOR = new Creator<PartialUploadFileAction<?,?>>() {
         @Override
-        public PartialUploadFileAction<?> createFromParcel(Parcel in) {
+        public PartialUploadFileAction<?,?> createFromParcel(Parcel in) {
             return new PartialUploadFileAction<>(in);
         }
 
         @Override
-        public PartialUploadFileAction<?>[] newArray(int size) {
+        public PartialUploadFileAction<?,?>[] newArray(int size) {
             return new PartialUploadFileAction[size];
         }
     };
@@ -54,7 +54,7 @@ public class PartialUploadFileAction<T extends AbstractUploadFragment<T>> extend
     @Override
     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
         if (Boolean.TRUE == positiveAnswer) {
-            T fragment = getUiHelper().getParent();
+            F fragment = getUiHelper().getParent();
             UploadJob activeJob = fragment.getActiveJob(getContext());
             if (activeJob != null) {
                 activeJob.cancelFileUpload(itemToRemove);

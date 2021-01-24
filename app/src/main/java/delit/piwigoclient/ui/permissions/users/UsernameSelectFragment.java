@@ -29,6 +29,7 @@ import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
@@ -36,7 +37,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter<?,Username,?,?>, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, Username> {
+public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter<?,Username,?,?>, UsernameRecyclerViewAdapter.UsernameRecyclerViewAdapterPreferences, Username> {
 
     private static final String USER_NAMES_MODEL = "usernamesModel";
     private static final String STATE_INDIRECT_SELECTION = "indirectlySelectedUsernames";
@@ -256,7 +257,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
     }
 
-    private void onUsernamesLoaded(final UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
+    protected void onUsernamesLoaded(final UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
         usernamesModel.acquirePageLoadLock();
         try {
             usernamesModel.recordPageLoadSucceeded(response.getMessageId());
@@ -282,7 +283,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<UsernameSelectFragment> {
+    private static class CustomPiwigoResponseListener<F extends UsernameSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) {

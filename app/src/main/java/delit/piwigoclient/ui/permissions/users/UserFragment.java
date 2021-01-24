@@ -85,7 +85,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 21/06/17.
  */
 
-public class UserFragment extends MyFragment<UserFragment> {
+public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
 
     private static final String CURRENT_GROUP_MEMBERSHIPS = "groupMemberships";
     private static final String CURRENT_DIRECT_ALBUM_PERMISSIONS = "currentDirectAlbumPermissions";
@@ -427,7 +427,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         return currentIndirectAlbumPermissions;
     }
 
-    private static class UserFragmentAction extends UIHelper.Action<FragmentUIHelper<UserFragment>, UserFragment, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> implements Parcelable {
+    private static class UserFragmentAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse> implements Parcelable {
 
         private static final String TAG = "UsrFrag";
 
@@ -460,8 +460,8 @@ public class UserFragment extends MyFragment<UserFragment> {
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<UserFragment> uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
-            UserFragment userFragment = uiHelper.getParent();
+        public boolean onSuccess(FUIH uiHelper, UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response) {
+            F userFragment = uiHelper.getParent();
             userFragment.setUser(response.getSelectedUser());
 
             if(userFragment.getNewUser() == null) {
@@ -476,7 +476,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<UserFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             Logging.log(Log.INFO, TAG, "removing from activity on piwigo error response rxd");
             uiHelper.getParent().getParentFragmentManager().popBackStack();
             return false;
@@ -488,7 +488,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new UserFragmentAction();
+            UIHelper.Action action = new UserFragmentAction<>();
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_user_details, new UserGetInfoResponseHandler(user.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
@@ -501,9 +501,9 @@ public class UserFragment extends MyFragment<UserFragment> {
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
         if (newUser.getId() < 0) {
-            saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler(newUser)));
+            saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler<>(newUser)));
         } else {
-            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser)));
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler<>(newUser)));
             saveUserPermissionsChangesIfRequired();
         }
 
@@ -519,7 +519,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         return currentSelection;
     }
 
-    private void setFieldsFromModel(User user) {
+    protected void setFieldsFromModel(User user) {
         usernameField.setText(user.getUsername());
         int selectedUserType = userTypeValues.indexOf(user.getUserType());
         usertypeField.setSelection(selectedUserType);
@@ -577,15 +577,15 @@ public class UserFragment extends MyFragment<UserFragment> {
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction(getUiHelper(), user));
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction<>(getUiHelper(), user));
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>, UserFragment> implements Parcelable {
+    private static class OnDeleteUserAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
 
         private User user;
 
-        public OnDeleteUserAction(FragmentUIHelper<UserFragment> uiHelper, User user) {
+        public OnDeleteUserAction(FUIH uiHelper, User user) {
             super(uiHelper);
             this.user = user;
         }
@@ -621,18 +621,18 @@ public class UserFragment extends MyFragment<UserFragment> {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                UserFragment fragment = getUiHelper().getParent();
+                F fragment = getUiHelper().getParent();
                 fragment.deleteUserNow(user);
             }
         }
     }
 
-    private void deleteUserNow(User thisItem) {
+    protected void deleteUserNow(User thisItem) {
 
         addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()));
     }
 
-    private void onUserSaved(UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse response) {
+    protected void onUserSaved(UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse response) {
         // copy across album permissions as they aren't normally retrieved.
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
@@ -750,7 +750,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private void onUserPermissionsRemoved(UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse response) {
+    protected void onUserPermissionsRemoved(UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse response) {
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
             currentDirectAlbumPermissions.removeAll(response.getAlbumsForWhichPermissionRemoved());
@@ -762,7 +762,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private void onUserPermissionsAdded(UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse response) {
+    protected void onUserPermissionsAdded(UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse response) {
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
             currentDirectAlbumPermissions.addAll(response.getAlbumsForWhichPermissionAdded());
@@ -779,7 +779,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onUserCreated(UserAddResponseHandler.PiwigoAddUserResponse response) {
+    protected void onUserCreated(UserAddResponseHandler.PiwigoAddUserResponse response) {
         saveActionIds.remove(response.getMessageId());
         User savedUser = response.getUser();
         newUser.setId(savedUser.getId());
@@ -789,7 +789,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         saveUserPermissionsChangesIfRequired();
     }
 
-    private void onGroupsLoaded(GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    protected void onGroupsLoaded(GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         HashSet<Long> differences = SetUtils.differences(user.getGroups(), PiwigoUtils.toSetOfIds(response.getGroups()));
         if(!differences.isEmpty()) {
             Logging.log(Log.ERROR, getTag(), String.format("Rxd %1$s groups but asked for %2$s", user.getGroups().size(), response.getGroups().size()));
@@ -799,13 +799,13 @@ public class UserFragment extends MyFragment<UserFragment> {
         fillGroupMembershipField();
     }
 
-    private void onGroupMembershipAlbumPermissionsRetrieved(GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse response) {
+    protected void onGroupMembershipAlbumPermissionsRetrieved(GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse response) {
         // retrieve all those albums indirectly accessibly by this user.
         newIndirectAlbumPermissions = response.getAllowedAlbums();
         populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
     }
 
-    private void onUserPermissionsRetrieved(UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse response) {
+    protected void onUserPermissionsRetrieved(UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse response) {
         // We're retrieving the current configuration
         currentDirectAlbumPermissions = response.getDirectlyAccessibleAlbumIds();
         currentIndirectAlbumPermissions = response.getIndirectlyAccessibleAlbumIds();
@@ -814,14 +814,14 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+    protected void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentIndirectAlbumPermissions != null) {
             populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
         }
     }
 
-    private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
+    protected void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if (isVisible()) {
@@ -830,7 +830,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
+    protected synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumPermissionsField.getAdapter();
         if (adapter == null) {
             AlbumSelectionListAdapterPreferences adapterPreferences = new AlbumSelectionListAdapterPreferences();
@@ -873,7 +873,7 @@ public class UserFragment extends MyFragment<UserFragment> {
         }
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<UserFragment> {
+    private static class CustomPiwigoResponseListener<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (getParent().isVisible()) {

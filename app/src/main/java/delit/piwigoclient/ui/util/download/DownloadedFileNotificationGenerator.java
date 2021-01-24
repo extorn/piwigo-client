@@ -19,13 +19,13 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AbstractMainActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 
-public class DownloadedFileNotificationGenerator<T> extends FileThumbnailGenerator<DownloadedFileNotificationGenerator<T>> {
+public class DownloadedFileNotificationGenerator<UIH extends UIHelper<UIH,T>, T> extends FileThumbnailGenerator<DownloadedFileNotificationGenerator<UIH,T>> {
 
     protected static final AtomicInteger notificationId = new AtomicInteger(100);
     private static final String TAG = "DnldFileNotifGen";
-    private final UIHelper<T> uiHelper;
+    private final UIHelper<UIH,T> uiHelper;
 
-    public DownloadedFileNotificationGenerator(UIHelper<T> uiHelper, @NonNull DownloadTargetLoadListener<DownloadedFileNotificationGenerator<T>> loadListener, @NonNull Uri downloadedFile) {
+    public DownloadedFileNotificationGenerator(UIHelper<UIH,T> uiHelper, @NonNull DownloadTargetLoadListener<DownloadedFileNotificationGenerator<UIH,T>> loadListener, @NonNull Uri downloadedFile) {
         super(uiHelper.getAppContext(), loadListener, downloadedFile, new Point(256,256));
         this.uiHelper = uiHelper;
     }
@@ -87,7 +87,7 @@ public class DownloadedFileNotificationGenerator<T> extends FileThumbnailGenerat
     @Override
     public boolean equals(@Nullable Object obj) {
         if(obj instanceof DownloadedFileNotificationGenerator) {
-            DownloadedFileNotificationGenerator<?> other = (DownloadedFileNotificationGenerator<?>) obj;
+            DownloadedFileNotificationGenerator<?,?> other = (DownloadedFileNotificationGenerator<?,?>) obj;
             return getDownloadedFile().equals(other.getDownloadedFile());
         }
         return false;

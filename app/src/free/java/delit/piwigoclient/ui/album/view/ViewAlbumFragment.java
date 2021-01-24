@@ -4,8 +4,9 @@ import java.util.HashSet;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 
-public class ViewAlbumFragment extends AbstractViewAlbumFragment {
+public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends AbstractViewAlbumFragment<F,FUIH> {
 
     @Override
     protected void showDownloadResourcesDialog(HashSet<ResourceItem> selectedItems) {

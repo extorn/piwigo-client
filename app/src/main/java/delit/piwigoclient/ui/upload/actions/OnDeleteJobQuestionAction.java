@@ -16,11 +16,11 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class OnDeleteJobQuestionAction<T extends AbstractUploadFragment<T>> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>, T> implements Parcelable {
+public class OnDeleteJobQuestionAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
     private static final String TAG = "OnDeleteJobQAction";
 
-    public OnDeleteJobQuestionAction(FragmentUIHelper<T> uiHelper) {
+    public OnDeleteJobQuestionAction(FUIH uiHelper) {
         super(uiHelper);
     }
 
@@ -38,21 +38,21 @@ public class OnDeleteJobQuestionAction<T extends AbstractUploadFragment<T>> exte
         return 0;
     }
 
-    public static final Creator<OnDeleteJobQuestionAction<?>> CREATOR = new Creator<OnDeleteJobQuestionAction<?>>() {
+    public static final Creator<OnDeleteJobQuestionAction<?,?>> CREATOR = new Creator<OnDeleteJobQuestionAction<?,?>>() {
         @Override
-        public OnDeleteJobQuestionAction<?> createFromParcel(Parcel in) {
+        public OnDeleteJobQuestionAction<?,?> createFromParcel(Parcel in) {
             return new OnDeleteJobQuestionAction<>(in);
         }
 
         @Override
-        public OnDeleteJobQuestionAction<?>[] newArray(int size) {
+        public OnDeleteJobQuestionAction<?,?>[] newArray(int size) {
             return new OnDeleteJobQuestionAction[size];
         }
     };
 
     @Override
     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-        AbstractUploadFragment<T> fragment = getUiHelper().getParent();
+        F fragment = getUiHelper().getParent();
         Long currentJobId = fragment.getUploadJobId();
         if (currentJobId == null) {
             Logging.log(Log.WARN, TAG, "User attempted to delete job that was no longer exists");

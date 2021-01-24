@@ -141,7 +141,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         return new AlbumItemCustomClickListener<T,LVA,MSL,VH,RC>(getModelType(), viewHolder, (LVA) this);
     }
 
-    public abstract static class AlbumItemMultiSelectStatusAdapter<MSL extends AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>,LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC> , VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>, T extends GalleryItem> extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,T> {
+    public abstract static class AlbumItemMultiSelectStatusAdapter<MSL extends AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>,LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC> , VH extends AlbumItemViewHolder<VH, LVA, T, MSL, RC>, RC extends ResourceContainer<?, T>, T extends GalleryItem> extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,AlbumItemRecyclerViewAdapterPreferences,T,VH> {
 
         protected abstract void onCategoryLongClick(CategoryItem album);
 

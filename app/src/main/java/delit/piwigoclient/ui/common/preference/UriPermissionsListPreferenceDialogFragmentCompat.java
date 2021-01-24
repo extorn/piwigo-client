@@ -44,8 +44,8 @@ import static android.view.View.GONE;
 public class UriPermissionsListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
     private static final String SAVED_STATE_ITEMS_FOR_DELETE = "itemsForDelete";
-    private RecyclerView listView;
     private final Set<UriPermissionUse> itemsForDelete = new HashSet<>();
+    private RecyclerView listView;
     private UriPermissionsListAdapter.UriPermissionsAdapterPrefs viewPrefs;
     private boolean selectToggle;
     private Button toggleAllSelectionButton;
@@ -53,6 +53,15 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
     private Button deleteSelectedButton;
 
     private UriPermissionsListPreferenceDialogFragmentCompat(){}
+
+    public static UriPermissionsListPreferenceDialogFragmentCompat newInstance(String key) {
+        final UriPermissionsListPreferenceDialogFragmentCompat fragment =
+                new UriPermissionsListPreferenceDialogFragmentCompat();
+        final Bundle b = new Bundle(1);
+        b.putString(ARG_KEY, key);
+        fragment.setArguments(b);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,22 +208,38 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
         return getPreference();
     }
 
-    public static UriPermissionsListPreferenceDialogFragmentCompat newInstance(String key) {
-        final UriPermissionsListPreferenceDialogFragmentCompat fragment =
-                new UriPermissionsListPreferenceDialogFragmentCompat();
-        final Bundle b = new Bundle(1);
-        b.putString(ARG_KEY, key);
-        fragment.setArguments(b);
-        return fragment;
-    }
-
     private void onItemDelete(UriPermissionUse item) {
         itemsForDelete.add(item);
         listAdapter.remove(item);
     }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
+        super.onClick(dialog, which);
+    }
+
   private static class UriPermissionsListAdapter<LVA extends UriPermissionsListAdapter<LVA,MSL,VH,T>, MSL extends UriPermissionsListAdapter.UriPermissionsMultiSelectStatusAdapter<MSL,LVA, VH,T>, VH extends UriPermissionsListAdapter.UriPermissionsViewHolder<VH, T, LVA, MSL>, T extends UriPermissionUse> extends SimpleRecyclerViewAdapter<LVA, T, UriPermissionsListAdapter.UriPermissionsAdapterPrefs, VH, MSL> {
 
-        public static class UriPermissionsMultiSelectStatusAdapter<MSA extends UriPermissionsMultiSelectStatusAdapter<MSA,LVA,VH,T>, LVA extends UriPermissionsListAdapter<LVA,MSA,VH,T>, VH extends UriPermissionsListAdapter.UriPermissionsViewHolder<VH,T,LVA,MSA>, T extends UriPermissionUse> implements BaseRecyclerViewAdapter.MultiSelectStatusListener<MSA,LVA,T> {
+        public UriPermissionsListAdapter(MSL multiSelectStatusListener, UriPermissionsAdapterPrefs prefs) {
+            super(multiSelectStatusListener, prefs);
+            setHasStableIds(true);
+        }
+
+        @NonNull
+        @Override
+        public VH buildViewHolder(View view, int viewType) {
+            return (VH) new UriPermissionsViewHolder(view);
+        }
+
+        @NonNull
+        @Override
+        protected View inflateView(@NonNull ViewGroup parent, int viewType) {
+            return LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.layout_list_item_uri_permission, parent, false);
+        }
+
+        public static class UriPermissionsMultiSelectStatusAdapter<MSA extends UriPermissionsMultiSelectStatusAdapter<MSA,LVA,VH,T>, LVA extends UriPermissionsListAdapter<LVA,MSA,VH,T>, VH extends UriPermissionsListAdapter.UriPermissionsViewHolder<VH,T,LVA,MSA>, T extends UriPermissionUse> implements BaseRecyclerViewAdapter.MultiSelectStatusListener<MSA,LVA,UriPermissionsAdapterPrefs,T,VH> {
 
             Button deleteSelectedButton;
 
@@ -251,23 +276,6 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
             public void onDisabledItemClick(LVA adapter, T item) {
 
             }
-        }
-
-        public UriPermissionsListAdapter(MSL multiSelectStatusListener, UriPermissionsAdapterPrefs prefs) {
-            super(multiSelectStatusListener, prefs);
-        }
-
-        @NonNull
-        @Override
-        public VH buildViewHolder(View view, int viewType) {
-            return (VH) new UriPermissionsViewHolder(view);
-        }
-
-        @NonNull
-        @Override
-        protected View inflateView(@NonNull ViewGroup parent, int viewType) {
-            return LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.layout_list_item_uri_permission, parent, false);
         }
 
         private static class UriPermissionsAdapterPrefs extends BaseRecyclerViewAdapterPreferences<UriPermissionsAdapterPrefs> {
@@ -333,12 +341,6 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
                 }
             }
         }
-    }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
-        super.onClick(dialog, which);
     }
 
 }

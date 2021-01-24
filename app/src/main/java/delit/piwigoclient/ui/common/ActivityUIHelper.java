@@ -20,7 +20,7 @@ import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
  * Created by gareth on 17/10/17.
  */
 
-public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
+public class ActivityUIHelper<UIH extends ActivityUIHelper<UIH,T>,T extends BaseMyActivity<T,UIH>> extends UIHelper<UIH,T> {
     public ActivityUIHelper(T parent, SharedPreferences prefs, View attachedView) {
         super(parent, prefs, parent, attachedView);
     }
@@ -60,7 +60,7 @@ public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
         protected void onNoDialogToShow() {
             Fragment f = getParent().getActiveFragment();
             if(f instanceof MyFragment) {
-                UIHelper helper = ((MyFragment)f).getUiHelper();
+                FragmentUIHelper<?,?> helper = ((MyFragment<?,?>)f).getUiHelper();
                 if(helper != null) {
                     helper.showNextQueuedMessage();
                 }
@@ -70,14 +70,14 @@ public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final BlockingUserInteractionQuestion event) {
-        QueuedQuestionMessage message = new QueuedQuestionMessage(R.string.alert_question_title, getAppContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter(this, event));
+        QueuedQuestionMessage<UIH,T> message = new QueuedQuestionMessage<>(R.string.alert_question_title, getAppContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter<UIH,T>((UIH) this, event));
         showMessageImmediatelyIfPossible(message);
     }
 
-    private static class BlockingUserInteractionQuestionResultAdapter<T extends ActivityUIHelper<Q>,Q extends MyActivity<Q>> extends QuestionResultAdapter<T,Q> implements Parcelable {
+    private static class BlockingUserInteractionQuestionResultAdapter<UIH extends ActivityUIHelper<UIH,T>,T extends BaseMyActivity<T, UIH>> extends QuestionResultAdapter<UIH,T> implements Parcelable {
         private final BlockingUserInteractionQuestion event;
 
-        public BlockingUserInteractionQuestionResultAdapter(T uiHelper, BlockingUserInteractionQuestion event) {
+        public BlockingUserInteractionQuestionResultAdapter(UIH uiHelper, BlockingUserInteractionQuestion event) {
             super(uiHelper);
             this.event = event;
         }
@@ -98,14 +98,14 @@ public class ActivityUIHelper<T extends BaseMyActivity> extends UIHelper<T> {
             return 0;
         }
 
-        public static final Creator<BlockingUserInteractionQuestionResultAdapter> CREATOR = new Creator<BlockingUserInteractionQuestionResultAdapter>() {
+        public static final Creator<BlockingUserInteractionQuestionResultAdapter<?,?>> CREATOR = new Creator<BlockingUserInteractionQuestionResultAdapter<?,?>>() {
             @Override
-            public BlockingUserInteractionQuestionResultAdapter createFromParcel(Parcel in) {
-                return new BlockingUserInteractionQuestionResultAdapter(in);
+            public BlockingUserInteractionQuestionResultAdapter<?,?> createFromParcel(Parcel in) {
+                return new BlockingUserInteractionQuestionResultAdapter<>(in);
             }
 
             @Override
-            public BlockingUserInteractionQuestionResultAdapter[] newArray(int size) {
+            public BlockingUserInteractionQuestionResultAdapter<?,?>[] newArray(int size) {
                 return new BlockingUserInteractionQuestionResultAdapter[size];
             }
         };

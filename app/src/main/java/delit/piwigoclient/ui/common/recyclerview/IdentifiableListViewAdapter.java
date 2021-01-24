@@ -18,7 +18,7 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link T}
  */
-public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListViewAdapter<LVA,P,T, IS, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T extends Identifiable, IS extends IdentifiableItemStore<T>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
+public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListViewAdapter<LVA,P,T, IS, VH, MSL>, P extends BaseRecyclerViewAdapterPreferences<P>, T extends Identifiable, IS extends IdentifiableItemStore<T>, VH extends CustomViewHolder<VH, LVA, P, T, MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>> extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
 
     private final IS itemStore;
     private final Class<? extends ViewModelContainer> modelType;
@@ -26,6 +26,7 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
 
     public IdentifiableListViewAdapter(Context context, final Class<? extends ViewModelContainer> modelType, final IS itemStore, MSL multiSelectStatusListener, P prefs) {
         super(multiSelectStatusListener, prefs);
+        this.setHasStableIds(true);
         this.itemStore = itemStore;
         this.modelType = modelType;
     }
@@ -44,10 +45,11 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
     public abstract VH buildViewHolder(View view, int viewType);
 
     @Override
-    protected void removeItemFromInternalStore(int idxRemoved) {
+    protected T removeItemFromInternalStore(int idxRemoved) {
         if (idxRemoved >= 0 && idxRemoved < itemStore.getItemCount()) {
             itemStore.getItems().remove(idxRemoved);
         }
+        return null;
     }
 
     protected IS getItemStore() {

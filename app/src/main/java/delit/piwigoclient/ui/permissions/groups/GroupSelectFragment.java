@@ -20,7 +20,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 
 import delit.libs.core.util.Logging;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
 import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
@@ -31,6 +30,7 @@ import delit.piwigoclient.model.piwigo.PiwigoGroups;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
@@ -40,7 +40,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter<?,?,?>, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group> {
+public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter<?,?,?>, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group> {
 
     private static final String GROUPS_MODEL = "groupsModel";
     private static final String TAG = "GrpSelFrag";
@@ -131,8 +131,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
 
         return v;
     }
-
-    private static class GroupSelectMultiSelectListener<MSL extends GroupSelectMultiSelectListener<MSL,LVA>, LVA extends GroupRecyclerViewAdapter<LVA,?,MSL>> extends GroupRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA,Group> {
+    private static class GroupSelectMultiSelectListener<MSL extends GroupSelectMultiSelectListener<MSL,LVA,P,VH>, LVA extends GroupRecyclerViewAdapter<LVA,VH,MSL>, P extends GroupRecyclerViewAdapter.GroupViewAdapterPreferences, VH extends GroupRecyclerViewAdapter.GroupViewHolder<VH,LVA,MSL>> extends GroupRecyclerViewAdapter.MultiSelectStatusAdapter<MSL,LVA, GroupRecyclerViewAdapter.GroupViewAdapterPreferences, Group,VH> {
 
         @Override
         public void onItemLongClick(LVA adapter, Group item) {
@@ -259,7 +258,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         }
     }
 
-    private void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    protected void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
@@ -290,7 +289,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         getListAdapter().replaceOrAddItem(event.getGroup());
     }
 
-    private static class CustomPiwigoResponseListener extends BasicPiwigoResponseListener<GroupSelectFragment> {
+    private static class CustomPiwigoResponseListener<F extends GroupSelectFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {

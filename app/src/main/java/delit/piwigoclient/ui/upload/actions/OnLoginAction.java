@@ -16,7 +16,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class OnLoginAction<T extends AbstractUploadFragment<T>> extends UIHelper.Action<FragmentUIHelper<T>, T, LoginResponseHandler.PiwigoOnLoginResponse> implements Parcelable {
+public class OnLoginAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.Action<FUIH,F, LoginResponseHandler.PiwigoOnLoginResponse> implements Parcelable {
     public OnLoginAction(){}
 
     protected OnLoginAction(Parcel in) {
@@ -33,21 +33,21 @@ public class OnLoginAction<T extends AbstractUploadFragment<T>> extends UIHelper
         return 0;
     }
 
-    public static final Creator<OnLoginAction<?>> CREATOR = new Creator<OnLoginAction<?>>() {
+    public static final Creator<OnLoginAction<?,?>> CREATOR = new Creator<OnLoginAction<?,?>>() {
         @Override
-        public OnLoginAction<?> createFromParcel(Parcel in) {
+        public OnLoginAction<?,?> createFromParcel(Parcel in) {
             return new OnLoginAction<>(in);
         }
 
         @Override
-        public OnLoginAction<?>[] newArray(int size) {
-            return new OnLoginAction<?>[size];
+        public OnLoginAction<?,?>[] newArray(int size) {
+            return new OnLoginAction<?,?>[size];
         }
     };
 
     @Override
-    public boolean onSuccess(FragmentUIHelper<T> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
-        T fragment = uiHelper.getParent();
+    public boolean onSuccess(FUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        F fragment = uiHelper.getParent();
         if(fragment != null) {
             MaterialButton button = fragment.getFileSelectButton();
             if(button != null) { // will be null if fragment not visible or initialising perhaps.

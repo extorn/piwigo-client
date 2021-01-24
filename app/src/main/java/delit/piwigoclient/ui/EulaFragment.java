@@ -21,6 +21,7 @@ import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
 import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
@@ -29,7 +30,7 @@ import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
  * Created by gareth on 07/06/17.
  */
 
-public class EulaFragment extends MyFragment<EulaFragment> {
+public class EulaFragment<F extends EulaFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
     public static EulaFragment newInstance() {
         EulaFragment fragment = new EulaFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);

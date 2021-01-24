@@ -24,7 +24,7 @@ import delit.piwigoclient.ui.common.UIHelper;
  * Created by gareth on 12/05/17.
  */
 
-public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPreferenceFragment> {
+public class UploadPreferenceFragment<F extends UploadPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends MyPreferenceFragment<F,FUIH> {
 
     private static final String TAG = "Upload Settings";
 
@@ -64,7 +64,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPrefere
         });
     }
 
-    private static class OnLoginAction extends UIHelper.Action<FragmentUIHelper<UploadPreferenceFragment>, UploadPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse>  implements Parcelable {
+    private static class OnLoginAction<F extends UploadPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, LoginResponseHandler.PiwigoOnLoginResponse>  implements Parcelable {
 
         protected OnLoginAction() {}
 
@@ -95,7 +95,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPrefere
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<UploadPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+        public boolean onSuccess(FUIH uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             if (sessionDetails == null) {
@@ -109,7 +109,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPrefere
         }
     }
 
-    private static class FailedUploadCleanAction extends UIHelper.Action<FragmentUIHelper<UploadPreferenceFragment>, UploadPreferenceFragment, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse>  implements Parcelable {
+    private static class FailedUploadCleanAction<F extends UploadPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH, F, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse>  implements Parcelable {
 
         protected FailedUploadCleanAction(){}
 
@@ -140,13 +140,13 @@ public class UploadPreferenceFragment extends MyPreferenceFragment<UploadPrefere
         };
 
         @Override
-        public boolean onSuccess(FragmentUIHelper<UploadPreferenceFragment> uiHelper, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse response) {
+        public boolean onSuccess(FUIH uiHelper, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse response) {
             uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getAppContext().getString(R.string.cleared_failed_uploads_from_server_pattern, response.getFilesCleaned()));
             return super.onSuccess(uiHelper, response);
         }
 
         @Override
-        public boolean onFailure(FragmentUIHelper<UploadPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(FUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             return super.onFailure(uiHelper, response);
         }
     }

@@ -8,7 +8,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<AbstractUploadFragment<?>>, AbstractUploadFragment<?>, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> implements Parcelable {
+public class LoadAlbumTreeAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.Action<FUIH,F, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> implements Parcelable {
 
     public LoadAlbumTreeAction() {
     }
@@ -27,21 +27,21 @@ public class LoadAlbumTreeAction extends UIHelper.Action<FragmentUIHelper<Abstra
         return 0;
     }
 
-    public static final Creator<LoadAlbumTreeAction> CREATOR = new Creator<LoadAlbumTreeAction>() {
+    public static final Creator<LoadAlbumTreeAction<?,?>> CREATOR = new Creator<LoadAlbumTreeAction<?,?>>() {
         @Override
-        public LoadAlbumTreeAction createFromParcel(Parcel in) {
-            return new LoadAlbumTreeAction(in);
+        public LoadAlbumTreeAction<?,?> createFromParcel(Parcel in) {
+            return new LoadAlbumTreeAction<>(in);
         }
 
         @Override
-        public LoadAlbumTreeAction[] newArray(int size) {
+        public LoadAlbumTreeAction<?,?>[] newArray(int size) {
             return new LoadAlbumTreeAction[size];
         }
     };
 
     @Override
-    public boolean onSuccess(FragmentUIHelper<AbstractUploadFragment<?>> uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
-        AbstractUploadFragment<?> parent = getActionParent(uiHelper);
+    public boolean onSuccess(FUIH uiHelper, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse response) {
+        F parent = getActionParent(uiHelper);
         if(parent != null) {
             parent.setUploadToAlbum(response.getDeepestAlbumOnDesiredPath().toStub());
         }

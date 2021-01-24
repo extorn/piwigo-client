@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
  * Created by gareth on 17/10/17.
  */
 
-public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
+public class FragmentUIHelper<FUI extends FragmentUIHelper<FUI,T>, T extends Fragment> extends UIHelper<FUI,T> {
 
     private boolean blockDialogsFromShowing = false;
 
@@ -35,9 +35,9 @@ public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
         if(canShowDialog) {
             Fragment f = getParent();
             if(f != null) {
-                MyActivity activity = (MyActivity) f.getActivity();
+                MyActivity<?,?> activity = (MyActivity<?,?>) f.getActivity();
                 if(activity != null) {
-                    UIHelper activityUiHelper = activity.getUiHelper();
+                    ActivityUIHelper<?,?> activityUiHelper = activity.getUiHelper();
                     canShowDialog = getParentView() != null && ViewCompat.isAttachedToWindow(getParentView());
                     canShowDialog &= !activityUiHelper.isDialogShowing();
                     canShowDialog &= !activity.isFinishing();

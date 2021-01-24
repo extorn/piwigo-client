@@ -14,13 +14,14 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 /**
  * Created by gareth on 07/06/17.
  */
 
-public class LicencesFragment extends MyFragment<LicencesFragment> {
+public class LicencesFragment<F extends LicencesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
     public static LicencesFragment newInstance() {
         LicencesFragment fragment = new LicencesFragment();
         fragment.setTheme(R.style.Theme_App_EditPages);

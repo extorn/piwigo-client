@@ -81,6 +81,7 @@ import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.view.AbstractViewAlbumFragment;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
@@ -114,7 +115,7 @@ import static android.view.View.VISIBLE;
  * Use the {@link UploadFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>> extends MyFragment<T> implements FilesToUploadRecyclerViewAdapter.RemoveListener {
+public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends MyFragment<F,FUIH> implements FilesToUploadRecyclerViewAdapter.RemoveListener {
     // the fragment initialization parameters
     private static final String TAG = "UploadFragment";
     private static final String SAVED_STATE_UPLOAD_TO_ALBUM = "uploadToAlbum";
@@ -222,7 +223,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
     }
 
     public void onFilesForUploadTooLarge(String filenamesCsv, Map<Uri, Double> filesForReview) {
-        getUiHelper().showOrQueueCancellableDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenamesCsv), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction<T>(getUiHelper(), filesForReview.keySet()));
+        getUiHelper().showOrQueueCancellableDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenamesCsv), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction<>(getUiHelper(), filesForReview.keySet()));
     }
 
     public boolean isCompressVideos() {
@@ -234,7 +235,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
     }
 
     public void withFilesUnacceptableForUploadRejected(Set<String> unacceptableFileExts) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_error, getString(R.string.alert_upload_job_contains_files_server_will_not_accept_pattern, unacceptableFileExts.size()), R.string.button_cancel, R.string.button_yes, new UnacceptableFilesAction<T>(getUiHelper(), unacceptableFileExts));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_error, getString(R.string.alert_upload_job_contains_files_server_will_not_accept_pattern, unacceptableFileExts.size()), R.string.button_cancel, R.string.button_yes, new UnacceptableFilesAction<>(getUiHelper(), unacceptableFileExts));
     }
 
     private void addUploadingAsFieldsIfAppropriate(View v) {
@@ -308,7 +309,8 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         if (PiwigoSessionDetails.getInstance(activeProfile) == null) {
             fileSelectButton.setEnabled(false);
             String serverUri = activeProfile.getPiwigoServerAddress(getPrefs(), getContext());
-            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), new LoginResponseHandler(), new OnLoginAction<T>());
+            String callName = getString(R.string.logging_in_to_piwigo_pattern, serverUri);
+            getUiHelper().invokeActiveServiceCall(callName, new LoginResponseHandler(), new OnLoginAction<>());
         } else {
             String list = CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes());
             String fileTypesStr = String.format("(%1$s)", list == null ? " * " : list);
@@ -499,7 +501,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
                     if(!albumPath.isEmpty()) {
                         String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
                         AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
-                        getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
+                        getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction<>());
                     }
                 }
             }
@@ -537,12 +539,6 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         layoutParams.bottomToTop = R.id.upload_files_button;
         ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
 
-        Objects.requireNonNull(filesForUploadView.getAdapter()).registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                compressVideosButton.setEnabled(filesForUploadView.getAdapter().getItemCount() > 0);
-            }
-        });
     }
 
 
@@ -683,7 +679,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
         setUploadJobId(uploadJob.getJobId());
         uploadToAlbum = new CategoryItemStub("???", uploadJob.getUploadToCategory());
         AlbumGetSubAlbumNamesResponseHandler hndler = new AlbumGetSubAlbumNamesResponseHandler(uploadJob.getUploadToCategory(), false);
-        getUiHelper().addActionOnResponse(getUiHelper().addActiveServiceCall(hndler), new OnGetSubAlbumNamesAction<T>());
+        getUiHelper().addActionOnResponse(getUiHelper().addActiveServiceCall(hndler), new OnGetSubAlbumNamesAction<>());
         selectedGalleryTextView.setText(uploadToAlbum.getName());
 
         byte privacyLevelWanted = uploadJob.getPrivacyLevelWanted();
@@ -707,7 +703,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
     private void updateUiUploadStatusFromJobIfRun(Context context) {
         UploadJob uploadJob = getActiveJob(context);
         if (uploadJob != null) {
-            new ReloadDataFromUploadJobTask<>((T)this, uploadJob).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new ReloadDataFromUploadJobTask<F,FUIH>((F)this, uploadJob).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             allowUserUploadConfiguration(null);
         }
@@ -899,7 +895,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
             if (activeJob.isFinished()) {
                 if (activeJob.uploadItemRequiresAction(itemToRemove)) {
                     String message = getString(R.string.alert_message_remove_file_server_state_incorrect);
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new PartialUploadFileAction<T>(getUiHelper(), itemToRemove));
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new PartialUploadFileAction<>(getUiHelper(), itemToRemove));
                 } else {
                     // job stopped, but upload of this file never got to the server.
                     activeJob.cancelFileUpload(itemToRemove);
@@ -922,7 +918,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
             }
         } else {
             if (longClick) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_delete_all_files_selected_for_upload), R.string.button_no, R.string.button_yes, new DeleteAllFilesSelectedAction<T>(getUiHelper()));
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_delete_all_files_selected_for_upload), R.string.button_no, R.string.button_yes, new DeleteAllFilesSelectedAction<>(getUiHelper()));
             } else {
                 adapter.remove(itemToRemove);
                 releaseUriPermissionsForUploadItem(itemToRemove);
@@ -1052,7 +1048,7 @@ public abstract class AbstractUploadFragment<T extends AbstractUploadFragment<T>
     }
 
     @Override
-    protected BasicPiwigoResponseListener<T> buildPiwigoResponseListener(Context context) {
+    protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
         return new ForegroundPiwigoFileUploadResponseListener<>(context);
     }
 

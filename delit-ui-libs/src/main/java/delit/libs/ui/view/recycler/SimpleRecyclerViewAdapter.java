@@ -6,12 +6,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class SimpleRecyclerViewAdapter<LVA extends SimpleRecyclerViewAdapter<LVA,T,P,VH,MSL>, T, P extends BaseRecyclerViewAdapterPreferences<P>, VH extends CustomViewHolder<VH, LVA, P,T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,T>> extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
+public abstract class SimpleRecyclerViewAdapter<LVA extends SimpleRecyclerViewAdapter<LVA,T,P,VH,MSL>, T, P extends BaseRecyclerViewAdapterPreferences<P>, VH extends CustomViewHolder<VH, LVA, P,T,MSL>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,P,T,VH>> extends BaseRecyclerViewAdapter<LVA, P, T, VH, MSL> {
 
     private List<T> itemStore;
 
+    /**
+     * WARNING: setStableIds must be false unless they are stable.
+     * They are stable here unless the item store is sorted
+     * @param multiSelectStatusListener
+     * @param prefs
+     */
     public SimpleRecyclerViewAdapter(MSL multiSelectStatusListener, P prefs) {
         super(multiSelectStatusListener, prefs);
+        setHasStableIds(true);
     }
 
     public void setItems(List<T> items) {
@@ -38,8 +45,8 @@ public abstract class SimpleRecyclerViewAdapter<LVA extends SimpleRecyclerViewAd
     }
 
     @Override
-    protected void removeItemFromInternalStore(int idxToRemove) {
-        itemStore.remove(idxToRemove);
+    protected T removeItemFromInternalStore(int idxToRemove) {
+        return itemStore.remove(idxToRemove);
     }
 
     @Override

@@ -105,7 +105,7 @@ import hotchemi.android.rate.MyAppRate;
 
 import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 
-public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> extends MyActivity<T> implements ComponentCallbacks2 {
+public abstract class AbstractMainActivity<T extends AbstractMainActivity<T,UIH>,UIH extends ActivityUIHelper<UIH,T>> extends MyActivity<T,UIH> implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
     private static final String STATE_BASKET = "basket";
@@ -119,7 +119,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     private Basket basket = new Basket();
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
-    private DownloadManager<ActivityUIHelper<T>, T> downloadManager;
+    private DownloadManager<UIH, T> downloadManager;
 
 
     public AbstractMainActivity() {
@@ -135,7 +135,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
 
 //        if(BuildConfig.DEBUG) {
 //            getSupportFragmentManager().enableDebugLogging(true);
@@ -304,19 +304,19 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         return intent;
     }
 
-    public static Intent buildShowGroupsIntent(UploadActivity context) {
+    public static Intent buildShowGroupsIntent(Context context) {
         Intent intent = new Intent("delit.piwigoclient.VIEW_GROUPS", null, context.getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         return intent;
     }
 
-    public static Intent buildShowUsersIntent(UploadActivity context) {
+    public static Intent buildShowUsersIntent(Context context) {
         Intent intent = new Intent("delit.piwigoclient.VIEW_USERS", null, context.getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         return intent;
     }
 
-    public static Intent buildShowTopTipsIntent(UploadActivity context) {
+    public static Intent buildShowTopTipsIntent(Context context) {
         Intent intent = new Intent("delit.piwigoclient.VIEW_TOP_TIPS", null, context.getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -396,7 +396,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
             boolean allowVideoPlayback = AlbumViewPreferences.isVideoPlaybackEnabled(prefs, this);
             if (selectedItem instanceof VideoResourceItem) {
                 if (showVideosInSlideshow) {
-                    newFragment = new SlideshowFragment();
+                    newFragment = new SlideshowFragment<>();
                     newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
                     newFragment = new AlbumVideoItemFragment();
@@ -404,7 +404,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     ((AlbumVideoItemFragment) newFragment).onPageSelected();
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
-                newFragment = new SlideshowFragment();
+                newFragment = new SlideshowFragment<>();
                 newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
             }
         }
@@ -751,7 +751,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         return invoked;
     }
 
-    private boolean invokeStoredActionIfAvailableOnClass(Class c) {
+    private boolean invokeStoredActionIfAvailableOnClass(Class<?> c) {
 
         boolean invoked = false;
         boolean actionAvailable = onLoginActionMethodName != null;
@@ -870,7 +870,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         }
         prefs.setAllowItemAddition(true);
         prefs.withInitialSelection(event.getInitialSelection());
-        RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
+        RecyclerViewCategoryItemSelectFragment<?,?> f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
         showFragmentNow(f);
     }
 
@@ -880,7 +880,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
         public void onBackStackChanged() {
             List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
             if(!fragmentList.isEmpty()) {
-                ((MyFragment)fragmentList.get(fragmentList.size()-1)).updatePageTitle();
+                ((MyFragment<?,?>)fragmentList.get(fragmentList.size()-1)).updatePageTitle();
             }
         }
     }

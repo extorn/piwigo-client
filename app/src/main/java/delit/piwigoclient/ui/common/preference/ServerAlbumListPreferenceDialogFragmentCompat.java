@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
@@ -18,8 +19,6 @@ import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
-
-import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 
@@ -38,10 +37,11 @@ import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHa
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
-public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
+public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     // state persistent values
     private long activeServiceCall = -1;
     private CustomPiwigoResponseListener serviceCallHandler;
@@ -191,7 +191,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private static class CustomPiwigoResponseListener<S extends ServerAlbumListPreferenceDialogFragmentCompat> extends BasicPiwigoResponseListener<S> {
+    private static class CustomPiwigoResponseListener<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends BasicPiwigoResponseListener<FUIH,F> {
 
 
         @Override
@@ -279,7 +279,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private static class CustomUIHelper extends UIHelper<DialogFragment> {
+    private static class CustomUIHelper extends UIHelper<CustomUIHelper,DialogFragment> {
         public CustomUIHelper(DialogFragment parent, SharedPreferences prefs, Context context) {
             super(parent, prefs, context);
         }

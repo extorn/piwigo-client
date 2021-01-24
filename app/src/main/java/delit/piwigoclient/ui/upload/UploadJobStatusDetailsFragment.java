@@ -26,9 +26,10 @@ import delit.libs.ui.view.button.MaterialCheckboxTriState;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
-public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDetailsFragment> {
+public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends MyFragment<F,FUIH> {
     private static final String STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String TAG = "UpJobStatFrag";
     private UploadJob uploadJob;

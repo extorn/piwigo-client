@@ -81,7 +81,7 @@ import static android.provider.DocumentsContract.EXTRA_INITIAL_URI;
 import static android.view.View.GONE;
 
 //@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter<?,FolderItem,?,?>, FolderItemViewAdapterPreferences, FolderItem> implements BackButtonHandler {
+public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends RecyclerViewLongSetSelectFragment<LVA, FolderItemViewAdapterPreferences, FolderItem> implements BackButtonHandler {
     private static final String TAG = "RVFolderSelFrg";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
     private DocumentFileBreadcrumbsView folderPathView;
@@ -93,8 +93,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
     private AppSettingsViewModel appSettingsViewModel;
     private FilterControl fileExtFilters;
 
-    public static RecyclerViewDocumentFileFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
-        RecyclerViewDocumentFileFolderItemSelectFragment fragment = new RecyclerViewDocumentFileFolderItemSelectFragment();
+    public static <F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> F newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
+        F fragment = (F) new RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>();
         fragment.setArguments(RecyclerViewDocumentFileFolderItemSelectFragment.buildArgsBundle(prefs, actionId));
         return fragment;
     }
@@ -378,7 +378,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private void processOpenDocumentsWithoutPermissions(List<FolderItem> itemsShared) {
+    protected void processOpenDocumentsWithoutPermissions(List<FolderItem> itemsShared) {
         if(BuildConfig.PAID_VERSION) {
             new SharedFilesClonedIntentProcessingTask(this).executeNow(itemsShared);
         } else {
@@ -387,7 +387,8 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private @NonNull List<FolderItem> processOpenDocuments(Intent resultData, ProgressListener listener) {
+    @NonNull
+    protected List<FolderItem> processOpenDocuments(Intent resultData, ProgressListener listener) {
         ClipData clipData = resultData.getClipData();
         List<FolderItem> itemsShared = new ArrayList<>();
         boolean permissionsMissing = false;
@@ -455,7 +456,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         return !allUriFlagsAreSet;
     }
 
-    private List<FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
+    protected List<FolderItem> processOpenDocumentTree(Intent resultData, ProgressListener listener) {
         if (resultData.getData() == null) {
             if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                 getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
@@ -534,7 +535,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         if(getListAdapter() == null) {
             applyNewRootsAdapter(buildFolderRootsAdapter());
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter(), getViewPrefs());
+            final LVA viewAdapter = (LVA) new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter(), getViewPrefs());
             viewAdapter.setTaskListener(new FolderItemTaskListener(getUiHelper()));
 
             if (!viewAdapter.isItemSelectionAllowed()) {
@@ -834,10 +835,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private static class SharedFilesClonedIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, List<FolderItem>, Integer, List<FolderItem>> implements ProgressListener {
+    private static class SharedFilesClonedIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<F, List<FolderItem>, Integer, List<FolderItem>> implements ProgressListener {
 
 
-        public SharedFilesClonedIntentProcessingTask(RecyclerViewDocumentFileFolderItemSelectFragment parent) {
+        public SharedFilesClonedIntentProcessingTask(F parent) {
             super(parent);
             withContext(parent.requireContext());
         }
@@ -908,7 +909,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 }
             }
             getOwner().getUiHelper().hideProgressIndicator();
-            getOwner().fileExtFilters.setEnabled(true);
+            getOwner().getFileExtFilters().setEnabled(true);
         }
 
         @Override
@@ -922,10 +923,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private static class SharedFilesIntentProcessingTask extends OwnedSafeAsyncTask<RecyclerViewDocumentFileFolderItemSelectFragment, Intent, Integer, List<FolderItem>> implements ProgressListener {
+    protected View getFileExtFilters() {
+        return fileExtFilters;
+    }
+
+    private static class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<F, Intent, Integer, List<FolderItem>> implements ProgressListener {
 
 
-        public SharedFilesIntentProcessingTask(RecyclerViewDocumentFileFolderItemSelectFragment parent) {
+        public SharedFilesIntentProcessingTask(F parent) {
              super(parent);
              withContext(parent.requireContext());
         }
@@ -970,7 +975,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
                 }
             }
             getOwner().getUiHelper().hideProgressIndicator();
-            getOwner().fileExtFilters.setEnabled(true);
+            getOwner().getFileExtFilters().setEnabled(true);
         }
 
         @Override
@@ -984,7 +989,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private void addRootFolder(@NonNull DocumentFile docFile) {
+    protected void addRootFolder(@NonNull DocumentFile docFile) {
         String filename = IOUtils.getFilename(docFile);
         folderRootsAdapter.add(filename, docFile);
         folderRootFolderSpinner.setSelection(folderRootsAdapter.getCount() - 1); // calls listener because it's a definite change.
@@ -1033,10 +1038,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment extends RecyclerVi
         }
     }
 
-    private static class TakeCopyOfFilesActionListener extends UIHelper.QuestionResultAdapter<FragmentUIHelper<RecyclerViewDocumentFileFolderItemSelectFragment>, RecyclerViewDocumentFileFolderItemSelectFragment> implements Parcelable {
+    private static class TakeCopyOfFilesActionListener<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {
         private final List<FolderItem> itemsShared;
 
-        public TakeCopyOfFilesActionListener(FragmentUIHelper<RecyclerViewDocumentFileFolderItemSelectFragment> uiHelper, List<FolderItem> itemsShared) {
+        public TakeCopyOfFilesActionListener(FUIH uiHelper, List<FolderItem> itemsShared) {
             super(uiHelper);
             this.itemsShared = itemsShared;
         }

@@ -13,11 +13,11 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.upload.AbstractUploadFragment;
 
-public class FileSizeExceededAction<T extends AbstractUploadFragment<T>> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<T>,T> implements Parcelable {
+public class FileSizeExceededAction<F extends AbstractUploadFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>>  extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
     private final Set<Uri> filesToDelete;
 
-    public FileSizeExceededAction(FragmentUIHelper<T> uiHelper, Set<Uri> filesForReview) {
+    public FileSizeExceededAction(FUIH uiHelper, Set<Uri> filesForReview) {
         super(uiHelper);
         this.filesToDelete = filesForReview;
     }
@@ -38,21 +38,21 @@ public class FileSizeExceededAction<T extends AbstractUploadFragment<T>> extends
         return 0;
     }
 
-    public static final Creator<FileSizeExceededAction<?>> CREATOR = new Creator<FileSizeExceededAction<?>>() {
+    public static final Creator<FileSizeExceededAction<?,?>> CREATOR = new Creator<FileSizeExceededAction<?,?>>() {
         @Override
-        public FileSizeExceededAction<?> createFromParcel(Parcel in) {
+        public FileSizeExceededAction<?,?> createFromParcel(Parcel in) {
             return new FileSizeExceededAction<>(in);
         }
 
         @Override
-        public FileSizeExceededAction<?>[] newArray(int size) {
+        public FileSizeExceededAction<?,?>[] newArray(int size) {
             return new FileSizeExceededAction[size];
         }
     };
 
     @Override
     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-        AbstractUploadFragment<T> fragment = getUiHelper().getParent();
+        F fragment = getUiHelper().getParent();
 
         if (Boolean.TRUE == positiveAnswer) {
             for (Uri file : filesToDelete) {
