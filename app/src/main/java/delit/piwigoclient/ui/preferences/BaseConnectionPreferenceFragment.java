@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -96,6 +98,10 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         cacheLevelPrefListener.onPreferenceChange(cacheLevelPref, getPreferenceValue(cacheLevelPref.getKey()));
     }
 
+    /**
+     * WARNING. This is called before the UIHelper is initialised. DONT try and use it.
+     * @param rootKey
+     */
     protected void buildPreferencesViewAndInitialise(String rootKey) {
         setPreferencesFromResource(R.xml.pref_page_connection, rootKey);
         setHasOptionsMenu(true);
@@ -202,7 +208,6 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
 
         Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
         responseCacheFlushButton.setOnPreferenceClickListener(new ResponseCacheFlushButtonListener(this));
-        setResponseCacheButtonText();
 
         findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
         findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
@@ -277,7 +282,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         if (responseCacheButtonTextRetriever != null && responseCacheButtonTextRetriever.getStatus() != AsyncTask.Status.FINISHED) {
             responseCacheButtonTextRetriever.cancel(true);
         }
-        responseCacheButtonTextRetriever = getUiHelper().submitAsyncTask(new ResponseCacheButtonTextRetriever((F) this));
+        responseCacheButtonTextRetriever = UIHelper.<ResponseCacheButtonTextRetriever,Void>submitAsyncTask(new ResponseCacheButtonTextRetriever<>((F) this) );
     }
 
     @Override
@@ -295,7 +300,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         initialising = false;
     }
 
-    private static class ResponseCacheButtonTextRetriever<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Void, Void, Long> {
+    private static class ResponseCacheButtonTextRetriever<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Object, Void, Long> {
 
         private Preference responseCacheFlushButton;
 
@@ -305,7 +310,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
 
         @Override
-        protected Long doInBackgroundSafely(Void... params) {
+        protected Long doInBackgroundSafely(Object... params) {
             try {
                 this.responseCacheFlushButton = getOwner().findPreference(R.string.preference_caching_clearResponseCache_key);
                 return CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
@@ -354,10 +359,9 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//        }
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setResponseCacheButtonText();
     }
 
     @Override
@@ -404,6 +408,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         initialising = true;
         setPreferenceScreen(null);
         buildPreferencesViewAndInitialise(preferencesKey);
+        setResponseCacheButtonText();
         initialising = false;
     }
 

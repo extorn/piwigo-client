@@ -17,5 +17,4 @@ public abstract class OwnedSafeAsyncTask<Owner, Params, Progress, Result> extend
     public Owner getOwner() {
         return Objects.requireNonNull(ownerRef.get());
     }
-
 }

@@ -96,7 +96,7 @@ import static android.content.Context.CLIPBOARD_SERVICE;
  * Created by gareth on 13/10/17.
  */
 
-public abstract class UIHelper<P extends UIHelper<P,T>,T> {
+public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
     private static final String TAG = "UiHelper";
     private static final String STATE_UIHELPER = "uiHelperState";
@@ -108,9 +108,9 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
     private static final String STATE_SIMPLE_MESSAGE_QUEUE = "UIHelper.simpleMessageQueue";
     private static final String STATE_DIALOG_MESSAGE_QUEUE = "UIHelper.dialogMessageQueue";
     private static ExecutorService executors;
-    private final WeakReference<T> parent;
+    private final WeakReference<OWNER> parent;
     private final SharedPreferences prefs;
-    private final Deque<QueuedDialogMessage<P,T>> dialogMessageQueue = new LinkedBlockingDeque<>(20);
+    private final Deque<QueuedDialogMessage<UIH, OWNER>> dialogMessageQueue = new LinkedBlockingDeque<>(20);
     private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(50);
     private boolean toastShowing = false;
     private Context appContext;
@@ -119,17 +119,17 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
     private final Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
-    private BasicPiwigoResponseListener<P,T> piwigoResponseListener;
+    private BasicPiwigoResponseListener<UIH, OWNER> piwigoResponseListener;
     private int permissionsNeededReason;
     private NotificationManagerCompat notificationManager;
     private WeakReference<ProgressIndicator> progressIndicator;
-    private ConcurrentHashMap<Long, Action<P,T,? extends PiwigoResponseBufferingHandler.Response>> actionOnServerCallComplete = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Long, Action<UIH, OWNER,? extends PiwigoResponseBufferingHandler.Response>> actionOnServerCallComplete = new ConcurrentHashMap<>();
 
-    public UIHelper(T parent, SharedPreferences prefs, Context context) {
+    public UIHelper(OWNER parent, SharedPreferences prefs, Context context) {
         this(parent, prefs, context, DisplayUtils.getActivity(context).getWindow().getDecorView());
     }
 
-    public UIHelper(T parent, SharedPreferences prefs, Context context, @Nullable View attachedView) {
+    public UIHelper(OWNER parent, SharedPreferences prefs, Context context, @Nullable View attachedView) {
         this.appContext = context.getApplicationContext();
         this.prefs = prefs;
         this.parent = new WeakReference<>(parent);
@@ -358,7 +358,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
 
     protected abstract View getParentView();
 
-    public T getParent() {
+    public OWNER getParent() {
         return parent.get();
     }
 
@@ -370,7 +370,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         return msgId;
     }
 
-    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action<P,T,? extends PiwigoResponseBufferingHandler.Response> actionOnResponse) {
+    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action<UIH, OWNER,? extends PiwigoResponseBufferingHandler.Response> actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
         return invokeSilentServiceCall(worker);
     }
@@ -432,7 +432,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         return addActiveServiceCall(titleString, messageId, serviceDesc);
     }
 
-    public <AST extends AsyncTask<P, ?,?>> AST submitAsyncTask(AST task, P... params) {
+    public static <AST extends AsyncTask<PRM, ?,?>,PRM> AST submitAsyncTask(AST task, PRM... params) {
         if (executors == null) {
             executors = Executors.newCachedThreadPool();
         }
@@ -553,11 +553,11 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         return addActiveServiceCall(appContext.getString(titleStringId), worker);
     }
 
-    public BasicPiwigoResponseListener<P,T> getPiwigoResponseListener() {
+    public BasicPiwigoResponseListener<UIH, OWNER> getPiwigoResponseListener() {
         return piwigoResponseListener;
     }
 
-    public void setPiwigoResponseListener(BasicPiwigoResponseListener<P,T> piwigoResponseListener) {
+    public void setPiwigoResponseListener(BasicPiwigoResponseListener<UIH, OWNER> piwigoResponseListener) {
         this.piwigoResponseListener = piwigoResponseListener;
     }
 
@@ -810,7 +810,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         }
     }
 
-    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage<P,T> message) {
+    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage<UIH, OWNER> message) {
         if (!canShowDialog()) {
             return false;
         }
@@ -823,7 +823,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
                 dialogMessageQueue.addFirst(message);
                 showNextQueuedMessage();
             } else {
-                QueuedDialogMessage<P,T> msg = dialogMessageQueue.peek();
+                QueuedDialogMessage<UIH, OWNER> msg = dialogMessageQueue.peek();
                 msg.getListener().chainResult(message.getListener());
             }
             return true;
@@ -836,7 +836,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
             return;
         }
         String msg = getAppContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority());
-        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new UnexpectedUriQuestionResult<>((P) this));
+        showOrQueueDialogQuestion(R.string.alert_warning, msg, R.string.button_stop_warning_me, R.string.button_ok, new UnexpectedUriQuestionResult<>((UIH) this));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -879,7 +879,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction<>((P)this, event.getUntrustedCerts()));
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction<>((UIH)this, event.getUntrustedCerts()));
     }
 
     public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
@@ -896,7 +896,7 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         return messageId;
     }
 
-    public <S extends QueuedDialogMessage<P,T>> void showOrQueueDialogMessage(S message) {
+    public <S extends QueuedDialogMessage<UIH, OWNER>> void showOrQueueDialogMessage(S message) {
         synchronized (dialogMessageQueue) {
             if (!isDialogShowing() && canShowDialog()) {
                 QueuedDialogMessage<?,?> nextMessage = dialogMessageQueue.peek();
@@ -921,23 +921,23 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         }
     }
 
-    public <QRL extends QuestionResultListener<P,T>> void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, detail, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<P,T>> void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, null, View.NO_ID, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
     }
 
-    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QRL listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage<>(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
@@ -945,11 +945,11 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId));
     }
 
-    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QRL listener) {
         showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, positiveButtonTextId, cancellable, listener));
     }
 
-    public <QRL extends QuestionResultListener<P,T>> void showOrQueueDialogMessage(int titleId, String message, QRL listener) {
+    public <QRL extends QuestionResultListener<UIH, OWNER>> void showOrQueueDialogMessage(int titleId, String message, QRL listener) {
         showOrQueueDialogMessage(new QueuedDialogMessage<>(titleId, message, null, listener));
     }
 
@@ -1089,8 +1089,8 @@ public abstract class UIHelper<P extends UIHelper<P,T>,T> {
         void onPopulateDialogView(ViewGroup dialogView, @LayoutRes int layoutId);
     }
 
-    public Action<P,T, PiwigoResponseBufferingHandler.Response> getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
-        return (Action<P, T, PiwigoResponseBufferingHandler.Response>) actionOnServerCallComplete.get(response.getMessageId());
+    public Action<UIH, OWNER, PiwigoResponseBufferingHandler.Response> getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
+        return (Action<UIH, OWNER, PiwigoResponseBufferingHandler.Response>) actionOnServerCallComplete.get(response.getMessageId());
     }
 
     public void addActionOnResponse(long msgId, Action action) {

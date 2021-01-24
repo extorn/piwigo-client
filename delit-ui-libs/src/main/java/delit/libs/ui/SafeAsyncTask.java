@@ -17,6 +17,9 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     private WeakReference<Context> contextRef;
 
+    public SafeAsyncTask(){
+    }
+
     public SafeAsyncTask<Params, Progress, Result> withContext(@NonNull Context context) {
         contextRef = new WeakReference<>(context);
         return this;
