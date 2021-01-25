@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -44,17 +45,17 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     private static final String TAG = "CustomImageDwnldr";
     public static final String EXIF_WANTED_URI_PARAM = "pwgCliEW";
     public static final String EXIF_WANTED_URI_FLAG = EXIF_WANTED_URI_PARAM + "=true";
-    private final Context context;
+    private final @NonNull Context context;
 
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
 
 
-    public AbstractBaseCustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public AbstractBaseCustomImageDownloader(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs) {
         this.context = context;
         this.connectionPrefs = connectionPrefs;
     }
 
-    public AbstractBaseCustomImageDownloader(Context context) {
+    public AbstractBaseCustomImageDownloader(@NonNull Context context) {
         this(context, ConnectionPreferences.getActiveProfile());
     }
 
@@ -119,9 +120,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             // Load EXIF data.
             try {
                 metadata = ImageMetadataReader.readMetadata(imageDataStream);
-            } catch (ImageProcessingException e) {
-                Logging.recordException(e);
-            } catch (IOException e) {
+            } catch (ImageProcessingException | IOException e) {
                 Logging.recordException(e);
             }
         }
@@ -164,37 +163,39 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             builder.clearQuery();
             queryParamIds.remove(EXIF_WANTED_URI_PARAM);
 
-            boolean piwigoFragmentAdded = false;
-            boolean paramAdded = false;
-            for (String param : queryParamIds) {
-                List<String> paramVals = uri.getQueryParameters(param);
-                if (paramVals.size() > 0) {
-                    for (String paramVal : paramVals) {
-                        builder.appendQueryParameter(param, paramVal);
-                        paramAdded = true;
-                    }
-                } else if (!piwigoFragmentAdded) {
-                    if (paramAdded) {
-                        Bundle b = new Bundle();
-                        b.putString("uri", uri.toString());
-                        FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
-                        Logging.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
-                    }
-                    builder.encodedQuery(param);
-                    piwigoFragmentAdded = true;
-                }
+            if(queryParamIds.size() > 0) {
+                readdAnyQueryParameters(c, uri, builder, queryParamIds);
             }
 
-        } else {
-            List<String> pathSegments = uri.getPathSegments();
-            for (int i = 0; i < pathSegments.size(); i++) {
-                builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
+        }
+        List<String> pathSegments = uri.getPathSegments();
+        for (int i = 0; i < pathSegments.size(); i++) {
+            builder.appendEncodedPath(Uri.encode(pathSegments.get(i)));
+        }
+        return builder.build().toString();
+    }
+
+    private void readdAnyQueryParameters(Context c, Uri uri, Uri.Builder builder, Set<String> queryParamIds) {
+        boolean piwigoFragmentAdded = false;
+        boolean paramAdded = false;
+        for (String param : queryParamIds) {
+            List<String> paramVals = uri.getQueryParameters(param);
+            if (paramVals.size() > 0) {
+                for (String paramVal : paramVals) {
+                    builder.appendQueryParameter(param, paramVal);
+                    paramAdded = true;
+                }
+            } else if (!piwigoFragmentAdded) {
+                if (paramAdded) {
+                    Bundle b = new Bundle();
+                    b.putString("uri", uri.toString());
+                    FirebaseAnalytics.getInstance(c).logEvent("uri_error", b);
+                    Logging.log(Log.ERROR, TAG, "Corrupting uri : " + uri.toString());
+                }
+                builder.encodedQuery(param);
+                piwigoFragmentAdded = true;
             }
         }
-
-
-
-        return builder.build().toString();
     }
 
     @Override
