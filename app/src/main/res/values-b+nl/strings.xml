@@ -59,7 +59,6 @@
     <string name="button_unlink">Ontkoppelen</string>
     <string name="button_untag">Tag verwijderen</string>
     <string name="button_close">Dichtbij</string>
-    <string name="tools_menu_title">Hulpmiddelen</string>
     <string name="settings_menu_title">App instellingen</string>
     <string name="offline_mode_menu_title">Offline modus</string>
     <string name="online_mode_menu_title">Online mode</string>
@@ -67,7 +66,6 @@
     <string name="upload_menu_title">Uploaden</string>
     <string name="upload_page_title">Piwigo uploaden</string>
     <string name="gallery_to_alter_title">Uploaden naar</string>
-    <string name="login_button_title">Log in</string>
 
     <string name="alert_question_enable_network_access">Gegevens ophalen van de server toestaan?</string>
     <string name="alert_question_disable_network_access">Alleen gegevens gebruiken die al in het cachegeheugen zijn opgeslagen op dit apparaat?</string>
@@ -80,12 +78,8 @@
     <string name="videoCacheCleared_message">Videocache gewist. Alle video\'s worden bij de volgende aanvraag gedownload van de externe server.</string>
     <string name="videoCacheClearFailed_message">De videocache kan op dit moment niet worden gewist. Als het probleem zich blijft voordoen, meldt u de fout.</string>
 
-    <string name="title_activity_view_gallery">Bekijk galerij</string>
     <string name="navigation_drawer_open">Open de navigatielade</string>
     <string name="navigation_drawer_close">Sluit de navigatielade</string>
-
-    <string name="notification_upload_paused">PIWIGO Upload onderbroken</string>
-    <string name="notification_upload_resumed">PIWIGO Upload hervat</string>
 
     <string name="alert_items_for_upload_already_exist_message_pattern">%1$d bestanden bestaan ​​al op de server. Hun machtigingen zullen worden gewijzigd om de hier geselecteerde personen weer te geven, en indien nodig zullen ze aan dit album worden gekoppeld.</string>
     <string name="alert_upload_success">Upload compleet.</string>
@@ -97,7 +91,6 @@
     <string name="alert_error_upload_file_no_longer_available_message_pattern">Bestand%1$s is niet langer beschikbaar op het apparaat, misschien is het verwijderd of verplaatst.\n%2$s</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Fout tijdens het uploaden van bestand%1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">Geüpload bestand%1$s is al aanwezig op de server, actie geannuleerd.</string>
-    <string name="alert_error_upload_add_file_failed_message_pattern">Fout bij het toevoegen van geüpload bestand%1$s aan album. Opnieuw proberen?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Upload bestand%1$s is mislukt vanwege een fout in PIWIGO-server (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Upload bestand%1$s is mislukt vanwege een webserverfout (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">Upload bestand%1$s is mislukt vanwege een fout bij het verwerken van de PIWIGO-reactie. Dit komt waarschijnlijk door een PIWIGO API-wijziging. Niet-parseerbare reactie:%2$s.</string>
@@ -128,15 +121,12 @@
     <string name="alert_title_error_handling_response">Fout bij het parseren van piwigo-reactie</string>
     <string name="alert_error_handling_response_pattern">Niet-parseerbare reactie:%1$d (%2$s)</string>
     <string name="none_selected">Geen</string>
-    <string name="alert_title_error_too_many_users">Fout</string>
     <string name="alert_error_too_many_users_message">Te veel gebruikers om te verwerken. Dien een uitbreidingsverzoek in om paging van gebruikers mogelijk te maken.</string>
 
     <string name="slideshow_resource_action_download">Download bestand</string>
     <string name="slideshow_resource_action_delete">Verwijderen</string>
     <string name="slideshow_resource_action_copy">Kopiëren naar album</string>
     <string name="slideshow_resource_action_move">Ga naar album</string>
-    <string name="slideshow_image_details_actions">Acties</string>
-    <string name="slideshow_image_details_exif">EXIF-gegevens</string>
     <string name="slideshow_image_details_comments">Opmerkingen</string>
 
     <string name="gallery_details_updating_progress_title">Album bijwerken</string>
@@ -144,10 +134,6 @@
     <string name="gallery_details_name_title">Albumnaam</string>
     <string name="gallery_details_description_title">Albumbeschrijving</string>
     <string name="gallery_details_save_button">Sparen</string>
-    <string name="gallery_details_discard_button">Gooi weg</string>
-    <string name="gallery_action_delete_progress_title">Album verwijderen</string>
-    <string name="gallery_action_delete_error_subcategories_present">Kan een album met subalbums niet verwijderen. Verwijder deze eerst.</string>
-    <string name="gallery_action_delete_error_photos_present">Kan een album met foto\'s of andere bestanden niet verwijderen. Verwijder deze eerst.</string>
     <string name="notification_upload_event">Piwigo uploaden</string>
     <string name="progress_downloading">Bestand downloaden</string>
     <string name="alert_error_unimplemented">Functie nog niet geïmplementeerd.</string>
@@ -319,14 +305,11 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="button_unlock">Ontgrendelen</string>
     <string name="alert_app_unlocked_message">De app is nu ontgrendeld</string>
     <string name="gallery_details_status_title">Privacystatus</string>
-    <string name="gallery_details_status_galleryIsPrivate">Ja</string>
-    <string name="gallery_details_status_galleryIsPublic">Nee</string>
     <string name="gallery_details_status">Beperk de toegang tot deze map</string>
     <string name="gallery_details_allowed_groups_title">Toegestane groepen</string>
     <string name="gallery_details_allowed_users_title">Toegestane gebruikers</string>
     <string name="click_to_view">Klik om te bekijken</string>
     <string name="click_to_view_pattern">%1$d - Klik om te bekijken / bewerken</string>
-    <string name="alert_warning_lowMemory">Slecht geheugen</string>
     <string name="alert_warning_lowMemory_message">Het apparaat heeft onvoldoende geheugen (%1$d). De afbeeldingscache in het geheugen is gewist.</string>
     <string name="files_for_upload_title">Bestanden om te uploaden</string>
     <string name="alert_information">Informatie</string>
@@ -347,7 +330,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Waarschuwing</string>
     <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">De miniatuurgrootte die u hebt geselecteerd, wordt niet standaard ondersteund door de server waarmee u bent verbonden. De server retourneert de afbeelding met de grootte van de "dichtstbijzijnde overeenkomst".</string>
-    <string name="rate_dialog_message">Als u deze app graag gebruikt, zou u dan even de tijd willen nemen om deze te beoordelen? Het duurt niet langer dan een minuut. Bedankt voor uw steun!</string>
     <string name="groups_menu_title">Groepen</string>
     <string name="group_members_pattern">(%1$d leden)</string>
     <string name="alert_group_delete_success_pattern">Groep (%1$s) is verwijderd</string>
@@ -417,14 +399,12 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="progress_reloading_album_permissions">Toegangsrechten voor albums opnieuw berekenen</string>
     <string name="group_is_default_title">Is standaard?</string>
     <string name="progress_adding_group">Groep toevoegen</string>
-    <string name="upload_unacceptable_files_prefix">Niet-geaccepteerde bestanden</string>
     <string name="alert_error_unable_to_access_local_filesystem">Zonder toegang tot het lokale bestandssysteem kan deze actie niet doorgaan. Sorry.</string>
     <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Zonder toegang tot het lokale bestandssysteem kan deze actie niet doorgaan. Als alternatief voor systeembrede machtigingen, selecteert u de map die u wilt gebruiken in de app-voorkeuren opnieuw.</string>
     <string name="alert_error_admin_user_required">Alleen admin-gebruikers kunnen uploaden, tenzij de community-plug-in is geïnstalleerd. Sorry.</string>
     <string name="upload_username_title">Upload als</string>
     <string name="certificates_heading">Certificaten</string>
 
-    <string name="alert_slideshow_out_of_sync_with_album">Deze diavoorstelling geeft niet langer nauwkeurig de huidige albuminhoud weer</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Deze diavoorstelling geeft niet langer nauwkeurig de huidige tag-inhoud weer</string>
     <string name="alert_error_app_not_yet_configured">App nog niet geconfigureerd en verbonden met een PIWIGO-server. Open de app handmatig en configureer deze voordat u probeert items ermee te delen.</string>
     <string name="error_server_configuration_invalid">Onacceptabele piwigo-serverdetails, controleer de app-verbindingsconfiguratie</string>
@@ -466,7 +446,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="error_insufficient_permissions_for_cache_folder">Lees-schrijftoegang tot de cachemap is vereist. Controleer de app-instellingen.</string>
     <string name="alert_title_error_talking_to_server">Fout bij het praten met de server</string>
     <string name="alert_title_error_connecting_to_server">Fout bij het verbinden met de server</string>
-    <string name="alert_warning_message_self_signed_certificates">Zelfondertekende SSL-certificaten mogen niet worden gebruikt op een openbare server (op internet) - doe onderzoek op https://letsencrypt.org of iets dergelijks. Dit is alleen voor testdoeleinden.</string>
     <string name="alert_error_adding_certificate_to_truststore">Fout bij toevoegen van certificaat aan truststore</string>
     <string name="alert_add_cert_to_truststore_pattern">Certificaatketen toevoegen aan lijst met vertrouwde CA\'s?</string>
     <string name="certificate_summary_pattern">Onderwerp:%1$s\nGeldig:%2$s -%3$s\nSerie:%4$s</string>
@@ -479,7 +458,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="album_create_failed">Album kan niet worden gemaakt. Probeer het opnieuw</string>
     <string name="alert_failure">Mislukking</string>
     <string name="album_created_but_permissions_set_failed">Album is gemaakt, maar machtigingen kunnen niet worden ingesteld. De poging om het gedeeltelijk ingestelde album te verwijderen, is mislukt. Controleer de server rechtstreeks.</string>
-    <string name="filelist_item_prefix">Het dossier:</string>
     <string name="alert_loading_certificates_from_selected_files">Certificaten laden van geselecteerde bestanden.</string>
     <string name="x509_key_type_field_pattern">Privésleutel%1$s</string>
     <string name="x509_key_strength_field_pattern">Sterkte:%1$d bits</string>
@@ -489,11 +467,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="x509_cert_valid_to_field_pattern">Geldig tot:%1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">Er zijn%1$d andere gebruikers gevonden die deze gebruikersnaam (%2$s) delen. De meest recente gebruiker van deze Piwigo-server is geselecteerd, maar dit is niet veilig als het mogelijk is dat ze de server op hetzelfde of een vergelijkbaar tijdstip zullen gebruiken. Overweeg om deze gebruikersnamen te wijzigen, zodat de gebruikersnaam een ​​unieke identificatie is voor een bepaalde gebruikersklasse.</string>
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Deze machtigingen zijn nodig om een ​​uploadproces te starten en vervolgens het uploadproces te laten draaien zodra het scherm is uitgeschakeld</string>
-    <string name="alert_no_scheme_specified">U moet uw serveradres voorvoegsel met http:// of https://. Er worden geen andere schema\'s ondersteund. Poort is optioneel als de standaardwaarde 80 voor http of 443 voor https is. Voorbeeld http://piwigo.org/demo of http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">De volgende%1$d bestanden hebben de waarschuwingsdrempel overschreden:%2$s. Wilt u deze uit de upload verwijderen?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">Wil je video\'s comprimeren voordat je ze uploadt?</string>
-    <string name="alert_trusted_certificates_polling">Niet-vertrouwde certificaten die door de server worden geleverd bij het maken van de verbinding, worden aan u getoond, zodat u ervoor kunt kiezen deze toe te voegen aan de trust store. Als u weigert, wordt u niet opnieuw om hetzelfde certificaat gevraagd. Om opnieuw te worden gevraagd, schakelt u de optie uit en opnieuw in om een ​​aangepast vertrouwd certificaatarchief te gebruiken.</string>
-    <string name="button_copy_link">Kopieer link</string>
     <string name="download_link_clipboard_data_desc">Downloadlink voor%1$s</string>
     <string name="alert_http_scheme_specified">Uw server gebruikt http. Dit is geen goed idee omdat de gebruikersnaam en het wachtwoord in platte tekst naar de server worden verzonden. Ik raad u ten zeerste aan om uw server te wijzigen om https te gebruiken.</string>
     <string name="gallery_admin_albums_list_load_failed_text">Het laden van de volledige beheerderslijst met albums is mislukt</string>
@@ -529,7 +504,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Zoeken</string>
 
-    <string name="file_selection_heading">Bestandsselectie</string>
     <string name="tag_heading_pattern">Tag:%1$s</string>
     <string name="error_updating_tag_pattern">Fout bij het verwijderen van bron (%1$s) uit tag:%2$s</string>
     <string name="alert_message_info_files_already_pending_approval_pattern">%1$d bestanden zijn niet geüpload omdat ze al zijn geüpload, maar in afwachting van goedkeuring door de beheerder.</string>
@@ -549,7 +523,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="inaccessible_remote_folder">** privaat **</string>
     <string name="error_unable_to_acquire_valid_session">Kan geen geldige sessie met server verkrijgen</string>
     <string name="upload_job_is_enabled_label">Is geldig en ingeschakeld?</string>
-    <string name="alert_unable_to_show_image_image_missing">Deze afbeelding ontbreekt. Kan niet worden weergegeven.</string>
     <string name="notification_title_foreground_upload_service">Piwigo-uploadservice</string>
     <string name="notification_message_upload_service">Rennen</string>
     <string name="slideshow_image_tab_basic_info">Basis informatie</string>
@@ -564,10 +537,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="button_hide_details">Details verbergen</string>
     <string name="alert_message_max_upload_file_count_reached">Maximaal aantal te uploaden bestanden bereikt. Koop en gebruik de betaalde versie van deze app om meerdere tegelijk te uploaden.</string>
     <string name="alert_message_advert_load_error">Advertenties hebben voortdurend problemen met het laden. Meld dit alstublieft aan mij, aangezien deze voor mij een belangrijke maar zeer kleine bron van inkomsten vormen. Overweeg om de betaalde versie aan te schaffen om advertenties volledig te verwijderen. De app zal nu 5 seconden bevriezen waarin dit scherm zichtbaar moet blijven. Het aftellen wordt opnieuw gestart als het bericht verborgen is. Na 5 seconden kunt u dit bericht sluiten en de app gewoon blijven gebruiken.</string>
-    <string name="alert_temporary_upload_album_deleted">Tijdelijk uploadalbum is verwijderd</string>
     <string name="alert_deleting_temporary_upload_album">Tijdelijk uploadalbum verwijderen</string>
     <string name="alert_invalid_uri_pattern">Ongeldige URI. %1$s</string>
-    <string name="alert_invalid_uri_pattern_spaces">Ongeldige URI. Er is een spatie in de URI op positie%1$d</string>
     <string name="album_section_heading_albums">albums</string>
     <string name="album_section_heading_albums_pattern">albums (%1$d)</string>
     <string name="album_section_heading_resources">foto\'s in dit album</string>
@@ -578,7 +549,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="connection_reset_warning_pattern">De server heeft de verbinding%1$d keer verbroken in de afgelopen%2$d minuten. Dit kan duiden op een probleem met uw serverconfiguratie.</string>
     <string name="content_description_icon">icoon</string>
     <string name="duplicates_ignored_pattern">%1$d duplicaten zijn genegeerd.</string>
-    <string name="progress_loading_session_details">Sessiedetails laden</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">De Piwigo WS-methode%1$s is niet langer beschikbaar op deze server en de fallback%2$s is gebruikt. Heeft u zojuist een server-plug-in uitgeschakeld of verwijderd?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">De Piwigo WS-methode%1$s is niet langer beschikbaar op deze server. Betrokken functionaliteit in de app uitschakelen. Heeft u zojuist een server-plug-in uitgeschakeld of verwijderd?</string>
     <string name="removing_favorite">Favoriet verwijderen</string>
@@ -610,7 +580,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="please_read_and_agree_with_eula_first">Lees en bevestig eerst de voorwaarden van de EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Vereiste machtigingen zijn niet verleend. Actie geannuleerd.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">Vereiste machtigingen zijn niet verleend. Actie geannuleerd. Als alternatief voor systeembrede machtigingen, selecteert u de map die u wilt gebruiken in de app-voorkeuren opnieuw.</string>
-    <string name="default_str">standaard</string>
     <string name="copied_to_clipboard">Gekopieerd naar het klembord</string>
     <string name="alert_plugin_required_pattern">%1$s serverplug-in vereist - versie%2$s of nieuwer</string>
 
@@ -628,7 +597,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="compress_images">Comprimeer afbeeldingen</string>
     <string name="upload_tab_title_settings">Instellingen</string>
     <string name="upload_tab_title_files">Bestanden</string>
-    <string name="unable_to_handle_shared_uri_missing_content_description_information">Kan gedeeld bestand niet verwerken. Ontbrekende gedetailleerde informatie zoals bestandsnaam en exact bestandstype. Download het bestand eerst naar uw apparaat.</string>
     <string name="alert_internal_server_exposed_pattern">Onverwachte autoriteit%1$s gevonden in url en vervangen door%2$s. Uw server is mogelijk verkeerd geconfigureerd.</string>
     <string name="buy_time_menu_title">Verberg advertenties</string>
     <string name="watch_advert_to_buy_advert_free_time">Wilt u een advertentie bekijken om een ​​korte periode zonder advertenties te kopen? U kunt dit meerdere keren doen om de tijdsduur desgewenst te verlengen.</string>
@@ -668,12 +636,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="files_unavailable_to_download_removed_pattern">Uw selectie bevat bestanden die niet kunnen worden verwerkt. Deze%1$d bestanden zijn genegeerd. Om een ​​videobestand te delen, moet het eerst lokaal volledig in de cache worden opgeslagen.</string>
     <string name="alert_all_user_hints_will_be_shown_again">Alle eenmalige gebruikershints worden opnieuw weergegeven</string>
     
-    
     <string name="delete_uploaded_files_title">Verwijder geüploade bestanden</string>
-    <string name="release_permissions_for_uri_pattern">Wilt u de machtigingen van deze app vrijgeven voor de oud geselecteerde Uri (%1$s)?</string>
     <string name="system_file_selector_label">systeembestand selectie</string>
-    <string name="uri_still_needed_pattern">Sorry, je kunt de toestemming voor de app om deze URI te gebruiken niet verwijderen. De app heeft nog steeds toestemming nodig om toegang te krijgen tot deze URI voor:\n\n%1$s</string>
-    <string name="no_suitable_activity_found">Geen geschikte activiteit gevonden</string>
     <string name="preference_uri_consumer_description_pattern">Voorkeur:%1$s</string>
     <string name="missing_permissions_warning_message_pattern">"Sinds de laatste keer dat deze app is geopend, zijn de bestandsrechten die vereist zijn voor de volgende delen van de app verwijderd\n\n%1$s\n\nSelecteer nieuwe machtigingen voor deze instellingen om ervoor te zorgen dat alles werkt zoals verwacht."</string>
     <string name="folder_selection_title">Selecteer map</string>
@@ -684,7 +648,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="createGallery_galleryCommentsAllowed_title">Gebruikerscommentaar</string>
     <string name="uri_permission_justification_to_upload">Voor uploaden naar server</string>
     <string name="progress_loading_folder_content">Mapinhoud laden</string>
-    <string name="adding_files">Bestanden toevoegen</string>
     <string name="calculating_file_checksums">Berekening van bestandscontrolesommen</string>
     <string name="alert_error_starting_download">Fout bij het starten van het downloaden van het bestand</string>
     <string name="progress_importing_files">Bestanden importeren</string>
@@ -704,7 +667,6 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="files_cached_from_other_apps">In cache opgeslagen aandelen</string>
     <string name="progress_copying_imported_files">Geïmporteerde bestanden kopiëren</string>
     <string name="selected_files">Geselecteerde bestanden</string>
-    <string name="alert_slideshow_reset_as_out_of_sync_with_album">Diavoorstelling loopt niet synchroon met de geladen albuminhoud. Resetten bij start.</string>
     <string name="uri_permission_justification_file_selection">Om bestanden of mappen te selecteren voor gebruik door deze app</string>
     <string name="alert_error_please_select_download_folder_and_retry">Selecteer een map om bestanden naar te downloaden in de app-instellingen en probeer het opnieuw.</string>
     <string name="no_acceptable_file_ext_found_for_video_pattern">Geen geldige uitvoerbestandsextensie (bij voorkeur%2$s) kon gevonden worden voor bestand (video:%3$b audio:%4$b) dat acceptabel is voor de server onder de opties (%1$s)</string>

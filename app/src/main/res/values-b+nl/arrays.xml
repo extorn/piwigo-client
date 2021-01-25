@@ -152,7 +152,7 @@
                  - albumminiaturen worden niet altijd weergegeven voor de admin-gebruiker
                  - getest tegen Piwigo 11. Het openen van een afbeelding werkte niet"</item>
         <item>1.4.0.101</item>
-        <item>"Niet gepubliceerd"</item>
+        <item>Niet gepubliceerd</item>
         <item>1.4.0.100</item>
         <item>"Bugfix:
                  - Meer testen van het uploadgebied heeft een aantal bugs verwijderd, waaronder:

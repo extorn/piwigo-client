@@ -59,7 +59,6 @@
     <string name="button_unlink">Desconectar</string>
     <string name="button_untag">Remover etiqueta</string>
     <string name="button_close">Cerca</string>
-    <string name="tools_menu_title">Herramientas</string>
     <string name="settings_menu_title">Ajustes de Aplicacion</string>
     <string name="offline_mode_menu_title">Modo offline</string>
     <string name="online_mode_menu_title">Modo en línea</string>
@@ -67,7 +66,6 @@
     <string name="upload_menu_title">Subir</string>
     <string name="upload_page_title">Subir Piwigo</string>
     <string name="gallery_to_alter_title">Subir a</string>
-    <string name="login_button_title">Iniciar sesión</string>
 
     <string name="alert_question_enable_network_access">¿Permitir la recuperación de datos del servidor?</string>
     <string name="alert_question_disable_network_access">¿Usar solo los datos que ya están almacenados en caché en este dispositivo?</string>
@@ -80,12 +78,8 @@
     <string name="videoCacheCleared_message">Se borró la caché de video. Todos los videos se descargarán del servidor remoto la próxima vez que se soliciten.</string>
     <string name="videoCacheClearFailed_message">La caché de video no se pudo borrar en este momento. Si el problema continúa, informe el error.</string>
 
-    <string name="title_activity_view_gallery">Ver galería</string>
     <string name="navigation_drawer_open">Cajón de navegación abierto</string>
     <string name="navigation_drawer_close">Cerrar cajón de navegación</string>
-
-    <string name="notification_upload_paused">Carga de PIWIGO en pausa</string>
-    <string name="notification_upload_resumed">Subida de PIWIGO reanudada</string>
 
     <string name="alert_items_for_upload_already_exist_message_pattern">%1$d archivos ya existen en el servidor. Sus permisos se modificarán para reflejar los seleccionados aquí y se vincularán a este álbum si es necesario.</string>
     <string name="alert_upload_success">Carga completa.</string>
@@ -97,7 +91,6 @@
     <string name="alert_error_upload_file_no_longer_available_message_pattern">El archivo%1$s ya no está disponible en el dispositivo. Quizás se haya eliminado o movido.\n%2$s</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Error al cargar el archivo%1$s.\n%2$s</string>
     <string name="alert_error_upload_file_already_on_server_message_pattern">El archivo%1$s cargado ya está presente en el servidor, acción cancelada.</string>
-    <string name="alert_error_upload_add_file_failed_message_pattern">Error al agregar el archivo%1$s subido al álbum. ¿Rever?</string>
     <string name="alert_upload_file_failed_piwigo_message_pattern">Error al cargar el archivo%1$s debido a un error en el servidor PIWIGO (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webserver_message_pattern">Error al cargar el archivo%1$s debido a un error del servidor web (%2$d:%3$s).</string>
     <string name="alert_upload_file_failed_webresponse_message_pattern">Error al cargar el archivo%1$s debido a un error al procesar la respuesta de PIWIGO. Esto probablemente se deba a un cambio de API de PIWIGO. Respuesta que no se puede analizar:%2$s.</string>
@@ -128,15 +121,12 @@
     <string name="alert_title_error_handling_response">Error al analizar la respuesta de piwigo</string>
     <string name="alert_error_handling_response_pattern">Respuesta no analizable:%1$d (%2$s)</string>
     <string name="none_selected">Ninguna</string>
-    <string name="alert_title_error_too_many_users">Error</string>
     <string name="alert_error_too_many_users_message">Demasiados usuarios para manejar. Envíe una solicitud de mejora para habilitar la localización de usuarios.</string>
 
     <string name="slideshow_resource_action_download">Descargar archivo</string>
     <string name="slideshow_resource_action_delete">Eliminar</string>
     <string name="slideshow_resource_action_copy">Copiar al álbum</string>
     <string name="slideshow_resource_action_move">Mover al álbum</string>
-    <string name="slideshow_image_details_actions">Comportamiento</string>
-    <string name="slideshow_image_details_exif">Datos EXIF</string>
     <string name="slideshow_image_details_comments">Comentarios</string>
 
     <string name="gallery_details_updating_progress_title">Actualizar álbum</string>
@@ -144,10 +134,6 @@
     <string name="gallery_details_name_title">Nombre del álbum</string>
     <string name="gallery_details_description_title">Descripción del Álbum</string>
     <string name="gallery_details_save_button">Salvar</string>
-    <string name="gallery_details_discard_button">Descarte</string>
-    <string name="gallery_action_delete_progress_title">Eliminar álbum</string>
-    <string name="gallery_action_delete_error_subcategories_present">No se puede eliminar un álbum que contiene subálbumes. Primero elimínelos.</string>
-    <string name="gallery_action_delete_error_photos_present">No se puede eliminar un álbum que contiene fotos u otros archivos. Primero elimínelos.</string>
     <string name="notification_upload_event">Subir Piwigo</string>
     <string name="progress_downloading">Descargando archivo</string>
     <string name="alert_error_unimplemented">Función aún no implementada.</string>
@@ -319,14 +305,11 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_unlock">desbloquear</string>
     <string name="alert_app_unlocked_message">La aplicación ahora se ha desbloqueado</string>
     <string name="gallery_details_status_title">Estado de privacidad</string>
-    <string name="gallery_details_status_galleryIsPrivate">si</string>
-    <string name="gallery_details_status_galleryIsPublic">No</string>
     <string name="gallery_details_status">Restringir el acceso a esta carpeta</string>
     <string name="gallery_details_allowed_groups_title">Grupos permitidos</string>
     <string name="gallery_details_allowed_users_title">Usuarios permitidos</string>
     <string name="click_to_view">Click para ver</string>
     <string name="click_to_view_pattern">%1$d: haz clic para ver o editar</string>
-    <string name="alert_warning_lowMemory">Memoria baja</string>
     <string name="alert_warning_lowMemory_message">El dispositivo se está quedando sin memoria (%1$d). Se ha borrado la memoria caché de imágenes en memoria.</string>
     <string name="files_for_upload_title">Archivos para cargar</string>
     <string name="alert_information">Información</string>
@@ -347,7 +330,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="eula_menu_title">EULA</string>
     <string name="alert_warning">Advertencia</string>
     <string name="alert_warning_thumbnail_size_not_natively_supported_by_server">El tamaño de la miniatura que ha seleccionado no es compatible de forma nativa con el servidor al que está conectado. El servidor devolverá la imagen del tamaño de la "coincidencia más cercana".</string>
-    <string name="rate_dialog_message">Si le gusta usar esta aplicación, ¿le importaría tomarse un momento para calificarla? No tomará más de un minuto. ¡Gracias por su apoyo!</string>
     <string name="groups_menu_title">Grupos</string>
     <string name="group_members_pattern">(%1$d miembros)</string>
     <string name="alert_group_delete_success_pattern">El grupo (%1$s) se eliminó correctamente</string>
@@ -417,14 +399,12 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="progress_reloading_album_permissions">Volver a calcular los derechos de acceso al álbum</string>
     <string name="group_is_default_title">¿Es predeterminado?</string>
     <string name="progress_adding_group">Agregar grupo</string>
-    <string name="upload_unacceptable_files_prefix">Archivos no aceptados</string>
     <string name="alert_error_unable_to_access_local_filesystem">Sin acceso al sistema de archivos local, esta acción no puede continuar. Lo siento.</string>
     <string name="alert_error_unable_to_access_local_filesystem_scoped_storage">Sin acceso al sistema de archivos local, esta acción no puede continuar. Como alternativa a los permisos de todo el sistema, vuelva a seleccionar la carpeta para usar en las preferencias de la aplicación.</string>
     <string name="alert_error_admin_user_required">Solo los usuarios administradores pueden cargar a menos que el complemento de la comunidad esté instalado. Lo siento.</string>
     <string name="upload_username_title">Subir como</string>
     <string name="certificates_heading">Certificados</string>
 
-    <string name="alert_slideshow_out_of_sync_with_album">Esta presentación de diapositivas ya no refleja con precisión el contenido actual del álbum</string>
     <string name="alert_slideshow_out_of_sync_with_tag">Esta presentación de diapositivas ya no refleja con precisión el contenido de la etiqueta actual</string>
     <string name="alert_error_app_not_yet_configured">Aplicación aún no configurada y conectada a un servidor PIWIGO. Abra la aplicación manualmente y configúrela antes de intentar compartir elementos con ella.</string>
     <string name="error_server_configuration_invalid">Detalles del servidor piwigo inaceptables, verifique la configuración de conexión de la aplicación</string>
@@ -466,7 +446,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="error_insufficient_permissions_for_cache_folder">Se necesita acceso de lectura y escritura a la carpeta de caché. Verifique la configuración de la aplicación.</string>
     <string name="alert_title_error_talking_to_server">Error al hablar con el servidor</string>
     <string name="alert_title_error_connecting_to_server">Error al conectarse al servidor</string>
-    <string name="alert_warning_message_self_signed_certificates">Los certificados SSL autofirmados no deben usarse en un servidor público (en Internet); investigue en https://letsencrypt.org o similar. Esto es solo para fines de prueba.</string>
     <string name="alert_error_adding_certificate_to_truststore">Error al agregar el certificado al almacén de confianza</string>
     <string name="alert_add_cert_to_truststore_pattern">¿Agregar cadena de certificados a la lista de CA confiables?</string>
     <string name="certificate_summary_pattern">Asunto:%1$s\nVálido:%2$s -%3$s\nSerie:%4$s</string>
@@ -479,7 +458,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="album_create_failed">No se pudo crear el álbum. Vuelve a intentarlo.</string>
     <string name="alert_failure">Fracaso</string>
     <string name="album_created_but_permissions_set_failed">Se creó el álbum, pero no se pudieron establecer los permisos. Error al intentar eliminar el álbum parcialmente configurado. Compruebe el servidor directamente.</string>
-    <string name="filelist_item_prefix">Archivo:</string>
     <string name="alert_loading_certificates_from_selected_files">Cargando certificados de archivos seleccionados.</string>
     <string name="x509_key_type_field_pattern">Clave privada%1$s</string>
     <string name="x509_key_strength_field_pattern">Fuerza:%1$d bits</string>
@@ -489,11 +467,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="x509_cert_valid_to_field_pattern">Válido para:%1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">Se encontraron%1$d otros usuarios para compartir este nombre de usuario (%2$s). Se seleccionó al usuario más reciente de este servidor Piwigo, pero esto no es seguro si es posible que estén usando el servidor al mismo tiempo o en un momento similar. Considere cambiar estos nombres de usuario para que el nombre de usuario sea un identificador único para una determinada clase de usuario.</string>
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Estos permisos son necesarios para iniciar un proceso de carga y luego mantener el proceso de carga en ejecución una vez que la pantalla se haya apagado</string>
-    <string name="alert_no_scheme_specified">Debe prefijar la dirección de su servidor con http:// o https://. No se admiten otros esquemas. El puerto es opcional si el valor predeterminado es 80 para http o 443 para https. Ejemplo http://piwigo.org/demo o http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Los siguientes%1$d archivos superaron el umbral de advertencia:%2$s. ¿Le gustaría eliminarlos de la carga?</string>
     <string name="alert_files_larger_than_upload_threshold_compress">¿Le gustaría comprimir algún video antes de subirlo?</string>
-    <string name="alert_trusted_certificates_polling">Se le presentarán los certificados que no son de confianza proporcionados por el servidor al conectarse para que pueda optar por agregarlos al almacén de confianza. Si lo rechaza, no se le volverá a solicitar el mismo certificado. Para que se le solicite nuevamente, anule la selección y vuelva a seleccionar la opción para usar un almacén de certificados de confianza personalizado.</string>
-    <string name="button_copy_link">Copiar link</string>
     <string name="download_link_clipboard_data_desc">Enlace de descarga para%1$s</string>
     <string name="alert_http_scheme_specified">Su servidor está usando http. Esta no es una buena idea porque el nombre de usuario y la contraseña se transmiten al servidor en texto sin formato. Le recomiendo encarecidamente que cambie su servidor para usar https.</string>
     <string name="gallery_admin_albums_list_load_failed_text">No se pudo cargar la lista administrativa completa de álbumes</string>
@@ -529,7 +504,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="slideshow_image_details_tags_title">Etiquetas</string>
     <string name="button_search">Buscar</string>
 
-    <string name="file_selection_heading">Selección de archivos</string>
     <string name="tag_heading_pattern">Etiqueta:%1$s</string>
     <string name="error_updating_tag_pattern">Error al eliminar el recurso (%1$s) de la etiqueta:%2$s</string>
     <string name="alert_message_info_files_already_pending_approval_pattern">No se cargaron%1$d archivos porque ya se cargaron pero están pendientes de la aprobación del administrador.</string>
@@ -549,7 +523,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="inaccessible_remote_folder">** privado **</string>
     <string name="error_unable_to_acquire_valid_session">No se pudo adquirir una sesión válida con el servidor</string>
     <string name="upload_job_is_enabled_label">¿Es válido y habilitado?</string>
-    <string name="alert_unable_to_show_image_image_missing">Falta esta imagen. No se puede mostrar.</string>
     <string name="notification_title_foreground_upload_service">Servicio de carga de Piwigo</string>
     <string name="notification_message_upload_service">Corriendo</string>
     <string name="slideshow_image_tab_basic_info">Información básica</string>
@@ -564,10 +537,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_hide_details">Ocultar detalle</string>
     <string name="alert_message_max_upload_file_count_reached">Se alcanzó el número máximo de archivos que se pueden cargar. Para cargar más a la vez, compre y use la versión paga de esta aplicación.</string>
     <string name="alert_message_advert_load_error">Los anuncios tienen problemas para cargarse constantemente. Por favor infórmeme de esto, ya que constituyen una fuente de ingresos importante, aunque muy pequeña, para mí. Considere comprar la versión paga para eliminar los anuncios por completo. La aplicación ahora se congelará durante 5 segundos durante los cuales esta pantalla debe permanecer visible. La cuenta atrás se reiniciará si el mensaje está oculto. Después de 5 segundos, puede cerrar este mensaje y continuar usando la aplicación con normalidad.</string>
-    <string name="alert_temporary_upload_album_deleted">El álbum de carga temporal se eliminó correctamente</string>
     <string name="alert_deleting_temporary_upload_album">Eliminando el álbum de carga temporal</string>
     <string name="alert_invalid_uri_pattern">URI no válido. %1$s</string>
-    <string name="alert_invalid_uri_pattern_spaces">URI no válido. Hay un carácter de espacio en el URI en la posición%1$d</string>
     <string name="album_section_heading_albums">álbumes</string>
     <string name="album_section_heading_albums_pattern">álbumes (%1$d)</string>
     <string name="album_section_heading_resources">fotos en este álbum</string>
@@ -578,7 +549,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="connection_reset_warning_pattern">El servidor ha cerrado la conexión%1$d veces en los últimos%2$d minutos. Esto podría indicar un problema con la configuración de su servidor.</string>
     <string name="content_description_icon">icono</string>
     <string name="duplicates_ignored_pattern">Se ignoraron%1$d duplicados.</string>
-    <string name="progress_loading_session_details">Cargando detalles de la sesión</string>
     <string name="alert_msg_using_fallback_piwigo_method_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor y se ha utilizado el respaldo%2$s. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="alert_msg_piwigo_method_not_available_pattern">El método Piwigo WS%1$s ya no está disponible en este servidor. Deshabilitar la funcionalidad afectada en la aplicación. ¿Acaba de desactivar o eliminar un complemento de servidor?</string>
     <string name="removing_favorite">Eliminando favorito</string>
@@ -610,7 +580,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="please_read_and_agree_with_eula_first">Primero lea y confirme el acuerdo con los términos del EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">No se concedieron los permisos necesarios. Acción cancelada.</string>
     <string name="alert_required_permissions_not_granted_action_cancelled_scoped_storage">No se concedieron los permisos necesarios. Acción cancelada. Como alternativa a los permisos de todo el sistema, vuelva a seleccionar la carpeta para usar en las preferencias de la aplicación.</string>
-    <string name="default_str">defecto</string>
     <string name="copied_to_clipboard">Copiado al portapapeles</string>
     <string name="alert_plugin_required_pattern">Se requiere el complemento de servidor%1$s - Versión%2$s o más reciente</string>
 
@@ -628,7 +597,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="compress_images">Comprimir imágenes</string>
     <string name="upload_tab_title_settings">Configuraciones</string>
     <string name="upload_tab_title_files">Archivos</string>
-    <string name="unable_to_handle_shared_uri_missing_content_description_information">No se puede manejar el archivo compartido. Falta información detallada como el nombre del archivo y el tipo de archivo exacto. Primero descargue el archivo a su dispositivo.</string>
     <string name="alert_internal_server_exposed_pattern">Se encontró una autoridad inesperada%1$s en la URL y se reemplazó por%2$s. Su servidor podría estar mal configurado.</string>
     <string name="buy_time_menu_title">Ocultar anuncios</string>
     <string name="watch_advert_to_buy_advert_free_time">¿Le gustaría ver un anuncio para comprar durante un período corto sin anuncios? Puede hacer esto varias veces para aumentar el tiempo si lo desea.</string>
@@ -668,12 +636,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="files_unavailable_to_download_removed_pattern">Su selección contenía archivos que no se pudieron procesar. Estos%1$d archivos se han ignorado. Para compartir un archivo de video, primero debe almacenarse en caché localmente.</string>
     <string name="alert_all_user_hints_will_be_shown_again">Todas las sugerencias de usuario únicas se mostrarán nuevamente</string>
     
-    
     <string name="delete_uploaded_files_title">Eliminar archivos cargados</string>
-    <string name="release_permissions_for_uri_pattern">¿Le gustaría liberar los permisos de esta aplicación para el antiguo Uri seleccionado (%1$s)?</string>
     <string name="system_file_selector_label">selección de archivos del sistema</string>
-    <string name="uri_still_needed_pattern">Lo sentimos, no puede quitar el permiso de la aplicación para usar este URI. La aplicación aún necesita permiso para acceder a este URI para:\n\n%1$s</string>
-    <string name="no_suitable_activity_found">No se encontró ninguna actividad adecuada</string>
     <string name="preference_uri_consumer_description_pattern">Preferencia:%1$s</string>
     <string name="missing_permissions_warning_message_pattern">"Desde la última vez que se abrió esta aplicación, se han eliminado los permisos de archivo requeridos por las siguientes partes de la aplicación\n\n%1$s\n\nSeleccione nuevos permisos para esta configuración para que todo funcione como se esperaba."</string>
     <string name="folder_selection_title">Seleccione la carpeta</string>
@@ -684,7 +648,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="createGallery_galleryCommentsAllowed_title">Comentarios del usuario</string>
     <string name="uri_permission_justification_to_upload">Para subir al servidor</string>
     <string name="progress_loading_folder_content">Cargando contenido de carpeta</string>
-    <string name="adding_files">Agregar archivos</string>
     <string name="calculating_file_checksums">Cálculo de sumas de verificación de archivos</string>
     <string name="alert_error_starting_download">Error al iniciar la descarga del archivo</string>
     <string name="progress_importing_files">Importación de archivos</string>
@@ -704,7 +667,6 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="files_cached_from_other_apps">Recursos compartidos en caché</string>
     <string name="progress_copying_imported_files">Copiar archivos importados</string>
     <string name="selected_files">Archivos seleccionados</string>
-    <string name="alert_slideshow_reset_as_out_of_sync_with_album">La presentación de diapositivas no está sincronizada con el contenido del álbum cargado. Restableciendo al inicio.</string>
     <string name="uri_permission_justification_file_selection">Para seleccionar archivos o carpetas para usar con esta aplicación</string>
     <string name="alert_error_please_select_download_folder_and_retry">Seleccione una carpeta para descargar archivos en la configuración de la aplicación, luego vuelva a intentarlo.</string>
     <string name="no_acceptable_file_ext_found_for_video_pattern">No se pudo encontrar una extensión de archivo de salida válida (la preferida es%2$s) para el archivo (video:%3$b audio:%4$b) aceptable para el servidor entre las opciones (%1$s)</string>

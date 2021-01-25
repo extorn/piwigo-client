@@ -152,7 +152,7 @@
                  - le miniature degli album non vengono sempre visualizzate per l\'utente amministratore
                  - testato con Piwigo 11. L\'apertura di un\'immagine non funzionava"</item>
         <item>1.4.0.101</item>
-        <item>"Non rilasciato"</item>
+        <item>Non rilasciato</item>
         <item>1.4.0.100</item>
         <item>"Risoluzione del problema:
                  - Ulteriori test dell\'area dei caricamenti hanno rimosso una serie di bug tra cui:

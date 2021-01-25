@@ -152,7 +152,7 @@
                  - las miniaturas de álbumes no siempre se muestran para el usuario administrador
                  - probado contra Piwigo 11. Abrir una imagen no funcionaba"</item>
         <item>1.4.0.101</item>
-        <item>"No publicado"</item>
+        <item>No publicado</item>
         <item>1.4.0.100</item>
         <item>"Arreglo del fallo:
                  - Más pruebas del área de cargas han eliminado una serie de errores que incluyen:
