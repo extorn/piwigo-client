@@ -239,11 +239,16 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         if(serverConnectionHasChanged()) {
             // we're in the wrong server or
             currentAlbum = null;
+            // need to remove historic fragments - not valid.
+            clearBackStack();
             showGallery(CategoryItem.ROOT_ALBUM);
         }
     }
 
     private boolean serverConnectionHasChanged() {
+        if(currentPiwigoServer == null) {
+            return false; // haven't opened any server yet
+        }
         String connectedServer = ConnectionPreferences.getActiveProfile().getPiwigoServerAddress(getSharedPrefs(), this);
         String connectedUsername = ConnectionPreferences.getActiveProfile().getPiwigoUsername(getSharedPrefs(), this);
         return !(Objects.equals(currentPiwigoUser, connectedUsername) && Objects.equals(currentPiwigoServer, connectedServer));
@@ -843,7 +848,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         FirebaseCrashlytics.getInstance().setCustomKey("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
         FirebaseCrashlytics.getInstance().setCustomKey("AppLanguage", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
 
-        if (event.getOldCredentials() == null || (event.isChangePage() && !invokeStoredActionIfAvailable())) {
+        if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
             showGallery(CategoryItem.ROOT_ALBUM);
         } else {

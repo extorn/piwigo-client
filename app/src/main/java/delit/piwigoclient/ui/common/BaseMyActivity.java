@@ -543,6 +543,16 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         super.onDetachedFromWindow();
     }
 
+    protected void clearBackStack() {
+        int stackCount = getSupportFragmentManager().getBackStackEntryCount();
+        if(stackCount > 0) {
+            FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(0);
+            getSupportFragmentManager().popBackStackImmediate(entry.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        stackCount = getSupportFragmentManager().getBackStackEntryCount();
+
+    }
+
     protected <B extends Fragment> boolean removeFragmentsFromHistory(Class<B> fragmentClass) {
         boolean found = false;
         int i = 0;
