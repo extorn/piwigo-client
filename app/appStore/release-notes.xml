@@ -1,99 +1,50 @@
 <en-GB>
 Bugfix:
-- More testing of the uploads area has removed a number of bugs including:
-- upload job can become stuck where shared files are no longer available
-- upload job can stop if the last updated date wasn't available for a video being compressed
-- Poor performance scrolling through albums
-- new image icon and media type icon disappear while scrolling through album
-- compressing a video to be just an audio file results was resulting in a video still
-- multimedia files will fail to play if ..."
+- Recent changes made it impossible to have both the free and paid versions installed at the same time on a single device
+- album thumbnails not always showing for admin user
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Další testování oblasti pro nahrávání odstranilo řadu chyb, včetně:
-- úloha nahrávání se může zaseknout tam, kde sdílené soubory již nejsou k dispozici
-- úloha nahrávání se může zastavit, pokud pro komprimované video nebylo k dispozici poslední aktualizované datum
-- Špatný výkon při procházení alb
-- nová ikona obrázku a ikona typu média zmizí při procházení albem
-- výsledkem komprese videa, která má být pouze zvukovým souborem, je statický obraz
-- multimediální soubory se nep..."
+- Nedávné změny znemožnily mít bezplatnou i placenou verzi nainstalovanou současně na jednom zařízení
+- miniatury alb, které se uživateli správce nezobrazují vždy
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Weitere Tests des Upload-Bereichs haben eine Reihe von Fehlern behoben, darunter:
-- Der Upload-Auftrag kann hängen bleiben, wenn freigegebene Dateien nicht mehr verfügbar sind
-- Der Upload-Auftrag kann gestoppt werden, wenn das Datum der letzten Aktualisierung für ein zu komprimierendes Video nicht verfügbar war
-- Schlechte Leistung beim Scrollen durch Alben
-- Neues Bildsymbol und Medientypsymbol verschwinden beim Scrollen durch das Album
-- Das Komprimieren eines Videos als Ergebn..."
+- Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
+- Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Más pruebas del área de cargas han eliminado una serie de errores que incluyen:
-- el trabajo de carga puede atascarse donde los archivos compartidos ya no están disponibles
-- el trabajo de carga puede detenerse si la última fecha actualizada no estaba disponible para un video que se está comprimiendo
-- Rendimiento deficiente al desplazarse por los álbumes
-- El icono de nueva imagen y el icono de tipo de medio desaparecen mientras se desplaza por el álbum
-- comprimir un v..."
+- Los cambios recientes hicieron imposible tener las versiones gratuitas y de pago instaladas al mismo tiempo en un solo dispositivo
+- las miniaturas de álbumes no siempre se muestran para el usuario administrador
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Des tests supplémentaires de la zone de téléchargement ont supprimé un certain nombre de bogues, notamment:
-- la tâche de téléchargement peut rester bloquée là où les fichiers partagés ne sont plus disponibles
-- la tâche de téléchargement peut s\'arrêter si la dernière date de mise à jour n\'était pas disponible pour une vidéo en cours de compression
-- Mauvaises performances de défilement des albums
-- la nouvelle icône d\'image et l\'icône de type de média disparaisse..."
+- Des changements récents ont rendu impossible l\'installation des versions gratuite et payante en même temps sur un seul appareil
+- les miniatures d\'album ne s\'affichent pas toujours pour l\'utilisateur administrateur
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Ulteriori test dell\'area dei caricamenti hanno rimosso una serie di bug tra cui:
-- il lavoro di caricamento può bloccarsi dove i file condivisi non sono più disponibili
-- il processo di caricamento può interrompersi se la data dell\'ultimo aggiornamento non era disponibile per un video in fase di compressione
-- Scarse prestazioni durante lo scorrimento degli album
-- l\'icona della nuova immagine e l\'icona del tipo di supporto scompaiono durante lo scorrimento de..."
+- Modifiche recenti hanno reso impossibile installare contemporaneamente sia la versione gratuita che quella a pagamento su un singolo dispositivo
+- le miniature degli album non vengono sempre visualizzate per l\'utente amministratore
 </it-IT>
 <ja-JP>
 バグ修正：
--アップロード領域をさらにテストすることで、次のような多くのバグが削除されました。
--共有ファイルが利用できなくなった場合、アップロードジョブがスタックする可能性があります
--圧縮されているビデオの最終更新日が利用できなかった場合、アップロードジョブを停止できます
--アルバムをスクロールするパフォーマンスが低い
--アルバムをスクロールしている間、新しい画像アイコンとメディアタイプアイコンが消えます
--ビデオを圧縮して単なるオーディオファイルにした結果、ビデオは静止画になりました
--サムネイルが生成されたファイルではなくデフォルトの場合、マルチメディアファイルは再生に失敗します
-変更点：
--サーバーのデフォルトの並べ替え順序設定オプションのオプションを追加しました-アルバムコンテンツを取得するときに使用します。
-これは、アプリインストールのデフォルト設定になりました。
+-最近の変更により、無料バージョンと有料バージョンの両方を1つのデバイスに同時にインストールすることは不可能になりました
+-アルバムのサムネイルが管理者ユーザーに常に表示されるとは限りません
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Meer testen van het uploadgebied heeft een aantal bugs verwijderd, waaronder:
-- uploadtaak kan vastlopen waar gedeelde bestanden niet langer beschikbaar zijn
-- uploadtaak kan stoppen als de laatste bijgewerkte datum niet beschikbaar was voor een video die werd gecomprimeerd
-- Slechte prestaties bij het scrollen door albums
-- nieuw afbeeldingspictogram en mediatype-pictogram verdwijnen tijdens het bladeren door het album
-- het comprimeren van een video om slechts een audiobestand te..."
+- Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren
+- albumminiaturen worden niet altijd weergegeven voor de admin-gebruiker
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Дополнительное тестирование области загрузки устранило ряд ошибок, в том числе:
-- задание загрузки может зависнуть там, где общие файлы больше не доступны
-- задание загрузки может быть остановлено, если дата последнего обновления не была доступна для сжатого видео
-- Плохая производительность при просмотре альбомов
-- значок нового изображения и значок типа мультимедиа исчезают при прокрутке альбома
-- сжатие видео в аудиофайл привело к появлению кадра видео
-- мультимедийны..."
+- Недавние изменения сделали невозможным одновременную установку бесплатной и платной версий на одном устройстве.
+- миниатюры альбомов не всегда отображаются для администратора
 </ru-RU>
 <zh-CN>
 错误修正：
--对上传区域的更多测试消除了许多错误，包括：
--上传作业可能会卡在无法再使用共享文件的地方
--如果上次更新日期不适用于压缩的视频，则上传作业可以停止
--专辑播放效果不佳
--在相册中滚动时，新的图像图标和媒体类型图标消失
--将视频压缩为音频文件结果导致视频静止
--如果缩略图是默认缩略图而不是生成的文件，则多媒体文件将无法播放
-变化：
--添加了服务器默认排序顺序首选项的选项-在检索专辑内容时使用。
-现在，这是应用程序安装的默认设置。
+-最近的更改使得不可能在单个设备上同时安装免费版和付费版
+-相册缩略图并不总是向管理员用户显示
 </zh-CN>

@@ -146,6 +146,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.101</item>
+        <item>"Bugfix:
+                 - Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren
+                 - albumminiaturen worden niet altijd weergegeven voor de admin-gebruiker"</item>
         <item>1.4.0.100</item>
         <item>"Bugfix:
                  - Meer testen van het uploadgebied heeft een aantal bugs verwijderd, waaronder:

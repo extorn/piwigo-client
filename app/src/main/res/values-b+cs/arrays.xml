@@ -146,6 +146,10 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.101</item>
+        <item>"Oprava chyby:
+                 - Nedávné změny znemožnily mít bezplatnou i placenou verzi nainstalovanou současně na jednom zařízení
+                 - miniatury alb, které se uživateli správce nezobrazují vždy"</item>
         <item>1.4.0.100</item>
         <item>"Oprava chyby:
                  - Další testování oblasti pro nahrávání odstranilo řadu chyb, včetně:
