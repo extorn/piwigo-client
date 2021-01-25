@@ -179,7 +179,11 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                     extList.append('|');
                 }
             }
-            String pattern = "^"+basePiwigoUrl+"([\\d]*/.*)?((?<=/)upload/.*\\.("+extList+"))$";
+            String basePiwigoUri = basePiwigoUrl;
+            if(basePiwigoUri.lastIndexOf('/') != basePiwigoUri.length() -1) {
+                basePiwigoUri += '/';
+            }
+            String pattern = "^("+basePiwigoUri+")([\\d]*/.*)?((?<=/)upload/.*\\.("+extList+"))$";
             multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
             multimediaPatternMatcher = null;
         }
@@ -265,8 +269,9 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             }
 
             if (originalResourceUrl != null && multimediaPatternMatcher.matches()) {
-                String pathPrefix = multimediaPatternMatcher.group(1);  // "12344/.*/"
-                String uploadsPath = multimediaPatternMatcher.group(2); // "upload.*"
+                String serverBasePath = multimediaPatternMatcher.group(1); // "Https://myserver.com/piwigo/"
+                String pathPrefix = multimediaPatternMatcher.group(2);  // "12344/.*/"
+                String uploadsPath = multimediaPatternMatcher.group(3); // "upload.*"
                 //FIXME Ask PiwigoPrivacy dev why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
 
@@ -275,8 +280,8 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
                     // I think this is piwigo_privacy simple mode.
                     originalResourceUrl = thumbnailUriStr.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + uploadsPath + "$3");
                     fixedPrivacyPluginImageUrisForPrivacyPluginUser = true;
-                } else if(pathPrefix == null || pathPrefix.isEmpty()){
-                    originalResourceUrl = basePiwigoUrl + "/" + id + uploadsPath;
+                } else if(pathPrefix == null) {
+                    originalResourceUrl = serverBasePath + id + '/' + uploadsPath;
                     fixedImageUrisForPrivacyPluginUser = true;
                 }
                 item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
