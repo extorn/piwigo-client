@@ -197,6 +197,13 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return earlierLoadedPages(page) * pageSize;
     }
 
+    /**
+     * WARNING: duplicates WILL be added here if provided.
+     * @param page
+     * @param pageSize
+     * @param newItems
+     * @return
+     */
     public int addItemPage(int page, /*int pages, */ int pageSize, Collection<T> newItems) {
 
         int firstInsertPos = 0;
@@ -292,6 +299,8 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     /**
+     * WARNING: duplicates WILL be added here if provided.
+     *
      * Add an item to the end of the list.
      * Note that this won't affect the paging calculations as they are done on the fly.
      *
