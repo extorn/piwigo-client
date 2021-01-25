@@ -3,8 +3,6 @@ package delit.piwigoclient.business.video.capture;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
-import delit.piwigoclient.business.video.capture.FrameHandler;
-
 public class FrameCapturer extends FrameHandler {
     private Bitmap frame;
     private long frameTimeUs;

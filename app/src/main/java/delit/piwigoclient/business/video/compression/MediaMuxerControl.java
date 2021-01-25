@@ -13,11 +13,10 @@ import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.MimeTypeFilter;
 import androidx.documentfile.provider.DocumentFile;
-
-import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.math.BigDecimal;

@@ -12,8 +12,8 @@ import com.squareup.picasso.RequestHandler;
 
 import delit.libs.core.util.Logging;
 import delit.libs.util.IOUtils;
-import delit.piwigoclient.business.video.capture.FrameCapturer;
 import delit.piwigoclient.business.video.capture.ExoPlayerFrameCapture;
+import delit.piwigoclient.business.video.capture.FrameCapturer;
 import delit.piwigoclient.util.BitmapUtils;
 
 public class VideoRequestHandler extends RequestHandler {

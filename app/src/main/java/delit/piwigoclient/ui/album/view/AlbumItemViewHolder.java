@@ -17,8 +17,6 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.common.UIHelper;
 
-import static android.view.View.GONE;
-
 public abstract class AlbumItemViewHolder<VH extends AlbumItemViewHolder<VH,LVA, T,MSL, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, T extends GalleryItem, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, RC extends ResourceContainer<?, T>> extends CustomViewHolder<VH, LVA, AlbumItemRecyclerViewAdapterPreferences, T,MSL> implements PicassoLoader.PictureItemImageLoaderListener {
     protected final int viewType;
     public AppCompatImageView mImageView;

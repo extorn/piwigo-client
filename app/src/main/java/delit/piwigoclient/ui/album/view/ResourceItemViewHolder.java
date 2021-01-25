@@ -8,11 +8,9 @@ import androidx.appcompat.widget.AppCompatImageView;
 import com.google.android.exoplayer2.util.MimeTypes;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 

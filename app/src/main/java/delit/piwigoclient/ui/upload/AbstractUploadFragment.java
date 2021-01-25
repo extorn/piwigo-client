@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.upload;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;

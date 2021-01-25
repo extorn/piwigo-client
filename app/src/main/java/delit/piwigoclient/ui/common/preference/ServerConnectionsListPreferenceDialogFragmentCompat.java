@@ -9,13 +9,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdView;
-
-import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
