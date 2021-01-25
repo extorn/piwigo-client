@@ -146,10 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
-        <item>1.4.0.101</item>
+        <item>1.4.0.102</item>
         <item>"错误修正：
                  -最近的更改使得不可能在单个设备上同时安装免费版和付费版
-                 -相册缩略图并不总是向管理员用户显示"</item>
+                 -相册缩略图并不总是向管理员用户显示
+                 -经过Piwigo 11的测试。打开图像无效"</item>
+        <item>1.4.0.101</item>
+        <item>"未发布"</item>
         <item>1.4.0.100</item>
         <item>"错误修正：
                  -对上传区域的更多测试消除了许多错误，包括：

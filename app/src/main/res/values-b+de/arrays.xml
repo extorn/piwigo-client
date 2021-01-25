@@ -146,10 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
-        <item>1.4.0.101</item>
+        <item>1.4.0.102</item>
         <item>"Bug-Fix:
                  - Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
-                 - Album-Miniaturansichten werden für Administratoren nicht immer angezeigt"</item>
+                 - Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
+                 - gegen Piwigo 11 getestet. Das Öffnen eines Bildes funktionierte nicht"</item>
+        <item>1.4.0.101</item>
+        <item>"Nicht veröffentlicht"</item>
         <item>1.4.0.100</item>
         <item>"Bug-Fix:
                  - Weitere Tests des Upload-Bereichs haben eine Reihe von Fehlern behoben, darunter:

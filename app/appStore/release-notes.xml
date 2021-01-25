@@ -2,49 +2,59 @@
 Bugfix:
 - Recent changes made it impossible to have both the free and paid versions installed at the same time on a single device
 - album thumbnails not always showing for admin user
+- tested against Piwigo 11. Opening an image was not working
 </en-GB>
 <cs-CZ>
 Oprava chyby:
 - Nedávné změny znemožnily mít bezplatnou i placenou verzi nainstalovanou současně na jednom zařízení
 - miniatury alb, které se uživateli správce nezobrazují vždy
+- testováno proti Piwigo 11. Otevření obrázku nefungovalo
 </cs-CZ>
 <de-DE>
 Bug-Fix:
 - Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
 - Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
+- gegen Piwigo 11 getestet. Das Öffnen eines Bildes funktionierte nicht
 </de-DE>
 <es-ES>
 Arreglo del fallo:
 - Los cambios recientes hicieron imposible tener las versiones gratuitas y de pago instaladas al mismo tiempo en un solo dispositivo
 - las miniaturas de álbumes no siempre se muestran para el usuario administrador
+- probado contra Piwigo 11. Abrir una imagen no funcionaba
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
 - Des changements récents ont rendu impossible l\'installation des versions gratuite et payante en même temps sur un seul appareil
 - les miniatures d\'album ne s\'affichent pas toujours pour l\'utilisateur administrateur
+- testé avec Piwigo 11. L\'ouverture d\'une image ne fonctionnait pas
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
 - Modifiche recenti hanno reso impossibile installare contemporaneamente sia la versione gratuita che quella a pagamento su un singolo dispositivo
 - le miniature degli album non vengono sempre visualizzate per l\'utente amministratore
+- testato con Piwigo 11. L\'apertura di un\'immagine non funzionava
 </it-IT>
 <ja-JP>
 バグ修正：
 -最近の変更により、無料バージョンと有料バージョンの両方を1つのデバイスに同時にインストールすることは不可能になりました
 -アルバムのサムネイルが管理者ユーザーに常に表示されるとは限りません
+--Piwigo11に対してテスト済み。画像を開くことが機能していませんでした
 </ja-JP>
 <nl-NL>
 Bugfix:
 - Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren
 - albumminiaturen worden niet altijd weergegeven voor de admin-gebruiker
+- getest tegen Piwigo 11. Het openen van een afbeelding werkte niet
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
 - Недавние изменения сделали невозможным одновременную установку бесплатной и платной версий на одном устройстве.
 - миниатюры альбомов не всегда отображаются для администратора
+- протестировано на Piwigo 11. Открытие образа не работало
 </ru-RU>
 <zh-CN>
 错误修正：
 -最近的更改使得不可能在单个设备上同时安装免费版和付费版
 -相册缩略图并不总是向管理员用户显示
+-经过Piwigo 11的测试。打开图像无效
 </zh-CN>
