@@ -12,9 +12,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -38,6 +36,7 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.database.UriPermissionUse;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.util.LiveDataTransientObserver;
 
 import static android.view.View.GONE;
 
@@ -174,15 +173,8 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
     }
 
     private void loadListValues() {
-        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(requireContext());
         LiveData<List<UriPermissionUse>> uriPermissionsData = getPreference().getAppSettingsViewModel().getAll();
-        uriPermissionsData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
-            @Override
-            public void onChanged(List<UriPermissionUse> permissionsHeld) {
-                uriPermissionsData.removeObserver(this);
-                loadDataIntoList(permissionsHeld);
-            }
-        });
+        uriPermissionsData.observeForever(new UriLoadPatientObserver(uriPermissionsData));
     }
 
     private void loadDataIntoList(List<UriPermissionUse> permissionsHeld) {
@@ -343,4 +335,14 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
         }
     }
 
+    private class UriLoadPatientObserver extends LiveDataTransientObserver<List<UriPermissionUse>> {
+        public UriLoadPatientObserver(LiveData<List<UriPermissionUse>> uriPermissionsData) {
+            super(UriPermissionsListPreferenceDialogFragmentCompat.this.requireContext(), uriPermissionsData);
+        }
+
+        @Override
+        public void onChangeObserved(List<UriPermissionUse> permissionsHeld) {
+            loadDataIntoList(permissionsHeld);
+        }
+    }
 }

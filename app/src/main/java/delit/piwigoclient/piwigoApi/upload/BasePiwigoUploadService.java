@@ -250,7 +250,12 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         List<UploadJob> jobs = new ArrayList<>();
         DocumentFile[] jobFiles = DocumentFile.fromFile(jobsFolder).listFiles();
         for (DocumentFile jobFile : jobFiles) {
-            UploadJob job = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), jobFile, UploadJob.class);
+            UploadJob job = null;
+            try {
+                job = IOUtils.readParcelableFromDocumentFile(c.getContentResolver(), jobFile, UploadJob.class);
+            } catch(Exception e) {
+                Logging.log(Log.WARN,TAG,"Unable to reload job from saved state (will be deleted) - has parcelable changed?");
+            }
             if (job != null) {
                 job.setLoadedFromFile(jobFile);
                 AbstractPiwigoDirectResponseHandler.blockMessageId(job.getJobId());

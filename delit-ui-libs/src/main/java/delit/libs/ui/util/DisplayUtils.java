@@ -407,10 +407,16 @@ public class DisplayUtils {
         return context;
     }
 
-    public static LifecycleOwner getLifecycleOwner(Context aContext) {
+    public static @Nullable LifecycleOwner getLifecycleOwner(Context aContext) {
         Context context = aContext;
         while (!(context instanceof LifecycleOwner)) {
-            context = ((ContextWrapper) context).getBaseContext();
+            if(context instanceof ContextWrapper) {
+                context = ((ContextWrapper) context).getBaseContext();
+            } else {
+                Logging.log(Log.ERROR, TAG, "Unable to find context lifecycle owner");
+                Logging.recordException(new Exception().fillInStackTrace());
+                return null;
+            }
         }
         return (LifecycleOwner) context;
     }

@@ -11,13 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +21,7 @@ import java.util.List;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.util.IOUtils;
+import delit.piwigoclient.ui.util.LiveDataTransientObserver;
 
 public class AppSettingsViewModel extends AndroidViewModel {
 
@@ -89,12 +86,10 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void releaseAllPersistableUriPermissions(@NonNull Context context, String consumerId) {
-        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
         LiveData<List<UriPermissionUse>> liveData = getAllForConsumer(consumerId);
-        liveData.observe(lifecycleOwner, new Observer<List<UriPermissionUse>>() {
+        liveData.observeForever(new LiveDataTransientObserver<List<UriPermissionUse>>(context, liveData) {
             @Override
-            public void onChanged(List<UriPermissionUse> permissionsHeld) {
-                liveData.removeObserver(this);
+            public void onChangeObserved(List<UriPermissionUse> permissionsHeld) {
                 for(UriPermissionUse use : permissionsHeld) {
                     releasePersistableUriPermission(context, Uri.parse(use.uri), use.consumerId, false);
                 }
@@ -108,17 +103,15 @@ public class AppSettingsViewModel extends AndroidViewModel {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void releasePersistableUriPermission(@NonNull Context context, @NonNull Uri uri, String consumerId, boolean removeTreeToo) {
-        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
         LiveData<List<UriPermissionUse>> liveData = getAllForUri(uri);
-        DisplayUtils.runOnUiThread(()->{liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uri, consumerId, removeTreeToo));});
+        DisplayUtils.runOnUiThread(()->{liveData.observeForever(new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uri, consumerId, removeTreeToo));});
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void releasePersistableUriPermission(@NonNull Context context, @NonNull Collection<Uri> uris, String consumerId, boolean removeTreeToo) {
-        LifecycleOwner lifecycleOwner = DisplayUtils.getLifecycleOwner(context);
         LiveData<List<UriPermissionUse>> liveData = getAllForUris(uris);
         //TODO is this actually going to help?!
-        DisplayUtils.runOnUiThread(()->{liveData.observe(lifecycleOwner, new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uris, consumerId, removeTreeToo));});
+        DisplayUtils.runOnUiThread(()->{liveData.observeForever(new PermissionsRemovingObserver(context.getApplicationContext(), liveData, uris, consumerId, removeTreeToo));});
     }
 
     //TODO need to use this kind of thing to ensure we ask user to add permissions back for URis that they removed permissions for in the system UI
@@ -142,33 +135,25 @@ public class AppSettingsViewModel extends AndroidViewModel {
         appSettingsRepository.deleteAllForUri(folderUri);
     }
 
-    private class PermissionsRemovingObserver implements Observer<List<UriPermissionUse>> {
+    private class PermissionsRemovingObserver extends LiveDataTransientObserver<List<UriPermissionUse>> {
         private final Collection<Uri> uris;
-        private final WeakReference<Context> contextRef;
         private final String consumerId;
-        private final LiveData<List<UriPermissionUse>> liveData;
         private final boolean removeTreeToo;
 
 
         public PermissionsRemovingObserver(Context context, LiveData<List<UriPermissionUse>> liveData, Collection<Uri> uris, String consumerId, boolean removeTreeToo) {
-            this.contextRef = new WeakReference<>(context);
-            this.liveData = liveData;
+            super(context, liveData);
             this.uris = uris;
             this.consumerId = consumerId;
             this.removeTreeToo = removeTreeToo;
         }
 
-        public Context getContext() {
-            return contextRef.get();
-        }
-
         public PermissionsRemovingObserver(Context context, LiveData<List<UriPermissionUse>> liveData, Uri uri, String consumerId, boolean removeTreeToo) {
-            this(context, liveData, Arrays.asList(uri), consumerId, removeTreeToo);
+            this(context, liveData, Collections.singletonList(uri), consumerId, removeTreeToo);
         }
 
         @Override
-        public void onChanged(List<UriPermissionUse> permissionsHeld) {
-            liveData.removeObserver(this);
+        public void onChangeObserved(List<UriPermissionUse> permissionsHeld) {
             List<String> consumers = new ArrayList<>();
             int flagsToRemove = 0;
             int flagsStillUsed = 0;
