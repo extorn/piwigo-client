@@ -278,7 +278,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public abstract Long getItemId(T item);
 
     public boolean containsItem(T item) {
-        return items.contains(item);
+        return getItemIdx(item) >= 0;
     }
 
     @Override
@@ -308,12 +308,21 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
 
     @Override
     public boolean remove(T item) {
-        return items.remove(item);
+        int idx = getItemIdx(item);
+        if(idx >= 0) {
+            items.remove(idx);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean removeAll(Collection<T> itemsForDeletion) {
-        return items.removeAll(itemsForDeletion);
+        boolean changed = false;
+        for(T item : itemsForDeletion) {
+            changed = remove(item);
+        }
+        return changed;
     }
 
     public boolean addMissingItems(List<? extends T> newItems) {
@@ -322,7 +331,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         }
         boolean changed = false;
         for (T c : newItems) {
-            if (!items.contains(c)) {
+            if(getItemIdx(c) < 0) {
                 addItem(c);
                 changed = true;
             }
@@ -332,7 +341,15 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
 
     @Override
     public int getItemIdx(T item) {
-        return items.indexOf(item);
+        long seekId = getItemId(item);
+        int idx = 0;
+        for (T c : items) {
+            if(seekId == getItemId(c)) {
+                return idx;
+            }
+            idx++;
+        }
+        return -1;
     }
 
     public boolean isPageLoaded(int pageNum) {
