@@ -814,8 +814,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if(handler.getResponse() != null) {
             b.putString("responseType", handler.getResponse().getClass().getName());
         }
-        if(handler.getError() != null) {
-            b.putSerializable("error", handler.getError());
+        Throwable error = handler.getError();
+        if(error != null) {
+            b.putSerializable("error", error);
         }
         PiwigoSessionDetails.writeToBundle(b, connectionPrefs);
         FirebaseAnalytics.getInstance(this).logEvent("uploadError", b);

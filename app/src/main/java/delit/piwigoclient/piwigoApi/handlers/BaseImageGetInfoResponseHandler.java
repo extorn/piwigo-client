@@ -48,7 +48,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
-        BaseImagesGetResponseHandler.BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList, usingPiwigoClientOveride);
+        AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList, usingPiwigoClientOveride);
         
         ResourceItem loadedResourceItem = resourceParser.parseAndProcessResourceData(result);
 
@@ -62,9 +62,9 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
         storeResponse(r);
     }
 
-    protected abstract BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride);
+    protected abstract AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride);
     
-    public static abstract class BaseImageGetInfoResourceParser extends BaseImagesGetResponseHandler.BasicCategoryImageResourceParser {
+    public static abstract class BaseImageGetInfoResourceParser extends AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser {
 
         private final boolean usingPiwigoClientOveride;
 

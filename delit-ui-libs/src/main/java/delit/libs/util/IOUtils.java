@@ -227,7 +227,7 @@ public class IOUtils {
         tmpFile = IOUtils.getTmpFile(folder, filename, "tmp", mimeType, true);
 
         if (tmpFile == null) {
-            Logging.log(Log.ERROR, TAG, "Error writing Object to disk - unable to create new temporary file : " + destinationFile.getName() + ".tmp");
+            Logging.log(Log.ERROR, TAG, "Error writing parcelable to disk - unable to create new temporary file : " + destinationFile.getName() + ".tmp");
             return false;
         }
 
@@ -242,14 +242,22 @@ public class IOUtils {
 
             }
         } catch (IOException e) {
-            Logging.log(Log.ERROR, TAG, "Error writing Object to disk : " + tmpFile.getUri());
+            Logging.log(Log.ERROR, TAG, "Error writing parcelable to disk : " + tmpFile.getUri());
             Logging.recordException(e);
         }
         boolean canWrite = true;
-        if (destinationFile.exists()) {
+        if (destinationFile.exists() && destinationFile.isFile()) {
             if (!destinationFile.delete()) {
-                Logging.log(Log.ERROR, TAG, "Error writing Object to disk - unable to delete previous file to allow replace : " + destinationFile.getUri());
-                canWrite = false;
+                boolean deleted =false;
+                if("file".equals(destinationFile.getUri().getScheme())) {
+                    deleted = new File(Objects.requireNonNull(destinationFile.getUri().getPath())).delete();
+                }
+                if(deleted) {
+                    Logging.log(Log.WARN, TAG, "Had to convert to file for delete to work - weird");
+                } else {
+                    Logging.log(Log.ERROR, TAG, "Error writing Parcelable to disk - unable to delete previous file to allow replace : " + destinationFile.getUri());
+                    canWrite = false;
+                }
             }
         }
         if (canWrite) {
@@ -301,7 +309,7 @@ public class IOUtils {
         boolean canWrite = true;
         if (destinationFile.exists()) {
             if (!destinationFile.delete()) {
-                Logging.log(Log.ERROR, TAG, "Error writing Object to disk - unable to delete previous file to allow replace : " + destinationFile.getUri());
+                Logging.log(Log.ERROR, TAG, "Error writing Object to disk - unable to delete previous file to allow replace(2) : " + destinationFile.getUri());
                 canWrite = false;
             }
         }

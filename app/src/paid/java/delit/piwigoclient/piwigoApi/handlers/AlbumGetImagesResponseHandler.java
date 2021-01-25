@@ -9,9 +9,9 @@ import java.util.Set;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
-public class ImagesGetResponseHandler extends BaseImagesGetResponseHandler {
+public class AlbumGetImagesResponseHandler extends AlbumGetImagesBasicResponseHandler {
 
-    public ImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
+    public AlbumGetImagesResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
         super(parentAlbum, sortOrder, page, pageSize, multimediaExtensionList);
     }
 

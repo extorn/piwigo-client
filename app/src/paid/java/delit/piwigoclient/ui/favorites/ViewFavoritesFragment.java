@@ -53,7 +53,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
@@ -762,8 +762,8 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             synchronized (getParent().getLoadingMessageIds()) {
-                if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
-                    getParent().onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
+                if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
+                    getParent().onGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
                     getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
                 } else if(response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
@@ -848,7 +848,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         }
     }
 
-    void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
+    void onGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
             favoritesModel.getContainerDetails().setPhotoCount(response.getTotalResourceCount());
             favoritesModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());

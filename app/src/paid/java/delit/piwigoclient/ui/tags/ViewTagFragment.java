@@ -54,7 +54,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
@@ -390,7 +390,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         }
     }
 
-    protected void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
+    protected void onGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
             tagModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             if (tagModel.isFullyLoaded() && tagModel.getItemCount() == 0) {
@@ -807,8 +807,8 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             synchronized (getParent().getLoadingMessageIds()) {
 
-                if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
-                    getParent().onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
+                if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
+                    getParent().onGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) {
                     getParent().onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
                 } else if(response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {

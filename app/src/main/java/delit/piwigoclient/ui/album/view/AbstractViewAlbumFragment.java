@@ -87,6 +87,7 @@ import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumAddPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
@@ -97,14 +98,13 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumsGetFirstAvailableAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageChangeParentAlbumHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageCopyToAlbumResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageSetPrivacyLevelResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
@@ -1094,7 +1094,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 Set<String> multimediaExtensionList = ConnectionPreferences.getActiveProfile().getKnownMultimediaExtensions(prefs, requireContext());
 
 
-                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetImagesResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
                 galleryModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
                 loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             } finally {
@@ -2042,7 +2042,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
 
-    protected void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
+    protected void onGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
             boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
             int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
@@ -3301,8 +3301,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                     getParent().onResourcesDeleted((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response);
                 } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
                     getParent().onListOfAlbumsLoaded((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
-                } else if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
-                    getParent().onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
+                } else if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
+                    getParent().onGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
                     getParent().onAlbumDeleted((AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) response);
                 } else if (response instanceof AlbumGetPermissionsResponseHandler.PiwigoAlbumPermissionsRetrievedResponse) {

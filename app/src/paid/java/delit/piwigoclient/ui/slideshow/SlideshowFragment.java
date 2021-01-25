@@ -35,8 +35,8 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesGetImagesResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
@@ -160,7 +160,7 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {
-            loadingMessageId = new ImagesGetResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+            loadingMessageId = new AlbumGetImagesResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
         } else if(containerDetails instanceof Tag) {
             loadingMessageId = new TagGetImagesResponseHandler((Tag) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
         } else if(container instanceof PiwigoFavorites) {

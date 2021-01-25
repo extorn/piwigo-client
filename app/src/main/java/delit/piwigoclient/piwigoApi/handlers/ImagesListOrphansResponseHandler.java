@@ -2,6 +2,8 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -68,7 +70,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
-    public boolean isMethodAvailable(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public boolean isMethodAvailable(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         boolean available = super.isMethodAvailable(context, connectionPrefs);
         if(available && "piwigo_client.images.getOrphans".equals(getPiwigoMethod())) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);

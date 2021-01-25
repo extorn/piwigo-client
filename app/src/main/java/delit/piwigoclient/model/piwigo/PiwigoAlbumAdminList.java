@@ -3,6 +3,8 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +32,7 @@ public class PiwigoAlbumAdminList implements Parcelable {
         dest.writeList(rootAlbums);
     }
 
-    public List<CategoryItem> getDirectChildrenOfAlbum(List<Long> parentageChain, long albumId) {
+    public @NonNull List<CategoryItem> getDirectChildrenOfAlbum(List<Long> parentageChain, long albumId) {
         if (ROOT_ALBUM.getParentageChain().equals(parentageChain)) {
             return rootAlbums;
         }
@@ -39,7 +41,11 @@ public class PiwigoAlbumAdminList implements Parcelable {
         for (CategoryItem rootAlbum : rootAlbums) {
             CategoryItem item = rootAlbum.locateChildAlbum(fullAlbumPath);
             if (item != null) {
-                return item.getChildAlbums();
+                List<CategoryItem> list = item.getChildAlbums();
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                return list;
             }
         }
         String parents = CollectionUtils.toCsvList(parentageChain);

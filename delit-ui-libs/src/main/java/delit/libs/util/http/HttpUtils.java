@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -22,14 +25,14 @@ import delit.libs.util.X509Utils;
 public class HttpUtils {
     private static final String TAG = "HttpUtils";
 
-    public static String[] getHttpErrorMessage(Context c, int statusCode, Throwable error) {
+    public static String[] getHttpErrorMessage(@NonNull Context context, int statusCode, @Nullable Throwable error) {
         String[] retVal = new String[2];
         retVal[1] = ""; // default to no extra detail.
 
         String errorMessage = "";
         String errorDetail = "";
         if (error != null) {
-            errorMessage = error.getMessage() != null ? error.getMessage() : c.getString(R.string.undefined_error_msg);
+            errorMessage = error.getMessage() != null ? error.getMessage() : context.getString(R.string.undefined_error_msg);
         }
         Throwable cause;
         if (error instanceof SSLHandshakeException) {
@@ -60,25 +63,25 @@ public class HttpUtils {
             }
         }
         if (statusCode >= 400 && statusCode < 500) {
-            errorMessage = c.getString(R.string.resource_unavailable_error_msg_pattern, statusCode);
+            errorMessage = context.getString(R.string.resource_unavailable_error_msg_pattern, statusCode);
         }
         // When Http response code is '500'
         else if (statusCode >= 500 && statusCode < 600) {
-            errorMessage = c.getString(R.string.server_error_msg_pattern, statusCode);
+            errorMessage = context.getString(R.string.server_error_msg_pattern, statusCode);
         }
         // When Http response code other than 4xx and 5xx
         else if (statusCode >= 300 && statusCode < 400) {
-            errorMessage = c.getString(R.string.redirect_error_msg_pattern, statusCode);
-            errorDetail = c.getString(R.string.http_error_msg_pattern, errorMessage);
+            errorMessage = context.getString(R.string.redirect_error_msg_pattern, statusCode);
+            errorDetail = context.getString(R.string.http_error_msg_pattern, errorMessage);
         } else if (statusCode >= 100 && statusCode < 200) {
-            errorMessage = c.getString(R.string.unexpected_response_error_msg_pattern, statusCode);
-            errorDetail = c.getString(R.string.http_error_msg_pattern, errorMessage);
+            errorMessage = context.getString(R.string.unexpected_response_error_msg_pattern, statusCode);
+            errorDetail = context.getString(R.string.http_error_msg_pattern, errorMessage);
         } else if (statusCode == 0) {
             if (error != null && error.getCause() != null && error.getCause().getMessage() != null) {
                 String detail = error.getCause().getMessage();
                 if(detail.contains("Trust anchor for certification path not found")) {
-                    errorMessage += c.getString(R.string.certificate_chain_not_verifiable_error);
-                    errorDetail += c.getString(R.string.certificate_chain_not_verifiable_error_detail);
+                    errorMessage += context.getString(R.string.certificate_chain_not_verifiable_error);
+                    errorDetail += context.getString(R.string.certificate_chain_not_verifiable_error_detail);
                 } else {
                     String moreInfo = "Error : \n" + detail;
                     if(errorMessage.isEmpty()) {
@@ -88,18 +91,18 @@ public class HttpUtils {
                     }
                 }
             } else {
-                errorMessage =  c.getString(R.string.connection_error_msg_pattern);
+                errorMessage =  context.getString(R.string.connection_error_msg_pattern);
 
                 if(error != null && error.getMessage() != null) {
-                    errorDetail = c.getString(R.string.http_error_msg_pattern, error.getMessage());
+                    errorDetail = context.getString(R.string.http_error_msg_pattern, error.getMessage());
                 }
             }
         } else if (statusCode < 0) {
             if (error != null && error.getCause() != null && error.getCause().getMessage() != null) {
                 String detail = error.getCause().getMessage();
                 if(detail.contains("Trust anchor for certification path not found")) {
-                    errorMessage += c.getString(R.string.certificate_chain_not_verifiable_error);
-                    errorDetail += c.getString(R.string.certificate_chain_not_verifiable_error_detail);
+                    errorMessage += context.getString(R.string.certificate_chain_not_verifiable_error);
+                    errorDetail += context.getString(R.string.certificate_chain_not_verifiable_error_detail);
                 } else {
                     String moreInfo = "Error : \n" + detail;
                     if(errorMessage.isEmpty()) {
@@ -110,8 +113,8 @@ public class HttpUtils {
                 }
             }
         } else {
-            errorMessage = c.getString(R.string.unexpected_response_error_msg_pattern, statusCode);
-            errorDetail = c.getString(R.string.http_error_msg_pattern, errorMessage);
+            errorMessage = context.getString(R.string.unexpected_response_error_msg_pattern, statusCode);
+            errorDetail = context.getString(R.string.http_error_msg_pattern, errorMessage);
         }
         retVal[0] = errorMessage;
         retVal[1] = errorDetail;

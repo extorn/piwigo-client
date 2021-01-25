@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -220,15 +221,15 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return false;
     }
 
-    public void setCallDetails(Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode) {
+    public void setCallDetails(@NonNull Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode) {
         setCallDetails(parentContext, connectionPrefs, useAsyncMode, true);
     }
 
-    protected Context getContext() {
+    protected @NonNull Context getContext() {
         return context;
     }
 
-    public void setCallDetails(Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode, boolean allowSessionRefreshAttempt) {
+    public void setCallDetails(@NonNull Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode, boolean allowSessionRefreshAttempt) {
         clearCallDetails();
 
         this.context = parentContext;

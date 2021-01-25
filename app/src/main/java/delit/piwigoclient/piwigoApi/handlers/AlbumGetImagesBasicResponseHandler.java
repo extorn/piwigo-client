@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import java.nio.file.PathMatcher;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +30,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
-public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetResourcesRspHdlr";
     private final static String AMP_HTML_TAG = "&amp;";
@@ -39,7 +40,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
     private final int pageSize;
     private final int page;
 
-    public BaseImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
+    public AlbumGetImagesBasicResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
         super("pwg.categories.getImages", TAG);
         this.parentAlbum = parentAlbum;
         this.sortOrder = sortOrder;
@@ -157,19 +158,30 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             return fixedPrivacyPluginImageUrisForPrivacyPluginUser;
         }
 
+        /**
+         * Sets up the multimedia pattern to have 3 groups.
+         * For input: http://myserver.com/piwigo/2021/_data/i/upload/2021/01/01/myFile.jpg
+         * Group 1: 2021/_data/i
+         * Group 2: /upload/2021/01/01/myfile.mp4
+         * Group 3: mp4
+         * @param multimediaExtensionList list of all extensions that would flag the resource as multimedia
+         * @param basePiwigoUrl
+         *
+         *
+         */
         public BasicCategoryImageResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
             this.basePiwigoUrl = basePiwigoUrl;
-            StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
+            StringBuilder extList = new StringBuilder();
             Iterator<String> extIter = multimediaExtensionList.iterator();
             while (extIter.hasNext()) {
                 String ext = extIter.next();
-                multimediaRegexpBuilder.append(ext);
+                extList.append(ext);
                 if (extIter.hasNext()) {
-                    multimediaRegexpBuilder.append('|');
+                    extList.append('|');
                 }
             }
-            multimediaRegexpBuilder.append(")$");
-            multimediaPattern = Pattern.compile(multimediaRegexpBuilder.toString(), Pattern.CASE_INSENSITIVE);
+            String pattern = "^"+basePiwigoUrl+"([\\d]*/.*)?((?<=/)upload/.*\\.("+extList+"))$";
+            multimediaPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
             multimediaPatternMatcher = null;
         }
 
@@ -196,7 +208,6 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 originalResourceUrl = origUrlElem.getAsString();
             }
             JsonObject derivatives = image.get("derivatives").getAsJsonObject();
-            String thumbnail;
 
             ResourceItem item;
 
@@ -254,25 +265,23 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 originalResourceUrlHeight = image.get("height").getAsInt();
             }
 
-
-            if (originalResourceUrl != null && multimediaPatternMatcher.matches() && (originalResourceUrl.matches("(?i)^"+basePiwigoUrl+"/upload/.*"))) {
-                //TODO why must we do something special for the privacy plugin?
+            if (originalResourceUrl != null && multimediaPatternMatcher.matches()) {
+                String pathPrefix = multimediaPatternMatcher.group(1);  // "12344/.*/"
+                String uploadsPath = multimediaPatternMatcher.group(2); // "upload.*"
+                //FIXME Ask PiwigoPrivacy dev why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
-                String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
 
-                thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
-                if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
-                    originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
+                String thumbnailUriStr = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
+                if (thumbnailUriStr.matches(".*piwigo_privacy/get\\.php\\?.*")) {
+                    // I think this is piwigo_privacy simple mode.
+                    originalResourceUrl = thumbnailUriStr.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + uploadsPath + "$3");
                     fixedPrivacyPluginImageUrisForPrivacyPluginUser = true;
-                } else {
-                    boolean missingImageId = mediaFile.startsWith("/upload");
-                    if (missingImageId) {
-                        originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/" + id + "/upload");
-                        fixedImageUrisForPrivacyPluginUser = true;
-                    }
+                } else if(pathPrefix == null || pathPrefix.isEmpty()){
+                    originalResourceUrl = basePiwigoUrl + "/" + id + uploadsPath;
+                    fixedImageUrisForPrivacyPluginUser = true;
                 }
                 item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
-                item.setThumbnailUrl(thumbnail);
+                item.setThumbnailUrl(thumbnailUriStr); // note we are using this as is. Only the original resource Uri gets altered.
                 item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
 
             } else {

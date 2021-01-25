@@ -3,6 +3,8 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 import com.drew.metadata.Metadata;
 import com.squareup.picasso.BaseLruExifCache;
 
@@ -21,11 +23,11 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
 
     private static final String TAG = "CustomImageDwnldr";
 
-    public CustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public CustomImageDownloader(@NonNull Context context, @NonNull ConnectionPreferences.ProfilePreferences connectionPrefs) {
         super(context, connectionPrefs);
     }
 
-    public CustomImageDownloader(Context context) {
+    public CustomImageDownloader(@NonNull Context context) {
         super(context);
     }
 

@@ -21,7 +21,7 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
         super(piwigoResource, multimediaExtensionList);
     }
 
-    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride) {
+    protected AlbumGetImagesBasicResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride) {
         return new ImageGetInfoResourceParser(multimediaExtensionList, getPiwigoServerUrl(), usingPiwigoClientOveride);
     }
 

@@ -43,7 +43,7 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesBasicResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -501,12 +501,12 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
-                onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
+            if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
+                onGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
             }
         }
 
-        public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
+        public void onGetResources(final AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse response) {
             ArrayList<GalleryItem> resources = response.getResources();
             getParent().onResourcesReceived(response.getPage(), response.getPageSize(), resources);
 

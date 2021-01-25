@@ -137,23 +137,18 @@ public class Worker extends SafeAsyncTask<Long, Integer, Boolean> {
 
     @Override
     protected final Boolean doInBackgroundSafely(Long... params) {
-        boolean result;
         try {
             if (params.length != 1) {
                 throw new IllegalArgumentException("Exactly one parameter must be passed - the id for this call");
             }
             long messageId = params[0];
-            result = executeCall(messageId);
-            Log.d(tag, "Worker returning : " + result);
+            boolean result = executeCall(messageId);
+            Logging.log(Log.DEBUG, tag, "Worker executed code in background successfully: " + result);
             return result;
         } catch (RuntimeException e) {
+            Logging.log(Log.ERROR, tag, "ASync worker background call crashed unexpectedly");
             Logging.recordException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(tag, "ASync code crashed unexpectedly", e);
-            }
-            result = false;
-            Log.d(tag, "Worker returning : " + result);
-            return result;
+            return false;
         }
     }
 

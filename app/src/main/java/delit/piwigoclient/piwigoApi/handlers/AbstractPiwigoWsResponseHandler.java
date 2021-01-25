@@ -3,6 +3,8 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -86,7 +88,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return piwigoMethodToUse;
     }
 
-    public boolean isMethodAvailable(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public boolean isMethodAvailable(@NonNull Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         setCallDetails(context, connectionPrefs, false);
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if(sessionDetails == null) {
