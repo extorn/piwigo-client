@@ -38,7 +38,7 @@ public class TopTipsFragment<F extends TopTipsFragment<F,FUIH>, FUIH extends Fra
 
         ListView plannedReleases = view.findViewById(R.id.toptips_list);
         String[] data = getResources().getStringArray(R.array.top_tips);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.layout_top_tips_list_item, R.id.list_item_details, data);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.layout_top_tips_list_item, R.id.list_item_details, data);
         plannedReleases.setAdapter(adapter);
 
         AdView adView = view.findViewById(R.id.toptips_adView);

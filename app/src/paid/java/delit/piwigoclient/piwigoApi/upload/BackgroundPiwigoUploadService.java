@@ -242,7 +242,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder)) {
                         // TODO get rid of the event processor thread and use the handler instead to minimise potential thread generation!
                         UriWatcher observer;
-                        if(monitoringFolder.getUri().getScheme().equals("file")) {
+                        if("file".equals(monitoringFolder.getUri().getScheme())) {
                             observer = new CustomFileObserver(this, new File(monitoringFolder.getUri().getPath()));
                         } else {
                             observer = new CustomContentObserver(null, this, monitoringFolder.getUri());

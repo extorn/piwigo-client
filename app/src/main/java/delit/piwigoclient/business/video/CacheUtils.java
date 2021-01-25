@@ -31,26 +31,17 @@ import delit.piwigoclient.piwigoApi.HttpClientFactory;
 public class CacheUtils {
 
     private static final String TAG = "CacheUtils";
-    private static final FilenameFilter metadataFileFilter = new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.endsWith(".dat");
+    private static final FilenameFilter metadataFileFilter = (dir, name) -> name.endsWith(".dat");
+    private static final Comparator<CachedContent> cacheItemAgeComparator = (o1, o2) -> {
+        Date first = o1.getLastAccessed();
+        Date second = o2.getLastAccessed();
+        if (first == null) {
+            return -1;
         }
-    };
-    private static final Comparator<CachedContent> cacheItemAgeComparator = new Comparator<CachedContent>() {
-
-        @Override
-        public int compare(CachedContent o1, CachedContent o2) {
-            Date first = o1.getLastAccessed();
-            Date second = o2.getLastAccessed();
-            if (first == null) {
-                return -1;
-            }
-            if (second == null) {
-                return 1;
-            }
-            return o1.getLastAccessed().compareTo(o2.getLastAccessed());
+        if (second == null) {
+            return 1;
         }
+        return o1.getLastAccessed().compareTo(o2.getLastAccessed());
     };
 
     private static File getVideoCacheFolder(Context c) throws IOException {

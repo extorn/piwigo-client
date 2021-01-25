@@ -34,6 +34,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -253,15 +254,15 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         }
         header = httpResponse.getFirstHeader("Content-Range");
         String contentRangeHeader = header != null ? header.getValue() : null;
-        if (!TextUtils.isEmpty(contentRangeHeader)) {
+        if (contentRangeHeader != null && !contentRangeHeader.isEmpty()) {
             Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);
             if (matcher.find()) {
                 try {
-                    totalFileContentBytes = Long.parseLong(matcher.group(3));
+                    totalFileContentBytes = Long.parseLong(Objects.requireNonNull(matcher.group(3)));
 
-                    lastContentByte = Long.parseLong(matcher.group(2));
+                    lastContentByte = Long.parseLong(Objects.requireNonNull(matcher.group(2)));
 
-                    firstContentByte = Long.parseLong(matcher.group(1));
+                    firstContentByte = Long.parseLong(Objects.requireNonNull(matcher.group(1)));
 
                     if(BuildConfig.DEBUG) {
                         Log.d(TAG, String.format("RETRIEVED BYTES %1$d-%2$d of %3$d", firstContentByte, lastContentByte, totalFileContentBytes));
@@ -287,7 +288,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     }
                     Log.d(TAG, "total file bytes " + totalFileContentBytes);
                     cacheMetaData.setTotalBytes(totalFileContentBytes);
-                } catch (NumberFormatException e) {
+                } catch (NullPointerException e) {
                     Logging.recordException(e);
                     if (logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");

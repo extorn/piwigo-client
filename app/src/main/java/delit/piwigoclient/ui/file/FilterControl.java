@@ -61,14 +61,11 @@ public class FilterControl extends FrameLayout {
         addView(content);
         showFiltersToggle = findViewById(R.id.content_filter_label);
         showFiltersToggle.setChecked(true);
-        showFiltersToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    filtersViewGroup.setVisibility(View.VISIBLE);
-                } else {
-                    filtersViewGroup.setVisibility(View.GONE);
-                }
+        showFiltersToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked) {
+                filtersViewGroup.setVisibility(View.VISIBLE);
+            } else {
+                filtersViewGroup.setVisibility(View.GONE);
             }
         });
         filtersViewGroup = findViewById(R.id.filters);

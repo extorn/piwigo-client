@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
@@ -24,6 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.CollectionUtils;
 import delit.libs.util.IOUtils;
@@ -305,6 +307,7 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
 
     public static class PriorUploads implements Parcelable {
 
+        private static final String TAG = "PriorUploads";
         private int jobId;
         private final HashMap<Uri, String> fileUrisAndHashcodes = new HashMap<>();
 
@@ -360,7 +363,11 @@ public class AutoUploadJobConfig implements Parcelable, Identifiable, Comparable
             if(child == null) {
                 child = folder.createFile(MimeTypes.BASE_TYPE_APPLICATION, ""+jobId);
             }
-            IOUtils.saveParcelableToDocumentFile(c, child, this);
+            if(child == null) {
+                Logging.log(Log.ERROR, TAG,"Unable to save to file. File could not be created in folder " + folder.getUri());
+            } else {
+                IOUtils.saveParcelableToDocumentFile(c, child, this);
+            }
         }
 
         public static PriorUploads loadFromFile(Context c, int jobId) {

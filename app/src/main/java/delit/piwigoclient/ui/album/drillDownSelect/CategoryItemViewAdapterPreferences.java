@@ -54,12 +54,13 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
 
     public CategoryItemViewAdapterPreferences loadFromBundle(Bundle parent) {
         Bundle b = parent.getBundle("FolderItemViewAdapterPreferences");
-        columns = b.getInt("columns");
-        initialRoot = b.getParcelable("initialRoot");
-        initialSelection = BundleUtils.getLongHashSet(b, "initialSelection");
-        connectionProfileKey = b.getString("connectionProfileKey");
-        super.loadFromBundle(b);
-
+        if(b != null) {
+            columns = b.getInt("columns");
+            initialRoot = b.getParcelable("initialRoot");
+            initialSelection = BundleUtils.getLongHashSet(b, "initialSelection");
+            connectionProfileKey = b.getString("connectionProfileKey");
+            super.loadFromBundle(b);
+        }
         return this;
     }
 

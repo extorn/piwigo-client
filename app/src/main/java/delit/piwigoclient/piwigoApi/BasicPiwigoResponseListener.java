@@ -290,7 +290,8 @@ public class BasicPiwigoResponseListener<P extends UIHelper<P,T>, T> implements 
             } else {
                 retVal = ((ViewGroup) parent).isShown();
             }
-        } else if (parent instanceof DialogFragment) {
+        } else //noinspection ConstantConditions
+            if (parent instanceof DialogFragment) {
             retVal = ((DialogFragment) parent).getDialog() != null;
         } else if (parent == null) {
             // this listener has become detached from the UI.

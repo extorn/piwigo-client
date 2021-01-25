@@ -621,7 +621,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
 
         @Override
-        public void fillValues(FolderItem newItem, boolean allowItemDeletion) {
+        public void fillValues(T newItem, boolean allowItemDeletion) {
             setItem((T) newItem);
             getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
@@ -629,7 +629,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItems().contains(newItem));
+            getCheckBox().setChecked(getSelectedItems().contains((T)newItem));
             getCheckBox().setEnabled(isEnabled());
             getIconViewLoader().load();
         }
@@ -722,7 +722,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             return typeIndicatorView;
         }
 
-        public abstract void fillValues(FolderItem newItem, boolean allowItemDeletion);
+        public abstract void fillValues(T newItem, boolean allowItemDeletion);
 
         @Override
         public void cacheViewFieldsAndConfigure(FolderItemViewAdapterPreferences adapterPrefs) {

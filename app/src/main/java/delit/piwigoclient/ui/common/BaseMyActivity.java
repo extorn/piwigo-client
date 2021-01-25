@@ -310,7 +310,7 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         }
 
         if (uiHelper == null) {
-            uiHelper = (UIH)new ActivityUIHelper<UIH,T>((T)this, prefs, getWindow().getDecorView());
+            uiHelper = (UIH) new ActivityUIHelper<>((T) this, prefs, getWindow().getDecorView());
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
@@ -357,12 +357,10 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
             }
             if (googleApi.isUserResolvableError(result)) {
                 Dialog d = googleApi.getErrorDialog(this, result, OPEN_GOOGLE_PLAY_INTENT_REQUEST);
-                d.setOnDismissListener(dialog -> {
-                    finish();
-                });
+                d.setOnDismissListener(dialog -> finish());
                 d.show();
             } else {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ExitOnCloseAction<UIH,T>(getUiHelper()));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.unsupported_device), new ExitOnCloseAction<>(getUiHelper()));
             }
         }
     }
@@ -418,13 +416,10 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     protected void onPause() {
         activitiesResumed--;
         activitySwap = true;
-        DisplayUtils.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                activitySwap = false;
-                if (getActivitiesResumedCount() == 0) {
-                    onAppPaused();
-                }
+        DisplayUtils.runOnUiThread(() -> {
+            activitySwap = false;
+            if (getActivitiesResumedCount() == 0) {
+                onAppPaused();
             }
         }, 1000);
         uiHelper.deregisterFromActiveServiceCalls();

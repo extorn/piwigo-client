@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import java.util.Objects;
+
 @Entity(primaryKeys = {"uri", "consumerId"})
 public class UriPermissionUse implements Parcelable {
     public static final String CONSUMER_ID_FILE_SELECT = "fileSelect";
@@ -42,9 +44,9 @@ public class UriPermissionUse implements Parcelable {
 
 
     protected UriPermissionUse(Parcel in) {
-        uri = in.readString();
-        consumerId = in.readString();
-        localizedConsumerName = in.readString();
+        uri = Objects.requireNonNull(in.readString());
+        consumerId = Objects.requireNonNull(in.readString());
+        localizedConsumerName = Objects.requireNonNull(in.readString());
         flags = in.readInt();
     }
 

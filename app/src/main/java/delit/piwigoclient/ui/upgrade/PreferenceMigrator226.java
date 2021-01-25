@@ -44,35 +44,31 @@ public class PreferenceMigrator226 extends PreferenceMigrator {
         }
         Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, context);
         for (String profileId : connectionProfiles) {
-            upgradeConnectionProfilePreference(context, profileId, R.string.preference_server_connection_timeout_secs_key, new ConnectionPreferenceUpgradeAction() {
-                public void upgrade(ConnectionPreferences.PreferenceActor actor) {
-                    int currentTimeout = actor.readInt(prefs, context, -1);
-                    if (currentTimeout >= 1000) {
-                        currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
-                        actor.writeInt(editor, context, currentTimeout);
-                    }
+            upgradeConnectionProfilePreference(context, profileId, R.string.preference_server_connection_timeout_secs_key, actor -> {
+                int currentTimeout = actor.readInt(prefs, context, -1);
+                if (currentTimeout >= 1000) {
+                    currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
+                    actor.writeInt(editor, context, currentTimeout);
                 }
             });
-            upgradeConnectionProfilePreference(context, profileId, R.string.preference_piwigo_playable_media_extensions_key, new ConnectionPreferenceUpgradeAction() {
-                public void upgrade(ConnectionPreferences.PreferenceActor actor) {
-                    try {
-                        String multimediaCsvList = actor.readString(prefs, context, null);
-                        HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-                        HashSet<String> cleanedValues = new HashSet<>(values.size());
-                        for (String value : values) {
-                            int dotIdx = value.indexOf('.');
-                            if (dotIdx < 0) {
-                                cleanedValues.add(value.toLowerCase());
-                            } else {
-                                cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
-                            }
+            upgradeConnectionProfilePreference(context, profileId, R.string.preference_piwigo_playable_media_extensions_key, actor -> {
+                try {
+                    String multimediaCsvList = actor.readString(prefs, context, null);
+                    HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+                    HashSet<String> cleanedValues = new HashSet<>(values.size());
+                    for (String value : values) {
+                        int dotIdx = value.indexOf('.');
+                        if (dotIdx < 0) {
+                            cleanedValues.add(value.toLowerCase());
+                        } else {
+                            cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
                         }
-                        actor.remove(editor, context);
-                        actor.writeStringSet(editor, context, cleanedValues);
-                        Logging.log(Log.DEBUG, getLogTag(), "Upgraded media extensions preference from string to Set<String>");
-                    } catch (ClassCastException e) {
-                        // will occur if the user has previously migrated preferences at version 222!
                     }
+                    actor.remove(editor, context);
+                    actor.writeStringSet(editor, context, cleanedValues);
+                    Logging.log(Log.DEBUG, getLogTag(), "Upgraded media extensions preference from string to Set<String>");
+                } catch (ClassCastException e) {
+                    // will occur if the user has previously migrated preferences at version 222!
                 }
             });
         }

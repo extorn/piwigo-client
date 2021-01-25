@@ -383,7 +383,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             new SharedFilesClonedIntentProcessingTask(this).executeNow(itemsShared);
         } else {
             // this is called from a background thread.
-            DisplayUtils.runOnUiThread(() -> {getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_shared_without_required_permissions_error), R.string.button_ok);});
+            DisplayUtils.runOnUiThread(() -> getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.files_shared_without_required_permissions_error), R.string.button_ok));
         }
     }
 
@@ -902,7 +902,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                     FolderItem item = folderItems.get(0);
                     getOwner().addRootFolder(item.getDocumentFile());
                 } else {
-                    getOwner().getListAdapter().addItems(getOwner().getContext(), folderItems);
+                    getOwner().getListAdapter().addItems(getOwner().requireContext(), folderItems);
                     getOwner().selectAllItems();
                 }
             }
@@ -968,7 +968,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                     FolderItem item = folderItems.get(0);
                     getOwner().addRootFolder(item.getDocumentFile());
                 } else if(folderItems.size() > 0) {
-                    getOwner().getListAdapter().addItems(getOwner().getContext(), folderItems);
+                    getOwner().getListAdapter().addItems(getOwner().requireContext(), folderItems);
                     getOwner().selectAllItems();
                 }
             }

@@ -68,16 +68,14 @@ public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> ex
         }
 
         builder.setSingleChoiceItems(entries, checkedItem,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        checkedItem = which;
-                        /*
-                         * Clicking on an item simulates the positive button
-                         * click, and dismisses the dialog.
-                         */
-                        MappedListPreferenceDialogFragmentCompat.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-                        dialog.dismiss();
-                    }
+                (dialog, which) -> {
+                    checkedItem = which;
+                    /*
+                     * Clicking on an item simulates the positive button
+                     * click, and dismisses the dialog.
+                     */
+                    MappedListPreferenceDialogFragmentCompat.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+                    dialog.dismiss();
                 });
 
         /*

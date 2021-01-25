@@ -174,12 +174,9 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
         addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
-        addListItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (keystoreLoadProgress < 0 || keystoreLoadProgress == 100) {
-                    addNewCertificate();
-                }
+        addListItemButton.setOnClickListener(v -> {
+            if (keystoreLoadProgress < 0 || keystoreLoadProgress == 100) {
+                addNewCertificate();
             }
         });
 
@@ -403,12 +400,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
             X509Certificate cert = (X509Certificate) item.getCertificate();
             fillCertificateFields(cert, viewHolder);
-            viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItem(position, v);
-                }
-            });
+            viewHolder.deleteButton.setOnClickListener(v -> onDeleteItem(position, v));
         }
 
         private String getIsolatedCnFieldIfPossible(X500Principal principal) {
@@ -434,12 +426,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
             X509Certificate cert = (X509Certificate) item.getTrustedCertificate();
             fillCertificateFields(cert, viewHolder);
-            viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItem(position, v);
-                }
-            });
+            viewHolder.deleteButton.setOnClickListener(v -> onDeleteItem(position, v));
         }
 
         private void onDeleteItem(int position, View v) {

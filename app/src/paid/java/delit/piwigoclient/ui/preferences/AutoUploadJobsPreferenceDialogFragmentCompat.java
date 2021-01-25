@@ -211,7 +211,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
             String user = Strings.emptyToNull(username);
             if(user == null) {
-                user = getContext().getString(R.string.server_connection_preference_user_guest);
+                user = requireContext().getString(R.string.server_connection_preference_user_guest);
             }
             return user + '@' + serverName + '(' + uploadFolder + ')';
         }

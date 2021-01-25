@@ -147,21 +147,12 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
         saveButton.setVisibility(View.GONE);
 
         addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewTag();
-            }
-        });
+        addListItemButton.setOnClickListener(v -> addNewTag());
 
         retryActionButton = view.findViewById(R.id.list_retryAction_actionButton);
-        retryActionButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                retryActionButton.hide();
-                loadTagsPage(tagsModel.getNextPageToReload());
-            }
+        retryActionButton.setOnClickListener(v -> {
+            retryActionButton.hide();
+            loadTagsPage(tagsModel.getNextPageToReload());
         });
 
         recyclerView = view.findViewById(R.id.list);
@@ -257,18 +248,14 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
         final View v = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_layout_create_tag,null);
         EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(which != AlertDialog.BUTTON_POSITIVE) {
-                    return;
-                }
-                AlertDialog alert = (AlertDialog)dialog;
-                EditText tagNameEdit = alert.findViewById(R.id.tag_tagname);
-                String tagName = tagNameEdit.getText().toString();
-                createNewTag(tagName);
+        DialogInterface.OnClickListener listener = (dialog, which) -> {
+            if(which != AlertDialog.BUTTON_POSITIVE) {
+                return;
             }
+            AlertDialog alert = (AlertDialog)dialog;
+            EditText tagNameEdit1 = alert.findViewById(R.id.tag_tagname);
+            String tagName = tagNameEdit1.getText().toString();
+            createNewTag(tagName);
         };
 
         addNewTagDialog = builder.setView(v)

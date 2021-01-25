@@ -402,26 +402,23 @@ public class CachingAsyncHttpClient implements Closeable {
                 .setDefaultCredentialsProvider(credentialsProvider)
                 .setRedirectStrategy(new MyRedirectStrategy(enableRedirects))
                 .setRetryHandler(retryHandler)
-                .addInterceptorFirst(new HttpRequestInterceptor() {
-                    @Override
-                    public void process(HttpRequest request, HttpContext context) {
-                        if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
-                            request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
-                        }
-                        for (String header : clientHeaderMap.keySet()) {
-                            if (request.containsHeader(header)) {
-                                Header overwritten = request.getFirstHeader(header);
-                                log.d(LOG_TAG,
-                                        String.format("Headers were overwritten! (%s | %s) overwrites (%s | %s)",
-                                                header, clientHeaderMap.get(header),
-                                                overwritten.getName(), overwritten.getValue())
-                                );
+                .addInterceptorFirst((HttpRequestInterceptor) (request, context) -> {
+                    if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
+                        request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
+                    }
+                    for (String header : clientHeaderMap.keySet()) {
+                        if (request.containsHeader(header)) {
+                            Header overwritten = request.getFirstHeader(header);
+                            log.d(LOG_TAG,
+                                    String.format("Headers were overwritten! (%s | %s) overwrites (%s | %s)",
+                                            header, clientHeaderMap.get(header),
+                                            overwritten.getName(), overwritten.getValue())
+                            );
 
-                                //remove the overwritten header
-                                request.removeHeader(overwritten);
-                            }
-                            request.addHeader(header, clientHeaderMap.get(header));
+                            //remove the overwritten header
+                            request.removeHeader(overwritten);
                         }
+                        request.addHeader(header, clientHeaderMap.get(header));
                     }
                 })
                 //NOTE: this occurs after the decision is made to cache or not!
@@ -832,12 +829,7 @@ public class CachingAsyncHttpClient implements Closeable {
         requestMap.remove(context);
 
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    cancelRequests(requestList, mayInterruptIfRunning);
-                }
-            };
+            Runnable runnable = () -> cancelRequests(requestList, mayInterruptIfRunning);
             threadPool.submit(runnable);
         } else {
             cancelRequests(requestList, mayInterruptIfRunning);

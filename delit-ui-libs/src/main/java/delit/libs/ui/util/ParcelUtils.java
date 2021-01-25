@@ -113,10 +113,8 @@ public class ParcelUtils {
     public static HashSet<Long> readLongSet(Parcel in) {
         ArrayList<Long> dataWrapper = readLongArrayList(in);
         HashSet<Long> wrapper = new HashSet<>(dataWrapper.size());
-        if(dataWrapper != null) {
-            wrapper = new HashSet<>(wrapper.size());
-            wrapper.addAll(dataWrapper);
-        }
+        wrapper = new HashSet<>(wrapper.size());
+        wrapper.addAll(dataWrapper);
         return wrapper;
     }
 
@@ -157,7 +155,7 @@ public class ParcelUtils {
         }
     }
 
-    public static <T extends Set<String>> T readStringSet(Parcel in, @NonNull T dest) {
+    public static <T extends Set<String>> T readStringSet(@NonNull Parcel in, @NonNull T dest) {
         List<String> rawData = in.createStringArrayList();
         dest.clear();
         if (rawData != null && rawData.size() > 0) {

@@ -557,11 +557,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             setRunningUploadJob(thisUploadJob);
 
             if (thisUploadJob == null) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(tag, "Upload job could not be located immediately after creating it - weird!");
-                } else {
-                    Logging.log(Log.WARN, tag, "Upload job could not be located immediately after creating it - weird!");
-                }
+                Logging.log(Log.WARN, tag, "Upload job could not be located immediately after creating it - weird!");
                 return;
             }
             TaskProgressTracker overallJobProgressTracker = thisUploadJob.getProgressTrackerForJob(this);

@@ -147,12 +147,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
 
         ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
-        addListItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewUser();
-            }
-        });
+        addListItemButton.setOnClickListener(v -> addNewUser());
 
         retryActionButton = view.findViewById(R.id.list_retryAction_actionButton);
         retryActionButton.setOnClickListener(v -> {

@@ -69,12 +69,7 @@ public class EulaFragment<F extends EulaFragment<F,FUIH>,FUIH extends FragmentUI
 
         final TextView email = view.findViewById(R.id.eula_admin_email);
 
-        email.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendEmail(((TextView) v).getText().toString());
-            }
-        });
+        email.setOnClickListener(v -> sendEmail(((TextView) v).getText().toString()));
 
 
         return view;
@@ -87,7 +82,7 @@ public class EulaFragment<F extends EulaFragment<F,FUIH>,FUIH extends FragmentUI
 
     private void sendEmail(String email) {
 
-        final String appVersion = ProjectUtils.getVersionName(getContext());
+        final String appVersion = ProjectUtils.getVersionName(requireContext());
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain"); // send email as plain text
@@ -99,7 +94,7 @@ public class EulaFragment<F extends EulaFragment<F,FUIH>,FUIH extends FragmentUI
             serverVersion = sessionDetails.getPiwigoVersion();
         }
         intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: " + appVersion + "\nType and model of Device Being Used:\n");
-        getContext().startActivity(Intent.createChooser(intent, getString(R.string.create_email_using_app)));
+        requireContext().startActivity(Intent.createChooser(intent, getString(R.string.create_email_using_app)));
     }
 
     private void onDontAgreeToEula() {

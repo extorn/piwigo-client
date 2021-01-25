@@ -34,8 +34,8 @@ public class CustomFileFilter implements FileFilter {
             return false;
         }
         MimeTypeMap map = MimeTypeMap.getSingleton();
-        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(pathname.getName()).toLowerCase());
-        if (mimeType == null || MimeTypeFilter.matches(mimeType, "video/*") || !allowVideosToExceedLimit) {
+        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(pathname.getName()));
+        if (mimeType == null || MimeTypeFilter.matches(mimeType.toLowerCase(), "video/*") || !allowVideosToExceedLimit) {
             return isFilesizeMatch(pathname);
         }
         return true;

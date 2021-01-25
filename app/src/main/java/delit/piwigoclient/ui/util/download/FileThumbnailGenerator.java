@@ -26,7 +26,7 @@ public abstract class FileThumbnailGenerator<P extends FileThumbnailGenerator<P>
     private static final String TAG = "FileThumbnailGenerator";
 
     private final Uri downloadedFile;
-    private final DownloadTargetLoadListener<P> listener;
+    private @NonNull final DownloadTargetLoadListener<P> listener;
     private final WeakReference<Context> contextRef;
     private final Point desiredSize;
 
@@ -47,7 +47,7 @@ public abstract class FileThumbnailGenerator<P extends FileThumbnailGenerator<P>
 
     public void execute() {
         try {
-            DisplayUtils.runOnUiThread(() ->{PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(downloadedFile).error(R.drawable.ic_file_gray_24dp).resize(desiredSize.x, desiredSize.y).centerInside().into(this);});
+            DisplayUtils.runOnUiThread(() -> PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(downloadedFile).error(R.drawable.ic_file_gray_24dp).resize(desiredSize.x, desiredSize.y).centerInside().into(this));
         } catch(RuntimeException e) {
             Logging.log(Log.ERROR, TAG, "Unexpected fatal error" );
             Logging.recordException(e);
@@ -65,9 +65,7 @@ public abstract class FileThumbnailGenerator<P extends FileThumbnailGenerator<P>
             Log.d(TAG, "Generated bitmap from : " + downloadedFile.getPath());
         }
         DisplayUtils.runOnUiThread(() -> withLoadedThumbnail(bitmap));
-        if(listener != null) {
-            listener.onDownloadTargetResult((P) this, true);
-        }
+        listener.onDownloadTargetResult((P) this, true);
     }
 
 
@@ -81,9 +79,7 @@ public abstract class FileThumbnailGenerator<P extends FileThumbnailGenerator<P>
         }
         Bitmap errorBitmap = DisplayUtils.getBitmap(errorDrawable);
         DisplayUtils.runOnUiThread(() -> withErrorThumbnail(errorBitmap));
-        if(listener != null) {
-            listener.onDownloadTargetResult((P) this, false);
-        }
+        listener.onDownloadTargetResult((P) this, false);
     }
 
     @Override

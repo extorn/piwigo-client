@@ -64,7 +64,7 @@ public abstract class BaseViewHolder<VH extends BaseViewHolder<VH, P, T, LVA,MSL
         detailsTitle = itemView.findViewById(R.id.list_item_details);
 
         deleteButton = itemView.findViewById(R.id.list_item_delete_button);
-        deleteButton.setOnClickListener(v -> onDeleteItemButtonClick(v));
+        deleteButton.setOnClickListener(this::onDeleteItemButtonClick);
     }
 
     private void onDeleteItemButtonClick(View v) {

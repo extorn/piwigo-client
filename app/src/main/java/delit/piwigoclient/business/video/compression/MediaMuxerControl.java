@@ -303,7 +303,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Long originalBytes) {
 
         TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
-        thisTrackStats.addOriginalBytesTranscoded(originalBytes == null ? 0 : originalBytes);
+        Objects.requireNonNull(thisTrackStats).addOriginalBytesTranscoded(originalBytes == null ? 0 : originalBytes);
 
         int trackCount = trackFormats.size();
 
@@ -344,7 +344,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     private void writeSampleDataToMuxer(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info) {
         TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
-        thisTrackStats.addTranscodedBytesWritten(encodedData.remaining());
+        Objects.requireNonNull(thisTrackStats).addTranscodedBytesWritten(encodedData.remaining());
 //        lastWrittenDataTimeUs = info.presentationTimeUs;
         if (VERBOSE_LOGGING) {
             Log.d(TAG, "muxing data - " + getTrackName(outputTrackIndex) + " [" + info.presentationTimeUs + ']');

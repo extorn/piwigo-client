@@ -365,7 +365,7 @@ public class IOUtils {
     }
 
     // access ordered list.
-    private static final LinkedHashMap<String,String> knownExtsToMimes = new LinkedHashMap<String,String>(0, 0.75f, true);
+    private static final LinkedHashMap<String,String> knownExtsToMimes = new LinkedHashMap<>(0, 0.75f, true);
 
     /**
      * Bomb proof get MimeType. (I hope)

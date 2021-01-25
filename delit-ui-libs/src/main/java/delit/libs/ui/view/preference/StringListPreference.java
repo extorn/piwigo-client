@@ -58,7 +58,7 @@ public class StringListPreference extends MappedListPreference<String> {
         } catch (ClassCastException e) {
             Logging.recordException(e);
             // this will occur if swapping this pref type in for an old string type.
-            if (e.getMessage().equals("java.lang.String cannot be cast to java.lang.String")) {
+            if ("java.lang.String cannot be cast to java.lang.String".equals(e.getMessage())) {
                 return null;
             }
             throw e;

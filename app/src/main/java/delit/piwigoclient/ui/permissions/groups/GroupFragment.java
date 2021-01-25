@@ -221,38 +221,20 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
         });
 
         editButton = v.findViewById(R.id.group_action_edit_button);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setFieldsEditable(true);
-            }
-        });
+        editButton.setOnClickListener(v15 -> setFieldsEditable(true));
         discardButton = v.findViewById(R.id.group_action_discard_button);
-        discardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newGroupMembers = null;
-                newGroup = null;
-                newAccessibleAlbumIds = null;
-                setFieldsFromModel(currentGroup);
-                populateAlbumPermissionsList();
-                setFieldsEditable(currentGroup.getId() < 0);
-            }
+        discardButton.setOnClickListener(v14 -> {
+            newGroupMembers = null;
+            newGroup = null;
+            newAccessibleAlbumIds = null;
+            setFieldsFromModel(currentGroup);
+            populateAlbumPermissionsList();
+            setFieldsEditable(currentGroup.getId() < 0);
         });
         saveButton = v.findViewById(R.id.group_action_save_button);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveGroupChanges();
-            }
-        });
+        saveButton.setOnClickListener(v13 -> saveGroupChanges());
         deleteButton = v.findViewById(R.id.group_action_delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteGroup(currentGroup);
-            }
-        });
+        deleteButton.setOnClickListener(v12 -> deleteGroup(currentGroup));
 
         if (currentGroup.getId() < 0) {
             currentAccessibleAlbumIds = new HashSet<>();

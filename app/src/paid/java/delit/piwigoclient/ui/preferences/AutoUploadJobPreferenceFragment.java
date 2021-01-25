@@ -189,7 +189,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
                     if(deleteFilesAfterUpload) {
                         perms = IOUtils.URI_PERMISSION_READ_WRITE;
                     }
-                    allPreferencesValid &= IOUtils.appHoldsAllUriPermissionsForUri(getContext(), uri, perms);
+                    allPreferencesValid &= IOUtils.appHoldsAllUriPermissionsForUri(requireContext(), uri, perms);
                 }
             }
         }

@@ -60,7 +60,9 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
     @Override
     public void onViewRemoved(View child) {
         super.onViewRemoved(child);
-        checkableChildren.remove(child);
+        if(child instanceof Checkable) {
+            checkableChildren.remove(child);
+        }
     }
 
     @Override

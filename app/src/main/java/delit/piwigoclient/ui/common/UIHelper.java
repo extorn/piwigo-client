@@ -247,7 +247,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     private synchronized void showDetailedMsg(QueuedSimpleMessage newItem) {
         if(!DisplayUtils.isRunningOnUIThread()) {
             // make certain this isn't called on a background thread.
-            DisplayUtils.postOnUiThread(() -> {showDetailedMsg(newItem);});
+            DisplayUtils.postOnUiThread(() -> showDetailedMsg(newItem));
             return;
         }
         if(!toastShowing) {
@@ -517,13 +517,10 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         if (b != null) {
             b.setVisibility(View.GONE);
         }
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, appContext.getString(nextMessage.getPositiveButtonTextId()), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                QuestionResultListener l = nextMessage.getListener();
-                if (l != null) {
-                    l.onResultInternal(alertDialog, true);
-                }
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, appContext.getString(nextMessage.getPositiveButtonTextId()), (dialog, which) -> {
+            QuestionResultListener l = nextMessage.getListener();
+            if (l != null) {
+                l.onResultInternal(alertDialog, true);
             }
         });
         dismissListener.setListener(nextMessage.getListener());
@@ -728,17 +725,13 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                 alert.setTitle(appContext.getString(R.string.alert_title_permissions_needed));
                 alert.setMessage(event.getJustification());
 
-                alert.setPositiveButton(appContext.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                alert.setPositiveButton(appContext.getString(R.string.button_ok), (dialog, whichButton) -> {
 //                        EventBus.getDefault().post(event);
-                        requester.requestPermission(event.getActionId(), permissionsNeeded);
-                    }
+                    requester.requestPermission(event.getActionId(), permissionsNeeded);
                 });
-                alert.setNegativeButton(appContext.getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // Do nothing, automatically the dialog is going to be closed.
-                        onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[0]), new int[0]);
-                    }
+                alert.setNegativeButton(appContext.getString(R.string.button_cancel), (dialog, whichButton) -> {
+                    // Do nothing, automatically the dialog is going to be closed.
+                    onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[0]), new int[0]);
                 });
                 if(DisplayUtils.canShowDialog(activity)) {
                     alert.create().show();
@@ -1442,12 +1435,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                 detailView.setText(getDetail());
 
                 ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
-                detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                    }
-                });
+                detailsVisibleButton.setOnCheckedChangeListener((buttonView, isChecked) -> detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE));
                 detailsVisibleButton.toggle();
             } else {
                 listener.onPopulateDialogView(dialogView, layoutId);

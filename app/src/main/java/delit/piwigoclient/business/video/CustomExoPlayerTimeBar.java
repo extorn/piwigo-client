@@ -301,12 +301,7 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
         }
         formatBuilder = new StringBuilder();
         formatter = new Formatter(formatBuilder, Locale.getDefault());
-        stopScrubbingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                stopScrubbing(false);
-            }
-        };
+        stopScrubbingRunnable = () -> stopScrubbing(false);
         if (scrubberDrawable != null) {
             scrubberPadding = (scrubberDrawable.getMinimumWidth() + 1) / 2;
         } else {

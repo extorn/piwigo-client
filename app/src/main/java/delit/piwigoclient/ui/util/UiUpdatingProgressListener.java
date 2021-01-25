@@ -31,7 +31,7 @@ public class UiUpdatingProgressListener implements TaskProgressListener {
         }
         try {
             int progressAsInt = (int)Math.rint(100 * percent);
-            DisplayUtils.runOnUiThread(() -> {progressIndicator.showProgressIndicator(taskDescriptionStrRes, progressAsInt);});
+            DisplayUtils.runOnUiThread(() -> progressIndicator.showProgressIndicator(taskDescriptionStrRes, progressAsInt));
         } catch (NullPointerException e) {
             Logging.log(Log.ERROR, TAG, "Error updating upload progress");
         }

@@ -245,7 +245,7 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
         }
     }
 
-    @NonNull
+    @Nullable
     private ClipData buildClipData(FileSelectionCompleteEvent event) {
         ArrayList<String> mimes = new ArrayList<>(event.getSelectedFolderItems().size());
         ArrayList<ClipData.Item> clipItems = new ArrayList<>(event.getSelectedFolderItems().size());

@@ -290,13 +290,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
 
         retryActionButton.hide();
-        retryActionButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                onReloadAlbum();
-            }
-        });
+        retryActionButton.setOnClickListener(v -> onReloadAlbum());
 
         emptyTagLabel = view.findViewById(R.id.tag_empty_content);
         emptyTagLabel.setText(R.string.tag_empty_text);
@@ -337,14 +331,11 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         } else {
             bulkActionButtonDelete.hide();
         }
-        bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    onBulkActionDeleteButtonPressed();
-                }
-                return true; // consume the event
+        bulkActionButtonDelete.setOnTouchListener((v, event) -> {
+            if(event.getActionMasked() == MotionEvent.ACTION_UP) {
+                onBulkActionDeleteButtonPressed();
             }
+            return true; // consume the event
         });
 
         recyclerView.setAdapter(viewAdapter);

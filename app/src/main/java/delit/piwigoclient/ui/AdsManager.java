@@ -177,9 +177,7 @@ public class AdsManager {
     }
 
     private void initAdService(Context context) {
-        MobileAds.initialize(context, initializationStatus -> {
-            initialiseAllAdverts(context);
-        });
+        MobileAds.initialize(context, initializationStatus -> initialiseAllAdverts(context));
     }
 
     private void initialiseAllAdverts(Context context) {

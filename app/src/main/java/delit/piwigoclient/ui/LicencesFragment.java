@@ -42,12 +42,9 @@ public class LicencesFragment<F extends LicencesFragment<F,FUIH>,FUIH extends Fr
         View view = inflater.inflate(R.layout.fragment_licences_view, container, false);
 
         Button button = view.findViewById(R.id.other_oss_licences_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //                OssLicensesMenuActivity.setActivityTitle(getString(R.string.custom_license_title));
-                startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
-            }
+        button.setOnClickListener(v -> {
+            //                OssLicensesMenuActivity.setActivityTitle(getString(R.string.custom_license_title));
+            startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
         });
 
         AdView adView = view.findViewById(R.id.licences_adView);

@@ -225,22 +225,19 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
 
         imageView.setOnLongClickListener(v -> {
             final SelectImageRenderDetailsDialog dialogFactory = new SelectImageRenderDetailsDialog(getContext());
-            AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), model, new SelectImageRenderDetailsDialog.RenderDetailSelectListener() {
-                @Override
-                public void onSelection(String selectedUrl, float rotateDegrees, float maxZoom) {
-                    currentImageUrlDisplayed = selectedUrl;
-                    char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
-                    String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
-                    loader.setUriToLoad(uriToLoad);
-                    if (0 != Float.compare(rotateDegrees, 0f)) {
-                        loader.setRotation(rotateDegrees);
-                    } else {
-                        loader.setRotation(0f);
-                    }
-                    loader.load();
-                    if(imageView instanceof TouchImageView) {
-                        ((TouchImageView)imageView).setMaxZoom(maxZoom);
-                    }
+            AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), model, (selectedUrl, rotateDegrees, maxZoom) -> {
+                currentImageUrlDisplayed = selectedUrl;
+                char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
+                String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
+                loader.setUriToLoad(uriToLoad);
+                if (0 != Float.compare(rotateDegrees, 0f)) {
+                    loader.setRotation(rotateDegrees);
+                } else {
+                    loader.setRotation(0f);
+                }
+                loader.load();
+                if(imageView instanceof TouchImageView) {
+                    ((TouchImageView)imageView).setMaxZoom(maxZoom);
                 }
             });
             dialog.show();

@@ -60,12 +60,9 @@ class SelectImageRenderDetailsDialog {
         }
         builder1.setView(view);
         builder1.setNegativeButton(R.string.button_cancel, null);
-        builder1.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(fileSelectList.getCheckedItemCount() > 0) {
-                    listener.onSelection(model.getFileUrl(getSelectedFile().getName()), getRotateDegrees(), maxZoomPicker.isChecked() ? 100 : 3);
-                }
+        builder1.setPositiveButton(R.string.button_ok, (dialog, which) -> {
+            if(fileSelectList.getCheckedItemCount() > 0) {
+                listener.onSelection(model.getFileUrl(getSelectedFile().getName()), getRotateDegrees(), maxZoomPicker.isChecked() ? 100 : 3);
             }
         });
         builder1.setCancelable(true);

@@ -414,12 +414,7 @@ public class MyDocumentProvider extends DocumentsProvider {
         // Create a queue to store the most recent documents,
         // which orders by last modified.
         PriorityQueue<File> lastModifiedFiles =
-                new PriorityQueue<>(5, new Comparator<File>() {
-
-                    public int compare(File i, File j) {
-                        return Long.compare(i.lastModified(), j.lastModified());
-                    }
-                });
+                new PriorityQueue<>(5, (i, j) -> Long.compare(i.lastModified(), j.lastModified()));
 
         // Iterate through all files and directories
         // in the file structure under the root.  If
@@ -485,11 +480,14 @@ public class MyDocumentProvider extends DocumentsProvider {
             return Collections.emptySet();
         }
         Set<File> thumbs = new HashSet<>();
-        for(File thumbFolder : thumbnails.listFiles()) {
-            try {
-                thumbs.add(getFilesWithName(thumbFolder, documentId));
-            } catch (FileNotFoundException e) {
-                //ignore this. it is expected
+        File[] thumbnailFiles = thumbnails.listFiles();
+        if(thumbnailFiles != null) {
+            for (File thumbFolder : thumbnailFiles) {
+                try {
+                    thumbs.add(getFilesWithName(thumbFolder, documentId));
+                } catch (FileNotFoundException e) {
+                    //ignore this. it is expected
+                }
             }
         }
         return thumbs;

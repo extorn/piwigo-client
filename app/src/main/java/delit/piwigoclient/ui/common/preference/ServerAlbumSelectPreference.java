@@ -53,13 +53,10 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
                 R.styleable.ServerAlbumSelectPreference, 0, 0);
         connectionProfileNamePreferenceKey = a.getString(R.styleable.ServerAlbumSelectPreference_connectionProfileNameKey);
         a.recycle();
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key != null && key.equals(connectionProfileNamePreferenceKey)) {
-                    String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
-                    setEnabled(connectionProfileName != null && ConnectionPreferences.getPreferences(connectionProfileName, sharedPreferences, context).isValid(getContext()));
-                }
+        listener = (sharedPreferences, key) -> {
+            if(key != null && key.equals(connectionProfileNamePreferenceKey)) {
+                String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
+                setEnabled(connectionProfileName != null && ConnectionPreferences.getPreferences(connectionProfileName, sharedPreferences, context).isValid(getContext()));
             }
         };
     }

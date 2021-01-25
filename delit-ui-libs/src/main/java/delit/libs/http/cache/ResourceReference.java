@@ -28,6 +28,7 @@ package delit.libs.http.cache;
 
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.annotation.Immutable;
 import cz.msebera.android.httpclient.client.cache.HttpCacheEntry;
@@ -50,13 +51,15 @@ class ResourceReference extends PhantomReference<HttpCacheEntry> {
     }
 
     @Override
-    public int hashCode() {
-        return this.resource.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResourceReference that = (ResourceReference) o;
+        return resource.equals(that.resource);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        return this.resource.equals(obj);
+    public int hashCode() {
+        return Objects.hash(resource);
     }
-
 }

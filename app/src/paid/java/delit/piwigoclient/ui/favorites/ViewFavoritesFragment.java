@@ -267,13 +267,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         retryActionButton = view.findViewById(R.id.favorites_retryAction_actionButton);
 
         retryActionButton.hide();
-        retryActionButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                onReloadAlbum();
-            }
-        });
+        retryActionButton.setOnClickListener(v -> onReloadAlbum());
 
         emptyFavoritesLabel = view.findViewById(R.id.favorites_empty_content);
         emptyFavoritesLabel.setText(R.string.favorites_empty_text);
@@ -314,14 +308,11 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         } else {
             bulkActionButtonDelete.hide();
         }
-        bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    onBulkActionDeleteButtonPressed();
-                }
-                return true; // consume the event
+        bulkActionButtonDelete.setOnTouchListener((v, event) -> {
+            if(event.getActionMasked() == MotionEvent.ACTION_UP) {
+                onBulkActionDeleteButtonPressed();
             }
+            return true; // consume the event
         });
 
         recyclerView.setAdapter(viewAdapter);

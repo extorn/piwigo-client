@@ -33,12 +33,7 @@ public class RequestHandle {
         final AsyncHttpRequest _request = request.get();
         if (_request != null) {
             if (Looper.myLooper() == Looper.getMainLooper()) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        _request.cancel(mayInterruptIfRunning);
-                    }
-                }).start();
+                new Thread(() -> _request.cancel(mayInterruptIfRunning)).start();
                 // Cannot reliably tell if the request got immediately canceled at this point
                 // we'll assume it got cancelled
                 return true;

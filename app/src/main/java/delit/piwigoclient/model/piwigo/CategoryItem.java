@@ -461,9 +461,9 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
                     // swap to the new copy. Note still need to merge old child albums across.
 //                    childAlbums.remove(i);
                     childAlbums.set(i, newMatchingItem);
-                    mergeChildrenWith(i, newMatchingItem, existingMatchingItem, !preferExisting);
+                    mergeChildrenWith(i, newMatchingItem, existingMatchingItem, false);
                 } else {
-                    mergeChildrenWith(i, existingMatchingItem, newMatchingItem, preferExisting);
+                    mergeChildrenWith(i, existingMatchingItem, newMatchingItem, true);
                 }
             }
         }

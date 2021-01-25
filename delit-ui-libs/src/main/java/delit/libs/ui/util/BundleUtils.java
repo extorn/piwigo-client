@@ -186,14 +186,17 @@ public class BundleUtils {
             }
             int len = b.getInt("bytes");
             byte[] dataBytes = b.getByteArray("data");
-            Parcel p = Parcel.obtain();
-            try {
-                p.unmarshall(dataBytes, 0, len);
-                p.setDataPosition(0);
-                return ParcelUtils.readMap(p, mapToFill, loader);
-            } finally {
-                p.recycle();
+            if(dataBytes != null) {
+                Parcel p = Parcel.obtain();
+                try {
+                    p.unmarshall(dataBytes, 0, len);
+                    p.setDataPosition(0);
+                    return ParcelUtils.readMap(p, mapToFill, loader);
+                } finally {
+                    p.recycle();
+                }
             }
+            return mapToFill;
         } catch (RuntimeException e) {
             Logging.recordException(e);
             return mapToFill;

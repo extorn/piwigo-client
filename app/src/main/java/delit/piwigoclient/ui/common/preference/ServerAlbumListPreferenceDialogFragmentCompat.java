@@ -246,12 +246,9 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
         // clear checked items
         itemListView.clearChoices();
         itemListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        itemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                itemListView.setItemChecked(itemListView.getSelectedItemPosition(), false);
-                itemListView.setItemChecked(position, true);
-            }
+        itemListView.setOnItemClickListener((parent, view, position, id) -> {
+            itemListView.setItemChecked(itemListView.getSelectedItemPosition(), false);
+            itemListView.setItemChecked(position, true);
         });
 
         ServerAlbumListPreference pref = getPreference();

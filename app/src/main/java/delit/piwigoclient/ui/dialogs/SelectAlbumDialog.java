@@ -48,20 +48,13 @@ public class SelectAlbumDialog {
         if (selectedPosition >= 0) {
             selectedAlbumId = availableGalleries.getItem(selectedPosition);
         }
-        builder1.setSingleChoiceItems(availableGalleries, selectedPosition, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                selectedAlbumId = availableGalleries.getItem(which);
-            }
-        });
+        builder1.setSingleChoiceItems(availableGalleries, selectedPosition, (dialog, which) -> selectedAlbumId = availableGalleries.getItem(which));
         builder1.setPositiveButton(
                 R.string.button_ok,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (selectedAlbumId != null) {
-                            dialog.cancel();
-                            positiveActionListener.onClick(dialog, id);
-                        }
+                (dialog, id) -> {
+                    if (selectedAlbumId != null) {
+                        dialog.cancel();
+                        positiveActionListener.onClick(dialog, id);
                     }
                 });
         return builder1.create();

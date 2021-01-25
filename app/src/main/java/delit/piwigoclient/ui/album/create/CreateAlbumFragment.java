@@ -130,12 +130,7 @@ public class CreateAlbumFragment<F extends CreateAlbumFragment<F,FUIH>,FUIH exte
 
     private void setAllowedGroupsText() {
         if (selectedGroups != null && this.selectedGroups.size() > 0) {
-            Collections.sort(selectedGroups, new Comparator<Group>() {
-                @Override
-                public int compare(Group o1, Group o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            });
+            Collections.sort(selectedGroups, (o1, o2) -> o1.getName().compareTo(o2.getName()));
             StringBuilder sb = new StringBuilder();
             Iterator<Group> iter = this.selectedGroups.iterator();
             while (iter.hasNext()) {
@@ -152,12 +147,7 @@ public class CreateAlbumFragment<F extends CreateAlbumFragment<F,FUIH>,FUIH exte
 
     private void setAllowedUsernamesText() {
         if (selectedUsernames != null && this.selectedUsernames.size() > 0) {
-            Collections.sort(selectedUsernames, new Comparator<Username>() {
-                @Override
-                public int compare(Username o1, Username o2) {
-                    return o1.getUsername().compareTo(o2.getUsername());
-                }
-            });
+            Collections.sort(selectedUsernames, (o1, o2) -> o1.getUsername().compareTo(o2.getUsername()));
             StringBuilder sb = new StringBuilder();
             Iterator<Username> iter = this.selectedUsernames.iterator();
             while (iter.hasNext()) {
@@ -234,55 +224,38 @@ public class CreateAlbumFragment<F extends CreateAlbumFragment<F,FUIH>,FUIH exte
         galleryCommentsAllowedSwitchField = view.findViewById(R.id.createGallery_galleryCommentsAllowed);
         galleryIsPrivateSwitchField = view.findViewById(R.id.createGallery_galleryIsPrivate);
         privateGalleryConfigView = view.findViewById(R.id.createGallery_privatePermissions);
-        galleryIsPrivateSwitchField.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setGalleryPermissionsFieldsVisibility();
-            }
-        });
+        galleryIsPrivateSwitchField.setOnCheckedChangeListener((buttonView, isChecked) -> setGalleryPermissionsFieldsVisibility());
         ((TextView) view.findViewById(R.id.createGallery_parentGallery)).setText(parentGallery.getName());
         allowedGroupsTextView = view.findViewById(R.id.createGallery_permissions_allowedGroups);
-        allowedGroupsTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        allowedGroupsTextView.setOnClickListener(v -> {
 
-                HashSet<Long> preselectedGroups = PiwigoUtils.toSetOfIds(selectedGroups);
-                GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, true, preselectedGroups);
-                getUiHelper().setTrackingRequest(groupSelectionNeededEvent.getActionId());
-                EventBus.getDefault().post(groupSelectionNeededEvent);
-            }
+            HashSet<Long> preselectedGroups = PiwigoUtils.toSetOfIds(selectedGroups);
+            GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, true, preselectedGroups);
+            getUiHelper().setTrackingRequest(groupSelectionNeededEvent.getActionId());
+            EventBus.getDefault().post(groupSelectionNeededEvent);
         });
         setAllowedGroupsText();
         allowedUsernamesTextView = view.findViewById(R.id.createGallery_permissions_allowedUsers);
-        allowedUsernamesTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (selectedGroups == null || selectedGroups.size() == 0 || userIdsInSelectedGroups != null) {
-                    if (selectedGroups == null || selectedGroups.size() == 0) {
-                        userIdsInSelectedGroups = new HashSet<>(0);
-                    }
-
-                    HashSet<Long> preselectedUserIds = PiwigoUtils.toSetOfIds(selectedUsernames);
-
-                    UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, true, userIdsInSelectedGroups, preselectedUserIds);
-                    getUiHelper().setTrackingRequest(usernameSelectionNeededEvent.getActionId());
-                    EventBus.getDefault().post(usernameSelectionNeededEvent);
-
-                } else {
-                    Set<Long> selectedGroupIds = PiwigoUtils.toSetOfIds(selectedGroups);
-                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
+        allowedUsernamesTextView.setOnClickListener(v -> {
+            if (selectedGroups == null || selectedGroups.size() == 0 || userIdsInSelectedGroups != null) {
+                if (selectedGroups == null || selectedGroups.size() == 0) {
+                    userIdsInSelectedGroups = new HashSet<>(0);
                 }
+
+                HashSet<Long> preselectedUserIds = PiwigoUtils.toSetOfIds(selectedUsernames);
+
+                UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, true, userIdsInSelectedGroups, preselectedUserIds);
+                getUiHelper().setTrackingRequest(usernameSelectionNeededEvent.getActionId());
+                EventBus.getDefault().post(usernameSelectionNeededEvent);
+
+            } else {
+                Set<Long> selectedGroupIds = PiwigoUtils.toSetOfIds(selectedGroups);
+                addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
             }
         });
         setAllowedUsernamesText();
         Button createGalleryButton = view.findViewById(R.id.createGallery_createGalleryButton);
-        createGalleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                onCreateGallery();
-            }
-        });
+        createGalleryButton.setOnClickListener(v -> onCreateGallery());
 
         setGalleryPermissionsFieldsVisibility();
 

@@ -52,12 +52,9 @@ public class ServerAlbumListPreference extends DialogPreference {
                 R.styleable.ServerAlbumListPreference, 0, 0);
         connectionProfileNamePreferenceKey = a.getString(R.styleable.ServerAlbumListPreference_connectionProfileNameKey);
         a.recycle();
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals(connectionProfileNamePreferenceKey)) {
-                    setEnabled(null != sharedPreferences.getString(connectionProfileNamePreferenceKey, null));
-                }
+        listener = (sharedPreferences, key) -> {
+            if(key.equals(connectionProfileNamePreferenceKey)) {
+                setEnabled(null != sharedPreferences.getString(connectionProfileNamePreferenceKey, null));
             }
         };
     }

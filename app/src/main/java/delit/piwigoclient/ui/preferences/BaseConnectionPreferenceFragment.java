@@ -180,23 +180,20 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         useCustomTrustedCertsPref.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         TrustedCaCertificatesPreference trustedCertsPref = (TrustedCaCertificatesPreference) findPreference(R.string.preference_select_trusted_certificate_key);
-        trustedCertsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValueObject) {
-                KeyStore currentValue = ((TrustedCaCertificatesPreference) preference).getKeystore();
-                KeyStore newValue = (KeyStore) newValueObject;
-                Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
-                Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
-                if (removedCertThumbprints.size() > 0) {
-                    Set<String> preProcessedCerts = new HashSet<>(getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>(newAliases.size())));
-                    for (String removedThumbprint : removedCertThumbprints) {
-                        preProcessedCerts.remove(removedThumbprint);
-                    }
-                    getPrefs().edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), preProcessedCerts).commit();
-                    forceHttpConnectionCleanupAndRebuild();
+        trustedCertsPref.setOnPreferenceChangeListener((preference, newValueObject) -> {
+            KeyStore currentValue = ((TrustedCaCertificatesPreference) preference).getKeystore();
+            KeyStore newValue = (KeyStore) newValueObject;
+            Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
+            Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
+            if (removedCertThumbprints.size() > 0) {
+                Set<String> preProcessedCerts = new HashSet<>(getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>(newAliases.size())));
+                for (String removedThumbprint : removedCertThumbprints) {
+                    preProcessedCerts.remove(removedThumbprint);
                 }
-                return true;
+                getPrefs().edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), preProcessedCerts).commit();
+                forceHttpConnectionCleanupAndRebuild();
             }
+            return true;
         });
         ClientCertificatePreference clientCertificatePreference = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
         clientCertificatePreference.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);

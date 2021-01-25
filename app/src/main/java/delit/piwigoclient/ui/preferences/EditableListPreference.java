@@ -385,7 +385,7 @@ public class EditableListPreference extends DialogPreference {
             super(source);
             value = source.readString();
             entries = ParcelUtils.readStringSet(source, new TreeSet<>());
-            entriesAltered = ParcelUtils.readValue(source,null, boolean.class);
+            entriesAltered = ParcelUtils.readBool(source);
         }
 
         public SavedState(Parcelable superState) {
@@ -397,7 +397,7 @@ public class EditableListPreference extends DialogPreference {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
             ParcelUtils.writeStringSet(dest, entries);
-            dest.writeValue(entriesAltered);
+            ParcelUtils.writeBool(dest, entriesAltered);
         }
     }
 

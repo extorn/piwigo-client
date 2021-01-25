@@ -308,9 +308,6 @@ public class DownloadManager<UIH extends UIHelper<UIH,T>, T> implements Parcelab
 
     private @Nullable DocumentFile getDestinationFile(@NonNull String mimeType, @NonNull String outputFilename) {
         DocumentFile folder = AppPreferences.getAppDownloadFolder(getSharedPrefs(), getContext());
-        if(folder == null) {
-            return null;
-        }
         String filenameWithoutExt = IOUtils.getFileNameWithoutExt(outputFilename);
         DocumentFile df = null;
         try {

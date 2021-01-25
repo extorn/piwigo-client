@@ -84,27 +84,21 @@ public class Compressor {
     }
 
     public Flowable<File> compressToFileAsFlowable(final File imageFile, final String compressedFileName) {
-        return Flowable.defer(new Callable<Flowable<File>>() {
-            @Override
-            public Flowable<File> call() {
-                try {
-                    return Flowable.just(compressToFile(imageFile, compressedFileName));
-                } catch (IOException e) {
-                    return Flowable.error(e);
-                }
+        return Flowable.defer((Callable<Flowable<File>>) () -> {
+            try {
+                return Flowable.just(compressToFile(imageFile, compressedFileName));
+            } catch (IOException e) {
+                return Flowable.error(e);
             }
         });
     }
 
     public Flowable<Bitmap> compressToBitmapAsFlowable(final File imageFile) {
-        return Flowable.defer(new Callable<Flowable<Bitmap>>() {
-            @Override
-            public Flowable<Bitmap> call() {
-                try {
-                    return Flowable.just(compressToBitmap(imageFile));
-                } catch (IOException e) {
-                    return Flowable.error(e);
-                }
+        return Flowable.defer((Callable<Flowable<Bitmap>>) () -> {
+            try {
+                return Flowable.just(compressToBitmap(imageFile));
+            } catch (IOException e) {
+                return Flowable.error(e);
             }
         });
     }

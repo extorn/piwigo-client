@@ -215,63 +215,60 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
         }
         dialogBuilder.setPositiveButton(R.string.button_ok, null);
         final AlertDialog dialog = dialogBuilder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(final DialogInterface dialog) {
+        dialog.setOnShowListener(dialog1 -> {
 
-                View.OnClickListener listener = new View.OnClickListener() {
+            View.OnClickListener listener = new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View v) {
-                        AlertDialog alert = (AlertDialog)dialog;
-                        EditText tagNameEdit = alert.findViewById(R.id.tag_tagname);
-                        String tagName = tagNameEdit.getText().toString();
-                        if(tagName.length() == 0) {
-                            //just close the window.
-                            DisplayUtils.hideKeyboardFrom(getContext(), dialog);
-                            dialog.dismiss();
-                            return;
-                        }
-
-                        if(v == alert.getButton(AlertDialog.BUTTON_POSITIVE)) {
-                            onPositiveButton(tagName);
-                            DisplayUtils.hideKeyboardFrom(getContext(), dialog);
-                            dialog.dismiss();
-                        } else if(v == alert.getButton(AlertDialog.BUTTON_NEUTRAL)) {
-                            onNeutralButton(tagName);
-                            DisplayUtils.hideKeyboardFrom(getContext(), dialog);
-                            dialog.dismiss();
-                        }
-                    }
-                    private void onNeutralButton(String tagName) {
-                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                        if(sessionDetails != null && sessionDetails.isLoggedIn() && sessionDetails.isUseUserTagPluginForSearch()) {
-                            addMatchingTagsForSelection(tagName);
-                        } else {
-                            // sink this click - the user is trying to rush ahead before the UI has finished loading.
-                        }
+                @Override
+                public void onClick(View v1) {
+                    AlertDialog alert = (AlertDialog) dialog1;
+                    EditText tagNameEdit1 = alert.findViewById(R.id.tag_tagname);
+                    String tagName = tagNameEdit1.getText().toString();
+                    if(tagName.length() == 0) {
+                        //just close the window.
+                        DisplayUtils.hideKeyboardFrom(getContext(), dialog1);
+                        dialog1.dismiss();
+                        return;
                     }
 
-                    private void onPositiveButton(String tagName) {
-                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                        if(sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate()) {
-                            addNewTagForSelection(tagName);
-                        } else if(sessionDetails != null && sessionDetails.isAdminUser()) {
-                            createNewTag(tagName);
-                        } else if(sessionDetails != null && !sessionDetails.isMethodsAvailableListAvailable()){
-                            // sink this click - the user is trying to rush ahead before the UI has finished loading.
-                        }
+                    if(v1 == alert.getButton(AlertDialog.BUTTON_POSITIVE)) {
+                        onPositiveButton(tagName);
+                        DisplayUtils.hideKeyboardFrom(getContext(), dialog1);
+                        dialog1.dismiss();
+                    } else if(v1 == alert.getButton(AlertDialog.BUTTON_NEUTRAL)) {
+                        onNeutralButton(tagName);
+                        DisplayUtils.hideKeyboardFrom(getContext(), dialog1);
+                        dialog1.dismiss();
                     }
-                };
+                }
+                private void onNeutralButton(String tagName) {
+                    PiwigoSessionDetails sessionDetails1 = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                    if(sessionDetails1 != null && sessionDetails1.isLoggedIn() && sessionDetails1.isUseUserTagPluginForSearch()) {
+                        addMatchingTagsForSelection(tagName);
+                    } else {
+                        // sink this click - the user is trying to rush ahead before the UI has finished loading.
+                    }
+                }
 
-                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                private void onPositiveButton(String tagName) {
+                    PiwigoSessionDetails sessionDetails1 = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                    if(sessionDetails1 != null && sessionDetails1.isUseUserTagPluginForUpdate()) {
+                        addNewTagForSelection(tagName);
+                    } else if(sessionDetails1 != null && sessionDetails1.isAdminUser()) {
+                        createNewTag(tagName);
+                    } else if(sessionDetails1 != null && !sessionDetails1.isMethodsAvailableListAvailable()){
+                        // sink this click - the user is trying to rush ahead before the UI has finished loading.
+                    }
+                }
+            };
+
+            Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(listener);
+            button.setEnabled(false);
+            button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_NEUTRAL);
+            if(button != null) {
                 button.setOnClickListener(listener);
                 button.setEnabled(false);
-                button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
-                if(button != null) {
-                    button.setOnClickListener(listener);
-                    button.setEnabled(false);
-                }
             }
         });
 

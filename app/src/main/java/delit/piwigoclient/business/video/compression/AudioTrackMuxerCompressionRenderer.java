@@ -6,6 +6,7 @@ import android.media.MediaCrypto;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -23,12 +24,15 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.util.Util;
 
+import delit.libs.core.util.Logging;
+
 /**
  * This doesn't seem to work (with the video compression, but does alone) - issue with the link to exoplayer I think... It's kind of there, but not completely. Very weird error.
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer {
 
+    private static final String TAG = "AudioCompressingRenderer";
     private final MediaMuxerControl mediaMuxerControl;
     private final ExoPlayerCompression.AudioCompressionParameters compressionSettings;
     private final CompressionAudioSink audioSink;
@@ -151,9 +155,11 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
         try {
             super.renderToEndOfStream();
         } catch(RuntimeException e) {
-            if(e.getMessage().equals(CompressionAudioSink.SUCCESS_ERROR_CODE)) {
+            if(CompressionAudioSink.SUCCESS_ERROR_CODE.equals(e.getMessage())) {
                 throw ExoPlaybackException.createForRenderer(new CompressionSuccessException(),getIndex());
             }
+            Logging.log(Log.ERROR, TAG, "Unexpected runtime exception while finishing stream");
+            throw e;
         }
     }
 
