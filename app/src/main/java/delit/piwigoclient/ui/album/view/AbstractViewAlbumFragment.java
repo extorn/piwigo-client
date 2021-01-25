@@ -1016,7 +1016,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         if (viewAdapter != null && viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
             viewPrefs.withAllowMultiSelect(false);
             viewPrefs.setAllowItemSelection(false);
-            viewAdapter.notifyDataSetChanged(); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged()); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
         }
 
         int basketItemCount = basket.getItemCount();
@@ -1106,8 +1106,8 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
         boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
         if (galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder)) {
-            this.viewAdapter.notifyDataSetChanged();
-            this.galleryListView.invalidate();
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
+            DisplayUtils.runOnUiThread(()->galleryListView.invalidate());
         }
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
@@ -1304,7 +1304,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
             }
             galleryModel.setSpacerAlbumCount(spacerAlbumsNeeded);
-            viewAdapter.notifyDataSetChanged();
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
         }
 
         updateBasketDisplay(getBasket());
@@ -1335,7 +1335,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             galleryModel.clear();
             galleryListViewScrollListener.resetState();
             galleryListView.swapAdapter(viewAdapter, true);
-//            viewAdapter.notifyDataSetChanged();
+//            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
 
             loadAlbumSubCategories();
             loadAlbumResourcesPage(0);
@@ -1808,7 +1808,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         boolean changed = galleryModel.addMissingAlbums(adminOnlyChildCategories);
         if (changed) {
             galleryModel.updateSpacerAlbumCount(albumsPerRow);
-            viewAdapter.notifyDataSetChanged();
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
         }
 
     }
@@ -1999,14 +1999,23 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 galleryModel.addItem(CategoryItem.ALBUM_HEADING);
             }
         }
+        long currentGalleryId = galleryModel.getContainerDetails().getId();
         boolean itemsRemoved = false;
         boolean itemsAdded = false;
+        boolean hasAlbumsAlready = galleryModel.getSubAlbumCount() > 0;
         for (CategoryItem item : response.getAlbums()) {
-            if (item.getId() != galleryModel.getContainerDetails().getId()) {
-                // the 'child' album is not the current album we're viewing
-                // first try and remove it (will remove any admin copies)
-                itemsRemoved = galleryModel.remove(item);
-                // now add the item.
+            if (item.getId() != currentGalleryId) {
+                if(hasAlbumsAlready) {
+                    // the 'child' album is not the current album we're viewing
+                    // first try and remove it (will remove any admin copies)
+                    try { // can't do an equality search since admin items aren't equal
+                        GalleryItem existing = galleryModel.getItemById(item.getId());
+                        itemsRemoved = galleryModel.remove(existing);
+                    } catch (IllegalArgumentException e) {
+                        Logging.log(Log.DEBUG, TAG, "Item not found. Adapter size : %1$d", galleryModel.getSubAlbumCount());
+                        // just means it isn't present - sink.
+                    }
+                }
                 galleryModel.addItem(item);
                 itemsAdded = true;
             } else {
@@ -2025,10 +2034,10 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         galleryModel.updateSpacerAlbumCount(albumsPerRow);
         if(itemsRemoved) {
             // everything has changed including the admin -> default items.
-            viewAdapter.notifyDataSetChanged();
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyItemRangeChanged(0,viewAdapter.getItemCount()));
         } else if(itemsAdded) {
             // everything has changed
-            viewAdapter.notifyDataSetChanged();
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
         }
         emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
@@ -2049,7 +2058,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 //                Collections.reverse(resources);
 //            }
             galleryModel.addItemPage(response.getPage(), response.getPageSize(), resources);
-            viewAdapter.notifyDataSetChanged();
+            DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
         }
         emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
@@ -2228,7 +2237,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             if (viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
                 viewPrefs.withAllowMultiSelect(false);
                 viewPrefs.setAllowItemSelection(false);
-                viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
+                DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged()); //TODO check this does what it should...
             }
 
             Basket basket = getBasket();
@@ -2250,7 +2259,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             if (viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
                 viewPrefs.withAllowMultiSelect(false);
                 viewPrefs.setAllowItemSelection(false);
-                viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
+                DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged()); //TODO check this does what it should...
             }
         } else {
             // if not showing, just flush the state and rebuild the page

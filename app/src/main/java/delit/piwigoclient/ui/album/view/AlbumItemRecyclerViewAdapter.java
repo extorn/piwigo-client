@@ -124,6 +124,17 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         }
     }
 
+    @Override
+    protected boolean isDirtyItemViewHolder(VH holder, T newItem) {
+        if(!super.isDirtyItemViewHolder(holder, newItem)) {
+            boolean catDirty = (holder.getItem() instanceof CategoryItem
+            && newItem instanceof CategoryItem
+            && ((CategoryItem) holder.getItem()).isAdminCopy() != ((CategoryItem) newItem).isAdminCopy());
+            return catDirty;
+        }
+        return true;
+    }
+
     public void redrawItem(VH vh, CategoryItem item) {
         // clone the item into the view holder item (will not be same object if serialization has occurred)
         vh.getItem().copyFrom(item, true);

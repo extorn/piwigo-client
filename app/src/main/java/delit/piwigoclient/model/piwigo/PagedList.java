@@ -28,6 +28,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     private String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
     private ArrayList<T> items;
+    //FIXME improvement - add an index (adds safety on add) - private LongSparseArray<T> itemIdToItemMap = new LongSparseArray<>();
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
     private boolean fullyLoaded;
