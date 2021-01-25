@@ -13,7 +13,7 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
-import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetImagesResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 
 /**
@@ -47,7 +47,7 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>,FUIH extend
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {
-            loadingMessageId = new ImagesGetResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+            loadingMessageId = new AlbumGetImagesResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
         } else {
             throw new IllegalArgumentException("unsupported container type : " + container);
         }
