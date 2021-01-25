@@ -495,9 +495,9 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
             uploadToAlbum = getArguments().getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
             if (uploadToAlbum == null) {
                 uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
-                SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-                if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
-                    ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+                ConnectionPreferences.ResumeActionPreferences resumePrefs = getUiHelper().getResumePrefs();
+                if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getReopenAction(requireContext()))) {
+                    ArrayList<Long> albumPath = resumePrefs.getAlbumPath(requireContext());
                     if(!albumPath.isEmpty()) {
                         String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
                         AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);

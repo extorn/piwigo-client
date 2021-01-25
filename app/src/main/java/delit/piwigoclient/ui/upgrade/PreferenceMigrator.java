@@ -105,11 +105,11 @@ public abstract class PreferenceMigrator implements Comparable<PreferenceMigrato
     }
 
     protected interface ConnectionPreferenceUpgradeAction {
-        void upgrade(ConnectionPreferences.ProfilePreferences.PreferenceActor actor);
+        void upgrade(ConnectionPreferences.PreferenceActor actor);
     }
 
     protected void upgradeConnectionProfilePreference(Context context, String profileId, @StringRes int profileKey, ConnectionPreferenceUpgradeAction action) {
-        ConnectionPreferences.ProfilePreferences.PreferenceActor actor = ConnectionPreferences.getPreferenceActor(context, profileId, profileKey);
+        ConnectionPreferences.PreferenceActor actor = ConnectionPreferences.getPreferenceActor(context, profileId, profileKey);
         action.upgrade(actor);
     }
 

@@ -251,14 +251,11 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     public static <UIH extends UIHelper<UIH,?>> boolean canHandleReopenAction(UIH uiHelper) {
-        SharedPreferences resumePrefs = uiHelper.getResumePrefs();
-        if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
-            ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
-            if (activeProfile.getProfileId(uiHelper.getPrefs(), uiHelper.getAppContext()).equals(resumePrefs.getString("reopenProfileId", null))) {
-                // Can handle it. Lets try.
-                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
-                return albumPath.size() > 1;
-            }
+        ConnectionPreferences.ResumeActionPreferences resumePrefs = uiHelper.getResumePrefs();
+        if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getReopenAction(uiHelper.getAppContext()))) {
+            // Can handle it. Lets try.
+            ArrayList<Long> albumPath = resumePrefs.getAlbumPath(uiHelper.getAppContext());
+            return albumPath.size() > 1;
         }
         return false;
     }
@@ -455,9 +452,9 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             loadModelFromArguments();
         } else {
             // restore previous viewed album.
-            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
-                ArrayList<Long> albumPath = CollectionUtils.longsFromCsvList(resumePrefs.getString("reopenAlbumPath", null));
+            ConnectionPreferences.ResumeActionPreferences resumePrefs = getUiHelper().getResumePrefs();
+            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getReopenAction(requireContext()))) {
+                ArrayList<Long> albumPath = resumePrefs.getAlbumPath(requireContext());
                 isReopening = true;
                 String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
                 AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
@@ -1242,9 +1239,9 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 return currentAlbumName;
             }
         } else if (isReopening) {
-            SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getString("reopenAction", null))) {
-                return resumePrefs.getString("reopenAlbumName", "");
+            ConnectionPreferences.ResumeActionPreferences resumePrefs = getUiHelper().getResumePrefs();
+            if (AbstractViewAlbumFragment.RESUME_ACTION.equals(resumePrefs.getReopenAction(requireContext()))) {
+                return resumePrefs.getAlbumName(requireContext());
             }
         }
         return "";
@@ -1281,16 +1278,10 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             }
         }
 
-        // why would this ever be null?
         List<Long> fullAlbumPath = galleryModel.getContainerDetails().getFullPath();
-        SharedPreferences resumePrefs = getUiHelper().getResumePrefs();
-        SharedPreferences.Editor editor = resumePrefs.edit();
-        editor.clear();
-        editor.putString("reopenAction", RESUME_ACTION);
-        editor.putString("reopenAlbumPath", CollectionUtils.toCsvList(fullAlbumPath));
-        editor.putString("reopenProfileId", profileId);
-        editor.putString("reopenAlbumName", buildPageHeading());
-        editor.apply();
+        ConnectionPreferences.ResumeActionPreferences resumePrefs = getUiHelper().getResumePrefs();
+        resumePrefs.setReopenAction(requireContext(), RESUME_ACTION);
+        resumePrefs.setAlbumDetails(requireContext(), fullAlbumPath, buildPageHeading());
 
 
         if (galleryIsDirty) {

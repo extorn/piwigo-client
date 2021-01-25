@@ -16,6 +16,7 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -35,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.BundleUtils;
@@ -111,6 +113,8 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     private static final String STATE_BASKET = "basket";
     private static final String TAG = "mainActivity";
     private static final String STATE_DOWNLOAD_MANAGER = "DownloadManager";
+    private static final String STATE_ACTIVE_PIWIGO_USERNAME = "ActiveUsername";
+    private static final String STATE_ACTIVE_PIWIGO_SERVER = "ActiveServerUri";
     private final CustomBackStackListener backStackListener;
     // these fields are persisted.
     private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
@@ -120,6 +124,8 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
     private CustomToolbar toolbar;
     private AppBarLayout appBar;
     private DownloadManager<AUIH, A> downloadManager;
+    private String currentPiwigoServer;
+    private String currentPiwigoUser;
 
 
     public AbstractMainActivity() {
@@ -145,6 +151,8 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putParcelable(STATE_BASKET, basket);
         outState.putParcelable(STATE_DOWNLOAD_MANAGER, downloadManager);
+        outState.putString(STATE_ACTIVE_PIWIGO_SERVER, ConnectionPreferences.getActiveProfile().getPiwigoServerAddress(getSharedPrefs(),this));
+        outState.putString(STATE_ACTIVE_PIWIGO_USERNAME, ConnectionPreferences.getActiveProfile().getPiwigoUsername(getSharedPrefs(),this));
 
         if(BuildConfig.DEBUG) {
 //            getSupportFragmentManager().enableDebugLogging(false);
@@ -164,6 +172,8 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
             currentAlbum = savedInstanceState.getParcelable(STATE_CURRENT_ALBUM);
             basket = savedInstanceState.getParcelable(STATE_BASKET);
             downloadManager = savedInstanceState.getParcelable(STATE_DOWNLOAD_MANAGER);
+            currentPiwigoServer = savedInstanceState.getString(STATE_ACTIVE_PIWIGO_SERVER);
+            currentPiwigoUser = savedInstanceState.getString(STATE_ACTIVE_PIWIGO_USERNAME);
             if(downloadManager == null) {
                 downloadManager = new DownloadManager<>(getUiHelper());
             } else {
@@ -203,7 +213,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
             intent.setAction(null);
         }
 
-        if (!actionHandled && savedInstanceState == null) {
+        if ((!actionHandled && savedInstanceState == null)) {
             if (hasNotAcceptedEula()) {
                 showEula();
             } else if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
@@ -214,6 +224,29 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         }
 
         configureAndShowRateAppReminderIfNeeded();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        currentPiwigoServer = ConnectionPreferences.getActiveProfile().getPiwigoServerAddress(getSharedPrefs(),this);
+        currentPiwigoUser = ConnectionPreferences.getActiveProfile().getPiwigoUsername(getSharedPrefs(),this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(serverConnectionHasChanged()) {
+            // we're in the wrong server or
+            currentAlbum = null;
+            showGallery(CategoryItem.ROOT_ALBUM);
+        }
+    }
+
+    private boolean serverConnectionHasChanged() {
+        String connectedServer = ConnectionPreferences.getActiveProfile().getPiwigoServerAddress(getSharedPrefs(), this);
+        String connectedUsername = ConnectionPreferences.getActiveProfile().getPiwigoUsername(getSharedPrefs(), this);
+        return !(Objects.equals(currentPiwigoUser, connectedUsername) && Objects.equals(currentPiwigoServer, connectedServer));
     }
 
     private void configureAndShowRateAppReminderIfNeeded() {
@@ -796,6 +829,12 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         }
         appBar.setEnabled(event.getTitle()!= null);
     }
+//
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        super.onNewIntent(intent);
+//        this.setIntent(intent);
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
@@ -804,7 +843,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         FirebaseCrashlytics.getInstance().setCustomKey("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
         FirebaseCrashlytics.getInstance().setCustomKey("AppLanguage", AppPreferences.getDesiredLanguage(getSharedPrefs(), this));
 
-        if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
+        if (event.getOldCredentials() == null || (event.isChangePage() && !invokeStoredActionIfAvailable())) {
             // If nothing specified, show the root gallery.
             showGallery(CategoryItem.ROOT_ALBUM);
         } else {

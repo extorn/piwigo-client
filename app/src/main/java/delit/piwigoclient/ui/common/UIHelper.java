@@ -1046,8 +1046,8 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         }
     }
 
-    public SharedPreferences getResumePrefs() {
-        return getAppContext().getSharedPreferences("resume-actions", Context.MODE_PRIVATE);
+    public ConnectionPreferences.ResumeActionPreferences getResumePrefs() {
+        return ConnectionPreferences.getActiveProfile().getResumeActionPreferences(getPrefs(), getAppContext());
     }
 
     public void doOnce(@NonNull String key, @NonNull String newValue, @NonNull Runnable action) {

@@ -45,7 +45,7 @@ public class PreferenceMigrator226 extends PreferenceMigrator {
         Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, context);
         for (String profileId : connectionProfiles) {
             upgradeConnectionProfilePreference(context, profileId, R.string.preference_server_connection_timeout_secs_key, new ConnectionPreferenceUpgradeAction() {
-                public void upgrade(ConnectionPreferences.ProfilePreferences.PreferenceActor actor) {
+                public void upgrade(ConnectionPreferences.PreferenceActor actor) {
                     int currentTimeout = actor.readInt(prefs, context, -1);
                     if (currentTimeout >= 1000) {
                         currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
@@ -54,7 +54,7 @@ public class PreferenceMigrator226 extends PreferenceMigrator {
                 }
             });
             upgradeConnectionProfilePreference(context, profileId, R.string.preference_piwigo_playable_media_extensions_key, new ConnectionPreferenceUpgradeAction() {
-                public void upgrade(ConnectionPreferences.ProfilePreferences.PreferenceActor actor) {
+                public void upgrade(ConnectionPreferences.PreferenceActor actor) {
                     try {
                         String multimediaCsvList = actor.readString(prefs, context, null);
                         HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));

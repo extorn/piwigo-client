@@ -531,10 +531,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 }
             } else {
-                if(!failureReported) {
-                    failureReported = true;
-                    reportNestedFailure(handler);
-                }
+                reportNestedFailure(handler);
             }
             if (newLoginStatus == loginStatus) {
                 // no progression - fail call.

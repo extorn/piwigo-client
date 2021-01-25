@@ -7,16 +7,20 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
@@ -84,8 +88,8 @@ public class ConnectionPreferences {
         return prefs.getString(context.getString(R.string.preference_caching_level_key), context.getResources().getString(R.string.preference_caching_level_default));
     }
 
-    public static ProfilePreferences.PreferenceActor getPreferenceActor(Context context, String profileId, int preferenceKey) {
-        ProfilePreferences.PreferenceActor actor = new ProfilePreferences.PreferenceActor(profileId);
+    public static PreferenceActor getPreferenceActor(Context context, String profileId, int preferenceKey) {
+        PreferenceActor actor = new PreferenceActor(profileId);
         actor.with(preferenceKey);
         actor.with(SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID));
         return actor;
@@ -126,6 +130,12 @@ public class ConnectionPreferences {
             this.asGuest = asGuest;
         }
 
+
+        public ResumeActionPreferences getResumeActionPreferences(SharedPreferences prefs, Context context) {
+            String connectionProfileId = getProfileId(prefs,context);
+            return new ResumeActionPreferences(connectionProfileId);
+        }
+
         public ProfilePreferences asGuest() {
             return new ProfilePreferences(prefix, true);
         }
@@ -142,7 +152,7 @@ public class ConnectionPreferences {
                 return false;
             }
             ProfilePreferences other = (ProfilePreferences) obj;
-            boolean equals = (prefix == other.prefix) || (prefix != null && prefix.equals(other.prefix));
+            boolean equals = Objects.equals(prefix, other.prefix);
             return equals && (asGuest == other.asGuest);
         }
 
@@ -283,144 +293,6 @@ public class ConnectionPreferences {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(prefix);
             ParcelUtils.writeBool(dest, asGuest);
-        }
-
-        public static class PreferenceActor {
-            private int prefKey;
-            private String profileId;
-            private SecurePrefsUtil securePrefUtil;
-            private static final String TAG  = "PrefActor";
-
-            public PreferenceActor(String profileId) {
-                this.profileId = profileId;
-            }
-            
-            public PreferenceActor with(SecurePrefsUtil securePrefUtil) {
-                this.securePrefUtil = securePrefUtil;
-                return this;
-            }
-            
-            public PreferenceActor with(@StringRes int prefKey) {
-                this.prefKey = prefKey;
-                return this;
-            }
-            
-            public void writeString(SharedPreferences prefs, Context context, String newValue) {
-                SharedPreferences.Editor editor = prefs.edit();
-                writeString(editor, context, newValue);
-                editor.commit();
-            }
-
-            public SharedPreferences.Editor writeString(SharedPreferences.Editor editor, Context context, String newValue) {
-                if(prefKey == R.string.preference_piwigo_playable_media_extensions_key) {
-                    //TODO remove this once I find what is inserting a string into this key!
-                    throw new RuntimeException();
-                }
-                editor.putString(getPrefKeyInProfile(context, prefKey), newValue);
-                return editor;
-            }
-
-            public SharedPreferences.Editor writeStringEncrypted(SharedPreferences.Editor editor, Context context, String value) {
-                if(securePrefUtil == null) {
-                    securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
-                }
-                securePrefUtil.writeSecurePreference(editor, getPrefKeyInProfile(context, prefKey), value);
-                return editor;
-            }
-
-            public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {
-                try {
-                    Set<String> val = prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
-                    if(val != null) {
-                        return new HashSet<>(val);
-                    }
-                    return new HashSet<>(); // don't ever return null
-                } catch(ClassCastException e) {
-                    String value = prefs.getString(getPrefKeyInProfile(context, prefKey), null);
-                    Logging.log(Log.ERROR, TAG, "Expected a string set for pref "+prefKey+" but was string : " + value);
-                    throw e;
-                }
-            }
-
-            public String readString(SharedPreferences prefs, Context context, String defaultVal) {
-                return prefs.getString(getPrefKeyInProfile(context, prefKey), defaultVal);
-            }
-            
-            public String readStringEncrypted(SharedPreferences prefs, Context context, String defaultVal) {
-                if(securePrefUtil == null) {
-                    securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
-                }
-                return securePrefUtil.readSecureStringPreference(context, prefs, getPrefKeyInProfile(context, prefKey), defaultVal);
-            }
-
-            public boolean readBoolean(SharedPreferences prefs, Context context, boolean defaultVal) {
-                return prefs.getBoolean(getPrefKeyInProfile(context, prefKey), defaultVal);
-            }
-
-            /**
-             * If active profile, updates in-use copy as well as actual profile
-             * @param prefs
-             * @param context
-             * @param newValue
-             */
-            public void writeBoolean(SharedPreferences prefs, Context context, boolean newValue) {
-                SharedPreferences.Editor editor = prefs.edit();
-                writeBoolean(editor, context, newValue);
-                editor.commit();
-            }
-
-            /**
-             * If active profile, updates in-use copy as well as actual profile
-             * 
-             * @param editor
-             * @param context
-             * @param newValue
-             * @return editor
-             */
-            public SharedPreferences.Editor writeBoolean(SharedPreferences.Editor editor, Context context, boolean newValue) {
-
-                editor.putBoolean(getPrefKeyInProfile(context, prefKey), newValue);
-                return editor;
-            }
-
-            public SharedPreferences.Editor writeInt(SharedPreferences.Editor editor, Context context, int newValue) {
-
-                editor.putInt(getPrefKeyInProfile(context, prefKey), newValue);
-                return editor;
-            }
-
-            private boolean isActiveProfile() {
-                return this.profileId == null || this.profileId.length() == 0;
-            }
-
-            public String getPrefKeyInProfile(Context context, @StringRes int keyId) {
-                if (!isActiveProfile()) {
-                    return profileId + ':' + context.getString(keyId);
-                }
-                return context.getString(keyId);
-            }
-
-
-            public int readInt(SharedPreferences prefs, Context context, int defaultVal) {
-                return prefs.getInt(getPrefKeyInProfile(context, prefKey), defaultVal);
-            }
-
-            public SharedPreferences.Editor writeStringSet(SharedPreferences.Editor editor, Context context, Set<String> newValue) {
-                if(newValue != null) {
-                    editor.putStringSet(getPrefKeyInProfile(context, prefKey), new HashSet<>(newValue));
-                } else {
-                    editor.remove(getPrefKeyInProfile(context, prefKey));
-                }
-                return editor;
-            }
-
-            public void remove(SharedPreferences.Editor editor, Context context) {
-                editor.remove(getPrefKeyInProfile(context, prefKey));
-            }
-
-            public boolean isForActiveProfile() {
-                return profileId == null;
-            }
         }
 
         public void setFollowHttpRedirects(SharedPreferences prefs, Context context, boolean newValue) {
@@ -584,4 +456,193 @@ public class ConnectionPreferences {
         }
     }
 
+    public static class ResumeActionPreferences {
+
+        private final String profileId;
+
+        public ResumeActionPreferences(String profileId) {
+            this.profileId =profileId;
+        }
+
+        public SharedPreferences getResumeSharedPrefs(@NonNull Context context) {
+            return context.getSharedPreferences(profileId + "resume_actions", Context.MODE_PRIVATE);
+        }
+
+
+        public String getReopenAction(@NonNull Context context) {
+            SharedPreferences prefs = getResumeSharedPrefs(context);
+            return prefs.getString("resume_action", null);
+        }
+
+        public void setReopenAction(@NonNull Context context, @Nullable String action) {
+            getResumeSharedPrefs(context).edit().putString("resume_action", action).apply();
+        }
+
+        public ArrayList<Long> getAlbumPath(@NonNull Context context) {
+            SharedPreferences prefs = getResumeSharedPrefs(context);
+            String albumPathStr =  prefs.getString("current_album.path", null);
+            return CollectionUtils.longsFromCsvList(albumPathStr);
+        }
+
+        public void setAlbumPath(@NonNull Context context, @NonNull List<Long> albumPath) {
+            String albumPathStr = CollectionUtils.toCsvList(albumPath);
+            getResumeSharedPrefs(context).edit().putString("current_album.path", albumPathStr).apply();
+        }
+
+
+        public String getAlbumName(@NonNull Context context) {
+            SharedPreferences prefs = getResumeSharedPrefs(context);
+            return prefs.getString("current_album.name", "");
+        }
+
+        public void setAlbumName(@NonNull Context context, String albumName) {
+            getResumeSharedPrefs(context).edit().putString("current_album.name", albumName).apply();
+        }
+
+        public void setAlbumDetails(@NonNull Context context, List<Long> albumPath, String albumName) {
+            String albumPathStr = CollectionUtils.toCsvList(albumPath);
+            SharedPreferences.Editor editor = getResumeSharedPrefs(context).edit();
+            editor.putString("current_album.path", albumPathStr);
+            editor.putString("current_album.name", albumName);
+            editor.apply();
+        }
+    }
+
+    public static class PreferenceActor {
+        private int prefKey;
+        private String profileId;
+        private SecurePrefsUtil securePrefUtil;
+        private static final String TAG  = "PrefActor";
+
+        public PreferenceActor(String profileId) {
+            this.profileId = profileId;
+        }
+
+        public PreferenceActor with(SecurePrefsUtil securePrefUtil) {
+            this.securePrefUtil = securePrefUtil;
+            return this;
+        }
+
+        public PreferenceActor with(@StringRes int prefKey) {
+            this.prefKey = prefKey;
+            return this;
+        }
+
+        public void writeString(SharedPreferences prefs, Context context, String newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeString(editor, context, newValue);
+            editor.commit();
+        }
+
+        public SharedPreferences.Editor writeString(SharedPreferences.Editor editor, Context context, String newValue) {
+            if(prefKey == R.string.preference_piwigo_playable_media_extensions_key) {
+                //TODO remove this once I find what is inserting a string into this key!
+                throw new RuntimeException();
+            }
+            editor.putString(getPrefKeyInProfile(context, prefKey), newValue);
+            return editor;
+        }
+
+        public SharedPreferences.Editor writeStringEncrypted(SharedPreferences.Editor editor, Context context, String value) {
+            if(securePrefUtil == null) {
+                securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
+            }
+            securePrefUtil.writeSecurePreference(editor, getPrefKeyInProfile(context, prefKey), value);
+            return editor;
+        }
+
+        public Set<String> readStringSet(SharedPreferences prefs, Context context, Set<String> defaultVal) {
+            try {
+                Set<String> val = prefs.getStringSet(getPrefKeyInProfile(context, prefKey), defaultVal);
+                if(val != null) {
+                    return new HashSet<>(val);
+                }
+                return new HashSet<>(); // don't ever return null
+            } catch(ClassCastException e) {
+                String value = prefs.getString(getPrefKeyInProfile(context, prefKey), null);
+                Logging.log(Log.ERROR, TAG, "Expected a string set for pref "+prefKey+" but was string : " + value);
+                throw e;
+            }
+        }
+
+        public String readString(SharedPreferences prefs, Context context, String defaultVal) {
+            return prefs.getString(getPrefKeyInProfile(context, prefKey), defaultVal);
+        }
+
+        public String readStringEncrypted(SharedPreferences prefs, Context context, String defaultVal) {
+            if(securePrefUtil == null) {
+                securePrefUtil = SecurePrefsUtil.getInstance(context, BuildConfig.APPLICATION_ID);
+            }
+            return securePrefUtil.readSecureStringPreference(context, prefs, getPrefKeyInProfile(context, prefKey), defaultVal);
+        }
+
+        public boolean readBoolean(SharedPreferences prefs, Context context, boolean defaultVal) {
+            return prefs.getBoolean(getPrefKeyInProfile(context, prefKey), defaultVal);
+        }
+
+        /**
+         * If active profile, updates in-use copy as well as actual profile
+         * @param prefs
+         * @param context
+         * @param newValue
+         */
+        public void writeBoolean(SharedPreferences prefs, Context context, boolean newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeBoolean(editor, context, newValue);
+            editor.commit();
+        }
+
+        /**
+         * If active profile, updates in-use copy as well as actual profile
+         *
+         * @param editor
+         * @param context
+         * @param newValue
+         * @return editor
+         */
+        public SharedPreferences.Editor writeBoolean(SharedPreferences.Editor editor, Context context, boolean newValue) {
+
+            editor.putBoolean(getPrefKeyInProfile(context, prefKey), newValue);
+            return editor;
+        }
+
+        public SharedPreferences.Editor writeInt(SharedPreferences.Editor editor, Context context, int newValue) {
+
+            editor.putInt(getPrefKeyInProfile(context, prefKey), newValue);
+            return editor;
+        }
+
+        private boolean isActiveProfile() {
+            return this.profileId == null || this.profileId.length() == 0;
+        }
+
+        public String getPrefKeyInProfile(Context context, @StringRes int keyId) {
+            if (!isActiveProfile()) {
+                return profileId + ':' + context.getString(keyId);
+            }
+            return context.getString(keyId);
+        }
+
+
+        public int readInt(SharedPreferences prefs, Context context, int defaultVal) {
+            return prefs.getInt(getPrefKeyInProfile(context, prefKey), defaultVal);
+        }
+
+        public SharedPreferences.Editor writeStringSet(SharedPreferences.Editor editor, Context context, Set<String> newValue) {
+            if(newValue != null) {
+                editor.putStringSet(getPrefKeyInProfile(context, prefKey), new HashSet<>(newValue));
+            } else {
+                editor.remove(getPrefKeyInProfile(context, prefKey));
+            }
+            return editor;
+        }
+
+        public void remove(SharedPreferences.Editor editor, Context context) {
+            editor.remove(getPrefKeyInProfile(context, prefKey));
+        }
+
+        public boolean isForActiveProfile() {
+            return profileId == null;
+        }
+    }
 }
