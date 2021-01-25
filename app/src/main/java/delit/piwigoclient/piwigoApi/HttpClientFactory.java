@@ -303,15 +303,14 @@ public class HttpClientFactory {
         return this.cacheStorage;
     }
 
-    private PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
-        synchronized (connectionPrefs) {
-            PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
-            if (cookieStore == null) {
-                cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getAbsoluteProfileKey(prefs, context));
-                cookieStoreMap.put(connectionPrefs, cookieStore);
-            }
-            return cookieStore;
+    private synchronized PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
+
+        PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
+        if (cookieStore == null) {
+            cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getAbsoluteProfileKey(prefs, context));
+            cookieStoreMap.put(connectionPrefs, cookieStore);
         }
+        return cookieStore;
     }
 
     private int extractPort(String serverAddress) {

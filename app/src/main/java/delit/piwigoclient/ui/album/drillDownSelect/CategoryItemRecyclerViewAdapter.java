@@ -196,7 +196,7 @@ public class CategoryItemRecyclerViewAdapter<LVA extends CategoryItemRecyclerVie
         }
     }
 
-    protected class SimpleCategoryItemViewHolder<LVA extends CategoryItemRecyclerViewAdapter<LVA,MSL,VH>, MSL extends BaseRecyclerViewAdapter.MultiSelectStatusListener<MSL,LVA,CategoryItemViewAdapterPreferences,CategoryItem,VH>, VH extends SimpleCategoryItemViewHolder<LVA, MSL,VH>> extends CategoryItemViewHolder<VH,LVA,MSL> {
+    protected class SimpleCategoryItemViewHolder extends CategoryItemViewHolder<VH,LVA,MSL> {
 
         public SimpleCategoryItemViewHolder(View view) {
             super(view);

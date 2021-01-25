@@ -13,13 +13,13 @@ public class BottomSheetCallbackAdapter extends BottomSheetBehavior.BottomSheetC
         switch(newState) {
             case BottomSheetBehavior.STATE_EXPANDED:
                 onExpanded(bottomSheet);
-                return;
+                break;
             case BottomSheetBehavior.STATE_COLLAPSED:
                 onCollapsed(bottomSheet);
-                return;
+                break;
             default:
                 onOtherStateChanged(bottomSheet, newState);
-                return;
+                break;
         }
     }
 
