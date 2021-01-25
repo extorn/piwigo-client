@@ -136,7 +136,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     private Spinner privacyLevelSpinner;
     private SwitchMaterial deleteFilesAfterUploadCheckbox;
     private MaterialButton fileSelectButton;
-    private FilesToUploadRecyclerViewAdapter filesToUploadAdapter;
+    private FilesToUploadRecyclerViewAdapter<?,?,?> filesToUploadAdapter;
     private Button uploadJobStatusButton;
     private TextView uploadableFilesView;
     private SwitchMaterial compressVideosCheckbox;
@@ -435,7 +435,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         });
 
         if (filesToUploadAdapter == null) {
-            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new ArrayList<>(), this);
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter<>(new ArrayList<DocumentFile>(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
 
             filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -702,7 +702,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     private void updateUiUploadStatusFromJobIfRun(Context context) {
         UploadJob uploadJob = getActiveJob(context);
         if (uploadJob != null) {
-            new ReloadDataFromUploadJobTask<F,FUIH>((F)this, uploadJob).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new ReloadDataFromUploadJobTask<>((F)this, uploadJob).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             allowUserUploadConfiguration(null);
         }
@@ -829,7 +829,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
     }
 
     public void buildAndSubmitNewUploadJob(boolean fileSizesHaveBeenChecked) {
-        FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+        FilesToUploadRecyclerViewAdapter<?,?,?> fileListAdapter = getFilesForUploadViewAdapter();
         Map<Uri,Long> filesForUpload = fileListAdapter.getFilesAndSizes();
         byte privacyLevelWanted = (byte) privacyLevelSpinner.getSelectedItemId(); // save as just bytes!
         long piwigoListenerId = getUiHelper().getPiwigoResponseListener().getHandlerId();

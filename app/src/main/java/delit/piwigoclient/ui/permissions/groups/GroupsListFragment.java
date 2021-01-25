@@ -242,7 +242,6 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
 
     private void onGroupSelected(Group selectedGroup) {
         EventBus.getDefault().post(new ViewGroupEvent(selectedGroup));
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
     private void onDeleteGroup(final Group thisItem) {

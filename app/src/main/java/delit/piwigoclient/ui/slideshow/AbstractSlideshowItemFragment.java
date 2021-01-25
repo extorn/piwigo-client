@@ -437,7 +437,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     }
 
     private void onUseAsAlbumThumbnailForParent() {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UseAsAlbumThumbnailForParentAction(getUiHelper()));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UseAsAlbumThumbnailForParentAction<>(getUiHelper()));
     }
 
     private boolean onUseAsAlbumThumbnailSelectAlbum() {
@@ -720,7 +720,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
     private void onDeleteItem(final T model) {
         String message = getString(R.string.alert_confirm_really_delete_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteItemAction(getUiHelper()));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteItemAction<>(getUiHelper()));
     }
 
     protected MaterialButton getEditButton() {

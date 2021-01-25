@@ -49,7 +49,7 @@ import delit.piwigoclient.business.video.opengl.OutputSurface;
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer implements MediaClock {
-
+    public static final String KEY_ROTATION = "rotation-degrees";
     private static final String MIME_TYPE = "video/avc"; //API19+ MediaFormat.MIMETYPE_VIDEO_AVC;    // H.264 Advanced Video Coding
     //    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_MPEG4; // MPEG4 format
     private final static boolean VERBOSE_LOGGING = false;
@@ -568,14 +568,14 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         }
 
 
-        if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
-            pendingRotationDegrees = inputMediaFormat.getInteger(MediaFormat.KEY_ROTATION);
+        if (inputMediaFormat.containsKey(KEY_ROTATION)) {
+            pendingRotationDegrees = inputMediaFormat.getInteger(KEY_ROTATION);
 
             if (Util.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 // On API level 21 and above the decoder applies the rotation when rendering to the surface - prevent this auto-rotation.
-                if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
+                if (inputMediaFormat.containsKey(KEY_ROTATION)) {
                     if (!compressionSettings.isHardRotateVideo()) {
-                        inputMediaFormat.setInteger(MediaFormat.KEY_ROTATION, 0);
+                        inputMediaFormat.setInteger(KEY_ROTATION, 0);
                     }
                 }
             }

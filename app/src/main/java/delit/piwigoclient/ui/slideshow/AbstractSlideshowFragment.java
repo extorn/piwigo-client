@@ -129,14 +129,6 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
             }
         }
         super.onResume();
-        if(showOutOfDateWarn) {
-            // don't show this at all. It isn't needed any more.
-//            DisplayUtils.postOnUiThread(()->{
-////            downgraded from clickable dialog to a toast message due to user feedback.
-//                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_slideshow_reset_as_out_of_sync_with_album));
-//            });
-
-        }
         DisplayUtils.postOnUiThread(()-> {
             getUiHelper().showUserHint(TAG, 1, R.string.hint_slideshow_base_view_1);
             getUiHelper().showUserHint(TAG, 2, R.string.hint_slideshow_base_view_2);
@@ -375,11 +367,11 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(AlbumItemDeletedEvent event) {
+    public void onEvent(AlbumItemDeletedEvent<?> event) {
         if (resourceContainer.getId() == event.item.getParentId()) {
             if (galleryItemAdapter != null) {
-                int fullGalleryIdx = galleryItemAdapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
-                galleryItemAdapter.deleteGalleryItem(fullGalleryIdx);
+                galleryItemAdapter.deleteGalleryItem(event.getAlbumResourceItemIdx());
+                Logging.log(Log.INFO, TAG, "item delete triggered in slideshow.");
                 if (galleryItemAdapter.getCount() == 0) {
                     // slideshow is now empty close this page.
                     Logging.log(Log.INFO, TAG, "removing from activity as slideshow empty");

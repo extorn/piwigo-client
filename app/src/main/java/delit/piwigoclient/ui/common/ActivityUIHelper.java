@@ -70,7 +70,7 @@ public class ActivityUIHelper<UIH extends ActivityUIHelper<UIH,T>,T extends Base
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final BlockingUserInteractionQuestion event) {
-        QueuedQuestionMessage<UIH,T> message = new QueuedQuestionMessage<>(R.string.alert_question_title, getAppContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter<UIH,T>((UIH) this, event));
+        QueuedQuestionMessage<UIH,T> message = new QueuedQuestionMessage<>(R.string.alert_question_title, getAppContext().getString(event.questionStringId), R.string.button_yes, R.string.button_no, new BlockingUserInteractionQuestionResultAdapter<>((UIH) this, event));
         showMessageImmediatelyIfPossible(message);
     }
 

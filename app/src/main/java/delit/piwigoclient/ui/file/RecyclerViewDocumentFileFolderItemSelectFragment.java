@@ -710,8 +710,6 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     @Override
     protected void setPageHeading(TextView headingField) {
         // heading field not used (missing from layout)
-//        headingField.setText(R.string.file_selection_heading);
-//        headingField.setVisibility(View.VISIBLE);
     }
 
     @Override

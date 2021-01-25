@@ -165,9 +165,8 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         return idx;
     }
 
-    public void deleteGalleryItem(int fullGalleryIdx) {
-        int slideshowIdxOfItemToDelete = galleryResourceItems.indexOf(fullGalleryIdx);
-        deleteItem(slideshowIdxOfItemToDelete);
+    public void deleteGalleryItem(int adapterItemIdx) {
+        deleteItem(adapterItemIdx);
     }
 
     @Override
@@ -191,18 +190,18 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
         return gallery.getItemByIdx(galleryResourceItems.get(position));
     }
 
-    private void deleteItem(int itemIdx) {
-        if (itemIdx >= 0) {
+    private void deleteItem(int adapterItemIdx) {
+        if (adapterItemIdx >= 0) {
+            int itemFullGalleryIdx = getRawGalleryItemPosition(adapterItemIdx);
             // remove the item from the list of items in the slideshow.
-            galleryResourceItems.remove(itemIdx);
+            galleryResourceItems.remove(itemFullGalleryIdx);
 
             // presume that the parent gallery has also been updated and adjust all items down one.
-            for(int i = itemIdx; i < galleryResourceItems.size(); i++) {
+            for(int i = itemFullGalleryIdx; i < galleryResourceItems.size(); i++) {
                 galleryResourceItems.set(i, galleryResourceItems.get(i)-1);
             }
             // now request a rebuild of the slideshow pages
-
-            onDeleteItem(getContainer(), itemIdx);
+            onDeleteItem(getContainer(), adapterItemIdx);
         }
     }
 

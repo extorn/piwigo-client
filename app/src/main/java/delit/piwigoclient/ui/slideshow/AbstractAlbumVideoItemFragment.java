@@ -274,7 +274,7 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
                 videoPlaybackPosition = 0; // ensure it starts at the beginning again
                 configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
             }
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction(getUiHelper()));
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction<>(getUiHelper()));
             return true;
         });
 

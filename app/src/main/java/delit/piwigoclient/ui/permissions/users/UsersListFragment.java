@@ -233,7 +233,6 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
 
     private void onUserSelected(User selectedUser) {
         EventBus.getDefault().post(new ViewUserEvent(selectedUser));
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
     private void onDeleteUser(final User thisItem) {

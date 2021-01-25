@@ -775,7 +775,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                     msgPatternId = R.string.alert_confirm_move_items_here_pattern;
                 }
                 String message = getString(msgPatternId, basket1.getItemCount(), galleryModel.getContainerDetails().getName());
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new BasketAction(getUiHelper()));
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new BasketAction<>(getUiHelper()));
             }
             return true; // consume the event
         });
@@ -885,7 +885,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             ResourceItem item = (ResourceItem) getGalleryModel().getItemById(imageId);
             if (item.getPrivacyLevel() != privacyLevel) {
                 // update item on server
-                getUiHelper().getParent().getBulkResourceActionData().trackMessageId(addActiveServiceCall(R.string.progress_resource_details_updating, new ImageSetPrivacyLevelResponseHandler(item, privacyLevel)));
+                getUiHelper().getParent().getBulkResourceActionData().trackMessageId(addActiveServiceCall(R.string.progress_resource_details_updating, new ImageSetPrivacyLevelResponseHandler<>(item, privacyLevel)));
             }
         }
     }
@@ -1116,7 +1116,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     private void onAlbumDeleteRequest(final CategoryItem album) {
         String msg = getString(R.string.alert_confirm_really_delete_album_from_server_pattern, album.getName());
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new DeleteAlbumAction(getUiHelper(), album));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new DeleteAlbumAction<>(getUiHelper(), album));
     }
 
     private void loadAlbumSubCategories() {
@@ -1538,7 +1538,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 // update the ui.
                 allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
                 int msgId = R.string.alert_information_own_user_readded_to_permissions_list;
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new AddingAlbumPermissionsAction(getUiHelper()));
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new AddingAlbumPermissionsAction<>(getUiHelper()));
                 return true;
             }
 
@@ -1550,11 +1550,11 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                     if (newlyAddedUsers.contains(currentLoggedInUserId)) {
                         //we're having to force add this user explicitly therefore for safety we need to apply the change recursively
                         String msg = getString(R.string.alert_information_add_album_permissions_recursively_pattern, galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new AddingChildPermissionsAction(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new AddingChildPermissionsAction<>(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
                     } else {
 
                         String msg = getString(R.string.alert_confirm_add_album_permissions_recursively_pattern, newlyAddedGroups.size(), newlyAddedUsers.size(), galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new AddAccessToAlbumAction(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new AddAccessToAlbumAction<>(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
                     }
                 } else {
                     // no need to be recursive as this album is a leaf node.
@@ -1581,7 +1581,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
             if (galleryModel.getContainerDetails().getSubCategories() > 0) {
                 String message = getString(R.string.alert_confirm_really_remove_album_permissions_pattern, newlyRemovedGroups.size(), newlyRemovedUsers.size());
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new RemoveAccessToAlbumAction(getUiHelper(), newlyRemovedGroups, newlyRemovedUsers));
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new RemoveAccessToAlbumAction<>(getUiHelper(), newlyRemovedGroups, newlyRemovedUsers));
             } else {
                 addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
             }
@@ -1787,7 +1787,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             adminOnlyChildCategories = adminOnlyServerCategoriesTree.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
         } catch (IllegalStateException e) {
             Logging.recordException(e);
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new AlbumNoLongerExistsAction(getUiHelper()));
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new AlbumNoLongerExistsAction<>(getUiHelper()));
             return;
         }
 
@@ -2262,14 +2262,14 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     public void onEvent(final BadRequestUsingHttpToHttpsServerEvent event) {
         final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
         String failedUriPath = event.getFailedUri().toString();
-        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), failedUriPath, R.string.button_no, R.string.button_yes, new BadHttpProtocolAction(getUiHelper(), connectionPreferences));
+        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), failedUriPath, R.string.button_no, R.string.button_yes, new BadHttpProtocolAction<>(getUiHelper(), connectionPreferences));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final BadRequestUsesRedirectionServerEvent event) {
         final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
         String failedUriPath = event.getFailedUri().toString();
-        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), failedUriPath, R.string.button_no, R.string.button_yes, new BadRequestRedirectionAction(getUiHelper(), connectionPreferences));
+        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), failedUriPath, R.string.button_no, R.string.button_yes, new BadRequestRedirectionAction<>(getUiHelper(), connectionPreferences));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -2659,7 +2659,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             if (Boolean.TRUE == positiveAnswer) {
                 if (album.getTotalPhotos() > 0 || album.getSubCategories() > 0) {
                     String msg = String.format(getContext().getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern), album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new ReallyDeleteAlbumAction(getUiHelper(), album));
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new ReallyDeleteAlbumAction<>(getUiHelper(), album));
                 } else {
                     getUiHelper().addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()));
                 }
