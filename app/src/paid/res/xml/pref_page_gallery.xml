@@ -194,7 +194,7 @@
 
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:defaultValue="@integer/preference_gallery_slideshow_item_detail_auto_hide_delay_default"
-            app:minValue="0"
+            app:minValue="2000"
             app:maxValue="30000"
             android:key="@string/preference_gallery_slideshow_item_detail_auto_hide_delay_key"
             android:title="@string/preference_gallery_slideshow_item_detail_auto_hide_delay_title"
