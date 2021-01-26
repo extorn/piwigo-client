@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.IdRes;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -65,6 +66,10 @@ public abstract class AbstractPreferencesActivity<A extends AbstractPreferencesA
         // Handle navigation view item clicks here.
         int id = event.navigationitemSelected;
 
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
         if (id == R.id.nav_gallery) {
             showGallery();
         } else {
