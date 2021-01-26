@@ -683,5 +683,8 @@ Vydání jsou v současné době ad hoc. Očekává se, že se frekvence aplikac
     <string name="button_compress">Komprimovat</string>
     <string name="unable_to_compress_without_data">Nelze komprimovat bez nastavení</string>
     <string name="video_compression_settings_invalid">Nastavení komprese videa je neplatné. Zkontrolujte to a zkuste to znovu.</string>
+    <string name="alert_password_entry">Vyžaduje se heslo</string>
+    <string name="import_x_of_type_y_cancelled_pattern">Import%2$s%1$s byl zrušen</string>
+    <string name="import_cancelled">Import zrušen</string>
 
 </resources>

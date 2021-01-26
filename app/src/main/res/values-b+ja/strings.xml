@@ -683,5 +683,8 @@ Extended Descriptionプラグインのコピーをインストールしていま
     <string name="button_compress">圧縮</string>
     <string name="unable_to_compress_without_data">設定なしでは圧縮できません</string>
     <string name="video_compression_settings_invalid">ビデオ圧縮設定が無効です。 確認して再試行してください。</string>
+    <string name="alert_password_entry">パスワードが必要</string>
+    <string name="import_x_of_type_y_cancelled_pattern">%2$s%1$sのインポートがキャンセルされました</string>
+    <string name="import_cancelled">インポートがキャンセルされました</string>
 
 </resources>

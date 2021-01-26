@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.103</item>
+        <item>"Correction d\'un bug:
+                 - La modification des éléments de keystore et de certificat de confiance a causé un plantage.
+                     : Envoyez-moi un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas
+                 - Parfois impossible de sortir des fichiers récents avec la sélection de fichiers système
+                Changements:
+                 - Meilleure expérience utilisateur pour l\'importation de keystore et de certificat"</item>
         <item>1.4.0.102</item>
         <item>"Correction d\'un bug:
                  - Des changements récents ont rendu impossible l\'installation des versions gratuite et payante en même temps sur un seul appareil

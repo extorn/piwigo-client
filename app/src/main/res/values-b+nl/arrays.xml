@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.103</item>
+        <item>"Bugfix:
+                 - Bewerken van sleutelarchief en vertrouwd certificaatitem veroorzaakte een crash.
+                     : Stuur me een e-mail vanuit de app als dit soort sleutelfuncties niet werken.
+                 - Soms niet in staat om uit recente bestanden te navigeren met systeembestandsselectie
+                Veranderingen:
+                 - Betere gebruikerservaring voor keystore en certificaatimport"</item>
         <item>1.4.0.102</item>
         <item>"Bugfix:
                  - Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren

@@ -683,5 +683,8 @@ Les communiqués sont pour le moment ponctuels. La fréquence des versions devra
     <string name="button_compress">Compresse</string>
     <string name="unable_to_compress_without_data">Impossible de compresser sans les paramètres</string>
     <string name="video_compression_settings_invalid">Les paramètres de compression vidéo ne sont pas valides. S\'il vous plaît, vérifiez et essayez à nouveau.</string>
+    <string name="alert_password_entry">Mot de passe requis</string>
+    <string name="import_x_of_type_y_cancelled_pattern">Importation de%2$s%1$s annulée</string>
+    <string name="import_cancelled">Importation annulée</string>
 
 </resources>

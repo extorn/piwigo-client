@@ -683,5 +683,8 @@ Gareth Deli保留自行决定修改或替换此文件的权利。
     <string name="button_compress">压缩</string>
     <string name="unable_to_compress_without_data">没有设置就无法压缩</string>
     <string name="video_compression_settings_invalid">视频压缩设置无效。 请检查并重试。</string>
+    <string name="alert_password_entry">要求输入密码</string>
+    <string name="import_x_of_type_y_cancelled_pattern">已取消导入%2$s%1$s</string>
+    <string name="import_cancelled">导入已取消</string>
 
 </resources>

@@ -683,5 +683,8 @@ Los lanzamientos se realizan ad hoc en este momento. Se espera que la frecuencia
     <string name="button_compress">Comprimir</string>
     <string name="unable_to_compress_without_data">No se puede comprimir sin la configuración</string>
     <string name="video_compression_settings_invalid">La configuración de compresión de video no es válida. Por favor revisa e intenta de nuevo.</string>
+    <string name="alert_password_entry">Se requiere contraseña</string>
+    <string name="import_x_of_type_y_cancelled_pattern">Importación de%2$s%1$s cancelada</string>
+    <string name="import_cancelled">Importación cancelada</string>
 
 </resources>

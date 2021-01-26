@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.103</item>
+        <item>"Risoluzione del problema:
+                 - La modifica dell\'archivio chiavi e dell\'elemento certificato attendibile ha causato un arresto anomalo.
+                     : Inviami un\'e-mail dall\'app quando funzionalità chiave come questa non funzionano.
+                 - A volte non è possibile uscire dai file recenti con la selezione del file di sistema
+                I cambiamenti:
+                 - Migliore esperienza utente per keystore e importazione di certificati"</item>
         <item>1.4.0.102</item>
         <item>"Risoluzione del problema:
                  - Modifiche recenti hanno reso impossibile installare contemporaneamente sia la versione gratuita che quella a pagamento su un singolo dispositivo

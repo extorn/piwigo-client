@@ -1,60 +1,80 @@
 <en-GB>
 Bugfix:
-- Recent changes made it impossible to have both the free and paid versions installed at the same time on a single device
-- album thumbnails not always showing for admin user
-- tested against Piwigo 11. Opening an image was not working
+- Keystore and Trusted certificate item editing caused crash.
+: Please email me from the app when key functionality like this doesn't work.
+- Sometimes unable to navigate out of recent files with system file selection
+Changes:
+- Better User experience for keystore and certificate import
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Nedávné změny znemožnily mít bezplatnou i placenou verzi nainstalovanou současně na jednom zařízení
-- miniatury alb, které se uživateli správce nezobrazují vždy
-- testováno proti Piwigo 11. Otevření obrázku nefungovalo
+- Úpravy úložiště klíčů a důvěryhodných certifikátů způsobily selhání.
+: Pokud mi taková klíčová funkce nefunguje, pošlete mi e-mail z aplikace.
+- Někdy nelze vybrat poslední soubory pomocí výběru systémových souborů
+Změny:
+- Lepší uživatelský komfort pro úložiště klíčů a import certifikátů
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren
-- Album-Miniaturansichten werden für Administratoren nicht immer angezeigt
-- gegen Piwigo 11 getestet. Das Öffnen eines Bildes funktionierte nicht
+- Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.
+: Bitte senden Sie mir eine E-Mail von der App, wenn solche Schlüsselfunktionen nicht funktionieren.
+- Manchmal kann mit der Auswahl der Systemdateien nicht aus den zuletzt verwendeten Dateien navigiert werden
+Änderungen:
+- Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Los cambios recientes hicieron imposible tener las versiones gratuitas y de pago instaladas al mismo tiempo en un solo dispositivo
-- las miniaturas de álbumes no siempre se muestran para el usuario administrador
-- probado contra Piwigo 11. Abrir una imagen no funcionaba
+- La edición del elemento del certificado de confianza y del almacén de claves provocó un bloqueo.
+: Envíeme un correo electrónico desde la aplicación cuando una función clave como esta no funcione.
+- A veces no se puede navegar fuera de los archivos recientes con la selección de archivos del sistema
+Cambios:
+- Mejor experiencia de usuario para el almacén de claves y la importación de certificados
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Des changements récents ont rendu impossible l\'installation des versions gratuite et payante en même temps sur un seul appareil
-- les miniatures d\'album ne s\'affichent pas toujours pour l\'utilisateur administrateur
-- testé avec Piwigo 11. L\'ouverture d\'une image ne fonctionnait pas
+- La modification des éléments de keystore et de certificat de confiance a causé un plantage.
+: Envoyez-moi un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas
+- Parfois impossible de sortir des fichiers récents avec la sélection de fichiers système
+Changements:
+- Meilleure expérience utilisateur pour l\'importation de keystore et de certificat
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Modifiche recenti hanno reso impossibile installare contemporaneamente sia la versione gratuita che quella a pagamento su un singolo dispositivo
-- le miniature degli album non vengono sempre visualizzate per l\'utente amministratore
-- testato con Piwigo 11. L\'apertura di un\'immagine non funzionava
+- La modifica dell\'archivio chiavi e dell\'elemento certificato attendibile ha causato un arresto anomalo.
+: Inviami un\'e-mail dall\'app quando funzionalità chiave come questa non funzionano.
+- A volte non è possibile uscire dai file recenti con la selezione del file di sistema
+I cambiamenti:
+- Migliore esperienza utente per keystore e importazione di certificati
 </it-IT>
 <ja-JP>
 バグ修正：
--最近の変更により、無料バージョンと有料バージョンの両方を1つのデバイスに同時にインストールすることは不可能になりました
--アルバムのサムネイルが管理者ユーザーに常に表示されるとは限りません
---Piwigo11に対してテスト済み。画像を開くことが機能していませんでした
+-キーストアと信頼できる証明書アイテムの編集によりクラッシュが発生しました。
+：このような主要な機能が動作しない場合は、アプリから私にメールしてください。
+-システムファイルを選択しても、最近のファイルから移動できない場合があります
+変更点：
+-キーストアと証明書のインポートのユーザーエクスペリエンスの向上
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren
-- albumminiaturen worden niet altijd weergegeven voor de admin-gebruiker
-- getest tegen Piwigo 11. Het openen van een afbeelding werkte niet
+- Bewerken van sleutelarchief en vertrouwd certificaatitem veroorzaakte een crash.
+: Stuur me een e-mail vanuit de app als dit soort sleutelfuncties niet werken.
+- Soms niet in staat om uit recente bestanden te navigeren met systeembestandsselectie
+Veranderingen:
+- Betere gebruikerservaring voor keystore en certificaatimport
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Недавние изменения сделали невозможным одновременную установку бесплатной и платной версий на одном устройстве.
-- миниатюры альбомов не всегда отображаются для администратора
-- протестировано на Piwigo 11. Открытие образа не работало
+- Редактирование хранилища ключей и доверенного сертификата вызывало сбой.
+: Напишите мне из приложения, если такие ключевые функции не работают.
+- Иногда невозможно перейти из недавних файлов с системным выбором файлов
+Изменения:
+- Улучшенный пользовательский интерфейс для хранилища ключей и импорта сертификатов
 </ru-RU>
 <zh-CN>
 错误修正：
--最近的更改使得不可能在单个设备上同时安装免费版和付费版
--相册缩略图并不总是向管理员用户显示
--经过Piwigo 11的测试。打开图像无效
+-密钥库和可信证书项目编辑导致崩溃。
+：当类似这样的关键功能不起作用时，请通过应用程序给我发送电子邮件。
+-有时无法通过选择系统文件来浏览最近的文件
+变化：
+-密钥库和证书导入的更好的用户体验
 </zh-CN>

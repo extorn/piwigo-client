@@ -683,5 +683,8 @@ Gareth Deli оставляет за собой право по собствен�
     <string name="button_compress">Компресс</string>
     <string name="unable_to_compress_without_data">Невозможно сжать без настроек</string>
     <string name="video_compression_settings_invalid">Настройки сжатия видео недействительны. Пожалуйста проверьте и попробуйте снова.</string>
+    <string name="alert_password_entry">Требуется пароль</string>
+    <string name="import_x_of_type_y_cancelled_pattern">Импорт%2$s%1$s отменен</string>
+    <string name="import_cancelled">Импорт отменен</string>
 
 </resources>

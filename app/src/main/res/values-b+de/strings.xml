@@ -683,5 +683,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="button_compress">Kompresse</string>
     <string name="unable_to_compress_without_data">Ohne die Einstellungen kann nicht komprimiert werden</string>
     <string name="video_compression_settings_invalid">Die Einstellungen für die Videokomprimierung sind ungültig. Bitte überprüfen Sie es und versuchen Sie es erneut.</string>
+    <string name="alert_password_entry">Passwort erforderlich</string>
+    <string name="import_x_of_type_y_cancelled_pattern">Import von%2$s%1$s abgebrochen</string>
+    <string name="import_cancelled">Import abgebrochen</string>
 
 </resources>

@@ -683,5 +683,8 @@ Uitgaven zijn momenteel op ad-hocbasis. De frequentie van releases zal naar verw
     <string name="button_compress">Samendrukken</string>
     <string name="unable_to_compress_without_data">Kan niet comprimeren zonder de instellingen</string>
     <string name="video_compression_settings_invalid">Videocompressie-instellingen zijn ongeldig. Controleer het en probeer het opnieuw.</string>
+    <string name="alert_password_entry">Wachtwoord benodigd</string>
+    <string name="import_x_of_type_y_cancelled_pattern">Import van%2$s%1$s geannuleerd</string>
+    <string name="import_cancelled">Import geannuleerd</string>
 
 </resources>
