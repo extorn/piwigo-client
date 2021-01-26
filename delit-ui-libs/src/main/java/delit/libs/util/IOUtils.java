@@ -1265,4 +1265,26 @@ public class IOUtils {
         }
         return null;
     }
+
+    public static String[] getMimeTypesIncludingFolders(Set<String> mimeTypes) {
+        boolean addFolderMime = true;
+        int mimeTypeCount = 1;
+        String[] mimeTypesArray;
+        if(mimeTypes != null) {
+            if(mimeTypes.contains(DocumentsContract.Document.MIME_TYPE_DIR)) {
+                addFolderMime = false;
+                mimeTypeCount = mimeTypes.size();
+            } else {
+                mimeTypeCount += mimeTypes.size();
+            }
+            mimeTypesArray = new String[mimeTypeCount];
+            mimeTypes.toArray(mimeTypesArray);
+        } else {
+            mimeTypesArray = new String[1];
+        }
+        if(addFolderMime) {
+            mimeTypesArray[mimeTypesArray.length - 1] = DocumentsContract.Document.MIME_TYPE_DIR;
+        }
+        return mimeTypesArray;
+    }
 }

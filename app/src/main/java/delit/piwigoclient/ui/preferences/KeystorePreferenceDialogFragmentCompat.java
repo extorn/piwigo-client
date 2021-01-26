@@ -97,7 +97,6 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     // non state persistent items
     private RecyclerView certificateList;
     private AlertDialog alertDialog;
-    private ExtendedFloatingActionButton addListItemButton;
     private KeyStore keystore;
     private ProgressIndicator progressIndicator;
     private AppSettingsViewModel appSettingsViewModel;
@@ -129,7 +128,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         EventBus.getDefault().unregister(this);
 
         if (positiveResult) {
-            KeyStore newValue = ((KeyStoreContentsAdapter) certificateList.getAdapter()).getBackingObjectStore();
+            KeyStore newValue = ((KeyStoreContentsAdapter) Objects.requireNonNull(certificateList.getAdapter())).getBackingObjectStore();
             if (getPreference().callChangeListener(newValue)) {
                 getPreference().setKeystore(newValue);
             }
@@ -172,7 +171,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         KeyStoreContentsAdapter adapter = new KeyStoreContentsAdapter(context, X509Utils.cloneKeystore(keystore));
         certificateList.setAdapter(adapter);
 
-        addListItemButton = view.findViewById(R.id.list_action_add_item_button);
+        ExtendedFloatingActionButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
         addListItemButton.setOnClickListener(v -> {
             if (keystoreLoadProgress < 0 || keystoreLoadProgress == 100) {
@@ -208,6 +207,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         fileSelectionEvent.withInitialFolder(Uri.fromFile(requireContext().getExternalFilesDir(null)));
         fileSelectionEvent.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.ALPHABETICAL);
         fileSelectionEvent.withSelectedUriPermissionsForConsumerId(getUriPermissionsKey());
+        fileSelectionEvent.setSelectedUriPermissionsForConsumerPurpose(getUriPermissionsPurpose());
         fileSelectionEvent.requestUriReadPermission();
 
         setTrackingRequest(fileSelectionEvent.getActionId());
@@ -216,10 +216,18 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     /**
      * Use the preference key as the uri permissions key - if this isn't unique, you might want to change it.
-     * @return
+     * @return The consumer key of any Uri Permissions granted for this preference
      */
     public @NonNull String getUriPermissionsKey() {
         return getPreference().getKey();
+    }
+
+    /**
+     * Use the preference title as the uri permissions purpose
+     * @return The purpose of any Uri Permissions granted for this preference
+     */
+    public @NonNull String getUriPermissionsPurpose() {
+        return getPreference().getTitle().toString();
     }
 
     private void processRecoverableErrors(Context context) {
@@ -239,7 +247,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
                 builder.setTitle(R.string.alert_information)
                 .setPositiveButton(R.string.button_ok, (dialog, which) -> {
-                    EditText passwordEditText = alertDialog.findViewById(R.id.keystore_password_editText);
+                    @NonNull EditText passwordEditText = Objects.requireNonNull(alertDialog.findViewById(R.id.keystore_password_editText));
                     char[] pass = new char[passwordEditText.getText().length()];
                     passwordEditText.getText().getChars(0, passwordEditText.getText().length(), pass, 0);
                     alertDialog.dismiss();
@@ -257,17 +265,17 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
             KeyStoreContentException e = (KeyStoreContentException) recoverableError;
 
-            EditText keystoreAliasEditText = v.findViewById(R.id.keystore_alias_editText);
+            TextView keystoreAliasEditText = v.findViewById(R.id.keystore_alias_viewText);
             keystoreAliasEditText.setText(e.getAlias());
         }
 
-        CheckBox viewUnencryptedToggle = v.findViewById(R.id.toggle_visibility);
+        CheckBox viewUnencryptedToggle = Objects.requireNonNull(v).findViewById(R.id.toggle_visibility);
         if (viewUnencryptedToggle != null) {
             EditText passwordField = v.findViewById(R.id.keystore_password_editText);
             viewUnencryptedToggle.setOnCheckedChangeListener(new PasswordInputToggle(passwordField));
         }
 
-        EditText filenameEditText = v.findViewById(R.id.keystore_filename_editText);
+        TextView filenameEditText = v.findViewById(R.id.keystore_filename_viewText);
         String filename = new File(recoverableError.getDataSource()).getName();
         filenameEditText.setText(filename);
 
@@ -340,11 +348,20 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             switch (holder.getItemViewType()) {
                 case VIEW_TYPE_PRIVATE_KEY:
-                    populatePrivateKeyDetails((KeyStorePrivateKeyItemViewHolder) holder, position, getItem(position));
+                    populatePrivateKeyDetails((KeyStorePrivateKeyItemViewHolder) holder, position, getPrivateKeyEntry(position));
                     break;
                 case VIEW_TYPE_CERTIFICATE:
-                    populateCertificateDetails((KeyStoreCertificateItemViewHolder) holder, position, getItem(position));
+                    populateCertificateDetails((KeyStoreCertificateItemViewHolder) holder, position, getTrustedCertificateEntry(position));
             }
+        }
+
+        private KeyStore.PrivateKeyEntry getPrivateKeyEntry(int position) {
+            return (KeyStore.PrivateKeyEntry)getItem(position);
+        }
+
+        private KeyStore.TrustedCertificateEntry getTrustedCertificateEntry(int position) {
+            KeyStore.Entry entry = getItem(position);
+            return (KeyStore.TrustedCertificateEntry)entry;
         }
 
         @Override
@@ -359,32 +376,26 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             }
         }
 
-        public <T extends KeyStore.Entry> T getItem(int position) {
+        public KeyStore.Entry getItem(int position) {
             try {
                 if (aliasesList.size() <= position) {
                     throw new IllegalArgumentException("Keystore does not contain that many entries");
                 }
                 String alias = aliasesList.get(position);
                 return getItem(backingObjectStore, alias);
-            } catch (KeyStoreException e) {
-                Logging.recordException(e);
-                throw new RuntimeException(e);
-            } catch (UnrecoverableEntryException e) {
-                Logging.recordException(e);
-                throw new RuntimeException(e);
-            } catch (NoSuchAlgorithmException e) {
+            } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
                 Logging.recordException(e);
                 throw new RuntimeException(e);
             }
         }
 
-        protected <T extends KeyStore.Entry> T getItem(KeyStore keystore, String alias) throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
+        protected KeyStore.Entry getItem(KeyStore keystore, String alias) throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
             char[] pass = getKeyPass(alias);
             KeyStore.PasswordProtection protection = null;
             if (pass != null && pass.length > 0) {
                 protection = new KeyStore.PasswordProtection(pass);
             }
-            return (T) keystore.getEntry(alias, protection);
+            return keystore.getEntry(alias, protection);
         }
 
         @Override
@@ -495,8 +506,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             LoadOperationResult loadOperationResult = new LoadOperationResult();
             int currentFile = 0;
             for (X509LoadOperation loadOp : loadOps) {
-                String fileExt = '.' + IOUtils.getFileExt(getContext(), loadOp.getFileUri()).toLowerCase();
-                //TODO fileExt is not . prefixed, but getAllowedCertificateFileTypes is
+                String fileExt = IOUtils.getFileExt(getContext(), loadOp.getFileUri()).toLowerCase();
                 if (getOwner().getPreference().getAllowedCertificateFileTypes().contains(fileExt)) {
                     try {
                         Collection<X509Certificate> certs = X509Utils.loadCertificatesFromUri(getContext(), loadOp.getFileUri());
@@ -552,7 +562,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private void onKeystoreLoadFinished(LoadOperationResult loadOperationResult, boolean wasLoadCancelled) {
         keystoreLoadOperationResult = loadOperationResult;
         if (!wasLoadCancelled) {
-            KeyStoreContentsAdapter adapter = ((KeyStoreContentsAdapter) certificateList.getAdapter());
+            @NonNull KeyStoreContentsAdapter adapter = ((KeyStoreContentsAdapter) Objects.requireNonNull(certificateList.getAdapter()));
             adapter.addData(loadOperationResult.removeSuccessfullyLoadedData());
         }
         progressIndicator.setVisibility(View.GONE);
@@ -591,7 +601,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         StringBuilder sb = new StringBuilder();
         if (certExceptions.size() > 0) {
             // add cert exceptions list
-            sb.append(getContext().getString(R.string.error_heading_unloadable_certificate_files));
+            sb.append(requireContext().getString(R.string.error_heading_unloadable_certificate_files));
             sb.append('\n');
             for (CertificateLoadException ex : certExceptions) {
                 sb.append(ex.getDataSource());
@@ -600,7 +610,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
         if (keystoreExceptions.size() > 0) {
             // add keystore exceptions list
-            sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_files));
+            sb.append(requireContext().getString(R.string.error_heading_unloadable_keystore_files));
             sb.append('\n');
             for (KeyStoreOperationException ex : keystoreExceptions) {
                 sb.append(ex.getDataSource());
@@ -609,7 +619,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
         if (keystoreContentExceptions.size() > 0) {
             // add keystore content exceptions list
-            sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_aliases));
+            sb.append(requireContext().getString(R.string.error_heading_unloadable_keystore_aliases));
             sb.append('\n');
             Map<String, List<KeyStoreContentException>> aliasErrors = new HashMap<>();
             for (KeyStoreContentException ex : keystoreContentExceptions) {

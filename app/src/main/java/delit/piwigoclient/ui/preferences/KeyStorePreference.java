@@ -20,13 +20,13 @@ import delit.libs.util.X509Utils;
 
 public abstract class KeyStorePreference extends DialogPreference {
 
-    public static final String BKS_FILE_SUFFIX = ".bks";
+    public static final String BKS_FILE_SUFFIX = "bks";
     private boolean justKeysWanted;
     private KeyStore currentValue;
 
 
-    private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(".cer", ".cert", ".pem"));
-    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(".p12", ".pkcs12", ".pfx", BKS_FILE_SUFFIX));
+    private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList("cer", "cert", "pem"));
+    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList("p12", "pkcs12", "pfx", BKS_FILE_SUFFIX));
 
 
     public KeyStorePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -52,20 +52,18 @@ public abstract class KeyStorePreference extends DialogPreference {
     public void setAllowedCertificateFileTypes(ArrayList<String> allowedCertificateFileTypes) {
         for (final ListIterator<String> i = allowedCertificateFileTypes.listIterator(); i.hasNext(); ) {
             String element = i.next();
-            if (!element.startsWith(".")) {
-                element = '.' + element;
-            }
             i.set(element.toLowerCase());
         }
         this.allowedCertificateFileTypes = allowedCertificateFileTypes;
     }
 
+    /**
+     *
+     * @param allowedKeyFileTypes just file extension, i.e. bks NOT .bks
+     */
     public void setAllowedKeyFileTypes(ArrayList<String> allowedKeyFileTypes) {
         for (final ListIterator<String> i = allowedCertificateFileTypes.listIterator(); i.hasNext(); ) {
             String element = i.next();
-            if (!element.startsWith(".")) {
-                element = '.' + element;
-            }
             i.set(element.toLowerCase());
         }
         this.allowedKeyFileTypes = allowedKeyFileTypes;
