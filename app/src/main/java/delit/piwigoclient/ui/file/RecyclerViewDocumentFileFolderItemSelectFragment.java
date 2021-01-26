@@ -48,6 +48,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -270,6 +271,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             buildBreadcrumbs(newFolder);
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
+            fileExtFilters.setAllFilters(getViewPrefs().getVisibleFileTypes());
             fileExtFilters.setActiveFilters(getListAdapter().getFileExtsInCurrentFolder());
             fileExtFilters.selectAll(true);
         }
@@ -332,7 +334,11 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, CollectionUtils.asStringArray(getViewPrefs().getVisibleMimeTypes()));
+        Set<String> permittedMimeTypes = getViewPrefs().getVisibleMimeTypes();
+        if(permittedMimeTypes.isEmpty()) {
+            permittedMimeTypes = IOUtils.getMimeTypesFromFileExts(new HashSet<>(), getViewPrefs().getVisibleFileTypes());
+        }
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, IOUtils.getMimeTypesIncludingFolders(permittedMimeTypes));
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         intent.addFlags(getViewPrefs().getSelectedUriPermissionFlags());
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -374,7 +380,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         if (resultCode != Activity.RESULT_OK || resultData == null) {
             // this is unnecessary to report since the request for files from the system selector was cancelled.
         } else {
-            new SharedFilesIntentProcessingTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, resultData);
+            new SharedFilesIntentProcessingTask(this, resultData).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -731,14 +737,12 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
         @Override
         public void onFilterUnchecked(Context context, String fileExt) {
-            SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
-            visibleFileTypes.remove(fileExt);
+            listAdapter.removeFileTypeToShow(fileExt);
         }
 
         @Override
         public void onFilterChecked(Context context, String fileExt) {
-            SortedSet<String> visibleFileTypes = listAdapter.getAdapterPrefs().getVisibleFileTypes();
-            visibleFileTypes.add(fileExt);
+            listAdapter.addFileTypeToShow(fileExt);
         }
 
         @Override
@@ -811,7 +815,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                         }
                         deselectAllItems();
                     } else {
-                        getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
+                        getListAdapter().clearAndAddAllFileTypesToShow(getViewPrefs().getVisibleFileTypes());
                         getListAdapter().resetRoot(ctx, newRoot);
                         deselectAllItems();
                         fileExtFilters.setEnabled(false);
@@ -925,11 +929,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         return fileExtFilters;
     }
 
-    private static class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<F, Intent, Integer, List<FolderItem>> implements ProgressListener {
+    private static class SharedFilesIntentProcessingTask<F extends RecyclerViewDocumentFileFolderItemSelectFragment<F,FUIH,LVA>, FUIH extends FragmentUIHelper<FUIH,F>,LVA extends FolderItemRecyclerViewAdapter<LVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<F, Void, Integer, List<FolderItem>> implements ProgressListener {
 
 
-        public SharedFilesIntentProcessingTask(F parent) {
+        private final Intent intent;
+
+        public SharedFilesIntentProcessingTask(F parent, Intent intent) {
              super(parent);
+             this.intent = intent;
              withContext(parent.requireContext());
         }
 
@@ -940,8 +947,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         }
 
         @Override
-        protected List<FolderItem> doInBackgroundSafely(Intent[] objects) {
-            Intent intent = objects[0];
+        protected List<FolderItem> doInBackgroundSafely(Void... nothing) {
             if (intent.getClipData() != null) {
                 return getOwner().processOpenDocuments(intent, this);
             } else {
