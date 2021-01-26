@@ -280,6 +280,9 @@ public abstract class BaseRecyclerViewAdapter<LVA extends BaseRecyclerViewAdapte
 
 
     public ItemSelectionListener<LVA, VH,P,T,MSL> buildItemSelectionListener(VH viewHolder) {
+        if(!hasStableIds()) {
+            throw new IllegalStateException("Adapter must have stable ids to use the item selection listener. If item IDs are stable (getItemId), then mark the adapter with adapter.setHasStableIds(true)");
+        }
         return new ItemSelectionListener<>((LVA)this, viewHolder);
     }
 
