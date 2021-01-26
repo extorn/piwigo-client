@@ -52,7 +52,7 @@ public class CreateAndSubmitUploadJobTask extends OwnedSafeAsyncTask<AbstractUpl
     }
 
     @Override
-    protected UploadJob doInBackgroundSafely(Void... voids) {
+    protected UploadJob doInBackgroundSafely(Void... nothing) {
         UploadJob activeJob = null;
         Long uploadJobId = getOwner().getUploadJobId();
         if (uploadJobId != null) {

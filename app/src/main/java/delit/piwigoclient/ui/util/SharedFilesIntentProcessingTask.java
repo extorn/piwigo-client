@@ -59,7 +59,7 @@ public class SharedFilesIntentProcessingTask<A extends MyActivity<A,AUIH>,AUIH e
     }
 
     @Override
-    protected Void doInBackgroundSafely(Void... objects) {
+    protected Void doInBackgroundSafely(Void... nothing) {
         SentFilesResult sentFilesResult = findSentFilesWithinIntent(intent);
         if(sentFilesResult != null) {
             processSharedFilesInBackground(sentFilesResult);

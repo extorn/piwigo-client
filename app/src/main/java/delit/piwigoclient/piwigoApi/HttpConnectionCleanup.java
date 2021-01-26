@@ -11,7 +11,7 @@ import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler
  * Created by gareth on 4/19/18.
  */
 
-public class HttpConnectionCleanup extends SafeAsyncTask {
+public class HttpConnectionCleanup extends SafeAsyncTask<Void,Void,Boolean> {
 
 
     private final long messageId;
@@ -34,7 +34,7 @@ public class HttpConnectionCleanup extends SafeAsyncTask {
     }
 
     @Override
-    protected Object doInBackgroundSafely(Object[] objects) {
+    protected Boolean doInBackgroundSafely(Void... nothing) {
         if (fullClientShutdown) {
             HttpClientFactory.getInstance(getContext()).clearCachedClients(connectionPrefs);
         } else {

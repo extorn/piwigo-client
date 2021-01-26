@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
 import delit.libs.core.util.Logging;
 
@@ -20,6 +21,7 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
     public SafeAsyncTask(){
     }
 
+
     public SafeAsyncTask<Params, Progress, Result> withContext(@NonNull Context context) {
         contextRef = new WeakReference<>(context);
         return this;
@@ -27,6 +29,11 @@ public abstract class SafeAsyncTask<Params, Progress, Result> extends AsyncTask<
 
     public Context getContext() {
         return Objects.requireNonNull(contextRef.get());
+    }
+
+    public SafeAsyncTask<Params, Progress, Result> executeOnExecutor(Executor executor) {
+        super.executeOnExecutor(executor,(Params[])null);
+        return this;
     }
 
     @SafeVarargs

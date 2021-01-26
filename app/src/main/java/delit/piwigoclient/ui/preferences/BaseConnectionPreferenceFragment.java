@@ -297,7 +297,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         initialising = false;
     }
 
-    private static class ResponseCacheButtonTextRetriever<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Object, Void, Long> {
+    private static class ResponseCacheButtonTextRetriever<F extends BaseConnectionPreferenceFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends OwnedSafeAsyncTask<F, Void, Void, Long> {
 
         private Preference responseCacheFlushButton;
 
@@ -307,7 +307,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
 
         @Override
-        protected Long doInBackgroundSafely(Object... params) {
+        protected Long doInBackgroundSafely(Void... nothing) {
             try {
                 this.responseCacheFlushButton = getOwner().findPreference(R.string.preference_caching_clearResponseCache_key);
                 return CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
@@ -755,7 +755,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
 
         @Override
-        protected Boolean doInBackgroundSafely(Void... params) {
+        protected Boolean doInBackgroundSafely(Void... nothing) {
             try {
                 CacheUtils.clearResponseCache(getContext());
                 getOwner().forceHttpConnectionCleanupAndRebuild();
