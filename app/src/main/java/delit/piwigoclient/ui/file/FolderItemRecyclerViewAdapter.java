@@ -63,10 +63,12 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     private boolean isBusy;
     private SafeAsyncTask activeTask;
     private TaskProgressListener taskListener;
+    private Set<String> currentFileTypesToShow = new HashSet<>();
 
     public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MSL multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
+        setHasStableIds(true);
     }
 
     public boolean isBusy() {
@@ -83,6 +85,19 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         DocumentFile oldFolder = activeFolder;
         state.restoreToAdapter(this);
         navigationListener.onPostFolderOpened(oldFolder, activeFolder);
+    }
+
+    public void removeFileTypeToShow(String fileExt) {
+        currentFileTypesToShow.remove(fileExt);
+    }
+
+    public void addFileTypeToShow(String fileExt) {
+        currentFileTypesToShow.add(fileExt);
+    }
+
+    public void clearAndAddAllFileTypesToShow(SortedSet<String> visibleFileTypes) {
+        currentFileTypesToShow.clear();
+        currentFileTypesToShow.addAll(visibleFileTypes);
     }
 
     public static class SavedState {
@@ -193,10 +208,9 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
 
     private List<FolderItem> getFilteredListOfContent(List<FolderItem> currentDisplayContent) {
         List<FolderItem> filteredContent = new ArrayList<>(currentDisplayContent.size());
-        SortedSet<String> visibleFileExts = getAdapterPrefs().getVisibleFileTypes();
         //String[] visibleMimes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
         boolean showFolderContainedFiles = getAdapterPrefs().isShowFolderContent();
-        FolderItemFilter filter = new FolderItemFilter(showFolderContainedFiles, visibleFileExts, null);
+        FolderItemFilter filter = new FolderItemFilter(showFolderContainedFiles, currentFileTypesToShow, null);
         for(int i = currentDisplayContent.size() - 1; i >= 0; i--) {
             FolderItem folderItem = currentDisplayContent.get(i);
             if(filter.accept(folderItem)) {
@@ -755,7 +769,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    private static class UpdateContentListAndSortContentAfterAdd extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Object,Object,Object> {
+    private static class UpdateContentListAndSortContentAfterAdd extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Void,Object,Object> {
         private static final String TAG = "UpdateContentListAndSort";
 
         public UpdateContentListAndSortContentAfterAdd(FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter) {
@@ -768,7 +782,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
 
         @Override
-        protected Object doInBackgroundSafely(Object[] objects) {
+        protected Object doInBackgroundSafely(Void... nothing) {
             getOwner().currentVisibleDocumentFileExts = getOwner().buildListOfFileExtsAndMimesInCurrentFolder(getOwner().currentDisplayContent);
             if(getOwner().currentDisplayContent != null) {
                 Collections.sort(getOwner().currentDisplayContent, getOwner().getFolderItemComparator());
@@ -792,7 +806,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    private static class UpdateFolderContentTask extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Object,Object,Pair<List<FolderItem>,List<FolderItem>>> {
+    private static class UpdateFolderContentTask extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Void,Object,Pair<List<FolderItem>,List<FolderItem>>> {
 
         private static final String TAG = "UpdateFolderContentTask";
         private final DocumentFile newContent;
@@ -836,7 +850,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
 
         @Override
-        protected Pair<List<FolderItem>,List<FolderItem>> doInBackgroundSafely(Object[] objects) {
+        protected Pair<List<FolderItem>,List<FolderItem>> doInBackgroundSafely(Void... nothing) {
             Context context;
             try {
                 context = getContext();
