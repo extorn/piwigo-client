@@ -276,6 +276,11 @@
     
 
     
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">時間の経過後にアイテムの詳細を非表示にする</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$dミリ秒</string>
+    
+
+    
     <string name="preference_groups_request_pagesize_title">グループサーバーリクエストのページサイズ</string>
     <string name="preference_groups_request_pagesize_summary">%1$dアイテム</string>
     

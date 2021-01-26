@@ -3,78 +3,98 @@ Bugfix:
 - Keystore and Trusted certificate item editing caused crash.
 : Please email me from the app when key functionality like this doesn't work.
 - Sometimes unable to navigate out of recent files with system file selection
+- Groups list vertically aligned to the center of the screen
 Changes:
 - Better User experience for keystore and certificate import
+- New preference to control the length of time the image detail is shown in the fullscreen or slideshow view
 </en-GB>
 <cs-CZ>
 Oprava chyby:
 - Úpravy úložiště klíčů a důvěryhodných certifikátů způsobily selhání.
 : Pokud mi taková klíčová funkce nefunguje, pošlete mi e-mail z aplikace.
 - Někdy nelze vybrat poslední soubory pomocí výběru systémových souborů
+- Seznam skupin vertikálně zarovnaný ke středu obrazovky
 Změny:
 - Lepší uživatelský komfort pro úložiště klíčů a import certifikátů
+- Nová předvolba pro ovládání doby zobrazení detailu obrázku v zobrazení na celou obrazovku nebo v prezentaci
 </cs-CZ>
 <de-DE>
 Bug-Fix:
 - Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.
 : Bitte senden Sie mir eine E-Mail von der App, wenn solche Schlüsselfunktionen nicht funktionieren.
 - Manchmal kann mit der Auswahl der Systemdateien nicht aus den zuletzt verwendeten Dateien navigiert werden
+- Die Gruppenliste ist vertikal zur Bildschirmmitte ausgerichtet
 Änderungen:
 - Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten
+- Neue Einstell..."
 </de-DE>
 <es-ES>
 Arreglo del fallo:
 - La edición del elemento del certificado de confianza y del almacén de claves provocó un bloqueo.
 : Envíeme un correo electrónico desde la aplicación cuando una función clave como esta no funcione.
 - A veces no se puede navegar fuera de los archivos recientes con la selección de archivos del sistema
+- Lista de grupos alineados verticalmente al centro de la pantalla
 Cambios:
 - Mejor experiencia de usuario para el almacén de claves y la importación de certificados
+- Nueva p..."
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
 - La modification des éléments de keystore et de certificat de confiance a causé un plantage.
-: Envoyez-moi un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas
+: Veuillez m\'envoyer un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas.
 - Parfois impossible de sortir des fichiers récents avec la sélection de fichiers système
+- Liste des groupes alignée verticalement au centre de l\'écran
 Changements:
 - Meilleure expérience utilisateur pour l\'importation de keystore et de certificat
+- Nouv..."
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
 - La modifica dell\'archivio chiavi e dell\'elemento certificato attendibile ha causato un arresto anomalo.
 : Inviami un\'e-mail dall\'app quando funzionalità chiave come questa non funzionano.
 - A volte non è possibile uscire dai file recenti con la selezione del file di sistema
+- Elenco dei gruppi allineato verticalmente al centro dello schermo
 I cambiamenti:
 - Migliore esperienza utente per keystore e importazione di certificati
+- Nuova preferenza per controllare..."
 </it-IT>
 <ja-JP>
 バグ修正：
 -キーストアと信頼できる証明書アイテムの編集によりクラッシュが発生しました。
 ：このような主要な機能が動作しない場合は、アプリから私にメールしてください。
 -システムファイルを選択しても、最近のファイルから移動できない場合があります
+-グループリストは画面の中央に垂直に配置されます
 変更点：
 -キーストアと証明書のインポートのユーザーエクスペリエンスの向上
+-画像の詳細がフルスクリーンまたはスライドショービューに表示される時間の長さを制御するための新しい設定
 </ja-JP>
 <nl-NL>
 Bugfix:
 - Bewerken van sleutelarchief en vertrouwd certificaatitem veroorzaakte een crash.
 : Stuur me een e-mail vanuit de app als dit soort sleutelfuncties niet werken.
 - Soms niet in staat om uit recente bestanden te navigeren met systeembestandsselectie
+- Groepenlijst verticaal uitgelijnd met het midden van het scherm
 Veranderingen:
 - Betere gebruikerservaring voor keystore en certificaatimport
+- Nieuwe voorkeur om de tijdsduur te bepalen dat de afbeeldingsdetails worden weergegeven in he..."
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
 - Редактирование хранилища ключей и доверенного сертификата вызывало сбой.
 : Напишите мне из приложения, если такие ключевые функции не работают.
 - Иногда невозможно перейти из недавних файлов с системным выбором файлов
+- Список групп вертикально выровнен по центру экрана
 Изменения:
 - Улучшенный пользовательский интерфейс для хранилища ключей и импорта сертификатов
+- Новое предпочтение для управления продолжительностью отображения деталей изображения в полноэкранном режиме..."
 </ru-RU>
 <zh-CN>
 错误修正：
 -密钥库和可信证书项目编辑导致崩溃。
 ：当类似这样的关键功能不起作用时，请通过应用程序给我发送电子邮件。
 -有时无法通过选择系统文件来浏览最近的文件
+-组列表垂直对齐到屏幕中心
 变化：
 -密钥库和证书导入的更好的用户体验
+-新的首选项可控制在全屏或幻灯片视图中显示图像细节的时间长度
 </zh-CN>

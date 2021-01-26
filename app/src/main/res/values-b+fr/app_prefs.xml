@@ -276,6 +276,11 @@
     
 
     
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Masquer les détails de l\'article après le temps</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d millisecondes</string>
+    
+
+    
     <string name="preference_groups_request_pagesize_title">Taille de la page de la demande du serveur de groupes</string>
     <string name="preference_groups_request_pagesize_summary">%1$d éléments</string>
     

@@ -151,8 +151,10 @@
                  - Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.
                      : Bitte senden Sie mir eine E-Mail von der App, wenn solche Schlüsselfunktionen nicht funktionieren.
                  - Manchmal kann mit der Auswahl der Systemdateien nicht aus den zuletzt verwendeten Dateien navigiert werden
+                 - Die Gruppenliste ist vertikal zur Bildschirmmitte ausgerichtet
                 Änderungen:
-                 - Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten"</item>
+                 - Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten
+                 - Neue Einstellung zur Steuerung der Zeitdauer, in der die Bilddetails in der Vollbild- oder Diashow-Ansicht angezeigt werden"</item>
         <item>1.4.0.102</item>
         <item>"Bug-Fix:
                  - Aufgrund der jüngsten Änderungen war es nicht möglich, sowohl die kostenlose als auch die kostenpflichtige Version gleichzeitig auf einem einzigen Gerät zu installieren

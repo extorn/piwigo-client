@@ -276,6 +276,11 @@
     
 
     
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Скрыть сведения об элементе через раз</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d миллисекунды</string>
+    
+
+    
     <string name="preference_groups_request_pagesize_title">Размер страницы запроса сервера групп</string>
     <string name="preference_groups_request_pagesize_summary">%1$d элементов</string>
     

@@ -151,8 +151,10 @@
                  - Bewerken van sleutelarchief en vertrouwd certificaatitem veroorzaakte een crash.
                      : Stuur me een e-mail vanuit de app als dit soort sleutelfuncties niet werken.
                  - Soms niet in staat om uit recente bestanden te navigeren met systeembestandsselectie
+                 - Groepenlijst verticaal uitgelijnd met het midden van het scherm
                 Veranderingen:
-                 - Betere gebruikerservaring voor keystore en certificaatimport"</item>
+                 - Betere gebruikerservaring voor keystore en certificaatimport
+                 - Nieuwe voorkeur om de tijdsduur te bepalen dat de afbeeldingsdetails worden weergegeven in het volledige scherm of de diavoorstelling"</item>
         <item>1.4.0.102</item>
         <item>"Bugfix:
                  - Recente wijzigingen maakten het onmogelijk om zowel de gratis als de betaalde versie tegelijkertijd op één apparaat te installeren

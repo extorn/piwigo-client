@@ -149,10 +149,12 @@
         <item>1.4.0.103</item>
         <item>"Correction d\'un bug:
                  - La modification des éléments de keystore et de certificat de confiance a causé un plantage.
-                     : Envoyez-moi un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas
+                     : Veuillez m\'envoyer un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas.
                  - Parfois impossible de sortir des fichiers récents avec la sélection de fichiers système
+                 - Liste des groupes alignée verticalement au centre de l\'écran
                 Changements:
-                 - Meilleure expérience utilisateur pour l\'importation de keystore et de certificat"</item>
+                 - Meilleure expérience utilisateur pour l\'importation de keystore et de certificat
+                 - Nouvelle préférence pour contrôler la durée d\'affichage des détails de l\'image en plein écran ou en diaporama"</item>
         <item>1.4.0.102</item>
         <item>"Correction d\'un bug:
                  - Des changements récents ont rendu impossible l\'installation des versions gratuite et payante en même temps sur un seul appareil

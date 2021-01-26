@@ -151,8 +151,10 @@
                  - Úpravy úložiště klíčů a důvěryhodných certifikátů způsobily selhání.
                      : Pokud mi taková klíčová funkce nefunguje, pošlete mi e-mail z aplikace.
                  - Někdy nelze vybrat poslední soubory pomocí výběru systémových souborů
+                 - Seznam skupin vertikálně zarovnaný ke středu obrazovky
                 Změny:
-                 - Lepší uživatelský komfort pro úložiště klíčů a import certifikátů"</item>
+                 - Lepší uživatelský komfort pro úložiště klíčů a import certifikátů
+                 - Nová předvolba pro ovládání doby zobrazení detailu obrázku v zobrazení na celou obrazovku nebo v prezentaci"</item>
         <item>1.4.0.102</item>
         <item>"Oprava chyby:
                  - Nedávné změny znemožnily mít bezplatnou i placenou verzi nainstalovanou současně na jednom zařízení

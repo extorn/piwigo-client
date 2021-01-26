@@ -276,6 +276,11 @@
     
 
     
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">时间后隐藏物品详细信息</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d毫秒</string>
+    
+
+    
     <string name="preference_groups_request_pagesize_title">组服务器请求页面大小</string>
     <string name="preference_groups_request_pagesize_summary">%1$d项</string>
     
