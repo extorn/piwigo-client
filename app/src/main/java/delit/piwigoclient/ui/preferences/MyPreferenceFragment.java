@@ -242,11 +242,15 @@ public abstract class MyPreferenceFragment<F extends MyPreferenceFragment<F,FUIH
 
     @Override
     public final void onDisplayPreferenceDialog(Preference preference) {
+        if(preference instanceof PaidOnlyPreference) {
+            getUiHelper().showDetailedMsg(R.string.alert_information, R.string.paid_feature_only);
+            return;
+        }
         DialogFragment f = onDisplayCustomPreferenceDialog(preference);
         if(f == null) {
             if (preference instanceof ServerConnectionsListPreference) {
                 f = ServerConnectionsListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
-            } if(preference instanceof UriPermissionsListPreference) {
+            } else if(preference instanceof UriPermissionsListPreference) {
                 f = UriPermissionsListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
             } else if (preference instanceof ServerAlbumListPreference) {
                 f = ServerAlbumListPreferenceDialogFragmentCompat.newInstance(preference.getKey());

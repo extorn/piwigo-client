@@ -282,6 +282,11 @@
     <string name="preference_gallery_slideshow_image_rotate_summary">Image rotated to fit screen</string>
     <string name="preference_gallery_slideshow_image_rotate_key" translatable="false">preference_gallery_slideshow_image_rotate</string>
 
+    <integer name="preference_gallery_slideshow_item_detail_auto_hide_delay_default">2000</integer>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_title">Hide item detail after time</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_summary">%1$d milliseconds</string>
+    <string name="preference_gallery_slideshow_item_detail_auto_hide_delay_key" translatable="false">preference_gallery_slideshow_item_detail_auto_hide_delay</string>
+
     <string name="preference_groups_request_pagesize_key" translatable="false">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
     <string name="preference_groups_request_pagesize_summary">%1$d items</string>

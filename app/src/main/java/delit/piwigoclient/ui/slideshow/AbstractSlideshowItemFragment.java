@@ -52,6 +52,7 @@ import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.libs.ui.view.slidingsheet.SlidingBottomSheet;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -389,6 +390,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
 
         overlaysVisibilityControl = new ViewVisibleControl(v.findViewById(R.id.item_overlay_details_panel));
+        overlaysVisibilityControl.setDelayMillis(AlbumViewPreferences.getAutoHideItemDetailDelayMillis(getPrefs(),requireContext()));
         overlaysVisibilityControl.setVisibility(View.VISIBLE);
 
         RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
@@ -814,7 +816,8 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
     public static class ViewVisibleControl implements Runnable {
 
-        private long delayMillis = 2000;
+        private static final long DEFAULT_DELAY_MILLIS = 2000;
+        private long delayMillis = DEFAULT_DELAY_MILLIS;
         private List<View> views;
         private int visibilityOnRun = View.INVISIBLE;
         private long timerStarted;
@@ -850,7 +853,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             if (v != null) {
                 timerStarted = System.currentTimeMillis();
                 setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-                v.postDelayed(this, 2000);
+                v.postDelayed(this, delayMillis);
             }
         }
 

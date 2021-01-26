@@ -96,7 +96,7 @@ public class BaseAlbumViewPreferences {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_include_videos_in_slideshow_key), context.getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
     }
 
-    //TODO OBSOLETE - REMOVE
+    //FIXME OBSOLETE - REMOVE
     public static boolean isSlideshowExtraInfoShadowTransparent(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_transparent_extra_info_shadow_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_transparent_extra_info_shadow_default));
     }
@@ -113,5 +113,9 @@ public class BaseAlbumViewPreferences {
 
     public static boolean isRotateImageSoAspectMatchesScreenAspect(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_image_rotate_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_image_rotate_default));
+    }
+
+    public static long getAutoHideItemDetailDelayMillis(SharedPreferences prefs, Context context) {
+        return prefs.getInt(context.getString(R.string.preference_gallery_slideshow_item_detail_auto_hide_delay_key), context.getResources().getInteger(R.integer.preference_gallery_slideshow_item_detail_auto_hide_delay_default));
     }
 }
