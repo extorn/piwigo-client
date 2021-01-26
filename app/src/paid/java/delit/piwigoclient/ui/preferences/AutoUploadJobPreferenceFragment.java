@@ -137,7 +137,7 @@ public class AutoUploadJobPreferenceFragment<F extends AutoUploadJobPreferenceFr
             String serverUri = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
             LoginResponseHandler loginHandler = new LoginResponseHandler();
             loginHandler.withConnectionPreferences(profilePrefs);
-            getUiHelper().addActionOnResponse(loginHandler.getMessageId(), new LoginResponseAction(profilePrefs));
+            getUiHelper().addActionOnResponse(loginHandler.getMessageId(), new LoginResponseAction<>(profilePrefs));
             callServer(getString(R.string.logging_in_to_piwigo_pattern, serverUri), loginHandler);
         }
     }

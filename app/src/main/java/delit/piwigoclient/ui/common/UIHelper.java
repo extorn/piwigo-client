@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -59,6 +58,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -475,7 +475,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         return new DismissListener();
     }
 
-    protected void showDialog(final QueuedQuestionMessage nextMessage) {
+    protected void showDialog(final QueuedQuestionMessage<UIH,OWNER> nextMessage) {
         buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
@@ -507,7 +507,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         }
     }
 
-    protected void showDialog(final QueuedDialogMessage nextMessage) {
+    protected void showDialog(final QueuedDialogMessage<UIH,OWNER> nextMessage) {
         buildAlertDialog(getParentView().getContext());
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
@@ -543,13 +543,13 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         worker.invokeAsync(appContext);
     }
 
-    public long invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+    public long invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action<UIH,OWNER,?> actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
         addActiveServiceCall(progressMsg, worker);
         return worker.getMessageId();
     }
 
-    public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+    public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action<UIH,OWNER,?> actionOnResponse) {
         invokeActiveServiceCall(appContext.getString(progressMsgId), worker, actionOnResponse);
     }
 
@@ -617,9 +617,9 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
                     piwigoResponseListener.onRestoreInstanceState(thisBundle);
 
-                    for (QueuedDialogMessage message : dialogMessageQueue) {
+                    for (QueuedDialogMessage<UIH,OWNER> message : dialogMessageQueue) {
                         if (message.getListener() != null) {
-                            message.getListener().setUiHelper(this);
+                            message.getListener().setUiHelper((UIH)this);
                         }
                     }
                 }
@@ -646,9 +646,9 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         synchronized (dialogMessageQueue) {
             if (dialogMessageQueue.size() > 0 && !isDialogShowing()) {
                 // show the dialog now we're able.
-                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<UIH,OWNER> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
+                    showDialog((QueuedQuestionMessage<UIH,OWNER>) nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
@@ -845,7 +845,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         if (event.isHandled()) {
             return;
         }
-        final Set<String> preNotifiedCerts = new HashSet<>(prefs.getStringSet(appContext.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>()));
+        final Set<String> preNotifiedCerts = new HashSet<>(Objects.requireNonNull(prefs.getStringSet(appContext.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>())));
         if (preNotifiedCerts.containsAll(event.getUntrustedCerts().keySet())) {
             // already dealt with this
             return;
@@ -899,9 +899,9 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     public <S extends QueuedDialogMessage<UIH, OWNER>> void showOrQueueDialogMessage(S message) {
         synchronized (dialogMessageQueue) {
             if (!isDialogShowing() && canShowDialog()) {
-                QueuedDialogMessage<?,?> nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<UIH,OWNER> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog(nextMessage);
+                    showDialog((QueuedQuestionMessage<UIH,OWNER>)nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
@@ -911,9 +911,9 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
                 dialogMessageQueue.add(message);
             }
             if (!isDialogShowing() && canShowDialog()) {
-                QueuedDialogMessage<?,?> nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage<UIH,OWNER> nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog(nextMessage);
+                    showDialog((QueuedQuestionMessage<UIH,OWNER>)nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
@@ -1036,7 +1036,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
 
     public void showUserHint(String tag, int hintId, @StringRes int hintStrResId) {
         String hintsKey = appContext.getString(R.string.usage_hints_shown_list_key);
-        Set<String> hintsShown = new HashSet<>(getPrefs().getStringSet(hintsKey, new HashSet<>()));
+        Set<String> hintsShown = new HashSet<>(Objects.requireNonNull(getPrefs().getStringSet(hintsKey, new HashSet<>())));
         if (hintsShown.add(tag + '_' + hintId)) {
             int userHintDuration = Toast.LENGTH_LONG; //TODO use custom toast impl so I can set other duration perhaps. - AppPreferences.getUserHintDuration(getPrefs(), context);
             TransientMsgUtils.makeDetailedToast(appContext, R.string.usage_hint_title, appContext.getString(hintStrResId), userHintDuration).show();
@@ -1093,7 +1093,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         return (Action<UIH, OWNER, PiwigoResponseBufferingHandler.Response>) actionOnServerCallComplete.get(response.getMessageId());
     }
 
-    public void addActionOnResponse(long msgId, Action action) {
+    public void addActionOnResponse(long msgId, Action<UIH,OWNER,?> action) {
         actionOnServerCallComplete.put(msgId, action);
     }
 
@@ -1138,7 +1138,7 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
 
-                final Set<String> preNotifiedCerts = new HashSet<>(getUiHelper().getPrefs().getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>()));
+                final Set<String> preNotifiedCerts = new HashSet<>(Objects.requireNonNull(getUiHelper().getPrefs().getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<>())));
                 if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
                     // already dealt with this
                     return;
@@ -1622,18 +1622,17 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
             if (canShowDialog()) {
 
                 if (dialogMessageQueue.size() > 0 && canShowDialog()) {
-                    QueuedDialogMessage<?,?> nextMessage;
+                    QueuedDialogMessage<UIH,OWNER> nextMessage;
                     do {
                         nextMessage = dialogMessageQueue.peek();
-                        if (nextMessage.isHasListener() && nextMessage.getListener() == null) {
+                        if (nextMessage != null && nextMessage.isHasListener() && nextMessage.getListener() == null) {
                             Logging.log(Log.WARN, TAG, "Discarding corrupt message");
                             dialogMessageQueue.remove();
                             nextMessage = null;
                         }
-
                     } while (nextMessage == null && dialogMessageQueue.size() > 0);
                     if (nextMessage instanceof QueuedQuestionMessage) {
-                        showDialog(nextMessage);
+                        showDialog((QueuedQuestionMessage<UIH,OWNER>)nextMessage);
                     } else if (nextMessage != null) {
                         showDialog(nextMessage);
                     } else {
