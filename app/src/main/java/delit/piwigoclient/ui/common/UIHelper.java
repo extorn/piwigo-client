@@ -292,13 +292,14 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     protected void showQueuedMsg() {
         View parentView = getParentView();
         if(parentView == null || !canShowDialog()) {
+            Logging.log(Log.WARN,TAG,"Unable to show message, parent has no view");
+            return;
+        }
+        if(simpleMessageQueue.isEmpty()) {
             return;
         }
         if(canShowDialog()) {
             setupDialogBoxes();
-        }
-        if(simpleMessageQueue.isEmpty()) {
-            return;
         }
         final CustomSnackbar snackbar;
         toastShowing = true;
@@ -453,7 +454,13 @@ public abstract class UIHelper<UIH extends UIHelper<UIH, OWNER>, OWNER> {
     }
 
     private void setupDialogBoxes() {
-        buildAlertDialog(getParentView().getContext());
+        Context context = getAppContext();
+        if(getParentView() != null) {
+            context = getParentView().getContext();
+        } else {
+            Logging.log(Log.WARN, TAG,"Unable to use view context for dialog boxes - view not available");
+        }
+        buildAlertDialog(context);
     }
 
     protected void buildAlertDialog(Context c) {

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,8 +36,8 @@ import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHa
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.common.DialogFragmentUIHelper;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 
 public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbumListPreferenceDialogFragmentCompat<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
@@ -47,7 +46,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
     private CustomPiwigoResponseListener serviceCallHandler;
     private ListView itemListView;
     private String STATE_ACTIVE_SERVICE_CALL = "ServerAlbumListPreference.ActiveCallId";
-    private CustomUIHelper uiHelper;
+    private DialogFragmentUIHelper uiHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,7 +98,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        serviceCallHandler = new CustomPiwigoResponseListener();
+        setupUiHelper(view);
         triggerAlbumsListLoad();
     }
 
@@ -158,14 +157,15 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
         }
     }
 
-    private void triggerAlbumsListLoad() {
-
-        ServerAlbumListPreference pref = getPreference();
-
-        uiHelper = new CustomUIHelper(this, getSharedPreferences(), getContext());
+    private void setupUiHelper(@NonNull View view) {
+        // need to recreate this because we're binding it to this view.
+        uiHelper = new DialogFragmentUIHelper(this, view, getSharedPreferences(), getContext());
+        serviceCallHandler = new CustomPiwigoResponseListener();
         uiHelper.setPiwigoResponseListener(serviceCallHandler);
         serviceCallHandler.withUiHelper(this, uiHelper);
+    }
 
+    private void triggerAlbumsListLoad() {
         activeServiceCall = invokeRetrieveSubCategoryNamesCall(getConnectionProfile());
     }
 
@@ -273,26 +273,6 @@ public class ServerAlbumListPreferenceDialogFragmentCompat<F extends ServerAlbum
             if (pref.callChangeListener(selectedAlbumId)) {
                 pref.persistStringValue(selectedAlbumAsStr);
             }
-        }
-    }
-
-    private static class CustomUIHelper extends UIHelper<CustomUIHelper,DialogFragment> {
-        public CustomUIHelper(DialogFragment parent, SharedPreferences prefs, Context context) {
-            super(parent, prefs, context);
-        }
-
-        @Override
-        protected View getParentView() {
-            DialogFragment parent = getParent();
-            if(parent == null) {
-                return null;
-            }
-            return parent.getView();
-        }
-
-        @Override
-        protected boolean canShowDialog() {
-            return true;
         }
     }
 

@@ -1,7 +1,9 @@
 package delit.piwigoclient.ui.preferences;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,6 +83,7 @@ import delit.libs.util.security.X509LoadOperation;
 import delit.piwigoclient.R;
 import delit.piwigoclient.database.AppSettingsViewModel;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.DialogFragmentUIHelper;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 
@@ -100,6 +104,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private KeyStore keystore;
     private ProgressIndicator progressIndicator;
     private AppSettingsViewModel appSettingsViewModel;
+    private DialogFragmentUIHelper uiHelper;
 
     @Override
     public <T extends Preference> T findPreference(@NonNull CharSequence key) {
@@ -111,6 +116,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         return (KeyStorePreference) super.getPreference();
     }
 
+    private SharedPreferences getSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(requireContext().getApplicationContext());
+    }
+
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
@@ -120,6 +129,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
         view.requestFocus();
     }
+
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
@@ -140,6 +150,24 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         ViewModelStoreOwner viewModelProvider = DisplayUtils.getViewModelStoreOwner(getContext());
         appSettingsViewModel = new ViewModelProvider(viewModelProvider).get(AppSettingsViewModel.class);
         return buildCertificateListView(context, keystore);
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog d = super.onCreateDialog(savedInstanceState);
+        if(uiHelper == null) {
+            // show toast messages at the parent activity level
+            uiHelper = new DialogFragmentUIHelper<>(this, getActivity().getWindow().getDecorView(), getSharedPreferences(), requireContext());
+        } else {
+            uiHelper.swapToNewContext(requireContext());
+        }
+        return d;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     private View buildCertificateListView(Context context, KeyStore keystore) {
@@ -230,7 +258,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         return getPreference().getTitle().toString();
     }
 
-    private void processRecoverableErrors(Context context) {
+    private void processRecoverableErrors(@NonNull Context context) {
 
         final SecurityOperationException recoverableError = keystoreLoadOperationResult.getNextRecoverableError();
 
@@ -245,7 +273,11 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(new ContextThemeWrapper(context, R.style.Theme_App_EditPages));
-                builder.setTitle(R.string.alert_information)
+                builder.setOnCancelListener(dialog -> {
+                    keystoreLoadOperationResult.cancelAllLoadOperations();
+                    uiHelper.showDetailedMsg(R.string.alert_warning, getString(R.string.import_cancelled));
+                });
+                builder.setTitle(R.string.alert_password_entry)
                 .setPositiveButton(R.string.button_ok, (dialog, which) -> {
                     @NonNull EditText passwordEditText = Objects.requireNonNull(alertDialog.findViewById(R.id.keystore_password_editText));
                     char[] pass = new char[passwordEditText.getText().length()];
@@ -253,6 +285,22 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                     alertDialog.dismiss();
                     keystoreLoadOperationResult.addPasswordForRerun(recoverableError, pass);
                     processRecoverableErrors(((AlertDialog)dialog).getContext());
+                }
+                )
+                .setNegativeButton(R.string.button_cancel, (dialog, which) -> {
+                    // cancel the load of this password protected keystore or alias as appropriate
+                    keystoreLoadOperationResult.cancelLoadOperation(recoverableError);
+                    processRecoverableErrors(((AlertDialog)dialog).getContext());
+                    String importObjectType;
+                    String object;
+                    if (recoverableError instanceof KeyStoreOperationException) {
+                        importObjectType = getString(R.string.heading_keystore_filename);
+                        object = new File(recoverableError.getDataSource()).getName();
+                    } else {
+                        importObjectType = getString(R.string.heading_keystore_alias);
+                        object = ((KeyStoreContentException)recoverableError).getAlias();
+                    }
+                    uiHelper.showDetailedMsg(R.string.alert_warning, getString(R.string.import_x_of_type_y_cancelled_pattern, object, importObjectType));
                 });
 
         View v = null;

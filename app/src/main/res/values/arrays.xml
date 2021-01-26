@@ -253,7 +253,10 @@
         <item>1.4.0.103</item>
         <item>"Bugfix:
                 - Keystore and Trusted certificate item editing caused crash.
-                    : Please email me from the app when key functionality like this doesn't work."</item>
+                    : Please email me from the app when key functionality like this doesn't work.
+                - Sometimes unable to navigate out of recent files with system file selection
+               Changes:
+                - Better User experience for keystore and certificate import"</item>
         <item>1.4.0.102</item>
         <item>"Bugfix:
                 - Recent changes made it impossible to have both the free and paid versions installed at the same time on a single device

@@ -278,4 +278,23 @@ public class LoadOperationResult implements Parcelable {
             result.getExceptionList().remove(recoverableError);
         }
     }
+
+    public void cancelLoadOperation(SecurityOperationException recoverableError) {
+        if (recoverableError instanceof KeyStoreOperationException) {
+            String f = recoverableError.getDataSource();
+            KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
+            keystoreLoadResults.remove(result);
+        } else if (recoverableError instanceof KeyStoreContentException) {
+            KeyStoreContentException err = (KeyStoreContentException) recoverableError;
+            String f = err.getDataSource();
+            KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
+            result.getLoadOperation().removeAliasToLoad(err.getAlias());
+            result.getExceptionList().remove(recoverableError);
+        }
+    }
+
+    public void cancelAllLoadOperations() {
+        keystoreLoadResults.clear();
+        certLoadResults.clear();
+    }
 }
