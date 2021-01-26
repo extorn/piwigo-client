@@ -281,7 +281,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
         public static final Creator<OnDeleteGroupAction> CREATOR = new Creator<OnDeleteGroupAction>() {
             @Override
             public OnDeleteGroupAction createFromParcel(Parcel in) {
-                return new OnDeleteGroupAction(in);
+                return new OnDeleteGroupAction<>(in);
             }
 
             @Override

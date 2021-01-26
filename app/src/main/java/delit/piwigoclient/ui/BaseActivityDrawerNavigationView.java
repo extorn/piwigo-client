@@ -147,7 +147,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
         } else {
             username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new OnUnlockAction(uiHelper));
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new OnUnlockAction<>(uiHelper));
     }
 
     @Override
@@ -234,7 +234,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
         public static final Creator<OnAppLockAction> CREATOR = new Creator<OnAppLockAction>() {
             @Override
             public OnAppLockAction createFromParcel(Parcel in) {
-                return new OnAppLockAction(in);
+                return new OnAppLockAction<>(in);
             }
 
             @Override
@@ -299,12 +299,12 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
                     if (networkAccessDesired) {
                         PiwigoSessionDetails.logout(connectionPrefs, getUiHelper().getAppContext());
                         String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getAppContext());
-                        getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                        getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction<>());
                     }
                     getUiHelper().getParent().setMenuVisibilityToMatchSessionState();
                 } else if (!networkAccessDesired) {
                     String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getAppContext());
-                    getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction());
+                    getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction<>());
                 }
             }
         }
@@ -331,7 +331,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
         public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
             @Override
             public OnLoginAction createFromParcel(Parcel in) {
-                return new OnLoginAction(in);
+                return new OnLoginAction<>(in);
             }
 
             @Override
@@ -388,7 +388,7 @@ public class BaseActivityDrawerNavigationView<V extends BaseActivityDrawerNaviga
         public static final Creator<OnUnlockAction> CREATOR = new Creator<OnUnlockAction>() {
             @Override
             public OnUnlockAction createFromParcel(Parcel in) {
-                return new OnUnlockAction(in);
+                return new OnUnlockAction<>(in);
             }
 
             @Override

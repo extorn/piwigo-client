@@ -675,7 +675,7 @@ public class AbstractAlbumVideoItemFragment<F extends AbstractAlbumVideoItemFrag
         public static final Creator<ClearCachedContentAction> CREATOR = new Creator<ClearCachedContentAction>() {
             @Override
             public ClearCachedContentAction createFromParcel(Parcel in) {
-                return new ClearCachedContentAction(in);
+                return new ClearCachedContentAction<>(in);
             }
 
             @Override

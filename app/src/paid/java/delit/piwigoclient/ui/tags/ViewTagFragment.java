@@ -375,9 +375,9 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
 
     private void reloadTagModel() {
         if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), new TagLoadedAction());
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), new TagLoadedAction<>());
         } else {
-            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(0, Integer.MAX_VALUE), new TagLoadedAction());
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(0, Integer.MAX_VALUE), new TagLoadedAction<>());
         }
     }
 
@@ -540,7 +540,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new OnDeleteTagsAction(getUiHelper());
+        UIHelper.QuestionResultListener dialogListener = new OnDeleteTagsAction<>(getUiHelper());
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean isTagAlterationSupported = sessionDetails != null && (sessionDetails.isUseUserTagPluginForUpdate() || sessionDetails.isAdminUser());
@@ -596,7 +596,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
 
     protected void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction<>(getUiHelper(), selectedItemIds, selectedItems));
     }
 
     private static class OnDeleteTagsAction<F extends ViewTagFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
@@ -622,7 +622,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         public static final Creator<OnDeleteTagsAction> CREATOR = new Creator<OnDeleteTagsAction>() {
             @Override
             public OnDeleteTagsAction createFromParcel(Parcel in) {
-                return new OnDeleteTagsAction(in);
+                return new OnDeleteTagsAction<>(in);
             }
 
             @Override
@@ -723,7 +723,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         public static final Creator<OnDeleteTagsForeverAction> CREATOR = new Creator<OnDeleteTagsForeverAction>() {
             @Override
             public OnDeleteTagsForeverAction createFromParcel(Parcel in) {
-                return new OnDeleteTagsForeverAction(in);
+                return new OnDeleteTagsForeverAction<>(in);
             }
 
             @Override
@@ -895,7 +895,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
         public static final Creator<TagLoadedAction> CREATOR = new Creator<TagLoadedAction>() {
             @Override
             public TagLoadedAction createFromParcel(Parcel in) {
-                return new TagLoadedAction(in);
+                return new TagLoadedAction<>(in);
             }
 
             @Override

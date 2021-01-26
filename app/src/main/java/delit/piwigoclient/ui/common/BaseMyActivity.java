@@ -310,9 +310,9 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
         }
 
         if (uiHelper == null) {
-            uiHelper = (UIH) new ActivityUIHelper<>((T) this, prefs, getWindow().getDecorView());
-            BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
-            listener.withUiHelper(this, uiHelper);
+            uiHelper = (UIH)new ActivityUIHelper<>((T) this, prefs, getWindow().getDecorView());
+            BasicPiwigoResponseListener<UIH,T> listener = buildPiwigoResponseListener();
+            listener.withUiHelper((T) this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
         if(savedInstanceState != null) {

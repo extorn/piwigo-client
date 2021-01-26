@@ -458,7 +458,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 isReopening = true;
                 String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
                 AlbumsGetFirstAvailableAlbumResponseHandler handler = new AlbumsGetFirstAvailableAlbumResponseHandler(albumPath, preferredAlbumThumbnailSize);
-                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction<>());
+                getUiHelper().addActionOnResponse(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, handler), new LoadAlbumTreeAction());
             } else {
                 throw new IllegalStateException("Unable to resume album fragment - no resume details stored");
             }
@@ -2349,21 +2349,21 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    private static class LoadAlbumTreeAction<FUIH extends FragmentUIHelper<FUIH,AbstractViewAlbumFragment>> extends UIHelper.Action<FUIH, AbstractViewAlbumFragment, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> implements Parcelable {
+    private static class LoadAlbumTreeAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends AbstractViewAlbumFragment<F,FUIH>> extends UIHelper.Action<FUIH, F, AlbumsGetFirstAvailableAlbumResponseHandler.PiwigoGetAlbumTreeResponse> implements Parcelable {
 
-        public static final Creator<LoadAlbumTreeAction<?>> CREATOR = new Creator<LoadAlbumTreeAction<?>>() {
+        public static final Creator<LoadAlbumTreeAction<?,?>> CREATOR = new Creator<LoadAlbumTreeAction<?,?>>() {
             @Override
-            public LoadAlbumTreeAction<?> createFromParcel(Parcel in) {
+            public LoadAlbumTreeAction<?,?> createFromParcel(Parcel in) {
                 return new LoadAlbumTreeAction<>(in);
             }
 
             @Override
-            public LoadAlbumTreeAction<?>[] newArray(int size) {
+            public LoadAlbumTreeAction<?,?>[] newArray(int size) {
                 return new LoadAlbumTreeAction[size];
             }
         };
 
-        LoadAlbumTreeAction() {
+        private LoadAlbumTreeAction() {
         }
 
         protected LoadAlbumTreeAction(Parcel in) {
@@ -2623,7 +2623,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         public static final Creator<DeleteAlbumAction> CREATOR = new Creator<DeleteAlbumAction>() {
             @Override
             public DeleteAlbumAction createFromParcel(Parcel in) {
-                return new DeleteAlbumAction(in);
+                return new DeleteAlbumAction<>(in);
             }
 
             @Override
@@ -2670,7 +2670,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             public static final Creator<ReallyDeleteAlbumAction> CREATOR = new Creator<ReallyDeleteAlbumAction>() {
                 @Override
                 public ReallyDeleteAlbumAction createFromParcel(Parcel in) {
-                    return new ReallyDeleteAlbumAction(in);
+                    return new ReallyDeleteAlbumAction<>(in);
                 }
 
                 @Override
@@ -2715,7 +2715,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         public static final Creator<DeleteSharedResourcesAction> CREATOR = new Creator<DeleteSharedResourcesAction>() {
             @Override
             public DeleteSharedResourcesAction createFromParcel(Parcel in) {
-                return new DeleteSharedResourcesAction(in);
+                return new DeleteSharedResourcesAction<>(in);
             }
 
             @Override
@@ -2948,7 +2948,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         public static final Creator<BadHttpProtocolAction> CREATOR = new Creator<BadHttpProtocolAction>() {
             @Override
             public BadHttpProtocolAction createFromParcel(Parcel in) {
-                return new BadHttpProtocolAction(in);
+                return new BadHttpProtocolAction<>(in);
             }
 
             @Override

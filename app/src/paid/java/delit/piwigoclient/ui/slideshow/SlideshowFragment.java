@@ -134,7 +134,7 @@ public class SlideshowFragment<F extends SlideshowFragment<F,FUIH,T>, FUIH exten
     }
 
     private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new ReloadTagSlideshowModelAction();
+        UIHelper.Action action = new ReloadTagSlideshowModelAction<>();
 
         if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), action);

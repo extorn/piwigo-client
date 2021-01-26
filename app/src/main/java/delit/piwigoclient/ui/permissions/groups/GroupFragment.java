@@ -261,7 +261,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
         super.onViewCreated(view, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
             //trigger total screen refresh. Any errors will result in screen being closed.
-            UIHelper.Action action = new GroupFragmentAction();
+            UIHelper.Action action = new GroupFragmentAction<>();
             getUiHelper().invokeActiveServiceCall(R.string.progress_loading_group_details, new GroupsGetListResponseHandler(currentGroup.getId()), action);
         } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
@@ -293,7 +293,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
         public static final Creator<GroupFragmentAction> CREATOR = new Creator<GroupFragmentAction>() {
             @Override
             public GroupFragmentAction createFromParcel(Parcel in) {
-                return new GroupFragmentAction(in);
+                return new GroupFragmentAction<>(in);
             }
 
             @Override
@@ -452,7 +452,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
         public static final Creator<OnDeleteGroupAction> CREATOR = new Creator<OnDeleteGroupAction>() {
             @Override
             public OnDeleteGroupAction createFromParcel(Parcel in) {
-                return new OnDeleteGroupAction(in);
+                return new OnDeleteGroupAction<>(in);
             }
 
             @Override

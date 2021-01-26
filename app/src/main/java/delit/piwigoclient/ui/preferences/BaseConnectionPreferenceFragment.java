@@ -377,7 +377,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext(), true).start();
-            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction());
+            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction<>());
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
 
             return true;
@@ -389,13 +389,13 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(loginAsProfileAfterLogout));
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction<>(loginAsProfileAfterLogout));
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
-            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
+            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction<>(loginAsProfileAfterLogout));
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
         } else {
-            new OnHttpClientShutdownAction(loginAsProfileAfterLogout).onSuccess(getUiHelper(), null);
+            new OnHttpClientShutdownAction<FUIH,F>(loginAsProfileAfterLogout).onSuccess(getUiHelper(), null);
             reloadConnectionProfilePrefs();
         }
     }
@@ -413,11 +413,11 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(false));
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction<>(false));
             return true;
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
-            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction());
+            getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction<>());
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
             return true;
         }
@@ -429,7 +429,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         return new CustomPiwigoResponseListener();
     }
 
-    private static class OnLogoutAction<FUIH extends FragmentUIHelper<FUIH,ConnectionPreferenceFragment>> extends UIHelper.Action<FUIH, ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> implements Parcelable {
+    private static class OnLogoutAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment<F,FUIH>> extends UIHelper.Action<FUIH, F, LogoutResponseHandler.PiwigoOnLogoutResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -460,14 +460,14 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
             return 0;
         }
 
-        public static final Creator<OnLogoutAction<?>> CREATOR = new Creator<OnLogoutAction<?>>() {
+        public static final Creator<OnLogoutAction<?,?>> CREATOR = new Creator<OnLogoutAction<?,?>>() {
             @Override
-            public OnLogoutAction<?> createFromParcel(Parcel in) {
+            public OnLogoutAction<?,?> createFromParcel(Parcel in) {
                 return new OnLogoutAction<>(in);
             }
 
             @Override
-            public OnLogoutAction<?>[] newArray(int size) {
+            public OnLogoutAction<?,?>[] newArray(int size) {
                 return new OnLogoutAction[size];
             }
         };
@@ -477,9 +477,9 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getAppContext()).start();
             if(loginAgain != null && !loginAgain) {
-                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction());
+                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction<>());
             } else {
-                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
+                uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction<>(loginAsProfileAfterLogout));
             }
             uiHelper.addActiveServiceCall(uiHelper.getAppContext().getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
             return false;
@@ -494,7 +494,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
     }
 
-    private static class OnLoginAction<FUIH extends FragmentUIHelper<FUIH,ConnectionPreferenceFragment>> extends UIHelper.Action<FUIH, ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse>implements Parcelable {
+    private static class OnLoginAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment> extends UIHelper.Action<FUIH, F, LoginResponseHandler.PiwigoOnLoginResponse>implements Parcelable {
 
         protected OnLoginAction(){}
 
@@ -512,14 +512,14 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
             return 0;
         }
 
-        public static final Creator<OnLoginAction<?>> CREATOR = new Creator<OnLoginAction<?>>() {
+        public static final Creator<OnLoginAction<?,?>> CREATOR = new Creator<OnLoginAction<?,?>>() {
             @Override
-            public OnLoginAction<?> createFromParcel(Parcel in) {
+            public OnLoginAction<?,?> createFromParcel(Parcel in) {
                 return new OnLoginAction<>(in);
             }
 
             @Override
-            public OnLoginAction<?>[] newArray(int size) {
+            public OnLoginAction<?,?>[] newArray(int size) {
                 return new OnLoginAction[size];
             }
         };
@@ -542,7 +542,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
     }
 
-    private static class OnHttpClientShutdownAction<FUIH extends FragmentUIHelper<FUIH,BaseConnectionPreferenceFragment>> extends UIHelper.Action<FUIH, BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> implements Parcelable {
+    private static class OnHttpClientShutdownAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment<F,FUIH>> extends UIHelper.Action<FUIH, F, HttpConnectionCleanup.HttpClientsShutdownResponse> implements Parcelable {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -572,14 +572,14 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
             return 0;
         }
 
-        public static final Creator<OnHttpClientShutdownAction<?>> CREATOR = new Creator<OnHttpClientShutdownAction<?>>() {
+        public static final Creator<OnHttpClientShutdownAction<?,?>> CREATOR = new Creator<OnHttpClientShutdownAction<?,?>>() {
             @Override
-            public OnHttpClientShutdownAction<?> createFromParcel(Parcel in) {
+            public OnHttpClientShutdownAction<?,?> createFromParcel(Parcel in) {
                 return new OnHttpClientShutdownAction<>(in);
             }
 
             @Override
-            public OnHttpClientShutdownAction<?>[] newArray(int size) {
+            public OnHttpClientShutdownAction<?,?>[] newArray(int size) {
                 return new OnHttpClientShutdownAction[size];
             }
         };
@@ -602,7 +602,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
                         uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getAppContext().getString(R.string.alert_warning_no_server_url_specified));
                     }
                 } else {
-                    uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                    uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction<>());
                 }
             }
             return retVal;

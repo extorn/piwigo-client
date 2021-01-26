@@ -60,16 +60,16 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private ExtendedFloatingActionButton retryActionButton;
     private PiwigoUsers usersModel;
-    private UserRecyclerViewAdapter viewAdapter;
+    private UserRecyclerViewAdapter<?,?,?> viewAdapter;
     private UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences viewPrefs;
 
-    public static UsersListFragment newInstance() {
+    public static UsersListFragment<?,?> newInstance() {
         UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences prefs = new UserRecyclerViewAdapter.UserRecyclerViewAdapterPreferences().deletable();
         prefs.setAllowItemAddition(true);
         prefs.setEnabled(true);
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
-        UsersListFragment fragment = new UsersListFragment();
+        UsersListFragment<?,?> fragment = new UsersListFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         fragment.setArguments(args);
         return fragment;
@@ -157,11 +157,11 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
 
-        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), requireActivity()));
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new UserRecyclerViewAdapter(getContext(), usersModel, new UserMultiSelectListener(), viewPrefs);
+        viewAdapter = new UserRecyclerViewAdapter(getContext(), usersModel, new UserMultiSelectListener<>(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
         recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -237,11 +237,11 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction(getUiHelper(), thisItem));
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteUserAction<>(getUiHelper(), thisItem));
         }
     }
 
-    private static class OnDeleteUserAction<F extends UserFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
+    private static class OnDeleteUserAction<F extends UsersListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
 
         private final User user;
 
@@ -266,14 +266,14 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
             return 0;
         }
 
-        public static final Creator<OnDeleteUserAction> CREATOR = new Creator<OnDeleteUserAction>() {
+        public static final Creator<OnDeleteUserAction<?,?>> CREATOR = new Creator<OnDeleteUserAction<?,?>>() {
             @Override
-            public OnDeleteUserAction createFromParcel(Parcel in) {
-                return new OnDeleteUserAction(in);
+            public OnDeleteUserAction<?,?> createFromParcel(Parcel in) {
+                return new OnDeleteUserAction<>(in);
             }
 
             @Override
-            public OnDeleteUserAction[] newArray(int size) {
+            public OnDeleteUserAction<?,?>[] newArray(int size) {
                 return new OnDeleteUserAction[size];
             }
         };
@@ -287,7 +287,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
         }
     }
 
-    private void deleteUserNow(User thisItem) {
+    protected void deleteUserNow(User thisItem) {
         this.deleteActionsPending.put(addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId())), thisItem);
     }
 

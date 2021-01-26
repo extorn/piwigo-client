@@ -334,7 +334,7 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
         public static final Creator<FavoriteRemoveAction> CREATOR = new Creator<FavoriteRemoveAction>() {
             @Override
             public FavoriteRemoveAction createFromParcel(Parcel in) {
-                return new FavoriteRemoveAction(in);
+                return new FavoriteRemoveAction<>(in);
             }
 
             @Override
@@ -376,7 +376,7 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
         public static final Creator<FavoriteAddAction> CREATOR = new Creator<FavoriteAddAction>() {
             @Override
             public FavoriteAddAction createFromParcel(Parcel in) {
-                return new FavoriteAddAction(in);
+                return new FavoriteAddAction<>(in);
             }
 
             @Override

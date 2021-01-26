@@ -308,7 +308,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     private void reloadAlbumSlideshowModel(CategoryItem album, String preferredAlbumThumbnailSize) {
-        AlbumLoadResponseAction action = new AlbumLoadResponseAction();
+        AlbumLoadResponseAction action = new AlbumLoadResponseAction<>();
         getUiHelper().invokeActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, false), action);
     }
 

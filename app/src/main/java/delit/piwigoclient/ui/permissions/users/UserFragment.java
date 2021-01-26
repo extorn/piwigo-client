@@ -450,7 +450,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         public static final Creator<UserFragmentAction> CREATOR = new Creator<UserFragmentAction>() {
             @Override
             public UserFragmentAction createFromParcel(Parcel in) {
-                return new UserFragmentAction(in);
+                return new UserFragmentAction<>(in);
             }
 
             @Override
@@ -609,7 +609,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
         public static final Creator<OnDeleteUserAction> CREATOR = new Creator<OnDeleteUserAction>() {
             @Override
             public OnDeleteUserAction createFromParcel(Parcel in) {
-                return new OnDeleteUserAction(in);
+                return new OnDeleteUserAction<>(in);
             }
 
             @Override

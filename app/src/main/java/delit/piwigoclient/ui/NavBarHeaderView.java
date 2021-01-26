@@ -237,7 +237,7 @@ public class NavBarHeaderView<V extends NavBarHeaderView<V,VUIH>, VUIH extends V
     protected void runHttpClientCleanup(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         HttpConnectionCleanup cleanup = new HttpConnectionCleanup(connectionPrefs, getContext());
         long msgId = cleanup.getMessageId();
-        uiHelper.addActionOnResponse(msgId, new OnHttpConnectionsCleanedAction());
+        uiHelper.addActionOnResponse(msgId, new OnHttpConnectionsCleanedAction<>());
         uiHelper.addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
         cleanup.start();
     }
@@ -246,11 +246,11 @@ public class NavBarHeaderView<V extends NavBarHeaderView<V,VUIH>, VUIH extends V
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            uiHelper.invokeActiveServiceCall(String.format(getContext().getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction());
+            uiHelper.invokeActiveServiceCall(String.format(getContext().getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction<>());
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             runHttpClientCleanup(connectionPrefs);
         } else {
-            new OnHttpConnectionsCleanedAction().onSuccess(uiHelper, null);
+            new OnHttpConnectionsCleanedAction<V,VUIH>().onSuccess(uiHelper, null);
         }
     }
 
@@ -326,7 +326,7 @@ public class NavBarHeaderView<V extends NavBarHeaderView<V,VUIH>, VUIH extends V
                 uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getAppContext().getString(R.string.alert_warning_no_server_url_specified));
                 uiHelper.getParent().markRefreshSessionComplete();
             } else {
-                uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                uiHelper.invokeActiveServiceCall(String.format(uiHelper.getAppContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction<>());
             }
             return false; // don't run standard listener code
         }

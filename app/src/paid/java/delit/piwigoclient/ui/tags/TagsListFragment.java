@@ -295,7 +295,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
 
     public void onDeleteTag(final Tag thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_tag);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction(getUiHelper(), thisItem));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteTagAction<>(getUiHelper(), thisItem));
     }
 
     private static class OnDeleteTagAction<F extends TagsListFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>, T extends Tag> extends UIHelper.QuestionResultAdapter<FUIH, F> implements Parcelable {

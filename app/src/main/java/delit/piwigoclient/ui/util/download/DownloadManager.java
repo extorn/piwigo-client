@@ -158,7 +158,7 @@ public class DownloadManager<UIH extends UIHelper<UIH,T>, T> implements Parcelab
                 removeActionDownloadEvent(); // sink the event from the queue to allow others to download
                 processNextQueuedDownloadEvent();
             } else {
-                event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction(event, this)));
+                event.setRequestId(getUiHelper().invokeActiveServiceCall(getString(R.string.progress_downloading), new ImageGetToFileHandler(fileDetail.getRemoteUri(), destinationFile.getUri()), new DownloadAction<>(event, this)));
             }
         }
     }

@@ -54,9 +54,9 @@ public class UploadPreferenceFragment<F extends UploadPreferenceFragment<F,FUIH>
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             String serverUri = connectionPrefs.getPiwigoServerAddress(getPrefs(), getContext());
             if (sessionDetails == null || !sessionDetails.isLoggedIn()) {
-                getUiHelper().invokeActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), new LoginResponseHandler(), new OnLoginAction());
+                getUiHelper().invokeActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), new LoginResponseHandler(), new OnLoginAction<>());
             } else if(sessionDetails.isPiwigoClientCleanUploadsAvailable()){
-                getUiHelper().invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction());
+                getUiHelper().invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction<>());
             } else {
                 getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_unavailable_feature_piwigo_client_plugin_needed);
             }
@@ -85,7 +85,7 @@ public class UploadPreferenceFragment<F extends UploadPreferenceFragment<F,FUIH>
         public static final Creator<OnLoginAction> CREATOR = new Creator<OnLoginAction>() {
             @Override
             public OnLoginAction createFromParcel(Parcel in) {
-                return new OnLoginAction(in);
+                return new OnLoginAction<>(in);
             }
 
             @Override
@@ -101,7 +101,7 @@ public class UploadPreferenceFragment<F extends UploadPreferenceFragment<F,FUIH>
             if (sessionDetails == null) {
                 Logging.log(Log.ERROR, TAG, "Session details null after login success - weird");
             } else if (sessionDetails.isPiwigoClientCleanUploadsAvailable()) {
-                uiHelper.invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction());
+                uiHelper.invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction<>());
             } else {
                 uiHelper.showDetailedMsg(R.string.alert_error, R.string.alert_unavailable_feature_piwigo_client_plugin_needed);
             }
@@ -130,7 +130,7 @@ public class UploadPreferenceFragment<F extends UploadPreferenceFragment<F,FUIH>
         public static final Creator<FailedUploadCleanAction> CREATOR = new Creator<FailedUploadCleanAction>() {
             @Override
             public FailedUploadCleanAction createFromParcel(Parcel in) {
-                return new FailedUploadCleanAction(in);
+                return new FailedUploadCleanAction<>(in);
             }
 
             @Override

@@ -756,7 +756,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         public static final Creator<UseAsAlbumThumbnailForParentAction> CREATOR = new Creator<UseAsAlbumThumbnailForParentAction>() {
             @Override
             public UseAsAlbumThumbnailForParentAction createFromParcel(Parcel in) {
-                return new UseAsAlbumThumbnailForParentAction(in);
+                return new UseAsAlbumThumbnailForParentAction<>(in);
             }
 
             @Override
@@ -943,7 +943,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         public static final Creator<OnDeleteItemAction> CREATOR = new Creator<OnDeleteItemAction>() {
             @Override
             public OnDeleteItemAction createFromParcel(Parcel in) {
-                return new OnDeleteItemAction(in);
+                return new OnDeleteItemAction<>(in);
             }
 
             @Override

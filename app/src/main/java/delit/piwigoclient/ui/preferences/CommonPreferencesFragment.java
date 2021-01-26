@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -72,7 +71,7 @@ public class CommonPreferencesFragment<F extends CommonPreferencesFragment<F,FUI
     }
 
     /**
-     * Inflates the {@link View} which will be displayed by this {@link Fragment}, from the app's
+     * Inflates the {@link View} which will be displayed by this Fragment, from the app's
      * resources.
      */
     @Override

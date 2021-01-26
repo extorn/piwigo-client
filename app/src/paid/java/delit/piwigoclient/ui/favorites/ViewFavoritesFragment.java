@@ -495,7 +495,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new OnDeleteFavoritesAction(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
+        UIHelper.QuestionResultListener dialogListener = new OnDeleteFavoritesAction<>(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean isFavoritesAlterationSupported = sessionDetails != null && sessionDetails.isPiwigoClientPluginInstalled();
@@ -550,7 +550,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
 
     protected void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction<>(getUiHelper(), selectedItemIds, selectedItems));
     }
 
     private static class OnDeleteFavoritesAction<F extends ViewFavoritesFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends UIHelper.QuestionResultAdapter<FUIH,F> implements Parcelable {
@@ -584,7 +584,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         public static final Creator<OnDeleteFavoritesAction> CREATOR = new Creator<OnDeleteFavoritesAction>() {
             @Override
             public OnDeleteFavoritesAction createFromParcel(Parcel in) {
-                return new OnDeleteFavoritesAction(in);
+                return new OnDeleteFavoritesAction<>(in);
             }
 
             @Override
@@ -678,7 +678,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
         public static final Creator<OnDeleteFavoritesForeverAction> CREATOR = new Creator<OnDeleteFavoritesForeverAction>() {
             @Override
             public OnDeleteFavoritesForeverAction createFromParcel(Parcel in) {
-                return new OnDeleteFavoritesForeverAction(in);
+                return new OnDeleteFavoritesForeverAction<>(in);
             }
 
             @Override

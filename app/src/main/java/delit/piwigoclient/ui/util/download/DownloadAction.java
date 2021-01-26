@@ -15,7 +15,6 @@ import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AbstractMainActivity;
-import delit.piwigoclient.ui.common.ActivityUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;
@@ -23,7 +22,7 @@ import delit.piwigoclient.util.MyDocumentProvider;
 
 import static android.view.View.VISIBLE;
 
-public class DownloadAction<AUIH extends ActivityUIHelper<AUIH,T>, T extends AbstractMainActivity<T,AUIH>> extends UIHelper.Action<AUIH, T, PiwigoResponseBufferingHandler.Response> implements Parcelable {
+public class DownloadAction<UIH extends UIHelper<UIH,T>, T> extends UIHelper.Action<UIH, T, PiwigoResponseBufferingHandler.Response> implements Parcelable {
 
     private DownloadActionListener listener;
     private final DownloadFileRequestEvent downloadEvent;
@@ -68,7 +67,7 @@ public class DownloadAction<AUIH extends ActivityUIHelper<AUIH,T>, T extends Abs
     };
 
     @Override
-    public boolean onSuccess(AUIH uiHelper, PiwigoResponseBufferingHandler.Response response) {
+    public boolean onSuccess(UIH uiHelper, PiwigoResponseBufferingHandler.Response response) {
         //UrlProgressResponse, UrlToFileSuccessResponse,
         if (response instanceof PiwigoResponseBufferingHandler.UrlProgressResponse) {
             onProgressUpdate(uiHelper, (PiwigoResponseBufferingHandler.UrlProgressResponse) response);
@@ -79,7 +78,7 @@ public class DownloadAction<AUIH extends ActivityUIHelper<AUIH,T>, T extends Abs
     }
 
     @Override
-    public boolean onFailure(AUIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+    public boolean onFailure(UIH uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
         if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
             onGetResourceCancelled(uiHelper, (PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
         }
@@ -90,7 +89,7 @@ public class DownloadAction<AUIH extends ActivityUIHelper<AUIH,T>, T extends Abs
         return super.onFailure(uiHelper, response);
     }
 
-    private void onProgressUpdate(AUIH uiHelper, final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
+    private void onProgressUpdate(UIH uiHelper, final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
         ProgressIndicator progressIndicator = uiHelper.getProgressIndicator();
         if (response.getProgress() < 0) {
             progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
@@ -103,7 +102,7 @@ public class DownloadAction<AUIH extends ActivityUIHelper<AUIH,T>, T extends Abs
         }
     }
 
-    public void onGetResource(DownloadFileRequestEvent downloadEvent, AUIH uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
+    public void onGetResource(DownloadFileRequestEvent downloadEvent, UIH uiHelper, final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
         Uri myDocUri = response.getLocalFileUri();
         if(!DocumentFile.isDocumentUri(uiHelper.getAppContext(),response.getLocalFileUri())) {
             myDocUri = DocumentsContract.buildDocumentUri(MyDocumentProvider.getAuthority(), IOUtils.getFilename(uiHelper.getAppContext(), response.getLocalFileUri()));
@@ -115,7 +114,7 @@ public class DownloadAction<AUIH extends ActivityUIHelper<AUIH,T>, T extends Abs
 
     }
 
-    private void onGetResourceCancelled(AUIH uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
+    private void onGetResourceCancelled(UIH uiHelper, PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
         uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getAppContext().getString(R.string.alert_image_download_cancelled_message));
     }
 

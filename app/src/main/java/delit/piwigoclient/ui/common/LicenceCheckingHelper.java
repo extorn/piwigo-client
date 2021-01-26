@@ -38,7 +38,7 @@ import delit.piwigoclient.ui.AdsManager;
  * Created by gareth on 28/10/17.
  */
 
-public class LicenceCheckingHelper {
+public class LicenceCheckingHelper<T extends BaseMyActivity<T,UIH>,UIH extends ActivityUIHelper<UIH,T>> {
     // Generated on google play site (specific to piwigoclient.paid) and copied here - this is the public services api key for my app
     private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqg+QahizYwmfOB47vGwGW+0fYjHxpnz/kYGIS/6jJeUwrdclCGEgmQZfbVfLZnQRpLw67sofp3yUwofFLFGYhWISvYyAgtuhyNlcaP5Ki2r7zyhxBcI+1xPFQI3kYb3rRuUMFEpYW+fERtMs2X9gnFlhAyqbw5mZX7I36LWBIPM2X2GUu7g4WXOcPayCocQFmk1u4Chz4Ca1M807Vk7AnI4cFPRsHfsuc3h9V+Zaqu2holNcQrvJhQ6yUMN0A5ip4RTKKGIogBcoVhv3Ye05BWqbzrnGPmIFvUGqRoh0dnrLL6oDHbnE5xpfNDU3hdnjv74vvDJKuJC05bYPxoOe2wIDAQAB";
 
@@ -48,10 +48,10 @@ public class LicenceCheckingHelper {
     private LicenseChecker mChecker;
     // A handler on the UI thread.
     private Handler mHandler;
-    private BaseMyActivity<?,?> activity;
+    private T activity;
     private Date lastChecked;
 
-    public void onCreate(BaseMyActivity<?,?> activity) {
+    public void onCreate(T activity) {
 
         this.activity = activity;
 
@@ -104,7 +104,7 @@ public class LicenceCheckingHelper {
 
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction(activity.getUiHelper(), showRetryButton));
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction<>(activity.getUiHelper(), showRetryButton));
     }
 
     private synchronized void forceCheck() {
@@ -123,7 +123,7 @@ public class LicenceCheckingHelper {
         doCheck();
     }
 
-    private static class LicenceCheckAction<T extends ActivityUIHelper<T,R>,R extends MyActivity<R,T>> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
+    private static class LicenceCheckAction<T extends ActivityUIHelper<T,R>,R extends BaseMyActivity<R,T>> extends UIHelper.QuestionResultAdapter<T,R> implements Parcelable {
 
         private final boolean allowRetry;
 
