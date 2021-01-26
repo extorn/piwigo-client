@@ -30,7 +30,7 @@ import delit.piwigoclient.R;
 
 public class FilterControl extends FrameLayout {
 
-    private Set<String> allFilters; //TODO this isn't needed in this component. Its functionality bleed from file select frag I think.
+    private Set<String> allFilters;
     private Set<String> activeFilters;
     private Set<String> selectedFilters;
     private FilterListener listener;
