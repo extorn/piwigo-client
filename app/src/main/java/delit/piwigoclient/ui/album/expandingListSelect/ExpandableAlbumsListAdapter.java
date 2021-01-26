@@ -230,7 +230,7 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
         childrenAreSelectable = enabled;
     }
 
-    public static class ExpandableAlbumsListAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+    public static class ExpandableAlbumsListAdapterPreferences extends BaseRecyclerViewAdapterPreferences<ExpandableAlbumsListAdapterPreferences> {
         private boolean allowRootAlbumSelection;
 
         public ExpandableAlbumsListAdapterPreferences withRootAlbumSelectionAllowed() {
@@ -239,18 +239,21 @@ public class ExpandableAlbumsListAdapter extends BaseExpandableListAdapter {
         }
 
         @Override
-        public Bundle storeToBundle(Bundle parent) {
-            Bundle b = new Bundle();
-            parent.putBundle("ExpandableAlbumsListAdapterPreferences", b);
-            super.storeToBundle(b);
-            return parent;
+        protected String getBundleName() {
+            return "ExpandableAlbumsListAdapterPreferences";
         }
 
         @Override
-        public ExpandableAlbumsListAdapterPreferences loadFromBundle(Bundle parent) {
-            Bundle b = parent.getBundle("ExpandableAlbumsListAdapterPreferences");
-            super.loadFromBundle(b);
-            return this;
+        protected String writeContentToBundle(Bundle b) {
+            super.writeContentToBundle(b);
+            b.putBoolean("allowRootAlbumSelection",allowRootAlbumSelection);
+            return getBundleName();
+        }
+
+        @Override
+        protected void readContentFromBundle(Bundle b) {
+            super.readContentFromBundle(b);
+            allowRootAlbumSelection = b.getBoolean("allowRootAlbumSelection", allowRootAlbumSelection);
         }
 
         public boolean isAllowRootAlbumSelection() {
