@@ -14,7 +14,6 @@ import delit.libs.ui.view.ProgressIndicator;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.ui.AbstractMainActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
 import delit.piwigoclient.ui.events.DownloadFileRequestEvent;

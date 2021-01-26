@@ -1754,7 +1754,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<>();
     }
 
     protected void onPiwigoUpdateResourceInfoResponse(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {

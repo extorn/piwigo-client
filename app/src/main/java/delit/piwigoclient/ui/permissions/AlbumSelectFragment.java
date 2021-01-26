@@ -42,7 +42,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
     private HashSet<Long> indirectSelection;
 
     public static <F extends AlbumSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> F newInstance(ArrayList<CategoryItemStub> availableAlbums, AlbumSelectionListAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
-        F fragment = (F) new AlbumSelectFragment();
+        F fragment = (F) new AlbumSelectFragment<>();
         fragment.setTheme(R.style.Theme_App_EditPages);
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
@@ -168,7 +168,7 @@ public class AlbumSelectFragment<F extends AlbumSelectFragment<F,FUIH>, FUIH ext
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<>();
     }
 
     protected void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {

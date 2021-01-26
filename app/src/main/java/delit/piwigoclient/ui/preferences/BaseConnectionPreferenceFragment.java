@@ -275,7 +275,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
     }
 
-    private void setResponseCacheButtonText() {
+    protected void setResponseCacheButtonText() {
         if (responseCacheButtonTextRetriever != null && responseCacheButtonTextRetriever.getStatus() != AsyncTask.Status.FINISHED) {
             responseCacheButtonTextRetriever.cancel(true);
         }
@@ -373,7 +373,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         super.onSaveInstanceState(outState);
     }
 
-    private boolean forceHttpConnectionCleanupAndRebuild() {
+    protected boolean forceHttpConnectionCleanupAndRebuild() {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext(), true).start();
@@ -400,7 +400,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
     }
 
-    private void reloadConnectionProfilePrefs() {
+    protected void reloadConnectionProfilePrefs() {
         // Refresh the displayed preferences with the new connection profile contents
         initialising = true;
         setPreferenceScreen(null);
@@ -426,7 +426,7 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<>();
     }
 
     private static class OnLogoutAction<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment<F,FUIH>> extends UIHelper.Action<FUIH, F, LogoutResponseHandler.PiwigoOnLogoutResponse> implements Parcelable {
@@ -735,21 +735,18 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
         }
     }
 
-    private static class CustomPiwigoResponseListener<FUIH extends FragmentUIHelper<FUIH,BaseConnectionPreferenceFragment>> extends BasicPiwigoResponseListener<FUIH,BaseConnectionPreferenceFragment> {
+    private static class CustomPiwigoResponseListener<FUIH extends FragmentUIHelper<FUIH,F>, F extends BaseConnectionPreferenceFragment<F,FUIH>> extends BasicPiwigoResponseListener<FUIH,F> {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-
             if (response instanceof HttpConnectionCleanup.HttpClientsShutdownResponse) {
                 getParent().reloadConnectionProfilePrefs();
             }
         }
     }
 
-    private static class ClearCacheInBackgroundTask extends OwnedSafeAsyncTask<BaseConnectionPreferenceFragment, Void, Void, Boolean> {
+    private static class ClearCacheInBackgroundTask<F extends BaseConnectionPreferenceFragment<F,?>> extends OwnedSafeAsyncTask<F, Void, Void, Boolean> {
 
-        public ClearCacheInBackgroundTask(BaseConnectionPreferenceFragment owner) {
+        public ClearCacheInBackgroundTask(F owner) {
             super(owner);
             withContext(owner.requireContext());
         }
@@ -778,17 +775,17 @@ public abstract class BaseConnectionPreferenceFragment<F extends BaseConnectionP
 
     }
 
-    private static class ResponseCacheFlushButtonListener implements Preference.OnPreferenceClickListener {
-        private final BaseConnectionPreferenceFragment fragment;
+    private static class ResponseCacheFlushButtonListener<F extends BaseConnectionPreferenceFragment<F,?>> implements Preference.OnPreferenceClickListener {
+        private final F fragment;
 
-        public ResponseCacheFlushButtonListener(BaseConnectionPreferenceFragment fragment) {
+        public ResponseCacheFlushButtonListener(F fragment) {
             this.fragment = fragment;
         }
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
             fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheClearingStarted_message));
-            new ClearCacheInBackgroundTask(fragment).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new ClearCacheInBackgroundTask<>(fragment).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             return true;
 
         }

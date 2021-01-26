@@ -3,10 +3,8 @@ package delit.libs.util.progress;
 import android.util.Log;
 
 import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;

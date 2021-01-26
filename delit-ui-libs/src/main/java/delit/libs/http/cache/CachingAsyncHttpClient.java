@@ -37,7 +37,6 @@ import java.util.zip.GZIPInputStream;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpHost;
-import cz.msebera.android.httpclient.HttpRequest;
 import cz.msebera.android.httpclient.HttpRequestInterceptor;
 import cz.msebera.android.httpclient.HttpVersion;
 import cz.msebera.android.httpclient.auth.AuthScope;

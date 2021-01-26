@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.tags;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -402,7 +401,7 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<>();
     }
 
     private static class CustomPiwigoResponseListener<F extends TagSelectFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH, F>> extends BasicPiwigoResponseListener<FUIH,F> {

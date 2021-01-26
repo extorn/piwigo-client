@@ -243,7 +243,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         int rawCurrentGalleryItemPosition = arguments.getInt(ARG_GALLERY_ITEM_DISPLAYED);
 
         if (galleryItemAdapter == null) {
-            galleryItemAdapter = new GalleryItemAdapter(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter = new GalleryItemAdapter<>(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
             // update settings with newest values.
@@ -308,7 +308,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     private void reloadAlbumSlideshowModel(CategoryItem album, String preferredAlbumThumbnailSize) {
-        AlbumLoadResponseAction action = new AlbumLoadResponseAction<>();
+        AlbumLoadResponseAction<F,FUIH,?> action = new AlbumLoadResponseAction<>();
         getUiHelper().invokeActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, false), action);
     }
 
@@ -442,7 +442,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<>();
     }
 
     public String getLogTag() {

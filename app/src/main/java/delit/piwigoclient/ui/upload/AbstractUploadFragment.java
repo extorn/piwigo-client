@@ -515,7 +515,7 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
 
         compressVideosButton.setOnClickListener(v -> {
             v.setEnabled(false);
-            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+            FilesToUploadRecyclerViewAdapter<?,?,?> fileListAdapter = getFilesForUploadViewAdapter();
             Map<Uri,Long> filesForUpload = fileListAdapter.getFilesAndSizes();
             if (filesForUpload.isEmpty()) {
                 return;

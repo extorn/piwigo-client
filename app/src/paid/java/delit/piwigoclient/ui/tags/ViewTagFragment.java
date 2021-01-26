@@ -770,7 +770,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<>();
     }
 
     protected void onTagUpdateResponse(PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse rsp) {

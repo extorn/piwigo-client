@@ -306,7 +306,7 @@ public class RecyclerViewCategoryItemSelectFragment<F extends RecyclerViewCatego
 
     @Override
     protected BasicPiwigoResponseListener<FUIH,F> buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener();
+        return new CustomPiwigoResponseListener<>();
     }
 
     void onAlbumsLoaded(final ArrayList<CategoryItem> albums, boolean isAdminList) {
