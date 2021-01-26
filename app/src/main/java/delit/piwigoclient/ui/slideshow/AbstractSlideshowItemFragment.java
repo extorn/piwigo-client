@@ -207,7 +207,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         Bundle args = getArguments();
         if (args != null) {
             long galleryItemId = args.getLong(ARG_GALLERY_ITEM_ID);
-            if (model == null || (model != null && model.getId() != galleryItemId)) {
+            if (model == null || (model.getId() != galleryItemId)) {
                 intialiseFields(); // if we are opening this page for the first time with new data, wipe any old values.
                 loadArgsFromBundle(args);
             }

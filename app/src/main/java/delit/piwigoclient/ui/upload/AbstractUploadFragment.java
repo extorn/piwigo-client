@@ -958,9 +958,6 @@ public abstract class AbstractUploadFragment<F extends AbstractUploadFragment<F,
         UploadJob job = null;
         Context ctx = requireContext();
         if (uploadJobId != null) {
-            if(ctx == null) {
-                ctx = getUiHelper().getAppContext();
-            }
             job = ForegroundPiwigoUploadService.getActiveForegroundJob(ctx, uploadJobId);
 
         }

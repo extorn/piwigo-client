@@ -491,14 +491,15 @@ public abstract class BaseMyActivity<T extends BaseMyActivity<T,UIH>,UIH extends
     @Override
     public void startActivityForResult(Intent intent, int requestCode, @Nullable Bundle options) {
         try {
-            if (requestCode < -1) {
+            int checkRequestCode = requestCode;
+            if (checkRequestCode < -1) {
                 // don't track this because we can't process a negative code anyway.
 //                setTrackedIntent(Long.valueOf(requestCode), -1);
-                requestCode = -1;
+                checkRequestCode = -1;
                 // record the event
-                recordInvalidRequestCodeEvent(intent, requestCode);
+                recordInvalidRequestCodeEvent(intent, checkRequestCode);
             }
-            super.startActivityForResult(intent, requestCode, options);
+            super.startActivityForResult(intent, checkRequestCode, options);
         } catch(IllegalArgumentException e) {
             Logging.log(Log.ERROR,TAG, String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
             throw e;

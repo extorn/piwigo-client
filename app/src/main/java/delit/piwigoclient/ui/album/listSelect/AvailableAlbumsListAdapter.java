@@ -12,6 +12,8 @@ import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
+import java.util.Objects;
+
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.list.CustomSelectListAdapter;
@@ -61,7 +63,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<AlbumSel
 
     @Override
     public boolean isEnabled(int position) {
-        return super.isEnabled(position) && getItem(position).isUserSelectable();
+        return super.isEnabled(position) && Objects.requireNonNull(getItem(position)).isUserSelectable();
     }
 
     @NonNull
@@ -86,7 +88,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<AlbumSel
                 isCustomView = true;
             }
             final CategoryItemStub item = getItem(position);
-            if (parentAlbum.getId() != item.getId() || position > 0) {
+            if (parentAlbum.getId() != Objects.requireNonNull(item).getId() || position > 0) {
                 // only display items that are not the root.
                 int paddingStart = 0;
                 if (getPrefs().isFlattenAlbumHierarchy()) {

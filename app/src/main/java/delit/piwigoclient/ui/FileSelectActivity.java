@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -81,7 +82,7 @@ public class FileSelectActivity<A extends FileSelectActivity<A, AUIH>, AUIH exte
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if(BuildConfig.DEBUG) {
             BundleUtils.logSize("Current File Select Activity", outState);

@@ -9,6 +9,7 @@ import androidx.room.Ignore;
 
 import java.util.Objects;
 
+@SuppressWarnings({"NotNullFieldNotInitialized", "NullableProblems"})
 @Entity(primaryKeys = {"uri", "consumerId"})
 public class UriPermissionUse implements Parcelable {
     public static final String CONSUMER_ID_FILE_SELECT = "fileSelect";

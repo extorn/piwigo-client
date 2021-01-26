@@ -618,7 +618,7 @@ public class AdsManager {
                 if (stopped) {
                     return;
                 }
-                boolean runAgain = updatePreference(stopped);
+                boolean runAgain = updatePreference(false);
                 if (runAgain) {
                     runInMillis(callFrequency);
                 } else {

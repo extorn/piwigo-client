@@ -34,6 +34,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
             return GalleryItem.PICTURE_HEADING_TYPE;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "PicturesHeading";

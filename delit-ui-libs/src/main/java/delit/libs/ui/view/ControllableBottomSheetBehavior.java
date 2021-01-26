@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -29,7 +30,7 @@ public class ControllableBottomSheetBehavior<V extends View> extends BottomSheet
         super(context, attrs);
     }
 
-    public static <V extends View> ControllableBottomSheetBehavior<V> from(V view) {
+    public static <V extends View> ControllableBottomSheetBehavior<V> from(@NonNull V view) {
         return (ControllableBottomSheetBehavior<V>) BottomSheetBehavior.from(view);
     }
 
@@ -38,7 +39,7 @@ public class ControllableBottomSheetBehavior<V extends View> extends BottomSheet
     }
 
     @Override
-    public boolean onInterceptTouchEvent(CoordinatorLayout parent, V child, MotionEvent event) {
+    public boolean onInterceptTouchEvent(@NonNull CoordinatorLayout parent, @NonNull V child, @NonNull MotionEvent event) {
         return mAllowUserDragging && super.onInterceptTouchEvent(parent, child, event);
     }
 }

@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ import delit.piwigoclient.ui.common.preference.UriPermissionsListPreferenceDialo
 public abstract class MyPreferenceFragment<F extends MyPreferenceFragment<F,FUIH>, FUIH extends FragmentUIHelper<FUIH,F>> extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
     private static final String STATE_PAGER_INDEX_POS = "pager_index_pos";
     protected static final int NO_PAGER_INDEX = -1;
+    private static final String TAG = "MyPrefFrag";
     private FUIH uiHelper;
     private int pagerIndex;
     protected static final String DIALOG_FRAGMENT_TAG =
@@ -73,7 +75,11 @@ public abstract class MyPreferenceFragment<F extends MyPreferenceFragment<F,FUIH
     @Override
     public final View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        v.setBackgroundColor(DisplayUtils.getColor(container.getContext(), R.attr.colorSurface));
+        if(v != null && container != null) {
+            v.setBackgroundColor(DisplayUtils.getColor(container.getContext(), R.attr.colorSurface));
+        } else {
+            Logging.log(Log.ERROR, TAG, "Unable to set background color, missing view or container");
+        }
         initialiseCoreComponents(savedInstanceState, container);
         return v;
     }

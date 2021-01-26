@@ -38,7 +38,7 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
 
 
     @Override
-    public Preference findPreference(CharSequence key) {
+    public Preference findPreference(@NonNull CharSequence key) {
         return getPreference();
     }
 

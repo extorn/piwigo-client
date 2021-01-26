@@ -37,7 +37,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     private AutoUploadJobsListAdapter adapter;
 
     @Override
-    public AutoUploadJobsPreference findPreference(CharSequence key) {
+    public AutoUploadJobsPreference findPreference(@NonNull CharSequence key) {
         return getPreference();
     }
 

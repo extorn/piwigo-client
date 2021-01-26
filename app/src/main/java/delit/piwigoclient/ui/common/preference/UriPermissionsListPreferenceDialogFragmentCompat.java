@@ -159,10 +159,6 @@ public class UriPermissionsListPreferenceDialogFragmentCompat extends Preference
         return (UriPermissionsListPreference) super.getPreference();
     }
 
-    private SharedPreferences getAppSharedPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
-    }
-
     @Override
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {

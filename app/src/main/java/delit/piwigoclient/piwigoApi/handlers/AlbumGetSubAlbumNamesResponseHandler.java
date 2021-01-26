@@ -42,12 +42,12 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             params.put("cat_id", String.valueOf(parentAlbumId));
         }
         if (recursive) {
-            params.put("recursive", Boolean.toString(recursive));
+            params.put("recursive", Boolean.toString(true));
             params.put("tree_output", Boolean.FALSE.toString());  // true returns broken json
         }
         boolean  communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
         if(communityPluginInstalled) {
-            params.put("faked_by_community", String.valueOf(!communityPluginInstalled));
+            params.put("faked_by_community", String.valueOf(false));
         }
         return params;
     }

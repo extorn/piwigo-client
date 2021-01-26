@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -94,7 +95,7 @@ public abstract class AbstractPreferencesActivity<A extends AbstractPreferencesA
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
         if(BuildConfig.DEBUG) {

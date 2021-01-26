@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -133,7 +134,7 @@ public class UploadActivity<A extends UploadActivity<A,AUIH>, AUIH extends Activ
 
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
 

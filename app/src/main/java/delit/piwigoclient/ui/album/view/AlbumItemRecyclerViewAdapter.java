@@ -90,7 +90,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
             case GalleryItem.PICTURE_HEADING_TYPE:
                 return (VH) new AlbumHeadingViewHolder(view, this, viewType);
             default:
-                return null;
+                throw new IllegalStateException("No matching viewholder could be found");
         }
     }
 

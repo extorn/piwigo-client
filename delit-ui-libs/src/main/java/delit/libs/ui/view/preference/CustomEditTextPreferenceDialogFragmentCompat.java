@@ -22,7 +22,7 @@ public class CustomEditTextPreferenceDialogFragmentCompat<T extends CustomEditTe
     private CharSequence currentText;
 
     @Override
-    public T findPreference(CharSequence key) {
+    public T findPreference(@NonNull CharSequence key) {
         return getPreference();
     }
 

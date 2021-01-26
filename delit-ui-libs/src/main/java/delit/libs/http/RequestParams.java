@@ -1,5 +1,7 @@
 package delit.libs.http;
 
+import androidx.annotation.NonNull;
+
 import com.loopj.android.http.JsonStreamerEntity;
 import com.loopj.android.http.ResponseHandlerInterface;
 
@@ -407,6 +409,7 @@ public class RequestParams implements Serializable {
                 fileArrayParams.get(key) != null;
     }
 
+    @NonNull
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();

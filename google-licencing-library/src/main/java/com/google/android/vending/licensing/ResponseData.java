@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
 /**
  * ResponseData from licensing server.
  */
@@ -71,6 +73,7 @@ public class ResponseData {
         return data;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return TextUtils.join("|", new Object [] { responseCode, nonce, packageName, versionCode,
