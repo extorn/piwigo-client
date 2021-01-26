@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.MimeTypeFilter;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -87,8 +88,14 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return this;
     }
 
-    public Bundle storeToBundle(Bundle parent) {
-        Bundle b = new Bundle();
+    @Override
+    protected String getBundleName() {
+        return "FolderItemViewAdapterPreferences";
+    }
+
+    @Override
+    protected String writeContentToBundle(Bundle b) {
+        super.writeContentToBundle(b);
         b.putBoolean("allowFileSelection", allowFileSelection);
         b.putBoolean("allowFolderSelection", allowFolderSelection);
         b.putBoolean("multiSelectAllowed", multiSelectAllowed);
@@ -104,14 +111,12 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         b.putString("selectedUriPermissionsForConsumerId", selectedUriPermissionsForConsumerId);
         b.putString("selectedUriPermissionConsumerPurpose", selectedUriPermissionConsumerPurpose);
         b.putInt("selectedUriPermissionFlags", selectedUriPermissionFlags);
-        parent.putBundle("FolderItemViewAdapterPreferences", b);
-
-        super.storeToBundle(b);
-        return parent;
+        return getBundleName();
     }
 
-    public FolderItemViewAdapterPreferences loadFromBundle(Bundle parent) {
-        Bundle b = parent.getBundle("FolderItemViewAdapterPreferences");
+    @Override
+    protected void readContentFromBundle(Bundle b) {
+        super.readContentFromBundle(b);
         allowFileSelection = b.getBoolean("allowFileSelection");
         allowFolderSelection = b.getBoolean("allowFolderSelection");
         multiSelectAllowed = b.getBoolean("multiSelectAllowed");
@@ -121,18 +126,17 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         columnsOfFiles = b.getInt("columnsOfFiles");
         showFilenames = b.getBoolean("showFilenames");
         visibleFileTypes = BundleUtils.getStringSet(b, "visibleFileTypes", new TreeSet<>());
-        if (visibleFileTypes.isEmpty()) {
+        if (visibleFileTypes != null && visibleFileTypes.isEmpty()) {
             visibleFileTypes = null;
         }
         visibleMimeTypes = BundleUtils.getStringSet(b, "visibleMimeTypes", new TreeSet<>());
         initialFolder = b.getParcelable("initialFolder");
         initialSelection = BundleUtils.readSortedSet(b, "initialSelection", new TreeSet<>());
-        selectedUriPermissionsForConsumerId = b.getString("selectedUriPermissionsForConsumerId");
+        selectedUriPermissionsForConsumerId = Objects.requireNonNull(b.getString("selectedUriPermissionsForConsumerId"));
         selectedUriPermissionConsumerPurpose = b.getString("selectedUriPermissionConsumerPurpose");
         selectedUriPermissionFlags = b.getInt("selectedUriPermissionFlags");
-        super.loadFromBundle(b);
-        return this;
     }
+
 
     public @Nullable Uri getInitialFolder() {
         return initialFolder;
@@ -151,11 +155,11 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     }
 
     public SortedSet<String> getVisibleFileTypes() {
-        return visibleFileTypes;
+        return new TreeSet<>(visibleFileTypes);
     }
 
     public SortedSet<String> getVisibleMimeTypes() {
-        return visibleMimeTypes;
+        return new TreeSet<>(visibleMimeTypes);
     }
 
     public void withVisibleMimeTypes(Set<String> visibleMimeTypes) {

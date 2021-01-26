@@ -4,6 +4,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+/**
+ * WARNING: If you extend this, you must override the store to and load from bundle methods
+ *          adding in the extra fields you want persisted.
+ * @param <Q>
+ */
 public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapterPreferences<Q>> {
     private boolean allowItemSelection;
     private boolean initialSelectionLocked;
@@ -41,8 +46,22 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
         return (Q) this;
     }
 
-    public Bundle storeToBundle(@NonNull Bundle bundle) {
+    public final Bundle storeToBundle(@NonNull Bundle bundle) {
         Bundle b = new Bundle();
+        String bundleName = writeContentToBundle(b);
+        bundle.putBundle(bundleName, b);
+        return bundle;
+    }
+
+    /**
+     * Override this as needed.
+     * If you override this, override getBundleName
+     *
+     * @param b
+     * @return
+     */
+    protected String writeContentToBundle(Bundle b) {
+        b.putString("type", getBundleName());
         b.putBoolean("allowItemSelection", allowItemSelection);
         b.putBoolean("initialSelectionLocked", initialSelectionLocked);
         b.putBoolean("multiSelectionEnabled", multiSelectionEnabled);
@@ -50,25 +69,37 @@ public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapte
         b.putBoolean("allowItemAddition", allowItemAddition);
         b.putBoolean("enabled", enabled);
         b.putBoolean("readonly", readonly);
-        bundle.putBundle("BaseRecyclerViewAdapterPreferences", b);
-        return bundle;
+        return getBundleName();
     }
 
-    public Q loadFromBundle(Bundle parent) {
+    protected String getBundleName() {
+        return "BaseRecyclerViewAdapterPreferences";
+    }
+
+    public final Q loadFromBundle(Bundle parent) {
         if(parent == null) {
             return (Q) this;
         }
-        Bundle b = parent.getBundle("BaseRecyclerViewAdapterPreferences");
+        Bundle b = parent.getBundle(getBundleName());
         if(b != null) {
-            allowItemSelection = b.getBoolean("allowItemSelection");
-            initialSelectionLocked = b.getBoolean("initialSelectionLocked");
-            multiSelectionEnabled = b.getBoolean("multiSelectionEnabled");
-            allowItemDeletion = b.getBoolean("allowItemDeletion");
-            allowItemAddition = b.getBoolean("allowItemAddition");
-            enabled = b.getBoolean("enabled");
-            readonly = b.getBoolean("readonly");
+            String expectedType = getBundleName();
+            String receivedType = b.getString("type");
+            if(!expectedType.equals(receivedType)) {
+                throw new IllegalStateException(String.format("Unable to load preferences. super.writeContentToBundle and super.readContentFromBundle must always be called. Expected %1$s but received type %2$s",expectedType, receivedType));
+            }
+            readContentFromBundle(b);
         }
         return (Q) this;
+    }
+
+    protected void readContentFromBundle(Bundle b) {
+        allowItemSelection = b.getBoolean("allowItemSelection");
+        initialSelectionLocked = b.getBoolean("initialSelectionLocked");
+        multiSelectionEnabled = b.getBoolean("multiSelectionEnabled");
+        allowItemDeletion = b.getBoolean("allowItemDeletion");
+        allowItemAddition = b.getBoolean("allowItemAddition");
+        enabled = b.getBoolean("enabled");
+        readonly = b.getBoolean("readonly");
     }
 
     public boolean isReadOnly() {

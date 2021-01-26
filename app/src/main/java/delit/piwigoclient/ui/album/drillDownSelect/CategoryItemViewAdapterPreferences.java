@@ -41,29 +41,29 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
         return this;
     }
 
-    public Bundle storeToBundle(Bundle parent) {
-        Bundle b = new Bundle();
+    @Override
+    protected String getBundleName() {
+        return "CategoryItemViewAdapterPreferences";
+    }
+
+    @Override
+    protected String writeContentToBundle(Bundle b) {
+        super.writeContentToBundle(b);
         b.putInt("columns", columns);
         b.putParcelable("initialRoot", initialRoot);
         BundleUtils.putLongHashSet(b, "initialSelection", initialSelection);
         b.putString("connectionProfileKey", connectionProfileKey);
-        parent.putBundle("FolderItemViewAdapterPreferences", b);
-        super.storeToBundle(b);
-        return parent;
+        return getBundleName();
     }
 
-    public CategoryItemViewAdapterPreferences loadFromBundle(Bundle parent) {
-        Bundle b = parent.getBundle("FolderItemViewAdapterPreferences");
-        if(b != null) {
-            columns = b.getInt("columns");
-            initialRoot = b.getParcelable("initialRoot");
-            initialSelection = BundleUtils.getLongHashSet(b, "initialSelection");
-            connectionProfileKey = b.getString("connectionProfileKey");
-            super.loadFromBundle(b);
-        }
-        return this;
+    @Override
+    protected void readContentFromBundle(Bundle b) {
+        super.readContentFromBundle(b);
+        columns = b.getInt("columns");
+        initialRoot = b.getParcelable("initialRoot");
+        initialSelection = BundleUtils.getLongHashSet(b, "initialSelection");
+        connectionProfileKey = b.getString("connectionProfileKey");
     }
-
 
     public CategoryItemStub getInitialRoot() {
         return initialRoot;

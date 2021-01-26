@@ -2,8 +2,6 @@ package delit.piwigoclient.ui.permissions;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
 public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapterPreferences<AlbumSelectionListAdapterPreferences> {
@@ -24,26 +22,25 @@ public class AlbumSelectionListAdapterPreferences extends BaseRecyclerViewAdapte
     }
 
     @Override
-    public Bundle storeToBundle(@NonNull Bundle bundle) {
-        super.storeToBundle(bundle);
-        Bundle b = new Bundle();
-        b.putBoolean("showThumbnails", showThumbnails);
-        b.putBoolean("flattenAlbumHierarchy", flattenAlbumHierarchy);
-        b.putBoolean("allowRootAlbumSelection", allowRootAlbumSelection);
-        bundle.putBundle("albumSelectionListAdapterPrefs", b);
-        return bundle;
+    protected String getBundleName() {
+        return "AlbumSelectionListAdapterPrefs";
     }
 
     @Override
-    public AlbumSelectionListAdapterPreferences loadFromBundle(Bundle bundle) {
-        super.loadFromBundle(bundle);
-        Bundle b = bundle.getBundle("albumSelectionListAdapterPrefs");
-        if(b != null) {
-            showThumbnails = b.getBoolean("showThumbnails");
-            flattenAlbumHierarchy = b.getBoolean("flattenAlbumHierarchy");
-            allowRootAlbumSelection = b.getBoolean("allowRootAlbumSelection");
-        }
-        return this;
+    protected String writeContentToBundle(Bundle b) {
+        super.writeContentToBundle(b);
+        b.putBoolean("showThumbnails", showThumbnails);
+        b.putBoolean("flattenAlbumHierarchy", flattenAlbumHierarchy);
+        b.putBoolean("allowRootAlbumSelection", allowRootAlbumSelection);
+        return getBundleName();
+    }
+
+    @Override
+    protected void readContentFromBundle(Bundle b) {
+        super.readContentFromBundle(b);
+        showThumbnails = b.getBoolean("showThumbnails");
+        flattenAlbumHierarchy = b.getBoolean("flattenAlbumHierarchy");
+        allowRootAlbumSelection = b.getBoolean("allowRootAlbumSelection");
     }
 
     public void setShowThumbnails(boolean showThumbnails) {
