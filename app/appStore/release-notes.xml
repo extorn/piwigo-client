@@ -1,100 +1,70 @@
 <en-GB>
 Bugfix:
-- Keystore and Trusted certificate item editing caused crash.
-: Please email me from the app when key functionality like this doesn't work.
-- Sometimes unable to navigate out of recent files with system file selection
-- Groups list vertically aligned to the center of the screen
-Changes:
-- Better User experience for keystore and certificate import
-- New preference to control the length of time the image detail is shown in the fullscreen or slideshow view
+- Problems caused in upload after re-working the file selection for keystore and certificates
+: Thanks for your patience, android file permissions management is tricky
+- delete of albums in root now always available on app load if appropriate
+- items can now be selected by clicking anywhere not just in the checkbox
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Úpravy úložiště klíčů a důvěryhodných certifikátů způsobily selhání.
-: Pokud mi taková klíčová funkce nefunguje, pošlete mi e-mail z aplikace.
-- Někdy nelze vybrat poslední soubory pomocí výběru systémových souborů
-- Seznam skupin vertikálně zarovnaný ke středu obrazovky
-Změny:
-- Lepší uživatelský komfort pro úložiště klíčů a import certifikátů
-- Nová předvolba pro ovládání doby zobrazení detailu obrázku v zobrazení na celou obrazovku nebo v prezentaci
+- Problémy způsobené při nahrávání po přepracování výběru souborů pro úložiště klíčů a certifikáty
+: Děkujeme za trpělivost, správa oprávnění souborů Android je složitá
+- mazání alb v kořenovém adresáři je nyní v případě potřeby vždy k dispozici při načtení aplikace
+- položky lze nyní vybrat kliknutím kdekoli nejen do zaškrtávacího políčka
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.
-: Bitte senden Sie mir eine E-Mail von der App, wenn solche Schlüsselfunktionen nicht funktionieren.
-- Manchmal kann mit der Auswahl der Systemdateien nicht aus den zuletzt verwendeten Dateien navigiert werden
-- Die Gruppenliste ist vertikal zur Bildschirmmitte ausgerichtet
-Änderungen:
-- Bessere Benutzererfahrung für den Import von Schlüsselspeichern und Zertifikaten
-- Neue Einstell..."
+- Probleme beim Hochladen nach Überarbeitung der Dateiauswahl für Keystore und Zertifikate
+: Vielen Dank für Ihre Geduld, die Verwaltung von Android-Dateiberechtigungen ist schwierig
+- Löschen von Alben im Stammverzeichnis jetzt bei Bedarf immer beim Laden der App verfügbar
+- Elemente können jetzt ausgewählt werden, indem Sie auf eine beliebige Stelle klicken, nicht nur in das Kontrollkästchen
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- La edición del elemento del certificado de confianza y del almacén de claves provocó un bloqueo.
-: Envíeme un correo electrónico desde la aplicación cuando una función clave como esta no funcione.
-- A veces no se puede navegar fuera de los archivos recientes con la selección de archivos del sistema
-- Lista de grupos alineados verticalmente al centro de la pantalla
-Cambios:
-- Mejor experiencia de usuario para el almacén de claves y la importación de certificados
-- Nueva p..."
+- Problemas causados en la carga después de volver a trabajar la selección de archivos para el almacén de claves y los certificados
+: Gracias por su paciencia, la gestión de permisos de archivos de Android es complicada
+- eliminar álbumes en la raíz ahora siempre está disponible en la carga de la aplicación si corresponde
+- los elementos ahora se pueden seleccionar haciendo clic en cualquier lugar, no solo en la casilla de verificación
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- La modification des éléments de keystore et de certificat de confiance a causé un plantage.
-: Veuillez m\'envoyer un e-mail depuis l\'application lorsque des fonctionnalités clés comme celle-ci ne fonctionnent pas.
-- Parfois impossible de sortir des fichiers récents avec la sélection de fichiers système
-- Liste des groupes alignée verticalement au centre de l\'écran
-Changements:
-- Meilleure expérience utilisateur pour l\'importation de keystore et de certificat
-- Nouv..."
+- Problèmes provoqués lors du téléchargement après avoir retravaillé la sélection de fichiers pour le keystore et les certificats
+: Merci pour votre patience, la gestion des autorisations de fichiers Android est délicate
+- suppression des albums à la racine désormais toujours disponible lors du chargement de l\'application, le cas échéant
+- les éléments peuvent maintenant être sélectionnés en cliquant n\'importe où et pas seulement dans la case à cocher
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- La modifica dell\'archivio chiavi e dell\'elemento certificato attendibile ha causato un arresto anomalo.
-: Inviami un\'e-mail dall\'app quando funzionalità chiave come questa non funzionano.
-- A volte non è possibile uscire dai file recenti con la selezione del file di sistema
-- Elenco dei gruppi allineato verticalmente al centro dello schermo
-I cambiamenti:
-- Migliore esperienza utente per keystore e importazione di certificati
-- Nuova preferenza per controllare..."
+- Problemi causati durante il caricamento dopo aver rielaborato la selezione dei file per keystore e certificati
+: Grazie per la pazienza, la gestione delle autorizzazioni dei file Android è complicata
+- eliminazione degli album in root ora sempre disponibile al caricamento dell\'app, se appropriato
+- Gli elementi ora possono essere selezionati facendo clic in un punto qualsiasi non solo nella casella di controllo
 </it-IT>
 <ja-JP>
 バグ修正：
--キーストアと信頼できる証明書アイテムの編集によりクラッシュが発生しました。
-：このような主要な機能が動作しない場合は、アプリから私にメールしてください。
--システムファイルを選択しても、最近のファイルから移動できない場合があります
--グループリストは画面の中央に垂直に配置されます
-変更点：
--キーストアと証明書のインポートのユーザーエクスペリエンスの向上
--画像の詳細がフルスクリーンまたはスライドショービューに表示される時間の長さを制御するための新しい設定
+-キーストアと証明書のファイル選択をやり直した後のアップロードで発生する問題
+：今しばらくお待ちください。Androidファイルのアクセス許可の管理には注意が必要です。
+-必要に応じて、ルート内のアルバムの削除がアプリのロード時に常に利用可能になりました
+-チェックボックスだけでなく、任意の場所をクリックしてアイテムを選択できるようになりました
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Bewerken van sleutelarchief en vertrouwd certificaatitem veroorzaakte een crash.
-: Stuur me een e-mail vanuit de app als dit soort sleutelfuncties niet werken.
-- Soms niet in staat om uit recente bestanden te navigeren met systeembestandsselectie
-- Groepenlijst verticaal uitgelijnd met het midden van het scherm
-Veranderingen:
-- Betere gebruikerservaring voor keystore en certificaatimport
-- Nieuwe voorkeur om de tijdsduur te bepalen dat de afbeeldingsdetails worden weergegeven in he..."
+- Problemen veroorzaakt bij het uploaden na het opnieuw bewerken van de bestandsselectie voor keystore en certificaten
+: Bedankt voor uw geduld, het beheer van Android-bestandsrechten is lastig
+- het verwijderen van albums in de root is nu altijd beschikbaar bij het laden van de app, indien van toepassing
+- items kunnen nu worden geselecteerd door ergens te klikken, niet alleen in het selectievakje
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Редактирование хранилища ключей и доверенного сертификата вызывало сбой.
-: Напишите мне из приложения, если такие ключевые функции не работают.
-- Иногда невозможно перейти из недавних файлов с системным выбором файлов
-- Список групп вертикально выровнен по центру экрана
-Изменения:
-- Улучшенный пользовательский интерфейс для хранилища ключей и импорта сертификатов
-- Новое предпочтение для управления продолжительностью отображения деталей изображения в полноэкранном режиме..."
+- Проблемы, возникшие при загрузке после повторной обработки выбора файлов для хранилища ключей и сертификатов
+: Спасибо за терпение, управление разрешениями файлов Android - сложная задача.
+- удаление альбомов в корне теперь всегда доступно при загрузке приложения, если это необходимо
+- теперь элементы можно выбирать, щелкая в любом месте, а не только в поле флажка
 </ru-RU>
 <zh-CN>
 错误修正：
--密钥库和可信证书项目编辑导致崩溃。
-：当类似这样的关键功能不起作用时，请通过应用程序给我发送电子邮件。
--有时无法通过选择系统文件来浏览最近的文件
--组列表垂直对齐到屏幕中心
-变化：
--密钥库和证书导入的更好的用户体验
--新的首选项可控制在全屏或幻灯片视图中显示图像细节的时间长度
+-重新处理密钥库和证书的文件选择后，在上传中引起的问题
+：感谢您的耐心等待，Android文件权限管理非常棘手
+-删除根目录中的相册现在在适当的情况下始终可在应用加载时使用
+-现在可以通过单击复选框中的任意位置来选择项目
 </zh-CN>

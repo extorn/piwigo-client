@@ -250,6 +250,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.104</item>
+        <item>"Bugfix:
+                - Problems caused in upload after re-working the file selection for keystore and certificates
+                    : Thanks for your patience, android file permissions management is tricky
+                - delete of albums in root now always available on app load if appropriate
+                - items can now be selected by clicking anywhere not just in the checkbox"</item>
         <item>1.4.0.103</item>
         <item>"Bugfix:
                 - Keystore and Trusted certificate item editing caused crash.

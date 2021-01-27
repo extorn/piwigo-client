@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.104</item>
+        <item>"Bug-Fix:
+                 - Probleme beim Hochladen nach Überarbeitung der Dateiauswahl für Keystore und Zertifikate
+                     : Vielen Dank für Ihre Geduld, die Verwaltung von Android-Dateiberechtigungen ist schwierig
+                 - Löschen von Alben im Stammverzeichnis jetzt bei Bedarf immer beim Laden der App verfügbar
+                 - Elemente können jetzt ausgewählt werden, indem Sie auf eine beliebige Stelle klicken, nicht nur in das Kontrollkästchen"</item>
         <item>1.4.0.103</item>
         <item>"Bug-Fix:
                  - Die Bearbeitung von Keystore- und vertrauenswürdigen Zertifikatelementen verursachte einen Absturz.

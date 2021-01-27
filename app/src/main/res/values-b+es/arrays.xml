@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.104</item>
+        <item>"Arreglo del fallo:
+                 - Problemas causados en la carga después de volver a trabajar la selección de archivos para el almacén de claves y los certificados
+                     : Gracias por su paciencia, la gestión de permisos de archivos de Android es complicada
+                 - eliminar álbumes en la raíz ahora siempre está disponible en la carga de la aplicación si corresponde
+                 - los elementos ahora se pueden seleccionar haciendo clic en cualquier lugar, no solo en la casilla de verificación"</item>
         <item>1.4.0.103</item>
         <item>"Arreglo del fallo:
                  - La edición del elemento del certificado de confianza y del almacén de claves provocó un bloqueo.

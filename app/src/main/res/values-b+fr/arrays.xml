@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.104</item>
+        <item>"Correction d\'un bug:
+                 - Problèmes provoqués lors du téléchargement après avoir retravaillé la sélection de fichiers pour le keystore et les certificats
+                     : Merci pour votre patience, la gestion des autorisations de fichiers Android est délicate
+                 - suppression des albums à la racine désormais toujours disponible lors du chargement de l\'application, le cas échéant
+                 - les éléments peuvent maintenant être sélectionnés en cliquant n\'importe où et pas seulement dans la case à cocher"</item>
         <item>1.4.0.103</item>
         <item>"Correction d\'un bug:
                  - La modification des éléments de keystore et de certificat de confiance a causé un plantage.

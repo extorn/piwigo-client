@@ -146,6 +146,12 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.104</item>
+        <item>"Risoluzione del problema:
+                 - Problemi causati durante il caricamento dopo aver rielaborato la selezione dei file per keystore e certificati
+                     : Grazie per la pazienza, la gestione delle autorizzazioni dei file Android è complicata
+                 - eliminazione degli album in root ora sempre disponibile al caricamento dell\'app, se appropriato
+                 - Gli elementi ora possono essere selezionati facendo clic in un punto qualsiasi non solo nella casella di controllo"</item>
         <item>1.4.0.103</item>
         <item>"Risoluzione del problema:
                  - La modifica dell\'archivio chiavi e dell\'elemento certificato attendibile ha causato un arresto anomalo.
