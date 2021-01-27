@@ -635,14 +635,14 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
 
         @Override
         public void fillValues(T newItem, boolean allowItemDeletion) {
-            setItem((T) newItem);
+            setItem(newItem);
             getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItems().contains((T)newItem));
+            getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
             getIconViewLoader().load();
         }
@@ -666,8 +666,8 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
 
         @SuppressLint("UseCompatLoadingForDrawables")
         @Override
-        public void fillValues(FolderItem newItem, boolean allowItemDeletion) {
-            setItem((T) newItem);
+        public void fillValues(T newItem, boolean allowItemDeletion) {
+            setItem(newItem);
 
             long bytes = newItem.getFileLength();
             itemHeading.setVisibility(View.VISIBLE);
@@ -744,6 +744,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             typeIndicatorView = itemView.findViewById(delit.libs.R.id.type_indicator);
             iconView = itemView.findViewById(delit.libs.R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("folder item thumb");
+            iconView.setOnClickListener(v -> ((View)v.getParent()).performClick());
             iconView.setOnLongClickListener(v -> {
                 iconViewLoader.cancelImageLoadIfRunning();
                 iconViewLoader.loadNoCache();
