@@ -293,6 +293,7 @@ public class FilterControl extends FrameLayout {
 
     public void setActiveFilters(SortedSet<String> activeFilters) {
         this.activeFilters = activeFilters;
+        this.activeFilters.retainAll(allFilters);
     }
 
 

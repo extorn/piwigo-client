@@ -19,6 +19,9 @@ import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.database.UriPermissionUse;
 
+/**
+ * NOTE: Currently as it is, if you specify file extensions AND mimes that are acceptable, the UNION of those sets is acceptable.
+ */
 public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences<FolderItemViewAdapterPreferences> {
 
     public final static int ALPHABETICAL = 1;
@@ -65,19 +68,21 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return this;
     }
 
-    public FolderItemViewAdapterPreferences withVisibleContent(int fileSortOrder) {
-        return withVisibleContent(null, fileSortOrder);
-    }
-
     public FolderItemViewAdapterPreferences withShowFilenames(boolean showFilenames) {
         this.showFilenames = showFilenames;
         return this;
     }
 
-    public FolderItemViewAdapterPreferences withVisibleContent(@Nullable Set<String> visibleFileTypes, int fileSortOrder) {
-        if (visibleFileTypes != null) {
+    public void withVisibleMimeTypes(Set<String> visibleMimeTypes) {
+        if (visibleMimeTypes != null) {
+            this.visibleMimeTypes = new TreeSet<>(visibleMimeTypes);
+        }
+    }
+
+    public void withVisibleContent(@Nullable Set<String> visibleFileExts, int fileSortOrder) {
+        if (visibleFileExts != null) {
             this.visibleFileTypes = new TreeSet<>();
-            for (String inputVal : visibleFileTypes) {
+            for (String inputVal : visibleFileExts) {
                 this.visibleFileTypes.add(inputVal.toLowerCase());
             }
         } else {
@@ -85,7 +90,6 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         }
         this.showFolderContents = true;
         this.fileSortOrder = fileSortOrder;
-        return this;
     }
 
     @Override
@@ -162,17 +166,14 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return new TreeSet<>(visibleMimeTypes);
     }
 
-    public void withVisibleMimeTypes(Set<String> visibleMimeTypes) {
-        if (visibleMimeTypes != null) {
-            this.visibleMimeTypes = new TreeSet<>(visibleMimeTypes);
-        }
-    }
 
-    public SortedSet<String> getVisibleFileTypesForMimes(@NonNull Map<String,String> extToMimeMap) {
+    public SortedSet<String> getAcceptableFileExts(@NonNull Map<String,String> extToMimeMap) {
         SortedSet<String> wantedExts = new TreeSet<>();
         if (visibleMimeTypes != null) {
+            String[] visibleMimeTypesArray = CollectionUtils.asStringArray(visibleMimeTypes);
             for(Map.Entry<String,String> extToMime : extToMimeMap.entrySet()) {
-                if(null != MimeTypeFilter.matches(extToMime.getValue(), CollectionUtils.asStringArray(visibleMimeTypes))) {
+                if(null != MimeTypeFilter.matches(extToMime.getValue(), visibleMimeTypesArray)
+                        || visibleFileTypes.contains(extToMime.getKey())) {
                     wantedExts.add(extToMime.getKey());
                 }
             }
@@ -241,6 +242,12 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
                 fileExts.add(ext);
             }
         }
+        return fileExts;
+    }
+
+    public SortedSet<String> getVisibleFileTypesForFileExts(Set<String> keySet) {
+        TreeSet<String> fileExts = new TreeSet<>(keySet);
+        fileExts.retainAll(getVisibleFileTypes());
         return fileExts;
     }
 }

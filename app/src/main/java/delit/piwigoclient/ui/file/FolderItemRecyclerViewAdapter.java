@@ -196,7 +196,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         boolean initialSetup = currentVisibleDocumentFileExts == null;
         currentVisibleDocumentFileExts = buildListOfFileExtsAndMimesInCurrentFolder(currentDisplayContent);
         if(initialSetup) {
-            currentFileTypesToShow = getAdapterPrefs().getVisibleFileTypesForMimes(currentVisibleDocumentFileExts);
+            currentFileTypesToShow = getAdapterPrefs().getAcceptableFileExts(currentVisibleDocumentFileExts);
             currentFullContent = currentDisplayContent;
         }
 

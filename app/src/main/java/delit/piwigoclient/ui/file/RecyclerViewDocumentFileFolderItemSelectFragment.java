@@ -277,7 +277,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
             SortedSet<String> allFilters = getViewPrefs().getVisibleFileTypes();
             allFilters.addAll(getViewPrefs().getFileTypesForVisibleMimes());
-            allFilters.addAll(getViewPrefs().getVisibleFileTypesForMimes(getListAdapter().getFileExtsAndMimesInCurrentFolder()));
+            allFilters.addAll(getViewPrefs().getAcceptableFileExts(getListAdapter().getFileExtsAndMimesInCurrentFolder()));
 
             getViewPrefs().getFileTypesForVisibleMimes();
 //            fileExtFilters.setShowInactiveFilters(false);
@@ -813,7 +813,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                     DocumentFile newRoot = adapter.getItemValue(position);
                     if(newRoot != null) {
                         fileExtFilters.setEnabled(true);
-                        getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
+                        
                         DocumentFile currentRoot = getListAdapter().getActiveFolder();
                         try {
                             if (currentRoot == null && getViewPrefs().getInitialFolder() != null) {
@@ -837,7 +837,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             } else {
                 // just show the empty view (if we're not already).
                 if(getListAdapter().getActiveFolder() != null) {
-                    getViewPrefs().withVisibleContent(fileExtFilters.getAllFilters(), getViewPrefs().getFileSortOrder());
+                    
                     getListAdapter().resetRoot(ctx, null);
                     deselectAllItems();
                 }
