@@ -75,7 +75,7 @@ public class LocalFoldersListPreference extends EventDrivenPreference<FileSelect
     }
 
     private boolean hasPermissionForUri(Uri folderUri) {
-        int permissionsHeld = IOUtils.getUriPermissionsFlags(getContext(), folderUri);
+        int permissionsHeld = IOUtils.getUriPermissionsFlagsHeld(getContext(), folderUri);
         boolean hasPermission = (requiredUriFlagsForSelectedItems & permissionsHeld) == requiredUriFlagsForSelectedItems;
         if(permissionsHeld == 0) {
             // need to remove this permission from our list of stored ones.

@@ -120,8 +120,7 @@ public class AppSettingsViewModel extends AndroidViewModel {
             List<UriPermission> perms = getApplication().getContentResolver().getPersistedUriPermissions();
             for (UriPermission perm : perms) {
                 DocumentFile treeLinkedDocFile = IOUtils.getTreeLinkedDocFile(getApplication(), perm.getUri(), uri);
-                if (perm.isWritePermission() && perm.getUri().equals(uri)
-                        || null != treeLinkedDocFile) {
+                if (perm.isWritePermission() && perm.getUri().equals(uri)  || null != treeLinkedDocFile) {
                     // no extra permission needed.
                     return true;
                 }

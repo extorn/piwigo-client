@@ -222,7 +222,7 @@ public class FilterControl extends FrameLayout {
     }
 
     private void configureInactiveFilterVisibilityToggleControl() {
-        boolean showInactiveFiltersViewControl = showInactiveFilters && activeFilters.size() != allFilters.size();
+        boolean showInactiveFiltersViewControl = showInactiveFilters && allFilters != null && activeFilters.size() != allFilters.size() && allFilters.size() > 0;
         inactiveFilterControl.setVisibility(showInactiveFiltersViewControl ? filtersViewGroup.getVisibility() : GONE);
     }
 

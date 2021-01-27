@@ -89,7 +89,7 @@ public class AppPreferences {
         if(downloadFolder != null && IOUtils.isPrivateFolder(context, downloadFolder.getUri().getPath())) {
             return true;
         }
-        int havePerms = IOUtils.getUriPermissionsFlags(context, downloadFolder.getUri());
+        int havePerms = IOUtils.getUriPermissionsFlagsHeld(context, downloadFolder.getUri());
         return IOUtils.allUriFlagsAreSet(havePerms, neededPermissions);
     }
 

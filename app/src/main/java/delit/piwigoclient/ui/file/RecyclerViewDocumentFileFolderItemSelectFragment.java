@@ -179,12 +179,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
         MaterialButton addRootButton = v.findViewById(R.id.add_root);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int perms;
-            if(!getViewPrefs().isAllowFolderSelection()) {
-                perms = Intent.FLAG_GRANT_READ_URI_PERMISSION; // only need read permission for the folders
-            } else {
-                perms = getViewPrefs().getSelectedUriPermissionFlags();
-            }
+            int perms = getNecessaryFolderPermissions();
             addRootButton.setOnClickListener(v1 -> retrievePermissionsForUri(null, perms));
         } else {
             addRootButton.setVisibility(GONE);
@@ -200,6 +195,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         navListener = new FolderItemNavigationListener();
 
         return v;
+    }
+
+    private int getNecessaryFolderPermissions() {
+        if(!getViewPrefs().isAllowFolderSelection()) {
+            return Intent.FLAG_GRANT_READ_URI_PERMISSION; // only need read permission for the folders
+        } else {
+            return getViewPrefs().getSelectedUriPermissionFlags();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -679,8 +682,10 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
         List<UriPermission> permissions = requireContext().getContentResolver().getPersistedUriPermissions();
         Map<String, DocumentFile> roots = new LinkedHashMap<>();
         roots.put("", null);
+        int requiredFolderPermissions = getNecessaryFolderPermissions();
+        boolean isNeedWrite = IOUtils.needsWritePermission(requiredFolderPermissions);
         for (UriPermission perm : permissions) {
-            if (perm.isWritePermission()) {
+            if ((isNeedWrite && perm.isWritePermission()) || perm.isReadPermission()) {
                 try {
                     DocumentFile documentFile = DocumentFile.fromTreeUri(requireContext(), perm.getUri());
                     roots.put(documentFile == null ? "???" : IOUtils.getFilename(documentFile), documentFile);
@@ -700,7 +705,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
+        LVA listAdapter = getListAdapter();
         HashSet<FolderItem> selectedItems = listAdapter.getSelectedItems();
         if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
             selectedItems = new HashSet<>(1);
@@ -736,9 +741,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
 
     private static class FileExtFilterControlListener implements FilterControl.FilterListener {
 
-        private final FolderItemRecyclerViewAdapter<?,?,?,?> listAdapter;
+        private final FolderItemRecyclerViewAdapter<?,FolderItem,?,?> listAdapter;
 
-        public FileExtFilterControlListener(FolderItemRecyclerViewAdapter<?,?,?,?> adapter) {
+        public FileExtFilterControlListener(FolderItemRecyclerViewAdapter<?,FolderItem,?,?> adapter) {
             this.listAdapter = adapter;
         }
 
@@ -768,9 +773,9 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
     private static class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
         private final int spanCount;
-        private final FolderItemRecyclerViewAdapter<?,?,?,?> viewAdapter;
+        private final FolderItemRecyclerViewAdapter<?,FolderItem,?,?> viewAdapter;
 
-        public SpanSizeLookup(FolderItemRecyclerViewAdapter<?,?,?,?> viewAdapter, int spanCount) {
+        public SpanSizeLookup(FolderItemRecyclerViewAdapter<?,FolderItem,?,?> viewAdapter, int spanCount) {
             this.viewAdapter = viewAdapter;
             this.spanCount = spanCount;
         }
@@ -1025,7 +1030,7 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
                         if (item.getKey().getUri().equals(pathItemFile.getUri())) {
                             loadedFromMemory = true;
                             if (getList().getLayoutManager() != null) {
-                                FolderItemRecyclerViewAdapter adapter = (FolderItemRecyclerViewAdapter) getList().getAdapter();
+                                LVA adapter = (LVA)getList().getAdapter();
                                 Objects.requireNonNull(adapter).restoreState((FolderItemRecyclerViewAdapter.SavedState) item.getValue().get(0));
                                 getList().getLayoutManager().onRestoreInstanceState((Parcelable) item.getValue().get(1));
 

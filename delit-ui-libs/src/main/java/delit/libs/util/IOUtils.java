@@ -660,7 +660,7 @@ public class IOUtils {
         String itemTree = getTreeBaseFromPathElements(itemPathSegments);
         String extraRoot = rootTree.replaceAll("^" + itemTree, "");
         if (rootTree.equals(extraRoot)) {
-            // The item is from a more specific root than that currently offered.
+            // The item is from a more specific root or has different root entirely than that currently offered.
             if(!itemTree.startsWith(rootTree)) {
                 // The path is not a match.
                 Logging.log(Log.WARN, TAG, "Incompatible Paths could not be relinked, root: %1$s <- item: %2$s", rootUri, itemUri);
@@ -668,9 +668,17 @@ public class IOUtils {
             } else {
                 String extraItemPathElement = itemTree.replaceAll("^"+rootTree, "");
                 String itemPath = getTreePathFromPathElements(itemPathSegments);
-                String adjustedItemPath = extraItemPathElement +'/'+ itemPath;
+                String adjustedItemPath;
+                if(itemTree.equals(rootTree + extraItemPathElement)) {
+                    adjustedItemPath = extraItemPathElement;
+                } else {
+                    adjustedItemPath = extraItemPathElement + '/' + itemPath;
+                }
                 String[] newPathElements = adjustedItemPath.split("/");
                 for (String pe : newPathElements) {
+                    if(pe.isEmpty()) {
+                        continue;
+                    }
                     rootedDocFile = rootedDocFile.findFile(pe);
                     if (rootedDocFile == null) {
                         //NOTE this is likely because the child has been deleted.
@@ -678,20 +686,26 @@ public class IOUtils {
                         throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
                     }
                 }
-                return rootedDocFile;
+                return Objects.requireNonNull(rootedDocFile);
             }
         } else {
+            // the item is within the root somewhere
             String pathBase = extraRoot; //DCIM
             String itemPath = getTreePathFromPathElements(itemPathSegments);
             String adjustedItemPath = itemPath.replaceAll("^" + pathBase, "");
-            if (itemPath.equals(adjustedItemPath)) {
+            if (pathBase.length() > 0 && itemPath.equals(adjustedItemPath)) {
                 // The path is not a match.
                 Logging.log(Log.WARN, TAG, "Incompatible Paths could not be relinked, root: %1$s <- item: %2$s", rootUri, itemUri);
                 throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
             } else {
                 String newItemPath = adjustedItemPath;
+                // trim the item tree from the front (if possible - it will be if the item is inside the same tree)
+                newItemPath = newItemPath.replaceFirst("^"+itemTree, "");
                 String[] newPathElements = newItemPath.split("/");
                 for (String pe : newPathElements) {
+                    if(pe.isEmpty()) {
+                        continue;
+                    }
                     rootedDocFile = rootedDocFile.findFile(pe);
                     if (rootedDocFile == null) {
                         //NOTE this is likely because the child has been deleted.
@@ -699,7 +713,7 @@ public class IOUtils {
                         throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
                     }
                 }
-                return rootedDocFile;
+                return Objects.requireNonNull(rootedDocFile);
             }
         }
     }
@@ -838,12 +852,12 @@ public class IOUtils {
 
     }
 
-    public static Uri getTreeUri(Uri uri) {
-        if("file".equals(uri.getScheme()) || uri.toString().startsWith("/")) {
+    public static @Nullable Uri getTreeUri(@Nullable Uri uri) {
+        if(uri == null || "file".equals(uri.getScheme()) || uri.toString().startsWith("/")) {
             // already a tree URI
             return uri;
         }
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             return DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
         } else {
             List<String> pathSegments = uri.getPathSegments();
@@ -863,23 +877,57 @@ public class IOUtils {
     }
 
 
-    public static int getUriPermissionsFlags(Context context, Uri uri) {
+    public static int getUriPermissionsFlagsHeld(Context context, Uri uri) {
         // we have read write for any file uri
         if("file".equals(uri.getScheme())) {
             return URI_PERMISSION_READ_WRITE;
         }
         // for all other uris we must check
+
+        Uri rootUri = getRootUriForUri(context, uri);
+        rootUri = getTreeUri(rootUri);
         List<UriPermission> uriPerms = context.getContentResolver().getPersistedUriPermissions();
-        Uri treeUri = IOUtils.getTreeUri(uri);
         int permissionFlags = 0;
         for(UriPermission p : uriPerms) {
-            if(p.getUri().equals(uri) || p.getUri().equals(treeUri)) {
-                if(p.isReadPermission()) {
-                    permissionFlags |= Intent.FLAG_GRANT_READ_URI_PERMISSION;
+            if(p.getUri().equals(uri) || (rootUri != null && p.getUri().equals(rootUri))) {
+                permissionFlags |= IOUtils.getFlagsFromUriPermission(p);
+            }
+        }
+        return permissionFlags;
+    }
+
+    /**
+     *
+     * @param context
+     * @param uri uri to check against our accessible roots
+     * @return @code{null} if there is no accessible root for this uri less specific than itself
+     */
+    private static @Nullable Uri getRootUriForUri(@NonNull Context context, @Nullable Uri uri) {
+        Uri rootUri = null;
+        if(uri != null) {
+            DocumentFile accessibleRootFile = IOUtils.getDocumentFileForUriLinkedToAnAccessibleRoot(context, uri);
+            if(accessibleRootFile != null) {
+                // the file is tied to a root we have access to.
+                DocumentFile accessibleRoot = IOUtils.getRootDocFile(accessibleRootFile);
+                if (accessibleRoot != null && !accessibleRoot.getUri().equals(uri)) {
+                    rootUri = Objects.requireNonNull(accessibleRoot).getUri();
+                    if (rootUri.equals(uri)) {
+                        rootUri = null;
+                    }
                 }
-                if(p.isWritePermission()) {
-                    permissionFlags |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
-                }
+            }
+        }
+        return rootUri;
+    }
+
+    private static int getFlagsFromUriPermission(@Nullable UriPermission uriPermission) {
+        int permissionFlags = 0;
+        if(uriPermission != null) {
+            if (uriPermission.isReadPermission()) {
+                permissionFlags |= Intent.FLAG_GRANT_READ_URI_PERMISSION;
+            }
+            if (uriPermission.isWritePermission()) {
+                permissionFlags |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
             }
         }
         return permissionFlags;
@@ -889,7 +937,7 @@ public class IOUtils {
         if (uri == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             return true;
         }
-        int permissionsHeld = getUriPermissionsFlags(context, uri);
+        int permissionsHeld = getUriPermissionsFlagsHeld(context, uri);
         return (permissions & permissionsHeld) == permissions;
     }
 
@@ -920,6 +968,7 @@ public class IOUtils {
                     }
                 }
             } catch(IllegalStateException | IllegalArgumentException e) {
+                Logging.log(Log.WARN,TAG,"sinking exception : %1$s", e.getMessage());
                 // Illegal argument is when the item is a file not folder
                 // Illegal state is thrown in getTreeLinkedDocFile
                 //ignore - this isn't the right root. We'll try the next.
