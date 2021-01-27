@@ -1310,6 +1310,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             displayControlsBasedOnSessionState();
             setEditItemDetailsControlsStatus();
             updatePageTitle();
+            updateBasketDisplay(getBasket());
         }
     }
 
