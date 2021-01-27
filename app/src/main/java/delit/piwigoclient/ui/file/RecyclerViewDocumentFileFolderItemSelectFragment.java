@@ -271,7 +271,14 @@ public class RecyclerViewDocumentFileFolderItemSelectFragment<F extends Recycler
             buildBreadcrumbs(newFolder);
             getListAdapter().setInitiallySelectedItems(getContext()); // adapter needs to be populated for this to work.
             updateListOfFileExtensionsForAllVisibleFiles(getListAdapter().getFileExtsAndMimesInCurrentFolder());
-            fileExtFilters.setAllFilters(getViewPrefs().getVisibleFileTypes());
+
+            SortedSet<String> allFilters = getViewPrefs().getVisibleFileTypes();
+            allFilters.addAll(getViewPrefs().getFileTypesForVisibleMimes());
+            allFilters.addAll(getViewPrefs().getVisibleFileTypesForMimes(getListAdapter().getFileExtsAndMimesInCurrentFolder()));
+
+            getViewPrefs().getFileTypesForVisibleMimes();
+//            fileExtFilters.setShowInactiveFilters(false);
+            fileExtFilters.setAllFilters(allFilters);
             fileExtFilters.setActiveFilters(getListAdapter().getFileExtsInCurrentFolder());
             fileExtFilters.selectAll(true);
         }

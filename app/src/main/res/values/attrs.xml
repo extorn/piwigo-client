@@ -5,6 +5,7 @@
     <attr format="reference" name="materialButtonIconAccentedStyle"/>
     <attr format="reference" name="checkboxFavoriteAccentedStyle"/>
     <attr format="reference" name="visibilityToggleStyle"/>
+    <attr format="reference" name="foldingToggleStyle"/>
     <attr format="reference" name="layoutExpansionToggleStyle"/>
     <attr format="reference" name="editableFieldCheckBox"/>
     <attr format="reference" name="clickableTextViewStyleBody1"/>

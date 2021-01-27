@@ -613,33 +613,94 @@ public class IOUtils {
         }
     }
 
+    private static String getTreePathFromPathElements(List<String> pathSegments) {
+        boolean capture = false;
+        for(String segment : pathSegments) {
+            if(capture) {
+                return segment;
+            }
+            if(segment.equals("document")) {
+                capture = true;
+            }
+        }
+        return "";
+    }
+
+    private static String getTreeBaseFromPathElements(List<String> pathSegments) {
+        boolean capture = false;
+        for(String segment : pathSegments) {
+            if(capture) {
+                return segment;
+            }
+            if(segment.equals("tree")) {
+                capture = true;
+            }
+        }
+        return "";
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static @NonNull DocumentFile getTreeLinkedDocFileO(Context context, Uri rootUri, Uri itemUri) {
         // this works really well - but its android O and above only. :-(
-        try {
-            DocumentFile rootDocFile = DocumentFile.fromTreeUri(context, rootUri);
+        /*
+                tree
+                primary:DCIM
 
-            List<String> itemPath = DocumentsContract.findDocumentPath(context.getContentResolver(), itemUri).getPath();
 
-            for (int i = 1; i < itemPath.size() && rootDocFile != null; i++) {
-                List<String> rootDocPath = DocumentsContract.findDocumentPath(context.getContentResolver(), rootDocFile.getUri()).getPath();
-                String parentPath = rootDocPath.get(rootDocPath.size() - 1);
-                if(itemPath.get(i).length() > parentPath.length()) {
-                    String filename = itemPath.get(i).substring(parentPath.length());
-                    filename = filename.indexOf('/') == 0 ? filename.substring(1) : filename;
-                    rootDocFile = rootDocFile.findFile(filename);
-                } else {
-                    rootDocFile = null;
-                }
-            }
-            if (rootDocFile == null) {
+                tree
+                primary:
+                document
+                primary:DCIM/Camera
+         */
+        DocumentFile rootedDocFile = DocumentFile.fromTreeUri(context, rootUri);
+
+        List<String> rootPathSegments = rootUri.getPathSegments();
+        List<String> itemPathSegments = itemUri.getPathSegments();
+        String rootTree = getTreeBaseFromPathElements(rootPathSegments);
+        String itemTree = getTreeBaseFromPathElements(itemPathSegments);
+        String extraRoot = rootTree.replaceAll("^" + itemTree, "");
+        if (rootTree.equals(extraRoot)) {
+            // The item is from a more specific root than that currently offered.
+            if(!itemTree.startsWith(rootTree)) {
+                // The path is not a match.
+                Logging.log(Log.WARN, TAG, "Incompatible Paths could not be relinked, root: %1$s <- item: %2$s", rootUri, itemUri);
                 throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+            } else {
+                String extraItemPathElement = itemTree.replaceAll("^"+rootTree, "");
+                String itemPath = getTreePathFromPathElements(itemPathSegments);
+                String adjustedItemPath = extraItemPathElement +'/'+ itemPath;
+                String[] newPathElements = adjustedItemPath.split("/");
+                for (String pe : newPathElements) {
+                    rootedDocFile = rootedDocFile.findFile(pe);
+                    if (rootedDocFile == null) {
+                        //NOTE this is likely because the child has been deleted.
+                        Logging.log(Log.WARN, TAG, "Unable to find item within new root: %1$s <- itemPath: %2$s", rootUri, adjustedItemPath);
+                        throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+                    }
+                }
+                return rootedDocFile;
             }
-            return rootDocFile;
-        } catch (FileNotFoundException e) {
-            throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
-        } catch(SecurityException e) {
-            return null; // no longer have permission to access this path
+        } else {
+            String pathBase = extraRoot; //DCIM
+            String itemPath = getTreePathFromPathElements(itemPathSegments);
+            String adjustedItemPath = itemPath.replaceAll("^" + pathBase, "");
+            if (itemPath.equals(adjustedItemPath)) {
+                // The path is not a match.
+                Logging.log(Log.WARN, TAG, "Incompatible Paths could not be relinked, root: %1$s <- item: %2$s", rootUri, itemUri);
+                throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+            } else {
+                String newItemPath = adjustedItemPath;
+                String[] newPathElements = newItemPath.split("/");
+                for (String pe : newPathElements) {
+                    rootedDocFile = rootedDocFile.findFile(pe);
+                    if (rootedDocFile == null) {
+                        //NOTE this is likely because the child has been deleted.
+                        Logging.log(Log.WARN, TAG, "Unable to find item within new root: %1$s <- itemPath: %2$s", rootUri, newItemPath);
+                        throw new IllegalStateException("Something went badly wrong here! Uri not child of Uri:\n" + itemUri + "\n" + rootUri);
+                    }
+                }
+                return rootedDocFile;
+            }
         }
     }
 

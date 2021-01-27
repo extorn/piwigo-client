@@ -54,16 +54,16 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
     private static final String TAG = "FolderItemRecAdap";
     private Comparator<? super FolderItem> fileComparator;
-    private final NavigationListener navigationListener;
+    final NavigationListener navigationListener;
     private TreeMap<String, String> currentVisibleDocumentFileExts;
-    private List<T> currentFullContent;
-    private List<T> currentDisplayContent;
-    private DocumentFile activeFolder;
-    private Uri activeRootUri;
-    private boolean isBusy;
+    List<T> currentFullContent;
+    List<T> currentDisplayContent;
+    DocumentFile activeFolder;
+    Uri activeRootUri;
+    boolean isBusy;
     private SafeAsyncTask activeTask;
-    private TaskProgressListener taskListener;
-    private Set<String> currentFileTypesToShow = new HashSet<>();
+    TaskProgressListener taskListener;
+    Set<String> currentFileTypesToShow = new HashSet<>();
 
     public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MSL multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
@@ -196,8 +196,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         boolean initialSetup = currentVisibleDocumentFileExts == null;
         currentVisibleDocumentFileExts = buildListOfFileExtsAndMimesInCurrentFolder(currentDisplayContent);
         if(initialSetup) {
-            Set<String> desiredExts = getAdapterPrefs().getVisibleFileTypesForMimes(currentVisibleDocumentFileExts);
-            getAdapterPrefs().withVisibleContent(desiredExts, getAdapterPrefs().getFileSortOrder());
+            currentFileTypesToShow = getAdapterPrefs().getVisibleFileTypesForMimes(currentVisibleDocumentFileExts);
             currentFullContent = currentDisplayContent;
         }
 
@@ -206,7 +205,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         return currentDisplayContent;
     }
 
-    private List<FolderItem> getFilteredListOfContent(List<FolderItem> currentDisplayContent) {
+    protected List<FolderItem> getFilteredListOfContent(List<FolderItem> currentDisplayContent) {
         List<FolderItem> filteredContent = new ArrayList<>(currentDisplayContent.size());
         //String[] visibleMimes = CollectionUtils.asStringArray(getAdapterPrefs().getVisibleMimeTypes());
         boolean showFolderContainedFiles = getAdapterPrefs().isShowFolderContent();
@@ -806,7 +805,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         }
     }
 
-    private static class UpdateFolderContentTask extends OwnedSafeAsyncTask<FolderItemRecyclerViewAdapter, Void,Object,Pair<List<FolderItem>,List<FolderItem>>> {
+    private static class UpdateFolderContentTask<FIVA extends FolderItemRecyclerViewAdapter<FIVA,FolderItem,?,?>> extends OwnedSafeAsyncTask<FIVA, Void,Object,Pair<List<FolderItem>,List<FolderItem>>> {
 
         private static final String TAG = "UpdateFolderContentTask";
         private final DocumentFile newContent;
@@ -814,7 +813,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
         private boolean refreshingExistingFolder;
         private DocumentFile oldFolder;
 
-        public UpdateFolderContentTask(FolderItemRecyclerViewAdapter folderItemRecyclerViewAdapter, DocumentFile newContent, boolean force) {
+        public UpdateFolderContentTask(FIVA folderItemRecyclerViewAdapter, DocumentFile newContent, boolean force) {
             super(folderItemRecyclerViewAdapter);
             this.newContent = newContent;
             this.force = force;
@@ -834,11 +833,6 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             Uri activeUri = getOwner().activeFolder != null ? getOwner().activeFolder.getUri() : null;
             Uri newUri = newContent != null ? newContent.getUri() : null;
             if (ObjectUtils.areEqual(activeUri, newUri)) {
-                /*if (!force && getOwner().currentDisplayContent != null && getOwner().activeFolder != null) {
-                    return;
-                } else {
-                    refreshingExistingFolder = true;
-                }*/
                 refreshingExistingFolder = true;
             }
 

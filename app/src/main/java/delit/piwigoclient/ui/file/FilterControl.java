@@ -38,6 +38,8 @@ public class FilterControl extends FrameLayout {
     private Button toggleAll;
     private boolean allSelected;
     private boolean showInactiveFilters = true;
+    private boolean showingInactiveFilters = false;
+    private CheckBox inactiveFilterControl;
 
     public FilterControl(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -60,22 +62,32 @@ public class FilterControl extends FrameLayout {
         addView(content);
         showFiltersToggle = findViewById(R.id.content_filter_label);
         showFiltersToggle.setChecked(true);
-        showFiltersToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked) {
-                filtersViewGroup.setVisibility(View.VISIBLE);
-            } else {
-                filtersViewGroup.setVisibility(View.GONE);
-            }
+        showFiltersToggle.setOnCheckedChangeListener((buttonView, showFilters) -> {
+            filtersViewGroup.setVisibility(showFilters ? VISIBLE : GONE);
+            configureInactiveFilterVisibilityToggleControl();
         });
         filtersViewGroup = findViewById(R.id.filters);
         toggleAll = findViewById(R.id.toggle_all_button);
         toggleAll.setOnClickListener(v -> onToggleAllSelection());
+
+        inactiveFilterControl = findViewById(R.id.view_inactive_filters_button);
+        inactiveFilterControl.setOnCheckedChangeListener((buttonView, isChecked) -> FilterControl.this.toggleShowingInactiveFilters(isChecked));
+
         setToggleSelectionButtonText();
         addDemoData();
     }
 
     public void setShowInactiveFilters(boolean showInactiveFilters) {
         this.showInactiveFilters = showInactiveFilters;
+        buildFilterViews(false);
+    }
+
+    private void toggleShowingInactiveFilters(boolean showInactiveFiltersNow) {
+        if(showingInactiveFilters != showInactiveFiltersNow) {
+            showingInactiveFilters = showInactiveFiltersNow;
+            inactiveFilterControl.setChecked(showingInactiveFilters);
+            buildFilterViews(false);
+        }
     }
 
     private void onToggleAllSelection() {
@@ -156,7 +168,7 @@ public class FilterControl extends FrameLayout {
         // initialise local cached set of selected items
         if (selectedFilters == null && activeFilters != null) {
             selectedFilters = new HashSet<>(activeFilters);
-        }//TODO shouldn't this be all the active filters not all filters?!
+        }
 
         // clear all the existing filters
         filtersViewGroup.removeAllViews();
@@ -169,7 +181,7 @@ public class FilterControl extends FrameLayout {
             allSelected = CollectionUtils.equals(activeFilters, selectedFilters);
             for (String filterText : allFilters) {
                 boolean isInactive = !activeFilters.contains(filterText);
-                if(!showInactiveFilters && isInactive) {
+                if((!showInactiveFilters || !showingInactiveFilters) && isInactive) {
                     continue;
                 }
                 FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);
@@ -199,12 +211,19 @@ public class FilterControl extends FrameLayout {
             }
         }
 
+        configureInactiveFilterVisibilityToggleControl();
+
         boolean filtersVisible = (activeFilters != null && !activeFilters.isEmpty());
         showFiltersToggle.setChecked(showFiltersToggle.isChecked() && filtersVisible);
         showFiltersToggle.setEnabled(filtersVisible);
         toggleAll.setEnabled(filtersVisible);
         this.allSelected = allSelected;
         setToggleSelectionButtonText();
+    }
+
+    private void configureInactiveFilterVisibilityToggleControl() {
+        boolean showInactiveFiltersViewControl = showInactiveFilters && activeFilters.size() != allFilters.size();
+        inactiveFilterControl.setVisibility(showInactiveFiltersViewControl ? filtersViewGroup.getVisibility() : GONE);
     }
 
     private View createFilterView(String fileExt, boolean checked, boolean isActive) {

@@ -94,6 +94,14 @@
         <item name="android:button">@drawable/layout_expansion_checkbox</item> <!-- just a null drawable - never shown -->
     </style>
 
+    <!-- folding toggle button style -->
+    <style name="App.Widget.CompoundButton.CheckBox.Folding" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="buttonCompat">@drawable/folding_checkbox</item> <!-- needed for pre lollipop -->
+        <item name="android:button">@drawable/folding_checkbox</item> <!-- just a null drawable - never shown -->
+    </style>
+
     <!-- password field visibility toggle button style -->
     <style name="App.Widget.CompoundButton.CheckBox.Visibility" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="android:layout_width">wrap_content</item>
