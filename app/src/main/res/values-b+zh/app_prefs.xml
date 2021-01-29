@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">专辑排序顺序</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">子相册排序顺序</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">子相册排序顺序</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">反转相册顺序</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">启用后，反转所选相册的排序顺序</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">反转相册排序顺序</string>
-    <string name="preference_gallery_sort_order_inverted_summary">启用后，反转所选相册资源的排序顺序</string>
+    <string name="preference_gallery_child_resource_sort_order_title">专辑资源排序顺序</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">反转相册资源排序顺序</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">启用后，反转所选相册资源的排序顺序</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">图像的唯一标识符</string>

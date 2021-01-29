@@ -7,9 +7,8 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
@@ -44,14 +43,14 @@ public class TagsGetListResponseHandler extends AbstractPiwigoWsResponseHandler 
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray tagsObj = result.get("tags").getAsJsonArray();
-        HashSet<Tag> tags = parseTagsFromJson(tagsObj);
+        ArrayList<Tag> tags = parseTagsFromJson(tagsObj);
         PiwigoGetTagsListRetrievedResponse r = new PiwigoGetTagsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, tags.size(), tags.size(), tags, isCached);
         storeResponse(r);
     }
 
-    public static HashSet<Tag> parseTagsFromJson(JsonArray tagsObj) throws JSONException {
+    public static ArrayList<Tag> parseTagsFromJson(JsonArray tagsObj) throws JSONException {
 
-        HashSet<Tag> tags = new LinkedHashSet<>(tagsObj.size());
+        ArrayList<Tag> tags = new ArrayList<>(tagsObj.size());
         for (int i = 0; i < tagsObj.size(); i++) {
             JsonObject tagObj = tagsObj.get(i).getAsJsonObject();
             Tag g = parseTagFromJson(tagObj);
@@ -84,12 +83,12 @@ Logging.recordException(e);
     }
 
     public static class PiwigoGetTagsListRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
-        private final HashSet<Tag> tags;
+        private final ArrayList<Tag> tags;
         private final int itemsOnPage;
         private final int pageSize;
         private final int page;
 
-        public PiwigoGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Tag> tags, boolean isCached) {
+        public PiwigoGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<Tag> tags, boolean isCached) {
             super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
@@ -109,7 +108,7 @@ Logging.recordException(e);
             return pageSize;
         }
 
-        public HashSet<Tag> getTags() {
+        public ArrayList<Tag> getTags() {
             return tags;
         }
     }

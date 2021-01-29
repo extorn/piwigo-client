@@ -6,12 +6,14 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import delit.libs.core.util.Logging;
@@ -26,10 +28,11 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     private static final String TAG = "PagedList";
     public static int MISSING_ITEMS_PAGE = -1;
     private String itemType;
-    private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
+    private final SortedMap<Integer,Integer> pagesLoadedIdxToSizeMap = new TreeMap<>();
     private ArrayList<T> items;
+    private ArrayList<T> sortedItems;
     //FIXME improvement - add an index (adds safety on add) - private LongSparseArray<T> itemIdToItemMap = new LongSparseArray<>();
-    private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
+    private final HashMap<Integer, Long> pagesLoadingPageIdxToLoadIdMap = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
     private boolean fullyLoaded;
     private ReentrantLock pageLoadLock;
@@ -42,6 +45,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public PagedList(String itemType, int maxExpectedItemCount) {
         this.itemType = itemType;
         this.items = new ArrayList<>(maxExpectedItemCount);
+        this.sortedItems = new ArrayList<>(maxExpectedItemCount);
         this.pageLoadLock = new ReentrantLock();
     }
 
@@ -69,7 +73,18 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return false;
     }
 
-    protected abstract void sortItems();
+    protected void resetSortOrder() {
+        sortedItems.clear();
+        getUnsortedItems().addAll(items);
+    }
+
+    protected void sortItems(List<T> items) {
+        Collections.sort(sortedItems, Collections.reverseOrder());
+    }
+
+    protected void sortItems() {
+        sortItems(sortedItems);
+    }
 
     public Integer getAMissingPage() {
         if(!pagesFailedToLoad.isEmpty()) {
@@ -77,18 +92,18 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         }
         if(!fullyLoaded) {
             int page = 0;
-            if(pagesLoaded.size() > 0) {
-                if (pagesLoaded.first() == 0) {
-                    page = pagesLoaded.last() + 1;
+            if(pagesLoadedIdxToSizeMap.size() > 0) {
+                if (pagesLoadedIdxToSizeMap.firstKey() == 0) {
+                    page = pagesLoadedIdxToSizeMap.lastKey() + 1;
                 } else {
-                    page = pagesLoaded.first() - 1;
+                    page = pagesLoadedIdxToSizeMap.firstKey() - 1;
                     if (page < 0) {
                         Logging.log(Log.ERROR, TAG, "Model thinks a negative page is missing! - This should be impossible");
                         return null;
                     }
                 }
             }
-            if(!pagesBeingLoaded.containsValue(page)) {
+            if(!pagesLoadingPageIdxToLoadIdMap.containsKey(page)) {
                 return page;
             }
         }
@@ -98,9 +113,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public PagedList(Parcel in) {
         try {
             itemType = in.readString();
-            ParcelUtils.readIntSet(in, pagesLoaded);
+            ParcelUtils.readMap(in, pagesLoadedIdxToSizeMap);
             items = ParcelUtils.readArrayList(in, getClass().getClassLoader());
-            ParcelUtils.readMap(in, pagesBeingLoaded, getClass().getClassLoader());
+            sortedItems = new ArrayList<>(items);
+            ParcelUtils.readMap(in, pagesLoadingPageIdxToLoadIdMap);
             ParcelUtils.readIntSet(in, pagesFailedToLoad);
             fullyLoaded = ParcelUtils.readBool(in);
             retrieveItemsInReverseOrder = ParcelUtils.readBool(in);
@@ -108,6 +124,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
             if (pageLoadLock == null) {
                 this.pageLoadLock = new ReentrantLock();
             }
+            sortItems();
         } catch(RuntimeException e) {
             if(itemType == null) {
                 itemType = "???";
@@ -123,9 +140,9 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(itemType);
-        ParcelUtils.writeIntSet(dest, pagesLoaded);
+        ParcelUtils.writeMap(dest, pagesLoadedIdxToSizeMap);
         ParcelUtils.writeArrayList(dest, items);
-        ParcelUtils.writeMap(dest, pagesBeingLoaded);
+        ParcelUtils.writeMap(dest, pagesLoadingPageIdxToLoadIdMap);
         ParcelUtils.writeIntSet(dest, pagesFailedToLoad);
         ParcelUtils.writeBool(dest, fullyLoaded);
         ParcelUtils.writeBool(dest, retrieveItemsInReverseOrder);
@@ -144,11 +161,11 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     public void recordPageBeingLoaded(long loaderId, int pageNum) {
-        pagesBeingLoaded.put(loaderId, pageNum);
+        pagesLoadingPageIdxToLoadIdMap.put(pageNum, loaderId);
     }
 
     public boolean isPageLoadedOrBeingLoaded(int pageNum) {
-        return pagesLoaded.contains(pageNum) || pagesBeingLoaded.containsValue(pageNum);
+        return pagesLoadedIdxToSizeMap.containsKey(pageNum) || pagesLoadingPageIdxToLoadIdMap.containsKey(pageNum);
     }
 
     public boolean hasNoFailedPageLoads() {
@@ -165,64 +182,80 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return retVal;
     }
 
-    public void recordPageLoadSucceeded(long loaderId) {
-        pagesBeingLoaded.remove(loaderId);
+    protected void recordPageLoadSucceeded(int pageIdx, int itemsLoaded) {
+        pagesLoadingPageIdxToLoadIdMap.remove(pageIdx);
+        pagesLoadedIdxToSizeMap.put(pageIdx, itemsLoaded);
     }
 
     public boolean isTrackingPageLoaderWithId(long loaderId) {
-        return pagesBeingLoaded.containsKey(loaderId);
+        return pagesLoadingPageIdxToLoadIdMap.containsValue(loaderId);
     }
 
     public void recordPageLoadFailed(long loaderId) {
-        Integer pageNum = pagesBeingLoaded.remove(loaderId);
-        if (pageNum != null) {
-            pagesFailedToLoad.add(pageNum);
-        }
-    }
-
-    private int earlierLoadedPages(int page) {
-        Iterator<Integer> iter = pagesLoaded.iterator();
-        int earlierPages = 0;
-        while (iter.hasNext()) {
-            int curPage = iter.next();
-            if (curPage < page) {
-                earlierPages++;
-            } else if (curPage == page) {
-                throw new IllegalStateException("Attempting to add page already loaded (" + curPage + ")");
+        for(Map.Entry<Integer,Long> pageLoadingEntry : pagesLoadingPageIdxToLoadIdMap.entrySet()) {
+            if(pageLoadingEntry.getValue().equals(loaderId)) {
+                pagesFailedToLoad.add(pageLoadingEntry.getKey());
             }
         }
-        return earlierPages;
     }
 
     protected int getPageInsertPosition(int page, int pageSize) {
-        return earlierLoadedPages(page) * pageSize;
+        int insertAtIdx = 0;
+        for(Map.Entry<Integer,Integer> pageIdxToSizeEntry : pagesLoadedIdxToSizeMap.entrySet()) {
+            if((isRetrieveItemsInReverseOrder() && pageIdxToSizeEntry.getKey() > page) || !isRetrieveItemsInReverseOrder() && pageIdxToSizeEntry.getKey() < page) {
+                insertAtIdx += pageIdxToSizeEntry.getValue();
+            }
+        }
+        return insertAtIdx;
     }
 
     /**
      * WARNING: duplicates WILL be added here if provided.
      * @param page
      * @param pageSize
-     * @param newItems
+     * @param itemsToAdd
      * @return
      */
-    public int addItemPage(int page, /*int pages, */ int pageSize, Collection<T> newItems) {
-
+    public int addItemPage(int page, /*int pages, */ int pageSize, List<T> itemsToAdd) {
+        List<T> newItems = itemsToAdd;
+        if(pageSize != newItems.size()) {
+            throw new IllegalArgumentException("Expected page size did not match number of items contained in page");
+        }
+        recordPageLoadSucceeded(page, newItems.size());
+        newItems = prePageInsert(newItems);
         int firstInsertPos = 0;
         try {
             if (newItems.size() > 0) {
                 firstInsertPos = Math.min(Math.max(0, getPageInsertPosition(page, pageSize)), items.size());
                 items.addAll(firstInsertPos, newItems);
+                sortedItems.addAll(firstInsertPos, newItems);
             }
-            pagesLoaded.add(page);
-            if (newItems.size() < pageSize && pagesLoaded.size() == page + 1) {
+            pagesLoadedIdxToSizeMap.put(page, pageSize);
+            if ((newItems.size() < pageSize && pagesLoadedIdxToSizeMap.size() == page + 1)
+            || (page == 0 && isRetrieveItemsInReverseOrder() && getNextPageToReload() == null)) {
                 fullyLoaded = true;
             }
         } catch(IllegalStateException e) {
             // page already loaded (can occur after resume...)
             Logging.log(Log.DEBUG, TAG, "ignoring page already loaded");
         }
+        postPageInsert(sortedItems, newItems);
         return firstInsertPos;
     }
+
+    private void postPageInsert(ArrayList<T> sortedItems, List<T> newItems) {
+        // do nothing as we assume the pages are arriving sorted before insert and being inserted in the correct place
+    }
+
+    /**
+     * Perform a simple sort, then reversing.
+     * @param newItems
+     * @return
+     */
+    protected List<T> prePageInsert(List<T> newItems) {
+        return newItems;
+    }
+
 
     public void markAsFullyLoaded() {
         fullyLoaded = true;
@@ -230,9 +263,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
 
     public void clear() {
         items.clear();
-        pagesLoaded.clear();
+        sortedItems.clear();
+        pagesLoadedIdxToSizeMap.clear();
         fullyLoaded = false;
-        pagesBeingLoaded.clear();
+        pagesLoadingPageIdxToLoadIdMap.clear();
         pagesFailedToLoad.clear();
     }
 
@@ -245,33 +279,25 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         throw new UnsupportedOperationException("Implement this if needed");
     }
 
-    protected int getAdjustedIdx(int idx) {
-        return items.size() - 1 - idx;
-    }
-
-    public int getDisplayIdx(T item) {
-        int rawIdx = getItemIdx(item);
-        if (retrieveItemsInReverseOrder) {
-            return getAdjustedIdx(rawIdx);
-        }
-        return rawIdx;
-    }
-
     @Override
     public T getItemByIdx(int idx) {
         if (retrieveItemsInReverseOrder) {
-            return items.get(getAdjustedIdx(idx));
+            return sortedItems.get(getReverseItemIdx(idx));
         }
-        return items.get(idx);
+        return sortedItems.get(idx);
     }
 
     @Override
     public ArrayList<T> getItems() {
+        return sortedItems;
+    }
+
+    public ArrayList<T> getUnsortedItems() {
         return items;
     }
 
-    public int getPagesLoaded() {
-        return pagesLoaded.size();
+    public int getPagesLoadedIdxToSizeMap() {
+        return pagesLoadedIdxToSizeMap.size();
     }
 
     @Override
@@ -309,21 +335,61 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
      */
     @Override
     public void addItem(T item) {
-        items.add(item);
+        int insertAtIdx = getItemInsertPosition(item);
+        updatePageLoadedCount(insertAtIdx -1, +1);
+        items.add(insertAtIdx, item);
+        sortedItems.add(insertAtIdx, item);
+        postItemInsert(item);
+    }
+
+    protected int getItemInsertPosition(T item) {
+        return items.size();
+    }
+
+    protected void postItemInsert(T item) {
+        sortItems();
     }
 
     public T remove(int idx) {
-        return items.remove(idx);
+        updatePageLoadedCount(idx, -1);
+        T item = sortedItems.remove(idx);
+        items.remove(item);
+        return item;
     }
 
     @Override
     public boolean remove(T item) {
         int idx = getItemIdx(item);
         if(idx >= 0) {
-            items.remove(idx);
+            remove(idx);
             return true;
         }
         return false;
+    }
+
+    private void updatePageLoadedCount(int idx, int change) {
+        int pageIdx = getPageIndexContaining(idx);
+        if(pageIdx < 0) {
+            Logging.log(Log.WARN, TAG, "Unable to alter page loaded count by %1$d. Affected page not found", change);
+        } else {
+            pagesLoadedIdxToSizeMap.put(pageIdx, pagesLoadedIdxToSizeMap.get(pageIdx) - 1);
+        }
+    }
+
+    protected int getPageIndexContaining(int resourceIdx) {
+        if(resourceIdx >= 0) {
+            int resourceIdxs = 0;
+            for (Map.Entry<Integer, Integer> pageIdxToSizeEntry : pagesLoadedIdxToSizeMap.entrySet()) {
+                int itemsInThisPage = pageIdxToSizeEntry.getValue();
+                resourceIdxs += itemsInThisPage;
+                if (resourceIdx <= resourceIdxs) {
+                    // this page contains the resource index in question
+                    return pageIdxToSizeEntry.getKey();
+                }
+            }
+            Logging.log(Log.WARN, TAG, "Unable to find a page with the resource index %1$d present. There are %2$d resources loaded across %3$d pages", resourceIdx, resourceIdxs, pagesLoadedIdxToSizeMap.size());
+        }
+        return -1;
     }
 
     @Override
@@ -355,6 +421,9 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         int idx = 0;
         for (T c : items) {
             if(seekId == getItemId(c)) {
+                if(retrieveItemsInReverseOrder) {
+                    return getReverseItemIdx(idx);
+                }
                 return idx;
             }
             idx++;
@@ -362,8 +431,32 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return -1;
     }
 
+    private int getNonReversedItemIdx(int idx) {
+        return idx - getReverseOffset(idx);
+    }
+
+    private int getReverseItemIdx(int idx) {
+        if(getReverseOffset(idx) == 0) {
+            return idx;
+        }
+        return getReverseOffset(idx) - idx;
+    }
+
+    /**
+     * Override this for non standard ordering of items when reversed.
+     * (If the whole list is flipped, this will be okay as it is).
+     *
+     * NOTE: if you implement reverse sorting of the comparator, you MUST ensure this returns zero
+     *
+     * @param idx index of the the item to 'reposition' by the offset
+     * @return the offset from zero to subtract the idx from to get its new idx when reversing the list
+     */
+    protected int getReverseOffset(int idx) {
+        return 0;
+    }
+
     public boolean isPageLoaded(int pageNum) {
-        return pagesLoaded.contains(pageNum);
+        return pagesLoadedIdxToSizeMap.containsKey(pageNum);
     }
 
     @Override

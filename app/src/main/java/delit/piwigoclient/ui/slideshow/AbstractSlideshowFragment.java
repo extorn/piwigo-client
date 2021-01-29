@@ -80,7 +80,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         Bundle args = new Bundle();
         storeGalleryModelClassToBundle(args, modelType);
         args.putLong(ARG_GALLERY_ID, resourceContainer.getId());
-        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, resourceContainer.getDisplayIdx(currentItem));
+        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, resourceContainer.getItemIdx(currentItem));
         return args;
     }
 
@@ -257,7 +257,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
 
         try {
-            int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
+            int pagerItemsIdx = galleryItemAdapter.getSlideshowIndexUsingFullGalleryIdx(rawCurrentGalleryItemPosition);
             viewPager.setCurrentItem(pagerItemsIdx);
         } catch (IllegalArgumentException e) {
             Logging.log(Log.WARN, TAG, "returning to album - slideshow empty");
@@ -396,7 +396,7 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
     }
 
     protected void loadMoreGalleryResources() {
-        int pageToLoad = resourceContainer.getPagesLoaded();
+        int pageToLoad = resourceContainer.getPagesLoadedIdxToSizeMap();
         loadAlbumResourcesPage(pageToLoad);
     }
 
@@ -495,6 +495,8 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) {
                 onGetResources((AlbumGetImagesBasicResponseHandler.PiwigoGetResourcesResponse) response);
+            } else {
+                getParent().onGetResourcesFailed(response);
             }
         }
 
@@ -503,6 +505,10 @@ public abstract class AbstractSlideshowFragment<F extends AbstractSlideshowFragm
             getParent().onResourcesReceived(response.getPage(), response.getPageSize(), resources);
 
         }
+    }
+
+    protected void onGetResourcesFailed(PiwigoResponseBufferingHandler.Response response) {
+        resourceContainer.recordPageLoadFailed(response.getMessageId());
     }
 
     void onResourcesReceived(int page, int pageSize, ArrayList<GalleryItem> resources) {

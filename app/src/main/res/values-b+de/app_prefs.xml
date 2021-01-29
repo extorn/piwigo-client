@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Sortierreihenfolge des Albums</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">Sortierreihenfolge für untergeordnete Alben</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">Sortierreihenfolge für untergeordnete Alben</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Reihenfolge der Alben umkehren</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Wenn aktiviert, kehren Sie die ausgewählte Sortierreihenfolge der Alben um</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Album-Sortierreihenfolge umkehren</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Wenn aktiviert, kehren Sie die ausgewählte Sortierreihenfolge der Albumressourcen um</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Sortierreihenfolge der Albumressourcen</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Sortierreihenfolge der Albumressourcen umkehren</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Wenn aktiviert, kehren Sie die ausgewählte Sortierreihenfolge der Albumressourcen um</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">Eindeutige Kennung für Bilder</string>

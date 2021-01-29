@@ -21,6 +21,11 @@ public abstract class IdentifiablePagedList<T extends Identifiable&Parcelable> e
         super(itemType, maxExpectedItemCount);
     }
 
+    @Override
+    public int addItemPage(int page, int pageSize, List<T> itemsToAdd) {
+        return super.addItemPage(page, pageSize, itemsToAdd);
+    }
+
     public IdentifiablePagedList(Parcel in) {
         super(in);
     }
@@ -35,11 +40,7 @@ public abstract class IdentifiablePagedList<T extends Identifiable&Parcelable> e
             return -1;
         }
         List<T> sortedItems = new ArrayList<>(getItems());
-        Collections.sort(sortedItems, (o1, o2) -> {
-            long x = o1.getId();
-            long y = o2.getId();
-            return Long.compare(x, y);
-        });
+        Collections.sort(sortedItems, new Identifiable.IdComparator<>());
         long id = sortedItems.get(0).getId() - 1;
         if(id > 0) {
             id = -1;

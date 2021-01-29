@@ -21,7 +21,7 @@
 
     
 
-    <string-array name="preference_album_subalbum_sort_order_items">
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
         <item>Predefinito</item>
         <item>Nome album A-Z</item>
         <item>Ultimo aggiornamento</item>
@@ -34,7 +34,7 @@
     </string-array>
 
 
-    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Predefinito</item>
         <item>adatta alle dimensioni dello schermo</item>
         <item>ingrandire e ritagliare per adattare lo schermo</item>
@@ -43,7 +43,7 @@
 
     
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array">
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
         <item>il più adatto</item>
         <item>piazza</item>
         <item>pollice</item>
@@ -59,7 +59,7 @@
 
     
 
-    <string-array name="preference_gallery_item_thumbnail_size_array">
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>piazza</item>
         <item>pollice</item>
         <item>2piccolo</item>
@@ -68,7 +68,7 @@
     </string-array>
 
     
-    <string-array name="preference_gallery_sort_order_entries">
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
         <item>Default del server</item>
         <item>ID risorsa</item>
         <item>Nome file risorsa</item>
@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.105</item>
+        <item>"Risoluzione del problema:
+             - Riscrittura dell\'album, tag e codice di ordinamento preferito perché era pieno di bug
+                 : Se qualcosa in quest\'area ora non funziona come previsto, fammelo sapere.
+                 : Questo dovrebbe risolvere i crash che si stavano verificando nella pagina della presentazione
+                 I cambiamenti:
+             - Nuova preferenza per consentire l\'inversione indipendente dell\'ordinamento di album e risorse secondari"</item>
         <item>1.4.0.104</item>
         <item>"Risoluzione del problema:
                  - Problemi causati durante il caricamento dopo aver rielaborato la selezione dei file per keystore e certificati

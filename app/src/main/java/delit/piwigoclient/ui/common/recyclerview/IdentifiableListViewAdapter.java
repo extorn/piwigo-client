@@ -52,7 +52,7 @@ public abstract class IdentifiableListViewAdapter<LVA extends IdentifiableListVi
         return null;
     }
 
-    protected IS getItemStore() {
+    public IS getItemStore() {
         return itemStore;
     }
 

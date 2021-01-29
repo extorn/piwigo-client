@@ -4,6 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import delit.libs.core.util.Logging;
 
 /**
@@ -41,14 +45,6 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
         }
     }
 
-    public ResourceItem getResourceItemById(long itemId) {
-        T item = getItemById(itemId);
-        if (item instanceof ResourceItem) {
-            return (ResourceItem) item;
-        }
-        throw new RuntimeException("Item is present, but is not an album resource, is a " + item.getClass().getName());
-    }
-
     public int getResourcesCount() {
         return getItemCount();
     }
@@ -66,5 +62,16 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
     @Override
     public long getId() {
         return containerDetails.getId();
+    }
+
+    @Override
+    protected List<T> prePageInsert(List<T> newItems) {
+        //TODO remove this once the server allows reversing the sort order as a webservice option!
+        if(isRetrieveItemsInReverseOrder()) {
+            ArrayList<T> sortedItems = new ArrayList<>(newItems);
+            Collections.reverse(sortedItems);
+            return sortedItems;
+        }
+        return newItems;
     }
 }

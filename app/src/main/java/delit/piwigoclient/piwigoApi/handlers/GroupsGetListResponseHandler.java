@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import delit.libs.http.RequestParams;
@@ -43,8 +43,8 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         this.pageSize = pageSize;
     }
 
-    public static HashSet<Group> parseGroupsFromJson(JsonArray groupsObj) {
-        HashSet<Group> groups = new LinkedHashSet<>(groupsObj.size());
+    public static ArrayList<Group> parseGroupsFromJson(JsonArray groupsObj) {
+        ArrayList<Group> groups = new ArrayList<>(groupsObj.size());
         for (int i = 0; i < groupsObj.size(); i++) {
             JsonObject groupObj = groupsObj.get(i).getAsJsonObject();
             Group g = parseGroupFromJson(groupObj);
@@ -84,7 +84,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         int pageSize = pagingObj.get("per_page").getAsInt();
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
-        HashSet<Group> groups = parseGroupsFromJson(groupsObj);
+        ArrayList<Group> groups = parseGroupsFromJson(groupsObj);
         if (this.page == PagedList.MISSING_ITEMS_PAGE) {
             page = this.page;
         }
@@ -93,12 +93,12 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
     }
 
     public static class PiwigoGetGroupsListRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
-        private final HashSet<Group> groups;
+        private final ArrayList<Group> groups;
         private final int itemsOnPage;
         private final int pageSize;
         private final int page;
 
-        public PiwigoGetGroupsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Group> groups, boolean isCached) {
+        public PiwigoGetGroupsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<Group> groups, boolean isCached) {
             super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
@@ -118,7 +118,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
             return pageSize;
         }
 
-        public HashSet<Group> getGroups() {
+        public ArrayList<Group> getGroups() {
             return groups;
         }
     }

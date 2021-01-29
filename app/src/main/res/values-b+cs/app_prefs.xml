@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Pořadí řazení alb</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">Pořadí řazení dětských alb</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">Pořadí řazení dětských alb</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Obrácené pořadí alb</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Pokud je tato možnost povolena, obrátit vybrané pořadí řazení alb</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Invertovat pořadí řazení alb</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Pokud je tato možnost povolena, obrátit vybrané pořadí řazení zdrojů alba</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Pořadí řazení prostředků alba</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Invertovat pořadí řazení prostředků alba</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Pokud je tato možnost povolena, obrátit vybrané pořadí řazení zdrojů alba</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">Jedinečný identifikátor obrázků</string>

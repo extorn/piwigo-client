@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Ordre de tri des albums</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">Ordre de tri des albums enfants</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">Ordre de tri des albums enfants</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Inverser l\'ordre des albums</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Lorsqu\'elle est activée, inverser l\'ordre de tri sélectionné des albums</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Inverser l\'ordre de tri de l\'album</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Lorsqu\'il est activé, inverser l\'ordre de tri sélectionné des ressources d\'album</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Ordre de tri des ressources de l\'album</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Inverser l\'ordre de tri des ressources de l\'album</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Lorsqu\'il est activé, inverser l\'ordre de tri sélectionné des ressources d\'album</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">Identifiant unique pour les images</string>

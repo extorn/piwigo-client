@@ -228,23 +228,26 @@
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
     <integer name="preference_video_cache_maxsize_mb_default">512</integer>
 
-    <string name="preference_gallery_sort_order_key" translatable="false">preference_gallery_sort_order</string>
-    <string name="preference_gallery_sort_order_title">Album sort order</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    <string name="preference_gallery_sort_order_default" translatable="false">server</string>
+    <string name="preference_gallery_child_album_sort_order_key" translatable="false">preference_gallery_child_album_sort_order</string>
+    <string name="preference_gallery_child_album_sort_order_title">Child album sort order</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
+    <integer name="preference_gallery_child_album_sort_order_default">2</integer> <!--DATE_ALBUM_SORT_ORDER (DSC) -->
 
+    <string name="preference_gallery_child_album_sort_order_inverted_key" translatable="false">preference_gallery_child_album_sort_order_inverted</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Invert order of Albums</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">When enabled, reverse the selected sort order of albums</string>
+    <bool name="preference_gallery_child_album_sort_order_inverted_default">false</bool>
 
-    <string name="preference_album_subalbum_sort_order_key" translatable="false">preference_album_subalbum_sort_order</string>
-    <string name="preference_album_subalbum_sort_order_title">Child album sort order</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
-    <integer name="preference_album_subalbum_sort_order_default">2
-    </integer> <!--DATE_ALBUM_SORT_ORDER (DSC) -->
+    <string name="preference_gallery_child_resource_sort_order_key" translatable="false">preference_gallery_child_resource_sort_order</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Album resource sort order</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_resource_sort_order_default" translatable="false">server</string>
 
+    <string name="preference_gallery_child_resource_sort_order_inverted_key" translatable="false">preference_gallery_child_resource_sort_order_inverted</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Invert Album resource sort order</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">When enabled, reverse the selected sort order of album resources</string>
+    <bool name="preference_gallery_child_resource_sort_order_inverted_default">false</bool>
 
-    <string name="preference_gallery_sort_order_inverted_key" translatable="false">preference_gallery_sort_order_inverted</string>
-    <string name="preference_gallery_sort_order_inverted_title">Invert Album sort order</string>
-    <string name="preference_gallery_sort_order_inverted_summary">When enabled, reverse the selected sort order of album resources</string>
-    <bool name="preference_gallery_sort_order_inverted_default">false</bool>
 
     <string name="preference_gallery_unique_id_key" translatable="false">preference_gallery_unique_id</string>
     <string name="preference_gallery_unique_id_title">Unique Identifier for images</string>

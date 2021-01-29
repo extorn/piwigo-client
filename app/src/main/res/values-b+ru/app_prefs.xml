@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Порядок сортировки альбомов</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">Порядок сортировки дочернего альбома</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">Порядок сортировки дочернего альбома</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Инвертировать порядок альбомов</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Если этот параметр включен, изменить выбранный порядок сортировки альбомов на обратный</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Инвертировать порядок сортировки альбомов</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Если этот параметр включен, изменить выбранный порядок сортировки ресурсов альбома на обратный</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Порядок сортировки ресурсов альбома</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Инвертировать порядок сортировки ресурсов альбома</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Если этот параметр включен, изменить выбранный порядок сортировки ресурсов альбома на обратный</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">Уникальный идентификатор для изображений</string>

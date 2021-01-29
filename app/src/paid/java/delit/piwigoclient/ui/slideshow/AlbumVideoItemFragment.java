@@ -8,9 +8,11 @@ import com.google.android.exoplayer2.Player;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.model.piwigo.VideoResourceItem;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.events.SlideshowItemPageFinished;
 
-public class AlbumVideoItemFragment extends AbstractAlbumVideoItemFragment {
+public class AlbumVideoItemFragment<F extends AbstractAlbumVideoItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH,F>, T extends VideoResourceItem> extends AbstractAlbumVideoItemFragment<F,FUIH,T> {
 
     @Override
     protected Player.EventListener buildNewPlayerEventListener() {

@@ -21,7 +21,7 @@
 
     
 
-    <string-array name="preference_album_subalbum_sort_order_items">
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
         <item>Standaard</item>
         <item>Albumnaam A-Z</item>
         <item>Laatst bijgewerkt</item>
@@ -34,7 +34,7 @@
     </string-array>
 
 
-    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Standaard</item>
         <item>passen op schermgrootte</item>
         <item>vergroten en bijsnijden om op het scherm te passen</item>
@@ -43,7 +43,7 @@
 
     
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array">
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
         <item>best passend</item>
         <item>vierkant</item>
         <item>duim</item>
@@ -59,7 +59,7 @@
 
     
 
-    <string-array name="preference_gallery_item_thumbnail_size_array">
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>vierkant</item>
         <item>duim</item>
         <item>2klein</item>
@@ -68,7 +68,7 @@
     </string-array>
 
     
-    <string-array name="preference_gallery_sort_order_entries">
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
         <item>Server standaard</item>
         <item>Bron-ID</item>
         <item>Resource bestandsnaam</item>
@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.105</item>
+        <item>"Bugfix:
+             - Herschrijf het album, de tag en de favoriete sorteercode omdat deze vol zat met bugs
+                 : Als iets op dit gebied nu niet werkt zoals u verwacht, laat het me dan weten.
+                 : Dit zou crashes moeten oplossen die optraden op de diavoorstellingspagina
+                 Veranderingen:
+             - Nieuwe voorkeur om onafhankelijke sorteervolgorde omkering van onderliggende albums en bronnen mogelijk te maken"</item>
         <item>1.4.0.104</item>
         <item>"Bugfix:
                  - Problemen veroorzaakt bij het uploaden na het opnieuw bewerken van de bestandsselectie voor keystore en certificaten

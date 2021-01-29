@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.util.List;
+
 import delit.libs.core.util.Logging;
 
 /**
@@ -32,7 +34,7 @@ public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> {
     }
 
     @Override
-    protected void sortItems() {
+    protected void sortItems(List<GalleryItem> items) {
         throw new UnsupportedOperationException("cannot sort the items");
     }
 

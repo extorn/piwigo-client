@@ -31,61 +31,63 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends ViewPager, SIF extends SlideshowItemFragment<SIF,FUIH,ResourceItem>,FUIH extends FragmentUIHelper<FUIH,SIF>> extends MyFragmentRecyclerPagerAdapter<SIF, VP> {
 
     private static final String TAG = "GalleryItemAdapter";
-    private final List<Integer> galleryResourceItems;
+    private final List<Integer> galleryResourceItemsFullGalleryIdx;
     private boolean shouldShowVideos;
-    private ResourceContainer<T, GalleryItem> gallery;
-    private Class<? extends ViewModelContainer> galleryModelClass;
+    private final ResourceContainer<T, GalleryItem> gallery;
+    private final Class<? extends ViewModelContainer> galleryModelClass;
     private HashMap<Long, Integer> cachedItemPositions; // id of item, against Slideshow item's position in slideshow pager
 
-    public GalleryItemAdapter(Class<? extends ViewModelContainer> galleryModelClass, ResourceContainer<T, GalleryItem> gallery, boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
+    public GalleryItemAdapter(Class<? extends ViewModelContainer> galleryModelClass, ResourceContainer<T, GalleryItem> gallery, boolean shouldShowVideos, int showGalleryItemIdx, FragmentManager fm) {
         super(fm);
         this.galleryModelClass = galleryModelClass;
         this.gallery = gallery;
-        galleryResourceItems = new ArrayList<>(gallery.getResourcesCount());
+        galleryResourceItemsFullGalleryIdx = new ArrayList<>(gallery.getResourcesCount());
         this.shouldShowVideos = shouldShowVideos;
-        addResourcesToIndex(0, gallery.getItems().size(), selectedItem); // use get items.size to ignore issues when hide
+        int firstGalleryIdxToImport = 0;
+        addResourcesToIndex(firstGalleryIdxToImport, gallery.getResourcesCount() - firstGalleryIdxToImport, showGalleryItemIdx); // use get items.size to ignore issues when hide
     }
 
-    private void addResourcesToIndex(int fromIdx, int items, int selectedItem) {
-        int toIndex = fromIdx;
-        if (fromIdx == 0) {
+    private void addResourcesToIndex(int firstGalleryIdxToImport, int itemsToAdd, int selectedItem) {
+        int toIndex = itemsToAdd - 1 - firstGalleryIdxToImport;
+        if (firstGalleryIdxToImport == 0) {
             // need to reload all items.
-            galleryResourceItems.clear();
-            toIndex += gallery.getItemCount();
+            galleryResourceItemsFullGalleryIdx.clear();
         }
 
-        for (int i = fromIdx; i < toIndex; i++) {
-            GalleryItem currentItem = gallery.getItemByIdx(i);
+        int resourcesScanned = 0;
+        for (int rawGalleryIdx = firstGalleryIdxToImport; rawGalleryIdx <= toIndex; rawGalleryIdx++) {
+            GalleryItem currentItem = gallery.getItemByIdx(rawGalleryIdx);
             if (!(currentItem instanceof ResourceItem)) {
-//                if (gallery.getItemCount() < items) {
-//                    toIndex++;
-//                }
                 continue;
             }
-            if (!shouldShowVideos && currentItem instanceof VideoResourceItem && i != selectedItem) {
+            resourcesScanned++;
+            if (!shouldShowVideos && currentItem instanceof VideoResourceItem && rawGalleryIdx != selectedItem) {
                 continue;
             }
-            galleryResourceItems.add(i);
+            galleryResourceItemsFullGalleryIdx.add(rawGalleryIdx);
+            if(resourcesScanned == itemsToAdd) {
+                break;
+            }
         }
         if (cachedItemPositions == null) {
-            cachedItemPositions = new HashMap<>(galleryResourceItems.size());
+            cachedItemPositions = new HashMap<>(galleryResourceItemsFullGalleryIdx.size());
         }
     }
 
 
-    public int getRawGalleryItemPosition(int slideshowPosition) {
-        return galleryResourceItems.get(slideshowPosition);
+    public int getFullGalleryItemIdxFromSlideshowIdx(int slideshowPosition) {
+        return galleryResourceItemsFullGalleryIdx.get(slideshowPosition);
     }
 
 
     @Override
     public int getItemPosition(@NonNull Object item) {
-        ResourceItem model = ((SlideshowItemFragment) item).getModel();
-        int fullGalleryIdx = gallery.getDisplayIdx(model);
+        ResourceItem model = ((SlideshowItemFragment<?,?,?>) item).getModel();
+        int fullGalleryIdx = gallery.getItemIdx(model);
         if(fullGalleryIdx < 0) {
             return POSITION_NONE;
         }
-        int newIndexPosition = galleryResourceItems.indexOf(fullGalleryIdx);
+        int newIndexPosition = galleryResourceItemsFullGalleryIdx.indexOf(fullGalleryIdx);
         if (newIndexPosition < 0) {
             return POSITION_NONE;
         }
@@ -99,28 +101,28 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
     @Override
     public int getCount() {
-        return galleryResourceItems.size();
+        return galleryResourceItemsFullGalleryIdx.size();
     }
 
     private int getTotalSlideshowItems() {
-        int ignoredResourceCount = gallery.getResourcesCount() - galleryResourceItems.size();
-        return gallery.isFullyLoaded() ? galleryResourceItems.size() : gallery.getImgResourceCount() - ignoredResourceCount;
+        int ignoredResourceCount = gallery.getResourcesCount() - galleryResourceItemsFullGalleryIdx.size();
+        return gallery.isFullyLoaded() ? galleryResourceItemsFullGalleryIdx.size() : gallery.getImgResourceCount() - ignoredResourceCount;
     }
 
     @Override
     public Class<? extends SIF> getFragmentType(int position) {
-        int slideshowIdx = galleryResourceItems.get(position);
+        int slideshowIdx = galleryResourceItemsFullGalleryIdx.get(position);
         GalleryItem galleryItem = null;
         try {
             galleryItem = gallery.getItemByIdx(slideshowIdx);
             if (galleryItem instanceof PictureResourceItem) {
                 if ("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
-                    return (Class) AlbumGifPictureItemFragment.class;
+                    return (Class<? extends SIF>)(Class) AlbumGifPictureItemFragment.class;
                 } else {
-                    return (Class) AlbumPictureItemFragment.class;
+                    return (Class<? extends SIF>)(Class) AlbumPictureItemFragment.class;
                 }
             } else if (galleryItem instanceof VideoResourceItem) {
-                return (Class) AlbumVideoItemFragment.class;
+                return (Class<? extends SIF>)(Class) AlbumVideoItemFragment.class;
             }
             //TODO check what causes this - probably deleting all items and trying to show a header!
             throw new IllegalArgumentException("Unsupported slideshow item type at position " + position + "(" + galleryItem + " " + galleryItem.getClass().getName() + ")");
@@ -137,23 +139,23 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
             throw new RuntimeException("unsupported gallery item.");
         }
 
-        GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
+        GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItemsFullGalleryIdx.get(position));
         int totalSlideshowItems = getTotalSlideshowItems();
         if (galleryItem instanceof PictureResourceItem) {
-            Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItems.size(), totalSlideshowItems);
+            Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems);
             item.setArguments(b);
         } else if (galleryItem instanceof VideoResourceItem) {
-            Bundle args = AbstractAlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItems.size(), totalSlideshowItems, false);
+            Bundle args = AbstractAlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItemsFullGalleryIdx.size(), totalSlideshowItems, false);
             item.setArguments(args);
         }
         return item;
     }
 
-    public int getSlideshowIndex(int rawCurrentGalleryItemPosition) {
-        int idx = galleryResourceItems.indexOf(rawCurrentGalleryItemPosition);
+    public int getSlideshowIndexUsingFullGalleryIdx(int itemFullGalleryIdx) {
+        int idx = galleryResourceItemsFullGalleryIdx.indexOf(itemFullGalleryIdx);
         if (idx < 0) {
-            Logging.log(Log.WARN, TAG, String.format(Locale.getDefault(), "Slideshow does not contain album item with index position (%1$d) (only have %2$d items available) - probably deleted it - will show first available.", rawCurrentGalleryItemPosition, galleryResourceItems.size()));
-            if(galleryResourceItems.size() > 0) {
+            Logging.log(Log.WARN, TAG, String.format(Locale.getDefault(), "Slideshow does not contain album item with index position (%1$d) (only have %2$d items available) - probably deleted it - will show first available.", itemFullGalleryIdx, galleryResourceItemsFullGalleryIdx.size()));
+            if(galleryResourceItemsFullGalleryIdx.size() > 0) {
                 return 0;
             }
             if (gallery.getItemCount() == 0) {
@@ -171,7 +173,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        SlideshowItemFragment selectedPage = getActiveFragment(position);
+        SIF selectedPage = getActiveFragment(position);
         int pagerIndex = -1;
         if (selectedPage != null) {
             pagerIndex = selectedPage.getPagerIndex();
@@ -187,18 +189,27 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
     }
 
     public GalleryItem getItemByPagerPosition(int position) {
-        return gallery.getItemByIdx(galleryResourceItems.get(position));
+        return gallery.getItemByIdx(galleryResourceItemsFullGalleryIdx.get(position));
     }
 
     private void deleteItem(int adapterItemIdx) {
         if (adapterItemIdx >= 0) {
-            int itemFullGalleryIdx = getRawGalleryItemPosition(adapterItemIdx);
+            int itemFullGalleryIdx = getFullGalleryItemIdxFromSlideshowIdx(adapterItemIdx);
             // remove the item from the list of items in the slideshow.
-            galleryResourceItems.remove(itemFullGalleryIdx);
+            int expectedFullGalleryIdx = galleryResourceItemsFullGalleryIdx.remove(adapterItemIdx);
+            if(itemFullGalleryIdx != expectedFullGalleryIdx) {
+                Logging.log(Log.ERROR, TAG, "Cached full gallery idxs is out of sync with actual values when starting item delete");
+            }
 
             // presume that the parent gallery has also been updated and adjust all items down one.
-            for(int i = itemFullGalleryIdx; i < galleryResourceItems.size(); i++) {
-                galleryResourceItems.set(i, galleryResourceItems.get(i)-1);
+            int fromIdx = adapterItemIdx;
+            int toIdx = galleryResourceItemsFullGalleryIdx.size() -1;
+            if(gallery.isRetrieveItemsInReverseOrder()) {
+                fromIdx = 0;
+                toIdx = adapterItemIdx-1;
+            }
+            for(int i = fromIdx; i <= toIdx; i++) {
+                galleryResourceItemsFullGalleryIdx.set(i, galleryResourceItemsFullGalleryIdx.get(i)-1);
             }
             // now request a rebuild of the slideshow pages
             onDeleteItem(getContainer(), adapterItemIdx);
@@ -213,7 +224,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
     @Override
     public void notifyDataSetChanged() {
-        EventBus.getDefault().post(new SlideshowSizeUpdateEvent(galleryResourceItems.size(), getTotalSlideshowItems()));
+        EventBus.getDefault().post(new SlideshowSizeUpdateEvent(galleryResourceItemsFullGalleryIdx.size(), getTotalSlideshowItems()));
         super.notifyDataSetChanged();
     }
 
@@ -229,7 +240,7 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, VP extends 
 
     public boolean isOutOfDate() {
         try {
-            int maxAlbumIdxInSlideshow = galleryResourceItems.get(galleryResourceItems.size() - 1);
+            int maxAlbumIdxInSlideshow = galleryResourceItemsFullGalleryIdx.get(galleryResourceItemsFullGalleryIdx.size() - 1);
             if (maxAlbumIdxInSlideshow > gallery.getItemCount() - 1) {
                 return true;
             }

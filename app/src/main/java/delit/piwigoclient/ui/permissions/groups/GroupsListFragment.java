@@ -183,7 +183,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
                 loadGroupsPage(pageToLoad);
             }
         };
-        scrollListener.configure(groupsModel.getPagesLoaded(), groupsModel.getItemCount());
+        scrollListener.configure(groupsModel.getPagesLoadedIdxToSizeMap(), groupsModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;
@@ -218,7 +218,7 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
     @Override
     public void onResume() {
         super.onResume();
-        if (groupsModel.getPagesLoaded() == 0 && viewAdapter != null) {
+        if (groupsModel.getPagesLoadedIdxToSizeMap() == 0 && viewAdapter != null) {
             viewAdapter.notifyDataSetChanged();
             loadGroupsPage(0);
         }
@@ -311,7 +311,6 @@ public class GroupsListFragment<F extends GroupsListFragment<F,FUIH>, FUIH exten
     protected void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
-            groupsModel.recordPageLoadSucceeded(response.getMessageId());
             retryActionButton.hide();
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());

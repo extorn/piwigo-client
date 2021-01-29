@@ -21,7 +21,7 @@
 
     
 
-    <string-array name="preference_album_subalbum_sort_order_items">
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
         <item>Défaut</item>
         <item>Nom de l\'album A-Z</item>
         <item>Dernière mise à jour</item>
@@ -34,7 +34,7 @@
     </string-array>
 
 
-    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Défaut</item>
         <item>adapter à la taille de l\'écran</item>
         <item>agrandir et recadrer pour s\'adapter à l\'écran</item>
@@ -43,7 +43,7 @@
 
     
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array">
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
         <item>meilleur ajustement</item>
         <item>carré</item>
         <item>pouce</item>
@@ -59,7 +59,7 @@
 
     
 
-    <string-array name="preference_gallery_item_thumbnail_size_array">
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>carré</item>
         <item>pouce</item>
         <item>2petit</item>
@@ -68,7 +68,7 @@
     </string-array>
 
     
-    <string-array name="preference_gallery_sort_order_entries">
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
         <item>Valeur par défaut du serveur</item>
         <item>ID de ressource</item>
         <item>Nom de fichier de la ressource</item>
@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.105</item>
+        <item>"Correction d\'un bug:
+             - Réécriture de l\'album, du tag et du code de tri favori car il était criblé de bugs
+                 : Si quelque chose dans ce domaine ne fonctionne pas comme prévu, veuillez me le faire savoir.
+                 : Cela devrait résoudre les plantages qui se produisaient sur la page du diaporama
+                 Changements:
+             - Nouvelle préférence pour permettre l\'inversion indépendante de l\'ordre de tri des albums enfants et des ressources"</item>
         <item>1.4.0.104</item>
         <item>"Correction d\'un bug:
                  - Problèmes provoqués lors du téléchargement après avoir retravaillé la sélection de fichiers pour le keystore et les certificats

@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.BoolRes;
+import androidx.annotation.IntegerRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.libs.core.util.Logging;
@@ -102,6 +105,48 @@ public abstract class PreferenceMigrator implements Comparable<PreferenceMigrato
                 });
             }
         }
+    }
+
+    public boolean rekeyBooleanPref(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, String fromOldKey, @StringRes int toNewKey, @BoolRes int defaultValRes) {
+        boolean defaultVal = context.getResources().getBoolean(defaultValRes);
+        if (prefs.contains(fromOldKey)) {
+            // this is the old generic preference, now split into two
+            boolean val = prefs.getBoolean(fromOldKey, defaultVal);
+            editor.remove(fromOldKey);
+            if(val != defaultVal) {
+                editor.putBoolean(context.getString(toNewKey), val);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean rekeyIntPref(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, String fromOldKey, @StringRes int toNewKey, @IntegerRes int defaultValRes) {
+        int defaultVal = context.getResources().getInteger(defaultValRes);
+        if (prefs.contains(fromOldKey)) {
+            // this is the old generic preference, now split into two
+            int val = prefs.getInt(fromOldKey, defaultVal);
+            editor.remove(fromOldKey);
+            if(val != defaultVal) {
+                editor.putInt(context.getString(toNewKey), val);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean rekeyStringPref(Context context, SharedPreferences prefs, SharedPreferences.Editor editor, String fromOldKey, @StringRes int toNewKey, @StringRes int defaultValRes) {
+        String defaultVal = context.getString(defaultValRes);
+        if (prefs.contains(fromOldKey)) {
+            // this is the old generic preference, now split into two
+            String val = prefs.getString(fromOldKey, defaultVal);
+            editor.remove(fromOldKey);
+            if(!Objects.equals(val,defaultVal)) {
+                editor.putString(context.getString(toNewKey), val);
+            }
+            return true;
+        }
+        return false;
     }
 
     protected interface ConnectionPreferenceUpgradeAction {

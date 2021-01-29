@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -795,7 +796,7 @@ public class UserFragment<F extends UserFragment<F,FUIH>, FUIH extends FragmentU
             Logging.log(Log.ERROR, getTag(), String.format("Rxd %1$s groups but asked for %2$s", user.getGroups().size(), response.getGroups().size()));
             throw new RuntimeException("error in group retrieval");
         }
-        currentGroupMembership = response.getGroups();
+        currentGroupMembership = new LinkedHashSet<>(response.getGroups());
         fillGroupMembershipField();
     }
 

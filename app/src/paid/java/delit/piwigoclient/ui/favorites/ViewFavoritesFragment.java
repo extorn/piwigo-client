@@ -338,7 +338,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
                 loadAlbumResourcesPage(pageToLoad);
             }
         };
-        scrollListener.configure(favoritesModel.getPagesLoaded(), favoritesModel.getItemCount());
+        scrollListener.configure(favoritesModel.getPagesLoadedIdxToSizeMap(), favoritesModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
     }
 
@@ -792,6 +792,7 @@ public class ViewFavoritesFragment<F extends ViewFavoritesFragment<F,FUIH>,FUIH 
     void onLoadFavoritesFailure(long messageId) {
         String failedCall = loadingMessageIds.get(messageId);
         synchronized (itemsToLoad) {
+            favoritesModel.recordPageLoadFailed(messageId);
             itemsToLoad.add(failedCall);
             emptyFavoritesLabel.setText(R.string.favorites_content_load_failed_text);
             if (itemsToLoad.size() > 0) {

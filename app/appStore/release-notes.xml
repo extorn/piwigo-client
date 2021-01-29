@@ -1,70 +1,80 @@
 <en-GB>
 Bugfix:
-- Problems caused in upload after re-working the file selection for keystore and certificates
-: Thanks for your patience, android file permissions management is tricky
-- delete of albums in root now always available on app load if appropriate
-- items can now be selected by clicking anywhere not just in the checkbox
+- Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs
+: If something in this area now doesn't work as you expect, please let me know.
+: This should solve crashes that were occurring on the slideshow page
+Changes:
+- New preference to allow independent sort order reversal of child albums and resources
 </en-GB>
 <cs-CZ>
 Oprava chyby:
-- Problémy způsobené při nahrávání po přepracování výběru souborů pro úložiště klíčů a certifikáty
-: Děkujeme za trpělivost, správa oprávnění souborů Android je složitá
-- mazání alb v kořenovém adresáři je nyní v případě potřeby vždy k dispozici při načtení aplikace
-- položky lze nyní vybrat kliknutím kdekoli nejen do zaškrtávacího políčka
+- Přepište album, značku a oblíbený třídicí kód, protože byl plný chyb
+: Pokud nyní něco v této oblasti nefunguje tak, jak očekáváte, dejte mi prosím vědět.
+: To by mělo vyřešit pády, ke kterým došlo na stránce prezentace
+Změny:
+- Nová preference umožňující nezávislé obrácení pořadí řazení podřízených alb a zdrojů
 </cs-CZ>
 <de-DE>
 Bug-Fix:
-- Probleme beim Hochladen nach Überarbeitung der Dateiauswahl für Keystore und Zertifikate
-: Vielen Dank für Ihre Geduld, die Verwaltung von Android-Dateiberechtigungen ist schwierig
-- Löschen von Alben im Stammverzeichnis jetzt bei Bedarf immer beim Laden der App verfügbar
-- Elemente können jetzt ausgewählt werden, indem Sie auf eine beliebige Stelle klicken, nicht nur in das Kontrollkästchen
+- Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war
+: Wenn etwas in diesem Bereich jetzt nicht wie erwartet funktioniert, lassen Sie es mich bitte wissen.
+: Dies sollte Abstürze beheben, die auf der Diashow-Seite aufgetreten sind
+Änderungen:
+- Neue Einstellung, um die unabhängige Umkehrung der Sortierreihenfolge von untergeordneten Alben und Ressourcen zu ermöglichen
 </de-DE>
 <es-ES>
 Arreglo del fallo:
-- Problemas causados en la carga después de volver a trabajar la selección de archivos para el almacén de claves y los certificados
-: Gracias por su paciencia, la gestión de permisos de archivos de Android es complicada
-- eliminar álbumes en la raíz ahora siempre está disponible en la carga de la aplicación si corresponde
-- los elementos ahora se pueden seleccionar haciendo clic en cualquier lugar, no solo en la casilla de verificación
+- Reescriba el álbum, la etiqueta y el código de clasificación favorito porque estaba plagado de errores
+: Si algo en esta área ahora no funciona como esperaba, hágamelo saber.
+: Esto debería resolver los bloqueos que estaban ocurriendo en la página de la presentación de diapositivas.
+Cambios:
+- Nueva preferencia para permitir la inversión de orden de clasificación independiente de álbumes y recursos secundarios
 </es-ES>
 <fr-FR>
 Correction d\'un bug:
-- Problèmes provoqués lors du téléchargement après avoir retravaillé la sélection de fichiers pour le keystore et les certificats
-: Merci pour votre patience, la gestion des autorisations de fichiers Android est délicate
-- suppression des albums à la racine désormais toujours disponible lors du chargement de l\'application, le cas échéant
-- les éléments peuvent maintenant être sélectionnés en cliquant n\'importe où et pas seulement dans la case à cocher
+- Réécriture de l\'album, du tag et du code de tri favori car il était criblé de bugs
+: Si quelque chose dans ce domaine ne fonctionne pas comme prévu, veuillez me le faire savoir.
+: Cela devrait résoudre les plantages qui se produisaient sur la page du diaporama
+Changements:
+- Nouvelle préférence pour permettre l\'inversion indépendante de l\'ordre de tri des albums enfants et des ressources
 </fr-FR>
 <it-IT>
 Risoluzione del problema:
-- Problemi causati durante il caricamento dopo aver rielaborato la selezione dei file per keystore e certificati
-: Grazie per la pazienza, la gestione delle autorizzazioni dei file Android è complicata
-- eliminazione degli album in root ora sempre disponibile al caricamento dell\'app, se appropriato
-- Gli elementi ora possono essere selezionati facendo clic in un punto qualsiasi non solo nella casella di controllo
+- Riscrittura dell\'album, tag e codice di ordinamento preferito perché era pieno di bug
+: Se qualcosa in quest\'area ora non funziona come previsto, fammelo sapere.
+: Questo dovrebbe risolvere i crash che si stavano verificando nella pagina della presentazione
+I cambiamenti:
+- Nuova preferenza per consentire l\'inversione indipendente dell\'ordinamento di album e risorse secondari
 </it-IT>
 <ja-JP>
 バグ修正：
--キーストアと証明書のファイル選択をやり直した後のアップロードで発生する問題
-：今しばらくお待ちください。Androidファイルのアクセス許可の管理には注意が必要です。
--必要に応じて、ルート内のアルバムの削除がアプリのロード時に常に利用可能になりました
--チェックボックスだけでなく、任意の場所をクリックしてアイテムを選択できるようになりました
+-アルバム、タグ、お気に入りのソートコードがバグだらけだったので書き直しました
+：この領域の何かが期待どおりに機能しない場合は、お知らせください。
+：これにより、スライドショーページで発生していたクラッシュが解決されるはずです。
+変更点：
+-子アルバムとリソースの独立した並べ替え順序の反転を許可する新しい設定
 </ja-JP>
 <nl-NL>
 Bugfix:
-- Problemen veroorzaakt bij het uploaden na het opnieuw bewerken van de bestandsselectie voor keystore en certificaten
-: Bedankt voor uw geduld, het beheer van Android-bestandsrechten is lastig
-- het verwijderen van albums in de root is nu altijd beschikbaar bij het laden van de app, indien van toepassing
-- items kunnen nu worden geselecteerd door ergens te klikken, niet alleen in het selectievakje
+- Herschrijf het album, de tag en de favoriete sorteercode omdat deze vol zat met bugs
+: Als iets op dit gebied nu niet werkt zoals u verwacht, laat het me dan weten.
+: Dit zou crashes moeten oplossen die optraden op de diavoorstellingspagina
+Veranderingen:
+- Nieuwe voorkeur om onafhankelijke sorteervolgorde omkering van onderliggende albums en bronnen mogelijk te maken
 </nl-NL>
 <ru-RU>
 Исправлена ошибка:
-- Проблемы, возникшие при загрузке после повторной обработки выбора файлов для хранилища ключей и сертификатов
-: Спасибо за терпение, управление разрешениями файлов Android - сложная задача.
-- удаление альбомов в корне теперь всегда доступно при загрузке приложения, если это необходимо
-- теперь элементы можно выбирать, щелкая в любом месте, а не только в поле флажка
+- Перепишите альбом, тег и любимый код сортировки, потому что он был пронизан ошибками
+: Если что-то в этой области сейчас работает не так, как вы ожидали, сообщите мне.
+: Это должно устранить сбои, которые происходили на странице слайд-шоу.
+Изменения:
+- Новое предпочтение, позволяющее независимое изменение порядка сортировки дочерних альбомов и ресурсов.
 </ru-RU>
 <zh-CN>
 错误修正：
--重新处理密钥库和证书的文件选择后，在上传中引起的问题
-：感谢您的耐心等待，Android文件权限管理非常棘手
--删除根目录中的相册现在在适当的情况下始终可在应用加载时使用
--现在可以通过单击复选框中的任意位置来选择项目
+-重写专辑，标签和喜欢的排序代码，因为它充满了错误
+：如果此区域的某些内容现在无法按预期工作，请告诉我。
+：这应该可以解决幻灯片页面上发生的崩溃
+变化：
+-新的首选项允许子相册和资源的独立排序顺序反转
 </zh-CN>

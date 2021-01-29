@@ -138,7 +138,7 @@ public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FU
                 loadUsernamesPage(pageToLoad);
             }
         };
-        scrollListener.configure(usernamesModel.getPagesLoaded(), usernamesModel.getItemCount());
+        scrollListener.configure(usernamesModel.getPagesLoadedIdxToSizeMap(), usernamesModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
 
         return v;
@@ -260,10 +260,9 @@ public class UsernameSelectFragment<F extends UsernameSelectFragment<F,FUIH>, FU
     protected void onUsernamesLoaded(final UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
         usernamesModel.acquirePageLoadLock();
         try {
-            usernamesModel.recordPageLoadSucceeded(response.getMessageId());
             if (response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
-                int firstIdxAdded = usernamesModel.addItemPage(usernamesModel.getPagesLoaded(), response.getPageSize(), response.getUsernames());
+                int firstIdxAdded = usernamesModel.addItemPage(usernamesModel.getPagesLoadedIdxToSizeMap(), response.getPageSize(), response.getUsernames());
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
                 if (usernamesModel.hasNoFailedPageLoads()) {
                     onListItemLoadSuccess();

@@ -258,6 +258,14 @@ public class ParcelUtils {
         return dest;
     }
 
+    public static <S,T,V extends Map<S, T>> V readMap(Parcel in) {
+        return readMap(in, null, null);
+    }
+
+    public static <S,T,V extends Map<S, T>> V readMap(Parcel in, V dest) {
+        return readMap(in, dest, null);
+    }
+
     public static <S, T> HashMap<S,T> readMap(Parcel in, ClassLoader loader) {
         return readMap(in, null, loader);
     }

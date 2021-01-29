@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Orden de clasificación de álbumes</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">Orden de clasificación de álbumes secundarios</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">Orden de clasificación de álbumes secundarios</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Orden inverso de álbumes</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Cuando está habilitado, invierte el orden de clasificación seleccionado de álbumes</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Invertir orden de clasificación del álbum</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Cuando está habilitado, invierte el orden de clasificación seleccionado de los recursos del álbum</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Orden de clasificación de recursos del álbum</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Invertir orden de clasificación de recursos del álbum</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Cuando está habilitado, invierte el orden de clasificación seleccionado de los recursos del álbum</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">Identificador único para imágenes</string>

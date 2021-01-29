@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Albumsorteervolgorde</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">Sorteervolgorde van onderliggende albums</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">Sorteervolgorde van onderliggende albums</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Keer de volgorde van albums om</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Indien ingeschakeld, keert u de geselecteerde sorteervolgorde van albums om</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Keer de sorteervolgorde van het album om</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Indien ingeschakeld, keert u de geselecteerde sorteervolgorde van albumbronnen om</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Sorteervolgorde van albumbronnen</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Keer de sorteervolgorde van de albumbronnen om</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Indien ingeschakeld, keert u de geselecteerde sorteervolgorde van albumbronnen om</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">Unieke identificatie voor afbeeldingen</string>

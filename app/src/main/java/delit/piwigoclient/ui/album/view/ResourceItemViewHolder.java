@@ -8,13 +8,14 @@ import androidx.appcompat.widget.AppCompatImageView;
 import com.google.android.exoplayer2.util.MimeTypes;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 import static android.view.View.GONE;
 
-public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL,T, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, T extends ResourceItem, RC extends PiwigoAlbum<T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
+public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL,T, RC>, LVA extends AlbumItemRecyclerViewAdapter<LVA, T, MSL, VH, RC>, MSL extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter<MSL,LVA,VH,RC,T>, T extends ResourceItem, RC extends PiwigoAlbum<CategoryItem,T>> extends AlbumItemViewHolder<VH, LVA, T, MSL, RC> {
     public AppCompatImageView mTypeIndicatorImg;
     public AppCompatCheckBox checkBox;
 

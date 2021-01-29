@@ -21,7 +21,7 @@
 
     
 
-    <string-array name="preference_album_subalbum_sort_order_items">
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
         <item>Defecto</item>
         <item>Nombre del álbum A-Z</item>
         <item>Última actualización</item>
@@ -34,7 +34,7 @@
     </string-array>
 
 
-    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Defecto</item>
         <item>ajustar al tamaño de la pantalla</item>
         <item>agrandar y recortar para ajustar la pantalla</item>
@@ -43,7 +43,7 @@
 
     
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array">
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
         <item>mejor ajuste</item>
         <item>cuadrado</item>
         <item>pulgar</item>
@@ -59,7 +59,7 @@
 
     
 
-    <string-array name="preference_gallery_item_thumbnail_size_array">
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>cuadrado</item>
         <item>pulgar</item>
         <item>2pequeña</item>
@@ -68,7 +68,7 @@
     </string-array>
 
     
-    <string-array name="preference_gallery_sort_order_entries">
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
         <item>Servidor predeterminado</item>
         <item>ID de recurso</item>
         <item>Nombre de archivo de recurso</item>
@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.105</item>
+        <item>"Arreglo del fallo:
+             - Reescriba el álbum, la etiqueta y el código de clasificación favorito porque estaba plagado de errores
+                 : Si algo en esta área ahora no funciona como esperaba, hágamelo saber.
+                 : Esto debería resolver los bloqueos que estaban ocurriendo en la página de la presentación de diapositivas.
+                 Cambios:
+             - Nueva preferencia para permitir la inversión de orden de clasificación independiente de álbumes y recursos secundarios"</item>
         <item>1.4.0.104</item>
         <item>"Arreglo del fallo:
                  - Problemas causados en la carga después de volver a trabajar la selección de archivos para el almacén de claves y los certificados

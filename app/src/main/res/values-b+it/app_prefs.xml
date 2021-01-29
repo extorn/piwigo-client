@@ -223,21 +223,25 @@
     
 
     
-    <string name="preference_gallery_sort_order_title">Ordinamento degli album</string>
-    <string name="preference_gallery_sort_order_summary">%1$s</string>
-    
-
-
-    
-    <string name="preference_album_subalbum_sort_order_title">Ordinamento degli album secondari</string>
-    <string name="preference_album_subalbum_sort_order_summary">%1$s</string>
+    <string name="preference_gallery_child_album_sort_order_title">Ordinamento degli album secondari</string>
+    <string name="preference_gallery_child_album_sort_order_summary">%1$s</string>
      
 
+    
+    <string name="preference_gallery_child_album_sort_order_inverted_title">Inverti l\'ordine degli album</string>
+    <string name="preference_gallery_child_album_sort_order_inverted_summary">Quando è abilitato, inverte l\'ordinamento selezionato degli album</string>
+    
 
     
-    <string name="preference_gallery_sort_order_inverted_title">Inverti l\'ordinamento degli album</string>
-    <string name="preference_gallery_sort_order_inverted_summary">Se abilitato, inverte l\'ordinamento selezionato delle risorse album</string>
+    <string name="preference_gallery_child_resource_sort_order_title">Ordinamento delle risorse dell\'album</string>
+    <string name="preference_gallery_child_resource_sort_order_summary">%1$s</string>
     
+
+    
+    <string name="preference_gallery_child_resource_sort_order_inverted_title">Inverti l\'ordinamento delle risorse dell\'album</string>
+    <string name="preference_gallery_child_resource_sort_order_inverted_summary">Se abilitato, inverte l\'ordinamento selezionato delle risorse album</string>
+    
+
 
     
     <string name="preference_gallery_unique_id_title">Identificatore univoco per le immagini</string>

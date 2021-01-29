@@ -126,7 +126,7 @@ public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH exte
             }
         };
 
-        scrollListener.configure(groupsModel.getPagesLoaded(), groupsModel.getItemCount());
+        scrollListener.configure(groupsModel.getPagesLoadedIdxToSizeMap(), groupsModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
 
         return v;
@@ -261,10 +261,9 @@ public class GroupSelectFragment<F extends GroupSelectFragment<F,FUIH>,FUIH exte
     protected void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
-            groupsModel.recordPageLoadSucceeded(response.getMessageId());
             if (response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
-                int firstIdxAdded = groupsModel.addItemPage(groupsModel.getPagesLoaded(), response.getPageSize(), response.getGroups());
+                int firstIdxAdded = groupsModel.addItemPage(groupsModel.getPagesLoadedIdxToSizeMap(), response.getPageSize(), response.getGroups());
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
                 if (groupsModel.hasNoFailedPageLoads()) {
                     onListItemLoadSuccess();

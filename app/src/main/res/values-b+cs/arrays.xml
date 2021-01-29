@@ -21,7 +21,7 @@
 
     
 
-    <string-array name="preference_album_subalbum_sort_order_items">
+    <string-array name="preference_gallery_child_album_sort_order_entry_text">
         <item>Výchozí</item>
         <item>Název alba A-Z</item>
         <item>Naposledy aktualizováno</item>
@@ -34,7 +34,7 @@
     </string-array>
 
 
-    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+    <string-array name="preference_gallery_slideshow_image_scaletype_entry_text">
         <item>Výchozí</item>
         <item>přizpůsobit velikosti obrazovky</item>
         <item>zvětšit a oříznout, aby se vešly na obrazovku</item>
@@ -43,7 +43,7 @@
 
     
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array">
+    <string-array name="preference_gallery_item_slideshow_image_size_entry_text">
         <item>nejvhodnější</item>
         <item>náměstí</item>
         <item>palec</item>
@@ -59,7 +59,7 @@
 
     
 
-    <string-array name="preference_gallery_item_thumbnail_size_array">
+    <string-array name="preference_gallery_item_thumbnail_size_entry_text">
         <item>náměstí</item>
         <item>palec</item>
         <item>2 malé</item>
@@ -68,7 +68,7 @@
     </string-array>
 
     
-    <string-array name="preference_gallery_sort_order_entries">
+    <string-array name="preference_gallery_child_resource_sort_order_entry_text">
         <item>Výchozí nastavení serveru</item>
         <item>ID zdroje</item>
         <item>Název souboru zdroje</item>
@@ -146,6 +146,13 @@
     </string-array>
     <string-array name="release_history" translatable="true">
         
+        <item>1.4.0.105</item>
+        <item>"Oprava chyby:
+             - Přepište album, značku a oblíbený třídicí kód, protože byl plný chyb
+                 : Pokud nyní něco v této oblasti nefunguje tak, jak očekáváte, dejte mi prosím vědět.
+                 : To by mělo vyřešit pády, ke kterým došlo na stránce prezentace
+                 Změny:
+             - Nová preference umožňující nezávislé obrácení pořadí řazení podřízených alb a zdrojů"</item>
         <item>1.4.0.104</item>
         <item>"Oprava chyby:
                  - Problémy způsobené při nahrávání po přepracování výběru souborů pro úložiště klíčů a certifikáty

@@ -185,7 +185,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
                 loadTagsPage(pageToLoad);
             }
         };
-        scrollListener.configure(tagsModel.getPagesLoaded(), tagsModel.getItemCount());
+        scrollListener.configure(tagsModel.getPagesLoadedIdxToSizeMap(), tagsModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
 
         setViewControlStatusBasedOnSessionState();
@@ -217,7 +217,7 @@ public class TagsListFragment<F extends TagsListFragment<F,FUIH>, FUIH extends F
     @Override
     public void onResume() {
         super.onResume();
-        if(tagsModel.getPagesLoaded() == 0 && viewAdapter != null) {
+        if(tagsModel.getPagesLoadedIdxToSizeMap() == 0 && viewAdapter != null) {
             viewAdapter.notifyDataSetChanged();
             loadTagsPage(0);
         }

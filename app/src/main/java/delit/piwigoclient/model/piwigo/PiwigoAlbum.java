@@ -5,7 +5,6 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -13,33 +12,32 @@ import java.util.List;
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
 import delit.libs.util.ObjectUtils;
-import delit.piwigoclient.BuildConfig;
 
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
  * <p>
  */
-public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<CategoryItem, T> implements Parcelable {
+public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends ResourceContainer<S, T> implements Parcelable {
 
     private static final String TAG = "PwgAlb";
-    public static final int DEFAULT_ALBUM_SORT_ORDER = 0;
-    public static final int NAME_ALBUM_SORT_ORDER = 1;
-    public static final int DATE_ALBUM_SORT_ORDER = 2;
-
-    private AlbumComparator itemComparator;
+    public static final int ALBUM_SORT_ORDER_DEFAULT = 0;
+    public static final int ALBUM_SORT_ORDER_NAME = 1;
+    public static final int ALBUM_SORT_ORDER_DATE = 2;
+    private final FullComparator comparator;
     private int subAlbumCount;
     private int spacerAlbums;
     private int bannerCount;
     private boolean hideAlbums;
+    private boolean retrieveAlbumsInReverseOrder;
 
-    public PiwigoAlbum(CategoryItem albumDetails) {
-        this(albumDetails, DEFAULT_ALBUM_SORT_ORDER);
+    public PiwigoAlbum(S albumDetails) {
+        this(albumDetails, ALBUM_SORT_ORDER_DEFAULT);
     }
 
-    public PiwigoAlbum(CategoryItem albumDetails, int albumSortOrder) {
+    public PiwigoAlbum(S albumDetails, int albumSortOrder) {
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
-        itemComparator = new AlbumComparator(albumSortOrder);
+        comparator = new FullComparator(albumSortOrder);
     }
     
     public PiwigoAlbum(Parcel in) {
@@ -47,14 +45,10 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
         subAlbumCount = in.readInt();
         spacerAlbums = in.readInt();
         bannerCount = in.readInt();
-        int albumSortOrder = in.readInt();
-        if(itemComparator == null) {
-            itemComparator = new AlbumComparator(albumSortOrder);
-        } else {
-            itemComparator.setAlbumSortOrder(albumSortOrder);
-        }
-        itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
+        comparator = new FullComparator(in.readInt());
+        comparator.setSortInReverseOrder(isRetrieveAlbumsInReverseOrder());
         hideAlbums = ParcelUtils.readBool(in);
+        retrieveAlbumsInReverseOrder = ParcelUtils.readBool(in);
     }
     
     @Override
@@ -62,14 +56,16 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
         return 0;
     }
 
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeInt(subAlbumCount);
         dest.writeInt(spacerAlbums);
         dest.writeInt(bannerCount);
-        dest.writeInt(itemComparator.albumSortOrder);
+        dest.writeInt(comparator.getAlbumSortOrder());
         ParcelUtils.writeBool(dest, hideAlbums);
+        ParcelUtils.writeBool(dest, retrieveAlbumsInReverseOrder);
     }
 
     @Override
@@ -82,60 +78,15 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
     }
 
     public boolean setAlbumSortOrder(int albumSortOrder) {
-        if (albumSortOrder != itemComparator.getAlbumSortOrder()) {
-            itemComparator.setAlbumSortOrder(albumSortOrder);
+        if(comparator.getAlbumSortOrder() != albumSortOrder) {
             if(getItems().size() > 0) {
-                sortItems();
-                return true;
+                throw new IllegalStateException("Unable to change sort order once items are present");
+                //TODO perhaps replicate server sorting unless swapping to default.
             }
+            comparator.setAlbumSortOrder(albumSortOrder);
+            return true;
         }
         return false;
-    }
-
-    @Override
-    public int getDisplayIdx(T item) {
-        int rawIdx = super.getDisplayIdx(item);
-        if (hideAlbums) {
-            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
-            if (rawIdx > subAlbumCount + bannerOffset) {
-                rawIdx -= subAlbumCount;
-            }
-        }
-        return rawIdx;
-    }
-
-    @Override
-    public T getItemByIdx(final int idx) {
-        int adjustedIdx = idx;
-        if (hideAlbums) {
-            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
-            if (adjustedIdx > 0) {
-                adjustedIdx += subAlbumCount + spacerAlbums;
-            }
-        }
-        if (isRetrieveItemsInReverseOrder()) {
-            // albums should not be reversed as their ordering is static
-            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
-            if (adjustedIdx >= bannerOffset && adjustedIdx < bannerOffset + subAlbumCount + spacerAlbums) {
-                // retrieving a category item - sub album or banner (heading / advert)
-                int newIdx = subAlbumCount + spacerAlbums + bannerOffset - adjustedIdx;
-                adjustedIdx = newIdx;
-            }
-        }
-        try {
-            return super.getItemByIdx(adjustedIdx);
-        } catch (RuntimeException e) {
-            String errorMsg = "error getting item at position " + idx + ", adjusted to " + adjustedIdx + ".\n"
-                    + " Is reverse order : " + isRetrieveItemsInReverseOrder() + ",\n"
-                    + "  model count: " + getItemCount() + ",\n"
-                    + " model resource count: " + getImgResourceCount() + ",\n"
-                    + " subAlbumCnt : " + subAlbumCount + ",\n"
-                    + " spacerAlbums : " + spacerAlbums + ",\n"
-                    + " hideAlbums : " + hideAlbums;
-            Logging.log(Log.ERROR,TAG,errorMsg);
-            Logging.recordException(e);
-            throw e;
-        }
     }
 
     public boolean isHideAlbums() {
@@ -147,92 +98,131 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
     }
 
     @Override
-    public void addItem(GalleryItem item) {
+    public void addItem(T item) {
+        if(item instanceof CategoryItem) {
+            addCategoryItem((CategoryItem) item);
+            return;
+        }
+        addNonCategoryItem(item);
+    }
+
+    private void addNonCategoryItem(T item) {
         boolean replaced = false;
-        if (containsItem((T) item)) {
-            remove((T) item);
+        if (containsItem(item)) {
+            remove(item);
             replaced = true;
         }
-        super.addItem((T) item);
+        super.addItem(item);
         if (item == GalleryItem.PICTURE_HEADING && !replaced) {
             bannerCount++;
         }
-        // ensure these are always placed above other resources.
-        sortItems();
-//        Log.d("Order", getItems().toString());
     }
 
     @Override
-    protected void sortItems() {
-        itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
-        Collections.sort(getItems(), itemComparator);
+    protected void postItemInsert(T item) {
+        if(comparator.getAlbumSortOrder() != ALBUM_SORT_ORDER_DEFAULT) {
+            super.postItemInsert(item);
+        }
     }
 
-    public void addItem(CategoryItem item) {
-        if (!containsItem((T) item)) {
+    @Override
+    protected void sortItems(List<T> items) {
+        Collections.sort(items, comparator);
+    }
+
+    @Override
+    protected int getPageIndexContaining(int resourceIdx) {
+        if(resourceIdx < getSubAlbumCount() + bannerCount) {
+            return -1; // only the resource items are paged
+        }
+        return super.getPageIndexContaining(resourceIdx);
+    }
+
+    private void addCategoryItem(CategoryItem item) {
+        boolean updateCounts = false;
+        if (containsItem((T) item)) {
+            remove((T) item);
+        } else {
+            updateCounts = true;
+        }
+        super.addItem((T) item);
+        if(updateCounts) {
             if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
                 subAlbumCount++;
             } else {
                 bannerCount++;
             }
-        } else {
-            remove((T) item);
         }
-        super.addItem((T) item);
-        // ensure these are always placed first.
-        sortItems();
-//        Log.d("Order", getItems().toString());
     }
 
-    public void addItemPage(int page, int pageSize, List<T> newItems) {
-        super.addItemPage(page, pageSize, newItems);
+    @Override
+    public int addItemPage(int page, int pageSize, List<T> newItems) {
+        int firstInsertPosition = super.addItemPage(page, pageSize, newItems);
         for (GalleryItem item : newItems) {
             if (item == CategoryItem.ALBUM_HEADING || item == GalleryItem.PICTURE_HEADING) {
                 bannerCount++;
             }
         }
-        if (isRetrieveItemsInReverseOrder()) {
-            // need to resort the list to bubble the albums back to the end!
-            sortItems();
-        }
+        return firstInsertPosition;
     }
 
-    protected int getPageInsertPosition(int page, int pageSize) {
-        int insertPosition = super.getPageInsertPosition(page, pageSize);
-
-        insertPosition += subAlbumCount;
-        insertPosition += spacerAlbums;
-
-        if (!isRetrieveItemsInReverseOrder()) {
-            insertPosition += bannerCount;
-        } else {
-            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
-            insertPosition += bannerOffset; // there will be one or two banners - one for pictures one for albums (ignoring adverts!)
+    @Override
+    protected int getItemInsertPosition(T item) {
+        if(item instanceof CategoryItem) {
+            int itemsToPreceedThisOne =  getSubAlbumCount();
+            if(itemsToPreceedThisOne > 0) {
+                if(isRetrieveItemsInReverseOrder()) {
+                    itemsToPreceedThisOne = 0;
+                }
+                itemsToPreceedThisOne += this.bannerCount > 0 ? 1 : 0;
+                return itemsToPreceedThisOne;
+            }
+            int offset = getResourcesCount() > 0 ? -1 : 0;
+            return (this.bannerCount + offset) > 0 ? 1 : 0; // insert at the start if no albums.
         }
-        return insertPosition;
+        // put it at the end of the resources.
+        return super.getItemInsertPosition(item);
+    }
+
+    @Override
+    protected int getPageInsertPosition(int page, int pageSize) {
+        int insertAtIdx = super.getPageInsertPosition(page, pageSize);
+        // ensure the pages of resources are placed after the albums
+        insertAtIdx += subAlbumCount;
+        insertAtIdx += spacerAlbums;
+        insertAtIdx += bannerCount;
+        return insertAtIdx;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PiwigoAlbum{");
+        sb.append("comparator=").append(comparator);
+        sb.append(", subAlbumCount=").append(subAlbumCount);
+        sb.append(", spacerAlbums=").append(spacerAlbums);
+        sb.append(", bannerCount=").append(bannerCount);
+        sb.append(", hideAlbums=").append(hideAlbums);
+        sb.append('}');
+        return sb.toString();
     }
 
     public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
         // remove all spacers
-        ArrayList<T> items = getItems();
-        while (items.remove(CategoryItem.BLANK)) {
-            if(BuildConfig.DEBUG) {
-                Log.d(TAG, "removing spacer album");
-            }
-            // loop will exit once there are no more items to remove
+        boolean removed = removeAll(Collections.singletonList((T)CategoryItem.BLANK));
+        if(removed) {
+            Logging.log(Log.DEBUG, TAG, "removing spacer album");
         }
         spacerAlbums = spacerAlbumsNeeded;
         if (spacerAlbumsNeeded > 0) {
             // add correct number of spacers
             long blankId = CategoryItem.BLANK.getId();
             for (int i = 0; i < spacerAlbumsNeeded; i++) {
-                items.add((T)CategoryItem.BLANK.clone().withId(blankId++));
+                addItem((T)CategoryItem.BLANK.clone().withId(blankId++));
             }
-            // ensure spacers are always placed before images etc.
-            sortItems();
         }
     }
 
+    @Override
     public void clear() {
         super.clear();
         subAlbumCount = 0;
@@ -249,14 +239,68 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
         return subAlbumCount;
     }
 
-    private static class AlbumComparator implements Comparator<GalleryItem>, Serializable {
+    public boolean isRetrieveAlbumsInReverseOrder() {
+        return retrieveAlbumsInReverseOrder;
+    }
 
-        private static final long serialVersionUID = -6822471227339812339L;
+    public boolean setRetrieveChildAlbumsInReverseOrder(boolean retrieveAlbumsInReverseOrder) {
+        if(this.retrieveAlbumsInReverseOrder != retrieveAlbumsInReverseOrder) {
+            comparator.setSortInReverseOrder(retrieveAlbumsInReverseOrder);
+            this.retrieveAlbumsInReverseOrder = retrieveAlbumsInReverseOrder;
+            return true;
+        }
+        return false;
+    }
+
+    public static class FullComparator implements Comparator<GalleryItem>, Serializable {
+
+        private static final long serialVersionUID = 4330313592069147720L;
+        CategoryComparator categoryComparator;
+        ResourceComparator resourceComparator;
+
+        public FullComparator(int albumSortOrder) {
+            categoryComparator = new CategoryComparator(albumSortOrder);
+            resourceComparator = new ResourceComparator();
+        }
+
+        @Override
+        public int compare(GalleryItem o1, GalleryItem o2) {
+            int result = categoryComparator.compare(o1,o2);
+            if(result == 0 && o1 instanceof ResourceItem) {
+                // only compare if one is a resource item to avoid double testing of two categories
+                result = resourceComparator.compare(o1,o2);
+            }
+            return result;
+        }
+
+        private void setSortInReverseOrder(boolean reverseOrder) {
+            categoryComparator.setSortInReverseOrder(reverseOrder);
+        }
+
+        public int getAlbumSortOrder() {
+            return categoryComparator.getAlbumSortOrder();
+        }
+
+        public void setAlbumSortOrder(int albumSortOrder) {
+            categoryComparator.setAlbumSortOrder(albumSortOrder);
+        }
+    }
+
+    private static class CategoryComparator implements Comparator<GalleryItem>, Serializable {
+        private static final long serialVersionUID = -4017716137940864728L;
         private boolean sortInReverseOrder;
         private int albumSortOrder;
 
-        public AlbumComparator(int albumSortOrder) {
+        public CategoryComparator(int albumSortOrder) {
             this.albumSortOrder = albumSortOrder;
+        }
+
+
+        @Override
+        public Comparator<GalleryItem> reversed() {
+            CategoryComparator categoryComparator = new CategoryComparator(albumSortOrder);
+            categoryComparator.setSortInReverseOrder(true);
+            return categoryComparator;
         }
 
         public void setSortInReverseOrder(boolean sortInReverseOrder) {
@@ -273,65 +317,83 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
 
         @Override
         public int compare(GalleryItem o1, GalleryItem o2) {
-            if (sortInReverseOrder) {
-                return compareReverseOrdering(o1, o2);
-            } else {
-                return -compareReverseOrdering(o1, o2);
-            }
+            return compareFixingCategoryOrder(o1,o2);
         }
 
-        private int compareReverseOrdering(GalleryItem o1, GalleryItem o2) {
+        protected int compareFixingCategoryOrder(GalleryItem o1, GalleryItem o2) {
             boolean firstIsCategory = o1 instanceof CategoryItem;
             boolean secondIsCategory = o2 instanceof CategoryItem;
-
+            int autoReverse = sortInReverseOrder ? -1 : 1;
             if (firstIsCategory && secondIsCategory) {
                 if (o1 == CategoryItem.ALBUM_HEADING) {
-                    return 1; // push album heading to the end of albums
+                    return -1; // push album heading to the start of albums
                 } else if (o2 == CategoryItem.ALBUM_HEADING) {
-                    return -1; // push album heading to the end of albums
+                    return 1; // push album heading to the start of albums
                 } else {
                     if (CategoryItem.BLANK.equals(o1)) {
                         if (!CategoryItem.BLANK.equals(o2)) {
-                            return sortInReverseOrder ? 1 : -1;
+                            return -1;
                         } else {
-                            return 0;
+                            return 0; // avoid perpetual sorting of blank items
                         }
                     }
-                    int order;
                     switch (albumSortOrder) {
-                        case DATE_ALBUM_SORT_ORDER:
-                            order = ObjectUtils.compare(o1.getLastAltered(), o2.getLastAltered());
-                            return sortInReverseOrder ? -order : order; // internal album ordering is static
-                        case NAME_ALBUM_SORT_ORDER:
-                            order = o1.getName().compareToIgnoreCase(o2.getName());
-                            return sortInReverseOrder ? order : -order; // internal album ordering is static
-                        case DEFAULT_ALBUM_SORT_ORDER:
+                        case ALBUM_SORT_ORDER_DATE:
+                            // internal album ordering is static
+                            return autoReverse * ObjectUtils.compare(o1.getLastAltered(), o2.getLastAltered());
+                        case ALBUM_SORT_ORDER_NAME:
+                            // internal album ordering is static
+                            return autoReverse * o1.getName().compareToIgnoreCase(o2.getName());
+                        case ALBUM_SORT_ORDER_DEFAULT:
+                            return 0; // do nothing. we have to deal with this separately using the list.
                         default:
-                            return 0; // don't change the individual album order (we'll do this once they're all added)
+                            return autoReverse;
                     }
                 }
-            } else if (!firstIsCategory && !secondIsCategory) {
-                if (o1 == GalleryItem.PICTURE_HEADING) {
-                    return 1; // push pictures heading to the end of pictures
-                } else if (o2 == GalleryItem.PICTURE_HEADING) {
-                    return -1; // push pictures heading to the end of pictures
-                } else {
-                    return 0; // don't change the actual picture ordering
-                }
             } else if (firstIsCategory) {
-                return 1; // push categories to the very end
-            } else {
-                return -1; // push categories to the very end
+                return -1; // push categories to the start
+            } else if (secondIsCategory) {
+                return 1; // push categories to the start
             }
+            return 0; // don't affect the resource ordering
+        }
+    }
+
+    /**
+     * sorts resources relative to the categories and headings only.
+     * Does not change the internal resource sort order
+     */
+    private static class ResourceComparator implements Comparator<GalleryItem>, Serializable {
+
+        private static final long serialVersionUID = -263036600717170733L;
+
+        @Override
+        public int compare(GalleryItem o1, GalleryItem o2) {
+            return compareResources(o1,o2);
         }
 
+        public int compareResources(GalleryItem o1, GalleryItem o2) {
+            boolean firstIsCategory = o1 instanceof CategoryItem;
+            boolean secondIsCategory = o2 instanceof CategoryItem;
+            if (!firstIsCategory && !secondIsCategory) {
+                if (o1 == GalleryItem.PICTURE_HEADING) {
+                    return -1; // push pictures heading to the start of pictures
+                } else if (o2 == GalleryItem.PICTURE_HEADING) {
+                    return 1; // push pictures heading to the start of pictures
+                } else {
+                    return 0; // don't reorder pictures
+                }
+            } else if (firstIsCategory && !secondIsCategory) {
+                return -1; // push categories to the start
+            } else if (!firstIsCategory && secondIsCategory) {
+                return 1; // push categories to the start
+            }
+            return 0; // don't reorder resources
+        }
     }
 
     public boolean addMissingAlbums(List<CategoryItem> adminCategories) {
         boolean changed =  super.addMissingItems((List<? extends T>) adminCategories);
-        if(changed) {
-            sortItems();
-        }
         return changed;
     }
 
@@ -371,14 +433,15 @@ public class PiwigoAlbum<T extends GalleryItem> extends ResourceContainer<Catego
         }
         return null;
     }
-    public static final Parcelable.Creator<PiwigoAlbum<?>> CREATOR
-            = new Parcelable.Creator<PiwigoAlbum<?>>() {
-        public PiwigoAlbum<?> createFromParcel(Parcel in) {
+
+    public static final Creator<PiwigoAlbum<?,?>> CREATOR
+            = new Creator<PiwigoAlbum<?,?>>() {
+        public PiwigoAlbum<?,?> createFromParcel(Parcel in) {
             return new PiwigoAlbum<>(in);
         }
 
-        public PiwigoAlbum<?>[] newArray(int size) {
-            return new PiwigoAlbum<?>[size];
+        public PiwigoAlbum<?,?>[] newArray(int size) {
+            return new PiwigoAlbum<?,?>[size];
         }
     };
 }

@@ -175,7 +175,7 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
                 loadTagsPage(pageToLoad);
             }
         };
-        scrollListener.configure(tagsModel.getPagesLoaded(), tagsModel.getItemCount());
+        scrollListener.configure(tagsModel.getPagesLoadedIdxToSizeMap(), tagsModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
 
         return v;
@@ -445,9 +445,8 @@ public class TagSelectFragment<F extends TagSelectFragment<F,FUIH>, FUIH extends
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
         tagsModel.acquirePageLoadLock();
         try {
-            tagsModel.recordPageLoadSucceeded(response.getMessageId());
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
-            if(!isAdminPage && tagsModel.getPagesLoaded() == 0) {
+            if(!isAdminPage && tagsModel.getPagesLoadedIdxToSizeMap() == 0) {
                 boolean needToLoadAdminList = setTagsModelPageSourceCount();
                 if(needToLoadAdminList) {
                     loadTagsPage(response.getPage());

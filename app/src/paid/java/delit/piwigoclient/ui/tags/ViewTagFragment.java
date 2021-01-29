@@ -361,7 +361,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
                 loadAlbumResourcesPage(pageToLoad);
             }
         };
-        scrollListener.configure(tagModel.getPagesLoaded(), tagModel.getItemCount());
+        scrollListener.configure(tagModel.getPagesLoadedIdxToSizeMap(), tagModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
     }
 
@@ -824,6 +824,7 @@ public class ViewTagFragment<F extends ViewTagFragment<F,FUIH>, FUIH extends Fra
     protected void withUnexpectedPiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
         String failedCall = loadingMessageIds.get(response.getMessageId());
         synchronized (itemsToLoad) {
+            tagModel.recordPageLoadFailed(response.getMessageId());
             itemsToLoad.add(failedCall);
             emptyTagLabel.setText(R.string.tag_content_load_failed_text);
             if (itemsToLoad.size() > 0) {

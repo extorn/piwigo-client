@@ -182,7 +182,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
                 loadUsersPage(pageToLoad);
             }
         };
-        scrollListener.configure(usersModel.getPagesLoaded(), usersModel.getItemCount());
+        scrollListener.configure(usersModel.getPagesLoadedIdxToSizeMap(), usersModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;
@@ -204,7 +204,7 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     @Override
     public void onResume() {
         super.onResume();
-        if (usersModel.getPagesLoaded() == 0 && viewAdapter != null) {
+        if (usersModel.getPagesLoadedIdxToSizeMap() == 0 && viewAdapter != null) {
             viewAdapter.notifyDataSetChanged();
             loadUsersPage(0);
         }
@@ -299,7 +299,6 @@ public class UsersListFragment<F extends UsersListFragment<F,FUIH>, FUIH extends
     protected void onUsersLoaded(final UsersGetListResponseHandler.PiwigoGetUsersListResponse response) {
         usersModel.acquirePageLoadLock();
         try {
-            usersModel.recordPageLoadSucceeded(response.getMessageId());
             retryActionButton.hide();
             int firstIdxAdded = usersModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsers());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getUsers().size());

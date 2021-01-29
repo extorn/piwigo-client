@@ -304,7 +304,7 @@ public class GroupFragment<F extends GroupFragment<F,FUIH>, FUIH extends Fragmen
 
         @Override
         public boolean onSuccess(FUIH uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
-            HashSet<Group> groups = response.getGroups();
+            ArrayList<Group> groups = response.getGroups();
             F groupFragment = uiHelper.getParent();
             if(groups.isEmpty()) {
                 Logging.log(Log.INFO, TAG, "removing from activity as group not available any more");

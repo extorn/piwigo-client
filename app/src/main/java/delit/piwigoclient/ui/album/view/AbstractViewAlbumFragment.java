@@ -169,7 +169,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
 
     private static PiwigoAlbumAdminList adminOnlyServerCategoriesTree;
-    private PiwigoAlbum<GalleryItem> galleryModel;
+    private PiwigoAlbum<CategoryItem,GalleryItem> galleryModel;
     private HashSet<Long> userIdsInSelectedGroups;
     private List<CategoryItem> adminOnlyChildCategories;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
@@ -549,9 +549,17 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
         boolean sortOrderChanged;
         if (galleryModel != null) {
-            sortOrderChanged = galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, requireContext()));
-            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
-            sortOrderChanged &= galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+            int newSortOrder = AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, requireContext());
+            try {
+                sortOrderChanged = galleryModel.setAlbumSortOrder(newSortOrder);
+            } catch(IllegalStateException e) {
+                galleryModel.clear();
+                sortOrderChanged = galleryModel.setAlbumSortOrder(newSortOrder);
+            }
+            boolean invertResourceSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
+            sortOrderChanged &= galleryModel.setRetrieveItemsInReverseOrder(invertResourceSortOrder);
+            boolean invertChildAlbumSortOrder = AlbumViewPreferences.getAlbumChildAlbumSortOrderInverted(prefs, requireContext());
+            sortOrderChanged &= galleryModel.setRetrieveChildAlbumsInReverseOrder(invertChildAlbumSortOrder);
         } else {
             Logging.log(Log.WARN, getTag(), "Attempt to set album sort order but album model is still null");
         }
@@ -621,7 +629,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
 
 
         galleryListViewScrollListener = new AlbumScrollListener(gridLayoutMan);
-        galleryListViewScrollListener.configure(galleryModel.getPagesLoaded(), galleryModel.getItemCount());
+        galleryListViewScrollListener.configure(galleryModel.getPagesLoadedIdxToSizeMap(), galleryModel.getItemCount());
         galleryListView.addOnScrollListener(galleryListViewScrollListener);
 
         //display bottom sheet if needed
@@ -2046,9 +2054,6 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 }
             }
             ArrayList<GalleryItem> resources = response.getResources();
-//            if(invertSortOrder) {
-//                Collections.reverse(resources);
-//            }
             galleryModel.addItemPage(response.getPage(), response.getPageSize(), resources);
             DisplayUtils.runOnUiThread(()->viewAdapter.notifyDataSetChanged());
         }
@@ -2208,7 +2213,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             Logging.log(Log.WARN, TAG, "Attempt to reopen parent but is null");
             return null;
         }
-        PiwigoAlbum<GalleryItem> nextPiwigoAlbum = new ViewModelProvider(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
+        PiwigoAlbum<CategoryItem,GalleryItem> nextPiwigoAlbum = new ViewModelProvider(requireActivity()).get("" + albumDetails.getParentId(), PiwigoAlbumModel.class).getModel();
         if (nextPiwigoAlbum == null) {
             Logging.log(Log.WARN, TAG, "Attempt to reopen parent but parent is not available. Returning null");
             return null;
@@ -2309,7 +2314,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         }
     }
 
-    protected PiwigoAlbum<GalleryItem> getGalleryModel() {
+    protected PiwigoAlbum<CategoryItem, GalleryItem> getGalleryModel() {
         return galleryModel;
     }
 
@@ -2318,6 +2323,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
     }
 
     protected void onServerDataLoadFailed(long messageId) {
+
         String failedCall = loadingMessageIds.get(messageId);
         if (failedCall == null) {
             if (editingItemDetails) {
@@ -2341,6 +2347,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                 default:
                     // Could be 'C' or a number of current image page being loaded.
                     emptyGalleryLabel.setText(R.string.gallery_album_content_load_failed_text);
+                    galleryModel.recordPageLoadFailed(messageId);
                     break;
             }
             if (itemsToLoad.size() > 0) {
@@ -2936,7 +2943,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
                 F fragment = getUiHelper().getParent();
-                PiwigoAlbum<GalleryItem> galleryModel = fragment.getGalleryModel();
+                PiwigoAlbum<CategoryItem,GalleryItem> galleryModel = fragment.getGalleryModel();
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
             } else {
                 getUiHelper().getParent().onAlbumUpdateFinished();
@@ -3075,7 +3082,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
         BulkResourceActionData(Parcel in) {
             selectedItemIds = ParcelUtils.readLongSet(in);
             itemsUpdated = ParcelUtils.readLongSet(in);
-            itemsUpdating = ParcelUtils.readMap(in, null);
+            itemsUpdating = ParcelUtils.readMap(in);
             selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             resourceInfoAvailable = ParcelUtils.readBool(in);
             trackedMessageIds = ParcelUtils.readLongArrayList(in);

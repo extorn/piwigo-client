@@ -73,11 +73,11 @@ public class BaseAlbumViewPreferences {
     }
 
     public static String getResourceSortOrder(SharedPreferences prefs, Context context) {
-        return prefs.getString(context.getString(R.string.preference_gallery_sort_order_key), context.getString(R.string.preference_gallery_sort_order_default));
+        return prefs.getString(context.getString(R.string.preference_gallery_child_resource_sort_order_key), context.getString(R.string.preference_gallery_child_resource_sort_order_default));
     }
 
     public static boolean getResourceSortOrderInverted(SharedPreferences prefs, Context context) {
-        return prefs.getBoolean(context.getString(R.string.preference_gallery_sort_order_inverted_key), context.getResources().getBoolean(R.bool.preference_gallery_sort_order_inverted_default));
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_child_resource_sort_order_inverted_key), context.getResources().getBoolean(R.bool.preference_gallery_child_resource_sort_order_inverted_default));
     }
 
     public static int getResourceRequestPageSize(SharedPreferences prefs, Context context) {
@@ -101,9 +101,12 @@ public class BaseAlbumViewPreferences {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_transparent_extra_info_shadow_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_transparent_extra_info_shadow_default));
     }
 
+    public static boolean getAlbumChildAlbumSortOrderInverted(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_child_album_sort_order_inverted_key), context.getResources().getBoolean(R.bool.preference_gallery_child_album_sort_order_inverted_default));
+    }
 
     public static int getAlbumChildAlbumsSortOrder(SharedPreferences prefs, Context context) {
-        return prefs.getInt(context.getString(R.string.preference_album_subalbum_sort_order_key), context.getResources().getInteger(R.integer.preference_album_subalbum_sort_order_default));
+        return prefs.getInt(context.getString(R.string.preference_gallery_child_album_sort_order_key), context.getResources().getInteger(R.integer.preference_gallery_child_album_sort_order_default));
     }
 
     public static ImageView.ScaleType getSlideshowImageScalingType(SharedPreferences prefs, Context context) {

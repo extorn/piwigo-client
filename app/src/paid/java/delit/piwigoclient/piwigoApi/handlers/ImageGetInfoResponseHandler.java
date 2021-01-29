@@ -6,7 +6,8 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -36,8 +37,8 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
             ResourceItem resourceItem = super.parseAndProcessResourceData(image);
 
             JsonArray tagsElem = image.get("tags").getAsJsonArray();
-            HashSet<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsElem);
-            resourceItem.setTags(tags);
+            ArrayList<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsElem);
+            resourceItem.setTags(new LinkedHashSet<>(tags));
 
             Boolean isFavorite = null;
             JsonElement favoriteJsonElem = image.get("isFavorite");
