@@ -219,7 +219,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public int addItemPage(int page, /*int pages, */ int pageSize, List<T> itemsToAdd) {
         List<T> newItems = itemsToAdd;
         if(pageSize != newItems.size()) {
-            throw new IllegalArgumentException("Expected page size did not match number of items contained in page");
+            throw new IllegalArgumentException(String.format("Expected page size (%1$d) did not match number of items contained in page (%2$d) for page %3$d", pageSize, itemsToAdd.size(), page));
         }
         recordPageLoadSucceeded(page, newItems.size());
         newItems = prePageInsert(newItems);
