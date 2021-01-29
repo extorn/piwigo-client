@@ -11,10 +11,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
@@ -218,8 +220,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
      */
     public int addItemPage(int page, /*int pages, */ int pageSize, List<T> itemsToAdd) {
         List<T> newItems = itemsToAdd;
-        if(pageSize != newItems.size()) {
-            throw new IllegalArgumentException(String.format("Expected page size (%1$d) did not match number of items contained in page (%2$d) for page %3$d", pageSize, itemsToAdd.size(), page));
+        if(pageSize < newItems.size()) {
+            String errorMessage = String.format(Locale.UK, "Expected page size (%1$d) did not match number of items contained in page (%2$d) for page %3$d", pageSize, itemsToAdd.size(), page);
+            Logging.log(Log.ERROR, TAG, errorMessage);
+            throw new IllegalArgumentException(errorMessage);
         }
         recordPageLoadSucceeded(page, newItems.size());
         newItems = prePageInsert(newItems);
