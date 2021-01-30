@@ -59,7 +59,7 @@ public class PiwigoTagsTest {
         PiwigoTags tags = loadResourcePages(false);
         List<GalleryItem> originalOrder = new ArrayList<>(tags.getItems());
         tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
-        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, tags.getItems());
+        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, tags.getItems(), true, true);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class PiwigoTagsTest {
         PiwigoTags tags = loadResourcePages(true);
         List<GalleryItem> originalOrder = new ArrayList<>(tags.getItems());
         tags.setRetrieveItemsInReverseOrder(!tags.isRetrieveItemsInReverseOrder());
-        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, tags.getItems());
+        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, tags.getItems(),true, true);
     }
 
     private PiwigoTags loadResourcePages(boolean reversed) {

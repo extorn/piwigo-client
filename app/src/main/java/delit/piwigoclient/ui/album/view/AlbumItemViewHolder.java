@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 
+import delit.libs.core.util.Logging;
 import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
@@ -47,8 +48,12 @@ public abstract class AlbumItemViewHolder<VH extends AlbumItemViewHolder<VH,LVA,
 
     @Override
     public void fillValues(T newItem, boolean allowItemDeletion) {
-        setItem(newItem);
-        getItemActionListener().onFillValues();
+        try {
+            setItem(newItem);
+            getItemActionListener().onFillValues();
+        } catch(RuntimeException e) {
+            Logging.recordException(e);
+        }
     }
 
     protected void updateRecentlyViewedMarker(GalleryItem newItem) {

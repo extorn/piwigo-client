@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 
 import delit.libs.core.util.Logging;
 import delit.libs.ui.util.ParcelUtils;
@@ -340,6 +339,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     @Override
     public void addItem(T item) {
         int insertAtIdx = getItemInsertPosition(item);
+        addItem(insertAtIdx, item);
+    }
+
+    private void addItem(int insertAtIdx, T item) {
         updatePageLoadedCount(insertAtIdx -1, +1);
         items.add(insertAtIdx, item);
         sortedItems.add(insertAtIdx, item);
@@ -347,11 +350,27 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     protected int getItemInsertPosition(T item) {
-        return items.size();
+        if(isRetrieveItemsInReverseOrder()) {
+            return 0;
+        } else {
+            return items.size();
+        }
     }
 
     protected void postItemInsert(T item) {
         sortItems();
+    }
+
+    public boolean replace(T item, T newItem) {
+        int idx = items.indexOf(item);
+        if(idx >= 0) {
+            remove(idx);
+            addItem(idx, newItem);
+//            items.remove(idx);
+//            items.add(idx, newItem);
+            return true;
+        }
+        return false;
     }
 
     public T remove(int idx) {

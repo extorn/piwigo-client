@@ -7,6 +7,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.google.android.exoplayer2.util.MimeTypes;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -25,19 +26,23 @@ public class ResourceItemViewHolder<VH extends ResourceItemViewHolder<VH,LVA,MSL
 
     @Override
     public void fillValues(T newItem, boolean allowItemDeletion) {
-        super.fillValues(newItem, allowItemDeletion);
-        updateCheckableStatus();
-        checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener((VH)this));
+        try {
+            super.fillValues(newItem, allowItemDeletion);
+            updateRecentlyViewedMarker(newItem);
+            updateCheckableStatus();
+            checkBox.setOnCheckedChangeListener(parentAdapter.buildItemSelectionListener((VH) this));
 
-        if (!(newItem.getName() == null || newItem.getName().isEmpty()) && parentAdapter.getAdapterPrefs().isShowResourceNames()) {
-            mNameView.setVisibility(View.VISIBLE);
-            mNameView.setText(newItem.getName());
-        } else {
-            mNameView.setVisibility(GONE);
+            if (!(newItem.getName() == null || newItem.getName().isEmpty()) && parentAdapter.getAdapterPrefs().isShowResourceNames()) {
+                mNameView.setVisibility(View.VISIBLE);
+                mNameView.setText(newItem.getName());
+            } else {
+                mNameView.setVisibility(GONE);
+            }
+            fillResourceItemThumbnailValue(newItem);
+            setTypeIndicatorStatus(newItem);
+        } catch(RuntimeException e) {
+            Logging.recordException(e);
         }
-        fillResourceItemThumbnailValue(newItem);
-        setTypeIndicatorStatus(newItem);
-        updateRecentlyViewedMarker(newItem);
     }
 
     public void updateCheckableStatus() {

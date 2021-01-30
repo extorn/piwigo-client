@@ -175,7 +175,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     public boolean equals(Object other) {
         if(other instanceof CategoryItem) {
             CategoryItem otherItem = (CategoryItem) other;
-            return (otherItem.getId() == this.getId() && otherItem.isAdminCopy() == this.isAdminCopy) || BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName());
+            return (otherItem.getId() == this.getId() && otherItem.isAdminCopy() == this.isAdminCopy) || (BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName()));
         }
         return false;
     }

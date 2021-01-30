@@ -240,4 +240,8 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         fullPath.add(id);
         return fullPath;
     }
+
+    public boolean isFromServer() {
+        return id > 0;
+    }
 }

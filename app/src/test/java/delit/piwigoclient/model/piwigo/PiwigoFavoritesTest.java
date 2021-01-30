@@ -59,7 +59,7 @@ public class PiwigoFavoritesTest {
         PiwigoFavorites favs = loadResourcePages(false);
         List<GalleryItem> originalOrder = new ArrayList<>(favs.getItems());
         favs.setRetrieveItemsInReverseOrder(!favs.isRetrieveItemsInReverseOrder());
-        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, favs.getItems());
+        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, favs.getItems(), true, true);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class PiwigoFavoritesTest {
         PiwigoFavorites favs = loadResourcePages(true);
         List<GalleryItem> originalOrder = new ArrayList<>(favs.getItems());
         favs.setRetrieveItemsInReverseOrder(!favs.isRetrieveItemsInReverseOrder());
-        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, favs.getItems());
+        PiwigoResourceUtil.assertHasBeenReversed(originalOrder, favs.getItems(), true, true);
     }
 
     private PiwigoFavorites loadResourcePages(boolean reversed) {

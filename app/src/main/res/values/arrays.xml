@@ -252,10 +252,11 @@
         -->
         <item>1.4.0.105</item>
         <item>"Bugfix:
-            - Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs
-                : If something in this area now doesn't work as you expect, please let me know.
-                : This should solve crashes that were occurring on the slideshow page
-                Changes:
+                - Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs
+                    : If something in this area now doesn't work as you expect, please let me know.
+                    : This should solve crashes that were occurring on the slideshow page
+                - TODO! The recently altered yellow star icon wasn't appearing in some sort orders
+               Changes:
             - New preference to allow independent sort order reversal of child albums and resources"</item>
         <item>1.4.0.104</item>
         <item>"Bugfix:

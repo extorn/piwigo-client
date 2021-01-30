@@ -2000,7 +2000,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             }
         }
         long currentGalleryId = galleryModel.getContainerDetails().getId();
-        boolean itemsRemoved = false;
+        boolean itemsReplaced = false;
         boolean itemsAdded = false;
         boolean hasAlbumsAlready = galleryModel.getSubAlbumCount() > 0;
         for (CategoryItem item : response.getAlbums()) {
@@ -2010,13 +2010,14 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
                     // first try and remove it (will remove any admin copies)
                     try { // can't do an equality search since admin items aren't equal
                         GalleryItem existing = galleryModel.getItemById(item.getId());
-                        itemsRemoved = galleryModel.remove(existing);
+                        itemsReplaced = galleryModel.replace(existing, item);
                     } catch (IllegalArgumentException e) {
                         Logging.log(Log.DEBUG, TAG, "Item not found. Adapter size : %1$d", galleryModel.getSubAlbumCount());
                         // just means it isn't present - sink.
                     }
+                } else {
+                    galleryModel.addItem(item);
                 }
-                galleryModel.addItem(item);
                 itemsAdded = true;
             } else {
                 // copy the extra data across not retrieved by default.
@@ -2032,7 +2033,7 @@ public abstract class AbstractViewAlbumFragment<F extends AbstractViewAlbumFragm
             galleryModel.addMissingAlbums(adminOnlyChildCategories);
         }
         galleryModel.updateSpacerAlbumCount(albumsPerRow);
-        if(itemsRemoved) {
+        if(itemsReplaced) {
             // everything has changed including the admin -> default items.
             DisplayUtils.runOnUiThread(()->viewAdapter.notifyItemRangeChanged(0,viewAdapter.getItemCount()));
         } else if(itemsAdded) {

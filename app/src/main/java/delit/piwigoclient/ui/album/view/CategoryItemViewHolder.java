@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.album.view;
 import android.view.View;
 import android.widget.TextView;
 
+import delit.libs.core.util.Logging;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
@@ -28,47 +29,51 @@ public class CategoryItemViewHolder<VH extends CategoryItemViewHolder<VH, LVA, M
 
     @Override
     public void fillValues(T newItem, boolean allowItemDeletion) {
-        super.fillValues(newItem, allowItemDeletion);
-        updateRecentlyViewedMarker(newItem);
+        try {
+            super.fillValues(newItem, allowItemDeletion);
+            updateRecentlyViewedMarker(newItem);
 
-        if (CategoryItem.BLANK.equals(newItem)) {
-            itemView.setVisibility(View.INVISIBLE);
-            imageLoader.resetAll();
-            return;
-        } else {
-            itemView.setVisibility(View.VISIBLE);
-        }
+            if (CategoryItem.BLANK.equals(newItem)) {
+                itemView.setVisibility(View.INVISIBLE);
+                imageLoader.resetAll();
+                return;
+            } else {
+                itemView.setVisibility(View.VISIBLE);
+            }
 
-        if (newItem.getSubCategories() > 0) {
-            long totalPhotos = newItem.getTotalPhotos();
-            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, newItem.getSubCategories(), totalPhotos));
-        } else {
-            mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, newItem.getPhotoCount()));
-            mPhotoCountView.setSingleLine();
-        }
+            if (newItem.getSubCategories() > 0) {
+                long totalPhotos = newItem.getTotalPhotos();
+                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_subcategory_summary_text_pattern, newItem.getSubCategories(), totalPhotos));
+            } else {
+                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, newItem.getPhotoCount()));
+                mPhotoCountView.setSingleLine();
+            }
 
-        if (!(newItem.getName() == null || newItem.getName().isEmpty())) {
-            mNameView.setVisibility(View.VISIBLE);
-            mNameView.setText(newItem.getName());
-        } else {
-            mNameView.setVisibility(INVISIBLE);
-        }
+            if (!(newItem.getName() == null || newItem.getName().isEmpty())) {
+                mNameView.setVisibility(View.VISIBLE);
+                mNameView.setText(newItem.getName());
+            } else {
+                mNameView.setVisibility(INVISIBLE);
+            }
 
-        if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
-            mDescView.setVisibility(View.VISIBLE);
-            // support for the extended description plugin.
-            String desc = PiwigoUtils.getResourceDescriptionOutsideAlbum(newItem.getDescription());
-            mDescView.setText(PiwigoUtils.getSpannedHtmlText(desc));
-        } else {
-            mDescView.setVisibility(INVISIBLE);
-        }
+            if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
+                mDescView.setVisibility(View.VISIBLE);
+                // support for the extended description plugin.
+                String desc = PiwigoUtils.getResourceDescriptionOutsideAlbum(newItem.getDescription());
+                mDescView.setText(PiwigoUtils.getSpannedHtmlText(desc));
+            } else {
+                mDescView.setVisibility(INVISIBLE);
+            }
 
-        if (newItem.getThumbnailUrl() != null) {
-            configureLoadingBasicThumbnail(newItem);
-        } else {
-            configurePlaceholderThumbnail(newItem);
+            if (newItem.getThumbnailUrl() != null) {
+                configureLoadingBasicThumbnail(newItem);
+            } else {
+                configurePlaceholderThumbnail(newItem);
+            }
+            imageLoader.load();
+        } catch(RuntimeException e) {
+            Logging.recordException(e);
         }
-        imageLoader.load();
     }
 
     @Override

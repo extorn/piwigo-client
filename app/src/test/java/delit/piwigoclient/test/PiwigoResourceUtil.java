@@ -46,7 +46,7 @@ public class PiwigoResourceUtil {
         return resourceItemLoadPages;
     }
 
-    public static void assertHasBeenReversed(List<GalleryItem> originalOrder, ArrayList<GalleryItem> reversedOrder) {
+    public static void assertHasBeenReversed(List<GalleryItem> originalOrder, ArrayList<GalleryItem> reversedOrder, boolean categoriesReversed, boolean resourcesReversed) {
         List<Integer> bannersAtIdx = new ArrayList<>();
         int i = 0;
         for(GalleryItem item : originalOrder) {
@@ -59,16 +59,30 @@ public class PiwigoResourceUtil {
         int toIdx = 0;
         int checksDone = 0;
         for(int nonItemIdx : bannersAtIdx) {
+            if(fromIdx == nonItemIdx) {
+                fromIdx++;
+                continue;
+            }
             if(fromIdx >= 0) {
                 toIdx = nonItemIdx;
             }
             if(toIdx != fromIdx) {
                 if(toIdx - fromIdx > 1) {
+                    boolean reverseExpected = true; // default is to assume we want to test against the reverse
+                    if(originalOrder.get(fromIdx-1) == CategoryItem.ALBUM_HEADING) {
+                        reverseExpected = categoriesReversed;
+                    } else if(originalOrder.get(fromIdx-1) == CategoryItem.PICTURE_HEADING) {
+                        reverseExpected = resourcesReversed;
+                    }
                     // there is an item to check is reversed
                     List<GalleryItem> originalArr = originalOrder.subList(fromIdx, toIdx);
+                    List<GalleryItem> expectedReversed = new ArrayList<>(originalArr);
+                    if(reverseExpected) {
+                        Collections.reverse(expectedReversed);
+                    }
                     List<GalleryItem> reversedArr = reversedOrder.subList(fromIdx, toIdx);
                     logger.log(Level.FINE, String.format("Checking for equality from album idx %1$d to %2$d", fromIdx, toIdx));
-                    assertArrayEquals(originalArr.toArray(), reversedArr.toArray());
+                    assertArrayEquals(expectedReversed.toArray(), reversedArr.toArray());
                     checksDone++;
                 } else {
                     fromIdx = toIdx;
