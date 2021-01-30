@@ -26,7 +26,6 @@
             android:title="@string/preference_gallery_enable_video_playback_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory
         android:layout="@android:layout/preference_category"
@@ -34,9 +33,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.preference.ListPreference
-            android:entries="@array/preference_gallery_item_thumbnail_size_array"
+            android:entries="@array/preference_gallery_item_thumbnail_size_entry_text"
             android:defaultValue="@string/preference_gallery_album_thumbnail_size_default"
-            android:entryValues="@array/preference_gallery_item_thumbnail_size_array_values"
+            android:entryValues="@array/preference_gallery_item_thumbnail_size_entry_values"
             android:key="@string/preference_gallery_album_thumbnail_size_key"
             android:title="@string/preference_gallery_album_thumbnail_size_title"
             android:summary="@string/preference_gallery_album_thumbnail_size_summary"
@@ -45,12 +44,19 @@
         <delit.libs.ui.view.preference.IntListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="@integer/preference_album_subalbum_sort_order_default"
-            android:key="@string/preference_album_subalbum_sort_order_key"
-            android:summary="@string/preference_album_subalbum_sort_order_summary"
-            android:title="@string/preference_album_subalbum_sort_order_title"
-            app:entries="@array/preference_album_subalbum_sort_order_items"
-            app:entryValues="@array/preference_album_subalbum_sort_order_values" />
+            android:defaultValue="@integer/preference_gallery_child_album_sort_order_default"
+            android:key="@string/preference_gallery_child_album_sort_order_key"
+            android:summary="@string/preference_gallery_child_album_sort_order_summary"
+            android:title="@string/preference_gallery_child_album_sort_order_title"
+            app:entries="@array/preference_gallery_child_album_sort_order_entry_text"
+            app:entryValues="@array/preference_gallery_child_album_sort_order_entry_values" />
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_gallery_child_album_sort_order_inverted_default"
+            android:key="@string/preference_gallery_child_album_sort_order_inverted_key"
+            android:summary="@string/preference_gallery_child_album_sort_order_inverted_summary"
+            android:title="@string/preference_gallery_child_album_sort_order_inverted_title" />
         <androidx.preference.SwitchPreference
             android:defaultValue="@bool/preference_gallery_show_album_thumbnail_zoomed_default"
             android:key="@string/preference_gallery_show_album_thumbnail_zoomed_key"
@@ -81,9 +87,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.preference.ListPreference
-            android:entries="@array/preference_gallery_item_thumbnail_size_array"
+            android:entries="@array/preference_gallery_item_thumbnail_size_entry_text"
             android:defaultValue="@string/preference_gallery_item_thumbnail_size_default"
-            android:entryValues="@array/preference_gallery_item_thumbnail_size_array_values"
+            android:entryValues="@array/preference_gallery_item_thumbnail_size_entry_values"
             android:key="@string/preference_gallery_item_thumbnail_size_key"
             android:title="@string/preference_gallery_item_thumbnail_size_title"
             android:summary="@string/preference_gallery_item_thumbnail_size_summary"
@@ -97,21 +103,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <androidx.preference.ListPreference
-            android:defaultValue="@string/preference_gallery_sort_order_default"
-            android:entries="@array/preference_gallery_sort_order_entries"
-            android:entryValues="@array/preference_gallery_sort_order_entryValues"
-            android:key="@string/preference_gallery_sort_order_key"
-            android:summary="@string/preference_gallery_sort_order_summary"
-            android:title="@string/preference_gallery_sort_order_title"
+            android:defaultValue="@string/preference_gallery_child_resource_sort_order_default"
+            android:entries="@array/preference_gallery_child_resource_sort_order_entry_text"
+            android:entryValues="@array/preference_gallery_child_resource_sort_order_entry_values"
+            android:key="@string/preference_gallery_child_resource_sort_order_key"
+            android:summary="@string/preference_gallery_child_resource_sort_order_summary"
+            android:title="@string/preference_gallery_child_resource_sort_order_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_gallery_sort_order_inverted_default"
-            android:key="@string/preference_gallery_sort_order_inverted_key"
-            android:summary="@string/preference_gallery_sort_order_inverted_summary"
-            android:title="@string/preference_gallery_sort_order_inverted_title" />
+            android:defaultValue="@bool/preference_gallery_child_resource_sort_order_inverted_default"
+            android:key="@string/preference_gallery_child_resource_sort_order_inverted_key"
+            android:summary="@string/preference_gallery_child_resource_sort_order_inverted_summary"
+            android:title="@string/preference_gallery_child_resource_sort_order_inverted_title" />
         <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
@@ -136,9 +142,9 @@
         android:layout_height="wrap_content">
 
         <androidx.preference.ListPreference
-            android:entries="@array/preference_gallery_item_slideshow_image_size_array"
+            android:entries="@array/preference_gallery_item_slideshow_image_size_entry_text"
             android:defaultValue="@string/preference_gallery_item_slideshow_image_size_default"
-            android:entryValues="@array/preference_gallery_item_slideshow_image_size_array_values"
+            android:entryValues="@array/preference_gallery_item_slideshow_image_size_entry_values"
             android:key="@string/preference_gallery_item_slideshow_image_size_key"
             android:title="@string/preference_gallery_item_slideshow_image_size_title"
             android:summary="@string/preference_gallery_item_slideshow_image_size_summary"
@@ -149,8 +155,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@string/preference_gallery_slideshow_image_scaletype_default"
-            android:entries="@array/preference_gallery_slideshow_image_scaletype_array"
-            android:entryValues="@array/preference_gallery_slideshow_image_scaletype_array_values"
+            android:entries="@array/preference_gallery_slideshow_image_scaletype_entry_text"
+            android:entryValues="@array/preference_gallery_slideshow_image_scaletype_entry_values"
             android:key="@string/preference_gallery_slideshow_image_scaletype_key"
             android:summary="@string/preference_gallery_slideshow_image_scaletype_summary"
             android:title="@string/preference_gallery_slideshow_image_scaletype_title" />
