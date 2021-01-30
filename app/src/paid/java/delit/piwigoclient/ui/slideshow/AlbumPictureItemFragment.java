@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +16,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.ref.WeakReference;
+
 import delit.libs.core.util.Logging;
+import delit.libs.ui.OwnedSafeAsyncTask;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.view.CustomViewPager;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
@@ -105,10 +109,40 @@ public class AlbumPictureItemFragment<F extends AlbumPictureItemFragment<F,FUIH,
     }
 
     private void setupExifDataTab(ViewPager viewPager, Metadata metadata) {
-        ExpandableListView exifDataList = viewPager.findViewById(R.id.exifDataList);
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences();
-        prefs.readonly();
-        ExifDataListAdapter exifDataListAdapter = ExifDataListAdapter.newAdapter(viewPager.getContext(), metadata);
-        exifDataList.setAdapter(exifDataListAdapter);
+        new ExifDataLoadTask(this, viewPager, metadata).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
+    }
+
+    private static class ExifDataLoadTask<F extends AlbumPictureItemFragment<F,FUIH,T>, FUIH extends FragmentUIHelper<FUIH, F>, T extends PictureResourceItem> extends OwnedSafeAsyncTask<F, Void,Void, ExifDataListAdapter> {
+        private final WeakReference<ViewPager> viewPagerRef;
+        private final Metadata metadata;
+
+        public ExifDataLoadTask(F owner, ViewPager viewPager, Metadata metadata) {
+            super(owner);
+            this.viewPagerRef = new WeakReference<>(viewPager);
+            this.metadata = metadata;
+        }
+
+        @Override
+        protected ExifDataListAdapter doInBackgroundSafely(Void... voids) {
+//            BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences();
+//            prefs.readonly();
+            ViewPager viewPager = viewPagerRef.get();
+            if(viewPager != null) {
+                return ExifDataListAdapter.newAdapter(viewPager.getContext(), metadata);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecuteSafely(ExifDataListAdapter exifDataListAdapter) {
+            super.onPostExecuteSafely(exifDataListAdapter);
+            ViewPager viewPager = viewPagerRef.get();
+            if(viewPager != null) {
+                ExpandableListView exifDataList = viewPager.findViewById(R.id.exifDataList);
+                exifDataList.setAdapter(exifDataListAdapter);
+            }
+        }
     }
 }
