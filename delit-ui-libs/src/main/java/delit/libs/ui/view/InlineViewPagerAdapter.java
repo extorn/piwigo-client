@@ -69,7 +69,8 @@ public class InlineViewPagerAdapter extends PagerAdapter {
 
     @Override
     public int getItemPosition(@NonNull Object object) {
-        return pagesContent.indexOf(object);
+        View v = (View)object;
+        return pagesContent.indexOf(v);
     }
 
     @NonNull

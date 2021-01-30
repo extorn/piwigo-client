@@ -1,7 +1,6 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 /**
  * Created by gareth on 06/04/18.
