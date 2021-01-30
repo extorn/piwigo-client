@@ -219,7 +219,7 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
 
         @Override
         public void onClick(View v) {
-            int maxManualRetries = 2;
+            int maxManualRetries = 1;
             ResizingPicassoLoader<ImageView> imageLoader = getViewHolder().imageLoader;
             if (v == getViewHolder().mImageView && !imageLoader.isImageLoaded() && !imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
                 manualRetries++;
