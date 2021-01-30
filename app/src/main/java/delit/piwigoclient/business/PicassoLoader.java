@@ -194,7 +194,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, EnhancedPic
         return imageLoading;
     }
 
-    public void loadNoCache() {
+    public void loadFromServer() {
         load(true);
     }
 

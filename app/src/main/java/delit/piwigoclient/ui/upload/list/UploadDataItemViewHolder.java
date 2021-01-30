@@ -126,12 +126,12 @@ public class UploadDataItemViewHolder<IVH extends UploadDataItemViewHolder<IVH,L
         fileForUploadImageView.setOnClickListener(v -> {
             if (!imageLoader.isImageLoaded()) {
                 imageLoader.cancelImageLoadIfRunning();
-                imageLoader.loadNoCache();
+                imageLoader.loadFromServer();
             }
         });
         fileForUploadImageView.setOnLongClickListener(v -> {
             imageLoader.cancelImageLoadIfRunning();
-            imageLoader.loadNoCache();
+            imageLoader.loadFromServer();
             return true;
         });
 

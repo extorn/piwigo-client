@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
 import delit.libs.ui.view.recycler.CustomClickListener;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
@@ -218,10 +220,11 @@ public class AlbumItemRecyclerViewAdapter<LVA extends AlbumItemRecyclerViewAdapt
         @Override
         public void onClick(View v) {
             int maxManualRetries = 2;
-            if (v == getViewHolder().mImageView && !getViewHolder().imageLoader.isImageLoaded() && getViewHolder().imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
+            ResizingPicassoLoader<ImageView> imageLoader = getViewHolder().imageLoader;
+            if (v == getViewHolder().mImageView && !imageLoader.isImageLoaded() && !imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
                 manualRetries++;
-                getViewHolder().imageLoader.cancelImageLoadIfRunning();
-                getViewHolder().imageLoader.loadNoCache();
+                imageLoader.cancelImageLoadIfRunning();
+                imageLoader.loadFromServer();
             } else {
                 if(getViewHolder().getItem() != null) {
                     if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {

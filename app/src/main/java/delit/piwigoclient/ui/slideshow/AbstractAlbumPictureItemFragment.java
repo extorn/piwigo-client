@@ -115,7 +115,7 @@ public class AbstractAlbumPictureItemFragment<F extends AbstractAlbumPictureItem
         imageView.setOnClickListener(v -> {
             if (loader != null && !loader.isImageLoaded()) {
                 loader.cancelImageLoadIfRunning();
-                loader.loadNoCache();
+                loader.loadFromServer();
             }
         });
 

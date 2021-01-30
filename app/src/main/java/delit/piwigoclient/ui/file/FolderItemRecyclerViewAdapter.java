@@ -747,7 +747,7 @@ public class FolderItemRecyclerViewAdapter<LVA extends FolderItemRecyclerViewAda
             iconView.setOnClickListener(v -> ((View)v.getParent()).performClick());
             iconView.setOnLongClickListener(v -> {
                 iconViewLoader.cancelImageLoadIfRunning();
-                iconViewLoader.loadNoCache();
+                iconViewLoader.loadFromServer();
                 return true;
             });
             iconViewLoader = new ResizingPicassoLoader<>(getIconView(), this, 0, 0);
