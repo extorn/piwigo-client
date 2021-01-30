@@ -3,12 +3,6 @@ package delit.piwigoclient.ui.upgrade;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.annotation.BoolRes;
-import androidx.annotation.IntegerRes;
-import androidx.annotation.StringRes;
-
-import java.util.Objects;
-
 import delit.piwigoclient.R;
 
 public class PreferenceMigrator348 extends PreferenceMigrator {

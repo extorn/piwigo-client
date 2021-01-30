@@ -4,7 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import java.util.ArrayList;
+import androidx.annotation.NonNull;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -208,6 +209,7 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         return insertAtIdx;
     }
 
+    @NonNull
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PiwigoAlbum{");
