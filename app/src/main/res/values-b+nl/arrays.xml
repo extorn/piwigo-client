@@ -148,10 +148,13 @@
         
         <item>1.4.0.105</item>
         <item>"Bugfix:
-             - Herschrijf het album, de tag en de favoriete sorteercode omdat deze vol zat met bugs
-                 : Als iets op dit gebied nu niet werkt zoals u verwacht, laat het me dan weten.
-                 : Dit zou crashes moeten oplossen die optraden op de diavoorstellingspagina
-                 Veranderingen:
+                 - Herschrijf het album, de tag en de favoriete sorteercode omdat deze vol zat met bugs
+                     : Als iets op dit gebied nu niet werkt zoals u verwacht, laat het me dan weten.
+                     : Dit zou crashes moeten oplossen die optraden op de diavoorstellingspagina
+                 - Het onlangs gewijzigde gele sterpictogram verscheen niet in sommige sorteringen
+                 - Corrigeer het laden van miniaturen
+                 - Bug verholpen waardoor handmatig opnieuw laden van mislukte miniaturen wordt voorkomen door te klikken - slechts één keer, zodat het niet te irritant is als u van album wilt veranderen
+                Veranderingen:
              - Nieuwe voorkeur om onafhankelijke sorteervolgorde omkering van onderliggende albums en bronnen mogelijk te maken"</item>
         <item>1.4.0.104</item>
         <item>"Bugfix:

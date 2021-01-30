@@ -148,10 +148,13 @@
         
         <item>1.4.0.105</item>
         <item>"Risoluzione del problema:
-             - Riscrittura dell\'album, tag e codice di ordinamento preferito perché era pieno di bug
-                 : Se qualcosa in quest\'area ora non funziona come previsto, fammelo sapere.
-                 : Questo dovrebbe risolvere i crash che si stavano verificando nella pagina della presentazione
-                 I cambiamenti:
+                 - Riscrittura dell\'album, tag e codice di ordinamento preferito perché era pieno di bug
+                     : Se qualcosa in quest\'area ora non funziona come previsto, fammelo sapere.
+                     : Questo dovrebbe risolvere i crash che si stavano verificando nella pagina della presentazione
+                 - L\'icona della stella gialla modificata di recente non appariva in alcuni ordinamenti
+                 - Correggere il caricamento delle miniature
+                 - Risolto il bug che impediva il ricaricamento manuale del caricamento della miniatura non riuscito facendo clic - solo una volta, quindi non è troppo irritante se si desidera cambiare album
+                I cambiamenti:
              - Nuova preferenza per consentire l\'inversione indipendente dell\'ordinamento di album e risorse secondari"</item>
         <item>1.4.0.104</item>
         <item>"Risoluzione del problema:

@@ -148,10 +148,13 @@
         
         <item>1.4.0.105</item>
         <item>"Arreglo del fallo:
-             - Reescriba el álbum, la etiqueta y el código de clasificación favorito porque estaba plagado de errores
-                 : Si algo en esta área ahora no funciona como esperaba, hágamelo saber.
-                 : Esto debería resolver los bloqueos que estaban ocurriendo en la página de la presentación de diapositivas.
-                 Cambios:
+                 - Reescriba el álbum, la etiqueta y el código de clasificación favorito porque estaba plagado de errores
+                     : Si algo en esta área ahora no funciona como esperaba, hágamelo saber.
+                     : Esto debería resolver los bloqueos que estaban ocurriendo en la página de la presentación de diapositivas.
+                 - El ícono de la estrella amarilla recientemente modificado no aparecía en algún orden de clasificación
+                 - Corregir la carga de miniaturas
+                 - Solucione el error que evita la recarga manual de la carga de miniaturas fallidas haciendo clic, solo una vez para que no sea demasiado irritante si desea cambiar el álbum
+                Cambios:
              - Nueva preferencia para permitir la inversión de orden de clasificación independiente de álbumes y recursos secundarios"</item>
         <item>1.4.0.104</item>
         <item>"Arreglo del fallo:

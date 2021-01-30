@@ -148,10 +148,13 @@
         
         <item>1.4.0.105</item>
         <item>"Oprava chyby:
-             - Přepište album, značku a oblíbený třídicí kód, protože byl plný chyb
-                 : Pokud nyní něco v této oblasti nefunguje tak, jak očekáváte, dejte mi prosím vědět.
-                 : To by mělo vyřešit pády, ke kterým došlo na stránce prezentace
-                 Změny:
+                 - Přepište album, značku a oblíbený třídicí kód, protože byl plný chyb
+                     : Pokud nyní něco v této oblasti nefunguje tak, jak očekáváte, dejte mi prosím vědět.
+                     : To by mělo vyřešit pády, ke kterým došlo na stránce prezentace
+                 - Nedávno pozměněná ikona žluté hvězdy se neobjevila v nějakém pořadí
+                 - Opravte načítání miniatur
+                 - Opravte chybu, která brání manuálnímu opětovnému načtení neúspěšného načtení miniatur kliknutím - pouze jednou, takže to není příliš iritující, pokud chcete změnit album
+                Změny:
              - Nová preference umožňující nezávislé obrácení pořadí řazení podřízených alb a zdrojů"</item>
         <item>1.4.0.104</item>
         <item>"Oprava chyby:

@@ -148,10 +148,13 @@
         
         <item>1.4.0.105</item>
         <item>"Correction d\'un bug:
-             - Réécriture de l\'album, du tag et du code de tri favori car il était criblé de bugs
-                 : Si quelque chose dans ce domaine ne fonctionne pas comme prévu, veuillez me le faire savoir.
-                 : Cela devrait résoudre les plantages qui se produisaient sur la page du diaporama
-                 Changements:
+                 - Réécriture de l\'album, du tag et du code de tri favori car il était criblé de bugs
+                     : Si quelque chose dans ce domaine ne fonctionne pas comme prévu, veuillez me le faire savoir.
+                     : Cela devrait résoudre les plantages qui se produisaient sur la page du diaporama
+                 - L\'icône d\'étoile jaune récemment modifiée n\'apparaissait pas dans certains ordres de tri
+                 - Corriger le chargement des vignettes
+                 - Correction d\'un bug empêchant le rechargement manuel de l\'échec du chargement des vignettes en cliquant - une seule fois pour ne pas trop déranger si vous voulez changer d\'album
+                Changements:
              - Nouvelle préférence pour permettre l\'inversion indépendante de l\'ordre de tri des albums enfants et des ressources"</item>
         <item>1.4.0.104</item>
         <item>"Correction d\'un bug:

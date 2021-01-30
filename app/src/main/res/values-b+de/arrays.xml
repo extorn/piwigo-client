@@ -148,10 +148,13 @@
         
         <item>1.4.0.105</item>
         <item>"Bug-Fix:
-             - Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war
-                 : Wenn etwas in diesem Bereich jetzt nicht wie erwartet funktioniert, lassen Sie es mich bitte wissen.
-                 : Dies sollte Abstürze beheben, die auf der Diashow-Seite aufgetreten sind
-                 Änderungen:
+                 - Schreiben Sie das Album, das Tag und den bevorzugten Sortiercode neu, da es voller Fehler war
+                     : Wenn etwas in diesem Bereich jetzt nicht wie erwartet funktioniert, lassen Sie es mich bitte wissen.
+                     : Dies sollte Abstürze beheben, die auf der Diashow-Seite aufgetreten sind
+                 - Das kürzlich geänderte gelbe Sternsymbol wurde in einigen Sortierreihenfolgen nicht angezeigt
+                 - Korrigieren Sie das Laden von Thumbnails
+                 - Fehler behoben, der das manuelle Neuladen fehlgeschlagener Miniaturansichten durch Klicken verhindert - nur einmal, damit es nicht zu ärgerlich ist, wenn Sie das Album ändern möchten
+                Änderungen:
              - Neue Einstellung, um die unabhängige Umkehrung der Sortierreihenfolge von untergeordneten Alben und Ressourcen zu ermöglichen"</item>
         <item>1.4.0.104</item>
         <item>"Bug-Fix:
