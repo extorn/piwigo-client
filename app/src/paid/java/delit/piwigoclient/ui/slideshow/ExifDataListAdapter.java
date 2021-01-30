@@ -113,14 +113,14 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
                 List<Map<String, String>> children = new ArrayList<>();
 
                 for (Tag tag : directory.getTags()) {
-                    Map<String, String> curChildMap = new HashMap();
+                    Map<String, String> curChildMap = new HashMap<>();
                     curChildMap.put(NAME, tag.getTagName());
                     curChildMap.put(VALUE, tag.getDescription());
                     children.add(curChildMap);
                 }
                 if (directory.hasErrors()) {
                     for (String error : directory.getErrors()) {
-                        Map<String, String> curChildMap = new HashMap();
+                        Map<String, String> curChildMap = new HashMap<>();
                         curChildMap.put(NAME, "ERROR");
                         curChildMap.put(VALUE, error);
                         children.add(curChildMap);
@@ -134,7 +134,7 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
                 }
             }
         } else {
-            Map<String, String> curChildMap = new HashMap();
+            Map<String, String> curChildMap = new HashMap<>();
             curChildMap.put(NAME, "Exif Data");
             curChildMap.put(VALUE, context.getString(R.string.picture_resource_exif_data_unavailable));
 
