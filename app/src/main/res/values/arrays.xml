@@ -255,7 +255,9 @@
                 - Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs
                     : If something in this area now doesn't work as you expect, please let me know.
                     : This should solve crashes that were occurring on the slideshow page
-                - TODO! The recently altered yellow star icon wasn't appearing in some sort orders
+                - The recently altered yellow star icon wasn't appearing in some sort orders
+                - Correct the loading of thumbnails
+                - Fix bug preventing manual reload of failed thumbnail load by clicking - just once so it isn't too iritating if you want to change album
                Changes:
             - New preference to allow independent sort order reversal of child albums and resources"</item>
         <item>1.4.0.104</item>
