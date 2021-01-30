@@ -56,7 +56,7 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_upload_job_status,null);
+        View v = inflater.inflate(R.layout.fragment_upload_job_status,container, false);
 
         return v;
     }
@@ -163,7 +163,7 @@ public class UploadJobStatusDetailsFragment<F extends UploadJobStatusDetailsFrag
 
             View v = convertView;
             if(v == null) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_item_simple, null);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_list_item_simple, parent, false);
             }
             TextView view = v.findViewById(R.id.list_item_name);
             view.setText(piwigoDateFormat.format(thisDataItem.getKey()));
