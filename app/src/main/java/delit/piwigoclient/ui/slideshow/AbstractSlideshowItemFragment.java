@@ -104,7 +104,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     private static final String ARG_GALLERY_TYPE = "containerModelType";
     private static final String ARG_GALLERY_ID = "containerId";
     private static final String ARG_GALLERY_ITEM_ID = "itemId";
-    private static final String ARG_AND_STATE_ALBUM_ITEM_IDX = "albumItemIndex";
+    private static final String SLIDESHOW_PAGE_IDX = "slideshowPageIdx";
     private static final String ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT = "albumLoadedResourceItemCount";
     private static final String ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT = "albumTotalResourceItemCount";
     private static final String STATE_UPDATED_LINKED_ALBUM_SET = "updatedLinkedAlbumSet";
@@ -115,7 +115,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     private static final String STATE_IS_ALLOW_DOWNLOAD = "allowDownload";
 
     private T model;
-    private int albumItemIdx;
+    private int slideshowPageIdx;
     private int albumLoadedItemCount;
     private long albumTotalItemCount;
     private HashSet<CategoryItemStub> updatedLinkedAlbumSet;
@@ -151,12 +151,12 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     private TextView resourceTitleView;
     private TextView resourceDescTitleView;
 
-    public static <S extends ResourceItem> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long itemId, int albumItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
+    public static <S extends ResourceItem> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long itemId, int slideshowPageIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
         AbstractSlideshowFragment.storeGalleryModelClassToBundle(b, modelType);
         b.putLong(ARG_GALLERY_ID, albumId);
         b.putLong(ARG_GALLERY_ITEM_ID, itemId);
-        b.putInt(ARG_AND_STATE_ALBUM_ITEM_IDX, albumItemIdx);
+        b.putInt(SLIDESHOW_PAGE_IDX, slideshowPageIdx);
         b.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
         b.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, totalResourceItemCount);
         return b;
@@ -173,7 +173,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         outState.putBoolean(STATE_IS_ALLOW_DOWNLOAD, isAllowDownload());
         BundleUtils.putSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
         BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
-        outState.putInt(ARG_AND_STATE_ALBUM_ITEM_IDX, albumItemIdx);
+        outState.putInt(SLIDESHOW_PAGE_IDX, slideshowPageIdx);
         outState.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
         outState.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
         outState.putBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM, isPrimarySlideshowItem);
@@ -196,7 +196,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         editingItemDetails = false;
         informationShowing = false;
         allowDownload = true;
-        albumItemIdx = -1;
+        slideshowPageIdx = -1;
         albumLoadedItemCount = -1;
         albumTotalItemCount = -1;
         doOnPageSelectedAndAddedRun = false;
@@ -302,7 +302,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
             ModelUnavailableException er = new ModelUnavailableException(errMsg, e);
             Logging.recordException(er);
         }
-        albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
+        slideshowPageIdx = b.getInt(SLIDESHOW_PAGE_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
         loadExtraArgsFromBundle(b);
@@ -322,7 +322,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
         albumsRequiringReload = BundleUtils.getLongHashSet(b, STATE_ALBUMS_REQUIRING_UPDATE);
         isPrimarySlideshowItem = b.getBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM);
 
-        albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
+        slideshowPageIdx = b.getInt(SLIDESHOW_PAGE_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
     }
@@ -460,14 +460,14 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     }
 
     private void updateItemPositionText() {
-        if (albumLoadedItemCount == 1 && albumItemIdx == albumLoadedItemCount && albumTotalItemCount == albumLoadedItemCount) {
+        if (albumLoadedItemCount == 1 && slideshowPageIdx == albumLoadedItemCount && albumTotalItemCount == albumLoadedItemCount) {
             itemPositionTextView.setVisibility(GONE);
         } else {
             itemPositionTextView.setVisibility(VISIBLE);
             if(albumLoadedItemCount < albumTotalItemCount) {
-                itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d[%3$d]", albumItemIdx + 1, albumLoadedItemCount, albumTotalItemCount));
+                itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d[%3$d]", slideshowPageIdx + 1, albumLoadedItemCount, albumTotalItemCount));
             } else {
-                itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d", albumItemIdx + 1, albumTotalItemCount));
+                itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d", slideshowPageIdx + 1, albumTotalItemCount));
             }
         }
     }
@@ -836,7 +836,9 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
         private void setVisibility(int visibility) {
             for (View v : views) {
-                v.setVisibility(visibility);
+                if(v.getVisibility() != visibility) {
+                    v.setVisibility(visibility);
+                }
             }
         }
 
@@ -913,7 +915,7 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
 
     protected void onImageDeleted(HashSet<? extends ResourceItem> deletedItems) {
         List<Long> resourceItemParentChain = model.getParentageChain();
-        EventBus.getDefault().post(new AlbumItemDeletedEvent<>(model, albumItemIdx, albumLoadedItemCount));
+        EventBus.getDefault().post(new AlbumItemDeletedEvent<>(model, slideshowPageIdx, albumLoadedItemCount));
         for (int i = 0; i < resourceItemParentChain.size() - 1; i++) {
             // update all albums except the direct parent of the resource deleted
             EventBus.getDefault().post(new AlbumAlteredEvent(resourceItemParentChain.get(i), resourceItemParentChain.get(i+1)));
@@ -1052,13 +1054,13 @@ public abstract class AbstractSlideshowItemFragment<F extends AbstractSlideshowI
     }
 
     public void onPagerIndexChangedTo(int newPagerIndex) {
-        albumItemIdx -= 1;
+        slideshowPageIdx -= 1;
         updateItemPositionText();
     }
 
     @Override
     public int getPagerIndex() {
-        return albumItemIdx;
+        return slideshowPageIdx;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
