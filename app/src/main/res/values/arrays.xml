@@ -250,6 +250,12 @@
         Add option to show password field contents in preferences (new preference type?)
         investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
+        <item>1.4.0.106</item>
+        <item>"Bugfix:
+                - Hopefully the final bug where album thumbnails appeared not to be loading correctly
+               Changes:
+                - When deleting an album, child resources can be either unlinked, or deleted from the server
+                - There is a new orphaned resource management page"</item>
         <item>1.4.0.105</item>
         <item>"Bugfix:
                 - Rewrite of the album, tag, and favorite sorting code because it was riddled with bugs

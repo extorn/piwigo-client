@@ -82,7 +82,7 @@ public class AlbumGetImagesBasicResponseHandler extends AbstractPiwigoWsResponse
             JsonObject pagingObj = result.get("paging").getAsJsonObject();
             int page = pagingObj.get("page").getAsInt();
             int pageSize = pagingObj.get("per_page").getAsInt();
-            totalResourceCount = pagingObj.get("count").getAsInt();
+            totalResourceCount = pagingObj.get("total_count").getAsInt();
         }
         if(result.has("images") && result.get("images").isJsonArray()) {
             images = result.get("images").getAsJsonArray();

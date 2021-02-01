@@ -296,7 +296,7 @@ public class CreateAlbumFragment<F extends CreateAlbumFragment<F,FUIH>,FUIH exte
 
         newAlbum = new PiwigoGalleryDetails(parentGallery, null, galleryName, galleryDescription, userCommentsAllowed, isPrivate);
 
-        createGalleryMessageId = addActiveServiceCall(R.string.progress_creating_album, new AlbumCreateResponseHandler(newAlbum));
+        createGalleryMessageId = addActiveServiceCall(R.string.progress_creating_album, new AlbumCreateResponseHandler(newAlbum, true));
     }
 
     @Override

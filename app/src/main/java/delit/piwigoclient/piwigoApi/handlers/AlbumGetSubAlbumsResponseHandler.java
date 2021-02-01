@@ -77,7 +77,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             }
         }
 
-        PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries, isCached);
+        PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), parentAlbum, availableGalleries, isCached);
         storeResponse(r);
     }
 
@@ -240,15 +240,21 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
 //    }
 
     public static class PiwigoGetSubAlbumsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final CategoryItem parentAlbum;
         private final ArrayList<CategoryItem> albums;
 
-        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, ArrayList<CategoryItem> albums, boolean isCached) {
+        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, CategoryItem parentAlbum, ArrayList<CategoryItem> albums, boolean isCached) {
             super(messageId, piwigoMethod, true, isCached);
+            this.parentAlbum = parentAlbum;
             this.albums = albums;
         }
 
         public ArrayList<CategoryItem> getAlbums() {
             return albums;
+        }
+
+        public CategoryItem getParentAlbum() {
+            return parentAlbum;
         }
     }
 

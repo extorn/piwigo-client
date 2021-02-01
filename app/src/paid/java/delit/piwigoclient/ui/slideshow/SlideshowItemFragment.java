@@ -140,7 +140,11 @@ public abstract class SlideshowItemFragment<F extends SlideshowItemFragment<F,FU
             addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler<>(model));
         }
         if(allowFullEdit) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(model, !allowTagEdit));
+            if(model.getLinkedAlbums().isEmpty()) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_item_must_belong_to_at_least_one_album));
+            } else {
+                addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(model, !allowTagEdit));
+            }
         }
     }
 

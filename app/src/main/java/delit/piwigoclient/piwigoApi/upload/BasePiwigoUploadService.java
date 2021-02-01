@@ -881,7 +881,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
         // all files were uploaded successfully.
         //delete temporary hidden album
-        AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(thisUploadJob.getTemporaryUploadAlbum());
+        AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(thisUploadJob.getTemporaryUploadAlbum(), true);
         invokeWithRetries(thisUploadJob, albumDelHandler, 2);
         if (!albumDelHandler.isSuccess()) {
             // notify the listener of the final error we received from the server

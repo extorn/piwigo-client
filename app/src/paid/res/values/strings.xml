@@ -31,4 +31,11 @@
     <string name="ignoring_job_no_file_types_selected_for_upload">No file extensions selected for upload. Ignoring job</string>
     <string name="ignoring_job_connection_profile_set_for_offline_access">Connection profile set to offline mode. Ignoring job</string>
     <string name="slideshow_auto_drive_paused">Slideshow Autodrive paused until next slide</string>
+    <string name="progress_loading_orphan_ids">Loading Orphans</string>
+    <string name="orphans_heading">Orphaned Resources</string>
+    <string name="orphans_menu_title">Orphans</string>
+    <string name="orphans_album_description">All orphaned Resources collected by the PiwigoClient App</string>
+    <string name="orphans_no_orphans_found_on_server">No Orphans Found</string>
+    <string name="orphans_found_on_server_pattern">Orphans Found : %1$d</string>
+    <string name="alert_confirm_okay_to_create_orphans_album">There are orphans present. To view these, we must create a private folder accessible only to admins. You can delete the album at any time afterwards. If you disagree, you\'ll have to process these on the server yourself.</string>
 </resources>

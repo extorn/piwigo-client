@@ -75,7 +75,7 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return this;
     }
 
-    public AlbumItemRecyclerViewAdapterPreferences withShowingAlbumNames(boolean showResourceNames) {
+    public AlbumItemRecyclerViewAdapterPreferences withShowingResourceNames(boolean showResourceNames) {
         this.showResourceNames = showResourceNames;
         return this;
     }

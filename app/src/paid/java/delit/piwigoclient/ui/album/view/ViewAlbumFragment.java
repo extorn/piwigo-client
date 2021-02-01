@@ -189,7 +189,7 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
     }
 
     @Override
-    protected void onPiwigoUpdateResourceInfoResponse(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
+    protected void onPiwigoResponseUpdateResourceInfo(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<?> response) {
         if(tagMembershipChangesAction != null) {
         tagMembershipChangesAction.recordTagListUpdated(response.getPiwigoResource());
             // changes made.
@@ -208,12 +208,12 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
                 tagMembershipChangesAction = null;
             }
         } else {
-            super.onPiwigoUpdateResourceInfoResponse(response);
+            super.onPiwigoResponseUpdateResourceInfo(response);
         }
     }
 
     @Override
-    protected void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
+    protected void onPiwigoResponseResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<?> response) {
         if(tagMembershipChangesAction != null) {
             if(tagMembershipChangesAction.addResourceReadyToProcess(response.getResource())) {
                 // action is ready for the next step.
@@ -225,12 +225,16 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
                     if (allowTagEdit) {
                         addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler<>(item));
                     } else {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(item, true));
+                        if(item.getLinkedAlbums().isEmpty()) {
+                            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_item_must_belong_to_at_least_one_album));
+                        } else {
+                            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<>(item, true));
+                        }
                     }
                 }
             }
         }
-        super.onResourceInfoRetrieved(response);
+        super.onPiwigoResponseResourceInfoRetrieved(response);
     }
 
     private void getResourceInfo(HashSet<ResourceItem> selectedResources) {
@@ -245,10 +249,10 @@ public class ViewAlbumFragment<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH 
         return new ViewAlbumPiwigoResponseListener<>();
     }
 
-    protected static class ViewAlbumPiwigoResponseListener<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends CustomPiwigoResponseListener<F,FUIH> {
+    public static class ViewAlbumPiwigoResponseListener<F extends AbstractViewAlbumFragment<F,FUIH>,FUIH extends FragmentUIHelper<FUIH,F>> extends CustomPiwigoResponseListener<F,FUIH> {
         @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            super.onAfterHandlePiwigoResponse(response);
+        protected void processAlbumPiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            super.processAlbumPiwigoResponse(response);
         }
     }
 

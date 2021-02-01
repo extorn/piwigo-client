@@ -13,10 +13,12 @@ public class AlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler 
 
     private static final String TAG = "CreateGalleryRspHdlr";
     private final PiwigoGalleryDetails newAlbum;
+    private final boolean isVisibleOnWebsite;
 
-    public AlbumCreateResponseHandler(PiwigoGalleryDetails newAlbum) {
+    public AlbumCreateResponseHandler(PiwigoGalleryDetails newAlbum, boolean isVisibleOnWebsite) {
         super("pwg.categories.add", TAG);
         this.newAlbum = newAlbum;
+        this.isVisibleOnWebsite = isVisibleOnWebsite;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class AlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler 
         params.put("parent", String.valueOf(newAlbum.getParentGalleryId()));
         params.put("name", newAlbum.getGalleryName());
         params.put("comment", newAlbum.getGalleryDescription());
-        params.put("visible", String.valueOf(true));
+        params.put("visible", String.valueOf(isVisibleOnWebsite));
         params.put("status", newAlbum.isPrivate() ? "private" : "public");
         params.put("commentable", String.valueOf(newAlbum.isUserCommentsAllowed()));
         return params;

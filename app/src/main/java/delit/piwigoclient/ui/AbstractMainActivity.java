@@ -89,6 +89,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.orphans.ViewOrphansFragment;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapterPreferences;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupRecyclerViewAdapter;
@@ -374,6 +375,26 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
 
     protected abstract void showFavorites();
 
+    private void showOrphans() {
+        boolean restore = false;
+        // check if we've shown any albums before. If so, pop everything off the stack.
+        if (null == getSupportFragmentManager().findFragmentByTag(ViewOrphansFragment.class.getName())) {
+            // we're opening the activity freshly.
+
+            // check for reopen details and use them instead if possible.
+            if (ViewOrphansFragment.canHandleReopenAction(getUiHelper())) {
+                restore = true;
+            }
+        }
+        AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
+
+        if (restore) {
+            showFragmentNow(ViewOrphansFragment.newInstance());
+        } else {
+            showFragmentNow(ViewOrphansFragment.newInstance(), false);
+        }
+    }
+
     private void showGallery(final CategoryItem gallery) {
         boolean restore = false;
         if (gallery != null && gallery.isRoot()) {
@@ -390,7 +411,7 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
         AdsManager.getInstance(this).showAlbumBrowsingAdvertIfAppropriate(this);
 
         if (restore) {
-            showFragmentNow(new ViewAlbumFragment(), !gallery.isRoot());
+            showFragmentNow(new ViewAlbumFragment<>(), !gallery.isRoot());
         } else {
             showFragmentNow(ViewAlbumFragment.newInstance(gallery), gallery != null && !gallery.isRoot());
         }
@@ -470,6 +491,8 @@ public abstract class AbstractMainActivity<A extends AbstractMainActivity<A, AUI
             showTopTips();
         } else if (id == R.id.nav_gallery) {
             showGallery(CategoryItem.ROOT_ALBUM);
+        } else if(id == R.id.nav_orphans) {
+            showOrphans();
         } else if (id == R.id.nav_favorites) {
             showFavorites();
         } else if (id == R.id.nav_about) {

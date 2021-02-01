@@ -774,8 +774,9 @@ SOFTWARE.
     <string name="alert_title_select_album">Select Album</string>
     <string name="alert_title_set_album_thumbnail">Update album thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Update album thumbnail to this image?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete the album (%1$s) and all content permanently (unless linked to albums elsewhere)?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Are you absolutely certain you want to delete album (%1$s) with %2$d photos, and %3$d child albums containing a further %4$d photos for ever? Note that photos linked to other albums will remain there, but any others are deleted forever. There is no undo feature for this action.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete album (%1$s)?\n\nThere is no undo feature</string>
+    <string name="alert_confirm_really_really_delete_album_without_child_albums_from_server_pattern">You are deleting album (%1$s) with %2$d photos.\n\nWould you like to permanently delete any orphaned content?</string>
+    <string name="alert_confirm_really_really_delete_album_with_child_albums_from_server_pattern">You are deleting album (%1$s) with %2$d photos, and %3$d child albums containing a further %4$d photos.\n\nWould you like to permanently delete any orphaned content?</string>
     <string name="alert_confirm_copy_items_here_pattern">Copy the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Move the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Linked Albums</string>
@@ -1043,5 +1044,6 @@ SOFTWARE.
     <string name="alert_password_entry">Password Required</string>
     <string name="import_x_of_type_y_cancelled_pattern">Import of %2$s %1$s cancelled</string>
     <string name="import_cancelled">Import cancelled</string>
+    <string name="alert_error_item_must_belong_to_at_least_one_album">The item must belong to at least one album unless being deleted. Please select one and try again.</string>
 
 </resources>

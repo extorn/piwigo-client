@@ -11,18 +11,28 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.ContentType;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import delit.libs.core.util.Logging;
 import delit.libs.http.RequestParams;
 import delit.libs.http.cache.CachingAsyncHttpClient;
@@ -113,6 +123,22 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
         }
         return requestParams;
+    }
+
+    public StringEntity getJsonFormParameters() {
+
+        List<BasicNameValuePair> formParams = new ArrayList<>(getRequestParameters().getParamsList());
+        // for tidiness remove the pwg method - this must always be a request parameter
+        for (Iterator<BasicNameValuePair> iterator = formParams.iterator(); iterator.hasNext(); ) {
+            BasicNameValuePair nvp = iterator.next();
+            if (nvp.getName().equals("method")) {
+                iterator.remove();
+                break;
+            }
+        }
+
+        Gson gson = new GsonBuilder().registerTypeAdapter(BasicNameValuePair.class, new BasicNameValuePairJsonAdapter()).create();
+        return new StringEntity(gson.toJson(getRequestParameters().getParamsList()), ContentType.APPLICATION_JSON);
     }
 
     protected abstract RequestParams buildRequestParameters();
@@ -437,11 +463,51 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
             return client.get(getContext(), getPiwigoWsApiUri(), buildCustomCacheControlHeaders(forceResponseRevalidation, onlyUseCache), getRequestParameters(), handler);
         } else {
+            //TODO get form params entity working.
+//            StringEntity formParamsEntity = getJsonFormParameters();
+//            if(formParamsEntity != null) {
+//                return client.post(getContext(), getPiwigoWsApiUri(), formParamsEntity, ContentType.APPLICATION_JSON.getMimeType(), handler);
+//            } else {
+//                return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
+//            }
             return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
         }
     }
 
     public boolean isUseHttpGet() {
         return false;
+    }
+
+    private static class BasicNameValuePairJsonAdapter extends TypeAdapter<BasicNameValuePair> {
+        @Override
+        public BasicNameValuePair read(JsonReader reader) throws IOException {
+            BasicNameValuePair value = null;
+            reader.beginObject();
+            String pairName;
+            String pairValue;
+
+            while (reader.hasNext()) {
+                JsonToken token = reader.peek();
+
+                if (token.equals(JsonToken.NAME)) {
+                    //get the current token
+                    pairName = reader.nextName();
+                    //move to next token
+                    token = reader.peek();
+                    pairValue = reader.nextString();
+                    value = new BasicNameValuePair(pairName, pairValue);
+                }
+            }
+            reader.endObject();
+            return value;
+        }
+
+        @Override
+        public void write(com.google.gson.stream.JsonWriter writer, BasicNameValuePair nameValuePair) throws IOException {
+            writer.beginObject();
+            writer.name(nameValuePair.getName());
+            writer.value(nameValuePair.getValue());
+            writer.endObject();
+        }
     }
 }

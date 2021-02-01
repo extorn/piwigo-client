@@ -600,7 +600,7 @@ public class RequestParams implements Serializable {
         return entity;
     }
 
-    protected List<BasicNameValuePair> getParamsList() {
+    public List<BasicNameValuePair> getParamsList() {
         List<BasicNameValuePair> lparams = new LinkedList<>();
 
         for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {

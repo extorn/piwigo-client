@@ -61,7 +61,7 @@ public class OnDeleteJobQuestionAction<F extends AbstractUploadFragment<F,FUIH>,
         UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), currentJobId);
         if (positiveAnswer != null && positiveAnswer && job != null) {
             if (job.getTemporaryUploadAlbum() > 0) {
-                AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum());
+                AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum(), false);
                 getUiHelper().addNonBlockingActiveServiceCall(getContext().getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()), albumDelHandler.getTag());
             }
             IOUtils.deleteAllFilesSharedWithThisApp(getContext());

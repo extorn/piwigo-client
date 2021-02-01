@@ -24,6 +24,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     private static final String TAG = "CategoryItem";
     private static final String BLANK_TAG = "PIWIGO_CLIENT_INTERNAL_BLANK";
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
+    public static final CategoryItem ORPHANS_ROOT_ALBUM = new CategoryItem(-1, "Orphans", null, false, null, 0, 0, 0, null);
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, BLANK_TAG, null, true, null, 0, 0, 0, null);
     public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 100, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
 
@@ -531,5 +532,12 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
 
     public void setUserCommentsAllowed(boolean isUserCommentsAllowed) {
         this.isUserCommentsAllowed = isUserCommentsAllowed;
+    }
+
+    public void setPhotoCount(int thisAlbumPhotoCount) {
+        if(thisAlbumPhotoCount != photoCount) {
+            totalPhotoCount += (thisAlbumPhotoCount - photoCount);
+        }
+        photoCount = thisAlbumPhotoCount;
     }
 }

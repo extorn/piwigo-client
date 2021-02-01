@@ -132,6 +132,13 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
         if(comparator.getAlbumSortOrder() != ALBUM_SORT_ORDER_DEFAULT) {
             super.postItemInsert(item);
         }
+        if(item instanceof CategoryItem) {
+            if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
+                subAlbumCount++;
+            } else {
+                bannerCount++;
+            }
+        }
     }
 
     @Override
@@ -154,20 +161,8 @@ public class PiwigoAlbum<S extends CategoryItem, T extends GalleryItem> extends 
     }
 
     private void addCategoryItem(CategoryItem item) {
-        boolean updateCounts = false;
-        if (containsItem((T) item)) {
-            remove((T) item);
-        } else {
-            updateCounts = true;
-        }
+        remove((T) item);
         super.addItem((T) item);
-        if(updateCounts) {
-            if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
-                subAlbumCount++;
-            } else {
-                bannerCount++;
-            }
-        }
     }
 
     @Override

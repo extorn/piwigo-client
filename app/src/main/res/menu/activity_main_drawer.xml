@@ -17,6 +17,11 @@
             android:title="@string/gallery_menu_title" />
 
         <item
+            android:id="@+id/nav_orphans"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/orphans_menu_title" />
+
+        <item
             android:id="@+id/nav_upload"
             android:icon="@drawable/ic_menu_upload"
             android:title="@string/upload_menu_title" />

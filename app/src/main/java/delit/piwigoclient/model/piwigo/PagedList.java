@@ -151,6 +151,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
 
     public void updateMaxExpectedItemCount(int newCount) {
         items.ensureCapacity(newCount);
+        sortedItems.ensureCapacity(newCount);
     }
 
     public void acquirePageLoadLock() {
@@ -342,7 +343,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         addItem(insertAtIdx, item);
     }
 
-    private void addItem(int insertAtIdx, T item) {
+    protected void addItem(int insertAtIdx, T item) {
         updatePageLoadedCount(insertAtIdx -1, +1);
         items.add(insertAtIdx, item);
         sortedItems.add(insertAtIdx, item);
@@ -353,7 +354,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         if(isRetrieveItemsInReverseOrder()) {
             return 0;
         } else {
-            return items.size();
+            return sortedItems.size();
         }
     }
 
@@ -362,12 +363,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     public boolean replace(T item, T newItem) {
-        int idx = items.indexOf(item);
+        int idx = getItemIdx(item);
         if(idx >= 0) {
             remove(idx);
             addItem(idx, newItem);
-//            items.remove(idx);
-//            items.add(idx, newItem);
             return true;
         }
         return false;
@@ -442,7 +441,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public int getItemIdx(T item) {
         long seekId = getItemId(item);
         int idx = 0;
-        for (T c : items) {
+        for (T c : sortedItems) {
             if(seekId == getItemId(c)) {
                 if(retrieveItemsInReverseOrder) {
                     return getReverseItemIdx(idx);
